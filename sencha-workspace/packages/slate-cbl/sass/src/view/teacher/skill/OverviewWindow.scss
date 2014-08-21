@@ -1,0 +1,91 @@
+$border-color: #999;
+
+.skill-grid {
+    border-bottom: 2px solid $border-color;
+    margin: 0;
+    table-layout: fixed;
+
+    th, td {
+        padding: 0.5em;
+    }
+
+    .skill-grid-demo-detail-data {
+        padding: 0;
+    }
+}
+
+.skill-grid-header-row {
+    
+}
+
+.skill-grid-header {
+    background: none;
+    border-bottom: 2px solid $border-color;
+}
+
+.skill-grid-demo-row {
+    
+}
+
+.skill-grid-demo-data {
+    background: #eee;
+    @include ellipsis;
+    
+    tr:nth-child(4n-1) & {
+        background: #e0e0e0;
+    }
+}
+
+.skill-grid-demo-index {
+    text-align: center;
+    width: 9%;
+}
+
+.skill-grid-demo-date {
+    white-space: nowrap;
+    width: 16%;
+}
+
+.skill-grid-demo-level {
+    text-align: center;
+    width: 8%
+}
+
+.skill-grid-demo-experience {
+    
+}
+
+.skill-grid-demo-context {
+    
+}
+
+.skill-grid-demo-task {
+    
+}
+
+.skill-grid-demo-artifact {
+    width: 10%;
+}
+
+.skill-grid-demo-detail-row {
+    
+}
+
+.skill-grid-demo-detail-ct {
+    height: 0;
+    overflow: hidden;
+    padding: 0 0.75em;
+    
+    .skill-grid-demo-detail-row.is-expanded & {
+        height: auto;
+        padding: 0.5em 0.75em;
+    }
+}
+
+.skill-grid-emptytext-row {
+    
+}
+
+.skill-grid-emptytext-cell {
+    
+}
