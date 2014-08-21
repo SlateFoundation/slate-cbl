@@ -1,0 +1,50 @@
+$g: 'cbl-grid';
+
+$grid-border-color: $text-color;
+
+$label-cell-width: 180px;
+$data-cell-width:  150px;
+
+ $level-9-color: #d94181;
+$level-10-color: #ffa200;
+$level-11-color: #5dc02a;
+$level-12-color: #008cc1;
+
+ $level-9-color-light: #ea97ba;
+$level-10-color-light: #ffcc73;
+$level-11-color-light: #a6dc8a;
+$level-12-color-light: #73c0dd;
+
+ $level-9-color-medium: #e1679a;
+$level-10-color-medium: #ffb533;
+$level-11-color-medium: #7dcd55;
+$level-12-color-medium: #33a3cd;
+
+ $level-9-color-dark: #ca274f;
+$level-10-color-dark: #ff7d00;
+$level-11-color-dark: #38a719;
+$level-12-color-dark: #005ea8;
+
+$level-colors:
+     $level-9-color,
+    $level-10-color,
+    $level-11-color,
+    $level-12-color;
+
+$level-colors-light:
+     $level-9-color-light,
+    $level-10-color-light,
+    $level-11-color-light,
+    $level-12-color-light;
+
+$level-colors-medium:
+     $level-9-color-medium,
+    $level-10-color-medium,
+    $level-11-color-medium,
+    $level-12-color-medium;
+
+$level-colors-dark:
+     $level-9-color-dark,
+    $level-10-color-dark,
+    $level-11-color-dark,
+    $level-12-color-dark;

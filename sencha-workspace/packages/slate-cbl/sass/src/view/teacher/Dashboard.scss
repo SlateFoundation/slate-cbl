@@ -1,0 +1,275 @@
+.level-n { // ideally would be %level-n but Sencha Cmd has some outdated ish
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 1px 1px black;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@for $n from 9 through 12 {
+    .cbl-level-#{$n} {
+        $level-color: nth($level-colors, ($n - 8));
+        $level-color-light:  nth($level-colors-light,  ($n - 8));
+        $level-color-medium: nth($level-colors-medium, ($n - 8));
+        $level-color-dark:   nth($level-colors-dark,   ($n - 8));
+    
+        @extend .level-n;
+        background-color: $level-color;
+        
+        &.#{$g}-progress-cell {
+            background-color: $level-color-light;
+        }
+        
+        .#{$g}-progress-bar {
+            @include background-image(linear-gradient(
+                $level-color,
+                $level-color-dark
+            ));
+        }
+
+        .#{$g}-demo.is-complete {
+            background-color: $level-color-medium;
+        }        
+    }
+}
+
+.ellipsis {
+    @include ellipsis;
+}
+
+.popover,
+.popover.x-body {
+    border-radius: 3px;
+    box-shadow: 0 0 1em rgba(black, .2);
+    color: inherit;
+    font: inherit;
+    max-width: 30em;
+    overflow: visible;
+}
+
+.popover-title {
+    background-color: #787878;
+    border-radius: 3px 3px 0 0;
+    color: white;
+    font-size: 1.25em;
+    font-family: $body-font;
+    letter-spacing: -.5px;
+    line-height: 1;
+    margin: 0;
+    padding: .5625em 1.125em;
+    position: relative;
+}
+
+.popover-pointer-img {
+    display: block;
+    height: 1em;
+    left: 0;
+    position: absolute;
+    top: 50%;
+    @include translate(-100%, -50%);
+    width: .5em;
+    
+    .point-right & {
+        left: 100%;
+        @include transform(rotate(180deg) translate(0%, 50%));
+    }
+}
+
+.popover-pointer {
+    fill: #787878;
+}
+
+.popover-body {
+    background-color: #d5d5d5;
+    border-radius: 0 0 3px 3px;
+    font-family: $body-font;
+    padding: 1em 1.5em;
+}
+
+.#{$g}-ct {
+    @include display-box;
+    @include box-orient(horizontal);
+}
+
+.#{$g}-scroll-ct {
+    border: 1px solid $grid-border-color;
+    border-width: 0 1px;
+    @include box-flex(1);
+    overflow-x: auto;
+}
+
+.#{$g} {
+    margin: 0;
+    table-layout: fixed;
+    width: auto;
+
+	&.#{$g}-main {
+		width: 100%;
+		
+		tr {
+		    > :first-child { border-left:  none; }
+		    > :last-child  { border-right: none; }
+		}
+	}
+    
+    td, th {
+        background: $page-bg-color;
+        border: 1px solid $grid-border-color;
+        border-bottom: none;
+        @include box-sizing(border-box);
+        padding: .5em;
+    }
+    
+    th {
+        background: rgba($grid-border-color, .1);
+    }
+    
+    > tbody > tr:last-child {
+        > td, > th {
+            border-bottom: 1px solid $grid-border-color;
+        }
+    }
+
+    .#{$g}-corner-cell {
+        background: none;
+        border: none;
+    }
+
+    .#{$g}-student-name {
+        line-height: 1.3;
+        text-align: center;
+    }
+}
+
+.#{$g}-legend {
+    padding: 2em 0;
+}
+
+.#{$g}-competency-col {
+    width: $label-cell-width;
+}
+
+.#{$g}-progress-col {
+    width: $data-cell-width;
+}
+
+.#{$g}-progress-row > .#{$g}-progress-cell {
+    overflow: hidden;
+    position: relative;
+}
+
+.#{$g}-progress-bar {
+    background-color: lighten($grid-border-color, 10);
+    left: 0;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    @include transition(width 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000)); // easeOutCirc
+    width: 0;
+    z-index: 0;
+}
+
+.#{$g}-progress-level {
+    font-size: .75em;
+    left: .5em;
+    line-height: 1;
+    margin-top: -.5em;
+    position: absolute;
+    top: 50%;
+}
+
+.#{$g}-progress-percent {
+    border-radius: 3px;
+    padding: .25em;
+    position: relative;
+}
+
+.#{$g}-legend-item {
+    border-radius: 3px;
+    display: inline-block;
+    margin-right: .25em;
+    padding: .25em .75em;
+}
+
+.#{$g}-skills-row > .#{$g}-skills-cell {
+    border: none;
+    overflow: hidden;
+    padding: 0;
+}
+
+.#{$g}-skills-ct > .#{$g}-skills-grid {
+    margin: 0;
+    table-layout: fixed;
+}
+
+.#{$g}-skill-col {
+    width: $label-cell-width;
+}
+
+.#{$g}-demos-col {
+    width: $data-cell-width;
+}
+
+.#{$g}-skills-ct {
+    @include transition(all 250ms);
+    @include transition-timing-function(cubic-bezier(0.075, 0.820, 0.165, 1.000)); // easeOutCirc
+    height: 0;
+}
+
+.#{$g}-demos-cell {
+    position: relative;
+}
+
+.#{$g}-skill-row > .#{$g}-skill-name {
+    @extend .#{$g}-competency-name;
+    background: $page-bg-color;
+    border-right: none;
+    font-size: .875em;
+    font-weight: normal;
+    padding: .75em .5em .75em 1.5em;
+    position: relative;
+    
+    .popover {
+        right: -5px;
+        top: 0;
+        width: 300px;
+    }
+    
+    &:hover,
+    &:focus {
+        .popover {
+            display: block;
+        }
+    }
+}
+
+.#{$g}-demos {
+    @include box-align(stretch);
+    @include display-box;
+    left: 0;
+    list-style: none;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.#{$g}-demo {
+    background-color: $page-bg-color;
+    border-right: 1px solid $grid-border-color;
+    @include box-flex(1);
+    @include box-sizing(border-box);
+	@include transition(background-color 250ms ease-in);
+    cursor: pointer;
+    
+    &:last-child {
+        border-right: none;
+    }
+    
+    &.is-complete {
+        background-color: #ccc;
+    }
+}
