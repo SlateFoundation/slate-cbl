@@ -138,7 +138,10 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
             }),
             competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
             competencyCardConfig = {
-                title: competency.get('Descriptor'),
+                title: competency.get('Code'),
+                tabConfig: {
+                    tooltip: Ext.String.format('<h3>{0}</h3><p>{1}</p>', competency.get('Descriptor'), competency.get('Statement'))
+                },
                 competency: competency,
                 items: []
             },
