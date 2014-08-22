@@ -246,8 +246,8 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         };
 
         // load demonstrations and skills
-        Slate.cbl.API.getDemonstrations(studentIds, competencyId, function(response) {
-            demonstrations = response.data.data;
+        competency.getDemonstrationsForStudents(studentIds, function(loadedDemonstrations) {
+            demonstrations = loadedDemonstrations;
             if (skills) {
                 _renderSkills();
             }
@@ -278,7 +278,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     refresh: function() {
         var me = this,
             dashboardView = me.getView(),
-            contentAreaData = dashboardView.getContentArea(),
+            contentArea = dashboardView.getContentArea(),
             studentsStore = Ext.getStore('cbl-students'),
             competenciesStore = Ext.getStore('cbl-competencies'),
             
@@ -289,13 +289,13 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                 );
             };
 
-        if (!studentsStore.isLoaded() || !contentAreaData) {
+        if (!studentsStore.isLoaded() || !contentArea) {
             return;
         }
         
         if (!competenciesStore.isLoaded()) {
-            Slate.cbl.API.getCompetencies(studentsStore.collect('ID'), contentAreaData.Code, function(response) {
-                competenciesStore.loadRawData(response.data.data);
+            contentArea.getCompetenciesForStudents(studentsStore.collect('ID'), function(competencies) {
+                competenciesStore.loadRawData(competencies);
                 me.refresh();
             });
             return;

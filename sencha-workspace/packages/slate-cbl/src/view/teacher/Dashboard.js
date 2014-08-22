@@ -1,13 +1,10 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
-/**
- * TODO:
- */
- 
+/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('Slate.cbl.view.teacher.Dashboard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-teacher-dashboard',
     requires:[
         'Slate.cbl.view.teacher.DashboardController',
+        'Slate.cbl.model.ContentArea',
         'Slate.cbl.widget.Popover'
     ],
 
@@ -155,7 +152,23 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
     },
     
     applyPopover: function(newPopover, oldPopover) {
-        return Ext.factory(newPopover, Slate.cbl.widget.Popover, oldPopover);
+        return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
+    },
+
+    applyContentArea: function(contentArea) {
+        if (!contentArea) {
+            return null;
+        }
+
+        if (contentArea.isModel) {
+            return contentArea;
+        }
+        
+        if (contentArea === true) {
+            contentArea = {};
+        }
+        
+        return Ext.create('Slate.cbl.model.ContentArea', contentArea);
     },
     
     updateContentArea: function(newContentArea, oldContentArea) {

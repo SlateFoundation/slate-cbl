@@ -21,39 +21,5 @@ Ext.define('Slate.cbl.API', {
                 Ext.callback(callback, scope, [response]);
             }
         });
-    },
-
-    getCompetencies: function(studentIds, contentAreaId, callback, scope) {
-        var me = this;
-
-        me.request({
-            url: '/cbl/teacher-dashboard/competencies',
-            method: 'GET',
-            params: {
-                students: studentIds.join(','),
-                'content-area': contentAreaId
-            },
-            success: function(response) {
-                me.fireEvent('competenciesload', response, studentIds, contentAreaId);
-                Ext.callback(callback, scope, [response]);
-            }
-        });
-    },
-
-    getDemonstrations: function(studentIds, competencyId, callback, scope) {
-        var me = this;
-
-        me.request({
-            url: '/cbl/teacher-dashboard/demonstrations',
-            method: 'GET',
-            params: {
-                students: studentIds.join(','),
-                competency: competencyId
-            },
-            success: function(response) {
-                me.fireEvent('demonstrationsload', response, studentIds, competencyId);
-                Ext.callback(callback, scope, [response]);
-            }
-        });
     }
 });

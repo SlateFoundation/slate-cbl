@@ -1,8 +1,4 @@
 /*jslint browser: true, undef: true *//*global Ext,Slate*/
-/**
- * TODO:
- * - Use Slate.model.Person from future slate-core package
- */
 Ext.define('Slate.cbl.model.Competency', {
     extend: 'Ext.data.Model',
     requires: [
@@ -45,6 +41,21 @@ Ext.define('Slate.cbl.model.Competency', {
             skills.add(response.data.data);
             me.set('skills', skills);
             Ext.callback(callback, scope, [skills]);
+        });
+    },
+    
+    getDemonstrationsForStudents: function(studentIds, callback, scope) {
+        var me = this;
+
+        Slate.cbl.API.request({
+            method: 'GET',
+            url: '/cbl/competencies/' + me.get('Code') + '/demonstrations',
+            params: {
+                students: studentIds.join(',')
+            },
+            success: function(response) {
+                Ext.callback(callback, scope, [response.data && response.data.data]);
+            }
         });
     }
 });
