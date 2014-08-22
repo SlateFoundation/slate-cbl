@@ -143,9 +143,8 @@ $level-colors-dark:
 
 .cbl-recent-progress {
     float: right;
-    margin: 0 0 2em 2em;
-    width: 31.25%;
-    width: calc(31.25% - 1em);
+    margin: 0 0 3% 3%;
+    width: 31.3333%;
 
     .scoring-domain-col {
         width: 100%;
@@ -158,16 +157,16 @@ $level-colors-dark:
 
 .cbl-competency-panels {
     clear: both;
-    display: flex;
-    flex-wrap: wrap;
     list-style: none;
-    margin: 0 -1em;
+    margin: 0 -1.5%;
     padding: 0;
 }
 
 .cbl-competency-panel {
-    flex: 1 0 300px;
-    margin: 0 1em 2em;
+    display: inline-block;
+    margin: 0 1.5% 3%;
+    vertical-align: top;
+    width: 47%;
     
     .header-title {
         float: none;
