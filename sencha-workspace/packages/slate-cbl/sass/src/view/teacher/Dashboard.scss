@@ -7,12 +7,12 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-@for $n from 9 through 12 {
+@for $n from 8 through 13 {
     .cbl-level-#{$n} {
-        $level-color: nth($level-colors, ($n - 8));
-        $level-color-light:  nth($level-colors-light,  ($n - 8));
-        $level-color-medium: nth($level-colors-medium, ($n - 8));
-        $level-color-dark:   nth($level-colors-dark,   ($n - 8));
+        $level-color:        nth($level-colors,        ($n - 7));
+        $level-color-light:  nth($level-colors-light,  ($n - 7));
+        $level-color-medium: nth($level-colors-medium, ($n - 7));
+        $level-color-dark:   nth($level-colors-dark,   ($n - 7));
     
         @extend .level-n;
         background-color: $level-color;
@@ -152,6 +152,10 @@
 
 .#{$g}-progress-col {
     width: $data-cell-width;
+}
+
+.#{$g}-progress-row {
+    cursor: pointer;
 }
 
 .#{$g}-progress-row > .#{$g}-progress-cell {

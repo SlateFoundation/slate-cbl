@@ -29,7 +29,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
     title: 'Skill Overview',
     width: 700,
     minWidth: 700,
-    constrainHeader: true,
+    // constrainHeader: true,
     autoScroll: true,
 
     dockedItems: [
@@ -74,22 +74,46 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
             ]
         },
         {
-            reference: 'studentCombo',
             dock: 'top',
+            
+            xtype: 'toolbar',
+            items: [
+                {
+                    flex: 1,
 
-            xtype: 'combobox',
-            emptyText: 'Start typing student\'s name',
-
-            store: {
-                type: 'chained',
-                source: 'cbl-students'
-            },
-            queryMode: 'local',
-            displayField: 'FullName',
-            valueField: 'ID',
-
-            forceSelection: true,
-            autoSelect: true
+                    reference: 'studentCombo',
+                    xtype: 'combobox',
+                    emptyText: 'Start typing student\'s name',
+        
+                    store: {
+                        type: 'chained',
+                        source: 'cbl-students'
+                    },
+                    queryMode: 'local',
+                    displayField: 'FullName',
+                    valueField: 'ID',
+        
+                    forceSelection: true,
+                    autoSelect: true
+                }
+            ]
+        },
+        {
+            dock: 'bottom',
+            xtype: 'toolbar',
+            items: [
+                {
+                    xtype: 'button',
+                    action: 'override',
+                    text: 'Override'
+                },
+                '->',
+                {
+                    xtype: 'button',
+                    action: 'demonstration-create',
+                    text: 'Log a Demonstration'
+                }
+            ]
         }
     ],
 
@@ -110,7 +134,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                 '<table class="skill-grid">',                                        
                     '<thead>',
                         '<tr class="skill-grid-header-row">',
-                            '<th class="skill-grid-header skill-grid-demo-index">Demo</th>',
+                            '<th class="skill-grid-header skill-grid-demo-index">&nbsp;</th>',
                             '<th class="skill-grid-header skill-grid-demo-date">Date</th>',
                             '<th class="skill-grid-header skill-grid-demo-level">Level</th>',
                             '<th class="skill-grid-header skill-grid-demo-experience">Experience</th>',
@@ -124,7 +148,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                             '<tr class="skill-grid-demo-row" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstration.Demonstrated:date("M j, Y")}</td>',
-                                '<td class="skill-grid-demo-data skill-grid-demo-level">{Level}</td>',
+                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="cbl-level-{Level}">{Level}</div></td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-type">{Demonstration.ExperienceType:htmlEncode}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-context">{Demonstration.Context:htmlEncode}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-task">{Demonstration.PerformanceType:htmlEncode}</td>',
@@ -134,9 +158,17 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                                 '<td class="skill-grid-demo-detail-data" colspan="6">',
                                     '<div class="skill-grid-demo-detail-ct">',
                                         '<tpl if="Demonstration.ArtifactURL">',
-                                            'Artifact: <a href="{Demonstration.ArtifactURL:htmlEncode}">{Demonstration.ArtifactURL:htmlEncode}</a>',
+                                            '<div class="skill-grid-demo-artifact">',
+                                                '<strong>Artifact: </strong>',
+                                                '<a href="{Demonstration.ArtifactURL:htmlEncode}">{Demonstration.ArtifactURL:htmlEncode}</a>',
+                                            '</div>',
                                         '</tpl>',
-                                        '<div class="skill-grid-demo-comments">{Demonstration.Comments:htmlEncode}</div>',
+                                        '<tpl if="Demonstration.Comments">',
+                                            '<div class="skill-grid-demo-comments">',
+                                                '<strong>Comments: </strong>',
+                                                '{[this.escapeAndNewline(values.Demonstration.Comments)]}',
+                                            '</div>',
+                                        '</tpl>',
                                         '<div class="skill-grid-demo-meta">',
                                             'Reported',
                                             '<tpl for="Demonstration.Creator"> by <a href="/people/{Username}">{FirstName} {LastName}</a></tpl>',
@@ -151,21 +183,12 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                             '<td class="skill-grid-emptytext-cell" colspan="6">No demonstrations are logged yet for this skill</td>',
                         '</tr>',
                     '</tpl>',
-                '</table>'
-            ]
-        },
-        {
-            xtype: 'toolbar',
-            items: [
+                '</table>',
                 {
-                    xtype: 'button',
-                    action: 'demonstration-create',
-                    text: 'Log a Demonstration'
-                },
-                {
-                    xtype: 'button',
-                    action: 'override',
-                    text: 'Override'
+                    escapeAndNewline: function(s) {
+                        s = Ext.util.Format.htmlEncode(s);
+                        return Ext.util.Format.nl2br(s);
+                    }
                 }
             ]
         }

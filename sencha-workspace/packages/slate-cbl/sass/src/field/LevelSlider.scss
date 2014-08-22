@@ -1,9 +1,23 @@
- $level-8-color: #666;
-$level-13-color: #a0522d;
-
 .cbl-level-slider-field {
     .x-slider-ct-horz {
         background: none;
+        cursor: pointer;
+        position: relative;
+
+        &:active {
+            cursor: ew-resize;
+            cursor: col-resize;
+        }
+
+        &::before {
+            color: #c00;
+            content: '\00d7'; // times
+            font-size: large;
+            font-weight: bold;
+            left: 26px;
+            position: absolute;
+            top: 6px;
+        }
     }
 
     .x-slider-horz {
@@ -39,6 +53,9 @@ $level-13-color: #a0522d;
         background: white;
         border-radius: 100%;
         box-shadow: 0 1px 1px rgba(black, .3);
+        cursor: pointer;
+        cursor: ew-resize;
+        cursor: col-resize;
         margin-top: -9px;
     }
     
