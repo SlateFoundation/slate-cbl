@@ -8,7 +8,7 @@ use TableNotFoundException;
 class CompetenciesRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass = 'Slate\\CBL\\Competency';
-    public static $browseOrder = 'Code';
+    public static $browseOrder = 'ContentAreaID, Code';
 
     public static function handleRecordRequest(\ActiveRecord $Competency, $action = false)
     {

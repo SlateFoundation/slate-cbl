@@ -4,13 +4,14 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
     xtype: 'slate-cbl-teacher-demonstration-createwindow',
     requires: [
         'Slate.cbl.view.teacher.demonstration.CreateWindowController',
+        'Slate.cbl.store.AllCompetencies',
         'Slate.cbl.model.Demonstration',
-        'Slate.cbl.model.Skill',
         'Slate.cbl.field.LevelSlider',
 
         'Ext.layout.container.Fit',
         'Ext.form.Panel',
-        'Ext.tab.Panel',
+        'Ext.grid.Panel',
+        'Ext.grid.feature.Grouping',
         'Ext.form.field.Text',
         'Ext.form.field.TextArea',
         'Ext.form.field.ComboBox',
@@ -106,42 +107,101 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
 
                 xtype: 'tabpanel',
                 margin: '10 -16',
-                bodyPadding: '16 75',
+//                bodyPadding: '16 75',
                 bodyStyle: {
 	                backgroundColor: '#ddd'
                 },
                 // title: 'Competencies',
-                defaults: {
-                    xtype: 'container',
-                    closable: true,
-                    layout: 'anchor',
-                    defaults: {
-                        xtype: 'slate-cbl-levelsliderfield',
-						labelAlign: 'top',
-                        anchor: '100%'
-                        // labelWidth: 150
-                    }
-                },
+//                defaults: {
+//                    xtype: 'container',
+//                    closable: true,
+//                    layout: 'anchor',
+//                    defaults: {
+//                        xtype: 'slate-cbl-levelsliderfield',
+//						labelAlign: 'top',
+//                        anchor: '100%'
+//                        // labelWidth: 150
+//                    }
+//                },
                 items: [
                     {
-                        reference: 'addCompetencyCt',
+                        reference: 'competenciesGrid',
                         title: 'Add competency',
                         glyph: 0xf0fe + '@FontAwesome',
-
                         closable: false,
                         tabConfig: {
                             hidden: true
                         },
-                        defaults: {
-                            xtype: 'button',
-                            scale: 'large',
-                            margin: '0 0 5'
+
+                        xtype: 'gridpanel',
+                        height: 300,
+                        hideHeaders: true,
+                        store: {
+                            xclass: 'Slate.cbl.store.AllCompetencies'
                         },
-                        layout: {
-                            type: 'vbox',
-                            align: 'stretch'
-                        }
+                        columns: [
+                            {
+                                text: 'Code',
+                                dataIndex: 'Code'
+                            },
+                            {
+                                text: 'Descriptor',
+                                dataIndex: 'Descriptor',
+                                flex: 1
+                            }
+                        ],
+                        features: [
+                            {
+                                id: 'grouping',
+                                ftype: 'grouping',
+                                groupHeaderTpl: [
+                                    '{[this.getContentAreaHeader(values)]}',
+                                    {
+                                        contentAreaTpl: [
+                                            '<span class="title">{Title}</span>'
+//                                            '<span class="count">{[parent.children.length]}</span>'
+                                        ],
+                                        getContentAreaHeader: function(values) {
+                                            var contentAreaData = this.owner.grid.getStore().contentAreas.get(values.groupValue),
+                                                contentAreaTpl = Ext.XTemplate.getTpl(this, 'contentAreaTpl');
+
+                                            return contentAreaTpl.apply(contentAreaData, values);
+                                        }
+                                    }
+                                ],
+                                enableGroupingMenu: false,
+                                startCollapsed: true
+                            }
+                        ],
+                        dockedItems: [
+                            {
+                                reference: 'competenciesSearchField',
+                                dock: 'top',
+
+                                xtype: 'textfield',
+                                emptyText: 'Type competency code or statement...'
+                            }
+                        ]
                     }
+//                    {
+//                        reference: 'addCompetencyCt',
+//                        title: 'Add competency',
+//                        glyph: 0xf0fe + '@FontAwesome',
+//
+//                        closable: false,
+//                        tabConfig: {
+//                            hidden: true
+//                        },
+//                        defaults: {
+//                            xtype: 'button',
+//                            scale: 'large',
+//                            margin: '0 0 5'
+//                        },
+//                        layout: {
+//                            type: 'vbox',
+//                            align: 'stretch'
+//                        }
+//                    }
                 ]
             },
             {

@@ -2,10 +2,15 @@
 Ext.define('Slate.cbl.model.Competency', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.cbl.API'
+        'Slate.cbl.API',
+        'Slate.cbl.proxy.Records',
+        'Ext.data.identifier.Negative'
     ],
 
+    // model config
     idProperty: 'ID',
+    identifier: 'negative',
+
     fields: [
         // server-persisted fields
         { name: 'ID', type: 'int' },
@@ -23,6 +28,11 @@ Ext.define('Slate.cbl.model.Competency', {
         { name: 'skillsRendered', persist: false, type: 'boolean', defaultValue: false },
         { name: 'skills', persist: false }
     ],
+
+    proxy: {
+        type: 'slate-cbl-records',
+        url: '/cbl/competencies'
+    },
     
     withSkills: function(callback, scope) {
         var me = this,

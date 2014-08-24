@@ -4,17 +4,9 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
     xtype: 'slate-cbl-teacher-skill-overviewwindow',
     requires: [
         'Slate.cbl.view.teacher.skill.OverviewWindowController',
-//        'Slate.cbl.model.Demonstration',
-//        'Slate.cbl.model.Skill',
-//        'Slate.cbl.field.LevelSlider',
-//
-//        'Ext.layout.container.Fit',
-//        'Ext.form.Panel',
-        'Ext.tab.Panel',
-//        'Ext.form.field.Text',
-//        'Ext.form.field.TextArea',
+        'Slate.cbl.model.Skill',
+
         'Ext.form.field.ComboBox',
-//        'Ext.form.field.Checkbox',
         'Ext.data.ChainedStore'
     ],
     

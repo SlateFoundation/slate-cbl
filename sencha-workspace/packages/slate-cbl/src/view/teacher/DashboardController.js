@@ -5,12 +5,13 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     requires: [
 //        'Slate.cbl.view.teacher.DummyData',
         'Slate.cbl.API',
-        'Slate.cbl.store.Students',
-        'Slate.cbl.store.Competencies',
+        'Slate.cbl.model.Student',
+        'Slate.cbl.model.Competency',
         'Slate.cbl.view.teacher.demonstration.CreateWindow',
         'Slate.cbl.view.teacher.skill.OverviewWindow',
         
-        'Ext.util.Collection'
+        'Ext.util.Collection',
+        'Ext.data.Store',
     ],
 
     config: {
@@ -43,12 +44,14 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     init: function() {
         var me = this;
 
-        Ext.create('Slate.cbl.store.Students', {
-            storeId: 'cbl-students'
+        Ext.create('Ext.data.Store', {
+            storeId: 'cbl-students',
+            model: 'Slate.cbl.model.Student'
         });
     
-        Ext.create('Slate.cbl.store.Competencies', {
-            storeId: 'cbl-competencies'
+        Ext.create('Ext.data.Store', {
+            storeId: 'cbl-competencies',
+            model: 'Slate.cbl.model.Competency'
         });
     },
 

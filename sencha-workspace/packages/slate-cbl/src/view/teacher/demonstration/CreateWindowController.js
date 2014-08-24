@@ -23,8 +23,11 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
             'container[reference=competenciesTabPanel] > container': {
                 removed: 'onCompetencyCardRemoved'
             },
-            'container[reference=addCompetencyCt] button': {
-                click: 'onAddCompetencyButtonClick'
+//            'container[reference=addCompetencyCt] button': {
+//                click: 'onAddCompetencyButtonClick'
+//            },
+            'textfield[reference=competenciesSearchField]': {
+                change: 'onCompetenciesSearchFieldChange'
             }
         }
     },
@@ -35,24 +38,52 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
         var me = this,
             competenciesStore = Ext.getStore('cbl-competencies'),
             buttonConfigs = [];
-
-        competenciesStore.each(function(competency) {
-            buttonConfigs.push({
-                text: competency.get('Descriptor'),
-                tooltip: competency.get('Statement'),
-                competency: competency
-            });
-        });
         
-        me.lookupReference('addCompetencyCt').add(buttonConfigs);
+//        me.lookupReference('competenciesGrid').getStore().load();
+
+//        competenciesStore.each(function(competency) {
+//            buttonConfigs.push({
+//                text: competency.get('Descriptor'),
+//                tooltip: competency.get('Statement'),
+//                competency: competency
+//            });
+//        });
+//        
+//        me.lookupReference('addCompetencyCt').add(buttonConfigs);
     },
     
     onStudentSelect: function(studentCombo, student) {
         this.getView().setTitle('Log a demonstration' + (student.length ? ' for ' + student[0].getDisplayName() : ''));
     },
     
-    onAddCompetencyButtonClick: function(button) {
-        this.addCompetency(button.competency);
+//    onAddCompetencyButtonClick: function(button) {
+//        this.addCompetency(button.competency);
+//    },
+    
+    onCompetenciesSearchFieldChange: function(searchField, value) {
+        var grid = this.lookupReference('competenciesGrid'),
+            store = grid.getStore(),
+            groupingFeature = grid.getView().getFeature('grouping'),
+            regex;
+
+        value = Ext.String.trim(value);
+
+        Ext.suspendLayouts();
+
+        if (value) {
+            regex =  Ext.String.createRegex(value, false, false);
+            store.clearFilter(false);
+            store.filterBy(function(competency) {
+                return regex.test(competency.get('Code')) || regex.test(competency.get('Descriptor'));
+            });
+            groupingFeature.expandAll();
+            grid.getSelectionModel().select(store.getAt(0), false, true);
+        } else {
+            store.clearFilter();
+            groupingFeature.collapseAll();
+        }
+
+        Ext.resumeLayouts(true);
     },
     
     onCompetencyCardRemoved: function(competencyCard, competenciesTabPanel) {
