@@ -32,14 +32,14 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
                 click: 'onCreateDemonstrationClick'
             }
         },
-        
+
         listen: {
             api: {
                 demonstrationcreate: 'onDemonstrationCreate'
             }
         }
     },
-    
+
     // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
     applyId: function(id) {
         return Ext.id(null, id);
@@ -58,12 +58,12 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
             me.lookupReference('studentCombo').setValue(student);
         }
     },
-    
+
     onCompetencyChange: function(competencyCombo, competency) {
         competency = competency && competencyCombo.findRecordByValue(competency);
 
         var me = this;
-        
+
         if (!competency) {
             return;
         }
@@ -74,7 +74,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
             skillsCombo.getStore().loadRawData(skills.getRange());
             skillsCombo.enable();
-            
+
             if (!skillsCombo.findRecordByValue(skillsCombo.getValue() || initialValue)) {
                 skillsCombo.clearValue();
                 skillsCombo.focus();
@@ -83,7 +83,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
             }
         });
     },
-    
+
     onSkillChange: function(skillCombo, skill) {
         var me = this;
 
@@ -93,26 +93,26 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
         me.syncDemonstrationsTable();
     },
-    
+
     onStudentChange: function(studentCombo, student) {
         // TODO: update window title
 
         this.syncDemonstrationsTable();
     },
-    
+
     onDemoRowClick: function(overviewWindow, ev, targetEl) {
         targetEl.next('.skill-grid-demo-detail-row').toggleCls('is-expanded');
         overviewWindow.doLayout();
     },
-    
+
     onOverrideClick: function() {
         alert('Not yet implemented');
     },
-    
+
     onCreateDemonstrationClick: function() {
         this.fireViewEvent('createdemonstrationclick');
     },
-    
+
     onDemonstrationCreate: function(demonstration) {
         var me = this,
             demonstrationSkillIds = Ext.pluck(demonstration.get('skills')||[], 'ID'),

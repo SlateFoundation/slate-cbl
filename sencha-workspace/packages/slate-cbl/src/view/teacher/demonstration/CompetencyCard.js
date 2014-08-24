@@ -5,12 +5,12 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CompetencyCard', {
     requires: [
         'Slate.cbl.field.LevelSlider'
     ],
-    
+
     padding: '16 75',
     layout: 'anchor',
     defaultType: 'slate-cbl-levelsliderfield',
     defaults: {
-		labelAlign: 'top',
+        labelAlign: 'top',
         anchor: '100%'
         // labelWidth: 150
     }

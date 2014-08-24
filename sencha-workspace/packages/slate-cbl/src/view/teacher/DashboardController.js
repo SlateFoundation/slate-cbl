@@ -9,9 +9,9 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         'Slate.cbl.model.Competency',
         'Slate.cbl.view.teacher.demonstration.CreateWindow',
         'Slate.cbl.view.teacher.skill.OverviewWindow',
-        
+
         'Ext.util.Collection',
-        'Ext.data.Store',
+        'Ext.data.Store'
     ],
 
     config: {
@@ -23,7 +23,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                 democellclick: 'onDemoCellClick'
             }
         },
-        
+
         listen: {
             store: {
                 '#cbl-students': {
@@ -48,7 +48,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             storeId: 'cbl-students',
             model: 'Slate.cbl.model.Student'
         });
-    
+
         Ext.create('Ext.data.Store', {
             storeId: 'cbl-competencies',
             model: 'Slate.cbl.model.Competency'
@@ -76,7 +76,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                     var createWindow = me.showCreateDemonstration();
                     createWindow.down('field[name=StudentID]').setValue(overviewWindow.getStudent().getId());
                     createWindow.getController().addCompetency(overviewWindow.getCompetency());
-                    
+
                     Ext.resumeLayouts(true);
                 }
             }
@@ -125,7 +125,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         for (; competencyIndex < competenciesLength; competencyIndex++) {
             competency = competencies[competencyIndex];
             competencyProgressCell = mainGridEl.down('.cbl-grid-progress-row[data-competency="'+competency.ID+'"] .cbl-grid-progress-cell[data-student="'+studentId+'"]', true);
-            
+
             if (!competencyProgressCell) {
                 continue;
             }
@@ -181,9 +181,9 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             _finishExpand, _finishToggle, _renderSkills,
             studentIds, demonstrations;
 
-    
+
         Ext.suspendLayouts();
-        
+
         _finishToggle = function() {
             skillHeadersRow.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
             skillStudentsRow.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
@@ -202,7 +202,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
         // handle expand
         competency.set('expanded', true);
-        
+
         _finishExpand = function() {
             skillsHeight = skillHeadersRow.down('.cbl-grid-skills-grid').getHeight();
             skillsRows.addCls('is-expanded');
@@ -290,7 +290,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             contentArea = dashboardView.getContentArea(),
             studentsStore = Ext.getStore('cbl-students'),
             competenciesStore = Ext.getStore('cbl-competencies'),
-            
+
             syncCompetencyRowHeights = function() {
                 me.syncRowHeights(
                     dashboardView.el.select('.cbl-grid-competencies thead tr, .cbl-grid-competencies .cbl-grid-progress-row'),
@@ -301,7 +301,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         if (!studentsStore.isLoaded() || !contentArea) {
             return;
         }
-        
+
         if (!competenciesStore.isLoaded()) {
             contentArea.getCompetenciesForStudents(studentsStore.collect('ID'), function(competencies) {
                 competenciesStore.loadRawData(competencies);
@@ -327,11 +327,11 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         } else {
             dashboardView.on('render', syncCompetencyRowHeights, me, { single: true });
         }
-        
+
 //
 //        Ext.resumeLayouts(true);
     },
-    
+
     syncRowHeights: function(table1Rows, table2Rows) {
         var me = this,
             dashboardView = me.getView(),
@@ -358,7 +358,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             maxHeight = Math.max(table1RowHeights[rowIndex], table2RowHeights[rowIndex]);
             table1Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
             table2Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
-            
+
 //            console.log('set row %o height to %o', rowIndex, maxHeight);
 //            studentsRows.item(rowIndex).setHeight(Math.max(competenciesRowHeights[rowIndex], studentsRowHeights[rowIndex]));
         }

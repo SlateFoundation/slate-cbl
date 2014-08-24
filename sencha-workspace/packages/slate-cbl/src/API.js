@@ -2,7 +2,7 @@
 Ext.define('Slate.cbl.API', {
     extend: 'Emergence.util.AbstractAPI',
     singleton: true,
-    
+
     recordKeyFn: function(recordData) {
         return recordData.ID;
     },

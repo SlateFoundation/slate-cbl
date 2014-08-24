@@ -33,8 +33,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
             }
         }
     },
-    
-    
+
+
     toastTpl: [
         '<tpl for="student">',
             '<strong>{FirstName} {LastName}</strong>',
@@ -52,11 +52,11 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
     onStudentSelect: function(studentCombo, student) {
         this.getView().setTitle('Log a demonstration' + (student.length ? ' for ' + student[0].getDisplayName() : ''));
     },
-    
+
     onCompetenciesSearchFieldChange: function(searchField, value) {
         this.updateCompetencyFilter(value);
     },
-    
+
     onCompetenciesSearchFieldSpecialKey: function(searchField, ev) {
         var me = this,
             selectionModel = me.lookupReference('competenciesGrid').getSelectionModel();
@@ -80,11 +80,11 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
                 break;
         }
     },
-    
+
     onCompetencyAddClick: function(competenciesGrid, competency) {
         this.addCompetency(competency);
     },
-    
+
     onCompetencyRowDoubleClick: function(competenciesGrid, competency) {
         this.addCompetency(competency);
     },
@@ -93,15 +93,15 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
         if (competenciesTabPanel.destroying || competenciesTabPanel.destroyed) {
             return;
         }
-        
+
         var me = this;
-        
+
         Ext.suspendLayouts();
 
         me.updateCompetencyFilter();
 
         me.syncAddComptencyButtonVisibility();
-        
+
         Ext.resumeLayouts(true);
     },
 
@@ -159,10 +159,10 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
                     if (me.lookupReference('loadNextStudentCheck').checked && !createWindow.destroying && !createWindow.destroyed) {
                         createWindow.setDemonstration(true); // start a new demonstration
-                        
+
                         studentsFieldStore = studentField.getStore();
                         studentField.select(studentsFieldStore.getAt(studentsFieldStore.indexOf(selectedStudent) + 1));
-                        
+
                         createWindow.setLoading(false);
                     } else {
                         createWindow.close();
@@ -203,7 +203,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
             if (createWindow.destroying || createWindow.destroyed) {
                 return;
             }
-            
+
             var competencyCard;
 
             skills.each(function(skill) {
@@ -217,7 +217,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
             competencyCard = competenciesTabPanel.insert(competenciesTabPanel.items.getCount() - 1, competencyCardConfig);
             competenciesTabPanel.setActiveItem(competencyCard);
-            
+
             if (competenciesSearchField.isDirty()) {
                 competenciesSearchField.reset(); // changing the value from dirty back to blank will trigger the change handler
             } else {
@@ -225,7 +225,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
             }
 
             me.syncAddComptencyButtonVisibility();
-            
+
             Ext.resumeLayouts(true);
 
             // scroll destination won't be measured correctly if this is called before layouts are flushed
@@ -247,7 +247,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
             regex;
 
         Ext.suspendLayouts();
-        
+
         query = Ext.String.trim(query || me.lookupReference('competenciesSearchField').getValue());
 
         store.clearFilter(false);

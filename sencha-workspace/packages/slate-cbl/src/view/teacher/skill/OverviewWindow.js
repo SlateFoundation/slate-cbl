@@ -9,9 +9,9 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
         'Ext.form.field.ComboBox',
         'Ext.data.ChainedStore'
     ],
-    
+
     controller: 'slate-cbl-teacher-skill-overviewwindow',
-    
+
     config: {
         student: null,
         competency: null,
@@ -34,9 +34,9 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                 {
                     reference: 'competencyCombo',
                     flex: 1,
-        
+
                     xtype: 'combobox',
-        
+
                     store: {
                         type: 'chained',
                         source: 'cbl-competencies'
@@ -44,30 +44,30 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     queryMode: 'local',
                     displayField: 'Descriptor',
                     valueField: 'Code',
-        
+
                     forceSelection: true
                 },
                 'Skill:',
                 {
                     reference: 'skillCombo',
                     flex: 1,
-        
+
                     xtype: 'combobox',
-        
+
                     store: {
                         model: 'Slate.cbl.model.Skill'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
                     valueField: 'ID',
-        
+
                     forceSelection: true
                 }
             ]
         },
         {
             dock: 'top',
-            
+
             xtype: 'toolbar',
             items: [
                 {
@@ -76,7 +76,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     reference: 'studentCombo',
                     xtype: 'combobox',
                     emptyText: 'Start typing student\'s name',
-        
+
                     store: {
                         type: 'chained',
                         source: 'cbl-students'
@@ -84,7 +84,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     queryMode: 'local',
                     displayField: 'FullName',
                     valueField: 'ID',
-        
+
                     forceSelection: true,
                     autoSelect: true
                 }
@@ -112,18 +112,18 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
     items: [
         {
             reference: 'skillStatement',
-            
+
             xtype: 'component',
             autoEl: 'p',
             padding: '16 32 0'
         },
         {
             reference: 'demonstrationsTable',
-            
+
             xtype: 'component',
             minHeight: 200,
             tpl: [
-                '<table class="skill-grid">',                                        
+                '<table class="skill-grid">',
                     '<thead>',
                         '<tr class="skill-grid-header-row">',
                             '<th class="skill-grid-header skill-grid-demo-index">&nbsp;</th>',
@@ -207,7 +207,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
         if (Ext.isString(skill)) {
             skill = parseInt(skill, 10);
         }
-        
+
         return skill ? skill : null;
     },
 

@@ -20,9 +20,9 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
         'Ext.form.field.Checkbox',
         'Ext.data.ChainedStore'
     ],
-    
+
     controller: 'slate-cbl-teacher-demonstration-createwindow',
-    
+
     config: {
         demonstration: true
     },
@@ -37,7 +37,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
             tooltip: 'Override'
         }
     ],
-    
+
     layout: 'fit',
     items: {
         reference: 'form',
@@ -75,21 +75,21 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                 xtype: 'combobox',
                 name: 'ExperienceType',
                 fieldLabel: 'Type of Experience',
-                
+
                 store: ['Core Studio', 'Choice Studio', 'Workshop', 'Health and Wellness', 'PE/Fitness', 'Online Courseware', 'Situated Learning', 'Work-based Learning', 'Advisory']
             },
             {
                 xtype: 'combobox',
                 name: 'Context',
                 fieldLabel: 'Context',
-                
+
                 store: ['Journalism', 'Mythbusters', 'Personal Finance', 'Math Workshop', 'Literacy Workshop', 'Culinary Arts', 'Etnrepreneurship', 'Performing Arts', 'Help Desk']
             },
             {
                 xtype: 'combobox',
                 name: 'PerformanceType',
                 fieldLabel: 'Performance Task',
-                
+
                 store: ['Position paper', 'Lab report', 'Media presentation', 'Argumentative essay', 'Speech']
             },
             {
@@ -98,7 +98,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                 xtype: 'textfield',
                 name: 'ArtifactURL',
                 fieldLabel: 'Artifact (URL)',
-                
+
                 allowBlank: true,
                 regex: /^https?:\/\/.+/i,
                 regexText: 'Artifact must be a complete URL (starting with http:// or https://)'
@@ -106,7 +106,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
             {
                 reference: 'competenciesTabPanel',
                 anchor: '100%',
-                
+
                 competencyTipTpl: [
                     '<h3>{Descriptor}</h3>',
                     '<p>{Statement}</p>'
@@ -119,7 +119,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                 margin: '10 -16',
 //                bodyPadding: '16 75',
                 bodyStyle: {
-	                backgroundColor: '#ddd'
+                    backgroundColor: '#ddd'
                 },
                 // title: 'Competencies',
                 defaultType: 'slate-cbl-teacher-demonstration-competencycard',
@@ -246,11 +246,11 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
         if (demonstration.isModel) {
             return demonstration;
         }
-        
+
         if (demonstration === true) {
             demonstration = {};
         }
-        
+
         return Ext.create('Slate.cbl.model.Demonstration', demonstration);
     }
 });

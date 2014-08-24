@@ -48,7 +48,7 @@ Ext.define('Slate.cbl.model.ContentArea', {
         type: 'slate-cbl-records',
         url: '/cbl/content-areas'
     },
-    
+
     getCompetenciesForStudents: function(studentIds, callback, scope) {
         var me = this;
 

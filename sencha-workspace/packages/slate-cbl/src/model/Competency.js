@@ -33,11 +33,11 @@ Ext.define('Slate.cbl.model.Competency', {
         type: 'slate-cbl-records',
         url: '/cbl/competencies'
     },
-    
+
     withSkills: function(callback, scope) {
         var me = this,
             skills = me.get('skills');
-        
+
         if (skills) {
             Ext.callback(callback, scope, [skills]);
             return;
@@ -47,13 +47,13 @@ Ext.define('Slate.cbl.model.Competency', {
             skills = new Ext.util.Collection({
                 keyFn: Slate.cbl.API.recordKeyFn
             });
-            
+
             skills.add(response.data.data);
             me.set('skills', skills);
             Ext.callback(callback, scope, [skills]);
         });
     },
-    
+
     getDemonstrationsForStudents: function(studentIds, callback, scope) {
         var me = this;
 

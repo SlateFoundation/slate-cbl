@@ -9,12 +9,12 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
     ],
 
     controller: 'slate-cbl-teacher-dashboard',
-    
+
     config: {
         contentArea: null,
         popover: true
     },
-    
+
     skillHeadersTpl: [
         '<tpl for=".">',
             '<tr class="cbl-grid-skill-row" data-skill="{ID}">',
@@ -24,7 +24,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             '</tr>',
         '</tpl>'
     ],
-    
+
     skillStudentsTpl: [
         '<tpl for="skills">',
             '<tr class="cbl-grid-skill-row" data-skill="{ID}">',
@@ -48,7 +48,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
                 for (; i <= to; i++) {
                     arr.push(i);
                 }
-                
+
                 return arr;
             }
         }
@@ -59,13 +59,13 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         '<div class="cbl-grid-ct">',
             '<table class="cbl-grid cbl-grid-competencies">',
                 '<colgroup class="cbl-grid-competency-col"></colgroup>',
-    
+
                 '<thead>',
                     '<tr>',
                         '<td class="cbl-grid-corner-cell"></td>',
                     '</tr>',
                 '</thead>',
-    
+
                 '<tbody>',
                     '<tpl for="competencies">',
                         '<tr class="cbl-grid-progress-row" data-competency="{ID}">',
@@ -84,11 +84,11 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
                     '</tpl>',
                 '</tbody>',
             '</table>',
-    
+
             '<div class="cbl-grid-scroll-ct">',
                 '<table class="cbl-grid cbl-grid-main">',
                     '<colgroup span="{students.length}" class="cbl-grid-progress-col"></colgroup>',
-        
+
                     '<thead>',
                         '<tr>',
                             '<tpl for="students">',
@@ -96,7 +96,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
                             '</tpl>',
                         '</tr>',
                     '</thead>',
-        
+
                     '<tbody>',
                         '<tpl for="competencies">',
                             '<tr class="cbl-grid-progress-row" data-competency="{ID}">',
@@ -150,7 +150,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 //            element: 'el'
 //        }
     },
-    
+
     applyPopover: function(newPopover, oldPopover) {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
     },
@@ -163,18 +163,18 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         if (contentArea.isModel) {
             return contentArea;
         }
-        
+
         if (contentArea === true) {
             contentArea = {};
         }
-        
+
         return Ext.create('Slate.cbl.model.ContentArea', contentArea);
     },
-    
+
     updateContentArea: function(newContentArea, oldContentArea) {
         this.fireEvent('contentareachange', this, newContentArea, oldContentArea);
     },
-    
+
     onGridClick: function(ev, t) {
         var me = this,
             targetEl;
@@ -185,7 +185,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             me.fireEvent('democellclick', me, ev, targetEl);
         }
     },
-    
+
     onSkillNameMouseOver: function(ev) {
         var me = this,
             popover = me.getPopover(),

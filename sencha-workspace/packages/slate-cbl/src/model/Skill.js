@@ -66,7 +66,7 @@ Ext.define('Slate.cbl.model.Skill', {
         type: 'slate-cbl-records',
         url: '/cbl/skills'
     },
-    
+
     getDemonstrationsByStudent: function(studentId, callback, scope, include) {
         var me = this;
 
