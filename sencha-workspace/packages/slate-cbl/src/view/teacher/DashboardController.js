@@ -113,6 +113,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             skillDemonstrationBoxes = Ext.fly(skillDemonstrationsCell).query('.cbl-grid-demo');
             skillDemonstrationBoxesLength = Math.min(skillDemonstrationBoxes.length, skill.complete);
             skillDemonstrationBoxIndex = 0;
+
             for (; skillDemonstrationBoxIndex < skillDemonstrationBoxesLength; skillDemonstrationBoxIndex++) {
                 skillDemonstrationBox = skillDemonstrationBoxes[skillDemonstrationBoxIndex];
                 if (!Ext.fly(skillDemonstrationBox).hasCls('is-complete')) {
@@ -123,13 +124,18 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
         for (; competencyIndex < competenciesLength; competencyIndex++) {
             competency = competencies[competencyIndex];
+            competencyProgressCell = mainGridEl.down('.cbl-grid-progress-row[data-competency="'+competency.ID+'"] .cbl-grid-progress-cell[data-student="'+studentId+'"]', true);
+            
+            if (!competencyProgressCell) {
+                continue;
+            }
+
             if (competency.complete && competency.needed) {
                 competencyPercent = Math.round(100 * competency.complete / competency.needed);
             } else {
                 competencyPercent = 0;
             }
 
-            competencyProgressCell = mainGridEl.down('.cbl-grid-progress-row[data-competency="'+competency.ID+'"] .cbl-grid-progress-cell[data-student="'+studentId+'"]', true);
             updatesSetPercent.push({
                 percent: competencyPercent,
                 textDom: Ext.fly(competencyProgressCell).down('.cbl-grid-progress-percent', true),

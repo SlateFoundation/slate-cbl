@@ -4,14 +4,16 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
     xtype: 'slate-cbl-teacher-demonstration-createwindow',
     requires: [
         'Slate.cbl.view.teacher.demonstration.CreateWindowController',
+        'Slate.cbl.view.teacher.demonstration.CompetencyCard',
         'Slate.cbl.store.AllCompetencies',
         'Slate.cbl.model.Demonstration',
-        'Slate.cbl.field.LevelSlider',
 
         'Ext.layout.container.Fit',
         'Ext.form.Panel',
+        'Ext.tab.Panel',
         'Ext.grid.Panel',
         'Ext.grid.feature.Grouping',
+        'Ext.grid.column.Action',
         'Ext.form.field.Text',
         'Ext.form.field.TextArea',
         'Ext.form.field.ComboBox',
@@ -104,25 +106,26 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
             {
                 reference: 'competenciesTabPanel',
                 anchor: '100%',
+                
+                competencyTipTpl: [
+                    '<h3>{Descriptor}</h3>',
+                    '<p>{Statement}</p>'
+                ],
 
                 xtype: 'tabpanel',
+                tabBar: {
+                    hidden: true
+                },
                 margin: '10 -16',
 //                bodyPadding: '16 75',
                 bodyStyle: {
 	                backgroundColor: '#ddd'
                 },
                 // title: 'Competencies',
-//                defaults: {
-//                    xtype: 'container',
-//                    closable: true,
-//                    layout: 'anchor',
-//                    defaults: {
-//                        xtype: 'slate-cbl-levelsliderfield',
-//						labelAlign: 'top',
-//                        anchor: '100%'
-//                        // labelWidth: 150
-//                    }
-//                },
+                defaultType: 'slate-cbl-teacher-demonstration-competencycard',
+                defaults: {
+                    closable: true
+                },
                 items: [
                     {
                         reference: 'competenciesGrid',
@@ -136,6 +139,9 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                         xtype: 'gridpanel',
                         height: 300,
                         hideHeaders: true,
+                        viewConfig: {
+                            emptyText: 'No competencies match your search.'
+                        },
                         store: {
                             xclass: 'Slate.cbl.store.AllCompetencies'
                         },
@@ -148,6 +154,17 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                                 text: 'Descriptor',
                                 dataIndex: 'Descriptor',
                                 flex: 1
+                            },
+                            {
+                                xtype: 'actioncolumn',
+                                width: 40,
+                                items: [
+                                    {
+                                        action: 'add',
+                                        glyph: 0xf0fe + '@FontAwesome',
+                                        tooltip: 'Add competency to this demonstration'
+                                    }
+                                ]
                             }
                         ],
                         features: [
@@ -183,25 +200,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                             }
                         ]
                     }
-//                    {
-//                        reference: 'addCompetencyCt',
-//                        title: 'Add competency',
-//                        glyph: 0xf0fe + '@FontAwesome',
-//
-//                        closable: false,
-//                        tabConfig: {
-//                            hidden: true
-//                        },
-//                        defaults: {
-//                            xtype: 'button',
-//                            scale: 'large',
-//                            margin: '0 0 5'
-//                        },
-//                        layout: {
-//                            type: 'vbox',
-//                            align: 'stretch'
-//                        }
-//                    }
                 ]
             },
             {
@@ -232,7 +230,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                         reference: 'loadNextStudentCheck',
 
                         xtype: 'checkboxfield',
-                        boxLabel: 'Load next student',
+                        boxLabel: 'Continue with next student',
                         checked: true
                     }
                 ]
