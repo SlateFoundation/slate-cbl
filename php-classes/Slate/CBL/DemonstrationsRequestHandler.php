@@ -41,14 +41,14 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
     protected static function onBeforeRecordSaved(ActiveRecord $Demonstration, $requestData)
 	{
         // validate skills list
-        if (array_key_exists('skills', $requestData)) {
-            if (!is_array($requestData['skills']) || !count($requestData['skills'])) {
+        if (array_key_exists('Skills', $requestData)) {
+            if (!is_array($requestData['Skills']) || !count($requestData['Skills'])) {
                 return static::throwInvalidRequestError('At least one performance level must be logged');
             }
             
-            foreach ($requestData['skills'] AS $index => $skill) {
-                if (empty($skill['ID']) || !is_numeric($skill['ID']) || $skill['ID'] < 1) {
-                    return static::throwInvalidRequestError("Skill at index $index is missing ID");
+            foreach ($requestData['Skills'] AS $index => $skill) {
+                if (empty($skill['SkillID']) || !is_numeric($skill['SkillID']) || $skill['SkillID'] < 1) {
+                    return static::throwInvalidRequestError("Skill at index $index is missing SkillID");
                 }
     
                 if (empty($skill['Level']) || !in_array($skill['Level'], DemonstrationSkill::$fields['Level']['values'])) {
@@ -60,7 +60,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
 
 	protected static function onRecordSaved(ActiveRecord $Demonstration, $requestData)
 	{
-        if (array_key_exists('skills', $requestData)) {
+        if (array_key_exists('Skills', $requestData)) {
             // get existing skill records and index by SkillID
             if (!$Demonstration->isNew) {
                 try {
@@ -82,22 +82,22 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             // save new and update existing skills
             $touchedSkillIds = [];
             
-            foreach ($requestData['skills'] AS $skill) {
-                $touchedSkillIds[] = $skill['ID'];
+            foreach ($requestData['Skills'] AS $skill) {
+                $touchedSkillIds[] = $skill['SkillID'];
                     
-                if (!array_key_exists($skill['ID'], $existingSkills)) {
+                if (!array_key_exists($skill['SkillID'], $existingSkills)) {
                     $DemoSkill = DemonstrationSkill::create([
                         'DemonstrationID' => $Demonstration->ID
-                        ,'SkillID' => $skill['ID']
+                        ,'SkillID' => $skill['SkillID']
                         ,'Level' => $skill['Level']
                     ], true);
-                } elseif ($existingSkills[$skill['ID']]['Level'] != $skill['Level']) {
+                } elseif ($existingSkills[$skill['SkillID']]['Level'] != $skill['Level']) {
                     DB::nonQuery(
                         'UPDATE `%s` SET Level = "%s" WHERE ID = %u'
                         ,[
                             DemonstrationSkill::$tableName
                             ,DB::escape($skill['Level'])
-                            ,$existingSkills[$skill['ID']]['ID']
+                            ,$existingSkills[$skill['SkillID']]['ID']
                         ]
                     );
                 }

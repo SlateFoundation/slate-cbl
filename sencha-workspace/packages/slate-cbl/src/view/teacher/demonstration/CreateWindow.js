@@ -62,7 +62,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
 
                 store: {
                     type: 'chained',
-                    source: 'cbl-students'
+                    source: 'cbl-students-loaded'
                 },
                 queryMode: 'local',
                 displayField: 'FullName',
@@ -83,7 +83,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                 name: 'Context',
                 fieldLabel: 'Context',
 
-                store: ['Journalism', 'Mythbusters', 'Personal Finance', 'Math Workshop', 'Literacy Workshop', 'Culinary Arts', 'Etnrepreneurship', 'Performing Arts', 'Help Desk']
+                store: ['Journalism', 'Mythbusters', 'Personal Finance', 'Math Workshop', 'Literacy Workshop', 'Culinary Arts', 'Entrepreneurship', 'Performing Arts', 'Help Desk']
             },
             {
                 xtype: 'combobox',
@@ -132,18 +132,18 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                         title: 'Add competency',
                         glyph: 0xf0fe + '@FontAwesome',
                         closable: false,
-                        tabConfig: {
-                            hidden: true
-                        },
 
                         xtype: 'gridpanel',
                         height: 300,
                         hideHeaders: true,
                         viewConfig: {
-                            emptyText: 'No competencies match your search.'
+                            emptyText: 'No competencies match your search.',
+                            loadingText: false
                         },
                         store: {
-                            xclass: 'Slate.cbl.store.AllCompetencies'
+                            type: 'chained',
+                            source: 'cbl-competencies-all',
+                            groupField: 'ContentAreaID'
                         },
                         columns: [
                             {
@@ -179,7 +179,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
 //                                            '<span class="count">{[parent.children.length]}</span>'
                                         ],
                                         getContentAreaHeader: function(values) {
-                                            var contentAreaData = this.owner.grid.getStore().contentAreas.get(values.groupValue),
+                                            var contentAreaData = Ext.getStore('cbl-competencies-all').contentAreas.get(values.groupValue),
                                                 contentAreaTpl = Ext.XTemplate.getTpl(this, 'contentAreaTpl');
 
                                             return contentAreaTpl.apply(contentAreaData, values);
@@ -252,5 +252,19 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
         }
 
         return Ext.create('Slate.cbl.model.Demonstration', demonstration);
+    },
+    
+    updateDemonstration: function(demonstration) {
+        var me = this,
+            _fireEvent = function() {
+                me.fireEvent('loaddemonstration', me, demonstration);
+            };
+
+        // if component is not rendered yet, defer until it is
+        if (me.rendered) {
+            _fireEvent();
+        } else {
+            me.on('render', _fireEvent, me, { single: true });
+        }
     }
 });

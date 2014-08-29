@@ -6,11 +6,16 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
         'Slate.cbl.API',
 
         'Ext.MessageBox',
-        'Ext.window.Toast'
+        'Ext.window.Toast',
+        'Ext.util.MixedCollection'
     ],
 
     config: {
         control: {
+            '#': {
+                show: 'onShow',
+                loaddemonstration: 'onLoadDemonstration'
+            },
             'combobox[name=StudentID]': {
                 select: 'onStudentSelect'
             },
@@ -49,6 +54,103 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
 
     // event handlers
+    onShow: function(demonstrationWindow) {
+        var me = this,
+            competenciesGrid = me.lookupReference('competenciesGrid'),
+            store = Ext.getStore('cbl-competencies-all');
+
+        // load global competencies store the first time a window shows
+        if (!store.isLoaded()) {
+            competenciesGrid.setLoading('Loading competencies&hellip;');
+            
+            store.on('load', function() {
+                competenciesGrid.setLoading(false);
+            }, me, { single: true });
+            
+            if (!store.isLoading()) {
+                store.load();
+            }
+        }
+    },
+
+    onLoadDemonstration: function(demonstrationWindow, demonstration) {
+        var me = this,
+            competenciesGrid = me.lookupReference('competenciesGrid'),
+            competenciesStore = Ext.getStore('cbl-competencies-all'),
+            _restoreSavedSkills;
+
+        // if loading a phantom, leave the form unloaded so empty fields aren't marked invalid
+        if (demonstration.phantom) {
+            return;
+        }
+        
+        Ext.suspendLayouts();
+
+        // if loading an existing demonstration, load it into the form immediately.
+        me.lookupReference('form').loadRecord(demonstration);
+        
+        competenciesGrid.setLoading('Loading competencies&hellip;');
+
+        // define closure for finishing this operation by loading already-saved skills into competencies grid
+        _restoreSavedSkills = function() {
+            var skills = demonstration.get('Skills') || [],
+                skillsByCompetencyId = {},
+                competenciesToLoad = [],
+                skillsLength = skills.length, skillIndex = 0, demonstrationSkill, competencyId,
+                _onCompetencyReady, _onFinished;
+                
+            _onCompetencyReady = function(competency, competencyCard) {
+                var competencySkills = skillsByCompetencyId[competency.getId()],
+                    competencySkillsLength = competencySkills.length,
+                    competencySkillIndex = 0,
+                    competencySkill;
+
+                // remove competency from the queue
+                Ext.Array.remove(competenciesToLoad, competency.getId());
+                
+                // load skills into competency 
+                for (; competencySkillIndex < competencySkillsLength; competencySkillIndex++) {
+                    competencySkill = competencySkills[competencySkillIndex];
+                    competencyCard.down('slate-cbl-levelsliderfield{skill.ID=='+competencySkill.SkillID+'}').setValue(competencySkill.Level);
+                }
+
+                // finish loading cycle when the queue is empty
+                if (!competenciesToLoad.length) {
+                    competenciesGrid.setLoading(false);
+                    Ext.resumeLayouts(true);
+                    me.scrollCompetenciesTabsToEnd();
+                }
+            };
+
+            // group skills by competency and a queue of competencies to be loaded
+            for (; skillIndex < skillsLength; skillIndex++) {
+                demonstrationSkill = skills[skillIndex];
+                competencyId = demonstrationSkill.Skill.CompetencyID;
+                
+                if (competencyId in skillsByCompetencyId) {
+                    skillsByCompetencyId[competencyId].push(demonstrationSkill);
+                } else {
+                    competenciesToLoad.push(competencyId);
+                    skillsByCompetencyId[competencyId] = [demonstrationSkill];
+                }
+            }
+
+            // load all competencies in the queue
+            for (competencyId in skillsByCompetencyId) {
+                if (skillsByCompetencyId.hasOwnProperty(competencyId)) {
+                    me.addCompetency(competenciesStore.getById(competencyId), _onCompetencyReady, me, true); // true to insert sorted
+                }
+            }
+        };
+
+        // competencies grid must be loaded before restoring saved skills
+        if (competenciesStore.isLoaded()) {
+            _restoreSavedSkills();
+        } else {
+            competenciesStore.on('load', _restoreSavedSkills, me, { single: true });
+        }
+    },
+
     onStudentSelect: function(studentCombo, student) {
         this.getView().setTitle('Log a demonstration' + (student.length ? ' for ' + student[0].getDisplayName() : ''));
     },
@@ -59,13 +161,17 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
     onCompetenciesSearchFieldSpecialKey: function(searchField, ev) {
         var me = this,
-            selectionModel = me.lookupReference('competenciesGrid').getSelectionModel();
+            competenciesGrid = me.lookupReference('competenciesGrid'),
+            selectionModel = competenciesGrid.getSelectionModel();
 
         switch (ev.getKey()) {
             case ev.ENTER:
                 if (selectionModel.getCount()) {
-                    me.addCompetency(selectionModel.getLastSelected());
                     ev.stopEvent();
+                    competenciesGrid.setLoading('Loading skills&hellip;');
+                    me.addCompetency(selectionModel.getLastSelected(), function() {
+                        competenciesGrid.setLoading(false);
+                    });
                 }
                 break;
             case ev.DOWN:
@@ -82,11 +188,17 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
     },
 
     onCompetencyAddClick: function(competenciesGrid, competency) {
-        this.addCompetency(competency);
+        competenciesGrid.setLoading('Loading skills&hellip;');
+        this.addCompetency(competency, function() {
+            competenciesGrid.setLoading(false);
+        });
     },
 
     onCompetencyRowDoubleClick: function(competenciesGrid, competency) {
-        this.addCompetency(competency);
+        competenciesGrid.setLoading('Loading skills&hellip;');
+        this.addCompetency(competency, function() {
+            competenciesGrid.setLoading(false);
+        });
     },
 
     onCompetencyCardRemoved: function(competencyCard, competenciesTabPanel) {
@@ -130,7 +242,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
         for (; activeSliderIndex < activeSlidersLength; activeSliderIndex++) {
             activeSlider = activeSliders[activeSliderIndex];
             skills.push({
-                ID: activeSlider.skill.ID,
+                SkillID: activeSlider.skill.ID,
                 Level: activeSlider.getValue()
             });
         }
@@ -145,9 +257,12 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
         createWindow.setLoading('Submitting demonstration&hellip;');
 
         formPanel.updateRecord(demonstration);
-        demonstration.set('skills', skills);
+        demonstration.set('Skills', skills);
 
         demonstration.save({
+            params: {
+                include: 'completion'
+            },
             callback: function(record, operation, success) {
                 var studentsFieldStore;
 
@@ -184,7 +299,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
 
     // protected methods
-    addCompetency: function(competency) {
+    addCompetency: function(competency, callback, scope, insertSorted) {
         var me = this,
             createWindow = me.getView(),
             competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
@@ -204,7 +319,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
                 return;
             }
 
-            var competencyCard;
+            var competencyCard, insertIndex;
 
             skills.each(function(skill) {
                 skillFieldsConfig.push({
@@ -215,7 +330,26 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
             Ext.suspendLayouts();
 
-            competencyCard = competenciesTabPanel.insert(competenciesTabPanel.items.getCount() - 1, competencyCardConfig);
+            if (insertSorted) {
+                // slightly hackey -- items is AbstractMixedCollection which doesn't have findInsertionIndex, but
+                // findInsertionIndex is a public method on MixedCollection which directly extends its abstract
+                // variant to add sorting methods
+                insertIndex = Ext.util.MixedCollection.prototype.findInsertionIndex.call(competenciesTabPanel.items, competencyCardConfig, function(a, b) {
+                    // the add competencies grid is always last
+                    if (a.reference == 'competenciesGrid') {
+                        return 1;
+                    } else if (b.reference == 'competenciesGrid') {
+                        return -1;
+                    }
+
+                    // sort by title -- this could be inaccurate if codes have numbers appended that are multiple digits but not zerofilled
+                    return a.title.localeCompare(b.title);
+                });
+            } else {
+                insertIndex = competenciesTabPanel.items.getCount() - 1;
+            }
+
+            competencyCard = competenciesTabPanel.insert(insertIndex, competencyCardConfig);
             competenciesTabPanel.setActiveItem(competencyCard);
 
             if (competenciesSearchField.isDirty()) {
@@ -228,9 +362,17 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
             Ext.resumeLayouts(true);
 
-            // scroll destination won't be measured correctly if this is called before layouts are flushed
-            competenciesTabPanel.getTabBar().getLayout().overflowHandler.scrollToItem(competenciesTabPanel.items.last().tab);
+            me.scrollCompetenciesTabsToEnd(); // must be called after resuming layouts
+
+            Ext.callback(callback, scope, [competency, competencyCard]);
         });
+    },
+
+    scrollCompetenciesTabsToEnd: function() {
+        var me = this,
+            competenciesTabPanel = me.lookupReference('competenciesTabPanel');
+
+        competenciesTabPanel.getTabBar().getLayout().overflowHandler.scrollToItem(competenciesTabPanel.items.last().tab);
     },
 
     updateCompetencyFilter: function(query) {
@@ -276,15 +418,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
     syncAddComptencyButtonVisibility: function() {
         var me = this,
-            tabPanel = me.lookupReference('competenciesTabPanel'),
-            tabBar = tabPanel.getTabBar(),
-            competenciesGrid = me.lookupReference('competenciesGrid');
+            tabPanel = me.lookupReference('competenciesTabPanel');
 
-        if (me.lookupReference('competenciesTabPanel').items.getCount() == 1) {
-            tabBar.hide();
-        } else {
-            competenciesGrid.tab.setHidden(!competenciesGrid.getStore().getCount());
-            tabBar.show();
-        }
+        tabPanel.getTabBar().setHidden(tabPanel.items.getCount() == 1);
     }
 });

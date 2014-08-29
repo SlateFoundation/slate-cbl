@@ -7,6 +7,8 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         'Slate.cbl.API',
         'Slate.cbl.model.Student',
         'Slate.cbl.model.Competency',
+        'Slate.cbl.model.Demonstration',
+        'Slate.cbl.store.AllCompetencies',
         'Slate.cbl.view.teacher.demonstration.CreateWindow',
         'Slate.cbl.view.teacher.skill.OverviewWindow',
 
@@ -26,10 +28,10 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
         listen: {
             store: {
-                '#cbl-students': {
+                '#cbl-students-loaded': {
                     refresh: 'refresh'
                 },
-                '#cbl-competencies': {
+                '#cbl-competencies-loaded': {
                     refresh: 'refresh'
                 }
             },
@@ -45,23 +47,24 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         var me = this;
 
         Ext.create('Ext.data.Store', {
-            storeId: 'cbl-students',
+            storeId: 'cbl-students-loaded',
             model: 'Slate.cbl.model.Student'
         });
 
         Ext.create('Ext.data.Store', {
-            storeId: 'cbl-competencies',
+            storeId: 'cbl-competencies-loaded',
             model: 'Slate.cbl.model.Competency'
+        });
+        
+        Ext.create('Slate.cbl.store.AllCompetencies', {
+            storeId: 'cbl-competencies-all'
         });
     },
 
 
     // event handers
     onDemoCellClick: function(dashboardView, ev, targetEl) {
-        var me = this,
-            overviewWindow;
-
-        overviewWindow = Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
+        Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
             autoShow: true,
             animateTarget: targetEl,
 
@@ -70,15 +73,37 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             skill: targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'),
 
             listeners: {
-                'createdemonstrationclick': function() {
-                    Ext.suspendLayouts();
+                scope: this,
+                createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
+                editdemonstrationclick: 'onOverviewEditDemonstrationClick'
+            }
+        });
+    },
+    
+    onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {
+        Ext.suspendLayouts();
 
-                    var createWindow = me.showCreateDemonstration();
-                    createWindow.down('field[name=StudentID]').setValue(overviewWindow.getStudent().getId());
-                    createWindow.getController().addCompetency(overviewWindow.getCompetency());
+        var demonstrationWindow = this.showDemonstrationWindow();
+        demonstrationWindow.down('field[name=StudentID]').setValue(student);
+        demonstrationWindow.getController().addCompetency(competency);
 
-                    Ext.resumeLayouts(true);
-                }
+        Ext.resumeLayouts(true);
+    },
+    
+    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId, ev, targetEl) {
+        var me = this,
+            demonstrationWindow = me.showDemonstrationWindow({
+                title: 'Edit demonstration #' + demonstrationId
+            });
+        
+        demonstrationWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
+        Slate.cbl.model.Demonstration.load(demonstrationId, {
+            params: {
+                include: 'Skills.Skill'
+            },
+            success: function(demonstration) {
+                demonstrationWindow.setDemonstration(demonstration);
+                demonstrationWindow.setLoading(false);
             }
         });
     },
@@ -169,7 +194,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     onProgressRowClick: function(dashboardView, ev, targetEl) {
         var me = this,
             competencyId = targetEl.getAttribute('data-competency'),
-            competency = Ext.getStore('cbl-competencies').getById(competencyId),
+            competency = Ext.getStore('cbl-competencies-loaded').getById(competencyId),
             skills = competency.get('skills'),
             skillsRows = dashboardView.el.select(
                 Ext.String.format('.cbl-grid-skills-row[data-competency="{0}"]', competencyId),
@@ -216,7 +241,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         }
 
         // load skills from server and render
-        studentIds = Ext.getStore('cbl-students').collect('ID');
+        studentIds = Ext.getStore('cbl-students-loaded').collect('ID');
         _renderSkills = function() {
             var skillHeadersTpl = dashboardView.getTpl('skillHeadersTpl'),
                 skillStudentsTpl = dashboardView.getTpl('skillStudentsTpl'),
@@ -272,7 +297,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
 
     // public methods
-    showCreateDemonstration: function(options) {
+    showDemonstrationWindow: function(options) {
         return Ext.create('Slate.cbl.view.teacher.demonstration.CreateWindow', Ext.apply({
             autoShow: true
         }, options));
@@ -288,8 +313,8 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         var me = this,
             dashboardView = me.getView(),
             contentArea = dashboardView.getContentArea(),
-            studentsStore = Ext.getStore('cbl-students'),
-            competenciesStore = Ext.getStore('cbl-competencies'),
+            studentsStore = Ext.getStore('cbl-students-loaded'),
+            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
 
             syncCompetencyRowHeights = function() {
                 me.syncRowHeights(
@@ -310,12 +335,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             return;
         }
 
-//        Ext.suspendLayouts();
-
-//        me.lookupReference('competencies').update({
-//            competencies: me.competencies,
-//            skills: me.skills
-//        });
+        Ext.suspendLayouts();
 
         dashboardView.update({
             students: Ext.pluck(studentsStore.getRange(), 'data'),
@@ -328,8 +348,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             dashboardView.on('render', syncCompetencyRowHeights, me, { single: true });
         }
 
-//
-//        Ext.resumeLayouts(true);
+        Ext.resumeLayouts(true);
     },
 
     syncRowHeights: function(table1Rows, table2Rows) {
@@ -339,7 +358,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             table2RowHeights = [],
             rowCount, rowIndex, table1Row, table2Row, maxHeight;
 
-//        Ext.suspendLayouts();
+        Ext.suspendLayouts();
 
         rowCount = table1Rows.getCount();
 
@@ -363,6 +382,6 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 //            studentsRows.item(rowIndex).setHeight(Math.max(competenciesRowHeights[rowIndex], studentsRowHeights[rowIndex]));
         }
 
-//        Ext.resumeLayouts(true);
+        Ext.resumeLayouts(true);
     }
 });

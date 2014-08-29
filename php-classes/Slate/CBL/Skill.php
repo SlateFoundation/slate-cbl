@@ -49,6 +49,10 @@ class Skill extends \VersionedRecord
             'errorMessage' => 'A descriptor is required'
         ]
     ];
+    
+    public static $dynamicFields = [
+        'Competency'
+    ];
 
     public function getHandle()
     {

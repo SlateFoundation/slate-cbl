@@ -76,7 +76,6 @@ Ext.define('Slate.cbl.model.Demonstration', {
 
     proxy: {
         type: 'slate-cbl-records',
-        url: '/cbl/demonstrations',
-        include: ['completion']
+        url: '/cbl/demonstrations'
     }
 });

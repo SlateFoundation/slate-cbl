@@ -50,7 +50,7 @@ class Demonstration extends \VersionedRecord
         'Skills' => [
             'type' => 'one-many'
             ,'class' => 'Slate\\CBL\\DemonstrationSkill'
-            ,'foreign' => 'SkillID'
+            ,'foreign' => 'DemonstrationID'
         ]
     ];
     
@@ -66,7 +66,8 @@ class Demonstration extends \VersionedRecord
     
     public static $dynamicFields = [
         'Student',
-        'completion' => ['method' => 'getCompletion']
+        'completion' => ['method' => 'getCompletion'],
+        'Skills'
     ];
 
 #    public static function getAllBySkill(Skill $Skill)

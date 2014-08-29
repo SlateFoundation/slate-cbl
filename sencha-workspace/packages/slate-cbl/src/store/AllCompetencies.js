@@ -6,9 +6,7 @@ Ext.define('Slate.cbl.store.AllCompetencies', {
     ],
 
     model: 'Slate.cbl.model.Competency',
-    autoLoad: true,
     pageSize: 0,
-    groupField: 'ContentAreaID',
     proxy: {
         type: 'slate-cbl-records',
         url: '/cbl/competencies',

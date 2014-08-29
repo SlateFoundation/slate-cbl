@@ -14,7 +14,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         control: {
             '#': {
                 beforeshow: 'onBeforeWindowShow',
-                demorowclick: 'onDemoRowClick'
+                demorowclick: 'onDemoRowClick',
+                demoeditclick: 'onDemoEditClick'
             },
             'combobox[reference=competencyCombo]': {
                 change: 'onCompetencyChange'
@@ -110,7 +111,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     },
 
     onCreateDemonstrationClick: function() {
-        this.fireViewEvent('createdemonstrationclick');
+        var overviewWindow = this.getView();
+        overviewWindow.fireEvent('createdemonstrationclick', overviewWindow, overviewWindow.getStudent(), overviewWindow.getCompetency());
     },
 
     onDemonstrationCreate: function(demonstration) {

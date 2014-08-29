@@ -39,7 +39,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
                     store: {
                         type: 'chained',
-                        source: 'cbl-competencies'
+                        source: 'cbl-competencies-loaded'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
@@ -79,7 +79,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
                     store: {
                         type: 'chained',
-                        source: 'cbl-students'
+                        source: 'cbl-students-loaded'
                     },
                     queryMode: 'local',
                     displayField: 'FullName',
@@ -152,7 +152,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                                         '<tpl if="Demonstration.ArtifactURL">',
                                             '<div class="skill-grid-demo-artifact">',
                                                 '<strong>Artifact: </strong>',
-                                                '<a href="{Demonstration.ArtifactURL:htmlEncode}">{Demonstration.ArtifactURL:htmlEncode}</a>',
+                                                '<a href="{Demonstration.ArtifactURL:htmlEncode}" target="_blank">{Demonstration.ArtifactURL:htmlEncode}</a>',
                                             '</div>',
                                         '</tpl>',
                                         '<tpl if="Demonstration.Comments">',
@@ -162,10 +162,11 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                                             '</div>',
                                         '</tpl>',
                                         '<div class="skill-grid-demo-meta">',
-                                            'Reported',
+                                            'Demonstration #{Demonstration.ID} reported',
                                             '<tpl for="Demonstration.Creator"> by <a href="/people/{Username}">{FirstName} {LastName}</a></tpl>',
                                             ' on {[fm.date(new Date(values.Demonstration.Created * 1000), "F j, Y, g:i a")]}',
                                         '</div>',
+                                        '<a href="#demonstration-edit" data-demonstration="{Demonstration.ID}">edit demonstration</a>',
                                     '</div>',
                                 '</td>',
                             '</tr>',
@@ -191,16 +192,16 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
         click: {
             fn: 'onGridClick',
             element: 'el',
-            delegate: '.skill-grid-demo-row'
+            delegate: '.skill-grid-demo-row, a[href="#demonstration-edit"]'
         }
     },
 
     applyStudent: function(student) {
-        return student ? Ext.getStore('cbl-students').getById(student) : null;
+        return student ? Ext.getStore('cbl-students-loaded').getById(student) : null;
     },
 
     applyCompetency: function(competency) {
-        return competency ? Ext.getStore('cbl-competencies').getById(competency) : null;
+        return competency ? Ext.getStore('cbl-competencies-loaded').getById(competency) : null;
     },
 
     applySkill: function(skill) {
@@ -217,6 +218,9 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
         if (targetEl = ev.getTarget('.skill-grid-demo-row', me.el, true)) {
             me.fireEvent('demorowclick', me, ev, targetEl);
+        } else if (targetEl = ev.getTarget('a[href="#demonstration-edit"]', me.el, true)) {
+            ev.stopEvent();
+            me.fireEvent('editdemonstrationclick', me, parseInt(targetEl.getAttribute('data-demonstration'), 10), ev, targetEl);
         }
     }
 });

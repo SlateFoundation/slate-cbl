@@ -1,6 +1,5 @@
 /*jslint browser: true, undef: true *//*global Ext*/
 // @require-package slate-cbl
-// @require-package slate-theme
 Ext.define('Site.page.TeacherCompetencyDashboard', {
     singleton: true,
     requires: [
@@ -39,7 +38,7 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
 
         // load data embedded in page
         if (studentsData) {
-            Ext.getStore('cbl-students').loadRawData(studentsData);
+            Ext.getStore('cbl-students-loaded').loadRawData(studentsData);
         }
 
 
@@ -47,7 +46,7 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
         body.on('click', function(ev, t) {
             ev.stopEvent();
 
-            dashboard.getController().showCreateDemonstration();
+            dashboard.getController().showDemonstrationWindow();
         }, me, { delegate: 'button[data-action="demonstration-create"]'});
     }
 });
