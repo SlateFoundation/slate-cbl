@@ -47,7 +47,11 @@
     {$dwoo.parent}
 
     {if $.get.jsdebug}
-        {sencha_bootstrap patchLoader=false packages=array('slate-cbl', 'slate-theme')}
+        {sencha_bootstrap
+            patchLoader=false
+            packages=array('slate-theme')
+            packageRequirers=array('sencha-workspace/pages/src/page/TeacherCompetencyDashboard.js')
+        }
     {else}
         <script src="{Site::getVersionedRootUrl('js/pages/TeacherCompetencyDashboard.js')}"></script>
     {/if}
