@@ -9,7 +9,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         'Slate.cbl.model.Competency',
         'Slate.cbl.model.Demonstration',
         'Slate.cbl.store.AllCompetencies',
-        'Slate.cbl.view.teacher.demonstration.CreateWindow',
+        'Slate.cbl.view.teacher.demonstration.EditWindow',
         'Slate.cbl.view.teacher.skill.OverviewWindow',
 
         'Ext.util.Collection',
@@ -83,27 +83,27 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {
         Ext.suspendLayouts();
 
-        var demonstrationWindow = this.showDemonstrationWindow();
-        demonstrationWindow.down('field[name=StudentID]').setValue(student);
-        demonstrationWindow.getController().addCompetency(competency);
+        var editWindow = this.showDemonstrationEditWindow();
+        editWindow.down('field[name=StudentID]').setValue(student);
+        editWindow.getController().addCompetency(competency);
 
         Ext.resumeLayouts(true);
     },
     
     onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId, ev, targetEl) {
         var me = this,
-            demonstrationWindow = me.showDemonstrationWindow({
+            editWindow = me.showDemonstrationEditWindow({
                 title: 'Edit demonstration #' + demonstrationId
             });
         
-        demonstrationWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
+        editWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
         Slate.cbl.model.Demonstration.load(demonstrationId, {
             params: {
                 include: 'Skills.Skill'
             },
             success: function(demonstration) {
-                demonstrationWindow.setDemonstration(demonstration);
-                demonstrationWindow.setLoading(false);
+                editWindow.setDemonstration(demonstration);
+                editWindow.setLoading(false);
             }
         });
     },
@@ -297,8 +297,8 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
 
     // public methods
-    showDemonstrationWindow: function(options) {
-        return Ext.create('Slate.cbl.view.teacher.demonstration.CreateWindow', Ext.apply({
+    showDemonstrationEditWindow: function(options) {
+        return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
             autoShow: true
         }, options));
     },

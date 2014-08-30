@@ -46,7 +46,7 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
         body.on('click', function(ev, t) {
             ev.stopEvent();
 
-            dashboard.getController().showDemonstrationWindow();
+            dashboard.getController().showDemonstrationEditWindow();
         }, me, { delegate: 'button[data-action="demonstration-create"]'});
     }
 });

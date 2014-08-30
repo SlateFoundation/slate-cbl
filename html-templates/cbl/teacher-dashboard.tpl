@@ -33,7 +33,7 @@
         </form>
     </header>
 
-    <div id='teacherDashboardCt'>Loading competency tracker &mdash; teacher dashboard&hellip;</div>
+    <div id='teacherDashboardCt'><div class="text-center"><img class="loading-spinner" src="/img/loaders/spinner.gif" alt=""> Loading teacher dashboard&hellip;</div></div>
 {/block}
 
 {block js-bottom}

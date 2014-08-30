@@ -1,9 +1,9 @@
 /*jslint browser: true, undef: true *//*global Ext*/
-Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
+Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     extend: 'Ext.window.Window',
-    xtype: 'slate-cbl-teacher-demonstration-createwindow',
+    xtype: 'slate-cbl-teacher-demonstration-editwindow',
     requires: [
-        'Slate.cbl.view.teacher.demonstration.CreateWindowController',
+        'Slate.cbl.view.teacher.demonstration.EditWindowController',
         'Slate.cbl.view.teacher.demonstration.CompetencyCard',
         'Slate.cbl.store.AllCompetencies',
         'Slate.cbl.model.Demonstration',
@@ -21,7 +21,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
         'Ext.data.ChainedStore'
     ],
 
-    controller: 'slate-cbl-teacher-demonstration-createwindow',
+    controller: 'slate-cbl-teacher-demonstration-editwindow',
 
     config: {
         demonstration: true
@@ -107,10 +107,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                 reference: 'competenciesTabPanel',
                 anchor: '100%',
 
-                competencyTipTpl: [
-                    '<h3>{Descriptor}</h3>',
-                    '<p>{Statement}</p>'
-                ],
+//              competencyTipTitleTpl: '{Descriptor}',
+//              competencyTipBodyTpl: '{Statement}',
 
                 xtype: 'tabpanel',
                 tabBar: {
@@ -138,7 +136,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                         hideHeaders: true,
                         viewConfig: {
                             emptyText: 'No competencies match your search.',
-                            loadingText: false
+                            loadingText: false,
+                            stripeRows: false
                         },
                         store: {
                             type: 'chained',
@@ -154,6 +153,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                                 text: 'Descriptor',
                                 dataIndex: 'Descriptor',
                                 flex: 1
+/*
                             },
                             {
                                 xtype: 'actioncolumn',
@@ -165,6 +165,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                                         tooltip: 'Add competency to this demonstration'
                                     }
                                 ]
+*/
                             }
                         ],
                         features: [
@@ -196,7 +197,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                                 dock: 'top',
 
                                 xtype: 'textfield',
-                                emptyText: 'Type competency code or statement...'
+                                margin: '6 12',
+                                emptyText: 'Type competency code or statement&hellip;'
                             }
                         ]
                     }
@@ -212,6 +214,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindow', {
                 selectOnFocus: false
             },
             {
+                anchor: '100%',
+
                 xtype: 'container',
                 layout: {
                     type: 'hbox',

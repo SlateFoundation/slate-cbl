@@ -1,7 +1,7 @@
 /*jslint browser: true, undef: true *//*global Ext,Slate*/
-Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
+Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.slate-cbl-teacher-demonstration-createwindow',
+    alias: 'controller.slate-cbl-teacher-demonstration-editwindow',
     requires: [
         'Slate.cbl.API',
 
@@ -31,7 +31,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
             },
             'gridpanel[reference=competenciesGrid]': {
                 addclick: 'onCompetencyAddClick',
-                rowdblclick: 'onCompetencyRowDoubleClick'
+                rowclick: 'onCompetencyRowDoubleClick'
             },
             'button[action=submit]': {
                 click: 'onSubmitClick'
@@ -40,21 +40,44 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
     },
 
 
-    toastTpl: [
-        '<tpl for="student">',
-            '<strong>{FirstName} {LastName}</strong>',
-        '</tpl>',
-        ' demonstrated',
-        '<strong>',
-            ' {skills.length}',
-            ' <tpl if="skills.length == 1">skill<tpl else>skills</tpl>',
-            '.',
-        '</strong>'
+    toastTitleTpl: [
+        '<tpl if="wasPhantom">',
+            'Demonstration Logged',
+        '<tpl else>',
+            'Demonstration Edited',
+        '</tpl>'
+    ],
+
+    toastBodyTpl: [
+        '<tpl if="wasPhantom">',
+            '<tpl for="student">',
+                '<strong>{FirstName} {LastName}</strong>',
+            '</tpl>',
+            ' demonstrated',
+            ' <strong>',
+                '{skills.length}',
+                ' <tpl if="skills.length == 1">skill<tpl else>skills</tpl>',
+                '.',
+            '</strong>',
+        '<tpl else>',
+            'Updated',
+            ' <strong>',
+                '{skills.length}',
+                ' <tpl if="skills.length == 1">skill<tpl else>skills</tpl>',
+            '</strong>',
+            ' demonstrated by',
+            '<tpl for="student">',
+                ' <strong>',
+                    '{FirstName} {LastName}',
+                    '.',
+                '</strong>',
+            '</tpl>',
+        '</tpl>'
     ],
 
 
     // event handlers
-    onShow: function(demonstrationWindow) {
+    onShow: function(editWindow) {
         var me = this,
             competenciesGrid = me.lookupReference('competenciesGrid'),
             store = Ext.getStore('cbl-competencies-all');
@@ -73,7 +96,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
         }
     },
 
-    onLoadDemonstration: function(demonstrationWindow, demonstration) {
+    onLoadDemonstration: function(editWindow, demonstration) {
         var me = this,
             competenciesGrid = me.lookupReference('competenciesGrid'),
             competenciesStore = Ext.getStore('cbl-competencies-all'),
@@ -83,12 +106,13 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
         if (demonstration.phantom) {
             return;
         }
-        
+
         Ext.suspendLayouts();
 
         // if loading an existing demonstration, load it into the form immediately.
         me.lookupReference('form').loadRecord(demonstration);
-        
+        me.lookupReference('loadNextStudentCheck').setVisible(demonstration.phantom);
+
         competenciesGrid.setLoading('Loading competencies&hellip;');
 
         // define closure for finishing this operation by loading already-saved skills into competencies grid
@@ -229,8 +253,9 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
     onSubmitClick: function(btn) {
         var me = this,
-            createWindow = me.getView(),
-            demonstration = createWindow.getDemonstration(),
+            editWindow = me.getView(),
+            demonstration = editWindow.getDemonstration(),
+            wasPhantom = demonstration.phantom,
             formPanel = me.lookupReference('form'),
             studentField = formPanel.getForm().findField('StudentID'),
             selectedStudent = studentField.getSelectedRecord(),
@@ -254,7 +279,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
 
         // persist to server
-        createWindow.setLoading('Submitting demonstration&hellip;');
+        editWindow.setLoading('Submitting demonstration&hellip;');
 
         formPanel.updateRecord(demonstration);
         demonstration.set('Skills', skills);
@@ -264,28 +289,35 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
                 include: 'completion'
             },
             callback: function(record, operation, success) {
-                var studentsFieldStore;
+                var studentsFieldStore,
+                    tplData;
 
                 if (success) {
-                    Ext.toast(Ext.XTemplate.getTpl(me, 'toastTpl').apply({
+                    tplData = {
+                        wasPhantom: wasPhantom,
                         student: selectedStudent.getData(),
                         skills: skills
-                    }), 'Demonstration Logged');
+                    };
 
-                    if (me.lookupReference('loadNextStudentCheck').checked && !createWindow.destroying && !createWindow.destroyed) {
-                        createWindow.setDemonstration(true); // start a new demonstration
+                    Ext.toast(
+                        Ext.XTemplate.getTpl(me, 'toastBodyTpl').apply(tplData),
+                        Ext.XTemplate.getTpl(me, 'toastTitleTpl').apply(tplData)
+                    );
+
+                    if (wasPhantom && me.lookupReference('loadNextStudentCheck').checked && !editWindow.destroying && !editWindow.destroyed) {
+                        editWindow.setDemonstration(true); // start a new demonstration
 
                         studentsFieldStore = studentField.getStore();
                         studentField.select(studentsFieldStore.getAt(studentsFieldStore.indexOf(selectedStudent) + 1));
 
-                        createWindow.setLoading(false);
+                        editWindow.setLoading(false);
                     } else {
-                        createWindow.close();
+                        editWindow.close();
                     }
 
                     Slate.cbl.API.fireEvent('demonstrationcreate', demonstration);
                 } else {
-                    createWindow.setLoading(false);
+                    editWindow.setLoading(false);
                     Ext.Msg.show({
                         title: 'Failed to log demonstration',
                         message: operation.getError() || 'Please backup your work to another application and report this to your technical support contact',
@@ -301,21 +333,28 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
     // protected methods
     addCompetency: function(competency, callback, scope, insertSorted) {
         var me = this,
-            createWindow = me.getView(),
+            editWindow = me.getView(),
             competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
             competenciesSearchField = me.lookupReference('competenciesSearchField'),
             competencyCardConfig = {
                 title: competency.get('Code'),
                 tabConfig: {
-                    tooltip: competenciesTabPanel.getTpl('competencyTipTpl').apply(competency.getData())
+/*
+                    tooltip: {
+                        title: competenciesTabPanel.getTpl('competencyTipTitleTpl').apply(competency.getData()),
+                        text: competenciesTabPanel.getTpl('competencyTipBodyTpl').apply(competency.getData())
+                    }
+*/
                 },
                 competency: competency,
                 items: []
             },
             skillFieldsConfig = competencyCardConfig.items;
 
+        
+        
         competency.withSkills(function(skills) {
-            if (createWindow.destroying || createWindow.destroyed) {
+            if (editWindow.destroying || editWindow.destroyed) {
                 return;
             }
 
@@ -351,6 +390,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CreateWindowController', {
 
             competencyCard = competenciesTabPanel.insert(insertIndex, competencyCardConfig);
             competenciesTabPanel.setActiveItem(competencyCard);
+
+            me.lookupReference('competencyDescription').update(competency.getData());
 
             if (competenciesSearchField.isDirty()) {
                 competenciesSearchField.reset(); // changing the value from dirty back to blank will trigger the change handler
