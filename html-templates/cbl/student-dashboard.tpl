@@ -71,11 +71,16 @@
                         '</header>',
                         
                         '<div class="panel-body">',
-                            '<div class="cbl-progress-meter cbl-level-{level}">',
+                            '<div class="cbl-progress-meter is-halted cbl-level-{level}">',
                                 '<div class="cbl-progress-bar" style="width:{progress * 100}%"></div>',
                                 '<div class="cbl-progress-level">L{level}</div>',
                                 '<div class="cbl-progress-percent">{progress * 100}%</div>',
+                                '<div class="cbl-progress-average">9.25</div>',
                             '</div>',
+
+							'<div class="explainer">',
+								'<p>Here goes a sentence explaining that your average score of <strong>9.25</strong> is below the skill level needed to progress, <strong>10</strong>. This is a sentence describing what you can do to improve.</p>',
+							'</div>',
 
                             '<ul class="cbl-skill-meter">',
                                 '<tpl for="skills">',

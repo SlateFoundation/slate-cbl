@@ -4,6 +4,23 @@
     {cssmin fonts/font-awesome.css}
     <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}" />
 
+	{* TODO re-integrate meeeeeee *}
+    <style type="text/css">
+		.cbl-grid-progress-average {
+		    font-size: .75em;
+		    line-height: 1;
+		    margin-top: -.5em;
+		    position: absolute;
+		    right: .5em;
+		    top: 50%;
+		    -webkit-font-smoothing: subpixel-antialiased;
+		}
+
+		.is-halted {
+			background-image: url('/img/halted-progress.png') !important;
+		}
+    </style>
+
     {$dwoo.parent}
 {/block}
 

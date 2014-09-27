@@ -121,7 +121,7 @@
 	}
     
     td, th {
-        background: $page-bg-color;
+        background-color: $page-bg-color;
         border: 1px solid $grid-border-color;
         border-bottom: none;
         @include box-sizing(border-box);
@@ -194,6 +194,15 @@
     border-radius: 3px;
     padding: .25em;
     position: relative;
+}
+
+.#{$g}-progress-average {
+    font-size: .75em;
+    line-height: 1;
+    margin-top: -.5em;
+    position: absolute;
+    right: .5em;
+    top: 50%;
 }
 
 .#{$g}-legend-item {

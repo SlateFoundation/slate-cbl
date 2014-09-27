@@ -1,0 +1,266 @@
+// these shouldn't be needed once ported to Ext
+@import 'compass/css3/images';
+@import 'compass/css3/transform';
+
+ $level-9-color: #d94181;
+$level-10-color: #ffa200;
+$level-11-color: #5dc02a;
+$level-12-color: #008cc1;
+
+ $level-9-color-light: #ea97ba;
+$level-10-color-light: #ffcc73;
+$level-11-color-light: #a6dc8a;
+$level-12-color-light: #73c0dd;
+
+ $level-9-color-medium: #e1679a;
+$level-10-color-medium: #ffb533;
+$level-11-color-medium: #7dcd55;
+$level-12-color-medium: #33a3cd;
+
+ $level-9-color-dark: #ca274f;
+$level-10-color-dark: #ff7d00;
+$level-11-color-dark: #38a719;
+$level-12-color-dark: #005ea8;
+
+$level-colors:
+     $level-9-color,
+    $level-10-color,
+    $level-11-color,
+    $level-12-color;
+
+$level-colors-light:
+     $level-9-color-light,
+    $level-10-color-light,
+    $level-11-color-light,
+    $level-12-color-light;
+
+$level-colors-medium:
+     $level-9-color-medium,
+    $level-10-color-medium,
+    $level-11-color-medium,
+    $level-12-color-medium;
+
+$level-colors-dark:
+     $level-9-color-dark,
+    $level-10-color-dark,
+    $level-11-color-dark,
+    $level-12-color-dark;
+
+.cbl-level-n { // ideally would be %level-n but Sencha Cmd has some outdated ish
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(black, .8);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@for $n from 9 through 12 {
+    .cbl-level-#{$n} {
+        $level-color:        nth($level-colors,        ($n - 8));
+        $level-color-light:  nth($level-colors-light,  ($n - 8));
+        $level-color-medium: nth($level-colors-medium, ($n - 8));
+        $level-color-dark:   nth($level-colors-dark,   ($n - 8));
+    
+        @extend .cbl-level-n;
+        background-color: $level-color;
+        
+        &.cbl-progress-meter {
+            background-color: $level-color-light;
+        }
+        
+        .cbl-progress-bar {
+            @include background-image(linear-gradient(
+                $level-color,
+                $level-color-dark
+            ));
+        }
+        
+        &.cbl-skill-complete-indicator {
+            background: none;
+            color: $level-color;
+            text-shadow: none;
+        }
+        
+        .check-mark {
+            fill: $level-color;
+        }
+    }
+}
+
+.student-dashboard-tpl {
+    .page-header > .header-title {
+        float: none;
+    }
+}
+
+.cbl-labeled-meter {
+    align-items: center;
+    clear: both;
+    display: flex;
+    margin: 1em 0;
+    
+    .cbl-progress-meter {
+        flex: 1;
+    }
+}
+
+.cbl-meter-label {
+    color: inherit;
+    font: inherit;
+    margin: 0 2em 0 0;
+}
+
+
+.cbl-progress-meter {
+    height: 2.5em;
+    position: relative;
+}
+
+.is-halted {
+	background-image: url('/img/halted-progress.png') !important;
+}
+
+.cbl-progress-bar {
+    height: 100%;
+}
+
+.cbl-progress-level {
+    left: 1em;
+    position: absolute;
+    top: 50%;
+    @include translateY(-50%);
+}
+
+.cbl-progress-percent {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    @include translate(-50%, -50%);
+}
+
+.cbl-progress-average {
+	right: 1em;
+	position: absolute;
+	top: 50%;
+	@include translateY(-50%);
+}
+
+.explainer {
+	color: #888;
+	font-style: italic;
+	margin: 1.5em;
+}
+
+.student-dashboard-tpl {
+    .page-header {
+        overflow: hidden;
+    }
+}
+
+.cbl-recent-progress {
+    float: right;
+    margin: 0 0 3% 3%;
+    width: 31.3333%;
+
+    .scoring-domain-col {
+        width: 100%;
+    }
+
+    .level-col {
+        text-align: right;
+
+		> div {
+			border-radius: 3px;
+		}
+    }
+}
+
+.cbl-competency-panels {
+    clear: both;
+    list-style: none;
+    margin: 0 -1.5%;
+    padding: 0;
+}
+
+.cbl-competency-panel {
+    display: inline-block;
+    margin: 0 1.5% 3%;
+    vertical-align: top;
+    width: 47%;
+    
+    .header-title {
+        float: none;
+    }
+
+    .cbl-progress-meter {
+        margin: -1em -1em 0;
+    }
+}
+
+.cbl-skill-meter {
+    list-style: none;
+    padding: 0;
+}
+
+.cbl-skill {
+    align-items: center;
+    clear: both;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1em 0;
+}
+
+.cbl-skill-name {
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    width: 100%;
+}
+
+.cbl-skill-demos {
+    display: flex;
+    flex: 1;
+    margin: .25em 4em;
+    margin-right: 4em - 1.5;
+    padding: 0;
+}
+
+.cbl-skill-demo {
+    border: 1px solid #333;
+    border-radius: 2px;
+    display: block;
+    flex: 1;
+    padding: .25em;
+
+    + .cbl-skill-demo {
+        margin-left: .25em;
+    }
+
+    &.is-empty {
+        background: white;
+    }
+}
+
+.cbl-skill-complete-indicator {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    border: 2px solid;
+    border-radius: 100%;
+    box-shadow: none;
+    height: 1.5em;
+    width: 1.5em;
+
+    &:checked::before {
+        content: '\2713';
+        display: block;
+        line-height: 20px;
+        text-align: center;
+    }
+
+    .check-mark-image {
+        margin-top: 4px;
+    }
+}
