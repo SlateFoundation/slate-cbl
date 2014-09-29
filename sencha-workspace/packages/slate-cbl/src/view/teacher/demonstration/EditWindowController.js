@@ -85,11 +85,11 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         // load global competencies store the first time a window shows
         if (!store.isLoaded()) {
             competenciesGrid.setLoading('Loading competencies&hellip;');
-            
+
             store.on('load', function() {
                 competenciesGrid.setLoading(false);
             }, me, { single: true });
-            
+
             if (!store.isLoading()) {
                 store.load();
             }
@@ -122,7 +122,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                 competenciesToLoad = [],
                 skillsLength = skills.length, skillIndex = 0, demonstrationSkill, competencyId,
                 _onCompetencyReady, _onFinished;
-                
+
             _onCompetencyReady = function(competency, competencyCard) {
                 var competencySkills = skillsByCompetencyId[competency.getId()],
                     competencySkillsLength = competencySkills.length,
@@ -131,8 +131,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
                 // remove competency from the queue
                 Ext.Array.remove(competenciesToLoad, competency.getId());
-                
-                // load skills into competency 
+
+                // load skills into competency
                 for (; competencySkillIndex < competencySkillsLength; competencySkillIndex++) {
                     competencySkill = competencySkills[competencySkillIndex];
                     competencyCard.down('slate-cbl-levelsliderfield{skill.ID=='+competencySkill.SkillID+'}').setValue(competencySkill.Level);
@@ -150,7 +150,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             for (; skillIndex < skillsLength; skillIndex++) {
                 demonstrationSkill = skills[skillIndex];
                 competencyId = demonstrationSkill.Skill.CompetencyID;
-                
+
                 if (competencyId in skillsByCompetencyId) {
                     skillsByCompetencyId[competencyId].push(demonstrationSkill);
                 } else {
@@ -267,6 +267,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         for (; activeSliderIndex < activeSlidersLength; activeSliderIndex++) {
             activeSlider = activeSliders[activeSliderIndex];
             skills.push({
+                CompetencyID: activeSlider.skill.CompetencyID,
                 SkillID: activeSlider.skill.ID,
                 Level: activeSlider.getValue()
             });
@@ -286,7 +287,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
         demonstration.save({
             params: {
-                include: 'completion'
+                include: 'competencyCompletions'
             },
             callback: function(record, operation, success) {
                 var studentsFieldStore,
@@ -351,8 +352,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             },
             skillFieldsConfig = competencyCardConfig.items;
 
-        
-        
+
+
         competency.withSkills(function(skills) {
             if (editWindow.destroying || editWindow.destroyed) {
                 return;

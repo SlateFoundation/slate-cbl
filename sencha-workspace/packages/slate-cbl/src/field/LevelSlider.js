@@ -34,10 +34,6 @@ Ext.define('Slate.cbl.field.LevelSlider', {
         me.updateThumbValue(me.getValue());
     },
 
-    getValue: function() {
-        return this.callParent().toString();
-    },
-
     updateThumbValue: function(value) {
         var me = this;
 

@@ -27,10 +27,10 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             } catch (TableNotFoundException $e) {
                 $demonstrations = [];
             }
-            
+
             $conditions[] = 'ID IN ('.implode($demonstrations, ',').')';
         }
-        
+
         if (!empty($_GET['student']) && ctype_digit($_GET['student'])) {
             $conditions['StudentID'] = $_GET['student'];
         }
@@ -39,27 +39,27 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
     }
 
     protected static function onBeforeRecordSaved(ActiveRecord $Demonstration, $requestData)
-	{
+    {
         // validate skills list
         if (array_key_exists('Skills', $requestData)) {
             if (!is_array($requestData['Skills']) || !count($requestData['Skills'])) {
                 return static::throwInvalidRequestError('At least one performance level must be logged');
             }
-            
+
             foreach ($requestData['Skills'] AS $index => $skill) {
                 if (empty($skill['SkillID']) || !is_numeric($skill['SkillID']) || $skill['SkillID'] < 1) {
                     return static::throwInvalidRequestError("Skill at index $index is missing SkillID");
                 }
-    
-                if (empty($skill['Level']) || !in_array($skill['Level'], DemonstrationSkill::$fields['Level']['values'])) {
+
+                if (empty($skill['Level']) || !is_numeric($skill['Level']) || $skill['Level'] < 1) {
                     return static::throwInvalidRequestError("Skill at index $index is missing Level");
                 }
             }
         }
-	}
+    }
 
-	protected static function onRecordSaved(ActiveRecord $Demonstration, $requestData)
-	{
+    protected static function onRecordSaved(ActiveRecord $Demonstration, $requestData)
+    {
         if (array_key_exists('Skills', $requestData)) {
             // get existing skill records and index by SkillID
             if (!$Demonstration->isNew) {
@@ -78,13 +78,13 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             } else {
                 $existingSkills = [];
             }
-            
+
             // save new and update existing skills
             $touchedSkillIds = [];
-            
+
             foreach ($requestData['Skills'] AS $skill) {
                 $touchedSkillIds[] = $skill['SkillID'];
-                    
+
                 if (!array_key_exists($skill['SkillID'], $existingSkills)) {
                     $DemoSkill = DemonstrationSkill::create([
                         'DemonstrationID' => $Demonstration->ID
@@ -102,10 +102,10 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     );
                 }
             }
-            
+
             // delete any existing skills that weren't touched in this save
             $removedSkillIds = array_diff(array_keys($existingSkills), $touchedSkillIds);
-            
+
             if (count($removedSkillIds)) {
                 DB::nonQuery(
                     'DELETE FROM `%s` WHERE DemonstrationID = %u AND SkillID IN (%s)'
@@ -116,6 +116,8 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     ]
                 );
             }
+
+            $Demonstration->clearRelatedObject('Skills');
         }
-	}
+    }
 }

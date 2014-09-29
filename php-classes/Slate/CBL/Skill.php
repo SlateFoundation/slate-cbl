@@ -24,7 +24,7 @@ class Skill extends \VersionedRecord
         ]
         ,'Descriptor'
         ,'Statement' => 'clob'
-        ,'DemonstrationsNeeded' => [
+        ,'DemonstrationsRequired' => [
             'type' => 'uint'
             ,'default' => 2
         ]
@@ -36,7 +36,7 @@ class Skill extends \VersionedRecord
             ,'class' => Competency::class
         ]
     ];
-    
+
     public static $validators = [
         'CompetencyID' => [
             'validator' => 'number'
@@ -50,7 +50,7 @@ class Skill extends \VersionedRecord
             'errorMessage' => 'A descriptor is required'
         ]
     ];
-    
+
     public static $dynamicFields = [
         'Competency'
     ];
@@ -86,5 +86,27 @@ class Skill extends \VersionedRecord
 
         // save results
         return $this->finishValidation();
+    }
+
+    public function save($deep = true)
+    {
+        $wasCompetencyDirty = $this->isFieldDirty('CompetencyID');
+        $wasDemonstrationsRequiredDirty = $this->isFieldDirty('DemonstrationsRequired');
+
+        parent::save($deep);
+
+        if ($wasCompetencyDirty) {
+            if ($this->Competency) {
+                $this->Competency->getSkillIds(true); // true to force refresh of cached value
+            }
+
+            if ($oldCompetencyId = $this->getOriginalValue('CompetencyID')) {
+                Competency::getByID($oldCompetencyId)->getSkillIds(true); // true to force refresh of cached value
+            }
+        }
+
+        if ($wasDemonstrationsRequiredDirty) {
+            $this->Competency->getTotalDemonstrationsRequired(true); // true to force refresh of cached value
+        }
     }
 }

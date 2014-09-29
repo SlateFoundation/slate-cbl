@@ -16,7 +16,7 @@
 		    -webkit-font-smoothing: subpixel-antialiased;
 		}
 
-		.is-halted {
+		.is-average-low {
 			background-image: url('/img/halted-progress.png') !important;
 		}
     </style>

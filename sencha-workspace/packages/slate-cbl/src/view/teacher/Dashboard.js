@@ -26,30 +26,53 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
     ],
 
     skillStudentsTpl: [
+        '{%var demonstrationsTpl = this.owner.getTpl("demonstrationsTpl")%}',
         '<tpl for="skills">',
             '<tr class="cbl-grid-skill-row" data-skill="{ID}">',
                 '<tpl for="parent.studentIds">',
-                    '{%var demonstrations = parent.demonstrationsByStudent && parent.demonstrationsByStudent && parent.demonstrationsByStudent[values]%}',
                     '<td class="cbl-grid-demos-cell cbl-level-9" data-student="{.}">', // TODO: real level
-                        '<ul class="cbl-grid-demos">',
-                            '<tpl for="this.makeRange(1, parent.DemonstrationsNeeded)">',
-                                '<li class="cbl-grid-demo {[demonstrations && values <= demonstrations.length ? "is-complete" : ""]}"></li>',
-                            '</tpl>',
-                        '</ul>',
+                        '{%demonstrationsTpl.applyOut({skill: parent, studentId: values}, out)%}',
                     '</td>',
                 '</tpl>',
             '</tr>',
-        '</tpl>',
-        {
-            makeRange: function(from, to) {
-                var arr = [],
-                    i = from;
+        '</tpl>'
+    ],
 
-                for (; i <= to; i++) {
-                    arr.push(i);
+    demonstrationsTpl: [
+        '<ul class="cbl-grid-demos">',
+            '<tpl for="this.getDemonstrationBlocks(skill, studentId)">',
+                '<li class="cbl-grid-demo" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
+                    '{Level}',
+                '</li>',
+            '</tpl>',
+        '</ul>',
+        {
+            getDemonstrationBlocks: function(skill, studentId) {
+                var demonstrationsRequired = skill.DemonstrationsRequired,
+                    demonstrationsByStudent = skill.demonstrationsByStudent,
+                    blocks = (demonstrationsByStudent && studentId in demonstrationsByStudent && Ext.Array.clone(demonstrationsByStudent[studentId])) || [],
+                    blocksLength, blockIndex, lowestBlockIndex;
+
+
+                // trim lowest demonstrations
+                while ((blocksLength = blocks.length) > demonstrationsRequired) {
+                    for (blockIndex = 0, lowestBlockIndex = null; blockIndex < blocksLength; blockIndex++) {
+                        if (lowestBlockIndex === null || blocks[blockIndex].Level < blocks[lowestBlockIndex].Level) {
+                            lowestBlockIndex = blockIndex;
+                        }
+                    }
+
+                    Ext.Array.splice(blocks, lowestBlockIndex, 1);
                 }
 
-                return arr;
+
+                // add empty blocks
+                while (blocks.length < demonstrationsRequired) {
+                    blocks.push({});
+                }
+
+
+                return blocks;
             }
         }
     ],
@@ -102,14 +125,16 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
                             '<tr class="cbl-grid-progress-row" data-competency="{ID}">',
                                 '<tpl for="parent.students">',
                                     '{%var level = 9%}', // TODO: real level
-                                    '{%var percent = Math.round(100 * (parent.studentDemonstrations[values.ID] || 0) / parent.totalDemonstrationsNeeded)%}',
-                                    '<td class="cbl-grid-progress-cell is-halted cbl-level-{[level]}" data-student="{ID}">',
+                                    '{%var studentCompletion = parent.studentCompletions[values.ID] || {}%}',
+                                    '{%var percent = Math.round(100 * (studentCompletion.demonstrationsCount || 0) / parent.totalDemonstrationsRequired)%}',
+                                    '{%var isAverageLow = studentCompletion.demonstrationsAverage < parent.minimumAverage && percent >= 50%}',
+                                    '<td class="cbl-grid-progress-cell {[isAverageLow ? "is-average-low" : ""]} cbl-level-{[level]}" data-student="{ID}">',
                                         '<span class="cbl-grid-progress-bar" style="width: {[percent]}%"></span>',
                                         '<span class="cbl-grid-progress-level">L{[level]}</span>',
                                         '<span class="cbl-grid-progress-percent">{[percent]}%</span>',
                                         '<span class="cbl-grid-progress-average">',
-                                        	// '<img src="/img/alert.svg">',
-                                        	'10.75',
+                                            // '<img src="/img/alert.svg">',
+                                            '{[fm.number(studentCompletion.demonstrationsAverage, "0.##")]}',
                                         '</span>',
                                     '</td>',
                                 '</tpl>',

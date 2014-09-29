@@ -71,6 +71,13 @@ Ext.define('Slate.cbl.model.Demonstration', {
             name: "Comments",
             type: "string",
             useNull: true
+        },
+
+        // server-provided metadata
+        {
+            name: 'competencyCompletions',
+            defaultValue: [],
+            persist: false
         }
     ],
 

@@ -61,6 +61,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
             $skillDemonstration['DemonstrationID'] = intval($skillDemonstration['DemonstrationID']);
             $skillDemonstration['StudentID'] = intval($skillDemonstration['StudentID']);
             $skillDemonstration['SkillID'] = intval($skillDemonstration['SkillID']);
+            $skillDemonstration['Level'] = intval($skillDemonstration['Level']);
         }
 
         return static::respond('skills', [

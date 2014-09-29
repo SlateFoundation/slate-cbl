@@ -12,7 +12,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
     public static function handleRequest()
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');
-        
+
         switch ($action = static::shiftPath()) {
             case '':
             case false:
@@ -21,7 +21,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                 return static::throwNotFoundError();
         }
     }
-    
+
     public static function handleDashboardRequest()
     {
         if (!empty($_GET['content-area'])) {
@@ -32,11 +32,11 @@ class TeacherDashboardRequestHandler extends \RequestHandler
             }
         }
 
-        // TODO: get total + required demonstrations and supply in map 
+        // TODO: get total + required demonstrations and supply in map
 
         return static::respond('teacher-dashboard', [
             'students' => \Slate\People\Student::getAllByClass()
-            ,'ContentArea' => $ContentArea 
+            ,'ContentArea' => $ContentArea
         ]);
     }
 }

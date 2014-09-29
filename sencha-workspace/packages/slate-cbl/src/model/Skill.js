@@ -56,7 +56,7 @@ Ext.define('Slate.cbl.model.Skill', {
             type: "string"
         },
         {
-            name: "DemonstrationsNeeded",
+            name: "DemonstrationsRequired",
             type: "int",
             defaultValue: 2
         }

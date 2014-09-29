@@ -69,7 +69,7 @@ class Demonstration extends \VersionedRecord
     
     public static $dynamicFields = [
         'Student',
-        'completion' => ['method' => 'getCompletion'],
+        'competencyCompletions' => ['method' => 'getCompetencyCompletions'],
         'Skills'
     ];
 
@@ -88,66 +88,31 @@ class Demonstration extends \VersionedRecord
     }
 
     /**
-     * Returns current completion state of all skills and competencies affected by this demonstration
+     * Returns current completion state of all competencies affected by this demonstration
      */
-    public function getCompletion()
+    public function getCompetencyCompletions()
     {
-        $competencies = [];
-        $skills = [];
-        
-        $touchedSkillIds = \DB::allValues(
-            'SkillID'
-            ,'SELECT SkillID FROM `%s` WHERE DemonstrationID = %u'
-            ,[
-                DemonstrationSkill::$tableName
-                ,$this->ID
+        $competencies = Competency::getAllByQuery(
+            'SELECT DISTINCT Competency.*'
+            .' FROM `%s` DemonstrationSkill'
+            .' JOIN `%s` Skill ON Skill.ID = DemonstrationSkill.SkillID'
+            .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
+            .' WHERE DemonstrationSkill.DemonstrationID = %u',
+            [
+                DemonstrationSkill::$tableName,
+                Skill::$tableName,
+                Competency::$tableName,
+                $this->ID
             ]
         );
 
-        // TODO: only count demonstrations of a necessary level
-        $skillCompletions = \DB::table(
-            'SkillID'
-            ,'SELECT Skill.CompetencyID, Skill.ID AS SkillID, Skill.DemonstrationsNeeded AS needed, LEAST(Skill.DemonstrationsNeeded, COUNT(StudentDemonstrationSkill.ID)) AS complete'
-            .' FROM ('
-            .'   SELECT DISTINCT Skill.CompetencyID AS ID'
-            .'   FROM `%s` Skill'
-            .'   WHERE ID IN (%s)'
-            .' ) TouchedCompetency'
-            .' JOIN `%s` Skill ON Skill.CompetencyID = TouchedCompetency.ID'
-            .' LEFT JOIN ('
-            .'   SELECT DemonstrationSkill.ID, DemonstrationSkill.SkillID'
-            .'    FROM `%s` DemonstrationSkill'
-            .'    JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration'
-            .'     ON Demonstration.ID = DemonstrationSkill.DemonstrationID'
-            .' ) StudentDemonstrationSkill ON StudentDemonstrationSkill.SkillID = Skill.ID'
-            .' GROUP BY Skill.ID'
-            ,[
-                Skill::$tableName
-                ,implode(',', $touchedSkillIds)
-                ,Skill::$tableName
-                ,DemonstrationSkill::$tableName
-                ,Demonstration::$tableName
-                ,$this->StudentID
-            ]
-        );
-
-        foreach ($skillCompletions AS &$skillCompletion) {
-            if (in_array($skillCompletion['SkillID'], $touchedSkillIds)) {
-                $skills[] = [
-                    'ID' => (int)$skillCompletion['SkillID']
-                    ,'complete' => (int)$skillCompletion['complete']
-                    ,'needed' => (int)$skillCompletion['needed']
-                ];
-            }
-            
-            $competencies[$skillCompletion['CompetencyID']]['ID'] = (int)$skillCompletion['CompetencyID'];
-            $competencies[$skillCompletion['CompetencyID']]['complete'] += (int)$skillCompletion['complete'];
-            $competencies[$skillCompletion['CompetencyID']]['needed'] += (int)$skillCompletion['needed'];
+        $completions = [];
+        foreach ($competencies AS $Competency) {
+            $completion = $Competency->getCompletionForStudent($this->Student);
+            $completion['CompetencyID'] = $Competency->ID;
+            $completions[] = $completion;
         }
         
-        return [
-            'competencies' => array_values($competencies)
-            ,'skills' => $skills
-        ];
+        return $completions;
     }
 }

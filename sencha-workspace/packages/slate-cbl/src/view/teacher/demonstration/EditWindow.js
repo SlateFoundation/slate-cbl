@@ -257,7 +257,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
 
         return Ext.create('Slate.cbl.model.Demonstration', demonstration);
     },
-    
+
     updateDemonstration: function(demonstration) {
         var me = this,
             _fireEvent = function() {

@@ -19,8 +19,8 @@ class DemonstrationSkill extends \ActiveRecord
             ,'index' => true
         ]
         ,'Level' => [
-            'type' => 'enum',
-            'values' => ['8', '9', '10', '11', '12', '13']
+            'type' => 'tinyint',
+            'unsigned' => true
         ]
     ];
 
@@ -44,23 +44,15 @@ class DemonstrationSkill extends \ActiveRecord
             'validator' => 'number'
             ,'min' => 1
         ]
+        ,'Level' => [
+            'validator' => 'number'
+            ,'min' => 8
+            ,'max' => 13
+        ]
     ];
     
     public static $dynamicFields = [
         'Demonstration',
         'Skill'
     ];
-
-    public function validate($deep = true)
-    {
-        parent::validate($deep);
-
-        $this->_validator->validate(array(
-            'field' => 'Level'
-            ,'validator' => 'selection'
-            ,'choices' => static::getFieldOptions('Level', 'values')
-        ));
-
-        return $this->finishValidation();
-    }
 }

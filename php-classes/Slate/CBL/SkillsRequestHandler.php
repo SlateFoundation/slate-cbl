@@ -35,7 +35,7 @@ class SkillsRequestHandler extends \RecordsRequestHandler
                 return parent::handleRecordRequest($Skill, $action);
         }
     }
-    
+
     public static function handleDemonstrationsRequest(Skill $Skill)
     {
         if (!empty($_GET['student']) && ctype_digit($_GET['student'])) {
@@ -53,7 +53,7 @@ class SkillsRequestHandler extends \RecordsRequestHandler
 
 
         $query .= sprintf(' WHERE DemonstrationSkill.SkillID = %u', $Skill->ID);
-        
+
         if ($studentId) {
             $query .= sprintf(' AND Demonstration.StudentID = %u', $studentId);
         }

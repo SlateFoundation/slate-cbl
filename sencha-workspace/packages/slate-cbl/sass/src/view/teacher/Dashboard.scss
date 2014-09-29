@@ -20,14 +20,14 @@
         $level-color-light:  nth($level-colors-light,  ($n - 7));
         $level-color-medium: nth($level-colors-medium, ($n - 7));
         $level-color-dark:   nth($level-colors-dark,   ($n - 7));
-    
+
         @extend .level-n;
         background-color: $level-color;
-        
+
         &.#{$g}-progress-cell {
             background-color: $level-color-light;
         }
-        
+
         .#{$g}-progress-bar {
             @include background-image(linear-gradient(
                 $level-color,
@@ -35,9 +35,9 @@
             ));
         }
 
-        .#{$g}-demo.is-complete {
+        .#{$g}-demo[data-demonstration] { // used to be .is-complete, complete demo cells get data-demonstration set now instead
             background-color: $level-color-medium;
-        }        
+        }
     }
 }
 
@@ -76,7 +76,7 @@
     top: 50%;
     @include translate(-100%, -50%);
     width: .5em;
-    
+
     .point-right & {
         left: 100%;
         @include transform(rotate(180deg) translate(0%, 50%));
@@ -111,15 +111,15 @@
     table-layout: fixed;
     width: auto;
 
-	&.#{$g}-main {
-		width: 100%;
-		
-		tr {
-		    > :first-child { border-left:  none; }
-		    > :last-child  { border-right: none; }
-		}
-	}
-    
+    &.#{$g}-main {
+        width: 100%;
+
+        tr {
+            > :first-child { border-left:  none; }
+            > :last-child  { border-right: none; }
+        }
+    }
+
     td, th {
         background-color: $page-bg-color;
         border: 1px solid $grid-border-color;
@@ -127,11 +127,11 @@
         @include box-sizing(border-box);
         padding: .5em;
     }
-    
+
     th {
         background: rgba($grid-border-color, .1);
     }
-    
+
     > tbody > tr:last-child {
         > td, > th {
             border-bottom: 1px solid $grid-border-color;
@@ -203,6 +203,11 @@
     position: absolute;
     right: .5em;
     top: 50%;
+    display: none;
+
+    .is-average-low &, .#{$g}-progress-cell:hover & {
+        display: block;
+    }
 }
 
 .#{$g}-legend-item {
@@ -261,13 +266,13 @@
     font-weight: normal;
     padding: .75em .5em .75em 1.5em;
     position: relative;
-    
+
     .popover {
         right: -5px;
         top: 0;
         width: 300px;
     }
-    
+
     &:hover,
     &:focus {
         .popover {
@@ -294,13 +299,13 @@
     border-right: 1px solid $grid-border-color;
     @include box-flex(1);
     @include box-sizing(border-box);
-	@include transition(background-color 250ms ease-in);
+    @include transition(background-color 250ms ease-in);
     cursor: pointer;
-    
+
     &:last-child {
         border-right: none;
     }
-    
+
     &.is-complete {
         background-color: #ccc;
     }

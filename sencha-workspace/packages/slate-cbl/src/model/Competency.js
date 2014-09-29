@@ -20,8 +20,9 @@ Ext.define('Slate.cbl.model.Competency', {
         { name: 'Statement', type: 'string'},
 
         // server-provided metadata
-        { name: 'totalDemonstrationsNeeded', persist: false, type: 'integer' },
-        { name: 'studentDemonstrations', persist: false, defaultValue: {} },
+        { name: 'totalDemonstrationsRequired', persist: false, type: 'integer' },
+        { name: 'minimumAverage', persist: false, type: 'float' },
+        { name: 'studentCompletions', persist: false, defaultValue: {} },
 
         // in-browser state
         { name: 'expanded', persist: false, type: 'boolean', defaultValue: false },
