@@ -9,6 +9,7 @@ class ContentArea extends \ActiveRecord
     public static $singularNoun = 'content area';
     public static $pluralNoun = 'content areas';
     public static $collectionRoute = '/cbl/content-areas';
+    public static $useCache = true;
 
     public static $fields = [
         'Code' => [

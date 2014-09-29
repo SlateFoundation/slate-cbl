@@ -25,6 +25,7 @@ class Demonstration extends \VersionedRecord
     public static $singularNoun = 'demonstration';
     public static $pluralNoun = 'demonstrations';
     public static $collectionRoute = '/cbl/demonstrations';
+    public static $useCache = true;
 
     public static $fields = [
         'StudentID' => [

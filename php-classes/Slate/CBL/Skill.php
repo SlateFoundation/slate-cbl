@@ -12,6 +12,7 @@ class Skill extends \VersionedRecord
     public static $singularNoun = 'skill';
     public static $pluralNoun = 'skills';
     public static $collectionRoute = '/cbl/skills';
+    public static $useCache = true;
 
     public static $fields = [
         'CompetencyID' => [

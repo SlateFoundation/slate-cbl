@@ -15,6 +15,7 @@ class Competency extends \VersionedRecord
     public static $singularNoun = 'competency';
     public static $pluralNoun = 'competencies';
     public static $collectionRoute = '/cbl/competencies';
+    public static $useCache = true;
 
     public static $fields = [
         'ContentAreaID' => [
