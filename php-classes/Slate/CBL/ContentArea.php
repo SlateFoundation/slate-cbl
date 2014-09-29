@@ -21,7 +21,7 @@ class ContentArea extends \ActiveRecord
     public static $relationships = [
         'Competencies' => [
             'type' => 'one-many'
-            ,'class' => 'Slate\\CBL\\Competency'
+            ,'class' => Competency::class
             ,'foreign' => 'ContentAreaID'
             ,'order' => ['Code' => 'ASC']
         ]

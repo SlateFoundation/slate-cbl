@@ -8,7 +8,7 @@ use TableNotFoundException;
 
 class DemonstrationsRequestHandler extends \RecordsRequestHandler
 {
-    public static $recordClass = 'Slate\\CBL\\Demonstration';
+    public static $recordClass = Demonstration::class;
     public static $browseOrder = ['ID' => 'ASC'];
 
     public static function handleBrowseRequest($options = array(), $conditions = array(), $responseID = null, $responseData = array())

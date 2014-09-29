@@ -27,11 +27,11 @@ class DemonstrationSkill extends \ActiveRecord
     public static $relationships = [
         'Demonstration' => [
             'type' => 'one-one'
-            ,'class' => 'Slate\\CBL\\Demonstration'
+            ,'class' => Demonstration::class
         ],
         'Skill' => [
             'type' => 'one-one'
-            ,'class' => 'Slate\\CBL\\Skill'
+            ,'class' => Skill::class
         ]
     ];
     

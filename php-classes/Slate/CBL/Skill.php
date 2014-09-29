@@ -32,7 +32,7 @@ class Skill extends \VersionedRecord
     public static $relationships = [
         'Competency' => [
             'type' => 'one-one'
-            ,'class' => 'Slate\\CBL\\Competency'
+            ,'class' => Competency::class
         ]
     ];
     

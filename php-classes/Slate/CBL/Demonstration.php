@@ -2,6 +2,8 @@
 
 namespace Slate\CBL;
 
+use Slate\People\Student;
+
 /**
  * Tracks the demonstration of one skill at one level
  *
@@ -45,11 +47,11 @@ class Demonstration extends \VersionedRecord
     public static $relationships = [
         'Student' => [
             'type' => 'one-one'
-            ,'class' => 'Slate\\CBL\\Skill'
+            ,'class' => Student::class
         ],
         'Skills' => [
             'type' => 'one-many'
-            ,'class' => 'Slate\\CBL\\DemonstrationSkill'
+            ,'class' => DemonstrationSkill::class
             ,'foreign' => 'DemonstrationID'
         ]
     ];

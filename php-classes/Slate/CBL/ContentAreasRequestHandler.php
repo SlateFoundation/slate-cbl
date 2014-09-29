@@ -7,7 +7,7 @@ use TableNotFoundException;
 
 class ContentAreasRequestHandler extends \RecordsRequestHandler
 {
-    public static $recordClass = 'Slate\\CBL\\ContentArea';
+    public static $recordClass = ContentArea::class;
     public static $browseOrder = 'Code';
 
     public static function handleRecordRequest(\ActiveRecord $ContentArea, $action = false)

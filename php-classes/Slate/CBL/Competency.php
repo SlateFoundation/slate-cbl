@@ -2,6 +2,9 @@
 
 namespace Slate\CBL;
 
+use DB, Cache;
+use Slate\People\Student;
+
 class Competency extends \VersionedRecord
 {
     // VersionedRecord configuration
@@ -28,11 +31,11 @@ class Competency extends \VersionedRecord
     public static $relationships = [
         'ContentArea' => [
             'type' => 'one-one'
-            ,'class' => 'Slate\\CBL\\ContentArea'
+            ,'class' => ContentArea::class
         ]
         ,'Skills' => [
             'type' => 'one-many'
-            ,'class' => 'Slate\\CBL\\Skill'
+            ,'class' => Skill::class
             ,'foreign' => 'CompetencyID'
         ]
     ];
