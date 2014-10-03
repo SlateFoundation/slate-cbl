@@ -1,3 +1,3 @@
 <?php
 
-RequestHandler::respond('student-dashboard');
+Slate\CBL\StudentDashboardRequestHandler::handleRequest();

@@ -30,6 +30,7 @@ class ContentAreasRequestHandler extends \RecordsRequestHandler
             $studentIds = is_string($_REQUEST['students']) ? explode(',', $_REQUEST['students']) : $_REQUEST['students'];
         }
 
+        $students = [];
         foreach ($studentIds AS $studentId) {
             if (!ctype_digit($studentId)) {
                 return static::throwInvalidRequestError('students must be identified by integer ID');
