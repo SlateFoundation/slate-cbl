@@ -115,7 +115,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
                     '<thead>',
                         '<tr>',
                             '<tpl for="students">',
-                                '<th class="cbl-grid-student-name" data-student="{ID}">{FirstName} {LastName}</th>',
+                                '<th class="cbl-grid-student-name" data-student="{ID}"><a href="/cbl/student-dashboard?student={Username}&content-area={parent.contentArea.Code}">{FirstName} {LastName}</a></th>',
                             '</tpl>',
                         '</tr>',
                     '</thead>',

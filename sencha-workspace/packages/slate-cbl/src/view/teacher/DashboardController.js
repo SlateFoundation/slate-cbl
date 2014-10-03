@@ -365,6 +365,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         Ext.suspendLayouts();
 
         dashboardView.update({
+            contentArea: contentArea.getData(),
             students: Ext.pluck(studentsStore.getRange(), 'data'),
             competencies: Ext.pluck(competenciesStore.getRange(), 'data')
         });
