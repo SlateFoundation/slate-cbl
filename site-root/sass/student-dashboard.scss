@@ -46,7 +46,7 @@ $level-colors-dark:
     $level-11-color-dark,
     $level-12-color-dark;
 
-.cbl-level-n { // ideally would be %level-n but Sencha Cmd has some outdated ish
+.cbl-level-colored {
     color: white;
     font-weight: bold;
     text-align: center;
@@ -62,10 +62,8 @@ $level-colors-dark:
         $level-color-medium: nth($level-colors-medium, ($n - 8));
         $level-color-dark:   nth($level-colors-dark,   ($n - 8));
     
-        @extend .cbl-level-n;
-        background-color: $level-color;
-        
-        &.cbl-progress-meter {
+        .cbl-progress-meter {
+            @extend .cbl-level-colored;
             background-color: $level-color-light;
         }
         
@@ -76,7 +74,7 @@ $level-colors-dark:
             ));
         }
         
-        &.cbl-skill-complete-indicator {
+        .cbl-skill-complete-indicator {
             background: none;
             color: $level-color;
             text-shadow: none;
@@ -84,6 +82,11 @@ $level-colors-dark:
         
         .check-mark {
             fill: $level-color;
+        }
+
+        .cbl-skill-demo[data-demonstration] {
+            @extend .cbl-level-colored;
+            background-color: $level-color;
         }
     }
 }
@@ -227,6 +230,8 @@ $level-colors-dark:
 }
 
 .cbl-skill-demo {
+    @extend .cbl-level-n;
+    background: white;
     border: 1px solid #333;
     border-radius: 2px;
     display: block;
@@ -235,10 +240,6 @@ $level-colors-dark:
 
     + .cbl-skill-demo {
         margin-left: .25em;
-    }
-
-    &.is-empty {
-        background: white;
     }
 }
 
