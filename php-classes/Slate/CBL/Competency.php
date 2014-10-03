@@ -2,7 +2,7 @@
 
 namespace Slate\CBL;
 
-use DB, Cache;
+use DB, Cache, TableNotFoundException;
 use Slate\People\Student;
 
 class Competency extends \VersionedRecord
@@ -122,14 +122,18 @@ class Competency extends \VersionedRecord
             return $skillIds;
         }
 
-        $skillIds = array_map('intval', DB::allValues(
-            'ID',
-            'SELECT Skill.ID FROM `%s` Skill WHERE Skill.CompetencyID = %u',
-            [
-                Skill::$tableName,
-                $this->ID
-            ]
-        ));
+        try {
+            $skillIds = array_map('intval', DB::allValues(
+                'ID',
+                'SELECT Skill.ID FROM `%s` Skill WHERE Skill.CompetencyID = %u',
+                [
+                    Skill::$tableName,
+                    $this->ID
+                ]
+            ));
+        } catch (TableNotFoundException $e) {
+            $skillIds = [];
+        }
 
         Cache::store($cacheKey, $skillIds);
 
@@ -144,13 +148,17 @@ class Competency extends \VersionedRecord
             return $total;
         }
 
-        $total = intval(DB::oneValue(
-            'SELECT SUM(Skill.DemonstrationsRequired) FROM `%s` Skill WHERE Skill.CompetencyID = %u',
-            [
-                Skill::$tableName,
-                $this->ID
-            ]
-        ));
+        try {
+            $total = intval(DB::oneValue(
+                'SELECT SUM(Skill.DemonstrationsRequired) FROM `%s` Skill WHERE Skill.CompetencyID = %u',
+                [
+                    Skill::$tableName,
+                    $this->ID
+                ]
+            ));
+        } catch (TableNotFoundException $e) {
+            $total = 0;
+        }
 
         Cache::store($cacheKey, $total);
 
@@ -165,10 +173,11 @@ class Competency extends \VersionedRecord
 #            return $completion;
 #        }
 
-        DB::nonQuery('set @num := 0, @skill := ""');
+        try {
+            DB::nonQuery('set @num := 0, @skill := ""');
 
-        $completion = DB::oneRecord(
-            <<<'END_OF_SQL'
+            $completion = DB::oneRecord(
+                <<<'END_OF_SQL'
 SELECT COUNT(Level) AS demonstrationsCount, AVG(Level) AS demonstrationsAverage
 FROM (
     SELECT StudentDemonstrationSkill.Level,
@@ -185,21 +194,27 @@ FROM (
 JOIN `%s` Skill ON Skill.ID = OrderedDemonstrationSkill.SkillID
 WHERE rowNumber <= DemonstrationsRequired;
 END_OF_SQL
-            ,[
-                DemonstrationSkill::$tableName,
-                Demonstration::$tableName,
-                $Student->ID,
-                implode(',', $this->getSkillIds()),
-                $this->getMinimumLevel(),
-                Skill::$tableName
-            ]
-        );
+                ,[
+                    DemonstrationSkill::$tableName,
+                    Demonstration::$tableName,
+                    $Student->ID,
+                    implode(',', $this->getSkillIds()),
+                    $this->getMinimumLevel(),
+                    Skill::$tableName
+                ]
+            );
 
-        // cast strings to floats
-        $completion = [
-            'demonstrationsCount' => intval($completion['demonstrationsCount']),
-            'demonstrationsAverage' => floatval($completion['demonstrationsAverage'])
-        ];
+            // cast strings to floats
+            $completion = [
+                'demonstrationsCount' => intval($completion['demonstrationsCount']),
+                'demonstrationsAverage' => floatval($completion['demonstrationsAverage'])
+            ];
+        } catch (TableNotFoundException $e) {
+            $completion = [
+                'demonstrationsCount' => 0,
+                'demonstrationsAverage' => null
+            ];
+        }
 
         // store in cache (will require cache-refreshers in relevant save methods)
 #        Cache::store($cacheKey, $completion);
