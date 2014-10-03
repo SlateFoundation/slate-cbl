@@ -53,6 +53,10 @@ class StudentDashboardRequestHandler extends \RequestHandler
             $Student = $GLOBALS['Session']->Person;
         }
 
+        if (!$Student->isA(Student::class)) {
+            return static::throwInvalidRequestError('Requested user is not a student');
+        }
+
         return $Student;
     }
 }
