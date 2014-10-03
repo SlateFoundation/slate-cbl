@@ -155,6 +155,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             '</div>',
         '</div>',
         '<div class="cbl-grid-legend">',
+        	'<span class="cbl-grid-legend-label">Legend:&ensp;</span>',
             '<span class="cbl-grid-legend-item cbl-level-9">9</span>',
             '<span class="cbl-grid-legend-item cbl-level-10">10</span>',
             '<span class="cbl-grid-legend-item cbl-level-11">11</span>',

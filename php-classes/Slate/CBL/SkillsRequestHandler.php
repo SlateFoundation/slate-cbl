@@ -5,6 +5,7 @@ namespace Slate\CBL;
 class SkillsRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass = Skill::class;
+    public static $accountLevelBrowse = false;
     public static $browseOrder = 'LENGTH(Code), Code';
 
     public static function handleBrowseRequest($options = array(), $conditions = array(), $responseID = null, $responseData = array())

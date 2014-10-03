@@ -4,23 +4,6 @@
     {cssmin fonts/font-awesome.css}
     <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}" />
 
-	{* TODO re-integrate meeeeeee *}
-    <style type="text/css">
-		.cbl-grid-progress-average {
-		    font-size: .75em;
-		    line-height: 1;
-		    margin-top: -.5em;
-		    position: absolute;
-		    right: .5em;
-		    top: 50%;
-		    -webkit-font-smoothing: subpixel-antialiased;
-		}
-
-		.is-average-low {
-			background-image: url('/img/halted-progress.png') !important;
-		}
-    </style>
-
     {$dwoo.parent}
 {/block}
 
@@ -33,21 +16,21 @@
 
         <form method="GET" class="inline-fields">
             {capture assign=studioSelect}
-                <select name="students" onchange="this.form.submit()" disabled>
-                    <option>-select-</option>
+                <select class="field-control inline medium" name="students" onchange="this.form.submit()" disabled>
+                    <option>&ndash;select&ndash;</option>
                 </select>
             {/capture}
-            {labeledField html=$studioSelect type=select label=Group}
+            {labeledField html=$studioSelect type=select label=Group class=auto-width}
             
             {capture assign=contentAreaSelect}
-                <select name="content-area" onchange="this.form.submit()">
-                    <option value="">-select-</option>
+                <select class="field-control inline medium" name="content-area" onchange="this.form.submit()">
+                    <option value="">&ndash;select&ndash;</option>
                     {foreach item=availableArea from=$allContentAreas}
                         <option value="{$availableArea->Code}" {refill field=content-area selected=$availableArea->Code}>{$availableArea->Title|escape}</option>
                     {/foreach}
                 </select>
             {/capture}
-            {labeledField html=$contentAreaSelect type=select label="Content Area"}
+            {labeledField html=$contentAreaSelect type=select label="Content Area" class=auto-width}
         </form>
     </header>
 
