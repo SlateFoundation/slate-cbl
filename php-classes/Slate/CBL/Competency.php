@@ -94,7 +94,7 @@ class Competency extends \VersionedRecord
             $ExistingRecord = static::getByHandle($this->Code);
 
             if ($ExistingRecord && ($ExistingRecord->ID != $Record->ID)) {
-                $validator->addError('Code', 'Code already registered');
+                $this->_validator->addError('Code', 'Code already registered');
             }
         }
 
