@@ -46,7 +46,7 @@ class DemonstrationSkill extends \ActiveRecord
         ]
         ,'Level' => [
             'validator' => 'number'
-            ,'min' => 8
+            ,'min' => 6
             ,'max' => 13
         ]
     ];
