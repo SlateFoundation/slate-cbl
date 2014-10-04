@@ -132,7 +132,7 @@
         border: 1px solid $grid-border-color;
         border-bottom: none;
         @include box-sizing(border-box);
-        padding: .5em;
+        padding: $data-cell-padding;
     }
 
     th {
@@ -152,7 +152,26 @@
 
     .#{$g}-student-name {
         line-height: 1.3;
+        padding: 0;
         text-align: center;
+    }
+}
+
+.#{$g}-student-name {
+    > a {
+        color: $color;
+        display: block;
+        padding: $data-cell-padding;
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            background-color: rgba(#00a6e5, .1); // TODO get the Slate theme color
+        }
+
+        &:visited {
+            color: $color;
+        }
     }
 }
 
@@ -202,13 +221,13 @@
     font-size: .75em;
     left: -100%;
     line-height: 1;
-    margin-top: -.5em;
+    margin-top: -($data-cell-padding);
     position: absolute;
     top: 50%;
 
 	.#{$g}-progress-cell:hover &,
 	.#{$g}-progress-cell:focus & {
-		left: .5em;
+		left: $data-cell-padding;
 	}
 }
 
@@ -221,7 +240,7 @@
 .#{$g}-progress-average {
     font-size: .75em;
     line-height: 1;
-    margin-top: -.5em;
+    margin-top: -($data-cell-padding);
     position: absolute;
     right: -100%;
     top: 50%;
@@ -231,7 +250,7 @@
     .is-average-low &,
     .#{$g}-progress-cell:hover &,
     .#{$g}-progress-cell:focus & {
-        right: .5em;
+        right: $data-cell-padding;
     }
 
 	.is-average-low & {

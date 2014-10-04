@@ -31,18 +31,22 @@
     
     .x-slider-inner {
         @include background-image(linear-gradient(left,
-            transparent percentage(1/12),
-             $level-8-color percentage(1/12),
-             $level-8-color percentage(3/12),
-             $level-9-color percentage(3/12),
-             $level-9-color percentage(5/12),
-            $level-10-color percentage(5/12),
-            $level-10-color percentage(7/12),
-            $level-11-color percentage(7/12),
-            $level-11-color percentage(9/12),
-            $level-12-color percentage(9/12),
-            $level-12-color percentage(11/12),
-            $level-13-color percentage(11/12)
+                transparent percentage(1/16),
+             $level-6-color percentage(1/16),
+             $level-6-color percentage(3/16),
+             $level-7-color percentage(3/16),
+             $level-7-color percentage(5/16),
+             $level-8-color percentage(5/16),
+             $level-8-color percentage(7/16),
+             $level-9-color percentage(7/16),
+             $level-9-color percentage(9/16),
+            $level-10-color percentage(9/16),
+            $level-10-color percentage(11/16),
+            $level-11-color percentage(11/16),
+            $level-11-color percentage(13/16),
+            $level-12-color percentage(13/16),
+            $level-12-color percentage(15/16),
+            $level-13-color percentage(15/16)
         ));
 
         height: 10px;
