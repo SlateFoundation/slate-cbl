@@ -15,12 +15,30 @@
         </div>
 
         <form method="GET" class="inline-fields">
-            {capture assign=studioSelect}
-                <select class="field-control inline medium" name="students" onchange="this.form.submit()" disabled>
-                    <option>&ndash;select&ndash;</option>
+            {capture assign=studentsSelect}
+                <select class="field-control inline medium" name="students" onchange="this.form.submit()">
+                    <option value="">&ndash;select&ndash;</option>
+                    {if count($.User->CurrentCourseSections)}
+                        <optgroup label="My Sections">
+                            {foreach item=Section from=$.User->CurrentCourseSections}
+                                <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
+                            {/foreach}
+                        </optgroup>
+                    {else}
+                        <optgroup label="All Sections">
+                            {foreach item=Section from=Slate\Courses\Section::getAll()}
+                                <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
+                            {/foreach}
+                        </optgroup>
+                    {/if}
+                    <optgroup label="All Groups">
+                        {foreach item=Group from=Emergence\People\Groups\Group::getAll(array(order=array(Left=ASC)))}
+                            <option value="group {$Group->Handle|escape}" {refill field=students selected="group $Group->Handle"}>{$Group->getFullPath(' ▸ ')|escape}</option>
+                        {/foreach}
+                    </optgroup>
                 </select>
             {/capture}
-            {labeledField html=$studioSelect type=select label=Group class=auto-width}
+            {labeledField html=$studentsSelect type=select label=Students class=auto-width}
             
             {capture assign=contentAreaSelect}
                 <select class="field-control inline medium" name="content-area" onchange="this.form.submit()">
@@ -34,20 +52,17 @@
         </form>
     </header>
 
-    {if $ContentArea}
+    {if $ContentArea && $students}
         <div id='teacherDashboardCt'><div class="text-center"><img class="loading-spinner" src="/img/loaders/spinner.gif" alt=""> Loading teacher dashboard&hellip;</div></div>
+    {elseif is_array($students)}
+        <p class="notify error">There are currently no students enrolled in the selected group</p>
     {else}
-        <p>Select a content area:</p>
-        <ul>
-            {foreach item=availableArea from=$allContentAreas}
-                <li><a href="?content-area={$availableArea->Code}">{$availableArea->Title|escape}</a></li>
-            {/foreach}
-        </ul>
+        <p class="notify">Select a student group and content area above to begin</p>
     {/if}
 {/block}
 
 {block js-bottom}
-    {if $ContentArea}
+    {if $ContentArea && $students}
         <script type="text/javascript">
             var SiteEnvironment = SiteEnvironment || { };
             SiteEnvironment.user = {$.User->getData()|json_encode};

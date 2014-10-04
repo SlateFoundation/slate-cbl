@@ -21,6 +21,11 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
             contentAreaData = siteEnv.cblContentArea || null,
             dashboard;
 
+        // ensure students are loaded
+        if (!studentsData || !studentsData.length) {
+            return;
+        }
+
         // initialize QuickTips
         Ext.QuickTips.init();
 
@@ -37,9 +42,7 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
 
 
         // load data embedded in page
-        if (studentsData) {
-            Ext.getStore('cbl-students-loaded').loadRawData(studentsData);
-        }
+        Ext.getStore('cbl-students-loaded').loadRawData(studentsData);
 
 
         // wire Log a Demonstration button
