@@ -50,8 +50,17 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             getDemonstrationBlocks: function(skill, studentId) {
                 var demonstrationsRequired = skill.DemonstrationsRequired,
                     demonstrationsByStudent = skill.demonstrationsByStudent,
-                    blocks = (demonstrationsByStudent && studentId in demonstrationsByStudent && Ext.Array.clone(demonstrationsByStudent[studentId])) || [],
-                    blocksLength, blockIndex, lowestBlockIndex;
+                    blocks, blocksLength, blockIndex, lowestBlockIndex;
+
+
+                // start with all demonstrations 1 level below the competency level or greater
+                if (demonstrationsByStudent && studentId in demonstrationsByStudent) {
+                    blocks = Ext.Array.filter(demonstrationsByStudent[studentId], function(demonstration) {
+                        return demonstration.Level >= 8; // TODO: retrieve the competency level dynamically rather than hard coding to 9
+                    });
+                } else {
+                    blocks = [];
+                }
 
 
                 // trim lowest demonstrations
