@@ -36,7 +36,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                 }
             },
             api: {
-                demonstrationcreate: 'onDemonstrationCreate'
+                demonstrationsave: 'onDemonstrationSave'
             }
         }
     },
@@ -108,7 +108,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         });
     },
 
-    onDemonstrationCreate: function(demonstration) {
+    onDemonstrationSave: function(demonstration) {
         var me = this,
             dashboardView = me.view,
             demonstrationsTpl = dashboardView.getTpl('demonstrationsTpl'),
@@ -118,7 +118,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
             demonstratedSkills = demonstration.get('Skills'),
             demonstratedSkillsLength = demonstratedSkills.length, demonstratedSkillIndex = 0, demonstratedSkill,
-            loadedCompetency, loadedCompetencySkills, loadedSkill, demonstrationsByStudent, loadedDemonstrations, skillDemonstrationsCell,
+            loadedCompetency, loadedCompetencySkills, loadedSkill, demonstrationsByStudent, loadedDemonstrations, skillDemonstrationsCell, existingDemonstrationSkill,
 
             competencyCompletions = demonstration.get('competencyCompletions'),
             competencyCompletionsLength = competencyCompletions.length, competencyCompletionIndex = 0, competencyCompletion,
@@ -146,12 +146,21 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             demonstrationsByStudent = loadedSkill.demonstrationsByStudent || (loadedSkill.demonstrationsByStudent = {});
             loadedDemonstrations = studentId in demonstrationsByStudent ? demonstrationsByStudent[studentId] : demonstrationsByStudent[studentId] = [];
 
-            loadedDemonstrations.push({
-                DemonstrationID: demonstration.getId(),
-                Level: demonstratedSkill.Level,
-                SkillID: demonstratedSkill.SkillID,
-                StudentID: studentId
+            // check if this is an update to an existing demonstration
+            existingDemonstrationSkill = Ext.Array.findBy(loadedDemonstrations, function(loadedSkillDemonstration) {
+                return loadedSkillDemonstration.DemonstrationID == demonstration.getId();
             });
+
+            if (existingDemonstrationSkill) {
+                existingDemonstrationSkill.Level = demonstratedSkill.Level;
+            } else {
+                loadedDemonstrations.push({
+                    DemonstrationID: demonstration.getId(),
+                    Level: demonstratedSkill.Level,
+                    SkillID: demonstratedSkill.SkillID,
+                    StudentID: studentId
+                });
+            }
 
 
             // update rendered demonstrations

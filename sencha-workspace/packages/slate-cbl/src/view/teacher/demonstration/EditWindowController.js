@@ -317,7 +317,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                         editWindow.close();
                     }
 
-                    Slate.cbl.API.fireEvent('demonstrationcreate', demonstration);
+                    Slate.cbl.API.fireEvent('demonstrationsave', demonstration);
                 } else {
                     editWindow.setLoading(false);
                     Ext.Msg.show({
