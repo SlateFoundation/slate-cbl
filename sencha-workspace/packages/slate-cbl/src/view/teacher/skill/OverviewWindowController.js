@@ -36,7 +36,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
         listen: {
             api: {
-                demonstrationcreate: 'onDemonstrationCreate'
+                demonstrationsave: 'onDemonstrationSave'
             }
         }
     },
@@ -115,12 +115,13 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         overviewWindow.fireEvent('createdemonstrationclick', overviewWindow, overviewWindow.getStudent(), overviewWindow.getCompetency());
     },
 
-    onDemonstrationCreate: function(demonstration) {
+    onDemonstrationSave: function(demonstration) {
         var me = this,
-            demonstrationSkillIds = Ext.pluck(demonstration.get('skills')||[], 'ID'),
+            demonstrationSkillIds = Ext.pluck(demonstration.get('Skills')||[], 'SkillID'),
+            loadedStudentId = me.lookupReference('studentCombo').getValue(),
             loadedSkillId = me.lookupReference('skillCombo').getValue();
 
-        if (Ext.Array.contains(demonstrationSkillIds, loadedSkillId)) {
+        if (demonstration.get('StudentID') == loadedStudentId && Ext.Array.contains(demonstrationSkillIds, loadedSkillId)) {
             me.syncDemonstrationsTable();
         }
     },

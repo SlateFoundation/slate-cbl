@@ -4,6 +4,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     alias: 'controller.slate-cbl-teacher-demonstration-editwindow',
     requires: [
         'Slate.cbl.API',
+        'Slate.cbl.field.LevelSlider',
 
         'Ext.MessageBox',
         'Ext.window.Toast',
@@ -259,7 +260,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             formPanel = me.lookupReference('form'),
             studentField = formPanel.getForm().findField('StudentID'),
             selectedStudent = studentField.getSelectedRecord(),
-            activeSliders = me.lookupReference('competenciesTabPanel').query('[skill]{getValue()!=7}'),
+            activeSliders = me.lookupReference('competenciesTabPanel').query('[skill]{getValue()!='+Slate.cbl.field.LevelSlider.prototype.minValue+'}'),
             activeSlidersLength = activeSliders.length, activeSliderIndex = 0, activeSlider,
             skills = [];
 
@@ -316,7 +317,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                         editWindow.close();
                     }
 
-                    Slate.cbl.API.fireEvent('demonstrationcreate', demonstration);
+                    Slate.cbl.API.fireEvent('demonstrationsave', demonstration);
                 } else {
                     editWindow.setLoading(false);
                     Ext.Msg.show({

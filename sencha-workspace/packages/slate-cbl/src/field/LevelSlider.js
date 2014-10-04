@@ -7,12 +7,12 @@ Ext.define('Slate.cbl.field.LevelSlider', {
     xtype: 'slate-cbl-levelsliderfield',
 
     componentCls: 'cbl-level-slider-field',
-    minValue: 7,
+    minValue: 5,
     maxValue: 13,
     useTips: false,
     thumbTpl: [
         '<span class="value">',
-            '<tpl if="!value || value == 7">',
+            '<tpl if="!value || value == this.owner.minValue">',
                 '<small>N/A</small>',
             '<tpl else>',
                 '{value}',
