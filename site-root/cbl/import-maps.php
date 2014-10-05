@@ -2,6 +2,10 @@
 
 $GLOBALS['Session']->requireAccountLevel('Developer');
 
+if (Slate\CBL\ContentArea::getCount() > 0) {
+    die ("Content area database is already populated, aborting");
+}
+
 $mapsCsvUrl = 'https://docs.google.com/a/slate.is/spreadsheets/d/1LnjTF5i2CeQrR9EQLB0llomtkpJ_xx38oyjat8wr2_g/export?format=csv&id=1LnjTF5i2CeQrR9EQLB0llomtkpJ_xx38oyjat8wr2_g&gid=1995361518';
 $mapsCsv = SpreadsheetReader::createFromStream(fopen($mapsCsvUrl, 'r'));
 
@@ -30,6 +34,7 @@ while ($mapsRow = $mapsCsv->getNextRow()) {
                 ,'Code' => $row['Code']
                 ,'Descriptor' => $row['Descriptor']
                 ,'Statement' => $row['Statement']
+                ,'DemonstrationsRequired' => $row['ER']
             ], true), false, 'creating skill');
         }
     }
