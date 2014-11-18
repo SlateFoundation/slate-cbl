@@ -3,5 +3,5 @@ Ext.define('Slate.cbl.proxy.Records', {
     extend: 'Emergence.ext.proxy.Records',
     alias: 'proxy.slate-cbl-records',
 
-    apiWrapper: 'Slate.cbl.API'
+    connection: 'Slate.cbl.API'
 });
