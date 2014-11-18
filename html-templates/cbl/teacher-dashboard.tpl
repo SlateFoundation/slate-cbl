@@ -54,7 +54,7 @@
 
     {if $ContentArea && $students}
         <div id='teacherDashboardCt'><div class="text-center"><img class="loading-spinner" src="/img/loaders/spinner.gif" alt=""> Loading teacher dashboard&hellip;</div></div>
-    {elseif is_array($students)}
+    {elseif is_array($students) && $ContentArea}
         <p class="notify error">There are currently no students enrolled in the selected group</p>
     {else}
         <p class="notify">Select a student group and content area above to begin</p>
