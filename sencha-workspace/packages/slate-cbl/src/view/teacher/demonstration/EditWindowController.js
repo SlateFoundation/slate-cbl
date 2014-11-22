@@ -260,7 +260,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             formPanel = me.lookupReference('form'),
             studentField = formPanel.getForm().findField('StudentID'),
             selectedStudent = studentField.getSelectedRecord(),
-            activeSliders = me.lookupReference('competenciesTabPanel').query('[skill]{getValue()!='+Slate.cbl.field.LevelSlider.prototype.minValue+'}'),
+            activeSliders = me.lookupReference('competenciesTabPanel').query('[skill]{getLevel()!==null}'),
             activeSlidersLength = activeSliders.length, activeSliderIndex = 0, activeSlider,
             skills = [];
 
@@ -270,7 +270,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             skills.push({
                 CompetencyID: activeSlider.skill.CompetencyID,
                 SkillID: activeSlider.skill.ID,
-                Level: activeSlider.getValue()
+                Level: activeSlider.getLevel()
             });
         }
 

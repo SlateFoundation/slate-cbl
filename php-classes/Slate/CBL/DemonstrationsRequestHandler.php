@@ -51,7 +51,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     return static::throwInvalidRequestError("Skill at index $index is missing SkillID");
                 }
 
-                if (empty($skill['Level']) || !is_numeric($skill['Level']) || $skill['Level'] < 1) {
+                if (!isset($skill['Level']) || !is_numeric($skill['Level']) || $skill['Level'] < 0) {
                     return static::throwInvalidRequestError("Skill at index $index is missing Level");
                 }
             }
