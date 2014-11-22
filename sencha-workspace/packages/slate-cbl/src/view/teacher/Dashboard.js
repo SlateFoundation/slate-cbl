@@ -41,9 +41,13 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
     demonstrationsTpl: [
         '<ul class="cbl-grid-demos">',
             '<tpl for="this.getDemonstrationBlocks(skill, studentId)">',
-                '<li class="cbl-grid-demo<tpl if="counted"> cbl-grid-demo-counted</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
-                    '<tpl if="Level==0">M<tpl else>{Level}</tpl>',
-                '</li>',
+                '<tpl if="DemonstrationID">',
+                    '<li class="cbl-grid-demo<tpl if="counted"> cbl-grid-demo-counted</tpl><tpl if="Level==0"> cbl-grid-demo-missed</tpl>" data-demonstration="{DemonstrationID}">',
+                        '<tpl if="Level==0">M<tpl else>{Level}</tpl>',
+                    '</li>',
+                '<tpl else>',
+                    '<li class="cbl-grid-demo cbl-grid-demo-empty"></li>',
+                '</tpl>',
             '</tpl>',
         '</ul>',
         {
@@ -53,7 +57,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
                     blocks, blocksLength, blockIndex, lowestBlockIndex;
 
 
-                // start with all demonstrations 1 level below the competency level or greater
+                // start with all demonstrations, cloned and marked as counted
                 if (demonstrationsByStudent && studentId in demonstrationsByStudent) {
                     blocks = Ext.Array.map(demonstrationsByStudent[studentId], function(demonstration) {
                         return Ext.apply({
@@ -75,6 +79,20 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
                     Ext.Array.splice(blocks, lowestBlockIndex, 1);
                 }
+
+
+                // sort counted demonstrations first
+                Ext.Array.sort(blocks, function(a, b) {
+                    if (a.counted && !b.counted) {
+                        return -1;
+                    }
+
+                    if (!a.counted && b.counted) {
+                        return 1;
+                    }
+
+                    return a.DemonstrationID > b.DemonstrationID ? 1 : -1;
+                });
 
 
                 // add empty blocks
