@@ -49,6 +49,11 @@ class Skill extends \VersionedRecord
         ,'Descriptor' => [
             'errorMessage' => 'A descriptor is required'
         ]
+        ,'DemonstrationsRequired' => [
+            'validator' => 'number'
+            ,'min' => 1
+            ,'errorMessage' => 'DemonstrationsRequired must be an integer greater than 0'
+        ]
     ];
 
     public static $dynamicFields = [

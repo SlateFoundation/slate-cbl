@@ -136,7 +136,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                 // load skills into competency
                 for (; competencySkillIndex < competencySkillsLength; competencySkillIndex++) {
                     competencySkill = competencySkills[competencySkillIndex];
-                    competencyCard.down('slate-cbl-levelsliderfield{skill.ID=='+competencySkill.SkillID+'}').setValue(competencySkill.Level);
+                    competencyCard.down('slate-cbl-levelsliderfield{skill.ID=='+competencySkill.SkillID+'}').setLevel(competencySkill.Level);
                 }
 
                 // finish loading cycle when the queue is empty
@@ -260,7 +260,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             formPanel = me.lookupReference('form'),
             studentField = formPanel.getForm().findField('StudentID'),
             selectedStudent = studentField.getSelectedRecord(),
-            activeSliders = me.lookupReference('competenciesTabPanel').query('[skill]{getValue()!='+Slate.cbl.field.LevelSlider.prototype.minValue+'}'),
+            activeSliders = me.lookupReference('competenciesTabPanel').query('[skill]{getLevel()!==null}'),
             activeSlidersLength = activeSliders.length, activeSliderIndex = 0, activeSlider,
             skills = [];
 
@@ -270,7 +270,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             skills.push({
                 CompetencyID: activeSlider.skill.CompetencyID,
                 SkillID: activeSlider.skill.ID,
-                Level: activeSlider.getValue()
+                Level: activeSlider.getLevel()
             });
         }
 
@@ -340,14 +340,12 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             competenciesSearchField = me.lookupReference('competenciesSearchField'),
             competencyCardConfig = {
                 title: competency.get('Code'),
-                tabConfig: {
-/*
-                    tooltip: {
-                        title: competenciesTabPanel.getTpl('competencyTipTitleTpl').apply(competency.getData()),
-                        text: competenciesTabPanel.getTpl('competencyTipBodyTpl').apply(competency.getData())
-                    }
-*/
-                },
+//                tabConfig: {
+//                    tooltip: {
+//                        title: competenciesTabPanel.getTpl('competencyTipTitleTpl').apply(competency.getData()),
+//                        text: competenciesTabPanel.getTpl('competencyTipBodyTpl').apply(competency.getData())
+//                    }
+//                },
                 competency: competency,
                 items: []
             },

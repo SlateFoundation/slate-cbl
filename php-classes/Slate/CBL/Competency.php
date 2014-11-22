@@ -111,7 +111,7 @@ class Competency extends \VersionedRecord
     public function getMinimumAverage()
     {
         // TODO: determine dynamically based on current grade level, convert to dynamic attribute if possible
-        return 8.75;
+        return 8.5;
     }
 
     public function getSkillIds($forceRefresh = false)

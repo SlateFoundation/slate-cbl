@@ -31,22 +31,34 @@
     
     .x-slider-inner {
         @include background-image(linear-gradient(left,
-                transparent percentage(1/16),
-             $level-6-color percentage(1/16),
-             $level-6-color percentage(3/16),
-             $level-7-color percentage(3/16),
-             $level-7-color percentage(5/16),
-             $level-8-color percentage(5/16),
-             $level-8-color percentage(7/16),
-             $level-9-color percentage(7/16),
-             $level-9-color percentage(9/16),
-            $level-10-color percentage(9/16),
-            $level-10-color percentage(11/16),
-            $level-11-color percentage(11/16),
-            $level-11-color percentage(13/16),
-            $level-12-color percentage(13/16),
-            $level-12-color percentage(15/16),
-            $level-13-color percentage(15/16)
+//                transparent percentage(1/16),
+//             $level-6-color percentage(1/16),
+//             $level-6-color percentage(3/16),
+//             $level-7-color percentage(3/16),
+//             $level-7-color percentage(5/16),
+//             $level-8-color percentage(5/16),
+//             $level-8-color percentage(7/16),
+//             $level-9-color percentage(7/16),
+//             $level-9-color percentage(9/16),
+//            $level-10-color percentage(9/16),
+//            $level-10-color percentage(11/16),
+//            $level-11-color percentage(11/16),
+//            $level-11-color percentage(13/16),
+//            $level-12-color percentage(13/16),
+//            $level-12-color percentage(15/16),
+//            $level-13-color percentage(15/16)
+                  transparent percentage(1/12),
+               $level-8-color percentage(1/12),
+               $level-8-color percentage(3/12),
+               $level-9-color percentage(3/12),
+               $level-9-color percentage(5/12),
+              $level-10-color percentage(5/12),
+              $level-10-color percentage(7/12),
+              $level-11-color percentage(7/12),
+              $level-11-color percentage(9/12),
+              $level-12-color percentage(9/12),
+              $level-12-color percentage(11/12),
+              $level-13-color percentage(11/12)
         ));
 
         height: 10px;
@@ -55,6 +67,7 @@
     
     .x-slider-thumb {
         background: white;
+        border: 1px solid transparent;
         border-radius: 100%;
         box-shadow: 0 1px 1px rgba(black, .3);
         cursor: pointer;
@@ -62,12 +75,18 @@
         cursor: col-resize;
         margin-top: -9px;
     }
+
+    .thumb-parked:hover {
+        border: 1px dashed #666;
+        cursor: pointer;
+        cursor: context-menu;
+    }
     
     .value {
         color: $color;
         display: block;
         font-weight: bold;
-        line-height: 26px;
+        line-height: 25px;
         text-align: center;
         
         > small {
@@ -75,5 +94,19 @@
             letter-spacing: 1px;
             vertical-align: 1px;
         }
+    }
+}
+
+.special-grade-tip {
+    padding: 0;
+
+    .x-tip-body {
+        border: none;
+        padding: 0;
+    }
+
+    .x-menu {
+        border: none;
+        padding: 0;
     }
 }

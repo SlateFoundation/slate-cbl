@@ -41,8 +41,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
     demonstrationsTpl: [
         '<ul class="cbl-grid-demos">',
             '<tpl for="this.getDemonstrationBlocks(skill, studentId)">',
-                '<li class="cbl-grid-demo" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
-                    '{Level}',
+                '<li class="cbl-grid-demo<tpl if="counted"> cbl-grid-demo-counted</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
+                    '<tpl if="Level==0">M<tpl else>{Level}</tpl>',
                 '</li>',
             '</tpl>',
         '</ul>',
@@ -55,8 +55,10 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
                 // start with all demonstrations 1 level below the competency level or greater
                 if (demonstrationsByStudent && studentId in demonstrationsByStudent) {
-                    blocks = Ext.Array.filter(demonstrationsByStudent[studentId], function(demonstration) {
-                        return demonstration.Level >= 8; // TODO: retrieve the competency level dynamically rather than hard coding to 9
+                    blocks = Ext.Array.map(demonstrationsByStudent[studentId], function(demonstration) {
+                        return Ext.apply({
+                            counted: demonstration.Level >= 8 // TODO: retrieve the competency level dynamically rather than hard coding to 9
+                        }, demonstration);
                     });
                 } else {
                     blocks = [];
