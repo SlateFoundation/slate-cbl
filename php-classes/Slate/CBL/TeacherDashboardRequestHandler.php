@@ -3,8 +3,6 @@
 namespace Slate\CBL;
 
 use Slate\People\Student;
-use Slate\Courses\Section;
-use Emergence\People\Groups\Group;
 
 class TeacherDashboardRequestHandler extends \RequestHandler
 {
@@ -37,32 +35,10 @@ class TeacherDashboardRequestHandler extends \RequestHandler
         }
 
         if (!empty($_GET['students'])) {
-            if ($_GET['students'] == 'all') {
-                $students = \Slate\People\Student::getAllByClass();
-            } else {
-                list ($groupType, $groupHandle) = explode(' ', $_GET['students'], 2);
-                switch ($groupType) {
-                    case 'group':
-                        if (!$Group = Group::getByHandle($groupHandle)) {
-                            return static::throwNotFoundError('Group not found');
-                        }
-
-                        $students = array_filter($Group->getAllPeople(), function($Person) {
-                            return $Person->isA(Student::class);
-                        });
-                        break;
-                    case 'section':
-                        if (!$Section = Section::getByHandle($groupHandle)) {
-                            return static::throwNotFoundError('Section not found');
-                        }
-
-                        $students = array_values(array_filter($Section->Students, function($Person) {
-                            return $Person->isA(Student::class);
-                        }));
-                        break;
-                    default:
-                        return static::throwNotFoundError('Group type not recognized');
-                }
+            try {
+                $students = Student::getAllByListIdentifier($_GET['students']);
+            } catch (\Exception $e) {
+                return static::throwNotFoundError('Unable to load students list: ' . $e->getMessage());
             }
         }
 
