@@ -41,7 +41,7 @@
 				box-shadow: inset 0 0 0 2px $level-color-light;
         	}
 
-	        &[data-demonstration] { // used to be .is-complete, complete demo cells get data-demonstration set now instead
+	        &.cbl-grid-demo-counted {
 	            background-color: $level-color-medium;
 	        }
         }
