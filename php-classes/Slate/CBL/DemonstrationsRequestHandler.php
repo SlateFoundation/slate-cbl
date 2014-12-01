@@ -4,12 +4,25 @@ namespace Slate\CBL;
 
 use DB;
 use ActiveRecord;
+use SpreadsheetWriter;
 use TableNotFoundException;
+use Slate\People\Student;
 
 class DemonstrationsRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass = Demonstration::class;
     public static $browseOrder = ['ID' => 'ASC'];
+
+
+    public static function handleRecordsRequest($action = null)
+    {
+        switch ($action ?: $action = static::shiftPath()) {
+            case 'export':
+                return static::handleExportRequest();
+            default:
+                return parent::handleRecordsRequest($action);
+        }
+    }
 
     public static function handleBrowseRequest($options = array(), $conditions = array(), $responseID = null, $responseData = array())
     {
@@ -36,6 +49,62 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
+    }
+
+    public static function handleExportRequest()
+    {
+        $sw = new SpreadsheetWriter();
+
+        // fetch key objects from database
+        $students = Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+        $skills = Skill::getAll(['order' => 'Code']);
+        $demonstrations = Demonstration::getAllByWhere('StudentID IN ('.implode(',', array_map(function($Student) {
+            return $Student->ID;
+        }, $students)).')', ['order' => 'ID']);
+
+
+        // build and output headers list
+        $headers = [
+            'Timestamp',
+            'Student Name',
+            'Student Number',
+            'Portfolio Level',
+            'Context',
+            'Experience',
+            'Task',
+            'URL',
+            'Comments'
+        ];
+
+        foreach ($skills AS $Skill) {
+            $headers[] = $Skill->Code;
+        }
+
+        $sw->writeRow($headers);
+
+
+        // one row for each demonstration
+        foreach ($demonstrations AS $Demonstration) {
+            $row = [
+                date('Y-m-d H:i', $Demonstration->Created),
+                $Demonstration->Student->FullName,
+                $Demonstration->Student->StudentNumber,
+                9, // TODO: don't hard code
+                $Demonstration->Context,
+                $Demonstration->ExperienceType,
+                $Demonstration->PerformanceType,
+                $Demonstration->ArtifactURL,
+                $Demonstration->Comments
+            ];
+
+            $demonstrationSkills = DemonstrationSkill::getAllByField('DemonstrationID', $Demonstration->ID, ['indexField' => 'SkillID']);
+
+            foreach ($skills AS $Skill) {
+                $row[] = array_key_exists($Skill->ID, $demonstrationSkills) ? $demonstrationSkills[$Skill->ID]->Level : null;
+            }
+
+            $sw->writeRow($row);
+        }
     }
 
     protected static function onBeforeRecordSaved(ActiveRecord $Demonstration, $requestData)
