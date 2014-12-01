@@ -67,6 +67,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         $headers = [
             'Timestamp',
             'Student Name',
+            'Student Number',
             'Portfolio Level',
             'Context',
             'Experience',
@@ -87,6 +88,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             $row = [
                 date('Y-m-d H:i', $Demonstration->Created),
                 $Demonstration->Student->FullName,
+                $Demonstration->Student->StudentNumber,
                 9, // TODO: don't hard code
                 $Demonstration->Context,
                 $Demonstration->ExperienceType,
