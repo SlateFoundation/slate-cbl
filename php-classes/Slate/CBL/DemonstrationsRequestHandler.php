@@ -100,7 +100,11 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             $demonstrationSkills = DemonstrationSkill::getAllByField('DemonstrationID', $Demonstration->ID, ['indexField' => 'SkillID']);
 
             foreach ($skills AS $Skill) {
-                $row[] = array_key_exists($Skill->ID, $demonstrationSkills) ? $demonstrationSkills[$Skill->ID]->Level : null;
+                if (array_key_exists($Skill->ID, $demonstrationSkills)) {
+                    $row[] = $demonstrationSkills[$Skill->ID]->Level ? $demonstrationSkills[$Skill->ID]->Level : 'M';
+                } else {
+                    $row[] = null;
+                }
             }
 
             $sw->writeRow($row);
