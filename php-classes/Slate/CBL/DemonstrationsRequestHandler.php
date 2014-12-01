@@ -56,7 +56,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         $sw = new SpreadsheetWriter();
 
         // fetch key objects from database
-        $students = Student::getAllByListIdentifier($_GET['students']);
+        $students = Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
         $skills = Skill::getAll(['order' => 'Code']);
         $demonstrations = Demonstration::getAllByWhere('StudentID IN ('.implode(',', array_map(function($Student) {
             return $Student->ID;
