@@ -54,7 +54,6 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
 #                .'    ,Skill.DemonstrationsRequired'
 #                .'    ,SUM(IF(DemonstrationSkill.Level = 0, 1, 0)) totalMissing'
 #                .'    ,SUM(IF(DemonstrationSkill.Level != 0, 1, 0)) totalNotMissing'
-#                .'    ,Skill.DemonstrationsRequired'
                 .'    ,LEAST('
                 .'       GREATEST(Skill.DemonstrationsRequired - SUM(IF(DemonstrationSkill.Level != 0, 1, 0)), 0)' // how many needed demonstrations don't have non-missing levels
                 .'       ,SUM(IF(DemonstrationSkill.Level = 0, 1, 0))' // total missing demonstrations for this skill
@@ -65,7 +64,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                 .'   JOIN `%s` Skill'
                 .'    ON Skill.ID = DemonstrationSkill.SkillID'
                 .'   WHERE Demonstration.StudentID IN (%s)'
-                .'   GROUP BY DemonstrationSkill.SkillID'
+                .'   GROUP BY Demonstration.StudentID, DemonstrationSkill.SkillID'
                 .' ) MissingDemonstrationsByStudentSkill'
                 .' GROUP BY StudentID, CompetencyID'
                 ,[
