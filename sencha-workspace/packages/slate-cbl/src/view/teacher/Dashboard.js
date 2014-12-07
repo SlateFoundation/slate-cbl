@@ -42,7 +42,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         '<ul class="cbl-grid-demos">',
             '<tpl for="this.getDemonstrationBlocks(skill, studentId)">',
                 '<tpl if="DemonstrationID">',
-                    '<li class="cbl-grid-demo<tpl if="counted"> cbl-grid-demo-counted</tpl><tpl if="Level==0"> cbl-grid-demo-missed</tpl>" data-demonstration="{DemonstrationID}">',
+                    '<li class="cbl-grid-demo<tpl if="counted"> cbl-grid-demo-counted<tpl else> cbl-grid-demo-uncounted</tpl><tpl if="Level==0"> cbl-grid-demo-missed</tpl>" data-demonstration="{DemonstrationID}">',
                         '<tpl if="Level==0">M<tpl else>{Level}</tpl>',
                     '</li>',
                 '<tpl else>',

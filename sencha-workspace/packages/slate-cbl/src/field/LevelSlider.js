@@ -23,7 +23,7 @@ Ext.define('Slate.cbl.field.LevelSlider', {
             '<tpl if="value === null">',
                 '<small>N/A</small>',
             '<tpl elseif="value === 0">',
-                '<small>M</small>',
+                'M',
             '<tpl else>',
                 '{value}',
             '</tpl>',
