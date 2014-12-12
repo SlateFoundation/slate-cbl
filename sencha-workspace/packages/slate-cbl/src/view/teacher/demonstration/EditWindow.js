@@ -76,21 +76,21 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                 name: 'ExperienceType',
                 fieldLabel: 'Type of Experience',
 
-                store: ['Core Studio', 'Choice Studio', 'Workshop', 'Health and Wellness', 'PE/Fitness', 'Online Courseware', 'Situated Learning', 'Work-based Learning', 'Advisory']
+                store: (window.SiteEnvironment && window.SiteEnvironment.cblExperienceTypeOptions) || []
             },
             {
                 xtype: 'combobox',
                 name: 'Context',
                 fieldLabel: 'Context',
 
-                store: ['Journalism', 'Mythbusters', 'Personal Finance', 'Math Workshop', 'Literacy Workshop', 'Culinary Arts', 'Entrepreneurship', 'Performing Arts', 'Help Desk']
+                store: (window.SiteEnvironment && window.SiteEnvironment.cblContextOptions) || []
             },
             {
                 xtype: 'combobox',
                 name: 'PerformanceType',
                 fieldLabel: 'Performance Task',
 
-                store: ['Position paper', 'Lab report', 'Media presentation', 'Argumentative essay', 'Speech']
+                store: (window.SiteEnvironment && window.SiteEnvironment.cblPerformanceTypeOptions) || []
             },
             {
                 anchor: '-59',
