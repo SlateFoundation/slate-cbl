@@ -6,17 +6,14 @@ use Slate\People\Student;
 
 /**
  * Tracks the demonstration of one skill at one level
- *
- * TODO:
- * - Create a complementary class DemonstrationSkill that moves the level out of the
- * Demonstration record and enables multiple skills+levels to be logged per demonstration
- *
- * QUESTIONS:
- * - What is the maximum list of Levels the CBL system should support? Should L13 exist?
  */
 
 class Demonstration extends \VersionedRecord
 {
+    public static $experienceTypeOptions = ['Core Studio', 'Choice Studio', 'Workshop', 'Health and Wellness', 'PE/Fitness', 'Online Courseware', 'Situated Learning', 'Work-based Learning', 'Advisory'];
+    public static $contextOptions = ['Journalism', 'Mythbusters', 'Personal Finance', 'Math Workshop', 'Literacy Workshop', 'Culinary Arts', 'Entrepreneurship', 'Performing Arts', 'Help Desk'];
+    public static $performanceTypeOptions = ['Position paper', 'Lab report', 'Media presentation', 'Argumentative essay', 'Speech'];
+    
     // VersionedRecord configuration
     public static $historyTable = 'history_demonstrations';
 

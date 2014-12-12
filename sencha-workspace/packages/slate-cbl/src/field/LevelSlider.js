@@ -21,9 +21,9 @@ Ext.define('Slate.cbl.field.LevelSlider', {
     thumbTpl: [
         '<span class="value">',
             '<tpl if="value === null">',
-                '<small>N/A</small>',
+                '<small class="muted">N/A</small>',
             '<tpl elseif="value === 0">',
-                '<small>M</small>',
+                'M',
             '<tpl else>',
                 '{value}',
             '</tpl>',

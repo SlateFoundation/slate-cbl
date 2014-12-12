@@ -68,6 +68,9 @@
             SiteEnvironment.user = {$.User->getData()|json_encode};
             SiteEnvironment.cblStudents = {JSON::translateObjects($students, true)|json_encode};
             SiteEnvironment.cblContentArea = {JSON::translateObjects($ContentArea)|json_encode};
+            SiteEnvironment.cblExperienceTypeOptions = {Slate\CBL\Demonstration::$experienceTypeOptions|json_encode};
+            SiteEnvironment.cblContextOptions = {Slate\CBL\Demonstration::$contextOptions|json_encode};
+            SiteEnvironment.cblPerformanceTypeOptions = {Slate\CBL\Demonstration::$performanceTypeOptions|json_encode};
         </script>
     
         {$dwoo.parent}

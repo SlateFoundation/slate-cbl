@@ -41,7 +41,14 @@
 				box-shadow: inset 0 0 0 2px $level-color-light;
         	}
 
-	        &.cbl-grid-demo-counted {
+            &.#{$g}-demo-uncounted {
+                background-color: mix($text-color, $page-bg-color, 17%);
+                color: mix($text-color, $page-bg-color, 67%);
+                font-weight: normal;
+                text-shadow: none;
+            }
+
+	        &.#{$g}-demo-counted {
 	            background-color: $level-color-medium;
 	        }
         }

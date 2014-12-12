@@ -124,10 +124,13 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                 foreach ($ContentArea->Competencies AS $Competency) {
                     $competencyCompletion = $Competency->getCompletionForStudent($Student);
 
-                    $row[] = round($competencyCompletion['demonstrationsAverage'], 2);
+                    $row[] = $competencyCompletion['demonstrationsCount'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null;
+
                     $demonstrationsCounted += $competencyCompletion['demonstrationsCount'];
                     $demonstrationsRequired += $Competency->getTotalDemonstrationsRequired();
-                    $contentAreaAverageTotal += $competencyCompletion['demonstrationsAverage'] * $competencyCompletion['demonstrationsCount']; // averages weighted by count
+                    
+                    // averages are weighted by number of demonstrations
+                    $contentAreaAverageTotal += $competencyCompletion['demonstrationsAverage'] * $competencyCompletion['demonstrationsCount'];
 
                     if(isset($missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID])) {
                         $demonstrationsMissing += $missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID];
@@ -137,7 +140,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                 $row[] = $demonstrationsCounted;
                 $row[] = $demonstrationsRequired;
                 $row[] = $demonstrationsMissing;
-                $row[] = $demonstrationsCounted ? round($contentAreaAverageTotal / $demonstrationsCounted, 2) : 0;
+                $row[] = $demonstrationsCounted ? round($contentAreaAverageTotal / $demonstrationsCounted, 2) : null;
             }
 
             $sw->writeRow($row);
