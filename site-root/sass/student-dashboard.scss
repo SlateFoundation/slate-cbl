@@ -120,12 +120,16 @@ $level-colors-dark:
     position: relative;
 }
 
-.is-halted {
-	background-image: url('/img/halted-progress.png') !important;
+.is-average-low {
+	background-image: image-url('halted-progress.png');
 }
 
 .cbl-progress-bar {
     height: 100%;
+
+    .is-average-low & {
+        opacity: .6;
+    }
 }
 
 .cbl-progress-level {
@@ -147,6 +151,11 @@ $level-colors-dark:
 	position: absolute;
 	top: 50%;
 	@include translateY(-50%);
+
+	.is-average-low & {
+	    background: red;
+	    padding: 0 .3em;
+	}
 }
 
 .explainer {
