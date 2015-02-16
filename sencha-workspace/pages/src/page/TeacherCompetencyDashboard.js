@@ -51,5 +51,11 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
 
             dashboard.getController().showDemonstrationEditWindow();
         }, me, { delegate: 'button[data-action="demonstration-create"]'});
+        
+        body.on('click', function(ev, t) {
+            ev.stopEvent();
+
+            window.open('https://tinyurl.com/SDPcompetencycontinua', '_blank');
+        }, me, { delegate: 'button[data-action="view-the-continua"]'});
     }
 });

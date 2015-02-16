@@ -11,6 +11,7 @@
     {$allContentAreas = Slate\CBL\ContentArea::getAll()}
     <header class="page-header">
         <div class="header-buttons">
+            <button type="button" data-action="view-the-continua">View the Continua</button>
             <button type="button" class="primary" data-action="demonstration-create">Log a Demonstration</button>
         </div>
 

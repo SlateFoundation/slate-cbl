@@ -24,7 +24,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     controller: 'slate-cbl-teacher-demonstration-editwindow',
 
     config: {
-        demonstration: true
+        demonstration: true,
+        deleting: false
     },
 
     title: 'Log a demonstration',
@@ -39,6 +40,26 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     ],
 
     layout: 'fit',
+    dockedItems: [{
+        xtype: 'toolbar',
+        docked: 'top',
+        itemId: 'deletionToolbar',
+        hidden: true,
+        items: [{
+            xtype: 'tbtext',
+            text: 'Are you sure you want to delete this demonstration?'
+        }, {
+            xtype: 'button',
+            action: 'delete-demonstration',
+            text: 'Yes'
+        }, {
+            xtype: 'button',
+            text: 'No',
+            handler: function () {
+                this.up('window').close();
+            }
+        }]
+    }],
     items: {
         reference: 'form',
 
@@ -59,6 +80,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                 xtype: 'combobox',
                 name: 'StudentID',
                 fieldLabel: 'Student',
+                disableOnDelete: true,
 
                 store: {
                     type: 'chained',
@@ -70,40 +92,39 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
 
                 forceSelection: true,
                 autoSelect: true
-            },
-            {
+            }, {
                 xtype: 'combobox',
                 name: 'ExperienceType',
                 fieldLabel: 'Type of Experience',
+                disableOnDelete: true,
 
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblExperienceTypeOptions) || []
-            },
-            {
+            }, {
                 xtype: 'combobox',
                 name: 'Context',
                 fieldLabel: 'Context',
+                disableOnDelete: true,
 
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblContextOptions) || []
-            },
-            {
+            }, {
                 xtype: 'combobox',
                 name: 'PerformanceType',
                 fieldLabel: 'Performance Task',
+                disableOnDelete: true,
 
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblPerformanceTypeOptions) || []
-            },
-            {
+            }, {
                 anchor: '-59',
 
                 xtype: 'textfield',
                 name: 'ArtifactURL',
                 fieldLabel: 'Artifact (URL)',
+                disableOnDelete: true,
 
                 allowBlank: true,
                 regex: /^https?:\/\/.+/i,
                 regexText: 'Artifact must be a complete URL (starting with http:// or https://)'
-            },
-            {
+            }, {
                 reference: 'competenciesTabPanel',
                 anchor: '100%',
 
@@ -115,13 +136,12 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                     hidden: true
                 },
                 margin: '10 -16',
-//                bodyPadding: '16 75',
                 bodyStyle: {
                     backgroundColor: '#ddd'
                 },
-                // title: 'Competencies',
                 defaultType: 'slate-cbl-teacher-demonstration-competencycard',
                 defaults: {
+                    maskOnDelete: true,
                     closable: true
                 },
                 items: [
@@ -129,6 +149,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                         reference: 'competenciesGrid',
                         title: 'Add competency',
                         glyph: 0xf0fe + '@FontAwesome',
+                        disableOnDelete: true,
                         closable: false,
 
                         xtype: 'gridpanel',
@@ -148,24 +169,10 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                             {
                                 text: 'Code',
                                 dataIndex: 'Code'
-                            },
-                            {
+                            }, {
                                 text: 'Descriptor',
                                 dataIndex: 'Descriptor',
                                 flex: 1
-/*
-                            },
-                            {
-                                xtype: 'actioncolumn',
-                                width: 40,
-                                items: [
-                                    {
-                                        action: 'add',
-                                        glyph: 0xf0fe + '@FontAwesome',
-                                        tooltip: 'Add competency to this demonstration'
-                                    }
-                                ]
-*/
                             }
                         ],
                         features: [
@@ -177,7 +184,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                                     {
                                         contentAreaTpl: [
                                             '<span class="title">{Title}</span>'
-//                                            '<span class="count">{[parent.children.length]}</span>'
                                         ],
                                         getContentAreaHeader: function(values) {
                                             var contentAreaData = Ext.getStore('cbl-competencies-all').contentAreas.get(values.groupValue),
@@ -198,25 +204,26 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
 
                                 xtype: 'textfield',
                                 margin: '6 12',
-                                emptyText: 'Type competency code or statement&hellip;'
+                                emptyText: 'Type competency code or statement&hellip;',
+                                disableOnDelete: true
                             }
                         ]
                     }
                 ]
-            },
-            {
+            }, {
                 anchor: '-59', // add " -350" to make stretch with window
                 xtype: 'textarea',
                 name: 'Comments',
                 fieldLabel: 'Comments',
+                disableOnDelete: true,
 
                 allowBlank: true,
                 selectOnFocus: false
-            },
-            {
+            }, {
                 anchor: '100%',
 
                 xtype: 'container',
+                disableOnDelete: true,
                 layout: {
                     type: 'hbox',
                     align: 'center'
@@ -229,8 +236,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                         action: 'submit',
                         formBind: true,
                         margin: '0 16 0 155'
-                    },
-                    {
+                    }, {
                         reference: 'loadNextStudentCheck',
 
                         xtype: 'checkboxfield',
@@ -269,6 +275,39 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
             _fireEvent();
         } else {
             me.on('render', _fireEvent, me, { single: true });
+        }
+    },
+    
+    applyDeleting: function(deleting) {
+        var me = this,
+            toolbar,
+            _doApplyDeleting = function () {
+                //disable form fields
+                Ext.Array.each(me.query('[disableOnDelete]'), function(component) {
+                    component.setDisabled(deleting);
+                });
+                
+                //disable Competencies
+                Ext.Array.each(me.query('[maskOnDelete]'), function(component) {
+                    if(component.rendered) {
+                        if(deleting) { 
+                            component.mask();
+                        } else {
+                            component.unmask();
+                        }
+
+                    }
+                });
+                
+                toolbar = me.getComponent('deletionToolbar');
+
+                toolbar.setHidden(!deleting);
+            };
+        
+        if(me.rendered) {
+            _doApplyDeleting();
+        } else {
+            me.on('render', _doApplyDeleting, me);
         }
     }
 });

@@ -165,7 +165,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
         // query demonstrations sums
         try {
             $skillDemonstrations = DB::allRecords(
-                'SELECT Demonstration.ID AS DemonstrationID, Demonstration.StudentID, DemonstrationSkill.SkillID, DemonstrationSkill.Level'
+                'SELECT Demonstration.ID AS DemonstrationID, Demonstration.StudentID, DemonstrationSkill.SkillID, DemonstrationSkill.Level, DemonstrationSkill.ID'
                 .' FROM (SELECT ID FROM `%s` WHERE CompetencyID = %u) AS Skill'
                 .' JOIN `%s` DemonstrationSkill'
                 .'  ON DemonstrationSkill.SkillID = Skill.ID'
@@ -189,6 +189,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
             $skillDemonstration['StudentID'] = intval($skillDemonstration['StudentID']);
             $skillDemonstration['SkillID'] = intval($skillDemonstration['SkillID']);
             $skillDemonstration['Level'] = intval($skillDemonstration['Level']);
+            $skillDemonstration['ID'] = intval($skillDemonstration['ID']);
         }
 
         return static::respond('skills', [

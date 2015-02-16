@@ -3,10 +3,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-skill-overviewwindow',
     requires: [
-//        'Slate.cbl.API',
-//
-//        'Ext.MessageBox',
-//        'Ext.window.Toast'
+        'Slate.cbl.view.teacher.skill.OverrideWindow'
     ],
 
     config: {
@@ -14,8 +11,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         control: {
             '#': {
                 beforeshow: 'onBeforeWindowShow',
-                demorowclick: 'onDemoRowClick',
-                demoeditclick: 'onDemoEditClick'
+                demorowclick: 'onDemoRowClick'
             },
             'combobox[reference=competencyCombo]': {
                 change: 'onCompetencyChange'
@@ -26,17 +22,18 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
             'combobox[reference=studentCombo]': {
                 change: 'onStudentChange'
             },
-            'button[action=override]': {
-                click: 'onOverrideClick'
-            },
             'button[action=demonstration-create]': {
                 click: 'onCreateDemonstrationClick'
+            },
+            'button[action=override]': {
+                click: 'onOverrideClick'
             }
         },
 
         listen: {
             api: {
-                demonstrationsave: 'onDemonstrationSave'
+                demonstrationsave: 'onDemonstrationSave',
+                demonstrationdeleted: 'onDemonstrationDeleted'
             }
         }
     },
@@ -100,14 +97,21 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
         this.syncDemonstrationsTable();
     },
+    
+    onOverrideClick: function (ev, targetEl) {
+        var competenciesCombo = this.lookupReference('competencyCombo');
+        
+        Ext.create('Slate.cbl.view.teacher.skill.OverrideWindow', {
+            autoShow: true,
+            animateTarget: targetEl,
+
+            student: this.getView().getStudent()
+        });  
+    },
 
     onDemoRowClick: function(overviewWindow, ev, targetEl) {
         targetEl.next('.skill-grid-demo-detail-row').toggleCls('is-expanded');
         overviewWindow.doLayout();
-    },
-
-    onOverrideClick: function() {
-        alert('Not yet implemented');
     },
 
     onCreateDemonstrationClick: function() {
@@ -115,7 +119,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         overviewWindow.fireEvent('createdemonstrationclick', overviewWindow, overviewWindow.getStudent(), overviewWindow.getCompetency());
     },
 
-    onDemonstrationSave: function(demonstration) {
+    onDemonstrationSave: function(demonstration, operation) {
         var me = this,
             demonstrationSkillIds = Ext.pluck(demonstration.get('Skills')||[], 'SkillID'),
             loadedStudentId = me.lookupReference('studentCombo').getValue(),
@@ -124,6 +128,10 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         if (demonstration.get('StudentID') == loadedStudentId && Ext.Array.contains(demonstrationSkillIds, loadedSkillId)) {
             me.syncDemonstrationsTable();
         }
+    },
+    
+    onDemonstrationDeleted: function(demonstration, operation) {
+        this.syncDemonstrationsTable();
     },
 
 

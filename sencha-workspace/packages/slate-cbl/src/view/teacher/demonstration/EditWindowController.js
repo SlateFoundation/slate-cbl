@@ -36,6 +36,9 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             },
             'button[action=submit]': {
                 click: 'onSubmitClick'
+            },
+            'button[action=delete-demonstration]': {
+                click: 'onDeleteDemonstrationConfirm'
             }
         }
     },
@@ -145,6 +148,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                     Ext.resumeLayouts(true);
                     me.scrollCompetenciesTabsToEnd();
                 }
+                
+                editWindow.applyDeleting(editWindow.config.deleting);
             };
 
             // group skills by competency and a queue of competencies to be loaded
@@ -174,6 +179,29 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         } else {
             competenciesStore.on('load', _restoreSavedSkills, me, { single: true });
         }
+    },
+    
+    onDeleteDemonstrationConfirm: function() {
+        var me = this,
+            editWindow = me.getView(),
+            params = Ext.Object.fromQueryString(window.location.href.split('?')[1]),
+            demonstration = editWindow.getDemonstration();
+        
+        params.students = params.students.replace('+', ' ');
+        
+        editWindow.setLoading('Deleting demonstration&hellip;');
+
+        demonstration.erase({
+            params: {
+                include: 'competencyCompletions,Skills.Skills'
+            },
+            callback: function(record, operation) {
+                editWindow.setDemonstration({});
+                editWindow.hide();
+
+                Slate.cbl.API.fireEvent('demonstrationdeleted', record, operation); //.getProxy().getReader().rawData
+            }
+        });
     },
 
     onStudentSelect: function(studentCombo, student) {
@@ -317,7 +345,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                         editWindow.close();
                     }
 
-                    Slate.cbl.API.fireEvent('demonstrationsave', demonstration);
+                    Slate.cbl.API.fireEvent('demonstrationsave', demonstration, operation);
                 } else {
                     editWindow.setLoading(false);
                     Ext.Msg.show({
