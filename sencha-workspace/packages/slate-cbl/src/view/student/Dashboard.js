@@ -55,8 +55,12 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
                 '<h5 class="cbl-skill-name" data-descriptor="{Descriptor}" data-statement="{Statement}">{Descriptor}</h5>',
                 '<ul class="cbl-skill-demos">',
                     '<tpl for="this.getDemonstrationBlocks(values)">',
-                        '<li class="cbl-skill-demo <tpl if="!counted">cbl-skill-demo-uncounted</tpl>" data-skill="{SkillID}" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
-                            '<tpl if="Level==0">M<tpl else>{Level:defaultValue("&nbsp;")}</tpl>',
+                        '<li class="cbl-skill-demo <tpl if="!values.counted">cbl-skill-demo-uncounted</tpl>" <tpl if="SkillID">data-skill="{SkillID}"</tpl> <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
+                            '<tpl if="Level">',
+                                '{[values.Level == 0 ? "M" : values.Level]}',
+                            '<tpl else>',
+                                '&nbsp;',
+                            '</tpl>',
                         '</li>',
                     '</tpl>',
                 '</ul>',
@@ -74,14 +78,15 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
                 var demonstrationsRequired = skill.DemonstrationsRequired,
                     blocks, blocksLength, blockIndex, lowestBlockIndex;
 
-
-                // start with all demonstrations 1 level below the competency level or greater
-                blocks = Ext.Array.map(skill.demonstrations, function(demonstration) {
-                    return Ext.apply({
-                        counted: demonstration.Level >= 8 // TODO: retrieve the competency level dynamically rather than hard coding to 9
-                    }, demonstration);
-                });
-
+                if (Ext.isArray(skill.demonstrations)) {
+                    blocks = Ext.Array.map(skill.demonstrations, function(demonstration) {
+                        return Ext.apply({
+                            counted: demonstration.Level >= 8 // TODO: retrieve the competency level dynamically rather than hard coding to 9
+                        }, demonstration);
+                    });    
+                } else {
+                    blocks = [];
+                }
 
                 // trim lowest demonstrations
                 while ((blocksLength = blocks.length) > demonstrationsRequired) {
@@ -93,7 +98,7 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
 
                     Ext.Array.splice(blocks, lowestBlockIndex, 1);
                 }
-                
+
                 // sort counted demonstrations first
                 Ext.Array.sort(blocks, function(a, b) {
                     if (a.counted && !b.counted) {
@@ -107,16 +112,11 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
                     return a.DemonstrationID > b.DemonstrationID ? 1 : -1;
                 });
 
-
                 // add empty blocks
                 while (blocks.length < demonstrationsRequired) {
                     blocks.push({});
                 }
-                
-                if(blocks[0] == {}) {
-                    debugger;
-                }
-       
+
                 return blocks;
             }
         }
