@@ -57,7 +57,7 @@
                     {/foreach}
                 </select>
             </div>
-            <button class="button primary">Show Rubric Details</button>
+            <button class="button primary">Refresh</button>
         </div>
     </form>
 
