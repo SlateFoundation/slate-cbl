@@ -11,7 +11,7 @@ Ext.define('Slate.cbl.widget.Popover', {
     floating: true,
     tpl: [
         '<h1 class="popover-title">',
-            '<svg class="popover-pointer-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5 10" aria-hidden="true" role="presentation">',
+            '<svg class="popover-pointer-img" viewBox="0 0 5 10" aria-hidden="true">',
                 '<polygon class="popover-pointer" points="0,5 5,0 5,10" />',
             '</svg>',
             '{title}',
