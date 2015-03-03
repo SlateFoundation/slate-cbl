@@ -58,6 +58,9 @@
                 </select>
             </div>
             <button class="button primary">Refresh</button>
+            {if Slate\CBL\CBL::$continuaUrl}
+                <a class="button primary" href="{Slate\CBL\CBL::$continuaUrl|escape}" target="_blank">View the Continua</a>
+            {/if}
         </div>
     </form>
 
