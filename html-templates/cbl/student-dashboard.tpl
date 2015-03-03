@@ -59,7 +59,7 @@
             </div>
             <button class="button primary">Show Rubric Details</button>
             {if Slate\CBL\CBL::$continuaUrl}
-                <a class="button primary" href="{Slate\CBL\CBL::$continuaUrl}" target="_blank">View the Continua</a>
+                <a class="button primary" href="{Slate\CBL\CBL::$continuaUrl|escape}" target="_blank">View the Continua</a>
             {/if}
         </div>
     </form>
