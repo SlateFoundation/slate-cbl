@@ -48,7 +48,11 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
         Ext.create('Ext.data.Store', {
             storeId: 'cbl-students-loaded',
-            model: 'Slate.cbl.model.Student'
+            model: 'Slate.cbl.model.Student',
+            sorters: [{
+                property: 'FullName',
+                direction: 'ASC'
+            }]
         });
 
         Ext.create('Ext.data.Store', {
