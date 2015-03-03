@@ -18,7 +18,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
         skill: null
     },
 
-    title: 'Skill Overview',
+    title: 'Standard Overview',
     width: 700,
     minWidth: 700,
     // constrainHeader: true,
@@ -47,7 +47,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
                     forceSelection: true
                 },
-                'Skill:',
+                'Standard:',
                 {
                     reference: 'skillCombo',
                     flex: 1,
