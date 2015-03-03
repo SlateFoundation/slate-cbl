@@ -3,12 +3,13 @@
 {block "css"}
     {$dwoo.parent}
     {cssmin "student-dashboard.css"}
+    <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}" />
+
 {/block}
 
 {block "content"}
     {$allContentAreas = Slate\CBL\ContentArea::getAll()}
 
-    {*
     <aside class="panel cbl-recent-progress">
         <header class="panel-header">
             <h3 class="header-title">Recent Progress</h3>
@@ -22,24 +23,42 @@
                 </tr>
             </thead>
 
-            <tbody></tbody>
+            <tbody>
+                <tr>
+                    <td class="scoring-domain-col">
+                        <span class="domain-skill">Cite Evidence</span>
+                        <div class="meta">
+                            <span class="domain-competency">Reading Literature, </span>
+                            <span class="domain-teacher">Mr. Smith</span>
+                        </div>
+                    </td>
+                    <td class="level-col"><div class="level-color cbl-level-10">10</div></td>
+                </tr>
+                <tr>
+                    <td class="scoring-domain-col">
+                        <span class="domain-skill">Customize the presentation for the specific purpose, context, and audience</span>
+                        <div class="meta">
+                            <span class="domain-competency">Writing Evidence-based Arguments, </span>
+                            <span class="domain-teacher">Mr. Smith</span>
+                        </div>
+                    </td>
+                    <td class="level-col"><div class="level-color cbl-level-10">10</div></td>
+                </tr>
+            </tbody>
         </table>
     </aside>
-    *}
 
     <header class="page-header">
         <h2 class="header-title">{$Student->FullName|escape}</h2>
 
-        {*
         <div class="cbl-labeled-meter">
-            <h3 class="cbl-meter-label">Graduation Progress</h3>
+            <h3 class="cbl-meter-label level-color">Graduation Progress</h3>
             <div class="cbl-progress-meter cbl-level-10">
                 <div class="cbl-progress-bar" style="width:40%"></div>
                 <div class="cbl-progress-level">L10</div>
                 <div class="cbl-progress-percent">40%</div>
             </div>
         </div>
-        *}
     </header>
 
     <form method="GET">
@@ -57,12 +76,13 @@
                     {/foreach}
                 </select>
             </div>
-            <button class="button primary">Show Rubric Details</button>
+            <button class="primary">Refresh</button>
+            <button data-action="view-the-continua">View the Continua</button>
         </div>
     </form>
 
     {if $ContentArea}
-        <ul class="cbl-competency-panels competencies-unloaded" id="studentDashboardCompetenciesList"></ul>
+        <div id="studentDashboardCt"></div>
     {/if}
 {/block}
 
@@ -80,6 +100,7 @@
         {if $.get.jsdebug}
             {sencha_bootstrap
                 patchLoader=false
+                packages=array('slate-theme')
                 packageRequirers=array('sencha-workspace/pages/src/page/StudentCompetencyDashboard.js')
             }
         {else}

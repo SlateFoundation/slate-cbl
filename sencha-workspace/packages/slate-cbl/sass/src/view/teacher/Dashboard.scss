@@ -21,8 +21,10 @@
         $level-color-medium: nth($level-colors-medium, ($n - 7));
         $level-color-dark:   nth($level-colors-dark,   ($n - 7));
 
-        @extend .level-n;
-        background-color: $level-color;
+        &.level-color {
+            @extend .level-n;
+            background-color: $level-color;
+        }
 
         &.#{$g}-progress-cell {
             background-color: $level-color-light;
@@ -90,6 +92,10 @@
     top: 50%;
     @include translate(-100%, -50%);
     width: .5em;
+
+    .point-none & {
+        display: none;
+    }
 
     .point-right & {
         left: 100%;
