@@ -95,6 +95,8 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
 
         foreach ($contentAreas AS $ContentArea) {
             foreach ($ContentArea->Competencies AS $Competency) {
+                $headers[] = $Competency->Code . '-Logged';
+                $headers[] = $Competency->Code . '-Total';
                 $headers[] = $Competency->Code . '-AVG';
             }
 
@@ -124,6 +126,11 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                 foreach ($ContentArea->Competencies AS $Competency) {
                     $competencyCompletion = $Competency->getCompletionForStudent($Student);
 
+                    // Logged
+                    $row[] = $competencyCompletion['demonstrationsCount'];
+                    // Total
+                    $row[] = $Competency->getTotalDemonstrationsRequired();
+                    // Average
                     $row[] = $competencyCompletion['demonstrationsCount'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null;
 
                     $demonstrationsCounted += $competencyCompletion['demonstrationsCount'];
