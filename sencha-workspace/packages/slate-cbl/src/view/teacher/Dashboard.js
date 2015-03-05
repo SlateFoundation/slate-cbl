@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext*/
+/*jslint browser: true, undef: true *//*global Ext, SiteEnvironment*/
 Ext.define('Slate.cbl.view.teacher.Dashboard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-teacher-dashboard',
