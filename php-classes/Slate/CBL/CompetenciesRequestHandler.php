@@ -122,10 +122,10 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                 $demonstrationsRequired = 0;
                 $demonstrationsMissing = 0;
                 $contentAreaAverageTotal = 0;
-
+                
                 foreach ($ContentArea->Competencies AS $Competency) {
                     $competencyCompletion = $Competency->getCompletionForStudent($Student);
-
+                    
                     // Logged
                     $row[] = $competencyCompletion['demonstrationsCount'];
                     // Total
@@ -171,13 +171,21 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
 
         // query demonstrations sums
         try {
-            $skillDemonstrations = DB::allRecords(
-                'SELECT Demonstration.ID AS DemonstrationID, Demonstration.StudentID, DemonstrationSkill.SkillID, DemonstrationSkill.Level'
-                .' FROM (SELECT ID FROM `%s` WHERE CompetencyID = %u) AS Skill'
-                .' JOIN `%s` DemonstrationSkill'
-                .'  ON DemonstrationSkill.SkillID = Skill.ID'
-                .' JOIN (SELECT ID, StudentID FROM `%s` WHERE StudentID IN (%s)) Demonstration'
-                .'  ON Demonstration.ID = DemonstrationSkill.DemonstrationID'
+            $skillDemonstrations = DB::allRecords('
+                 SELECT Demonstration.ID AS DemonstrationID,
+                        Demonstration.StudentID,
+                        DemonstrationSkill.SkillID,
+                        DemonstrationSkill.Level,
+                        DemonstrationSkill.ID
+                   FROM (SELECT ID
+                           FROM `%s`
+                          WHERE CompetencyID = %u) AS Skill
+                   JOIN `%s` DemonstrationSkill
+                     ON DemonstrationSkill.SkillID = Skill.ID
+                   JOIN (SELECT ID, StudentID
+                           FROM `%s`
+                          WHERE StudentID IN (%s)) Demonstration
+                     ON Demonstration.ID = DemonstrationSkill.DemonstrationID'
                 ,[
                     Skill::$tableName
                     ,$Competency->ID
@@ -196,6 +204,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
             $skillDemonstration['StudentID'] = intval($skillDemonstration['StudentID']);
             $skillDemonstration['SkillID'] = intval($skillDemonstration['SkillID']);
             $skillDemonstration['Level'] = intval($skillDemonstration['Level']);
+            $skillDemonstration['ID'] = intval($skillDemonstration['ID']);
         }
 
         return static::respond('skills', [
