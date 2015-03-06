@@ -9,7 +9,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     ],
 
     config: {
-        id: 'slate-cbl-teacher-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        id: 'slate-cbl-student-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         control: {
             '#': {
 //                contentareachange: 'refresh',
@@ -98,7 +98,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
 
         _renderSkills = function() {
             var demonstrationsLength = demonstrations.length, demonstrationIndex = 0, demonstration, skill;
-            // group skills by student
+            // group demonstrations by skill
             for (; demonstrationIndex < demonstrationsLength; demonstrationIndex++) {
                 demonstration = demonstrations[demonstrationIndex];
                 skill = skills.get(demonstration.SkillID);

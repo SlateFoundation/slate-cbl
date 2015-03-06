@@ -116,12 +116,6 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
             fn: 'onListClick',
             element: 'el',
             delegate: '.cbl-competency-panels, .cbl-competency-panels'
-            /*
-             },
-             mouseover: {
-             fn: 'onSkillNameMouseOver',
-             element: 'el'
-             */
         }
     },
 
@@ -155,27 +149,6 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
 
         if (targetEl = ev.getTarget('.cbl-skill-demo', me.el, true)) {
             me.fireEvent('democellclick', me, ev, targetEl);
-        }
-    },
-
-    onSkillNameMouseOver: function(ev) {
-        var me = this,
-            popover = me.getPopover(),
-            dashboardEl = me.el,
-            targetEl;
-
-        if (targetEl = ev.getTarget('.cbl-skill-name', dashboardEl, true)) {
-            if (popover.hidden || popover.alignTarget !== targetEl) {
-                popover.showBy(targetEl, 'tl-bl', [0, 42]);
-                popover.setWidth(targetEl.getWidth());
-                popover.update({
-                    // title: targetEl.getAttribute('data-descriptor'),
-                    title: null,
-                    body: targetEl.getAttribute('data-statement')
-                });
-            }
-        } else {
-            popover.hide();
         }
     }
 });

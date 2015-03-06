@@ -16,6 +16,7 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
         control: {
             '#': {
                 beforeshow: 'onBeforeWindowShow',
+                beforeRender: 'onBeforeRender',
                 demorowclick: 'onDemoRowClick',
                 destroy: 'onDestroy'
             },
@@ -28,6 +29,16 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
     // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
     applyId: function(id) {
         return Ext.id(null, id);
+    },
+
+    onBeforeRender: function(overviewWindow) {
+        overviewWindow.mon(Ext.GlobalEvents, 'resize', function() {
+            overviewWindow.center();
+        });
+
+        overviewWindow.mon(Ext.getWin(), 'scroll', function() {
+            overviewWindow.center();
+        });
     },
 
     onBeforeWindowShow: function(overviewWindow) {
@@ -52,20 +63,6 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
                 me.syncDemonstrationsTable();
             }
         }
-
-        Ext.on('resize', function() {
-            overviewWindow.center();
-            return true;
-        });
-
-        Ext.get(window).on('scroll', function() {
-            overviewWindow.center();
-            return true;
-        });
-    },
-
-    onDestroy: function(overviewWindow) {
-        Ext.off('resize', overviewWindow.center);
     },
 
     onDemoRowClick: function(overviewWindow, ev, targetEl) {
