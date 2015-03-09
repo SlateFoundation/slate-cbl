@@ -72,7 +72,8 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
             '</li>',
         '</tpl>',
         
-        {    sortDemonstrations: function sortDemonstrations(demonstrations, limit) {
+        {
+            sortDemonstrations: function sortDemonstrations(demonstrations, limit) {
                 'use strict';
                 demonstrations = Ext.isArray(demonstrations) ? demonstrations : [];
                 
@@ -84,13 +85,21 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
                     levelsSorted,
                     demos,
                     demosLen,
-                    displayDemonstrations = [];
+                    displayDemonstrations = [],
+                    scored = [],
+                    missed = [];
                 
                 // If no limit is specified, sort all demonstrations
                 limit = isNaN(limit) ? len : limit;
-            
+
                 // Define functions outside of loops
-                function sortByDate(a, b) {
+                function sortByNewest(a, b) {
+                    // Newest first
+                    return a.Demonstrated > b.Demonstrated ? -1 : a.Demonstrated < b.Demonstrated ? 1 : 0;
+                }
+                
+                function sortByOldest(a, b) {
+                    // Oldest first
                     return a.Demonstrated > b.Demonstrated ? 1 : a.Demonstrated < b.Demonstrated ? -1 : 0;
                 }
                 
@@ -105,26 +114,36 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
                 levelsSorted = Object.keys(sortedDemonstrations).sort(function (a, b) {
                     a = parseInt(a, 10);
                     b = parseInt(b, 10);
-                    return a < b ? 1 : a > b ? -1 : 0;
+                    return a > b ? -1 : a < b ? 1 : 0;
                 });
                 
                 // Loop over demonstrations starting with the highest levels
-                for (x = 0, len = levelsSorted.length; len > x; x++) {        
-                    // Sort demonstrations for x-level by date (oldest first)
-                    demos = sortedDemonstrations[levelsSorted[x]].sort(sortByDate);
-                    
+                levelLoop:
+                for (x = 0, len = levelsSorted.length; len > x; x++) {       
+                    // Sort demonstrations for x-level by date (newest first)
+                    demos = sortedDemonstrations[levelsSorted[x]].sort(sortByNewest);
+            
                     // Get limit-number of demonstrations
                     for (i = 0, demosLen = demos.length; demosLen > i; i++) {
-                        demo = demos[i];
-                        displayDemonstrations.push(demo);
+                        displayDemonstrations.push(demos[i]);
                         if (--limit === 0) {
-                            // return as soon as possible
-                            return displayDemonstrations;
+                            // Break out early
+                            break levelLoop;
                         }
                     }
                 }
                 
-                return displayDemonstrations;
+                // Split up scored and missed demonstrations while keeping order by date (oldest first)
+                displayDemonstrations.sort(sortByOldest).forEach(function(demo) {
+                    if (demo.Level > 0) {
+                        scored.push(demo);
+                    } else {
+                        missed.push(demo);
+                    }
+                });
+                
+                // Scored demonstrations go on the left, missed demonstrations go on the right
+                return scored.concat(missed);
             },
     
             getDemonstrationBlocks: function(skill, studentId) {
@@ -135,7 +154,7 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
                 while (blocks.length < demonstrationsRequired) {
                     blocks.push({});
                 }
-                
+
                 return blocks;
             }
         }
