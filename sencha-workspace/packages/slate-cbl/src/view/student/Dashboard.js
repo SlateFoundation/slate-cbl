@@ -19,6 +19,39 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
             pointer: 'none'
         }
     },
+    
+    recentProgressTpl: [
+        '<header class="panel-header">',
+        '    <h3 class="header-title">Recent Progress</h3>',
+        '</header>',
+
+        '<div class="table-ct">',
+        '    <table class="panel-body" id="progress-summary">',
+        '        <thead>',
+        '        <tr>',
+        '            <th class="col-header scoring-domain-col">Scoring Domain</th>',
+        '            <th class="col-header level-col">Level</th>',
+        '        </tr>',
+        '        </thead>',
+        '        <tbody>',
+        '           <tpl for="progress">',
+        '               <tr>',
+        '                   <td class="scoring-domain-col">',
+        '                       <span class="domain-skill">{skill}</span>',
+        '                           <div class="meta">',
+        '                               <span class="domain-competency">{competency}, </span>',
+        '                               <span class="domain-teacher">{teacher}</span>',
+        '                           </div>',
+        '                   </td>',
+        '                   <td class="level-col">',
+        '                       <div class="level-color cbl-level-{level}">{[ values.level != 0 ? values.level : "M" ]}</div>',
+        '                   </td>',
+        '               </tr>',
+        '           </tpl>',
+        '       </tbody>',
+        '    </table>',
+        '</div>'
+    ],
 
     competenciesTpl: [
         '<tpl for="competencies">',

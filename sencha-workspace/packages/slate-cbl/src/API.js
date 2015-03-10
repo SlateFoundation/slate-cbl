@@ -21,5 +21,26 @@ Ext.define('Slate.cbl.API', {
                 Ext.callback(callback, scope, [response]);
             }
         });
+    },
+    
+    getRecentProgress: function(params, callback, scope) {
+        params = params || {};
+        
+        var contentAreaCode = params.contentAreaCode || window.SiteEnvironment.cblContentArea.Code,
+            me = this;
+        
+        params.limit = params.limit || 10;
+        params.student = params.student || window.SiteEnvironment.cblStudent.ID;
+        delete params.contentAreaCode;
+
+        me.request({
+            url: '/cbl/content-areas/' + contentAreaCode + '/recent-progress',
+            method: 'GET',
+            params: params,
+            success: function(response) {
+                me.fireEvent('recentprogressload', response.data.data, contentAreaCode);
+                Ext.callback(callback, scope, [response.data.data]);
+            }
+        });
     }
 });
