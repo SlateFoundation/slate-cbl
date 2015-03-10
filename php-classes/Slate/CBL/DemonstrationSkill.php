@@ -22,6 +22,9 @@ class DemonstrationSkill extends \ActiveRecord
             'type' => 'tinyint',
             'unsigned' => true
         ]
+        ,'Demonstrated' => [
+            'type' => 'date'
+        ]
     ];
 
     public static $relationships = [

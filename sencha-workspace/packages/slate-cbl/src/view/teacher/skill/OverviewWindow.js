@@ -21,7 +21,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
     title: 'Standard Overview',
     width: 700,
     minWidth: 700,
-    // constrainHeader: true,
+    fixed: true,
     autoScroll: true,
 
     dockedItems: [

@@ -75,19 +75,20 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     },
 
     onDemoCellClick: function(dashboardView, ev, targetEl) {
-
+        // HACK: No idea how to get the demonstration set below into the OverviewBody xtemplate
+        window.SiteEnvironment.clickedDemonstration = parseInt(targetEl.getAttribute('data-demonstration'), 10);
+        
         Ext.create('Slate.cbl.view.student.skill.OverviewWindow', {
             autoShow: true,
             animateTarget: targetEl,
 
             student: window.SiteEnvironment.cblStudent.ID,
             competency: targetEl.up('ul.cbl-skill-demos').up('li.cbl-competency-panel').getAttribute('data-competency'),
-            skill: targetEl.getAttribute('data-skill')
+            skill: targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'),
+            demonstration: window.SiteEnvironment.clickedDemonstration /* HACK: FIXME: */
         });
     },
-
-
-
+    
     // protected methods
     loadSkills: function(student, competency, skillsList) {
         var me = this,

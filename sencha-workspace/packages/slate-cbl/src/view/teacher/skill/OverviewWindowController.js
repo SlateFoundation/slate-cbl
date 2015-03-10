@@ -2,20 +2,15 @@
 Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-skill-overviewwindow',
-    requires: [
-//        'Slate.cbl.API',
-//
-//        'Ext.MessageBox',
-//        'Ext.window.Toast'
-    ],
-
     config: {
-        id: 'slate-cbl-teacher-skill-overviewwindow', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        id: 'slate-cbl-teacher-skill-overviewwindow',
         control: {
             '#': {
                 beforeshow: 'onBeforeWindowShow',
                 demorowclick: 'onDemoRowClick',
-                demoeditclick: 'onDemoEditClick'
+                demoeditclick: 'onDemoEditClick',
+                beforerender: 'onBeforeRender'
             },
             'combobox[reference=competencyCombo]': {
                 change: 'onCompetencyChange'
@@ -44,6 +39,16 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
     applyId: function(id) {
         return Ext.id(null, id);
+    },
+
+    onBeforeRender: function(overviewWindow) {
+        overviewWindow.mon(Ext.GlobalEvents, 'resize', function() {
+            overviewWindow.center();
+        });
+
+        overviewWindow.mon(Ext.getWin(), 'scroll', function() {
+            overviewWindow.center();
+        });
     },
 
     onBeforeWindowShow: function(overviewWindow) {
