@@ -117,7 +117,7 @@ class ContentAreasRequestHandler extends \RecordsRequestHandler
                     ON c.ID = s.CompetencyID
                   WHERE d.StudentID = %s
                     AND c.ContentAreaID = %s
-                  ORDER BY d.Demonstrated DESC
+                  ORDER BY d.Created DESC
                   LIMIT %d;",
                 [
                     DemonstrationSkill::$tableName,

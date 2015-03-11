@@ -84,6 +84,16 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
             Slate.cbl.model.Skill.load(skillId, {
                 callback: function(skill) {
                     skill.getDemonstrationsByStudent(studentId, function(skillDemonstrations) {
+	                    
+	                    console.log(skillDemonstrations);
+	                    
+	                    skillDemonstrations.sort(function compare(a, b) {
+		                    var aDemonstrated = new Date(a.Demonstration.Demonstrated),
+		                    	bDemonstrated = new Date(b.Demonstration.Demonstrated);
+		                    	
+		                    return (aDemonstrated > bDemonstrated) ? -1 : (aDemonstrated < bDemonstrated) ? 1 : 0;
+		                });
+	                    
                         demonstrationsTable.selectedDemonstrationId = demonstrationId;
                         demonstrationsTable.update(skillDemonstrations);
                         demonstrationsTable.setLoading(false);

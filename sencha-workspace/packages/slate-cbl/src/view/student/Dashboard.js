@@ -98,11 +98,12 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
                     '</tpl>',
                 '</ul>',
                 '<div class="cbl-skill-description"><p>{Statement}</p></div>',
-//                '<div class="cbl-skill-complete-indicator cbl-level-{parent.level} is-checked">',
-//                    '<svg class="check-mark-image" width="16" height="16">',
-//                        '<polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
-//                    '</svg>',
-//                '</div>',
+                /* TODO: FIXME: We need new design assets/styling for the checkmark, this doesn't render very well at all
+                '<div class="cbl-skill-complete-indicator cbl-level-{parent.level} is-checked">',
+                    '<svg class="check-mark-image" width="16" height="16">',
+                        '<polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
+                    '</svg>',
+                '</div>',*/
             '</li>',
         '</tpl>',
         
