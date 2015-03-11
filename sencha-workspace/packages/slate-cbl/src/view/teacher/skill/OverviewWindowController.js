@@ -144,6 +144,14 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         if (skill && studentId) {
             demonstrationsTable.setLoading('Loading demonstrations&hellip;'); // currently not visible due to http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
             skill.getDemonstrationsByStudent(studentId, function(skillDemonstrations) {
+                
+                skillDemonstrations.sort(function compare(a, b) {
+                    var aDemonstrated = new Date(a.Demonstration.Demonstrated),
+                        bDemonstrated = new Date(b.Demonstration.Demonstrated);
+
+                    return (aDemonstrated > bDemonstrated) ? -1 : (aDemonstrated < bDemonstrated) ? 1 : 0;
+                });
+
                 demonstrationsTable.update(skillDemonstrations);
                 demonstrationsTable.setLoading(false);
             });
