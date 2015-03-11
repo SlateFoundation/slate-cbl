@@ -1,12 +1,7 @@
 /*jslint browser: true ,undef: true *//*global Ext*/
 Ext.define('Slate.cbl.util.CBL', {
     singleton : true,
-    config : {},
-    
-    constructor : function(config) {
-        this.initConfig(config);
-    },
-    
+
     sortDemonstrations: function sortDemonstrations(demonstrations, limit) {
         'use strict';
         demonstrations = Ext.isArray(demonstrations) ? demonstrations : [];

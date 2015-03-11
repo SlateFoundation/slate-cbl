@@ -56,7 +56,7 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                                         '<tpl if="Demonstration.Comments">',
                                             '<div class="skill-grid-demo-comments">',
                                                 '<strong>Comments: </strong>',
-                                                '{[this.escapeAndNewline(values.Demonstration.Comments)]}',
+                                                '{Demonstration.Comments:htmlEncode:nl2br}',
                                             '</div>',
                                         '</tpl>',
                                         '<div class="skill-grid-demo-meta">',
@@ -79,11 +79,6 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                     '</tpl>',
                 '</table>',
                 {
-                    escapeAndNewline: function(s) {
-                        s = Ext.util.Format.htmlEncode(s);
-                        return Ext.util.Format.nl2br(s);
-                    },
-                    
                     getClickedDemonstration: function() {
                         /* TODO: HACK: FIXME: DISCUSS: (all of the things)
                            @themightychris, I can't figure out how to get the

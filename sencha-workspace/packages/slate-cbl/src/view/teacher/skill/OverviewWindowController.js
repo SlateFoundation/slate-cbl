@@ -149,7 +149,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
                     var aDemonstrated = new Date(a.Demonstration.Demonstrated),
                         bDemonstrated = new Date(b.Demonstration.Demonstrated);
 
-                    return (aDemonstrated > bDemonstrated) ? -1 : (aDemonstrated < bDemonstrated) ? 1 : 0;
+                    return (aDemonstrated > bDemonstrated) ? 1 : (aDemonstrated < bDemonstrated) ? -1 : 0;
                 });
 
                 demonstrationsTable.update(skillDemonstrations);
