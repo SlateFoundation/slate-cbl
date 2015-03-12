@@ -24,7 +24,13 @@ class StudentCompetency extends \ActiveRecord
         'CompletionType' => [
             'type' => 'enum',
             'values' => array('demonstrated', 'overridden')
-        ]
+        ],
+        'Status' => [
+            'type' => 'enum'
+            ,'values' => ['Enrolled', 'Completed']
+            ,'default' => 'Enrolled'
+        ],
+        ['Level' => 'uint']
     ];
 
     public static $relationships = [

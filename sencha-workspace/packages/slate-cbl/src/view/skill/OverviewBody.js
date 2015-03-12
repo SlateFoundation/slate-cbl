@@ -56,7 +56,7 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                                         '<tpl if="Demonstration.Comments">',
                                             '<div class="skill-grid-demo-comments">',
                                                 '<strong>Comments: </strong>',
-                                                '{Demonstration.Comments:htmlEncode:nl2br}',
+                                                '{[Ext.util.Format.nl2br(Ext.util.Format.htmlEncode(values.Demonstration.Comments))]}',
                                             '</div>',
                                         '</tpl>',
                                         '<div class="skill-grid-demo-meta">',
