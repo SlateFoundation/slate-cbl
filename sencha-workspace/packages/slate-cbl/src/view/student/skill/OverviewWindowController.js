@@ -3,10 +3,6 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-student-skill-overviewwindow',
     requires: [
-//        'Slate.cbl.API',
-//
-//        'Ext.MessageBox',
-//        'Ext.window.Toast'
         'Slate.cbl.model.Competency',
         'Slate.cbl.model.Skill'
     ],
@@ -16,7 +12,7 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
         control: {
             '#': {
                 beforeshow: 'onBeforeWindowShow',
-                beforeRender: 'onBeforeRender',
+                beforerender: 'onBeforeRender',
                 demorowclick: 'onDemoRowClick',
                 destroy: 'onDestroy'
             },
@@ -79,13 +75,24 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
         var me = this,
             demonstrationsTable = me.lookupReference('demonstrationsTable'),
             skillId = me.lookupReference('skillCombo').getValue(),
-            studentId = me.view.getStudent();
-
+            studentId = me.view.getStudent(),
+            demonstrationId = me.view.getDemonstration();
+            
         if (skillId && studentId) {
-            demonstrationsTable.setLoading('Loading demonstrations&hellip;'); // currently not visible due to http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
+            // currently not visible due to http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
+            demonstrationsTable.setLoading('Loading demonstrations&hellip;');
             Slate.cbl.model.Skill.load(skillId, {
                 callback: function(skill) {
                     skill.getDemonstrationsByStudent(studentId, function(skillDemonstrations) {
+                        
+                        skillDemonstrations.sort(function compare(a, b) {
+                            var aDemonstrated = new Date(a.Demonstration.Demonstrated),
+                                bDemonstrated = new Date(b.Demonstration.Demonstrated);
+
+                            return (aDemonstrated > bDemonstrated) ? 1 : (aDemonstrated < bDemonstrated) ? -1 : 0;
+                        });
+
+                        demonstrationsTable.selectedDemonstrationId = demonstrationId;
                         demonstrationsTable.update(skillDemonstrations);
                         demonstrationsTable.setLoading(false);
                     });

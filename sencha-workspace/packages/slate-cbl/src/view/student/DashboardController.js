@@ -36,15 +36,26 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         var me = this,
             siteEnv = window.SiteEnvironment || {},
             student = siteEnv.cblStudent && Ext.create('Slate.cbl.model.Student', siteEnv.cblStudent)
-        studentDashboardCompetenciesList = dashboardView.el.down('#studentDashboardCompetenciesList'),
+            studentDashboardCompetenciesList = dashboardView.el.down('#studentDashboardCompetenciesList'),
+            /* HACK: what's the right way to get the recent progress... also why do we use down with an id above? */
+            studentDashboardRecentProgress = Ext.getElementById('studentDashboardRecentProgress'),
             contentArea = siteEnv.cblContentArea && Ext.create('Slate.cbl.model.ContentArea', siteEnv.cblContentArea),
             competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-            competenciesTpl = Ext.XTemplate.getTpl(me.view, 'competenciesTpl');
+            competenciesTpl = Ext.XTemplate.getTpl(me.view, 'competenciesTpl'),
+            recentProgressTpl = Ext.XTemplate.getTpl(me.view, 'recentProgressTpl');
 
         if (!student || !contentArea) {
             return;
         }
-
+                
+        Slate.cbl.API.getRecentProgress({}, function(progress) {
+            progress = Ext.isArray(progress) ? progress : [];
+            
+            recentProgressTpl.overwrite(studentDashboardRecentProgress, {
+                progress: progress
+            });
+        });
+        
         // empty competencies list
         studentDashboardCompetenciesList.empty();
         studentDashboardCompetenciesList.removeCls('competencies-unloaded').addCls('competencies-loading');
@@ -53,7 +64,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
             var competenciesLength = competencies.length,
                 competencyIndex = 0,
                 competency, skillsList;
-
 
             if(!competenciesStore.isLoaded()) {
                 competenciesStore.loadRawData(competencies);
@@ -75,19 +85,20 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     },
 
     onDemoCellClick: function(dashboardView, ev, targetEl) {
-
+        // HACK: No idea how to get the demonstration set below into the OverviewBody xtemplate
+        window.SiteEnvironment.clickedDemonstration = parseInt(targetEl.getAttribute('data-demonstration'), 10);
+        
         Ext.create('Slate.cbl.view.student.skill.OverviewWindow', {
             autoShow: true,
             animateTarget: targetEl,
 
             student: window.SiteEnvironment.cblStudent.ID,
             competency: targetEl.up('ul.cbl-skill-demos').up('li.cbl-competency-panel').getAttribute('data-competency'),
-            skill: targetEl.getAttribute('data-skill')
+            skill: targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'),
+            demonstration: window.SiteEnvironment.clickedDemonstration /* HACK: FIXME: */
         });
     },
-
-
-
+    
     // protected methods
     loadSkills: function(student, competency, skillsList) {
         var me = this,
@@ -117,7 +128,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
 
         competency.getDemonstrationsForStudents([student.getId()], function(loadedDemonstrations) {
             demonstrations = loadedDemonstrations;
-
+            
             if (skills) {
                 _renderSkills();
             }
@@ -126,9 +137,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
 
         competency.withSkills(function(loadedSkills) {
             skills = loadedSkills;
-
-
-
+            
             if (demonstrations) {
                 _renderSkills();
             }

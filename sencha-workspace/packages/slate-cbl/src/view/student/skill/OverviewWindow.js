@@ -4,6 +4,7 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
     xtype: 'slate-cbl-student-skill-overviewwindow',
     requires: [
         'Slate.cbl.view.student.skill.OverviewWindowController',
+        'Slate.cbl.view.skill.OverviewBody',
         'Slate.cbl.model.Skill',
 
         'Ext.form.field.ComboBox',
@@ -15,14 +16,14 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
     config: {
         student: null,
         competency: null,
-        skill: null
+        skill: null,
+        demonstration: null
     },
 
     title: 'Standard Overview',
     width: 700,
     minWidth: 700,
     shadow: 'frame',
-    center: true,
     fixed: true,
     monitorResize: true,
     modal: true,
@@ -74,8 +75,15 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
 
         return skill ? skill : null;
     },
+    
+    applyDemonstration: function(demonstration) {        
+        if (Ext.isString(demonstration)) {
+            demonstration = parseInt(demonstration, 10);
+        }
 
-
+        return demonstration ? demonstration : null;
+    },
+    
     onGridClick: function(ev, t) {
         var me = this,
             targetEl;
