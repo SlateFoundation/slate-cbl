@@ -88,7 +88,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
             autoShow: true,
             animateTarget: targetEl,
 
-            student: window.SiteEnvironment.cblStudent.ID,
+            student: dashboardView.getStudent().getId(),
             competency: targetEl.up('ul.cbl-skill-demos').up('li.cbl-competency-panel').getAttribute('data-competency'),
             skill: targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'),
             demonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)

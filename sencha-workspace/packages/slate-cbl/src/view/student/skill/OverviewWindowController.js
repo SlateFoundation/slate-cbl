@@ -40,7 +40,6 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
     onBeforeWindowShow: function(overviewWindow) {
         var me = this,
             competencyId = overviewWindow.getCompetency(),
-            student = overviewWindow.getStudent(),
             skillsCombo = me.lookupReference('skillCombo'),
             skillStore = skillsCombo.getStore(),
             skillId = overviewWindow.getSkill();
