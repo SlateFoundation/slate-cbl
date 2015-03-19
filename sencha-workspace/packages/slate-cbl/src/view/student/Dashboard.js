@@ -123,9 +123,10 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         }
     ],
 
-    html: [
-        '<ul class="cbl-competency-panels competencies-unloaded" id="studentDashboardCompetenciesList"></ul>'
-    ],
+    autoEl: {
+        tag: 'ul',
+        cls: 'cbl-competency-panels competencies-unloaded'
+    },
 
     listeners: {
         scope: 'this',

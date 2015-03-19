@@ -34,9 +34,9 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     //event handlers
     onComponentRender: function(dashboardView) {
         var me = this,
-            studentDashboardCompetenciesList = dashboardView.el.down('#studentDashboardCompetenciesList'),
+            studentDashboardCompetenciesList = dashboardView.el,
             /* HACK: what's the right way to get the recent progress... also why do we use down with an id above? */
-            studentDashboardRecentProgress = Ext.getElementById('studentDashboardRecentProgress'),
+            studentDashboardRecentProgress = Ext.get('studentDashboardRecentProgress'), // todo: move this to Site.page.Student script
             student = dashboardView.getStudent(),
             contentArea = dashboardView.getContentArea(),
             competenciesStore = Ext.getStore('cbl-competencies-loaded'),
