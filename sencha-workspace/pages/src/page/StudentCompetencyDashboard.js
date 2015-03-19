@@ -31,6 +31,7 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
         // render student dashboard component
         me.dashboard = Ext.create('Slate.cbl.view.student.Dashboard', {
             renderTo: Ext.get('studentDashboardCt'),
+            student: siteEnv.cblStudent || null,
             contentArea: siteEnv.cblContentArea || null
         });
         
