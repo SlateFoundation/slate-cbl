@@ -90,13 +90,11 @@ class ContentAreasRequestHandler extends \RecordsRequestHandler
     public static function handleRecentProgressRequest($contentArea) {
         $student = $_GET['student'];
         $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
-        
-        if (!$student) {
-            if (!ctype_digit($student)) {
-                return static::throwInvalidRequestError('student must be identified by integer ID');
-            }
+
+        if (!ctype_digit($student)) {
+            return static::throwInvalidRequestError('student must be identified by integer ID');
         }
-        
+
         try {
             $progress = DB::allRecords("
                 SELECT ds.level,
