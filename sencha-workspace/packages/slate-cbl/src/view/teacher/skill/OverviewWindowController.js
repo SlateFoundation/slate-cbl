@@ -133,7 +133,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
 
     // private methods
-    syncDemonstrationsTable: function() {
+    syncDemonstrationsTable: function() { // TODO: move some/all of this method to common view code?
         var me = this,
             demonstrationsTable = me.lookupReference('demonstrationsTable'),
             skillCombo = me.lookupReference('skillCombo'),

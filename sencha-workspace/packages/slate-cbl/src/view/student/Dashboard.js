@@ -55,6 +55,7 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
     ],
 
     competenciesTpl: [
+        // TODO: indent markup
         '<tpl for="competencies">',
         '{%var level = 9%}', // TODO: real level
         '{%var studentCompletion = values.studentCompletions[parent.student.ID] || {}%}',
