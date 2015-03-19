@@ -23,22 +23,19 @@ Ext.define('Slate.cbl.API', {
         });
     },
     
-    getRecentProgress: function(params, callback, scope) {
-        params = params || {};
-        
-        var contentAreaCode = params.contentAreaCode || window.SiteEnvironment.cblContentArea.Code,
-            me = this;
-        
-        params.limit = params.limit || 10;
-        params.student = params.student || window.SiteEnvironment.cblStudent.ID;
-        delete params.contentAreaCode;
+    getRecentProgress: function(studentId, contentAreaCode, callback, scope) {
+        var me = this,
+            params = {
+                limit: 10,
+                student: studentId
+            };
 
         me.request({
             url: '/cbl/content-areas/' + contentAreaCode + '/recent-progress',
             method: 'GET',
             params: params,
             success: function(response) {
-                me.fireEvent('recentprogressload', response.data.data, contentAreaCode);
+                me.fireEvent('recentprogressload', response.data.data, studentId, contentAreaCode);
                 Ext.callback(callback, scope, [response.data.data]);
             }
         });

@@ -46,8 +46,9 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         if (!student || !contentArea) {
             return;
         }
-                
-        Slate.cbl.API.getRecentProgress({}, function(progress) {
+
+        // TODO: recent progress should be its own component
+        Slate.cbl.API.getRecentProgress(student.getId(), contentArea.get('Code'), function(progress) {
             progress = Ext.isArray(progress) ? progress : [];
             
             recentProgressTpl.overwrite(studentDashboardRecentProgress, {
