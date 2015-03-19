@@ -72,6 +72,15 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                 autoSelect: true
             },
             {
+                xtype: 'datefield',
+                name: 'Demonstrated',
+                fieldLabel: 'Demonstrated',
+                displayField: 'Demonstrated',
+                valueField: 'Demonstrated',
+                value: new Date().toLocaleDateString()
+            },
+
+            {
                 xtype: 'combobox',
                 name: 'ExperienceType',
                 fieldLabel: 'Type of Experience',

@@ -1,11 +1,12 @@
-/*jslint browser: true, undef: true *//*global Ext*/
+/*jslint browser: true, undef: true *//*global Ext, SiteEnvironment*/
 Ext.define('Slate.cbl.view.teacher.Dashboard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-teacher-dashboard',
     requires:[
         'Slate.cbl.view.teacher.DashboardController',
         'Slate.cbl.model.ContentArea',
-        'Slate.cbl.widget.Popover'
+        'Slate.cbl.widget.Popover',
+        'Slate.cbl.util.CBL'
     ],
 
     controller: 'slate-cbl-teacher-dashboard',
@@ -42,7 +43,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         '<ul class="cbl-grid-demos">',
             '<tpl for="this.getDemonstrationBlocks(skill, studentId)">',
                 '<tpl if="DemonstrationID">',
-                    '<li class="cbl-grid-demo<tpl if="counted"> cbl-grid-demo-counted<tpl else> cbl-grid-demo-uncounted</tpl><tpl if="Level==0"> cbl-grid-demo-missed</tpl>" data-demonstration="{DemonstrationID}">',
+                    '<li class="cbl-grid-demo cbl-grid-demo-counted <tpl if="Level==0"> cbl-grid-demo-missed</tpl>" data-demonstration="{DemonstrationID}">',
                         '<tpl if="Level==0">M<tpl else>{Level}</tpl>',
                     '</li>',
                 '<tpl else>',
@@ -51,55 +52,23 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             '</tpl>',
         '</ul>',
         {
+
             getDemonstrationBlocks: function(skill, studentId) {
+
+                if (!skill || !studentId) {
+                    return null;
+                }
+
                 var demonstrationsRequired = skill.DemonstrationsRequired,
-                    demonstrationsByStudent = skill.demonstrationsByStudent,
-                    blocks, blocksLength, blockIndex, lowestBlockIndex;
-
-
-                // start with all demonstrations, cloned and marked as counted
-                if (demonstrationsByStudent && studentId in demonstrationsByStudent) {
-                    blocks = Ext.Array.map(demonstrationsByStudent[studentId], function(demonstration) {
-                        return Ext.apply({
-                            counted: demonstration.Level >= 8 // TODO: retrieve the competency level dynamically rather than hard coding to 9
-                        }, demonstration);
-                    });
-                } else {
-                    blocks = [];
-                }
-
-
-                // trim lowest demonstrations
-                while ((blocksLength = blocks.length) > demonstrationsRequired) {
-                    for (blockIndex = 0, lowestBlockIndex = null; blockIndex < blocksLength; blockIndex++) {
-                        if (lowestBlockIndex === null || blocks[blockIndex].Level < blocks[lowestBlockIndex].Level) {
-                            lowestBlockIndex = blockIndex;
-                        }
-                    }
-
-                    Ext.Array.splice(blocks, lowestBlockIndex, 1);
-                }
-
-
-                // sort counted demonstrations first
-                Ext.Array.sort(blocks, function(a, b) {
-                    if (a.counted && !b.counted) {
-                        return -1;
-                    }
-
-                    if (!a.counted && b.counted) {
-                        return 1;
-                    }
-
-                    return a.DemonstrationID > b.DemonstrationID ? 1 : -1;
-                });
-
+                    blocks = Slate.cbl.util.CBL.sortDemonstrations(
+                        skill.demonstrationsByStudent ? skill.demonstrationsByStudent[studentId] : [],
+                        demonstrationsRequired
+                );
 
                 // add empty blocks
                 while (blocks.length < demonstrationsRequired) {
                     blocks.push({});
                 }
-
 
                 return blocks;
             }
@@ -197,17 +166,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         click: {
             fn: 'onGridClick',
             element: 'el',
-            delegate: '.cbl-grid-progress-row, .cbl-grid-demos-cell'
-        },
-        mouseover: {
-            fn: 'onSkillNameMouseOver',
-            element: 'el'
-//            delegate: '.cbl-grid-skill-name'
+            delegate: '.cbl-grid-progress-row, .cbl-grid-demo'
         }
-//        mouseout: {
-//            fn: 'onSkillsGridMouseOut',
-//            element: 'el'
-//        }
     },
 
     applyPopover: function(newPopover, oldPopover) {
@@ -240,27 +200,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
         if (targetEl = ev.getTarget('.cbl-grid-progress-row', me.el, true)) {
             me.fireEvent('progressrowclick', me, ev, targetEl);
-        } else if (targetEl = ev.getTarget('.cbl-grid-demos-cell', me.el, true)) {
+        } else if (targetEl = ev.getTarget('.cbl-grid-demo', me.el, true)) {
             me.fireEvent('democellclick', me, ev, targetEl);
-        }
-    },
-
-    onSkillNameMouseOver: function(ev) {
-        var me = this,
-            popover = me.getPopover(),
-            dashboardEl = me.el,
-            targetEl;
-
-        if (targetEl = ev.getTarget('.cbl-grid-skill-name', dashboardEl, true)) {
-            if (popover.hidden || popover.alignTarget !== targetEl) {
-                popover.showBy(targetEl);
-                popover.update({
-                    title: targetEl.getAttribute('data-skill-name'),
-                    body: targetEl.getAttribute('data-skill-description')
-                });
-            }
-        } else {
-            popover.hide();
         }
     }
 });

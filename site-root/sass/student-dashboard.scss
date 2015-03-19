@@ -2,49 +2,51 @@
 @import 'compass/css3/images';
 @import 'compass/css3/transform';
 
- $level-9-color: #d94181;
+@import 'variables-all';
+
+$level-9-color: #d94181;
 $level-10-color: #ffa200;
 $level-11-color: #5dc02a;
 $level-12-color: #008cc1;
 
- $level-9-color-light: #ea97ba;
+$level-9-color-light: #ea97ba;
 $level-10-color-light: #ffcc73;
 $level-11-color-light: #a6dc8a;
 $level-12-color-light: #73c0dd;
 
- $level-9-color-medium: #e1679a;
+$level-9-color-medium: #e1679a;
 $level-10-color-medium: #ffb533;
 $level-11-color-medium: #7dcd55;
 $level-12-color-medium: #33a3cd;
 
- $level-9-color-dark: #ca274f;
+$level-9-color-dark: #ca274f;
 $level-10-color-dark: #ff7d00;
 $level-11-color-dark: #38a719;
 $level-12-color-dark: #005ea8;
 
 $level-colors:
-     $level-9-color,
-    $level-10-color,
-    $level-11-color,
-    $level-12-color;
+$level-9-color,
+$level-10-color,
+$level-11-color,
+$level-12-color;
 
 $level-colors-light:
-     $level-9-color-light,
-    $level-10-color-light,
-    $level-11-color-light,
-    $level-12-color-light;
+$level-9-color-light,
+$level-10-color-light,
+$level-11-color-light,
+$level-12-color-light;
 
 $level-colors-medium:
-     $level-9-color-medium,
-    $level-10-color-medium,
-    $level-11-color-medium,
-    $level-12-color-medium;
+$level-9-color-medium,
+$level-10-color-medium,
+$level-11-color-medium,
+$level-12-color-medium;
 
 $level-colors-dark:
-     $level-9-color-dark,
-    $level-10-color-dark,
-    $level-11-color-dark,
-    $level-12-color-dark;
+$level-9-color-dark,
+$level-10-color-dark,
+$level-11-color-dark,
+$level-12-color-dark;
 
 .cbl-level-colored {
     color: white;
@@ -61,32 +63,41 @@ $level-colors-dark:
         $level-color-light:  nth($level-colors-light,  ($n - 8));
         $level-color-medium: nth($level-colors-medium, ($n - 8));
         $level-color-dark:   nth($level-colors-dark,   ($n - 8));
-    
+
         .cbl-progress-meter {
-            @extend .cbl-level-colored;
             background-color: $level-color-light;
         }
-        
+
         .cbl-progress-bar {
             @include background-image(linear-gradient(
-                $level-color,
-                $level-color-dark
+                            $level-color,
+                            $level-color-dark
             ));
         }
-        
+
         .cbl-skill-complete-indicator {
             background: none;
             color: $level-color;
             text-shadow: none;
         }
-        
+
         .check-mark {
             fill: $level-color;
         }
 
         .cbl-skill-demo[data-demonstration] {
-            @extend .cbl-level-colored;
             background-color: $level-color;
+
+            &.cbl-skill-demo-uncounted {
+                background-color: mix($text-color, $page-bg-color, 17%);
+                color: mix($text-color, $page-bg-color, 67%);
+                font-weight: normal;
+                text-shadow: none;
+            }
+            
+            &.cbl-grid-demo-missed {
+                background-color: #C8C8C8;
+            }
         }
     }
 }
@@ -97,14 +108,25 @@ $level-colors-dark:
     }
 }
 
+.cbl-grad-progress {
+    .cbl-progress-level,
+    .cbl-progress-percent {
+        background-color: rgba(black, .1667);
+        border-radius: 3px;
+        padding: 0 .5em;
+    }
+}
+
 .cbl-labeled-meter {
     align-items: center;
     clear: both;
     display: flex;
     margin: 1em 0;
-    
+
     .cbl-progress-meter {
+        border-radius: .25em;
         flex: 1;
+        overflow: hidden;
     }
 }
 
@@ -114,14 +136,15 @@ $level-colors-dark:
     margin: 0 2em 0 0;
 }
 
-
 .cbl-progress-meter {
+    @extend .cbl-level-colored;
+    background-color: #ddd;
     height: 2.5em;
     position: relative;
 }
 
 .is-average-low {
-	background-image: image-url('halted-progress.png');
+    background-image: image-url('halted-progress.png');
 }
 
 .cbl-progress-bar {
@@ -133,10 +156,14 @@ $level-colors-dark:
 }
 
 .cbl-progress-level {
-    left: 1em;
+    left: .5em;
     position: absolute;
     top: 50%;
     @include translateY(-50%);
+
+    &.no-select {
+        left: 1em;
+    }
 }
 
 .cbl-progress-percent {
@@ -147,21 +174,28 @@ $level-colors-dark:
 }
 
 .cbl-progress-average {
-	right: 1em;
-	position: absolute;
-	top: 50%;
-	@include translateY(-50%);
+    font-size: .75em;
+    right: 1em;
+    position: absolute;
+    top: 50%;
+    @include translateY(-50%);
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: subpixel-antialiased;
 
-	.is-average-low & {
-	    background: red;
-	    padding: 0 .3em;
-	}
+    .is-average-low & {
+        background: red;
+        padding: 0 .3em;
+    }
 }
 
 .explainer {
-	color: #888;
-	font-style: italic;
-	margin: 1.5em;
+    color: #888;
+    font-style: italic;
+    margin: 1em 0;
+
+    p {
+        margin: 0 0 1em;
+    }
 }
 
 .student-dashboard-tpl {
@@ -172,19 +206,36 @@ $level-colors-dark:
 
 .cbl-recent-progress {
     float: right;
-    margin: 0 0 3% 3%;
+    margin: 1em 0 3% 3%;
     width: 31.3333%;
+
+    .table-ct {
+        max-height: 12em;
+        overflow: auto;
+    }
 
     .scoring-domain-col {
         width: 100%;
     }
 
     .level-col {
-        text-align: right;
+        text-align: center;
 
-		> div {
-			border-radius: 3px;
-		}
+        > div {
+            border-radius: 3px;
+        }
+    }
+
+    .domain-skill {
+        display: block;
+        font-size: small;
+        line-height: 1.3333;
+    }
+
+    .meta {
+        color: $muted-color;
+        font-size: small;
+        line-height: 1.3333;
     }
 }
 
@@ -196,11 +247,12 @@ $level-colors-dark:
 }
 
 .cbl-competency-panel {
+    background: none;
     display: inline-block;
     margin: 0 1.5% 3%;
     vertical-align: top;
     width: 47%;
-    
+
     .header-title {
         float: none;
     }
@@ -208,19 +260,33 @@ $level-colors-dark:
     .cbl-progress-meter {
         margin: -1em -1em 0;
     }
+    .panel-body {
+        color: $text-color;
+        font: $body-font;
+        font-size: $font-size;
+        text-align: left;
+        text-shadow: none;
+    }
 }
 
 .cbl-skill-meter {
     list-style: none;
+    margin: 0;
     padding: 0;
 }
 
 .cbl-skill {
-    align-items: center;
+    border-top: 1px solid $border-color;
     clear: both;
-    display: flex;
-    flex-wrap: wrap;
-    margin: 1em 0;
+    margin: 0 -1em;
+    padding: 1em;
+    position: relative;
+
+    &:hover {
+        background-color: rgba(white, .95);
+        border-color: transparent;
+        box-shadow: 0 0 0 1px darken($border-color, 10);
+    }
 }
 
 .cbl-skill-name {
@@ -232,16 +298,17 @@ $level-colors-dark:
 
 .cbl-skill-demos {
     display: flex;
-    flex: 1;
-    margin: .25em 4em;
-    margin-right: 4em - 1.5;
+    margin: .5em 0 0;
     padding: 0;
+
+    &:empty {
+        margin: 0;
+    }
 }
 
 .cbl-skill-demo {
-    @extend .cbl-level-n;
-    background: white;
-    border: 1px solid #333;
+    background-color: rgba(white, .5);
+    border: 1px solid rgba(black, .2);
     border-radius: 2px;
     display: block;
     flex: 1;
@@ -249,6 +316,17 @@ $level-colors-dark:
 
     + .cbl-skill-demo {
         margin-left: .25em;
+    }
+}
+
+.cbl-skill-demo[data-demonstration] {
+    @extend .cbl-level-colored;
+    border-color: $text-color;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        box-shadow: inset 0 0 0 2px rgba(white, .5);
     }
 }
 
@@ -272,5 +350,29 @@ $level-colors-dark:
 
     .check-mark-image {
         margin-top: 4px;
+    }
+}
+
+.cbl-skill-description {
+    background: rgba(white, .95);
+    border: 1px solid darken($border-color, 10);
+    border-top-width: 0;
+    box-shadow: 0 1em 1em -1em rgba(black, .4);
+    display: none;
+    left: -1px;
+    padding: 0 3em 1.5em;
+    position: absolute;
+    right: -1px;
+    top: 100%;
+    z-index: 1;
+
+    p {
+        color: $muted-color;
+        font-style: italic;
+        margin: 0;
+    }
+
+    .cbl-skill:hover & {
+        display: block;
     }
 }

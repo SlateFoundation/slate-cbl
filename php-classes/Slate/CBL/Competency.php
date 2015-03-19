@@ -190,7 +190,7 @@ FROM (
         SELECT DemonstrationSkill.SkillID, DemonstrationSkill.Level
         FROM `%s` DemonstrationSkill
         JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-        WHERE DemonstrationSkill.SkillID IN (%s) AND DemonstrationSkill.Level >= %u
+        WHERE DemonstrationSkill.SkillID IN (%s) AND DemonstrationSkill.Level > 0
     ) StudentDemonstrationSkill
     ORDER BY SkillID, Level DESC
 ) OrderedDemonstrationSkill
@@ -202,7 +202,6 @@ END_OF_SQL
                     Demonstration::$tableName,
                     $Student->ID,
                     implode(',', $this->getSkillIds()),
-                    $this->getMinimumLevel(),
                     Skill::$tableName
                 ]
             );

@@ -95,6 +95,8 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
 
         foreach ($contentAreas AS $ContentArea) {
             foreach ($ContentArea->Competencies AS $Competency) {
+                $headers[] = $Competency->Code . '-Logged';
+                $headers[] = $Competency->Code . '-Total';
                 $headers[] = $Competency->Code . '-AVG';
             }
 
@@ -120,10 +122,15 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                 $demonstrationsRequired = 0;
                 $demonstrationsMissing = 0;
                 $contentAreaAverageTotal = 0;
-
+                
                 foreach ($ContentArea->Competencies AS $Competency) {
                     $competencyCompletion = $Competency->getCompletionForStudent($Student);
-
+                    
+                    // Logged
+                    $row[] = $competencyCompletion['demonstrationsCount'];
+                    // Total
+                    $row[] = $Competency->getTotalDemonstrationsRequired();
+                    // Average
                     $row[] = $competencyCompletion['demonstrationsCount'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null;
 
                     $demonstrationsCounted += $competencyCompletion['demonstrationsCount'];
@@ -164,13 +171,22 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
 
         // query demonstrations sums
         try {
-            $skillDemonstrations = DB::allRecords(
-                'SELECT Demonstration.ID AS DemonstrationID, Demonstration.StudentID, DemonstrationSkill.SkillID, DemonstrationSkill.Level'
-                .' FROM (SELECT ID FROM `%s` WHERE CompetencyID = %u) AS Skill'
-                .' JOIN `%s` DemonstrationSkill'
-                .'  ON DemonstrationSkill.SkillID = Skill.ID'
-                .' JOIN (SELECT ID, StudentID FROM `%s` WHERE StudentID IN (%s)) Demonstration'
-                .'  ON Demonstration.ID = DemonstrationSkill.DemonstrationID'
+            $skillDemonstrations = DB::allRecords('
+                 SELECT Demonstration.ID AS DemonstrationID,
+                        Demonstration.StudentID,
+                        Demonstration.Demonstrated,
+                        DemonstrationSkill.SkillID,
+                        DemonstrationSkill.Level,
+                        DemonstrationSkill.ID
+                   FROM (SELECT ID
+                           FROM `%s`
+                          WHERE CompetencyID = %u) AS Skill
+                   JOIN `%s` DemonstrationSkill
+                     ON DemonstrationSkill.SkillID = Skill.ID
+                   JOIN (SELECT ID, StudentID, UNIX_TIMESTAMP(Demonstrated) AS Demonstrated
+                           FROM `%s`
+                          WHERE StudentID IN (%s)) Demonstration
+                     ON Demonstration.ID = DemonstrationSkill.DemonstrationID'
                 ,[
                     Skill::$tableName
                     ,$Competency->ID
@@ -186,9 +202,11 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
         // cast strings to integers
         foreach ($skillDemonstrations AS &$skillDemonstration) {
             $skillDemonstration['DemonstrationID'] = intval($skillDemonstration['DemonstrationID']);
+            $skillDemonstration['Demonstrated'] = intval($skillDemonstration['Demonstrated']);
             $skillDemonstration['StudentID'] = intval($skillDemonstration['StudentID']);
             $skillDemonstration['SkillID'] = intval($skillDemonstration['SkillID']);
             $skillDemonstration['Level'] = intval($skillDemonstration['Level']);
+            $skillDemonstration['ID'] = intval($skillDemonstration['ID']);
         }
 
         return static::respond('skills', [
