@@ -161,8 +161,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
             });
         } else {
             demonstrationsTable.update({
-                    demonstrations: [],
-                    selectedDemonstrationId: null
+                demonstrations: [],
+                selectedDemonstrationId: null
             });
         }
     }
