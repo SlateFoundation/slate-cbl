@@ -92,14 +92,19 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
                             return (aDemonstrated > bDemonstrated) ? 1 : (aDemonstrated < bDemonstrated) ? -1 : 0;
                         });
 
-                        demonstrationsTable.selectedDemonstrationId = demonstrationId;
-                        demonstrationsTable.update(skillDemonstrations);
+                        demonstrationsTable.update({
+                            demonstrations: skillDemonstrations,
+                            selectedDemonstrationId: demonstrationId
+                        });
                         demonstrationsTable.setLoading(false);
                     });
                 }
             });
         } else {
-            demonstrationsTable.update('');
+            demonstrationsTable.update({
+                demonstrations: [],
+                selectedDemonstrationId: null
+            });
         }
     }
 });

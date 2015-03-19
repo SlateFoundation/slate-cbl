@@ -34,8 +34,9 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                             '<th class="skill-grid-header skill-grid-demo-task">Performance&nbsp;Task</th>',
                         '</tr>',
                     '</thead>',
-                    '<tpl if="values && values.length">',
-                        '<tpl for=".">',
+
+                    '<tpl if="demonstrations && demonstrations.length">',
+                        '<tpl for="demonstrations">',
                             '<tr class="skill-grid-demo-row" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstration.Demonstrated:date("M j, Y")}</td>',
@@ -44,7 +45,7 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                                 '<td class="skill-grid-demo-data skill-grid-demo-context">{Demonstration.Context:htmlEncode}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-task">{Demonstration.PerformanceType:htmlEncode}</td>',
                             '</tr>',
-                            '<tr class="skill-grid-demo-detail-row {[ this.getClickedDemonstration() == values.DemonstrationID ? "is-expanded" : "" ]}" data-demonstration="{ID}">',
+                            '<tr class="skill-grid-demo-detail-row <tpl if="parent.selectedDemonstrationId == values.DemonstrationID">is-expanded</tpl>" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-detail-data" colspan="6">',
                                     '<div class="skill-grid-demo-detail-ct">',
                                         '<tpl if="Demonstration.ArtifactURL">',
@@ -56,14 +57,15 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                                         '<tpl if="Demonstration.Comments">',
                                             '<div class="skill-grid-demo-comments">',
                                                 '<strong>Comments: </strong>',
-                                                '{Demonstration.Comments:htmlEncode:nl2br}',
+                                                '{[Ext.util.Format.nl2br(Ext.util.Format.htmlEncode(values.Demonstration.Comments))]}',
                                             '</div>',
                                         '</tpl>',
                                         '<div class="skill-grid-demo-meta">',
                                             'Demonstration #{Demonstration.ID} &middot;&nbsp;',
                                             '<tpl for="Demonstration.Creator"><a href="/people/{Username}">{FirstName} {LastName}</a></tpl> &middot;&nbsp;',
-                                            '{[fm.date(new Date(values.Demonstration.Created * 1000), "F j, Y, g:i a")]} &middot;&nbsp;',
+                                            '{[fm.date(new Date(values.Demonstration.Created * 1000), "F j, Y, g:i a")]}',
                                             '<tpl if="!window.SiteEnvironment.cblStudent">',
+                                                ' &middot;&nbsp;',
                                                 '<a href="#demonstration-edit" data-demonstration="{Demonstration.ID}">Edit</a> | ',
                                                 '<a href="#demonstration-delete" data-demonstration="{Demonstration.ID}">Delete</a>',
                                             '</tpl>',
@@ -77,18 +79,7 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                             '<td class="skill-grid-emptytext-cell" colspan="6">No demonstrations are logged yet for this skill</td>',
                         '</tr>',
                     '</tpl>',
-                '</table>',
-                {
-                    getClickedDemonstration: function() {
-                        /* TODO: HACK: FIXME: DISCUSS: (all of the things)
-                           @themightychris, I can't figure out how to get the
-                           config.demonstration from OverviewWindow into this
-                           template... this is here for QA purposes.
-                        */
-                        
-                        return window.SiteEnvironment.clickedDemonstration;
-                    }
-                }
+                '</table>'
             ]
         }
     ]

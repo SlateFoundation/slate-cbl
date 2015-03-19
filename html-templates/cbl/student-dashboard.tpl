@@ -14,15 +14,15 @@
 
     <header class="page-header">
         <h2 class="header-title">{$Student->FullName|escape}</h2>
-
-        <div class="cbl-labeled-meter cbl-grad-progress">
+        
+        {* <div class="cbl-labeled-meter cbl-grad-progress">
             <h3 class="cbl-meter-label level-color">Graduation Progress</h3>
             <div class="cbl-progress-meter cbl-level-10">
                 <div class="cbl-progress-bar" style="width:40%"></div>
                 <div class="cbl-progress-level">L10</div>
                 <div class="cbl-progress-percent">40%</div>
             </div>
-        </div>
+        </div> *}
     </header>
 
     <form method="GET">

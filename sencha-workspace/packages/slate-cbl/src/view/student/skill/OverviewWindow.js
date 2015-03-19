@@ -55,7 +55,8 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
     ],
     items: [
         {
-            xtype: 'slate-cbl-skill-overviewbody'
+            xtype: 'slate-cbl-skill-overviewbody',
+            reference: 'demonstrationsBody'
         }
     ],
 
