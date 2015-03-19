@@ -64,7 +64,7 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                                             'Demonstration #{Demonstration.ID} &middot;&nbsp;',
                                             '<tpl for="Demonstration.Creator"><a href="/people/{Username}">{FirstName} {LastName}</a></tpl> &middot;&nbsp;',
                                             '{[fm.date(new Date(values.Demonstration.Created * 1000), "F j, Y, g:i a")]}',
-                                            '<tpl if="!window.SiteEnvironment.cblStudent">',
+                                            '<tpl if="parent.showEditLinks">',
                                                 ' &middot;&nbsp;',
                                                 '<a href="#demonstration-edit" data-demonstration="{Demonstration.ID}">Edit</a> | ',
                                                 '<a href="#demonstration-delete" data-demonstration="{Demonstration.ID}">Delete</a>',

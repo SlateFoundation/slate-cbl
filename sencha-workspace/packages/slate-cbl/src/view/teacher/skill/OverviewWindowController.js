@@ -154,7 +154,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
                 demonstrationsTable.update({
                     demonstrations: skillDemonstrations,
-                    selectedDemonstrationId: demonstrationId
+                    selectedDemonstrationId: demonstrationId,
+                    showEditLinks: true
                 });
 
                 demonstrationsTable.setLoading(false);
