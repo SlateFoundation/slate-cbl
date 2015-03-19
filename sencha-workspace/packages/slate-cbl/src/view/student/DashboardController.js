@@ -91,7 +91,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
             student: dashboardView.getStudent().getId(),
             competency: targetEl.up('ul.cbl-skill-demos').up('li.cbl-competency-panel').getAttribute('data-competency'),
             skill: targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'),
-            demonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
+            demonstration: targetEl.getAttribute('data-demonstration')
         });
     },
     

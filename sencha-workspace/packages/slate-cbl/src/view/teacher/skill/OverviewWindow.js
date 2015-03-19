@@ -143,6 +143,14 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
         return skill ? skill : null;
     },
 
+    applyDemonstration: function(demonstration) {
+        if (Ext.isString(demonstration)) {
+            demonstration = parseInt(demonstration, 10);
+        }
+
+        return demonstration ? demonstration : null;
+    },
+
     onGridClick: function(ev, t) {
         var me = this,
             targetEl;
