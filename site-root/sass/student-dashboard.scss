@@ -94,6 +94,10 @@ $level-12-color-dark;
                 font-weight: normal;
                 text-shadow: none;
             }
+            
+            &.cbl-grid-demo-missed {
+                background-color: #C8C8C8;
+            }
         }
     }
 }
@@ -215,7 +219,7 @@ $level-12-color-dark;
     }
 
     .level-col {
-        text-align: right;
+        text-align: center;
 
         > div {
             border-radius: 3px;

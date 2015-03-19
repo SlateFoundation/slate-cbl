@@ -21,5 +21,23 @@ Ext.define('Slate.cbl.API', {
                 Ext.callback(callback, scope, [response]);
             }
         });
+    },
+    
+    getRecentProgress: function(studentId, contentAreaCode, callback, scope) {
+        var me = this,
+            params = {
+                limit: 10,
+                student: studentId
+            };
+
+        me.request({
+            url: '/cbl/content-areas/' + contentAreaCode + '/recent-progress',
+            method: 'GET',
+            params: params,
+            success: function(response) {
+                me.fireEvent('recentprogressload', response.data.data, studentId, contentAreaCode);
+                Ext.callback(callback, scope, [response.data.data]);
+            }
+        });
     }
 });

@@ -16,7 +16,9 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
 
     onDocReady: function() {
         var me = this,
-            siteEnv = window.SiteEnvironment || {};
+            siteEnv = window.SiteEnvironment || {},
+            body = Ext.getBody(),
+            contentAreaEl = body.down('select[name="content-area"]');
 
         // ensure student is defined
         if (!siteEnv.cblStudent) {
@@ -29,7 +31,12 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
         // render student dashboard component
         me.dashboard = Ext.create('Slate.cbl.view.student.Dashboard', {
             renderTo: Ext.get('studentDashboardCt'),
+            student: siteEnv.cblStudent || null,
             contentArea: siteEnv.cblContentArea || null
+        });
+        
+        contentAreaEl.on('change', function(ev, t) {
+            // Placeholder for future functionality
         });
     }
 });

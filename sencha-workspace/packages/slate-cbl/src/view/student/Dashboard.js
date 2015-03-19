@@ -4,22 +4,58 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
     xtype: 'slate-cbl-student-dashboard',
     requires:[
         'Slate.cbl.view.student.DashboardController',
-        'Slate.cbl.model.ContentArea',
+        'Slate.cbl.model.Student',
         'Slate.cbl.model.Competency',
         'Slate.cbl.model.ContentArea',
-        'Slate.cbl.widget.Popover'
+        'Slate.cbl.widget.Popover',
+        'Slate.cbl.util.CBL'
     ],
 
     controller: 'slate-cbl-student-dashboard',
 
     config: {
+        student: null,
         contentArea: null,
         popover: {
             pointer: 'none'
         }
     },
+    
+    recentProgressTpl: [
+        '<header class="panel-header">',
+        '    <h3 class="header-title">Recent Progress</h3>',
+        '</header>',
+
+        '<div class="table-ct">',
+        '    <table class="panel-body" id="progress-summary">',
+        '        <thead>',
+        '        <tr>',
+        '            <th class="col-header scoring-domain-col">Scoring Domain</th>',
+        '            <th class="col-header level-col">Level</th>',
+        '        </tr>',
+        '        </thead>',
+        '        <tbody>',
+        '           <tpl for="progress">',
+        '               <tr>',
+        '                   <td class="scoring-domain-col">',
+        '                       <span class="domain-skill">{skill}</span>',
+        '                           <div class="meta">',
+        '                               <span class="domain-competency">{competency}, </span>',
+        '                               <span class="domain-teacher">{teacher}</span>',
+        '                           </div>',
+        '                   </td>',
+        '                   <td class="level-col">',
+        '                       <div class="level-color cbl-level-{level}">{[ values.level != 0 ? values.level : "M" ]}</div>',
+        '                   </td>',
+        '               </tr>',
+        '           </tpl>',
+        '       </tbody>',
+        '    </table>',
+        '</div>'
+    ],
 
     competenciesTpl: [
+        // TODO: indent markup
         '<tpl for="competencies">',
         '{%var level = 9%}', // TODO: real level
         '{%var studentCompletion = values.studentCompletions[parent.student.ID] || {}%}',
@@ -47,58 +83,40 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         '</li>',
         '</tpl>'
     ],
-
+    
     skillsTpl: [
         '<tpl for=".">',
-        '<li class="cbl-skill">',
-        '<h5 class="cbl-skill-name" data-descriptor="{Descriptor}" data-statement="{Statement}">{Descriptor}</h5>',
-        '<ul class="cbl-skill-demos">',
-        '<tpl for="this.getDemonstrationBlocks(values)">',
-        '<li class="cbl-skill-demo <tpl if="Level==0"> cbl-grid-demo-missed</tpl>" <tpl if="SkillID">data-skill="{SkillID}"</tpl> <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
-        '<tpl if="Level &gt;= 0">',
-        '{[values.Level == 0 ? "M" : values.Level]}',
-        '<tpl else>',
-        '&nbsp;',
+            '<li class="cbl-skill">',
+                '<h5 class="cbl-skill-name" data-descriptor="{Descriptor}" data-statement="{Statement}">{Descriptor}</h5>',
+                '<ul class="cbl-skill-demos" data-skill="{ID}">',
+                    '<tpl for="this.getDemonstrationBlocks(values)">',
+                        '<li class="cbl-skill-demo <tpl if="values.Level==0"> cbl-grid-demo-missed</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
+                            '<tpl if="values.Level &gt;= 0">',
+                                '{[values.Level == 0 ? "M" : values.Level]}',
+                            '<tpl else>',
+                                '&nbsp;',
+                            '</tpl>',
+                        '</li>',
+                    '</tpl>',
+                '</ul>',
+                '<div class="cbl-skill-description"><p>{Statement}</p></div>',
+                /* TODO: FIXME: We need new design assets/styling for the checkmark, this doesn't render very well at all
+                '<div class="cbl-skill-complete-indicator cbl-level-{parent.level} is-checked">',
+                    '<svg class="check-mark-image" width="16" height="16">',
+                        '<polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
+                    '</svg>',
+                '</div>',*/
+            '</li>',
         '</tpl>',
-        '</li>',
-        '</tpl>',
-        '</ul>',
-        '<div class="cbl-skill-description"><p>{Statement}</p></div>',
-//                '<div class="cbl-skill-complete-indicator cbl-level-{parent.level} is-checked">',
-//                    '<svg class="check-mark-image" width="16" height="16">',
-//                        '<polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
-//                    '</svg>',
-//                '</div>',
-        '</li>',
-        '</tpl>',
+        
         {
             getDemonstrationBlocks: function(skill, studentId) {
                 var demonstrationsRequired = skill.DemonstrationsRequired,
-                    blocks = Ext.isArray(skill.demonstrations) ? skill.demonstrations : [];
-
-                blocks = Ext.Array.sort(blocks, function(a, b) {
-                    return a.Level < b.Level ? -1 : 1;
-                });
-
-                blocks = blocks.splice(0, demonstrationsRequired);
-
-                // sort by most recent, followed by M
-                Ext.Array.sort(blocks, function(a, b) {
-                    if (a.Level == 0) {
-                        return 1;
-                    }
-
-                    if (b.Level == 0) {
-                        return -1;
-                    }
-
-                    // HACK: the ID should not be used in place of a timestamp
-                    return a.DemonstrationID < b.DemonstrationID ? -1 : 1;
-                });
-
+                    blocks = Slate.cbl.util.CBL.sortDemonstrations(skill.demonstrations, demonstrationsRequired);
+                    
                 // add empty blocks
                 while (blocks.length < demonstrationsRequired) {
-                    blocks.push({ID: skill.ID});
+                    blocks.push({});
                 }
 
                 return blocks;
@@ -106,9 +124,10 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         }
     ],
 
-    html: [
-        '<ul class="cbl-competency-panels competencies-unloaded" id="studentDashboardCompetenciesList"></ul>'
-    ],
+    autoEl: {
+        tag: 'ul',
+        cls: 'cbl-competency-panels competencies-unloaded'
+    },
 
     listeners: {
         scope: 'this',
@@ -121,6 +140,22 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
 
     applyPopover: function(newPopover, oldPopover) {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
+    },
+
+    applyStudent: function(student) {
+        if (!student) {
+            return null;
+        }
+
+        if (student.isModel) {
+            return student;
+        }
+
+        return Ext.create('Slate.cbl.model.Student', student);
+    },
+
+    updateStudent: function(newStudent, oldStudent) {
+        this.fireEvent('studentchange', this, newStudent, oldStudent);
     },
 
     applyContentArea: function(contentArea) {

@@ -9,59 +9,20 @@
 {block "content"}
     {$allContentAreas = Slate\CBL\ContentArea::getAll()}
 
-    <aside class="panel cbl-recent-progress">
-        <header class="panel-header">
-            <h3 class="header-title">Recent Progress</h3>
-        </header>
-
-        <div class="table-ct">
-            <table class="panel-body" id="progress-summary">
-                <thead>
-                <tr>
-                    <th class="col-header scoring-domain-col">Scoring Domain</th>
-                    <th class="col-header level-col">Level</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {for i 1 4}
-                    <tr>
-                        <td class="scoring-domain-col">
-                            <span class="domain-skill">Cite Evidence</span>
-                            <div class="meta">
-                                <span class="domain-competency">Reading Literature, </span>
-                                <span class="domain-teacher">Mr. Smith</span>
-                            </div>
-                        </td>
-                        <td class="level-col"><div class="level-color cbl-level-10">10</div></td>
-                    </tr>
-                    <tr>
-                        <td class="scoring-domain-col">
-                            <span class="domain-skill">Customize the presentation for the specific purpose, context, and audience</span>
-                            <div class="meta">
-                                <span class="domain-competency">Writing Evidence-based Arguments, </span>
-                                <span class="domain-teacher">Mr. Smith</span>
-                            </div>
-                        </td>
-                        <td class="level-col"><div class="level-color cbl-level-10">10</div></td>
-                    </tr>
-                {/for}
-                </tbody>
-            </table>
-        </div>
+    <aside id="studentDashboardRecentProgress" class="panel cbl-recent-progress">
     </aside>
 
     <header class="page-header">
         <h2 class="header-title">{$Student->FullName|escape}</h2>
-
-        <div class="cbl-labeled-meter cbl-grad-progress">
+        
+        {* <div class="cbl-labeled-meter cbl-grad-progress">
             <h3 class="cbl-meter-label level-color">Graduation Progress</h3>
             <div class="cbl-progress-meter cbl-level-10">
                 <div class="cbl-progress-bar" style="width:40%"></div>
                 <div class="cbl-progress-level">L10</div>
                 <div class="cbl-progress-percent">40%</div>
             </div>
-        </div>
+        </div> *}
     </header>
 
     <form method="GET">

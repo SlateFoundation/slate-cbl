@@ -72,9 +72,10 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             autoShow: true,
             animateTarget: targetEl,
 
-            student: targetEl.getAttribute('data-student'),
+            student: targetEl.up('.cbl-grid-demos-cell').getAttribute('data-student'),
             competency: targetEl.up('.cbl-grid-skills-row').getAttribute('data-competency'),
             skill: targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'),
+            demonstration: targetEl.getAttribute('data-demonstration'),
 
             listeners: {
                 scope: this,

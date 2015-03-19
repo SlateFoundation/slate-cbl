@@ -2,20 +2,15 @@
 Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-skill-overviewwindow',
-    requires: [
-//        'Slate.cbl.API',
-//
-//        'Ext.MessageBox',
-//        'Ext.window.Toast'
-    ],
-
     config: {
-        id: 'slate-cbl-teacher-skill-overviewwindow', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        id: 'slate-cbl-teacher-skill-overviewwindow',
         control: {
             '#': {
                 beforeshow: 'onBeforeWindowShow',
                 demorowclick: 'onDemoRowClick',
-                demoeditclick: 'onDemoEditClick'
+                demoeditclick: 'onDemoEditClick',
+                beforerender: 'onBeforeRender'
             },
             'combobox[reference=competencyCombo]': {
                 change: 'onCompetencyChange'
@@ -44,6 +39,16 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
     applyId: function(id) {
         return Ext.id(null, id);
+    },
+
+    onBeforeRender: function(overviewWindow) {
+        overviewWindow.mon(Ext.GlobalEvents, 'resize', function() {
+            overviewWindow.center();
+        });
+
+        overviewWindow.mon(Ext.getWin(), 'scroll', function() {
+            overviewWindow.center();
+        });
     },
 
     onBeforeWindowShow: function(overviewWindow) {
@@ -128,22 +133,38 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
 
     // private methods
-    syncDemonstrationsTable: function() {
+    syncDemonstrationsTable: function() { // TODO: move some/all of this method to common view code?
         var me = this,
             demonstrationsTable = me.lookupReference('demonstrationsTable'),
             skillCombo = me.lookupReference('skillCombo'),
             skillId = skillCombo.getValue(),
             skill = skillId && skillCombo.findRecordByValue(skillId),
-            studentId = me.lookupReference('studentCombo').getValue();
+            studentId = me.lookupReference('studentCombo').getValue(),
+            demonstrationId = me.view.getDemonstration();
 
         if (skill && studentId) {
             demonstrationsTable.setLoading('Loading demonstrations&hellip;'); // currently not visible due to http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
-            skill.getDemonstrationsByStudent(studentId, function(skillDemonstrations) {
-                demonstrationsTable.update(skillDemonstrations);
+            skill.getDemonstrationsByStudent(studentId, function(skillDemonstrations) {   
+                skillDemonstrations.sort(function compare(a, b) {
+                    var aDemonstrated = new Date(a.Demonstration.Demonstrated),
+                        bDemonstrated = new Date(b.Demonstration.Demonstrated);
+
+                    return (aDemonstrated > bDemonstrated) ? 1 : (aDemonstrated < bDemonstrated) ? -1 : 0;
+                });
+
+                demonstrationsTable.update({
+                    demonstrations: skillDemonstrations,
+                    selectedDemonstrationId: demonstrationId,
+                    showEditLinks: true
+                });
+
                 demonstrationsTable.setLoading(false);
             });
         } else {
-            demonstrationsTable.update('');
+            demonstrationsTable.update({
+                demonstrations: [],
+                selectedDemonstrationId: null
+            });
         }
     }
 });
