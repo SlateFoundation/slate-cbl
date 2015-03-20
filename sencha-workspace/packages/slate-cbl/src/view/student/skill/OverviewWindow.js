@@ -22,8 +22,11 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
     title: 'Skill Overview',
     width: 700,
     minWidth: 700,
-    // constrainHeader: true,
-    autoScroll: true,
+    shadow: 'frame',
+    center: true,
+    fixed: true,
+    monitorResize: true,
+    modal: true,
 
     dockedItems: [
         {

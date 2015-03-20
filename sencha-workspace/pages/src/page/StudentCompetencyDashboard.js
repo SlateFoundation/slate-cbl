@@ -43,6 +43,7 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
             contentArea: contentAreaData
         });
         
+        // could this be a standard link?
         body.on('click', function(ev, t) {
             ev.stopEvent();
 

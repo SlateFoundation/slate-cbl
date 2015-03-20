@@ -3,8 +3,7 @@
 {block "css"}
     {$dwoo.parent}
     {cssmin "student-dashboard.css"}
-    <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}" />
-
+    <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}">
 {/block}
 
 {block "content"}
@@ -15,43 +14,47 @@
             <h3 class="header-title">Recent Progress</h3>
         </header>
 
-        <table class="panel-body" id="progress-summary">
-            <thead>
-                <tr>
-                    <th class="col-header scoring-domain-col">Scoring Domain</th>
-                    <th class="col-header level-col">Level</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td class="scoring-domain-col">
-                        <span class="domain-skill">Cite Evidence</span>
-                        <div class="meta">
-                            <span class="domain-competency">Reading Literature, </span>
-                            <span class="domain-teacher">Mr. Smith</span>
-                        </div>
-                    </td>
-                    <td class="level-col"><div class="level-color cbl-level-10">10</div></td>
-                </tr>
-                <tr>
-                    <td class="scoring-domain-col">
-                        <span class="domain-skill">Customize the presentation for the specific purpose, context, and audience</span>
-                        <div class="meta">
-                            <span class="domain-competency">Writing Evidence-based Arguments, </span>
-                            <span class="domain-teacher">Mr. Smith</span>
-                        </div>
-                    </td>
-                    <td class="level-col"><div class="level-color cbl-level-10">10</div></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-ct">
+            <table class="panel-body" id="progress-summary">
+                <thead>
+                    <tr>
+                        <th class="col-header scoring-domain-col">Scoring Domain</th>
+                        <th class="col-header level-col">Level</th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {for i 1 4}
+                    <tr>
+                        <td class="scoring-domain-col">
+                            <span class="domain-skill">Cite Evidence</span>
+                            <div class="meta">
+                                <span class="domain-competency">Reading Literature, </span>
+                                <span class="domain-teacher">Mr. Smith</span>
+                            </div>
+                        </td>
+                        <td class="level-col"><div class="level-color cbl-level-10">10</div></td>
+                    </tr>
+                    <tr>
+                        <td class="scoring-domain-col">
+                            <span class="domain-skill">Customize the presentation for the specific purpose, context, and audience</span>
+                            <div class="meta">
+                                <span class="domain-competency">Writing Evidence-based Arguments, </span>
+                                <span class="domain-teacher">Mr. Smith</span>
+                            </div>
+                        </td>
+                        <td class="level-col"><div class="level-color cbl-level-10">10</div></td>
+                    </tr>
+                    {/for}
+                </tbody>
+            </table>
+        </div>
     </aside>
 
     <header class="page-header">
         <h2 class="header-title">{$Student->FullName|escape}</h2>
 
-        <div class="cbl-labeled-meter">
+        <div class="cbl-labeled-meter cbl-grad-progress">
             <h3 class="cbl-meter-label level-color">Graduation Progress</h3>
             <div class="cbl-progress-meter cbl-level-10">
                 <div class="cbl-progress-bar" style="width:40%"></div>
@@ -77,7 +80,7 @@
                 </select>
             </div>
             <button class="primary">Refresh</button>
-            <button data-action="view-the-continua">View the Continua</button>
+            <button data-action="view-the-continua">View Continua</button>
         </div>
     </form>
 
@@ -90,6 +93,8 @@
     {if $ContentArea}
         <script type="text/javascript">
             var SiteEnvironment = SiteEnvironment || { };
+            // DISCUSS: Using templating inside of script tags to populate variables is an anti-pattern.
+            // DISCUSS: We could use a PHP->JS bridge instead ex: js::set('key', value); and then expose those values in JavaScript
             SiteEnvironment.user = {$.User->getData()|json_encode};
             SiteEnvironment.cblStudent = {JSON::translateObjects($Student, true)|json_encode};
             SiteEnvironment.cblContentArea = {JSON::translateObjects($ContentArea)|json_encode};

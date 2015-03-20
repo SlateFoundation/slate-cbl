@@ -33,9 +33,13 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
                 '<div class="panel-body">',
                     '<div class="cbl-progress-meter {[isAverageLow ? "is-average-low" : ""]}">',
                         '<div class="cbl-progress-bar" style="width:{[percent]}%"></div>',
-                        '<div class="cbl-progress-level">L{[level]}</div>',
+                        '<div class="cbl-progress-level no-select">',
+                            '<span class="cbl-progress-level-prev">&#9664;</span>',
+                            'L{[level]}',
+                            '<span class="cbl-progress-level-prev">&#9658;</span>',
+                        '</div>',
                         '<div class="cbl-progress-percent">{[percent]}%</div>',
-                        '<div class="cbl-progress-average">{[fm.number(studentCompletion.demonstrationsAverage, "0.##")]}</div>',
+                        '<div class="cbl-progress-average" title="Average">{[fm.number(studentCompletion.demonstrationsAverage, "0.##")]}</div>',
                     '</div>',
 
     				'<div class="explainer">',
@@ -53,68 +57,63 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         '<tpl for=".">',
             '<li class="cbl-skill">',
                 '<h5 class="cbl-skill-name" data-descriptor="{Descriptor}" data-statement="{Statement}">{Descriptor}</h5>',
+
+                '<svg style="display: none" hidden>',
+                    '<symbol id="check-mark-glyph" viewBox="0 0 16 16">',
+                        '<polygon fill="currentcolor" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
+                    '</symbol>',
+                '</svg>',
+
                 '<ul class="cbl-skill-demos">',
                     '<tpl for="this.getDemonstrationBlocks(values)">',
-                        '<li class="cbl-skill-demo <tpl if="!values.counted">cbl-skill-demo-uncounted</tpl>" <tpl if="SkillID">data-skill="{SkillID}"</tpl> <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
-                            '<tpl if="Level">',
+                        '<li class="cbl-skill-demo <tpl if="Level==0"> cbl-grid-demo-missed</tpl>" <tpl if="SkillID">data-skill="{SkillID}"</tpl> <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
+                            '<tpl if="Level &gt;= 0">',
                                 '{[values.Level == 0 ? "M" : values.Level]}',
                             '<tpl else>',
                                 '&nbsp;',
                             '</tpl>',
                         '</li>',
                     '</tpl>',
+
+                    '<div class="cbl-skill-complete-indicator <tpl if="Math.random()<.5">is-complete</tpl>">', // TODO use real logic 
+                        '<svg class="cbl-skill-complete-image" width="16" height="16" role="img">',
+                            '<title>Complete</title>', // TODO logic should drive this to read Complete or Incomplete (for a11y)
+                            '<use xlink:href="#check-mark-glyph"></use>',
+                        '</svg>',
+                    '</div>',
                 '</ul>',
+
                 '<div class="cbl-skill-description"><p>{Statement}</p></div>',
-//                '<div class="cbl-skill-complete-indicator cbl-level-{parent.level} is-checked">',
-//                    '<svg class="check-mark-image" width="16" height="16">',
-//                        '<polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
-//                    '</svg>',
-//                '</div>',
             '</li>',
         '</tpl>',
         {
-            // TODO: deduplicate this and its copy from the teacher dashboard?
-            getDemonstrationBlocks: function(skill) {
+            getDemonstrationBlocks: function(skill, studentId) {
                 var demonstrationsRequired = skill.DemonstrationsRequired,
-                    blocks, blocksLength, blockIndex, lowestBlockIndex;
+                    blocks = Ext.isArray(skill.demonstrations) ? skill.demonstrations : [];
+                    
+                blocks = Ext.Array.sort(blocks, function(a, b) {
+                    return a.Level < b.Level ? -1 : 1;
+                });
+                
+                blocks = blocks.splice(0, demonstrationsRequired);
 
-                if (Ext.isArray(skill.demonstrations)) {
-                    blocks = Ext.Array.map(skill.demonstrations, function(demonstration) {
-                        return Ext.apply({
-                            counted: demonstration.Level >= 8 // TODO: retrieve the competency level dynamically rather than hard coding to 9
-                        }, demonstration);
-                    });    
-                } else {
-                    blocks = [];
-                }
-
-                // trim lowest demonstrations
-                while ((blocksLength = blocks.length) > demonstrationsRequired) {
-                    for (blockIndex = 0, lowestBlockIndex = null; blockIndex < blocksLength; blockIndex++) {
-                        if (lowestBlockIndex === null || blocks[blockIndex].Level < blocks[lowestBlockIndex].Level) {
-                            lowestBlockIndex = blockIndex;
-                        }
-                    }
-
-                    Ext.Array.splice(blocks, lowestBlockIndex, 1);
-                }
-
-                // sort counted demonstrations first
+                // sort by most recent, followed by M
                 Ext.Array.sort(blocks, function(a, b) {
-                    if (a.counted && !b.counted) {
-                        return -1;
+                    if (a.Level == 0) {
+                        return 1;        
                     }
-
-                    if (!a.counted && b.counted) {
-                        return 1;
+                    
+                    if (b.Level == 0) {
+                        return -1;                        
                     }
-
-                    return a.DemonstrationID > b.DemonstrationID ? 1 : -1;
+                    
+                    // HACK: the ID should not be used in place of a timestamp
+                    return a.DemonstrationID < b.DemonstrationID ? -1 : 1;
                 });
 
                 // add empty blocks
                 while (blocks.length < demonstrationsRequired) {
-                    blocks.push({});
+                    blocks.push({ID: skill.ID});
                 }
 
                 return blocks;

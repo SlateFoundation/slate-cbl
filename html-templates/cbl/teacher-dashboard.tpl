@@ -2,8 +2,8 @@
 
 {block "css"}
     {cssmin fonts/font-awesome.css}
-    <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}" />
-
+    {cssmin "student-dashboard.css"}
+    <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}">
     {$dwoo.parent}
 {/block}
 

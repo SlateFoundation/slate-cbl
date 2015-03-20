@@ -16,7 +16,8 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
         control: {
             '#': {
                 beforeshow: 'onBeforeWindowShow',
-                demorowclick: 'onDemoRowClick'
+                demorowclick: 'onDemoRowClick',
+                destroy: 'onDestroy'
             },
             'combobox[reference=skillCombo]': {
                 change: 'onSkillChange'
@@ -51,6 +52,20 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
                 me.syncDemonstrationsTable();
             }          
         }
+        
+        Ext.on('resize', function() {
+            overviewWindow.center();
+            return true;
+        });
+        
+        Ext.get(window).on('scroll', function() {
+            overviewWindow.center();
+            return true;
+        });
+    },
+    
+    onDestroy: function(overviewWindow) {
+      Ext.off('resize', overviewWindow.center);  
     },
     
     onDemoRowClick: function(overviewWindow, ev, targetEl) {

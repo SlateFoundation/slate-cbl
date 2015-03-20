@@ -38,7 +38,7 @@ $border-color: #999;
 
 .skill-grid-demo-index {
     text-align: right;
-    width: 5%;
+    width: 2.75em;
 }
 
 .skill-grid-demo-date {
@@ -85,7 +85,9 @@ $border-color: #999;
 }
 
 .skill-grid-emptytext-cell {
-    
+    color: #777;
+    font-style: italic;
+    text-align: center;
 }
 
 .skill-grid-demo-meta {

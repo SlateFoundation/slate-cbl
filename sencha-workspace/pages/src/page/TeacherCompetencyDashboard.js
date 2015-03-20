@@ -19,7 +19,8 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
             siteEnv = window.SiteEnvironment || {},
             studentsData = siteEnv.cblStudents,
             contentAreaData = siteEnv.cblContentArea || null,
-            dashboard;
+            dashboard,
+            studentsDataStore;
 
         // ensure students are loaded
         if (!studentsData || !studentsData.length) {
@@ -42,8 +43,14 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
 
 
         // load data embedded in page
-        Ext.getStore('cbl-students-loaded').loadRawData(studentsData);
-
+        studentsDataStore = Ext.getStore('cbl-students-loaded');
+        
+        studentsDataStore.sorters.add(new Ext.util.Sorter({
+            property : 'FullName',
+            direction: 'ASC'
+        }));
+        
+        studentsDataStore.loadRawData(studentsData);
 
         // wire Log a Demonstration button
         body.on('click', function(ev, t) {
