@@ -2,7 +2,7 @@
 
 {block "css"}
     {$dwoo.parent}
-    {cssmin "student-dashboard.css"}
+    {cssmin "cbl/student-dashboard.css"}
     <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}">
 {/block}
 

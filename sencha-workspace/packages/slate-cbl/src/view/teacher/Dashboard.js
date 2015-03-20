@@ -131,7 +131,6 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
                                         '<span class="cbl-grid-progress-level">L{[level]}</span>',
                                         '<span class="cbl-grid-progress-percent">{[percent]}%</span>',
                                         '<span class="cbl-grid-progress-average">',
-                                            // '<img src="/img/alert.svg">',
                                             '{[fm.number(studentCompletion.demonstrationsAverage, "0.##")]}',
                                         '</span>',
                                     '</td>',
