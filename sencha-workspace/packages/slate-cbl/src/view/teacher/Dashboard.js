@@ -152,11 +152,13 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             '</div>',
         '</div>',
         '<div class="cbl-grid-legend">',
-        	'<span class="cbl-grid-legend-label">Legend:&ensp;</span>',
-            '<span class="cbl-grid-legend-item cbl-level-9">9</span>',
-            '<span class="cbl-grid-legend-item cbl-level-10">10</span>',
-            '<span class="cbl-grid-legend-item cbl-level-11">11</span>',
-            '<span class="cbl-grid-legend-item cbl-level-12">12</span>',
+            '<span class="cbl-grid-legend-label">Legend:&ensp;</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-8">8</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-9">9</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-10">10</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-11">11</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-12">12</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-13">13</span>',
         '</div>'
     ],
 
