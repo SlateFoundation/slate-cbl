@@ -35,6 +35,11 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
 
     public static function handleExportRequest()
     {
+        $GLOBALS['Session']->requireAccountLevel('Staff');
+        
+        // This was causing a script timeout (30 seconds), this should help speed it up
+        \Site::$debug = false;
+        
         $sw = new SpreadsheetWriter();
 
         // fetch key objects from database

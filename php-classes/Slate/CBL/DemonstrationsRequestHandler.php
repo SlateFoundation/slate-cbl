@@ -17,6 +17,8 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
     public static function handleRecordsRequest($action = null)
     {
         switch ($action ?: $action = static::shiftPath()) {
+            case 'export-legacy':
+                return static::handleLegacyExportRequest();
             case 'export':
                 return static::handleExportRequest();
             default:
@@ -50,9 +52,15 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
-
-    public static function handleExportRequest()
+    
+    // 04/02/2015: This is how the report was originally requested and is being kept here until we know it is no longer needed
+    public static function handleLegacyExportRequest()
     {
+        $GLOBALS['Session']->requireAccountLevel('Staff');
+
+        // This was causing a script timeout (30 seconds), this should help speed it up
+        \Site::$debug = false;
+        
         $sw = new SpreadsheetWriter();
 
         // fetch key objects from database
@@ -108,6 +116,70 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             }
 
             $sw->writeRow($row);
+        }
+    }
+
+    public static function handleExportRequest()
+    {
+        $GLOBALS['Session']->requireAccountLevel('Staff');
+
+        // This was causing a script timeout (30 seconds), this should help speed it up
+        \Site::$debug = false;
+        
+        $sw = new SpreadsheetWriter();
+
+        // fetch key objects from database
+        $students = Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+        $skills = Skill::getAll(['indexField' => 'ID']);
+        $demonstrations = Demonstration::getAllByWhere('StudentID IN ('.implode(',', array_map(function($Student) {
+            return $Student->ID;
+        }, $students)).')', ['order' => 'ID']);
+
+        // build and output headers list
+        $headers = [
+            'Timestamp',
+            'Submitted by',
+            'ID',
+            'Name',
+            'Type of experience',
+            'Context',
+            'Perfromance task',
+            'Artifact',
+            'Competency',
+            'Standard',
+            'Rating',
+            'Level',
+            'Mapping'
+        ];
+        
+        $sw->writeRow($headers);
+
+        // one row for each demonstration standard
+       foreach ($demonstrations AS $Demonstration) {
+            $row = [
+                date('Y-m-d H:i', $Demonstration->Created),
+                $Demonstration->Creator->FullName,
+                $Demonstration->Student->StudentNumber,
+                $Demonstration->Student->FullName,
+                $Demonstration->ExperienceType,
+                $Demonstration->Context,
+                $Demonstration->PerformanceType,
+                $Demonstration->ArtifactURL
+            ];
+                        
+            $demonstrationSkills = DemonstrationSkill::getAllByField('DemonstrationID', $Demonstration->ID);
+            
+            // Don't rebuild the row for each standard demonstrated, just overwrite the last set of values
+            foreach ($demonstrationSkills AS $DemonstrationSkill) {
+                $skill = $skills[$DemonstrationSkill->SkillID];
+                
+                $row[8]  = $skill->Competency->Code;
+                $row[9]  = $skill->Code;
+                $row[10] = $DemonstrationSkill->Level > 0 ?  $DemonstrationSkill->Level : 'M';
+                $row[11] = 9;
+                $row[12] = '';
+                $sw->writeRow($row);
+            }
         }
     }
 
