@@ -35,6 +35,8 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
 
     public static function handleExportRequest()
     {
+        $GLOBALS['Session']->requireAccountLevel('Staff');
+        
         $sw = new SpreadsheetWriter();
 
         // fetch key objects from database
