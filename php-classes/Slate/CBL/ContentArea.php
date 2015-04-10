@@ -17,6 +17,7 @@ class ContentArea extends \ActiveRecord
             ,'unique' => true
         ]
         ,'Title' => 'string'
+        ,'Core' => 'boolean'
     ];
 
     public static $relationships = [
@@ -28,6 +29,8 @@ class ContentArea extends \ActiveRecord
         ]
     ];
     
+    /* DISCUSS: @themightychris ... where is this specified as being required
+	    in PHP land? */
     public static $validators = [
         'Title' => [
             'errorMessage' => 'A title is required'

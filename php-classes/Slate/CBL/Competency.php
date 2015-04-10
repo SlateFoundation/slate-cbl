@@ -7,6 +7,7 @@ use Slate\People\Student;
 
 class Competency extends \VersionedRecord
 {
+	/* TODO: These should not be hard coded! */
     public static $minimumLevel = 8;
     public static $minimumAverage = 8.5;
 
