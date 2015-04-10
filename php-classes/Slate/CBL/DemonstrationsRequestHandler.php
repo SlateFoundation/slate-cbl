@@ -94,7 +94,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         // one row for each demonstration
         foreach ($demonstrations AS $Demonstration) {
             $row = [
-                date('Y-m-d', $Demonstration->Demonstrated),
+                $Demonstration->Demonstrated,
                 $Demonstration->Student->FullName,
                 $Demonstration->Student->StudentNumber,
                 9, // TODO: don't hard code
