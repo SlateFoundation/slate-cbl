@@ -77,5 +77,7 @@
         <script>
             Ext.require('Site.page.StudentCompetencyDashboard');
         </script>
+    {else}
+        {$dwoo.parent}
     {/if}
 {/block}

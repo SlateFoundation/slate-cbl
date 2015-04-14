@@ -29,7 +29,7 @@ class Demonstration extends \VersionedRecord
             'type' => 'uint'
             ,'index' => true
         ]
-        ,'Demonstrated' => 'date'
+        ,'Demonstrated' => 'timestamp'
         ,'ExperienceType'
         ,'Context'
         ,'PerformanceType'

@@ -215,11 +215,12 @@ $level-12-color-dark;
     }
 
     .scoring-domain-col {
-        width: 100%;
+        white-space: normal;
     }
 
     .level-col {
         text-align: center;
+        width: 2.75em;
 
         > div {
             border-radius: 3px;

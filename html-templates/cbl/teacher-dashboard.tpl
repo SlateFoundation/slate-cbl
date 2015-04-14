@@ -91,5 +91,7 @@
         <script>
             Ext.require('Site.page.TeacherCompetencyDashboard');
         </script>
+    {else}
+        {$dwoo.parent}
     {/if}
 {/block}

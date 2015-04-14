@@ -18,6 +18,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
         'Ext.form.field.TextArea',
         'Ext.form.field.ComboBox',
         'Ext.form.field.Checkbox',
+        'Ext.form.field.Date',
         'Ext.data.ChainedStore'
     ],
 
