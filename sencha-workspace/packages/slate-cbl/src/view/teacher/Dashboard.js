@@ -168,6 +168,10 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             fn: 'onGridClick',
             element: 'el',
             delegate: '.cbl-grid-progress-row, .cbl-grid-demo'
+        },
+        mouseover: {
+            fn: 'onSkillNameMouseOver',
+            element: 'el'
         }
     },
 
@@ -203,6 +207,25 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             me.fireEvent('progressrowclick', me, ev, targetEl);
         } else if (targetEl = ev.getTarget('.cbl-grid-demo', me.el, true)) {
             me.fireEvent('democellclick', me, ev, targetEl);
+        }
+    },
+
+    onSkillNameMouseOver: function(ev) {
+        var me = this,
+            popover = me.getPopover(),
+            dashboardEl = me.el,
+            targetEl;
+
+        if (targetEl = ev.getTarget('.cbl-grid-skill-name', dashboardEl, true)) {
+            if (popover.hidden || popover.alignTarget !== targetEl) {
+                popover.showBy(targetEl);
+                popover.update({
+                    title: targetEl.getAttribute('data-skill-name'),
+                    body: targetEl.getAttribute('data-skill-description')
+                });
+            }
+        } else {
+            popover.hide();
         }
     }
 });
