@@ -1,13 +1,25 @@
 /*jslint browser: true, undef: true *//*global Ext*/
-Ext.define('Slate.cbl.view.skill.OverviewBody', {
-    extend: 'Ext.container.Container',
-    xtype: 'slate-cbl-skill-overviewbody',
-    requires: [
-        'Slate.cbl.model.Skill',
-        
-        'Ext.form.field.ComboBox',
-        'Ext.data.ChainedStore'
-    ],
+/**
+ * Provides a foundation for the window used in both the student and teacher
+ * UIs to display all the demonstrations affecting a given standard.
+ * 
+ * @abstract
+ */
+Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
+    extend: 'Ext.window.Window',
+    xtype: 'slate-cbl-standard-abstractoverviewwindow',
+
+    config: {
+        student: null,
+        competency: null,
+        skill: null,
+        demonstration: null
+    },
+
+    title: 'Standard Overview',
+    width: 700,
+    minWidth: 700,
+    fixed: true,
 
     items: [
         {
@@ -39,7 +51,7 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                         '<tpl for="demonstrations">',
                             '<tr class="skill-grid-demo-row" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
-                                '<td class="skill-grid-demo-data skill-grid-demo-date">{[fm.date(new Date(values.Demonstration.Demonstrated * 1000))]}</td>',
+                                '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstration.Demonstrated:date("M j, Y")}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{Level}"><tpl if="Level==0">M<tpl else>{Level}</tpl></div></td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-type">{Demonstration.ExperienceType:htmlEncode}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-context">{Demonstration.Context:htmlEncode}</td>',
@@ -82,5 +94,55 @@ Ext.define('Slate.cbl.view.skill.OverviewBody', {
                 '</table>'
             ]
         }
-    ]
+    ],
+
+    initEvents: function() {
+        var me = this;
+
+        me.callParent();
+
+        me.mon(me.lookupReference('demonstrationsTable').el, 'click', function(ev, t) {
+            me.fireEvent('demorowclick', me, ev, Ext.get(t));
+        }, me, { delegate: '.skill-grid-demo-row' });
+    },
+
+//    applyStudent: function(student) {
+//        return student ? Ext.getStore('cbl-students-loaded').getById(student) : null;
+//    },
+//
+//    applyCompetency: function(competency) {
+//        return competency ? Ext.getStore('cbl-competencies-loaded').getById(competency) : null;
+//    },
+
+    applyStudent: function(student) {
+        if (Ext.isString(student)) {
+            student = parseInt(student, 10);
+        }
+
+        return student ? student : null;
+    },
+    
+    applyCompetency: function(competency) {
+        if (Ext.isString(competency)) {
+            competency = parseInt(competency, 10);
+        }
+
+        return competency ? competency : null;
+    },
+    
+    applySkill: function(skill) {
+        if (Ext.isString(skill)) {
+            skill = parseInt(skill, 10);
+        }
+
+        return skill ? skill : null;
+    },
+    
+    applyDemonstration: function(demonstration) {
+        if (Ext.isString(demonstration)) {
+            demonstration = parseInt(demonstration, 10);
+        }
+
+        return demonstration ? demonstration : null;
+    }
 });

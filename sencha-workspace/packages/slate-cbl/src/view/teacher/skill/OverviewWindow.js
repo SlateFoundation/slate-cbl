@@ -1,11 +1,10 @@
 /*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
-    extend: 'Ext.window.Window',
+    extend: 'Slate.cbl.view.standard.AbstractOverviewWindow',
     xtype: 'slate-cbl-teacher-skill-overviewwindow',
     requires: [
         'Slate.cbl.view.teacher.skill.OverviewWindowController',
         'Slate.cbl.model.Skill',
-        'Slate.cbl.view.skill.OverviewBody',
 
         'Ext.form.field.ComboBox',
         'Ext.data.ChainedStore'
@@ -13,17 +12,6 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
     controller: 'slate-cbl-teacher-skill-overviewwindow',
 
-    config: {
-        student: null,
-        competency: null,
-        skill: null,
-        demonstration: null
-    },
-
-    title: 'Standard Overview',
-    width: 700,
-    minWidth: 700,
-    fixed: true,
     autoScroll: true,
 
     dockedItems: [
@@ -45,7 +33,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
-                    valueField: 'Code',
+                    valueField: 'ID',
 
                     forceSelection: true
                 },
@@ -111,55 +99,24 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
         }
     ],
 
-    items: [
-        {
-            xtype: 'slate-cbl-skill-overviewbody',
-            reference: 'demonstrationsBody'
-        }
-    ],
-
-    listeners: {
-        scope: 'this',
-        click: {
-            fn: 'onGridClick',
-            element: 'el',
-            delegate: '.skill-grid-demo-row, a[href="#demonstration-edit"]'
-        }
-    },
-
-    applyStudent: function(student) {
-        return student ? Ext.getStore('cbl-students-loaded').getById(student) : null;
-    },
-
-    applyCompetency: function(competency) {
-        return competency ? Ext.getStore('cbl-competencies-loaded').getById(competency) : null;
-    },
-
-    applySkill: function(skill) {
-        if (Ext.isString(skill)) {
-            skill = parseInt(skill, 10);
-        }
-
-        return skill ? skill : null;
-    },
-
-    applyDemonstration: function(demonstration) {
-        if (Ext.isString(demonstration)) {
-            demonstration = parseInt(demonstration, 10);
-        }
-
-        return demonstration ? demonstration : null;
-    },
-
-    onGridClick: function(ev, t) {
-        var me = this,
-            targetEl;
-
-        if (targetEl = ev.getTarget('.skill-grid-demo-row', me.el, true)) {
-            me.fireEvent('demorowclick', me, ev, targetEl);
-        } else if (targetEl = ev.getTarget('a[href="#demonstration-edit"]', me.el, true)) {
-            ev.stopEvent();
-            me.fireEvent('editdemonstrationclick', me, parseInt(targetEl.getAttribute('data-demonstration'), 10), ev, targetEl);
-        }
-    }
+//    listeners: {
+//        scope: 'this',
+//        click: {
+//            fn: 'onGridClick',
+//            element: 'el',
+//            delegate: '.skill-grid-demo-row, a[href="#demonstration-edit"]'
+//        }
+//    },
+//
+//    onGridClick: function(ev, t) {
+//        var me = this,
+//            targetEl;
+//
+//        if (targetEl = ev.getTarget('.skill-grid-demo-row', me.el, true)) {
+//            me.fireEvent('demorowclick', me, ev, targetEl);
+//        } else if (targetEl = ev.getTarget('a[href="#demonstration-edit"]', me.el, true)) {
+//            ev.stopEvent();
+//            me.fireEvent('editdemonstrationclick', me, parseInt(targetEl.getAttribute('data-demonstration'), 10), ev, targetEl);
+//        }
+//    }
 });
