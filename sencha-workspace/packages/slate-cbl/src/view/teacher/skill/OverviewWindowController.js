@@ -55,7 +55,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         var me = this,
             competency = overviewWindow.getCompetency(),
             student = overviewWindow.getStudent();
-debugger;
+
         if (competency) {
             me.lookupReference('competencyCombo').setValue(competency);
         }
