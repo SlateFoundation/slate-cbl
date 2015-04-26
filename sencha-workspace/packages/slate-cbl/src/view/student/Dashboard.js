@@ -17,9 +17,11 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
     config: {
         student: null,
         contentArea: null,
+
         popover: {
             pointer: 'none'
-        }
+        },
+        competenciesStatus: 'unloaded'
     },
     
     recentProgressTpl: [
@@ -62,71 +64,6 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         '</div>'
     ],
 
-    competenciesTpl: [
-        '<tpl for="competencies">',
-        '    <li class="panel cbl-competency-panel cbl-level-{level}" data-competency="{id}">',
-        '        <header class="panel-header">',
-        '            <h3 class="header-title">{descriptor:htmlEncode}</h3>',
-        '        </header>',
-
-        '        <div class="panel-body">',
-        '            <div class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
-        '                <div class="cbl-progress-bar" style="width:{percentComplete}%"></div>',
-        '                <div class="cbl-progress-level no-select">L{level}</div>',
-        '                <div class="cbl-progress-percent">{percentComplete}%</div>',
-        '                <div class="cbl-progress-average" title="Average">{demonstrationsAverage:number("0.##")}</div>',
-        '            </div>',
-
-        '            <div class="explainer">',
-        '                <p>{statement:htmlEncode}</p>',
-        '            </div>',
-
-        '            <ul class="cbl-skill-meter skills-unloaded"></ul>',
-        '        </div>',
-        '    </li>',
-        '</tpl>'
-    ],
-    
-    skillsTpl: [
-        '<tpl for=".">',
-            '<li class="cbl-skill">',
-                '<h5 class="cbl-skill-name" data-descriptor="{Descriptor}" data-statement="{Statement}">{Descriptor}</h5>',
-                '<ul class="cbl-skill-demos" data-skill="{ID}">',
-                    '<tpl for="this.getDemonstrationBlocks(values)">',
-                        '<li class="cbl-skill-demo <tpl if="values.Level==0">cbl-skill-demo-uncounted</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
-                            '<tpl if="values.Level &gt;= 0">',
-                                '{[values.Level == 0 ? "M" : values.Level]}',
-                            '<tpl else>',
-                                '&nbsp;',
-                            '</tpl>',
-                        '</li>',
-                    '</tpl>',
-                '</ul>',
-                '<div class="cbl-skill-description"><p>{Statement}</p></div>',
-                /* TODO: FIXME: We need new design assets/styling for the checkmark, this doesn't render very well at all
-                '<div class="cbl-skill-complete-indicator cbl-level-{parent.level} is-checked">',
-                    '<svg class="check-mark-image" width="16" height="16">',
-                        '<polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
-                    '</svg>',
-                '</div>',*/
-            '</li>',
-        '</tpl>',
-        
-        {
-            getDemonstrationBlocks: function(skill, studentId) {
-                var demonstrationsRequired = skill.DemonstrationsRequired,
-                    blocks = Slate.cbl.util.CBL.sortDemonstrations(skill.demonstrations, demonstrationsRequired);
-                    
-                // add empty blocks
-                while (blocks.length < demonstrationsRequired) {
-                    blocks.push({});
-                }
-
-                return blocks;
-            }
-        }
-    ],
-
     autoEl: {
         tag: 'ul',
         cls: 'cbl-competency-panels competencies-unloaded'
@@ -143,6 +80,8 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         }
     },
 
+
+    // config handlers
     applyPopover: function(newPopover, oldPopover) {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
     },
@@ -183,6 +122,18 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         this.fireEvent('contentareachange', this, newContentArea, oldContentArea);
     },
 
+    updateCompetenciesStatus: function(newStatus, oldStatus) {
+        if (oldStatus) {
+            this.removeCls('competencies-' + oldStatus);
+        }
+
+        if (newStatus) {
+            this.addCls('competencies-' + newStatus);
+        }
+    },
+
+
+    // event handlers
     onListClick: function(ev, t) {
         var me = this,
             targetEl;

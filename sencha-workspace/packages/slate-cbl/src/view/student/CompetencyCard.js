@@ -17,6 +17,9 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         demonstrationsAverage: null,
         isAverageLow: null,
 
+        // internal state
+        skillsStatus: 'unloaded',
+
         cls: 'cbl-competency-panel'
     },
 
@@ -37,7 +40,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         '        <p id="{id}-statementEl" data-ref="statementEl">{competency.Statement:htmlEncode}</p>',
         '    </div>',
 
-        '    <ul id="{id}-skillsCt" data-ref="skillsCt" class="cbl-skill-meter skills-unloaded"></ul>',
+        '    <ul id="{id}-skillsCt" data-ref="skillsCt" class="cbl-skill-meter"></ul>',
         '</div>'
     ],
     childEls: [
@@ -49,6 +52,46 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         'meterAverageEl',
         'statementEl',
         'skillsCt'
+    ],
+
+    skillsTpl: [
+        '<tpl foreach=".">',
+        '    <li class="cbl-skill">',
+        '        <h5 class="cbl-skill-name">{Descriptor:htmlEncode}</h5>',
+        '        <ul class="cbl-skill-demos" data-skill="{ID}">',
+        '            <tpl for="this.getDemonstrationBlocks(values)">',
+        '                <li class="cbl-skill-demo <tpl if="values.Level==0">cbl-skill-demo-uncounted</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
+        '                    <tpl if="values.Level &gt;= 0">',
+        '                        {[values.Level == 0 ? "M" : values.Level]}',
+        '                    <tpl else>',
+        '                        &nbsp;',
+        '                    </tpl>',
+        '                </li>',
+        '            </tpl>',
+        '        </ul>',
+        '        <div class="cbl-skill-description"><p>{Statement}</p></div>',
+                /* TODO: FIXME: We need new design assets/styling for the checkmark, this doesn't render very well at all
+                '<div class="cbl-skill-complete-indicator cbl-level-{parent.level} is-checked">',
+                    '<svg class="check-mark-image" width="16" height="16">',
+                        '<polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
+                    '</svg>',
+                '</div>',*/
+        '    </li>',
+        '</tpl>',
+        
+        {
+            getDemonstrationBlocks: function(skill, studentId) {
+                var demonstrationsRequired = skill.DemonstrationsRequired,
+                    blocks = Slate.cbl.util.CBL.sortDemonstrations(skill.demonstrations, demonstrationsRequired);
+
+                // add empty blocks
+                while (blocks.length < demonstrationsRequired) {
+                    blocks.push({});
+                }
+
+                return blocks;
+            }
+        }
     ],
 
 
@@ -77,6 +120,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     // config handlers
     updateCompetency: function(competency) {
         var me = this,
+            htmlEncode = Ext.util.Format.htmlEncode,
             completion = competency.get('studentCompletions')[me.getStudentId()] || {},
             percentComplete = Math.round(100 * (completion.demonstrationsCount || 0) / competency.get('totalDemonstrationsRequired')),
             demonstrationsAverage = completion.demonstrationsAverage;
@@ -85,15 +129,28 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         me.setPercentComplete(percentComplete);
         me.setDemonstrationsAverage(demonstrationsAverage);
         me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage < competency.get('minimumAverage'));
+
+        if (me.rendered) {
+            me.descriptorEl.update(htmlEncode(competency.get('Descriptor')));
+            me.statementEl.update(htmlEncode(competency.get('Statement')));
+        }
+
+        me.loadSkills();
     },
 
     updateLevel: function(newLevel, oldLevel) {
+        var me = this;
+
         if (oldLevel) {
-            this.removeCls('cbl-level-' + oldLevel);
+            me.removeCls('cbl-level-' + oldLevel);
         }
 
         if (newLevel) {
-            this.addCls('cbl-level-' + newLevel);
+            me.addCls('cbl-level-' + newLevel);
+        }
+
+        if (me.rendered) {
+            me.meterLevelEl.update(newLevel ? 'L'+newLevel : '');
         }
     },
 
@@ -118,5 +175,72 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         if (this.rendered) {
             this.meterEl.toggleCls('is-average-low', isAverageLow);
         }
+    },
+
+    updateSkillsStatus: function(newStatus, oldStatus) {
+        if (oldStatus) {
+            this.removeCls('skills-' + oldStatus);
+        }
+
+        if (newStatus) {
+            this.addCls('skills-' + newStatus);
+        }
+    },
+
+
+    // public methods
+    loadSkills: function() {
+        var me = this,
+            competency = me.getCompetency();
+
+        me.setSkillsStatus('loading');
+
+        competency.getDemonstrationsForStudents([me.getStudentId()], function(loadedDemonstrations) {
+            me.loadedDemonstrations = loadedDemonstrations;
+            me.refreshSkills();
+        });
+
+        competency.withSkills(function(loadedSkills) {
+            me.loadedSkills = loadedSkills;
+            me.refreshSkills();
+        });
+    },
+
+    refreshSkills: function() {
+        var me = this;
+
+        if (!me.loadedSkills || !me.loadedDemonstrations || !me.rendered) {
+            return;
+        }
+
+        console.log('refreshSkills');
+
+        me.getTpl('skillsTpl').overwrite(me.skillsCt, me.getSkillsData());
+
+        me.setSkillsStatus('loaded');
+    },
+
+    getSkillsData: function() {
+        var me = this,
+            skills = me.loadedSkills,
+            skillsLen = skills.getCount(), skillIndex = 0, skill,
+            demonstrations = me.loadedDemonstrations,
+            demonstrationsLen = demonstrations.length, demonstrationIndex = 0, demonstration,
+            skillsData = {};
+
+        for (; skillIndex < skillsLen; skillIndex++) {
+            skill = skills.getAt(skillIndex);
+            skillsData[skill.ID] = Ext.apply({
+                demonstrations: []
+            }, skill);
+        }
+
+        // group demonstrations by skill
+        for (; demonstrationIndex < demonstrationsLen; demonstrationIndex++) {
+            demonstration = demonstrations[demonstrationIndex];
+            skillsData[demonstration.SkillID].demonstrations.push(demonstration);
+        }
+
+        return skillsData;
     }
 });

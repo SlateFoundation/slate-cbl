@@ -12,8 +12,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         id: 'slate-cbl-student-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         control: {
             '#': {
-//                contentareachange: 'refresh',
-//                progressrowclick: 'onProgressRowClick',
                 democellclick: 'onDemoCellClick',
                 render: 'onComponentRender'
             }
@@ -34,14 +32,11 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     // event handlers
     onComponentRender: function(dashboardView) {
         var me = this,
-            studentDashboardCompetenciesList = dashboardView.el,
             /* HACK: what's the right way to get the recent progress... also why do we use down with an id above? */
             studentDashboardRecentProgress = Ext.get('studentDashboardRecentProgress'), // todo: move this to Site.page.Student script
             student = dashboardView.getStudent(),
             studentId = student && student.getId(),
             contentArea = dashboardView.getContentArea(),
-            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-            competenciesTpl = Ext.XTemplate.getTpl(me.view, 'competenciesTpl'),
             recentProgressTpl = Ext.XTemplate.getTpl(me.view, 'recentProgressTpl');
 
         if (!studentId || !contentArea) {
@@ -56,12 +51,12 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
                 progress: progress
             });
         });
-        
-        // empty competencies list
-        studentDashboardCompetenciesList.removeCls('competencies-unloaded').addCls('competencies-loading');
+
+        dashboardView.setCompetenciesStatus('loading');
 
         contentArea.getCompetenciesForStudents([studentId], function(competencies) {
-            var competenciesLength = competencies.length,
+            var competenciesStore = Ext.getStore('cbl-competencies-loaded'),
+                competenciesLength = competencies.length,
                 competencyIndex = 0,
                 competency, skillsList;
 
@@ -75,13 +70,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
                 };
             }));
 
-            studentDashboardCompetenciesList.removeCls('competencies-loading').addCls('competencies-loaded');
-
-            // for (; competencyIndex < competenciesLength; competencyIndex++) {
-            //     competency = Ext.create('Slate.cbl.model.Competency', competencies[competencyIndex]);
-            //     skillsList = studentDashboardCompetenciesList.down('.cbl-competency-panel[data-competency="'+competency.getId()+'"] .cbl-skill-meter');
-            //     me.loadSkills(studentId, competency, skillsList);
-            // }
+            dashboardView.setCompetenciesStatus('loaded');
         });
     },
 
@@ -94,51 +83,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
             skill: parseInt(targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'), 10),
             student: dashboardView.getStudent().getId(),
             selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
-        });
-    },
-    
-    // protected methods
-    loadSkills: function(studentId, competency, skillsList) {
-        var me = this,
-            skillsTpl = Ext.XTemplate.getTpl(me.view, 'skillsTpl'),
-            skills, demonstrations, _renderSkills;
-
-        skillsList.removeCls('skills-unloaded').addCls('skills-loading');
-
-        _renderSkills = function() {
-            var demonstrationsLength = demonstrations.length, demonstrationIndex = 0, demonstration, skill;
-            // group demonstrations by skill
-            for (; demonstrationIndex < demonstrationsLength; demonstrationIndex++) {
-                demonstration = demonstrations[demonstrationIndex];
-                skill = skills.get(demonstration.SkillID);
-
-                if (!skill.demonstrations) {
-                    skill.demonstrations = [];
-                }
-
-                skill.demonstrations.push(demonstration);
-            }
-
-
-            skillsTpl.overwrite(skillsList, skills.items);
-            skillsList.removeCls('skills-loading').addCls('skills-loaded');
-        };
-
-        competency.getDemonstrationsForStudents([studentId], function(loadedDemonstrations) {
-            demonstrations = loadedDemonstrations;
-            
-            if (skills) {
-                _renderSkills();
-            }
-        });
-
-
-        competency.withSkills(function(loadedSkills) {
-            skills = loadedSkills;
-            
-            if (demonstrations) {
-                _renderSkills();
-            }
         });
     }
 });
