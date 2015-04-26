@@ -31,7 +31,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     },
 
 
-    //event handlers
+    // event handlers
     onComponentRender: function(dashboardView) {
         var me = this,
             studentDashboardCompetenciesList = dashboardView.el,
@@ -58,7 +58,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         });
         
         // empty competencies list
-        studentDashboardCompetenciesList.empty();
         studentDashboardCompetenciesList.removeCls('competencies-unloaded').addCls('competencies-loading');
 
         contentArea.getCompetenciesForStudents([studentId], function(competencies) {
@@ -68,7 +67,13 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
 
             competenciesStore.loadRawData(competencies);
 
-            competenciesTpl.overwrite(studentDashboardCompetenciesList, me.getCompetenciesTplData());
+            dashboardView.add(Ext.Array.map(competenciesStore.getRange(), function(competency) {
+                return {
+                    studentId: studentId,
+                    competency: competency,
+                    autoEl: 'li'
+                };
+            }));
 
             studentDashboardCompetenciesList.removeCls('competencies-loading').addCls('competencies-loaded');
 
@@ -135,35 +140,5 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
                 _renderSkills();
             }
         });
-    },
-
-    getCompetenciesTplData: function() {
-        var dashboardView = this.getView(),
-            studentId = dashboardView.getStudent().getId(),
-            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-            competenciesLen = competenciesStore.getCount(),
-            i = 0, competency, completion, percentComplete, demonstrationsAverage,
-            competenciesData = [];
-
-        for (; i < competenciesLen; i++) {
-            competency = competenciesStore.getAt(i);
-            completion = competency.get('studentCompletions')[studentId] || {};
-            percentComplete = Math.round(100 * (completion.demonstrationsCount || 0) / competency.get('totalDemonstrationsRequired'));
-            demonstrationsAverage = completion.demonstrationsAverage;
-
-            competenciesData.push({
-                id: competency.getId(),
-                descriptor: competency.get('Descriptor'),
-                statement: competency.get('Statement'),
-                level: 9, // TODO: don't hardcode level
-                percentComplete: percentComplete,
-                demonstrationsAverage: demonstrationsAverage,
-                isAverageLow: percentComplete >= 50 && demonstrationsAverage < competency.get('minimumAverage')
-            });
-        }
-
-        return {
-            competencies: competenciesData
-        };
     }
 });

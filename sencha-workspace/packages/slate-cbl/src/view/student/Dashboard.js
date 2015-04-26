@@ -1,9 +1,10 @@
 /*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('Slate.cbl.view.student.Dashboard', {
-    extend: 'Ext.Component',
+    extend: 'Ext.Container',
     xtype: 'slate-cbl-student-dashboard',
     requires:[
         'Slate.cbl.view.student.DashboardController',
+        'Slate.cbl.view.student.CompetencyCard',
         'Slate.cbl.model.Student',
         'Slate.cbl.model.Competency',
         'Slate.cbl.model.ContentArea',
@@ -130,6 +131,8 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         tag: 'ul',
         cls: 'cbl-competency-panels competencies-unloaded'
     },
+    defaultType: 'slate-cbl-student-competencycard',
+    layout: 'container',
 
     listeners: {
         scope: 'this',
