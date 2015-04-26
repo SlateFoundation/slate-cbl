@@ -62,7 +62,8 @@ class SkillsRequestHandler extends \RecordsRequestHandler
 
         return static::respond('skillDemonstrations', [
             'success' => true,
-            'data' => DemonstrationSkill::getAllByQuery($query)
+            'data' => DemonstrationSkill::getAllByQuery($query),
+            'skill' => $Skill
         ]);
     }
 }

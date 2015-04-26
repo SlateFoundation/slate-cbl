@@ -65,21 +65,5 @@ Ext.define('Slate.cbl.model.Skill', {
     proxy: {
         type: 'slate-cbl-records',
         url: '/cbl/skills'
-    },
-
-    getDemonstrationsByStudent: function(studentId, callback, scope, include) {
-        var me = this;
-
-        Slate.cbl.API.request({
-            method: 'GET',
-            url: '/cbl/skills/' + me.get('Code') + '/demonstrations',
-            params: {
-                student: studentId,
-                include: include || 'Demonstration,Demonstration.Creator'
-            },
-            success: function(response) {
-                Ext.callback(callback, scope, [response.data && response.data.data]);
-            }
-        });
     }
 });

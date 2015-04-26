@@ -336,22 +336,31 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     addCompetency: function(competency, callback, scope, insertSorted) {
         var me = this,
             editWindow = me.getView(),
+            competenciesStore = Ext.getStore('cbl-competencies-all'),
             competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
             competenciesSearchField = me.lookupReference('competenciesSearchField'),
             competencyCardConfig = {
-                title: competency.get('Code'),
-//                tabConfig: {
-//                    tooltip: {
-//                        title: competenciesTabPanel.getTpl('competencyTipTitleTpl').apply(competency.getData()),
-//                        text: competenciesTabPanel.getTpl('competencyTipBodyTpl').apply(competency.getData())
-//                    }
-//                },
                 competency: competency,
                 items: []
             },
             skillFieldsConfig = competencyCardConfig.items;
 
+        // convert competency id to instance
+        if (!competency.isModel) {
+            // defer addCompetency until competencies store is loaded if necessary
+            if (competenciesStore.isLoaded()) {
+                competency = competenciesStore.getById(competency);
+            } else {
+                competenciesStore.on('load', function() {
+                    me.addCompetency(competency, callback, scope, insertSorted);
+                }, null, { single: true });
 
+                return;
+            }
+        }
+
+
+        competencyCardConfig.title = competency.get('Code');
 
         competency.withSkills(function(skills) {
             if (editWindow.destroying || editWindow.destroyed) {
