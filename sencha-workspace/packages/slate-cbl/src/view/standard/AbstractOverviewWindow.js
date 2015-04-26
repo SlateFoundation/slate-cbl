@@ -170,14 +170,10 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         me.loadedSkillId = skillId;
         me.loadedStudentId = studentId;
 
-        console.log('loadDemonstrationsTable, skillId=%o, studentId=%o', skillId, studentId);
-
         if (skillId && studentId) {
             demonstrationsTable.setLoading('Loading demonstrations&hellip;'); // currently not visible due to (fixed in 5.1) http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
 
-            Slate.cbl.API.getDemonstrationsByStudentSkill(studentId, skillId, function(skillDemonstrations, responseData) {  
-                console.log('loaded demonstrations: ', skillDemonstrations);
-
+            Slate.cbl.API.getDemonstrationsByStudentSkill(studentId, skillId, function(skillDemonstrations, responseData) {
                 skillStatementCmp.update((responseData.skill && responseData.skill.Statement) || '');
 
                 skillDemonstrations.sort(function compare(a, b) {
@@ -207,8 +203,6 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
             demonstrationsTable = me.demonstrationsTable,
             skillStatement = me.skillStatement,
             skillData = me.loadedSkillData;
-
-        console.log('refreshDemonstrationsTable, demonstrations=%o, demonstrationsTable=%o, selectedDemonstrationId=%o', me.demonstrations, demonstrationsTable, me.getSelectedDemonstration());
 
         demonstrationsTable.update({
             demonstrations: me.demonstrations || [],
