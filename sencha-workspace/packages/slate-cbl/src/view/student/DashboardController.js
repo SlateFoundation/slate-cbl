@@ -65,22 +65,17 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
                 competencyIndex = 0,
                 competency, skillsList;
 
-            if(!competenciesStore.isLoaded()) {
-                competenciesStore.loadRawData(competencies);
-            }
+            competenciesStore.loadRawData(competencies);
 
-            competenciesTpl.overwrite(studentDashboardCompetenciesList, {
-                student: student.getData(),
-                competencies: competencies
-            });
+            competenciesTpl.overwrite(studentDashboardCompetenciesList, me.getCompetenciesTplData());
 
             studentDashboardCompetenciesList.removeCls('competencies-loading').addCls('competencies-loaded');
 
-            for (; competencyIndex < competenciesLength; competencyIndex++) {
-                competency = Ext.create('Slate.cbl.model.Competency', competencies[competencyIndex]);
-                skillsList = studentDashboardCompetenciesList.down('.cbl-competency-panel[data-competency="'+competency.getId()+'"] .cbl-skill-meter');
-                me.loadSkills(student, competency, skillsList);
-            }
+            // for (; competencyIndex < competenciesLength; competencyIndex++) {
+            //     competency = Ext.create('Slate.cbl.model.Competency', competencies[competencyIndex]);
+            //     skillsList = studentDashboardCompetenciesList.down('.cbl-competency-panel[data-competency="'+competency.getId()+'"] .cbl-skill-meter');
+            //     me.loadSkills(student, competency, skillsList);
+            // }
         });
     },
 
@@ -139,5 +134,35 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
                 _renderSkills();
             }
         });
+    },
+
+    getCompetenciesTplData: function() {
+        var dashboardView = this.getView(),
+            studentId = dashboardView.getStudent().getId(),
+            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
+            competenciesLen = competenciesStore.getCount(),
+            i = 0, competency, completion, percentComplete, demonstrationsAverage,
+            competenciesData = [];
+
+        for (; i < competenciesLen; i++) {
+            competency = competenciesStore.getAt(i);
+            completion = competency.get('studentCompletions')[studentId] || {};
+            percentComplete = Math.round(100 * (completion.demonstrationsCount || 0) / competency.get('totalDemonstrationsRequired'));
+            demonstrationsAverage = completion.demonstrationsAverage;
+
+            competenciesData.push({
+                id: competency.getId(),
+                descriptor: competency.get('Descriptor'),
+                statement: competency.get('Statement'),
+                level: 9, // TODO: don't hardcode level
+                percentComplete: percentComplete,
+                demonstrationsAverage: demonstrationsAverage,
+                isAverageLow: percentComplete >= 50 && demonstrationsAverage < competency.get('minimumAverage')
+            });
+        }
+
+        return {
+            competencies: competenciesData
+        };
     }
 });

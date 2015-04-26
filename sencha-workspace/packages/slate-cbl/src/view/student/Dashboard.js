@@ -62,32 +62,27 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
     ],
 
     competenciesTpl: [
-        // TODO: indent markup
         '<tpl for="competencies">',
-        '{%var level = 9%}', // TODO: real level
-        '{%var studentCompletion = values.studentCompletions[parent.student.ID] || {}%}',
-        '{%var percent = Math.round(100 * (studentCompletion.demonstrationsCount || 0) / values.totalDemonstrationsRequired)%}',
-        '{%var isAverageLow = studentCompletion.demonstrationsAverage < values.minimumAverage && percent >= 50%}',
-        '<li class="panel cbl-competency-panel cbl-level-{[level]}" data-competency="{ID}">',
-        '<header class="panel-header">',
-        '<h3 class="header-title">{Descriptor}</h3>',
-        '</header>',
+        '    <li class="panel cbl-competency-panel cbl-level-{level}" data-competency="{id}">',
+        '        <header class="panel-header">',
+        '            <h3 class="header-title">{descriptor:htmlEncode}</h3>',
+        '        </header>',
 
-        '<div class="panel-body">',
-        '<div class="cbl-progress-meter {[isAverageLow ? "is-average-low" : ""]}">',
-        '<div class="cbl-progress-bar" style="width:{[percent]}%"></div>',
-        '<div class="cbl-progress-level no-select">L{[level]}</div>',
-        '<div class="cbl-progress-percent">{[percent]}%</div>',
-        '<div class="cbl-progress-average" title="Average">{[fm.number(studentCompletion.demonstrationsAverage, "0.##")]}</div>',
-        '</div>',
+        '        <div class="panel-body">',
+        '            <div class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
+        '                <div class="cbl-progress-bar" style="width:{percentComplete}%"></div>',
+        '                <div class="cbl-progress-level no-select">L{level}</div>',
+        '                <div class="cbl-progress-percent">{percentComplete}%</div>',
+        '                <div class="cbl-progress-average" title="Average">{demonstrationsAverage:number("0.##")}</div>',
+        '            </div>',
 
-        '<div class="explainer">',
-        '<p>{Statement}</p>',
-        '</div>',
+        '            <div class="explainer">',
+        '                <p>{statement:htmlEncode}</p>',
+        '            </div>',
 
-        '<ul class="cbl-skill-meter skills-unloaded"></ul>',
-        '</div>',
-        '</li>',
+        '            <ul class="cbl-skill-meter skills-unloaded"></ul>',
+        '        </div>',
+        '    </li>',
         '</tpl>'
     ],
     
