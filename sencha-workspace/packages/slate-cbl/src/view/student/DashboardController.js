@@ -3,7 +3,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-student-dashboard',
     requires: [
-        'Slate.cbl.model.Student',
         'Slate.cbl.model.Competency',
         'Slate.cbl.view.student.skill.OverviewWindow'
     ],
@@ -12,8 +11,10 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         id: 'slate-cbl-student-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         control: {
             '#': {
-                democellclick: 'onDemoCellClick',
                 render: 'onComponentRender'
+            },
+            'slate-cbl-student-competencycard': {
+                democellclick: 'onDemoCellClick'
             }
         }
     },
@@ -74,14 +75,14 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         });
     },
 
-    onDemoCellClick: function(dashboardView, ev, targetEl) {
+    onDemoCellClick: function(competencyCard, ev, targetEl) {
         Ext.create('Slate.cbl.view.student.skill.OverviewWindow', {
             autoShow: true,
             animateTarget: targetEl,
 
             competency: parseInt(targetEl.up('ul.cbl-skill-demos').up('li.cbl-competency-panel').getAttribute('data-competency'), 10),
             skill: parseInt(targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'), 10),
-            student: dashboardView.getStudent().getId(),
+            student: this.getView().getStudent().getId(),
             selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
         });
     }

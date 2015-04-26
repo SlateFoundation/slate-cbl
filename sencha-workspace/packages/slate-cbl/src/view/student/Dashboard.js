@@ -6,10 +6,8 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         'Slate.cbl.view.student.DashboardController',
         'Slate.cbl.view.student.CompetencyCard',
         'Slate.cbl.model.Student',
-        'Slate.cbl.model.Competency',
         'Slate.cbl.model.ContentArea',
-        'Slate.cbl.widget.Popover',
-        'Slate.cbl.util.CBL'
+        'Slate.cbl.widget.Popover'
     ],
 
     controller: 'slate-cbl-student-dashboard',
@@ -66,19 +64,10 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
 
     autoEl: {
         tag: 'ul',
-        cls: 'cbl-competency-panels competencies-unloaded'
+        cls: 'cbl-competency-panels'
     },
     defaultType: 'slate-cbl-student-competencycard',
     layout: 'container',
-
-    listeners: {
-        scope: 'this',
-        click: {
-            fn: 'onListClick',
-            element: 'el',
-            delegate: '.cbl-competency-panels, .cbl-competency-panels'
-        }
-    },
 
 
     // config handlers
@@ -129,17 +118,6 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
 
         if (newStatus) {
             this.addCls('competencies-' + newStatus);
-        }
-    },
-
-
-    // event handlers
-    onListClick: function(ev, t) {
-        var me = this,
-            targetEl;
-
-        if (targetEl = ev.getTarget('.cbl-skill-demo', me.el, true)) {
-            me.fireEvent('democellclick', me, ev, targetEl);
         }
     }
 });

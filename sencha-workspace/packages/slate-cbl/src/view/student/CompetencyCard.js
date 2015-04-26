@@ -2,6 +2,9 @@
 Ext.define('Slate.cbl.view.student.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-student-competencycard',
+    requires: [,
+        'Slate.cbl.util.CBL'
+    ],
 
     config: {
         // required inputs
@@ -53,6 +56,15 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         'statementEl',
         'skillsCt'
     ],
+
+    listeners: {
+        scope: 'this',
+        click: {
+            fn: 'onDemoCellClick',
+            element: 'el',
+            delegate: '.cbl-skill-demo'
+        }
+    },
 
     skillsTpl: [
         '<tpl foreach=".">',
@@ -188,6 +200,12 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     },
 
 
+    // event handlers
+    onDemoCellClick: function(ev, t) {
+        this.fireEvent('democellclick', this, ev, Ext.get(t));
+    },
+
+
     // public methods
     loadSkills: function() {
         var me = this,
@@ -212,8 +230,6 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         if (!me.loadedSkills || !me.loadedDemonstrations || !me.rendered) {
             return;
         }
-
-        console.log('refreshSkills');
 
         me.getTpl('skillsTpl').overwrite(me.skillsCt, me.getSkillsData());
 
