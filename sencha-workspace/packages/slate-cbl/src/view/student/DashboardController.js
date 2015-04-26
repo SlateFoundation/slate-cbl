@@ -38,17 +38,18 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
             /* HACK: what's the right way to get the recent progress... also why do we use down with an id above? */
             studentDashboardRecentProgress = Ext.get('studentDashboardRecentProgress'), // todo: move this to Site.page.Student script
             student = dashboardView.getStudent(),
+            studentId = student && student.getId(),
             contentArea = dashboardView.getContentArea(),
             competenciesStore = Ext.getStore('cbl-competencies-loaded'),
             competenciesTpl = Ext.XTemplate.getTpl(me.view, 'competenciesTpl'),
             recentProgressTpl = Ext.XTemplate.getTpl(me.view, 'recentProgressTpl');
 
-        if (!student || !contentArea) {
+        if (!studentId || !contentArea) {
             return;
         }
 
         // TODO: recent progress should be its own component
-        Slate.cbl.API.getRecentProgress(student.getId(), contentArea.get('Code'), function(progress) {
+        Slate.cbl.API.getRecentProgress(studentId, contentArea.get('Code'), function(progress) {
             progress = Ext.isArray(progress) ? progress : [];
             
             recentProgressTpl.overwrite(studentDashboardRecentProgress, {
@@ -60,7 +61,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         studentDashboardCompetenciesList.empty();
         studentDashboardCompetenciesList.removeCls('competencies-unloaded').addCls('competencies-loading');
 
-        contentArea.getCompetenciesForStudents([student.getId()], function(competencies) {
+        contentArea.getCompetenciesForStudents([studentId], function(competencies) {
             var competenciesLength = competencies.length,
                 competencyIndex = 0,
                 competency, skillsList;
@@ -74,7 +75,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
             // for (; competencyIndex < competenciesLength; competencyIndex++) {
             //     competency = Ext.create('Slate.cbl.model.Competency', competencies[competencyIndex]);
             //     skillsList = studentDashboardCompetenciesList.down('.cbl-competency-panel[data-competency="'+competency.getId()+'"] .cbl-skill-meter');
-            //     me.loadSkills(student, competency, skillsList);
+            //     me.loadSkills(studentId, competency, skillsList);
             // }
         });
     },
@@ -92,7 +93,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     },
     
     // protected methods
-    loadSkills: function(student, competency, skillsList) {
+    loadSkills: function(studentId, competency, skillsList) {
         var me = this,
             skillsTpl = Ext.XTemplate.getTpl(me.view, 'skillsTpl'),
             skills, demonstrations, _renderSkills;
@@ -118,7 +119,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
             skillsList.removeCls('skills-loading').addCls('skills-loaded');
         };
 
-        competency.getDemonstrationsForStudents([student.getId()], function(loadedDemonstrations) {
+        competency.getDemonstrationsForStudents([studentId], function(loadedDemonstrations) {
             demonstrations = loadedDemonstrations;
             
             if (skills) {
