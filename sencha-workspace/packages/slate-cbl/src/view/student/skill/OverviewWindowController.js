@@ -11,10 +11,7 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
         id: 'slate-cbl-student-skill-overviewwindow', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         control: {
             '#': {
-                beforeshow: 'onBeforeWindowShow',
-                beforerender: 'onBeforeRender',
-                demorowclick: 'onDemoRowClick',
-                destroy: 'onDestroy'
+                beforeshow: 'onBeforeWindowShow'
             },
             'combobox[reference=skillCombo]': {
                 change: 'onSkillChange'
@@ -27,83 +24,30 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
         return Ext.id(null, id);
     },
 
-    onBeforeRender: function(overviewWindow) {
-        overviewWindow.mon(Ext.GlobalEvents, 'resize', function() {
-            overviewWindow.center();
-        });
-
-        overviewWindow.mon(Ext.getWin(), 'scroll', function() {
-            overviewWindow.center();
-        });
-    },
-
     onBeforeWindowShow: function(overviewWindow) {
         var me = this,
             competencyId = overviewWindow.getCompetency(),
             skillsCombo = me.lookupReference('skillCombo'),
-            skillStore = skillsCombo.getStore(),
-            skillId = overviewWindow.getSkill();
+            skillStore = skillsCombo.getStore();
 
-        if (skillId && competencyId) {
-
-            if(!skillStore.isLoaded()) {
-                Slate.cbl.API.getSkills(competencyId, function(response){
-                    skillStore.loadRawData(response.data);
-
-                    skillsCombo.setValue(skillStore.findRecord('ID', skillId));
-                    me.syncDemonstrationsTable();
-                });
-
-            } else {
-                me.syncDemonstrationsTable();
-            }
+        if (!competencyId || skillStore.isLoaded()) {
+            return;
         }
-    },
 
-    onDemoRowClick: function(overviewWindow, ev, targetEl) {
-        targetEl.next('.skill-grid-demo-detail-row').toggleCls('is-expanded');
-        overviewWindow.doLayout();
+        Slate.cbl.API.getSkills(competencyId, function(response){
+            skillStore.loadRawData(response.data);
+
+            skillsCombo.setValue(skillStore.findRecord('ID', overviewWindow.getSkill()));
+        });
     },
 
     onSkillChange: function(skillCombo, skill) {
-        this.syncDemonstrationsTable();
-    },
+        skill = skill && skillCombo.findRecordByValue(skill);
 
-    // private methods
-    syncDemonstrationsTable: function() { // TODO: move some/all of this method to common view code?
-        var me = this,
-            demonstrationsTable = me.lookupReference('demonstrationsTable'),
-            skillId = me.lookupReference('skillCombo').getValue(),
-            studentId = me.view.getStudent(),
-            demonstrationId = me.view.getDemonstration();
-            
-        if (skillId && studentId) {
-            // currently not visible due to http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
-            demonstrationsTable.setLoading('Loading demonstrations&hellip;');
-            Slate.cbl.model.Skill.load(skillId, {
-                callback: function(skill) {
-                    skill.getDemonstrationsByStudent(studentId, function(skillDemonstrations) {
-                        
-                        skillDemonstrations.sort(function compare(a, b) {
-                            var aDemonstrated = new Date(a.Demonstration.Demonstrated),
-                                bDemonstrated = new Date(b.Demonstration.Demonstrated);
-
-                            return (aDemonstrated > bDemonstrated) ? 1 : (aDemonstrated < bDemonstrated) ? -1 : 0;
-                        });
-
-                        demonstrationsTable.update({
-                            demonstrations: skillDemonstrations,
-                            selectedDemonstrationId: demonstrationId
-                        });
-                        demonstrationsTable.setLoading(false);
-                    });
-                }
-            });
-        } else {
-            demonstrationsTable.update({
-                demonstrations: [],
-                selectedDemonstrationId: null
-            });
+        if (skill) {
+            this.lookupReference('skillStatement').update(skill.get('Statement'));
         }
+
+        this.getView().setSkill(skill ? skill.getId() : null);
     }
 });

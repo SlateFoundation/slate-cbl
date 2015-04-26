@@ -12,7 +12,10 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
     controller: 'slate-cbl-teacher-skill-overviewwindow',
 
-    autoScroll: true,
+    config: {
+        competency: null,
+        showEditLinks: true
+    },
 
     dockedItems: [
         {
@@ -98,25 +101,12 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
             ]
         }
     ],
+    
+    applyCompetency: function(competency) {
+        if (Ext.isString(competency)) {
+            competency = parseInt(competency, 10);
+        }
 
-//    listeners: {
-//        scope: 'this',
-//        click: {
-//            fn: 'onGridClick',
-//            element: 'el',
-//            delegate: '.skill-grid-demo-row, a[href="#demonstration-edit"]'
-//        }
-//    },
-//
-//    onGridClick: function(ev, t) {
-//        var me = this,
-//            targetEl;
-//
-//        if (targetEl = ev.getTarget('.skill-grid-demo-row', me.el, true)) {
-//            me.fireEvent('demorowclick', me, ev, targetEl);
-//        } else if (targetEl = ev.getTarget('a[href="#demonstration-edit"]', me.el, true)) {
-//            ev.stopEvent();
-//            me.fireEvent('editdemonstrationclick', me, parseInt(targetEl.getAttribute('data-demonstration'), 10), ev, targetEl);
-//        }
-//    }
+        return competency ? competency : null;
+    }
 });

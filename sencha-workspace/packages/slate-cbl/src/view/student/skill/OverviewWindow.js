@@ -11,7 +11,12 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
 
     controller: 'slate-cbl-student-skill-overviewwindow',
 
+    config: {
+        competency: null
+    },
+
     modal: true,
+    fixed: true,
     shadow: 'frame',
 
     dockedItems: [
@@ -39,22 +44,4 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
             ]
         }
     ]
-
-//    listeners: {
-//        scope: 'this',
-//        click: {
-//            fn: 'onGridClick',
-//            element: 'el',
-//            delegate: '.skill-grid-demo-row'
-//        }
-//    },
-//
-//    onGridClick: function(ev, t) {
-//        var me = this,
-//            targetEl;
-//
-//        if (targetEl = ev.getTarget('.skill-grid-demo-row', me.el, true)) {
-//            me.fireEvent('demorowclick', me, ev, targetEl);
-//        }
-//    }
 });

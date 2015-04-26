@@ -8,18 +8,21 @@
 Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
     extend: 'Ext.window.Window',
     xtype: 'slate-cbl-standard-abstractoverviewwindow',
+    requires: [
+        'Slate.cbl.API'
+    ],
 
     config: {
-        student: null,
-        competency: null,
         skill: null,
-        demonstration: null
+        student: null,
+        selectedDemonstration: null,
+        showEditLinks: false
     },
 
     title: 'Standard Overview',
     width: 700,
     minWidth: 700,
-    fixed: true,
+    autoScroll: true,
 
     items: [
         {
@@ -96,53 +99,121 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         }
     ],
 
-    initEvents: function() {
+
+    // template methods
+    initComponent: function() {
         var me = this;
 
         me.callParent();
 
-        me.mon(me.lookupReference('demonstrationsTable').el, 'click', function(ev, t) {
-            me.fireEvent('demorowclick', me, ev, Ext.get(t));
-        }, me, { delegate: '.skill-grid-demo-row' });
+        me.skillStatementCmp = me.down('[reference=skillStatement]');
+        me.demonstrationsTable = me.down('[reference=demonstrationsTable]');
     },
 
-//    applyStudent: function(student) {
-//        return student ? Ext.getStore('cbl-students-loaded').getById(student) : null;
-//    },
-//
-//    applyCompetency: function(competency) {
-//        return competency ? Ext.getStore('cbl-competencies-loaded').getById(competency) : null;
-//    },
+    afterRender: function() {
+        var me = this;
 
-    applyStudent: function(student) {
-        if (Ext.isString(student)) {
-            student = parseInt(student, 10);
+        me.callParent(arguments);
+
+        me.mon(me.demonstrationsTable.el, 'click', function(ev, t) {
+            if (targetEl = ev.getTarget('.skill-grid-demo-row', me.el, true)) {
+                targetEl.next('.skill-grid-demo-detail-row').toggleCls('is-expanded');
+                me.doLayout();
+                me.fireEvent('demorowclick', me, ev, targetEl);
+            } else if (targetEl = ev.getTarget('a[href="#demonstration-edit"]', me.el, true)) {
+                ev.stopEvent();
+                me.fireEvent('editdemonstrationclick', me, parseInt(targetEl.getAttribute('data-demonstration'), 10), ev, targetEl);
+            } else if (targetEl = ev.getTarget('a[href="#demonstration-delete"]', me.el, true)) {
+                ev.stopEvent();
+                me.fireEvent('deletedemonstrationclick', me, parseInt(targetEl.getAttribute('data-demonstration'), 10), ev, targetEl);
+            }
+
+        }, me, { delegate: '.skill-grid-demo-row, a[href="#demonstration-edit"], a[href="#demonstration-delete"]' });
+
+        me.mon(Ext.GlobalEvents, 'resize', function() {
+            me.center();
+        });
+
+        if (me.getSkill() && me.getStudent()) {
+            me.loadDemonstrationsTable();
         }
-
-        return student ? student : null;
     },
-    
-    applyCompetency: function(competency) {
-        if (Ext.isString(competency)) {
-            competency = parseInt(competency, 10);
-        }
 
-        return competency ? competency : null;
+
+    // config handlers
+    updateSkill: function() {
+        if (this.rendered) {
+            this.loadDemonstrationsTable();
+        }
     },
-    
-    applySkill: function(skill) {
-        if (Ext.isString(skill)) {
-            skill = parseInt(skill, 10);
-        }
 
-        return skill ? skill : null;
+    updateStudent: function() {
+        if (this.rendered) {
+            this.loadDemonstrationsTable();
+        }
     },
-    
-    applyDemonstration: function(demonstration) {
-        if (Ext.isString(demonstration)) {
-            demonstration = parseInt(demonstration, 10);
+
+
+    // public methods
+    loadDemonstrationsTable: function(forceReload) {
+        var me = this,
+            skillStatementCmp = me.skillStatementCmp,
+            demonstrationsTable = me.demonstrationsTable,
+            skillId = me.getSkill(),
+            studentId = me.getStudent();
+
+        // skip load if neither skill or student has changed
+        if (!forceReload && skillId == me.loadedSkillId && studentId == me.loadedStudentId) {
+            return;
         }
 
-        return demonstration ? demonstration : null;
+        me.loadedSkillId = skillId;
+        me.loadedStudentId = studentId;
+
+        console.log('loadDemonstrationsTable, skillId=%o, studentId=%o', skillId, studentId);
+
+        if (skillId && studentId) {
+            demonstrationsTable.setLoading('Loading demonstrations&hellip;'); // currently not visible due to (fixed in 5.1) http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
+
+            Slate.cbl.API.getDemonstrationsByStudentSkill(studentId, skillId, function(skillDemonstrations, responseData) {  
+                console.log('loaded demonstrations: ', skillDemonstrations);
+
+                skillStatementCmp.update((responseData.skill && responseData.skill.Statement) || '');
+
+                skillDemonstrations.sort(function compare(a, b) {
+                    var aDemonstrated = new Date(a.Demonstration.Demonstrated),
+                        bDemonstrated = new Date(b.Demonstration.Demonstrated);
+
+                    return (aDemonstrated > bDemonstrated) ? 1 : (aDemonstrated < bDemonstrated) ? -1 : 0;
+                });
+
+                me.demonstrations = skillDemonstrations;
+                me.loadedSkillData = responseData.skill;
+                me.refreshDemonstrationsTable();
+
+                demonstrationsTable.setLoading(false);
+            });
+        } else {
+            skillStatementCmp.update('Select a standard');
+
+            me.demonstrations = null;
+            me.loadedSkillData = null;
+            me.refreshDemonstrationsTable();
+        }
+    },
+
+    refreshDemonstrationsTable: function() {
+        var me = this,
+            demonstrationsTable = me.demonstrationsTable,
+            skillStatement = me.skillStatement,
+            skillData = me.loadedSkillData;
+
+        console.log('refreshDemonstrationsTable, demonstrations=%o, demonstrationsTable=%o, selectedDemonstrationId=%o', me.demonstrations, demonstrationsTable, me.getSelectedDemonstration());
+
+        demonstrationsTable.update({
+            demonstrations: me.demonstrations || [],
+            selectedDemonstrationId: me.getSelectedDemonstration(),
+            showEditLinks: me.getShowEditLinks()
+        });
     }
 });

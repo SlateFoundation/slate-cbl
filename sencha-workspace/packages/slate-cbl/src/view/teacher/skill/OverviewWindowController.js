@@ -7,10 +7,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         id: 'slate-cbl-teacher-skill-overviewwindow',
         control: {
             '#': {
-                beforeshow: 'onBeforeWindowShow',
-                demorowclick: 'onDemoRowClick',
-                demoeditclick: 'onDemoEditClick',
-                beforerender: 'onBeforeRender'
+                beforeshow: 'onBeforeWindowShow'
             },
             'combobox[reference=competencyCombo]': {
                 change: 'onCompetencyChange'
@@ -41,34 +38,16 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         return Ext.id(null, id);
     },
 
-    onBeforeRender: function(overviewWindow) {
-        overviewWindow.mon(Ext.GlobalEvents, 'resize', function() {
-            overviewWindow.center();
-        });
-
-        overviewWindow.mon(Ext.getWin(), 'scroll', function() {
-            overviewWindow.center();
-        });
-    },
-
     onBeforeWindowShow: function(overviewWindow) {
-        var me = this,
-            competency = overviewWindow.getCompetency(),
-            student = overviewWindow.getStudent();
-
-        if (competency) {
-            me.lookupReference('competencyCombo').setValue(competency);
-        }
-
-        if (student) {
-            me.lookupReference('studentCombo').setValue(student);
-        }
+        this.lookupReference('competencyCombo').setValue(overviewWindow.getCompetency());
+        this.lookupReference('studentCombo').setValue(overviewWindow.getStudent());
     },
 
     onCompetencyChange: function(competencyCombo, competency) {
         competency = competency && competencyCombo.findRecordByValue(competency);
 
-        var me = this;
+        var me = this,
+            overviewWindow = me.getView();
 
         if (!competency) {
             return;
@@ -76,13 +55,15 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
         competency.withSkills(function(skills) {
             var skillsCombo = me.lookupReference('skillCombo'),
-                initialValue = me.getView().getSkill();
+                initialValue = overviewWindow.getSkill();
 
             skillsCombo.getStore().loadRawData(skills.getRange());
             skillsCombo.enable();
 
             if (!skillsCombo.findRecordByValue(skillsCombo.getValue() || initialValue)) {
+                overviewWindow.setSkill(null);
                 skillsCombo.clearValue();
+                skillsCombo.expand();
                 skillsCombo.focus();
             } else if (initialValue) {
                 skillsCombo.setValue(initialValue);
@@ -91,24 +72,17 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     },
 
     onSkillChange: function(skillCombo, skill) {
-        var me = this;
-
         skill = skill && skillCombo.findRecordByValue(skill);
 
-        me.lookupReference('skillStatement').update(skill ? skill.get('Statement') : 'Select a competency and skill');
+        if (skill) {
+            this.lookupReference('skillStatement').update(skill.get('Statement'));
+        }
 
-        me.syncDemonstrationsTable();
+        this.getView().setSkill(skill ? skill.getId() : null);
     },
 
     onStudentChange: function(studentCombo, student) {
-        // TODO: update window title
-
-        this.syncDemonstrationsTable();
-    },
-
-    onDemoRowClick: function(overviewWindow, ev, targetEl) {
-        targetEl.next('.skill-grid-demo-detail-row').toggleCls('is-expanded');
-        overviewWindow.doLayout();
+        this.getView().setStudent(student);
     },
 
     onOverrideClick: function() {
@@ -121,50 +95,11 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     },
 
     onDemonstrationSave: function(demonstration) {
-        var me = this,
-            demonstrationSkillIds = Ext.pluck(demonstration.get('Skills')||[], 'SkillID'),
-            loadedStudentId = me.lookupReference('studentCombo').getValue(),
-            loadedSkillId = me.lookupReference('skillCombo').getValue();
+        var overviewWindow = this.getView(),
+            demonstrationSkillIds = Ext.pluck(demonstration.get('Skills')||[], 'SkillID');
 
-        if (demonstration.get('StudentID') == loadedStudentId && Ext.Array.contains(demonstrationSkillIds, loadedSkillId)) {
-            me.syncDemonstrationsTable();
-        }
-    },
-
-
-    // private methods
-    syncDemonstrationsTable: function() { // TODO: move some/all of this method to common view code?
-        var me = this,
-            demonstrationsTable = me.lookupReference('demonstrationsTable'),
-            skillCombo = me.lookupReference('skillCombo'),
-            skillId = skillCombo.getValue(),
-            skill = skillId && skillCombo.findRecordByValue(skillId),
-            studentId = me.lookupReference('studentCombo').getValue(),
-            demonstrationId = me.view.getDemonstration();
-
-        if (skill && studentId) {
-            demonstrationsTable.setLoading('Loading demonstrations&hellip;'); // currently not visible due to http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
-            skill.getDemonstrationsByStudent(studentId, function(skillDemonstrations) {   
-                skillDemonstrations.sort(function compare(a, b) {
-                    var aDemonstrated = new Date(a.Demonstration.Demonstrated),
-                        bDemonstrated = new Date(b.Demonstration.Demonstrated);
-
-                    return (aDemonstrated > bDemonstrated) ? 1 : (aDemonstrated < bDemonstrated) ? -1 : 0;
-                });
-
-                demonstrationsTable.update({
-                    demonstrations: skillDemonstrations,
-                    selectedDemonstrationId: demonstrationId,
-                    showEditLinks: true
-                });
-
-                demonstrationsTable.setLoading(false);
-            });
-        } else {
-            demonstrationsTable.update({
-                demonstrations: [],
-                selectedDemonstrationId: null
-            });
+        if (demonstration.get('StudentID') == overviewWindow.getStudent() && Ext.Array.contains(demonstrationSkillIds, overviewWindow.getSkill())) {
+            overviewWindow.loadDemonstrationsTable(true);
         }
     }
 });
