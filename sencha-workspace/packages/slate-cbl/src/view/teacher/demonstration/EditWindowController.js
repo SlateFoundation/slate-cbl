@@ -398,9 +398,9 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             }
 
             competencyCard = competenciesTabPanel.insert(insertIndex, competencyCardConfig);
+            competencyCard.down('#competencyDescription').update(competency.getData());
             competenciesTabPanel.setActiveItem(competencyCard);
 
-            me.lookupReference('competencyDescription').update(competency.getData());
 
             if (competenciesSearchField.isDirty()) {
                 competenciesSearchField.reset(); // changing the value from dirty back to blank will trigger the change handler

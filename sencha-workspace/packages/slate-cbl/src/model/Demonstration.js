@@ -44,7 +44,8 @@ Ext.define('Slate.cbl.model.Demonstration', {
         {
             name: "Demonstrated",
             type: "date",
-            dateFormat: "Y-m-d"
+            dateFormat: "timestamp",
+            useNull: true
         },
 //        {
 //            name: "Level",

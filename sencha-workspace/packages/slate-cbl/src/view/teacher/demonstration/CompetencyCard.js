@@ -19,7 +19,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.CompetencyCard', {
         // labelWidth: 150
     },
     dockedItems: [{
-        reference: 'competencyDescription',
+        itemId: 'competencyDescription',
         dock: 'top',
 
         xtype: 'component',
