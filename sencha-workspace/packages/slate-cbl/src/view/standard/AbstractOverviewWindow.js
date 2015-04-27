@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext*/
+/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 /**
  * Provides a foundation for the window used in both the student and teacher
  * UIs to display all the demonstrations affecting a given standard.
@@ -115,7 +115,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
 
         me.callParent(arguments);
 
-        me.mon(me.demonstrationsTable.el, 'click', function(ev, t) {
+        me.mon(me.demonstrationsTable.el, 'click', function(ev, targetEl) {
             if (targetEl = ev.getTarget('.skill-grid-demo-row', me.el, true)) {
                 targetEl.next('.skill-grid-demo-detail-row').toggleCls('is-expanded');
                 me.doLayout();
@@ -199,12 +199,9 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
     },
 
     refreshDemonstrationsTable: function() {
-        var me = this,
-            demonstrationsTable = me.demonstrationsTable,
-            skillStatement = me.skillStatement,
-            skillData = me.loadedSkillData;
+        var me = this;
 
-        demonstrationsTable.update({
+        me.demonstrationsTable.update({
             demonstrations: me.demonstrations || [],
             selectedDemonstrationId: me.getSelectedDemonstration(),
             showEditLinks: me.getShowEditLinks()

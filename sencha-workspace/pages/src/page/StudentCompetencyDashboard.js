@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext*/
+/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext*/
 // @require-package slate-cbl
 Ext.define('Site.page.StudentCompetencyDashboard', {
     singleton: true,
@@ -17,9 +17,9 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
         var me = this,
             siteEnv = window.SiteEnvironment || {},
             cblStudent = siteEnv.cblStudent || null,
-            cblContentArea = siteEnv.cblContentArea || null,
-            body = Ext.getBody(),
-            contentAreaEl = body.down('select[name="content-area"]');
+            cblContentArea = siteEnv.cblContentArea || null;
+            // body = Ext.getBody()
+            // contentAreaEl = body.down('select[name="content-area"]');
 
         // ensure student is defined
         if (!siteEnv.cblStudent) {
@@ -44,8 +44,8 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
             contentAreaId: cblContentArea && cblContentArea.ID
         });
         
-        contentAreaEl.on('change', function(ev, t) {
+        // contentAreaEl.on('change', function(ev, t) {
             // Placeholder for future functionality
-        });
+        // });
     }
 });

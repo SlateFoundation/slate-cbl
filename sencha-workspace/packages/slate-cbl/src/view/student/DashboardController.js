@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
+/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext*/
 Ext.define('Slate.cbl.view.student.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-student-dashboard',
@@ -21,8 +21,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
 
     // lifecycle overrides
     init: function() {
-        var me = this;
-
         Ext.create('Ext.data.Store', {
             storeId: 'cbl-competencies-loaded',
             model: 'Slate.cbl.model.Competency'
@@ -32,10 +30,10 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
 
     // event handlers
     onComponentRender: function(dashboardView) {
-        var me = this,
-            student = dashboardView.getStudent(),
+        var student = dashboardView.getStudent(),
             studentId = student && student.getId(),
-            contentArea = dashboardView.getContentArea();
+            contentArea = dashboardView.getContentArea(),
+            competenciesStore = Ext.getStore('cbl-competencies-loaded');
 
         if (!studentId || !contentArea) {
             return;
@@ -44,11 +42,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         dashboardView.setCompetenciesStatus('loading');
 
         contentArea.getCompetenciesForStudents([studentId], function(competencies) {
-            var competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-                competenciesLength = competencies.length,
-                competencyIndex = 0,
-                competency, skillsList;
-
             competenciesStore.loadRawData(competencies);
 
             dashboardView.add(Ext.Array.map(competenciesStore.getRange(), function(competency) {
