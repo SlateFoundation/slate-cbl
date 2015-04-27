@@ -33,25 +33,13 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     // event handlers
     onComponentRender: function(dashboardView) {
         var me = this,
-            /* HACK: what's the right way to get the recent progress... also why do we use down with an id above? */
-            studentDashboardRecentProgress = Ext.get('studentDashboardRecentProgress'), // todo: move this to Site.page.Student script
             student = dashboardView.getStudent(),
             studentId = student && student.getId(),
-            contentArea = dashboardView.getContentArea(),
-            recentProgressTpl = Ext.XTemplate.getTpl(me.view, 'recentProgressTpl');
+            contentArea = dashboardView.getContentArea();
 
         if (!studentId || !contentArea) {
             return;
         }
-
-        // TODO: recent progress should be its own component
-        Slate.cbl.API.getRecentProgress(studentId, contentArea.get('Code'), function(progress) {
-            progress = Ext.isArray(progress) ? progress : [];
-            
-            recentProgressTpl.overwrite(studentDashboardRecentProgress, {
-                progress: progress
-            });
-        });
 
         dashboardView.setCompetenciesStatus('loading');
 

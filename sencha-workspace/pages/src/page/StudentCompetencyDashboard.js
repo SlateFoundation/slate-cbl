@@ -3,11 +3,10 @@
 Ext.define('Site.page.StudentCompetencyDashboard', {
     singleton: true,
     requires: [
-        'Site.Common',
         'Slate.cbl.model.Student',
         'Slate.cbl.view.student.Dashboard',
-        'Ext.QuickTips',
-        'Ext.XTemplate'
+        'Slate.cbl.view.student.RecentProgress',
+        'Ext.QuickTips'
     ],
 
     constructor: function() {
@@ -17,6 +16,8 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
     onDocReady: function() {
         var me = this,
             siteEnv = window.SiteEnvironment || {},
+            cblStudent = siteEnv.cblStudent || null,
+            cblContentArea = siteEnv.cblContentArea || null,
             body = Ext.getBody(),
             contentAreaEl = body.down('select[name="content-area"]');
 
@@ -31,8 +32,16 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
         // render student dashboard component
         me.dashboard = Ext.create('Slate.cbl.view.student.Dashboard', {
             renderTo: Ext.get('studentDashboardCt'),
-            student: siteEnv.cblStudent || null,
-            contentArea: siteEnv.cblContentArea || null
+            student: cblStudent,
+            contentArea: cblContentArea
+        });
+        Ext.QuickTips.init();
+
+        // render student recent progress component
+        me.recentProgress = Ext.create('Slate.cbl.view.student.RecentProgress', {
+            renderTo: Ext.get('studentDashboardRecentProgress'),
+            studentId: cblStudent && cblStudent.ID,
+            contentAreaId: cblContentArea && cblContentArea.ID
         });
         
         contentAreaEl.on('change', function(ev, t) {
