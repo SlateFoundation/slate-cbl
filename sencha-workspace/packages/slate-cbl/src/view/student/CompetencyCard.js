@@ -71,7 +71,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         '    <li class="cbl-skill">',
         '        <h5 class="cbl-skill-name">{Descriptor:htmlEncode}</h5>',
         '        <ul class="cbl-skill-demos" data-skill="{ID}">',
-        '            <tpl for="this.getDemonstrationBlocks(values)">',
+        '            <tpl for="demonstrations">',
         '                <li class="cbl-skill-demo <tpl if="values.Level==0">cbl-skill-demo-uncounted</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
         '                    <tpl if="values.Level &gt;= 0">',
         '                        {[values.Level == 0 ? "M" : values.Level]}',
@@ -89,21 +89,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
                     '</svg>',
                 '</div>',*/
         '    </li>',
-        '</tpl>',
-        
-        {
-            getDemonstrationBlocks: function(skill, studentId) {
-                var demonstrationsRequired = skill.DemonstrationsRequired,
-                    blocks = Slate.cbl.util.CBL.sortDemonstrations(skill.demonstrations, demonstrationsRequired);
-
-                // add empty blocks
-                while (blocks.length < demonstrationsRequired) {
-                    blocks.push({});
-                }
-
-                return blocks;
-            }
-        }
+        '</tpl>'
     ],
 
 
@@ -242,8 +228,9 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
             skillsLen = skills.getCount(), skillIndex = 0, skill,
             demonstrations = me.loadedDemonstrations,
             demonstrationsLen = demonstrations.length, demonstrationIndex = 0, demonstration,
-            skillsData = {};
+            skillsData = {}, skillData, demonstrationsRequired;
 
+        // index skills by ID and create a copy of the skill object decorated with a demonstrations array
         for (; skillIndex < skillsLen; skillIndex++) {
             skill = skills.getAt(skillIndex);
             skillsData[skill.ID] = Ext.apply({
@@ -255,6 +242,15 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         for (; demonstrationIndex < demonstrationsLen; demonstrationIndex++) {
             demonstration = demonstrations[demonstrationIndex];
             skillsData[demonstration.SkillID].demonstrations.push(demonstration);
+        }
+
+        // sort and pad demonstrations arrays
+        for (skillIndex in skillsData) {
+            skillData = skillsData[skillIndex];
+            demonstrationsRequired = skillData.DemonstrationsRequired;
+
+            skillData.demonstrations = Slate.cbl.util.CBL.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
+            Slate.cbl.util.CBL.padArray(skillData.demonstrations, demonstrationsRequired);
         }
 
         return skillsData;
