@@ -66,6 +66,8 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         }
     },
 
+
+    // local subtemplates
     skillsTpl: [
         '<tpl foreach=".">',
         '    <li class="cbl-skill">',

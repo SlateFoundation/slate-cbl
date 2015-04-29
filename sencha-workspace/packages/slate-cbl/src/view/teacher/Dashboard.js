@@ -16,66 +16,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         popover: true
     },
 
-    skillHeadersTpl: [
-        '<tpl for=".">',
-            '<tr class="cbl-grid-skill-row" data-skill="{ID}">',
-                '<th class="cbl-grid-skill-name" data-skill-name="{Descriptor:htmlEncode}" data-skill-description="{Statement:htmlEncode}">',
-                    '<div class="ellipsis">{Descriptor:htmlEncode}</div>',
-                '</th>',
-            '</tr>',
-        '</tpl>'
-    ],
-
-    skillStudentsTpl: [
-        '{%var demonstrationsTpl = this.owner.getTpl("demonstrationsTpl")%}',
-        '<tpl for="skills">',
-            '<tr class="cbl-grid-skill-row" data-skill="{ID}">',
-                '<tpl for="parent.studentIds">',
-                    '<td class="cbl-grid-demos-cell cbl-level-9" data-student="{.}">', // TODO: real level
-                        '{%demonstrationsTpl.applyOut({skill: parent, studentId: values}, out)%}',
-                    '</td>',
-                '</tpl>',
-            '</tr>',
-        '</tpl>'
-    ],
-
-    demonstrationsTpl: [
-        '<ul class="cbl-grid-demos">',
-            '<tpl for="this.getDemonstrationBlocks(skill, studentId)">',
-                '<tpl if="DemonstrationID">',
-                    '<li class="cbl-grid-demo cbl-grid-demo-<tpl if="Level==0">uncounted<tpl else>counted</tpl>" data-demonstration="{DemonstrationID}">',
-                        '<tpl if="Level==0">M<tpl else>{Level}</tpl>',
-                    '</li>',
-                '<tpl else>',
-                    '<li class="cbl-grid-demo cbl-grid-demo-empty"></li>',
-                '</tpl>',
-            '</tpl>',
-        '</ul>',
-        {
-
-            getDemonstrationBlocks: function(skill, studentId) {
-
-                if (!skill || !studentId) {
-                    return null;
-                }
-
-                var demonstrationsRequired = skill.DemonstrationsRequired,
-                    blocks = Slate.cbl.util.CBL.sortDemonstrations(
-                        skill.demonstrationsByStudent ? skill.demonstrationsByStudent[studentId] : [],
-                        demonstrationsRequired
-                );
-
-                // add empty blocks
-                while (blocks.length < demonstrationsRequired) {
-                    blocks.push({});
-                }
-
-                return blocks;
-            }
-        }
-    ],
-
     componentCls: 'cbl-grid-cmp',
+
     tpl: [
         '{%var studentsCount = values.students.length%}',
         '<div class="cbl-grid-ct">',
@@ -173,6 +115,65 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
     },
 
 
+    // local subtemplates
+    skillHeadersTpl: [
+        '<tpl for=".">',
+            '<tr class="cbl-grid-skill-row" data-skill="{ID}">',
+                '<th class="cbl-grid-skill-name" data-skill-name="{Descriptor:htmlEncode}" data-skill-description="{Statement:htmlEncode}">',
+                    '<div class="ellipsis">{Descriptor:htmlEncode}</div>',
+                '</th>',
+            '</tr>',
+        '</tpl>'
+    ],
+
+    skillStudentsTpl: [
+        '{%var demonstrationsTpl = this.owner.getTpl("demonstrationsTpl")%}',
+        '<tpl for="skills">',
+            '<tr class="cbl-grid-skill-row" data-skill="{ID}">',
+                '<tpl for="parent.studentIds">',
+                    '<td class="cbl-grid-demos-cell cbl-level-9" data-student="{.}">', // TODO: real level
+                        '{%demonstrationsTpl.applyOut({skill: parent, studentId: values}, out)%}',
+                    '</td>',
+                '</tpl>',
+            '</tr>',
+        '</tpl>'
+    ],
+
+    demonstrationsTpl: [
+        '<ul class="cbl-grid-demos">',
+            '<tpl for="this.getDemonstrationBlocks(skill, studentId)">',
+                '<tpl if="DemonstrationID">',
+                    '<li class="cbl-grid-demo cbl-grid-demo-<tpl if="Level==0">uncounted<tpl else>counted</tpl>" data-demonstration="{DemonstrationID}">',
+                        '<tpl if="Level==0">M<tpl else>{Level}</tpl>',
+                    '</li>',
+                '<tpl else>',
+                    '<li class="cbl-grid-demo cbl-grid-demo-empty"></li>',
+                '</tpl>',
+            '</tpl>',
+        '</ul>',
+        {
+
+            getDemonstrationBlocks: function(skill, studentId) {
+
+                if (!skill || !studentId) {
+                    return null;
+                }
+
+                var demonstrationsRequired = skill.DemonstrationsRequired,
+                    blocks = Slate.cbl.util.CBL.sortDemonstrations(
+                        skill.demonstrationsByStudent ? skill.demonstrationsByStudent[studentId] : [],
+                        demonstrationsRequired
+                );
+
+                // add empty blocks
+                while (blocks.length < demonstrationsRequired) {
+                    blocks.push({});
+                }
+
+                return blocks;
+            }
+        }
+    ],
     // config handlers
     applyPopover: function(newPopover, oldPopover) {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
