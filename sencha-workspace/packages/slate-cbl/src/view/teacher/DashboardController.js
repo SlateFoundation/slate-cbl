@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
+/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.view.teacher.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-dashboard',
@@ -378,11 +378,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
         Ext.suspendLayouts();
 
-        dashboardView.update({
-            contentArea: contentArea.getData(),
-            students: Ext.pluck(studentsStore.getRange(), 'data'),
-            competencies: Ext.pluck(competenciesStore.getRange(), 'data')
-        });
+        dashboardView.update(dashboardView.getDashboardData());
 
         if (dashboardView.rendered) {
             syncCompetencyRowHeights();

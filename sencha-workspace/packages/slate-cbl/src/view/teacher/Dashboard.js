@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext, SiteEnvironment*/
+/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.view.teacher.Dashboard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-teacher-dashboard',
@@ -77,6 +77,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
     componentCls: 'cbl-grid-cmp',
     tpl: [
+        '{%var studentsCount = values.students.length%}',
         '<div class="cbl-grid-ct">',
             '<table class="cbl-grid cbl-grid-competencies">',
                 '<colgroup class="cbl-grid-competency-col"></colgroup>',
@@ -108,7 +109,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
             '<div class="cbl-grid-scroll-ct">',
                 '<table class="cbl-grid cbl-grid-main">',
-                    '<colgroup span="{students.length}" class="cbl-grid-progress-col"></colgroup>',
+                    '<colgroup span="{[studentsCount]}" class="cbl-grid-progress-col"></colgroup>',
 
                     '<thead>',
                         '<tr>',
@@ -121,26 +122,22 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
                     '<tbody>',
                         '<tpl for="competencies">',
                             '<tr class="cbl-grid-progress-row" data-competency="{ID}">',
-                                '<tpl for="parent.students">',
-                                    '{%var level = 9%}', // TODO: real level
-                                    '{%var studentCompletion = parent.studentCompletions[values.ID] || {}%}',
-                                    '{%var percent = Math.round(100 * (studentCompletion.demonstrationsCount || 0) / parent.totalDemonstrationsRequired)%}',
-                                    '{%var isAverageLow = studentCompletion.demonstrationsAverage < parent.minimumAverage && percent >= 50%}',
-                                    '<td class="cbl-grid-progress-cell {[isAverageLow ? "is-average-low" : ""]} cbl-level-{[level]}" data-student="{ID}">',
-                                        '<span class="cbl-grid-progress-bar" style="width: {[percent]}%"></span>',
-                                        '<span class="cbl-grid-progress-level">L{[level]}</span>',
-                                        '<span class="cbl-grid-progress-percent">{[percent]}%</span>',
+                                '<tpl for="students">',
+                                    '<td class="cbl-grid-progress-cell <tpl if="isAverageLow">is-average-low</tpl> cbl-level-{level}" data-student="{student.ID}">',
+                                        '<span class="cbl-grid-progress-bar" style="width: {percentComplete}%"></span>',
+                                        '<span class="cbl-grid-progress-level">L{level}</span>',
+                                        '<span class="cbl-grid-progress-percent">{percentComplete}%</span>',
                                         '<span class="cbl-grid-progress-average">',
-                                            '{[fm.number(studentCompletion.demonstrationsAverage, "0.##")]}',
+                                            '{demonstrationsAverage:number("0.##")}',
                                         '</span>',
                                     '</td>',
                                 '</tpl>',
                             '</tr>',
                             '<tr class="cbl-grid-skills-row" data-competency="{ID}">',
-                                '<td class="cbl-grid-skills-cell" colspan="{parent.students.length}">',
+                                '<td class="cbl-grid-skills-cell" colspan="{[studentsCount]}"">',
                                     '<div class="cbl-grid-skills-ct">',
                                         '<table class="cbl-grid-skills-grid">',
-                                            '<colgroup span="{parent.students.length}" class="cbl-grid-demos-col"></colgroup>',
+                                            '<colgroup span="{[studentsCount]}"" class="cbl-grid-demos-col"></colgroup>',
                                             '<tbody></tbody>',
                                         '</table>',
                                     '</div>',
@@ -175,6 +172,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         }
     },
 
+
+    // config handlers
     applyPopover: function(newPopover, oldPopover) {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
     },
@@ -199,6 +198,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         this.fireEvent('contentareachange', this, newContentArea, oldContentArea);
     },
 
+
+    // event handlers
     onGridClick: function(ev, t) {
         var me = this,
             targetEl;
@@ -227,5 +228,48 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         } else {
             popover.hide();
         }
+    },
+
+
+    // protected methods
+    getDashboardData: function() {
+        var me = this,
+            contentArea = me.getContentArea(),
+            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
+            competenciesData = Ext.pluck(competenciesStore.getRange(), 'data'),
+            competenciesLength = competenciesData.length, competencyIndex, competency, competencyStudents,
+            studentsStore = Ext.getStore('cbl-students-loaded'),
+            studentsData = Ext.pluck(studentsStore.getRange(), 'data'),
+            studentsLength = studentsData.length, studentIndex, student,
+            completion, percentComplete, demonstrationsAverage;
+
+
+        // build aligned students array for each competency
+        for (competencyIndex = 0; competencyIndex < competenciesLength; competencyIndex++) {
+            competency = competenciesData[competencyIndex];
+            competencyStudents = competency.students = [];
+
+            for (studentIndex = 0; studentIndex < studentsLength; studentIndex++) {
+                student = studentsData[studentIndex];
+                completion = competency.studentCompletions[student.ID] || {};
+                percentComplete = Math.round(100 * (completion.demonstrationsCount || 0) / competency.totalDemonstrationsRequired);
+                demonstrationsAverage = completion.demonstrationsAverage;
+
+                competencyStudents.push({
+                    student: student,
+                    level: 9, // TODO: don't hardcode
+                    percentComplete: percentComplete,
+                    demonstrationsAverage: demonstrationsAverage,
+                    isAverageLow: percentComplete >= 50 && demonstrationsAverage < competency.minimumAverage
+                });
+            }
+        }
+
+
+        return {
+            contentArea: contentArea.getData(),
+            students: studentsData,
+            competencies: competenciesData
+        };
     }
 });
