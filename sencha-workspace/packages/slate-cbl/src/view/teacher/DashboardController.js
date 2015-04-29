@@ -29,10 +29,10 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         listen: {
             store: {
                 '#cbl-students-loaded': {
-                    refresh: 'refresh'
+                    refresh: 'onStudentsRefresh'
                 },
                 '#cbl-competencies-loaded': {
-                    refresh: 'refresh'
+                    refresh: 'onCompetenciesRefresh'
                 }
             },
             api: {
@@ -67,6 +67,14 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
 
     // event handers
+    onStudentsRefresh: function () {
+        this.getView().refresh();
+    },
+
+    onCompetenciesRefresh: function () {
+        this.getView().refresh();
+    },
+
     onDemoCellClick: function(dashboardView, ev, targetEl) {
         Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
             autoShow: true,
@@ -96,7 +104,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         Ext.resumeLayouts(true);
     },
 
-    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId, ev, targetEl) {
+    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId) {
         var me = this,
             editWindow = me.showDemonstrationEditWindow({
                 title: 'Edit demonstration #' + demonstrationId
@@ -313,7 +321,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                 studentIds: studentIds
             });
 
-            me.syncRowHeights(
+            dashboardView.syncRowHeights(
                 skillHeadersRow.select('tr'),
                 skillStudentsRow.select('tr')
             );
@@ -343,83 +351,5 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
             autoShow: true
         }, options));
-    },
-
-
-    // protected methods
-
-    /**
-     * Redraw the dashboard based on currently loaded data
-     */
-    refresh: function() {
-        var me = this,
-            dashboardView = me.getView(),
-            contentArea = dashboardView.getContentArea(),
-            studentsStore = Ext.getStore('cbl-students-loaded'),
-            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-
-            syncCompetencyRowHeights = function() {
-                me.syncRowHeights(
-                    dashboardView.el.select('.cbl-grid-competencies thead tr, .cbl-grid-competencies .cbl-grid-progress-row'),
-                    dashboardView.el.select('.cbl-grid-main thead tr, .cbl-grid-main .cbl-grid-progress-row')
-                );
-            };
-
-        if (!studentsStore.isLoaded() || !contentArea) {
-            return;
-        }
-
-        if (!competenciesStore.isLoaded()) {
-            contentArea.getCompetenciesForStudents(studentsStore.collect('ID'), function(competencies) {
-                competenciesStore.loadRawData(competencies);
-            });
-            return;
-        }
-
-        Ext.suspendLayouts();
-
-        dashboardView.update(dashboardView.getDashboardData());
-
-        if (dashboardView.rendered) {
-            syncCompetencyRowHeights();
-        } else {
-            dashboardView.on('render', syncCompetencyRowHeights, me, { single: true });
-        }
-
-        Ext.resumeLayouts(true);
-    },
-
-    syncRowHeights: function(table1Rows, table2Rows) {
-        var me = this,
-            dashboardView = me.getView(),
-            table1RowHeights = [],
-            table2RowHeights = [],
-            rowCount, rowIndex, table1Row, table2Row, maxHeight;
-
-        Ext.suspendLayouts();
-
-        rowCount = table1Rows.getCount();
-
-        if (table2Rows.getCount() != rowCount) {
-            Ext.Logger.warn('tables\' row counts don\'t match');
-        }
-
-        // read all the row height in batch first for both tables
-        for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            table1RowHeights.push(table1Rows.item(rowIndex).getHeight());
-            table2RowHeights.push(table2Rows.item(rowIndex).getHeight());
-        }
-
-        // write all the max row heights
-        for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            maxHeight = Math.max(table1RowHeights[rowIndex], table2RowHeights[rowIndex]);
-            table1Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
-            table2Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
-
-//            console.log('set row %o height to %o', rowIndex, maxHeight);
-//            studentsRows.item(rowIndex).setHeight(Math.max(competenciesRowHeights[rowIndex], studentsRowHeights[rowIndex]));
-        }
-
-        Ext.resumeLayouts(true);
     }
 });

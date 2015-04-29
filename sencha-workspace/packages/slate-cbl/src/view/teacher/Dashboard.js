@@ -200,9 +200,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
 
     // event handlers
-    onGridClick: function(ev, t) {
-        var me = this,
-            targetEl;
+    onGridClick: function(ev, targetEl) {
+        var me = this;
 
         if (targetEl = ev.getTarget('.cbl-grid-progress-row', me.el, true)) {
             me.fireEvent('progressrowclick', me, ev, targetEl);
@@ -232,6 +231,76 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
 
     // protected methods
+
+    /**
+     * Redraw the dashboard based on currently loaded data
+     */
+    refresh: function() {
+        var me = this,
+            contentArea = me.getContentArea(),
+            studentsStore = Ext.getStore('cbl-students-loaded'),
+            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
+
+            syncCompetencyRowHeights = function() {
+                me.syncRowHeights(
+                    me.el.select('.cbl-grid-competencies thead tr, .cbl-grid-competencies .cbl-grid-progress-row'),
+                    me.el.select('.cbl-grid-main thead tr, .cbl-grid-main .cbl-grid-progress-row')
+                );
+            };
+
+        if (!studentsStore.isLoaded() || !contentArea) {
+            return;
+        }
+
+        if (!competenciesStore.isLoaded()) {
+            contentArea.getCompetenciesForStudents(studentsStore.collect('ID'), function(competencies) {
+                competenciesStore.loadRawData(competencies);
+            });
+            return;
+        }
+
+        Ext.suspendLayouts();
+
+        me.update(me.getDashboardData());
+
+        if (me.rendered) {
+            syncCompetencyRowHeights();
+        } else {
+            me.on('render', syncCompetencyRowHeights, me, { single: true });
+        }
+
+        Ext.resumeLayouts(true);
+    },
+
+    syncRowHeights: function(table1Rows, table2Rows) {
+        var table1RowHeights = [],
+            table2RowHeights = [],
+            rowCount, rowIndex, maxHeight;
+
+        Ext.suspendLayouts();
+
+        rowCount = table1Rows.getCount();
+
+        if (table2Rows.getCount() != rowCount) {
+            Ext.Logger.warn('tables\' row counts don\'t match');
+        }
+
+        // read all the row height in batch first for both tables
+        for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            table1RowHeights.push(table1Rows.item(rowIndex).getHeight());
+            table2RowHeights.push(table2Rows.item(rowIndex).getHeight());
+        }
+
+        // write all the max row heights
+        for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            maxHeight = Math.max(table1RowHeights[rowIndex], table2RowHeights[rowIndex]);
+            table1Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
+            table2Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
+        }
+
+        Ext.resumeLayouts(true);
+    },
+
     getDashboardData: function() {
         var me = this,
             contentArea = me.getContentArea(),
