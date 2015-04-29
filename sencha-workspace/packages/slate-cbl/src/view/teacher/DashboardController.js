@@ -44,8 +44,6 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
     // lifecycle overrides
     init: function() {
-        var me = this;
-
         Ext.create('Ext.data.Store', {
             storeId: 'cbl-students-loaded',
             model: 'Slate.cbl.model.Student',
@@ -241,8 +239,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
      * Attached via listeners config in view
      */
     onProgressRowClick: function(dashboardView, ev, targetEl) {
-        var me = this,
-            competencyId = targetEl.getAttribute('data-competency'),
+        var competencyId = targetEl.getAttribute('data-competency'),
             competency = Ext.getStore('cbl-competencies-loaded').getById(competencyId),
             skills = competency.get('skills'),
             skillsRows = dashboardView.el.select(
@@ -296,7 +293,6 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                 skillStudentsTpl = dashboardView.getTpl('skillStudentsTpl'),
                 skill, demonstrationsByStudent,
                 demonstrationsLength = demonstrations.length, demonstrationIndex = 0, demonstration;
-//                skillsLength = skills.getCount(), skillIndex = 0, studentId;
 
             competency.set('skillsRendered', true);
 
