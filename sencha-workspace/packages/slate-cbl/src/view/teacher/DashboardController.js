@@ -372,7 +372,6 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         if (!competenciesStore.isLoaded()) {
             contentArea.getCompetenciesForStudents(studentsStore.collect('ID'), function(competencies) {
                 competenciesStore.loadRawData(competencies);
-                me.refresh();
             });
             return;
         }
