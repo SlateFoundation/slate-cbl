@@ -1,9 +1,12 @@
 /* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
+/**
+ * TODO:
+ * - move rendering responsibilities to the view
+ */
 Ext.define('Slate.cbl.view.teacher.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-dashboard',
     requires: [
-//        'Slate.cbl.view.teacher.DummyData',
         'Slate.cbl.API',
         'Slate.cbl.model.Student',
         'Slate.cbl.model.Competency',
@@ -239,106 +242,11 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
      * Attached via listeners config in view
      */
     onProgressRowClick: function(dashboardView, ev, targetEl) {
-        var competencyId = targetEl.getAttribute('data-competency'),
-            competency = Ext.getStore('cbl-competencies-loaded').getById(competencyId),
-            skills = competency.get('skills'),
-            skillsRows = dashboardView.el.select(
-                Ext.String.format('.cbl-grid-skills-row[data-competency="{0}"]', competencyId),
-                true // true to get back unique Ext.Element instances
-            ),
-            skillHeadersRow = skillsRows.item(0),
-            skillStudentsRow = skillsRows.item(1),
-            skillsHeight = 0,
-            _finishExpand, _finishToggle, _renderSkills,
-            studentIds, demonstrations;
-
-
-        Ext.suspendLayouts();
-
-        _finishToggle = function() {
-            skillHeadersRow.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
-            skillStudentsRow.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
-            Ext.resumeLayouts(true);
-        };
-
-
-        // handle collapse
-        if (competency.get('expanded')) {
-            competency.set('expanded', false);
-            skillsRows.removeCls('is-expanded');
-            _finishToggle();
-            return;
-        }
-
-
-        // handle expand
-        competency.set('expanded', true);
-
-        _finishExpand = function() {
-            skillsHeight = skillHeadersRow.down('.cbl-grid-skills-grid').getHeight();
-            skillsRows.addCls('is-expanded');
-            _finishToggle();
-        };
-
-        // skills are already loaded & rendered, finish expand immediately
-        if (competency.get('skillsRendered')) {
-            _finishExpand();
-            return;
-        }
-
-        // load skills from server and render
-        studentIds = Ext.getStore('cbl-students-loaded').collect('ID');
-        _renderSkills = function() {
-            var skillHeadersTpl = dashboardView.getTpl('skillHeadersTpl'),
-                skillStudentsTpl = dashboardView.getTpl('skillStudentsTpl'),
-                skill, demonstrationsByStudent,
-                demonstrationsLength = demonstrations.length, demonstrationIndex = 0, demonstration;
-
-            competency.set('skillsRendered', true);
-
-            // group skills by student
-            for (; demonstrationIndex < demonstrationsLength; demonstrationIndex++) {
-                demonstration = demonstrations[demonstrationIndex];
-                skill = skills.get(demonstration.SkillID);
-                demonstrationsByStudent = skill.demonstrationsByStudent || (skill.demonstrationsByStudent = {});
-
-                if (demonstration.StudentID in demonstrationsByStudent) {
-                    demonstrationsByStudent[demonstration.StudentID].push(demonstration);
-                } else {
-                    demonstrationsByStudent[demonstration.StudentID] = [demonstration];
-                }
-            }
-
-
-            // render details tables
-            skillHeadersTpl.overwrite(skillHeadersRow.down('tbody'), skills.items);
-            skillStudentsTpl.overwrite(skillStudentsRow.down('tbody'), {
-                skills: skills.items,
-                studentIds: studentIds
-            });
-
-            dashboardView.syncRowHeights(
-                skillHeadersRow.select('tr'),
-                skillStudentsRow.select('tr')
-            );
-
-            _finishExpand();
-        };
-
-        // load demonstrations and skills
-        competency.getDemonstrationsForStudents(studentIds, function(loadedDemonstrations) {
-            demonstrations = loadedDemonstrations;
-            if (skills) {
-                _renderSkills();
-            }
-        });
-
-        competency.withSkills(function(loadedSkills) {
-            skills = loadedSkills;
-            if (demonstrations) {
-                _renderSkills();
-            }
-        });
+        dashboardView.expandCompetency(
+            Ext.getStore('cbl-competencies-loaded').getById(
+                targetEl.getAttribute('data-competency')
+            )
+        );
     },
 
 
