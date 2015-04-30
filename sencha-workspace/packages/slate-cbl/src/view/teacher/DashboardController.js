@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 /**
  * TODO:
- * - move rendering responsibilities to the view
+ * - move rendering responsibilities to the view?
  */
 Ext.define('Slate.cbl.view.teacher.DashboardController', {
     extend: 'Ext.app.ViewController',
@@ -69,11 +69,11 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
     // event handers
     onStudentsRefresh: function () {
-        this.getView().refresh();
+        this.getView().refreshDashboard();
     },
 
     onCompetenciesRefresh: function () {
-        this.getView().refresh();
+        this.getView().refreshDashboard();
     },
 
     onDemoCellClick: function(dashboardView, ev, targetEl) {
