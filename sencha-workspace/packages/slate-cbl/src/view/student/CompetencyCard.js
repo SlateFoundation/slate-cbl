@@ -66,6 +66,8 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         }
     },
 
+
+    // local subtemplates
     skillsTpl: [
         '<tpl foreach=".">',
         '    <li class="cbl-skill">',
@@ -230,12 +232,11 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
             demonstrationsLen = demonstrations.length, demonstrationIndex = 0, demonstration,
             skillsData = {}, skillData, demonstrationsRequired;
 
-        // index skills by ID and create a copy of the skill object decorated with a demonstrations array
+        // index skills by ID and create empty demonstrations array
         for (; skillIndex < skillsLen; skillIndex++) {
             skill = skills.getAt(skillIndex);
-            skillsData[skill.ID] = Ext.apply({
-                demonstrations: []
-            }, skill);
+            skill.demonstrations = [];
+            skillsData[skill.ID] = skill;
         }
 
         // group demonstrations by skill
