@@ -1,9 +1,12 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
+/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
+/**
+ * TODO:
+ * - move rendering responsibilities to the view?
+ */
 Ext.define('Slate.cbl.view.teacher.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-dashboard',
     requires: [
-//        'Slate.cbl.view.teacher.DummyData',
         'Slate.cbl.API',
         'Slate.cbl.model.Student',
         'Slate.cbl.model.Competency',
@@ -29,10 +32,10 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         listen: {
             store: {
                 '#cbl-students-loaded': {
-                    refresh: 'refresh'
+                    refresh: 'onStudentsRefresh'
                 },
                 '#cbl-competencies-loaded': {
-                    refresh: 'refresh'
+                    refresh: 'onCompetenciesRefresh'
                 }
             },
             api: {
@@ -44,8 +47,6 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
     // lifecycle overrides
     init: function() {
-        var me = this;
-
         Ext.create('Ext.data.Store', {
             storeId: 'cbl-students-loaded',
             model: 'Slate.cbl.model.Student',
@@ -67,6 +68,14 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
 
     // event handers
+    onStudentsRefresh: function () {
+        this.getView().refreshDashboard();
+    },
+
+    onCompetenciesRefresh: function () {
+        this.getView().refreshDashboard();
+    },
+
     onDemoCellClick: function(dashboardView, ev, targetEl) {
         Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
             autoShow: true,
@@ -96,7 +105,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         Ext.resumeLayouts(true);
     },
 
-    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId, ev, targetEl) {
+    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId) {
         var me = this,
             editWindow = me.showDemonstrationEditWindow({
                 title: 'Edit demonstration #' + demonstrationId
@@ -233,108 +242,11 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
      * Attached via listeners config in view
      */
     onProgressRowClick: function(dashboardView, ev, targetEl) {
-        var me = this,
-            competencyId = targetEl.getAttribute('data-competency'),
-            competency = Ext.getStore('cbl-competencies-loaded').getById(competencyId),
-            skills = competency.get('skills'),
-            skillsRows = dashboardView.el.select(
-                Ext.String.format('.cbl-grid-skills-row[data-competency="{0}"]', competencyId),
-                true // true to get back unique Ext.Element instances
-            ),
-            skillHeadersRow = skillsRows.item(0),
-            skillStudentsRow = skillsRows.item(1),
-            skillsHeight = 0,
-            _finishExpand, _finishToggle, _renderSkills,
-            studentIds, demonstrations;
-
-
-        Ext.suspendLayouts();
-
-        _finishToggle = function() {
-            skillHeadersRow.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
-            skillStudentsRow.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
-            Ext.resumeLayouts(true);
-        };
-
-
-        // handle collapse
-        if (competency.get('expanded')) {
-            competency.set('expanded', false);
-            skillsRows.removeCls('is-expanded');
-            _finishToggle();
-            return;
-        }
-
-
-        // handle expand
-        competency.set('expanded', true);
-
-        _finishExpand = function() {
-            skillsHeight = skillHeadersRow.down('.cbl-grid-skills-grid').getHeight();
-            skillsRows.addCls('is-expanded');
-            _finishToggle();
-        };
-
-        // skills are already loaded & rendered, finish expand immediately
-        if (competency.get('skillsRendered')) {
-            _finishExpand();
-            return;
-        }
-
-        // load skills from server and render
-        studentIds = Ext.getStore('cbl-students-loaded').collect('ID');
-        _renderSkills = function() {
-            var skillHeadersTpl = dashboardView.getTpl('skillHeadersTpl'),
-                skillStudentsTpl = dashboardView.getTpl('skillStudentsTpl'),
-                skill, demonstrationsByStudent,
-                demonstrationsLength = demonstrations.length, demonstrationIndex = 0, demonstration;
-//                skillsLength = skills.getCount(), skillIndex = 0, studentId;
-
-            competency.set('skillsRendered', true);
-
-            // group skills by student
-            for (; demonstrationIndex < demonstrationsLength; demonstrationIndex++) {
-                demonstration = demonstrations[demonstrationIndex];
-                skill = skills.get(demonstration.SkillID);
-                demonstrationsByStudent = skill.demonstrationsByStudent || (skill.demonstrationsByStudent = {});
-
-                if (demonstration.StudentID in demonstrationsByStudent) {
-                    demonstrationsByStudent[demonstration.StudentID].push(demonstration);
-                } else {
-                    demonstrationsByStudent[demonstration.StudentID] = [demonstration];
-                }
-            }
-
-
-            // render details tables
-            skillHeadersTpl.overwrite(skillHeadersRow.down('tbody'), skills.items);
-            skillStudentsTpl.overwrite(skillStudentsRow.down('tbody'), {
-                skills: skills.items,
-                studentIds: studentIds
-            });
-
-            me.syncRowHeights(
-                skillHeadersRow.select('tr'),
-                skillStudentsRow.select('tr')
-            );
-
-            _finishExpand();
-        };
-
-        // load demonstrations and skills
-        competency.getDemonstrationsForStudents(studentIds, function(loadedDemonstrations) {
-            demonstrations = loadedDemonstrations;
-            if (skills) {
-                _renderSkills();
-            }
-        });
-
-        competency.withSkills(function(loadedSkills) {
-            skills = loadedSkills;
-            if (demonstrations) {
-                _renderSkills();
-            }
-        });
+        dashboardView.expandCompetency(
+            Ext.getStore('cbl-competencies-loaded').getById(
+                targetEl.getAttribute('data-competency')
+            )
+        );
     },
 
 
@@ -343,88 +255,5 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
             autoShow: true
         }, options));
-    },
-
-
-    // protected methods
-
-    /**
-     * Redraw the dashboard based on currently loaded data
-     */
-    refresh: function() {
-        var me = this,
-            dashboardView = me.getView(),
-            contentArea = dashboardView.getContentArea(),
-            studentsStore = Ext.getStore('cbl-students-loaded'),
-            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-
-            syncCompetencyRowHeights = function() {
-                me.syncRowHeights(
-                    dashboardView.el.select('.cbl-grid-competencies thead tr, .cbl-grid-competencies .cbl-grid-progress-row'),
-                    dashboardView.el.select('.cbl-grid-main thead tr, .cbl-grid-main .cbl-grid-progress-row')
-                );
-            };
-
-        if (!studentsStore.isLoaded() || !contentArea) {
-            return;
-        }
-
-        if (!competenciesStore.isLoaded()) {
-            contentArea.getCompetenciesForStudents(studentsStore.collect('ID'), function(competencies) {
-                competenciesStore.loadRawData(competencies);
-                me.refresh();
-            });
-            return;
-        }
-
-        Ext.suspendLayouts();
-
-        dashboardView.update({
-            contentArea: contentArea.getData(),
-            students: Ext.pluck(studentsStore.getRange(), 'data'),
-            competencies: Ext.pluck(competenciesStore.getRange(), 'data')
-        });
-
-        if (dashboardView.rendered) {
-            syncCompetencyRowHeights();
-        } else {
-            dashboardView.on('render', syncCompetencyRowHeights, me, { single: true });
-        }
-
-        Ext.resumeLayouts(true);
-    },
-
-    syncRowHeights: function(table1Rows, table2Rows) {
-        var me = this,
-            dashboardView = me.getView(),
-            table1RowHeights = [],
-            table2RowHeights = [],
-            rowCount, rowIndex, table1Row, table2Row, maxHeight;
-
-        Ext.suspendLayouts();
-
-        rowCount = table1Rows.getCount();
-
-        if (table2Rows.getCount() != rowCount) {
-            Ext.Logger.warn('tables\' row counts don\'t match');
-        }
-
-        // read all the row height in batch first for both tables
-        for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            table1RowHeights.push(table1Rows.item(rowIndex).getHeight());
-            table2RowHeights.push(table2Rows.item(rowIndex).getHeight());
-        }
-
-        // write all the max row heights
-        for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            maxHeight = Math.max(table1RowHeights[rowIndex], table2RowHeights[rowIndex]);
-            table1Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
-            table2Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
-
-//            console.log('set row %o height to %o', rowIndex, maxHeight);
-//            studentsRows.item(rowIndex).setHeight(Math.max(competenciesRowHeights[rowIndex], studentsRowHeights[rowIndex]));
-        }
-
-        Ext.resumeLayouts(true);
     }
 });

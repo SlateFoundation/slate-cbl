@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
+/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-student-skill-overviewwindow',

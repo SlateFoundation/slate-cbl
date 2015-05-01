@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext*/
+/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext*/
 Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
     extend: 'Slate.cbl.view.standard.AbstractOverviewWindow',
     xtype: 'slate-cbl-student-skill-overviewwindow',
