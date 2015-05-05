@@ -181,23 +181,31 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                         Demonstration.StudentID,
                         Demonstration.Demonstrated,
                         DemonstrationSkill.SkillID,
+                        DemonstrationSkill.TargetLevel,
                         DemonstrationSkill.DemonstratedLevel,
                         DemonstrationSkill.ID
                    FROM (SELECT ID
-                           FROM `%s`
-                          WHERE CompetencyID = %u) AS Skill
-                   JOIN `%s` DemonstrationSkill
+                           FROM `%1$s`
+                          WHERE CompetencyID = %5$u) AS Skill
+                   JOIN `%2$s` DemonstrationSkill
                      ON DemonstrationSkill.SkillID = Skill.ID
                    JOIN (SELECT ID, StudentID, UNIX_TIMESTAMP(Demonstrated) AS Demonstrated
-                           FROM `%s`
-                          WHERE StudentID IN (%s)) Demonstration
-                     ON Demonstration.ID = DemonstrationSkill.DemonstrationID'
+                           FROM `%3$s`
+                          WHERE StudentID IN (%6$s)) Demonstration
+                     ON Demonstration.ID = DemonstrationSkill.DemonstrationID
+                   JOIN (SELECT StudentID, MAX(Level) AS CurrentLevel
+                           FROM `%4$s`
+                          WHERE StudentID IN (%6$s) AND CompetencyID = %5$u
+                          GROUP BY StudentID) StudentCompetency
+                     ON StudentCompetency.StudentID = Demonstration.StudentID
+                    AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
                 ,[
-                    Skill::$tableName
-                    ,$Competency->ID
-                    ,DemonstrationSkill::$tableName
-                    ,Demonstration::$tableName
-                    ,implode(',', $students)
+                    Skill::$tableName                   // 1
+                    ,DemonstrationSkill::$tableName     // 2
+                    ,Demonstration::$tableName          // 3
+                    ,StudentCompetency::$tableName      // 4
+                    ,$Competency->ID                    // 5
+                    ,implode(',', $students)            // 6
                 ]
             );
         } catch (TableNotFoundException $e) {
@@ -210,6 +218,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
             $skillDemonstration['Demonstrated'] = intval($skillDemonstration['Demonstrated']);
             $skillDemonstration['StudentID'] = intval($skillDemonstration['StudentID']);
             $skillDemonstration['SkillID'] = intval($skillDemonstration['SkillID']);
+            $skillDemonstration['TargetLevel'] = intval($skillDemonstration['TargetLevel']);
             $skillDemonstration['DemonstratedLevel'] = intval($skillDemonstration['DemonstratedLevel']);
             $skillDemonstration['ID'] = intval($skillDemonstration['ID']);
         }
