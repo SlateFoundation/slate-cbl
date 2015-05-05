@@ -57,11 +57,11 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                 .'    ,Skill.CompetencyID'
 #                .'    ,DemonstrationSkill.SkillID'
 #                .'    ,Skill.DemonstrationsRequired'
-#                .'    ,SUM(IF(DemonstrationSkill.Level = 0, 1, 0)) totalMissing'
-#                .'    ,SUM(IF(DemonstrationSkill.Level != 0, 1, 0)) totalNotMissing'
+#                .'    ,SUM(IF(DemonstrationSkill.DemonstratedLevel = 0, 1, 0)) totalMissing'
+#                .'    ,SUM(IF(DemonstrationSkill.DemonstratedLevel != 0, 1, 0)) totalNotMissing'
                 .'    ,LEAST('
-                .'       GREATEST(Skill.DemonstrationsRequired - SUM(IF(DemonstrationSkill.Level != 0, 1, 0)), 0)' // how many needed demonstrations don't have non-missing levels
-                .'       ,SUM(IF(DemonstrationSkill.Level = 0, 1, 0))' // total missing demonstrations for this skill
+                .'       GREATEST(Skill.DemonstrationsRequired - SUM(IF(DemonstrationSkill.DemonstratedLevel != 0, 1, 0)), 0)' // how many needed demonstrations don't have non-missing levels
+                .'       ,SUM(IF(DemonstrationSkill.DemonstratedLevel = 0, 1, 0))' // total missing demonstrations for this skill
                 .'    ) AS neededDemonstrationsMissed'
                 .'   FROM `%s` Demonstration'
                 .'   JOIN `%s` DemonstrationSkill'
@@ -181,7 +181,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
                         Demonstration.StudentID,
                         Demonstration.Demonstrated,
                         DemonstrationSkill.SkillID,
-                        DemonstrationSkill.Level,
+                        DemonstrationSkill.DemonstratedLevel,
                         DemonstrationSkill.ID
                    FROM (SELECT ID
                            FROM `%s`
@@ -210,7 +210,7 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
             $skillDemonstration['Demonstrated'] = intval($skillDemonstration['Demonstrated']);
             $skillDemonstration['StudentID'] = intval($skillDemonstration['StudentID']);
             $skillDemonstration['SkillID'] = intval($skillDemonstration['SkillID']);
-            $skillDemonstration['Level'] = intval($skillDemonstration['Level']);
+            $skillDemonstration['DemonstratedLevel'] = intval($skillDemonstration['DemonstratedLevel']);
             $skillDemonstration['ID'] = intval($skillDemonstration['ID']);
         }
 

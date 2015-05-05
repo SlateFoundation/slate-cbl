@@ -47,8 +47,8 @@ Ext.define('Slate.cbl.util.CBL', function() {
             // Separate demonstrations by level
             for (x = 0; len > x; x++) {
                 demo = demonstrations[x];
-                sortedDemonstrations[demo.Level] = sortedDemonstrations[demo.Level] || [];
-                sortedDemonstrations[demo.Level].push(demo);
+                sortedDemonstrations[demo.DemonstratedLevel] = sortedDemonstrations[demo.DemonstratedLevel] || [];
+                sortedDemonstrations[demo.DemonstratedLevel].push(demo);
             }
             
             // Sort the levels of demonstrations observed from greatest to least
@@ -75,7 +75,7 @@ Ext.define('Slate.cbl.util.CBL', function() {
 
             for (x = 0, len = displayDemonstrations.length; x < len; x++) {
                 demo = displayDemonstrations[x];
-                if (demo.Level > 0) {
+                if (demo.DemonstratedLevel > 0) {
                     scored.push(demo);
                 } else {
                     missed.push(demo);

@@ -167,11 +167,11 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             });
 
             if (existingDemonstrationSkill) {
-                existingDemonstrationSkill.Level = demonstratedSkill.Level;
+                existingDemonstrationSkill.DemonstratedLevel = demonstratedSkill.DemonstratedLevel;
             } else {
                 loadedDemonstrations.push({
                     DemonstrationID: demonstration.getId(),
-                    Level: demonstratedSkill.Level,
+                    DemonstratedLevel: demonstratedSkill.DemonstratedLevel,
                     SkillID: demonstratedSkill.SkillID,
                     StudentID: studentId
                 });

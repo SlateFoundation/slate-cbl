@@ -270,7 +270,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
             skills.push({
                 CompetencyID: activeSlider.skill.CompetencyID,
                 SkillID: activeSlider.skill.ID,
-                Level: activeSlider.getLevel()
+                TargetLevel: 9, // TODO: remove hardcoding after per-student competency is known
+                DemonstratedLevel: activeSlider.getLevel()
             });
         }
 

@@ -181,18 +181,18 @@ class Competency extends \VersionedRecord
 
             $completion = DB::oneRecord(
                 <<<'END_OF_SQL'
-SELECT COUNT(Level) AS demonstrationsCount, AVG(Level) AS demonstrationsAverage
+SELECT COUNT(DemonstratedLevel) AS demonstrationsCount, AVG(DemonstratedLevel) AS demonstrationsAverage
 FROM (
-    SELECT StudentDemonstrationSkill.Level,
+    SELECT StudentDemonstrationSkill.DemonstratedLevel,
         @num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber,
         @skill := StudentDemonstrationSkill.SkillID AS SkillID
     FROM (
-        SELECT DemonstrationSkill.SkillID, DemonstrationSkill.Level
+        SELECT DemonstrationSkill.SkillID, DemonstrationSkill.DemonstratedLevel
         FROM `%s` DemonstrationSkill
         JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-        WHERE DemonstrationSkill.SkillID IN (%s) AND DemonstrationSkill.Level > 0
+        WHERE DemonstrationSkill.SkillID IN (%s) AND DemonstrationSkill.DemonstratedLevel > 0
     ) StudentDemonstrationSkill
-    ORDER BY SkillID, Level DESC
+    ORDER BY SkillID, DemonstratedLevel DESC
 ) OrderedDemonstrationSkill
 JOIN `%s` Skill ON Skill.ID = OrderedDemonstrationSkill.SkillID
 WHERE rowNumber <= DemonstrationsRequired;

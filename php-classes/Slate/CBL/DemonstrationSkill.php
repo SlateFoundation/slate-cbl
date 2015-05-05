@@ -17,8 +17,11 @@ class DemonstrationSkill extends \ActiveRecord
         'SkillID' => [
             'type' => 'uint'
             ,'index' => true
-        ]
-        ,'Level' => [
+        ],
+        'TargetLevel' => [
+            'type' => 'tinyint'
+        ],
+        'DemonstratedLevel' => [
             'type' => 'tinyint',
             'unsigned' => true
         ]
@@ -44,7 +47,12 @@ class DemonstrationSkill extends \ActiveRecord
             'validator' => 'number'
             ,'min' => 1
         ]
-        ,'Level' => [
+        ,'TargetLevel' => [
+            'validator' => 'number'
+            ,'min' => 1
+            ,'max' => 13
+        ]
+        ,'DemonstratedLevel' => [
             'validator' => 'number'
             ,'min' => 0
             ,'max' => 13

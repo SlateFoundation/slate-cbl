@@ -97,7 +97,7 @@ class ContentAreasRequestHandler extends \RecordsRequestHandler
 
         try {
             $progress = DB::allRecords("
-                SELECT ds.level,
+                SELECT ds.DemonstratedLevel,
                        CONCAT(CASE p.Gender
                          WHEN 'Male'   THEN 'Mr. '
                          WHEN 'Female' THEN 'Ms. '

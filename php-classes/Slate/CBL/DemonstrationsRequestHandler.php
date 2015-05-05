@@ -173,11 +173,11 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             foreach ($demonstrationSkills AS $DemonstrationSkill) {
                 $skill = $skills[$DemonstrationSkill->SkillID];
                 
-                $row[8]  = $skill->Competency->Code;
-                $row[9]  = $skill->Code;
-                $row[10] = $DemonstrationSkill->Level > 0 ?  $DemonstrationSkill->Level : 'M';
-                $row[11] = 9;
-                $row[12] = '';
+                $row[] = $skill->Competency->Code;
+                $row[] = $skill->Code;
+                $row[] = $DemonstrationSkill->DemonstratedLevel > 0 ?  $DemonstrationSkill->DemonstratedLevel : 'M';
+                $row[] = $DemonstrationSkill->TargetLevel;
+                $row[] = '';
                 $sw->writeRow($row);
             }
         }
@@ -196,8 +196,12 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     return static::throwInvalidRequestError("Skill at index $index is missing SkillID");
                 }
 
-                if (!isset($skill['Level']) || !is_numeric($skill['Level']) || $skill['Level'] < 0) {
-                    return static::throwInvalidRequestError("Skill at index $index is missing Level");
+                if (!isset($skill['TargetLevel']) || !is_numeric($skill['TargetLevel']) || $skill['TargetLevel'] < 1) {
+                    return static::throwInvalidRequestError("Skill at index $index is missing TargetLevel");
+                }
+
+                if (!isset($skill['DemonstratedLevel']) || !is_numeric($skill['DemonstratedLevel']) || $skill['DemonstratedLevel'] < 0) {
+                    return static::throwInvalidRequestError("Skill at index $index is missing DemonstratedLevel");
                 }
             }
         }
@@ -211,7 +215,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                 try {
                     $existingSkills = DB::table(
                         'SkillID'
-                        ,'SELECT ID, SkillID, Level FROM `%s` WHERE DemonstrationID = %u'
+                        ,'SELECT ID, SkillID, DemonstratedLevel FROM `%s` WHERE DemonstrationID = %u'
                         ,[
                             DemonstrationSkill::$tableName
                             ,$Demonstration->ID
@@ -234,14 +238,15 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     $DemoSkill = DemonstrationSkill::create([
                         'DemonstrationID' => $Demonstration->ID
                         ,'SkillID' => $skill['SkillID']
-                        ,'Level' => $skill['Level']
+                        ,'TargetLevel' => $skill['TargetLevel']
+                        ,'DemonstratedLevel' => $skill['DemonstratedLevel']
                     ], true);
-                } elseif ($existingSkills[$skill['SkillID']]['Level'] != $skill['Level']) {
+                } elseif ($existingSkills[$skill['SkillID']]['DemonstratedLevel'] != $skill['DemonstratedLevel']) {
                     DB::nonQuery(
-                        'UPDATE `%s` SET Level = "%s" WHERE ID = %u'
+                        'UPDATE `%s` SET DemonstratedLevel = "%s" WHERE ID = %u'
                         ,[
                             DemonstrationSkill::$tableName
-                            ,DB::escape($skill['Level'])
+                            ,DB::escape($skill['DemonstratedLevel'])
                             ,$existingSkills[$skill['SkillID']]['ID']
                         ]
                     );

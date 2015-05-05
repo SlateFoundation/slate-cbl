@@ -37,20 +37,12 @@ Ext.define('Slate.cbl.model.Demonstration', {
             name: "StudentID",
             type: "int"
         },
-//        {
-//            name: "SkillID",
-//            type: "int"
-//        },
         {
             name: "Demonstrated",
             type: "date",
             dateFormat: "timestamp",
             useNull: true
         },
-//        {
-//            name: "Level",
-//            type: "string"
-//        },
         {
             name: "ExperienceType",
             type: "string"
