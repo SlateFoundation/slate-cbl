@@ -429,7 +429,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             skillsCollection = competency.get('skills'),
             skillsData = skillsCollection.items,
             skillsLength = skillsCollection.getCount(), skillIndex, skill,
-            skillCompetency, demonstrationsRequired, skillStudents,
+            skillCompetencyCompletions, demonstrationsRequired, skillStudents,
             studentsStore = Ext.getStore('cbl-students-loaded'),
             studentsData = Ext.pluck(studentsStore.getRange(), 'data'),
             studentsLength = studentsStore.getCount(), studentIndex, student,
@@ -455,21 +455,22 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         // build aligned students array with embedded demonstrations list for each skill+student
         for (skillIndex = 0; skillIndex < skillsLength; skillIndex++) {
             skill = skillsCollection.getAt(skillIndex);
-            skillCompetency = competenciesStore.getById(skill.CompetencyID);
+            skillCompetencyCompletions = competenciesStore.getById(skill.CompetencyID).get('studentCompletions') || {};
             demonstrationsRequired = skill.DemonstrationsRequired;
             skillDemonstrationsByStudent = demonstrationsBySkillStudent[skill.ID] || {};
             skillStudents = skill.students = [];
 
             for (studentIndex = 0; studentIndex < studentsLength; studentIndex++) {
                 student = studentsData[studentIndex];
-                skillStudentDemonstrations = skillDemonstrationsByStudent[student.ID] || [];
+                studentId = student.ID;
+                skillStudentDemonstrations = skillDemonstrationsByStudent[studentId] || [];
 
                 skillStudentDemonstrations = Slate.cbl.util.CBL.sortDemonstrations(skillStudentDemonstrations, demonstrationsRequired);
                 Slate.cbl.util.CBL.padArray(skillStudentDemonstrations, demonstrationsRequired);
 
                 skillStudents.push({
                     student: student,
-                    level: skillCompetency.get('level'),
+                    level: (skillCompetencyCompletions[studentId] || {}).currentLevel || null,
                     demonstrations: skillStudentDemonstrations
                 });
             }
