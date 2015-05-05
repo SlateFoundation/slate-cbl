@@ -177,25 +177,41 @@ class Competency extends \VersionedRecord
 #        }
 
         try {
-            DB::nonQuery('set @num := 0, @skill := ""');
+            
+
+            DB::nonQuery(
+                'set @num := 0, @skill := "", @currentLevel = (SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u)',
+                [
+                    $Student->ID,
+                    $this->ID
+                ]
+            );
 
             $completion = DB::oneRecord(
                 <<<'END_OF_SQL'
-SELECT COUNT(DemonstratedLevel) AS demonstrationsCount, AVG(DemonstratedLevel) AS demonstrationsAverage
-FROM (
-    SELECT StudentDemonstrationSkill.DemonstratedLevel,
-        @num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber,
-        @skill := StudentDemonstrationSkill.SkillID AS SkillID
-    FROM (
-        SELECT DemonstrationSkill.SkillID, DemonstrationSkill.DemonstratedLevel
-        FROM `%s` DemonstrationSkill
-        JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-        WHERE DemonstrationSkill.SkillID IN (%s) AND DemonstrationSkill.DemonstratedLevel > 0
-    ) StudentDemonstrationSkill
-    ORDER BY SkillID, DemonstratedLevel DESC
-) OrderedDemonstrationSkill
-JOIN `%s` Skill ON Skill.ID = OrderedDemonstrationSkill.SkillID
-WHERE rowNumber <= DemonstrationsRequired;
+SELECT @currentLevel AS currentLevel,
+       COUNT(DemonstratedLevel) AS demonstrationsCount,
+       AVG(DemonstratedLevel) AS demonstrationsAverage
+  FROM (
+       SELECT StudentDemonstrationSkill.TargetLevel,
+              StudentDemonstrationSkill.DemonstratedLevel,
+              @num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber,
+              @skill := StudentDemonstrationSkill.SkillID AS SkillID
+         FROM (
+              SELECT DemonstrationSkill.TargetLevel,
+                     DemonstrationSkill.SkillID,
+                     DemonstrationSkill.DemonstratedLevel
+                FROM `%s` DemonstrationSkill
+                JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration
+                  ON Demonstration.ID = DemonstrationSkill.DemonstrationID
+               WHERE DemonstrationSkill.SkillID IN (%s)
+                 AND DemonstrationSkill.TargetLevel = @currentLevel
+                 AND DemonstrationSkill.DemonstratedLevel > 0
+              ) StudentDemonstrationSkill
+        ORDER BY SkillID, DemonstratedLevel DESC
+       ) OrderedDemonstrationSkill
+  JOIN `%s` Skill ON Skill.ID = OrderedDemonstrationSkill.SkillID
+ WHERE rowNumber <= DemonstrationsRequired;
 END_OF_SQL
                 ,[
                     DemonstrationSkill::$tableName,
@@ -208,13 +224,15 @@ END_OF_SQL
 
             // cast strings to floats
             $completion = [
+                'currentLevel' => $completion['currentLevel'] == null ? null : intval($completion['currentLevel']),
                 'demonstrationsCount' => intval($completion['demonstrationsCount']),
-                'demonstrationsAverage' => floatval($completion['demonstrationsAverage'])
+                'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
             ];
         } catch (TableNotFoundException $e) {
             $completion = [
                 'demonstrationsCount' => 0,
-                'demonstrationsAverage' => null
+                'demonstrationsAverage' => null,
+                'currentLevel' => null
             ];
         }
 
