@@ -196,10 +196,6 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     return static::throwInvalidRequestError("Skill at index $index is missing SkillID");
                 }
 
-                if (!isset($skill['TargetLevel']) || !is_numeric($skill['TargetLevel']) || $skill['TargetLevel'] < 1) {
-                    return static::throwInvalidRequestError("Skill at index $index is missing TargetLevel");
-                }
-
                 if (!isset($skill['DemonstratedLevel']) || !is_numeric($skill['DemonstratedLevel']) || $skill['DemonstratedLevel'] < 0) {
                     return static::throwInvalidRequestError("Skill at index $index is missing DemonstratedLevel");
                 }
@@ -236,9 +232,9 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
 
                 if (!array_key_exists($skill['SkillID'], $existingSkills)) {
                     $DemoSkill = DemonstrationSkill::create([
-                        'DemonstrationID' => $Demonstration->ID
+                        'Demonstration' => $Demonstration
                         ,'SkillID' => $skill['SkillID']
-                        ,'TargetLevel' => $skill['TargetLevel']
+                        ,'TargetLevel' => empty($skill['TargetLevel']) ? null : $skill['TargetLevel']
                         ,'DemonstratedLevel' => $skill['DemonstratedLevel']
                     ], true);
                 } elseif ($existingSkills[$skill['SkillID']]['DemonstratedLevel'] != $skill['DemonstratedLevel']) {

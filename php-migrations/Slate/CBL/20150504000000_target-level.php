@@ -21,7 +21,7 @@ if (static::columnExists($tableName, 'TargetLevel')) {
 
 // migration
 printf("Updating table `%s`\n", $tableName);
-DB::nonQuery('ALTER TABLE `%s` ADD `TargetLevel` tinyint NOT NULL AFTER `SkillID`', $tableName);
+DB::nonQuery('ALTER TABLE `%s` ADD `TargetLevel` tinyint NULL DEFAULT NULL AFTER `SkillID`', $tableName);
 DB::nonQuery('ALTER TABLE `%s` CHANGE `Level` `DemonstratedLevel` tinyint NOT NULL', $tableName);
 DB::nonQuery('UPDATE `%s` SET `TargetLevel` = 9', $tableName);
 

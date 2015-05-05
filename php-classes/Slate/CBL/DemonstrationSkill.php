@@ -19,7 +19,8 @@ class DemonstrationSkill extends \ActiveRecord
             ,'index' => true
         ],
         'TargetLevel' => [
-            'type' => 'tinyint'
+            'type' => 'tinyint',
+            'notnull' => false
         ],
         'DemonstratedLevel' => [
             'type' => 'tinyint',
@@ -51,6 +52,7 @@ class DemonstrationSkill extends \ActiveRecord
             'validator' => 'number'
             ,'min' => 1
             ,'max' => 13
+            ,'required' => false
         ]
         ,'DemonstratedLevel' => [
             'validator' => 'number'
@@ -63,4 +65,14 @@ class DemonstrationSkill extends \ActiveRecord
         'Demonstration',
         'Skill'
     ];
+    
+    public function save($deep = true)
+    {
+        // default TargetLevel to student's current level
+        if (!$this->TargetLevel) {
+            $this->TargetLevel = \DB::oneValue('SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u', [$this->Demonstration->StudentID, $this->Skill->CompetencyID]);
+        }
+        
+        return parent::save($deep);
+    }
 }
