@@ -43,7 +43,7 @@ class ContentAreasRequestHandler extends \RecordsRequestHandler
             }
         }
 
-        // get data for all competencie
+        // get data for all competencies
         $competencies = [];
         foreach ($ContentArea->Competencies AS $Competency) {
             $competencyData = $Competency->getDetails(['totalDemonstrationsRequired', 'minimumAverage']);
