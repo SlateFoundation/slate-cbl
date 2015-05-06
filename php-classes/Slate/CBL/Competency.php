@@ -7,8 +7,9 @@ use Slate\People\Student;
 
 class Competency extends \VersionedRecord
 {
-    public static $minimumLevel = 8;
-    public static $minimumAverage = 8.5;
+    public static $minimumLevel = 8; // TODO: is this still used? rename to minimumGraduatingLevel
+    public static $minimumAverage = 8.5; // TODO: rename to minimumGraduatingAverage or get rid of
+    public static $maximumTargetLevel = 12;
 
     // VersionedRecord configuration
     public static $historyTable = 'history_cbl_competencies';
@@ -115,6 +116,12 @@ class Competency extends \VersionedRecord
     {
         // TODO: determine dynamically based on current grade level, convert to dynamic attribute if possible
         return static::$minimumAverage;
+    }
+
+    public function getMaximumTargetLevel()
+    {
+        // TODO: convert to a database field for the competency or content area?
+        return static::$maximumTargetLevel;
     }
 
     public function getSkillIds($forceRefresh = false)
