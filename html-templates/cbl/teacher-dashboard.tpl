@@ -1,5 +1,7 @@
 {extends designs/site.tpl}
 
+{block title}Teacher Competencies Dashboard &mdash; {$dwoo.parent}{/block}
+
 {block "css"}
     {cssmin fonts/font-awesome.css}
     <link rel="stylesheet" type="text/css" href="{Sencha_App::getByName('CompetencyTracker')->getVersionedPath('build/production/resources/CompetencyTracker-all.css')}" />

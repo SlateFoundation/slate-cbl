@@ -1,5 +1,7 @@
 {extends "designs/site.tpl"}
 
+{block title}Student Competencies Dashboard &mdash; {$dwoo.parent}{/block}
+
 {block "css"}
     {$dwoo.parent}
     {cssmin "cbl/student-dashboard.css"}
