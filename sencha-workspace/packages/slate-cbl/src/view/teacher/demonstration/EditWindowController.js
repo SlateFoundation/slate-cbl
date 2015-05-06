@@ -268,7 +268,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         for (; activeSliderIndex < activeSlidersLength; activeSliderIndex++) {
             activeSlider = activeSliders[activeSliderIndex];
             skills.push({
-                CompetencyID: activeSlider.skill.CompetencyID,
                 SkillID: activeSlider.skill.ID,
                 DemonstratedLevel: activeSlider.getLevel()
             });

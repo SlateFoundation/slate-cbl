@@ -28,10 +28,7 @@ Ext.define('Slate.cbl.model.Competency', {
         { name: 'expanded', persist: false, type: 'boolean', defaultValue: false },
         { name: 'skillsRendered', persist: false, type: 'boolean', defaultValue: false },
         { name: 'skills', persist: false },
-        { name: 'demonstrations', persist: false },
-
-        // placeholder values for incomplete features
-        { name: 'level', persist: false, defaultValue: 9 } // TODO: eliminate this or move to server-provided metadata
+        { name: 'demonstrations', persist: false }
     ],
 
     proxy: {
