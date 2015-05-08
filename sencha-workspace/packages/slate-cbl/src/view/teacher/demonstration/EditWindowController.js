@@ -5,6 +5,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     requires: [
         'Slate.cbl.API',
         'Slate.cbl.field.LevelSlider',
+        'Slate.cbl.store.Competencies',
 
         'Ext.MessageBox',
         'Ext.window.Toast',
@@ -81,7 +82,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     onShow: function(editWindow) {
         var me = this,
             competenciesGrid = me.lookupReference('competenciesGrid'),
-            store = Ext.getStore('cbl-competencies-all');
+            store = Ext.getStore('cbl-competencies');
 
         // load global competencies store the first time a window shows
         if (!store.isLoaded()) {
@@ -100,7 +101,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     onLoadDemonstration: function(editWindow, demonstration) {
         var me = this,
             competenciesGrid = me.lookupReference('competenciesGrid'),
-            competenciesStore = Ext.getStore('cbl-competencies-all'),
+            competenciesStore = Ext.getStore('cbl-competencies'),
             _restoreSavedSkills;
 
         // if loading a phantom, leave the form unloaded so empty fields aren't marked invalid
@@ -132,7 +133,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
                 // remove competency from the queue
                 Ext.Array.remove(competenciesToLoad, competency.getId());
-
+debugger;
                 // load skills into competency
                 for (; competencySkillIndex < competencySkillsLength; competencySkillIndex++) {
                     competencySkill = competencySkills[competencySkillIndex];
@@ -268,7 +269,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         for (; activeSliderIndex < activeSlidersLength; activeSliderIndex++) {
             activeSlider = activeSliders[activeSliderIndex];
             skills.push({
-                SkillID: activeSlider.skill.ID,
+                SkillID: activeSlider.skill.getId(),
                 DemonstratedLevel: activeSlider.getLevel()
             });
         }
@@ -335,7 +336,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     addCompetency: function(competency, callback, scope, insertSorted) {
         var me = this,
             editWindow = me.getView(),
-            competenciesStore = Ext.getStore('cbl-competencies-all'),
+            competenciesStore = Ext.getStore('cbl-competencies'),
             competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
             competenciesSearchField = me.lookupReference('competenciesSearchField'),
             competencyCardConfig = {
@@ -370,7 +371,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
             skills.each(function(skill) {
                 skillFieldsConfig.push({
-                    fieldLabel: skill.Descriptor,
+                    fieldLabel: skill.get('Descriptor'),
                     skill: skill
                 });
             });

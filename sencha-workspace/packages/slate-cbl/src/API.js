@@ -2,26 +2,19 @@
 Ext.define('Slate.cbl.API', {
     extend: 'Emergence.util.AbstractAPI',
     singleton: true,
+    requires: [
+        'Ext.data.Session'
+    ],
+
+
+    // TODO: merge upstream to Jarvus.util.AbstractAPI
+    getSession: function() {
+        return this.session || (this.session = new Ext.data.Session());
+    },
 
     // TODO: merge upstream to Emergence.util.AbstractAPI
     recordKeyFn: function(recordData) {
         return recordData.ID;
-    },
-
-    getSkills: function(competencyId, callback, scope) {
-        var me = this;
-
-        me.request({
-            url: '/cbl/skills',
-            method: 'GET',
-            params: {
-                competency: competencyId
-            },
-            success: function(response) {
-                me.fireEvent('skillsload', response, competencyId);
-                Ext.callback(callback, scope, [response]);
-            }
-        });
     },
     
     getRecentProgress: function(studentId, contentAreaCode, callback, scope) {
@@ -42,9 +35,7 @@ Ext.define('Slate.cbl.API', {
     },
 
     getDemonstrationsByStudentSkill: function(studentId, skillId, callback, scope) {
-        var me = this;
-
-        me.request({
+        this.request({
             method: 'GET',
             url: '/cbl/skills/' + skillId + '/demonstrations',
             params: {
@@ -53,6 +44,19 @@ Ext.define('Slate.cbl.API', {
             },
             success: function(response) {
                 Ext.callback(callback, scope, [response.data && response.data.data, response.data]);
+            }
+        });
+    },
+
+    getAllDemonstrationsByStudentsCompetency: function(studentIds, competencyId, callback, scope) {
+        this.request({
+            method: 'GET',
+            url: '/cbl/competencies/' + competencyId + '/demonstrations',
+            params: {
+                students: studentIds.join(',')
+            },
+            success: function(response) {
+                Ext.callback(callback, scope, [response.data && response.data.data]);
             }
         });
     }

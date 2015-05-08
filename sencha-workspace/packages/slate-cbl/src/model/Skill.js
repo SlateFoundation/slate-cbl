@@ -4,7 +4,8 @@ Ext.define('Slate.cbl.model.Skill', {
     requires: [
         'Slate.cbl.API',
         'Slate.cbl.proxy.Records',
-        'Ext.data.identifier.Negative'
+        'Ext.data.identifier.Negative',
+        'Ext.data.Store'
     ],
 
 

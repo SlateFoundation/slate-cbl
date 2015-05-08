@@ -47,20 +47,5 @@ Ext.define('Slate.cbl.model.ContentArea', {
     proxy: {
         type: 'slate-cbl-records',
         url: '/cbl/content-areas'
-    },
-
-    getCompetenciesForStudents: function(studentIds, callback, scope) {
-        var me = this;
-
-        Slate.cbl.API.request({
-            method: 'GET',
-            url: '/cbl/content-areas/' + me.get('Code') + '/competencies',
-            params: {
-                students: studentIds.join(',')
-            },
-            success: function(response) {
-                Ext.callback(callback, scope, [response.data && response.data.data]);
-            }
-        });
     }
 });

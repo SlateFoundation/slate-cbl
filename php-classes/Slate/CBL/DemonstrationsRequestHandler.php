@@ -17,9 +17,9 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
     public static function handleRecordsRequest($action = null)
     {
         switch ($action ?: $action = static::shiftPath()) {
-            case 'export-legacy':
+            case '*export-legacy':
                 return static::handleLegacyExportRequest();
-            case 'export':
+            case '*export':
                 return static::handleExportRequest();
             default:
                 return parent::handleRecordsRequest($action);

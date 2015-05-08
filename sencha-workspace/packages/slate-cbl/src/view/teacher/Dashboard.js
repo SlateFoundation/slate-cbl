@@ -7,10 +7,15 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-teacher-dashboard',
     requires:[
+        'Slate.cbl.util.CBL',
+
         'Slate.cbl.view.teacher.DashboardController',
-        'Slate.cbl.model.ContentArea',
         'Slate.cbl.widget.Popover',
-        'Slate.cbl.util.CBL'
+
+        'Slate.cbl.model.ContentArea',
+        'Slate.cbl.store.Students',
+        'Slate.cbl.store.Competencies',
+        'Slate.cbl.store.Skills'
     ],
 
     controller: 'slate-cbl-teacher-dashboard',
@@ -117,7 +122,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         mouseover: {
             fn: 'onSkillNameMouseOver',
             element: 'el'
-        }
+        },
+        progressrowclick: 'onProgressRowClick'
     },
 
 
@@ -197,6 +203,17 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         }
     },
 
+    /**
+     * Attached via listeners config in view
+     */
+    onProgressRowClick: function(dashboardView, ev, targetEl) {
+        this.expandCompetency(
+            Slate.cbl.store.Competencies.getById(
+                targetEl.getAttribute('data-competency')
+            )
+        );
+    },
+
     onSkillNameMouseOver: function(ev) {
         var me = this,
             popover = me.getPopover(),
@@ -218,47 +235,6 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
 
     // protected methods
-
-    /**
-     * Redraw the dashboard based on currently loaded data
-     */
-    refreshDashboard: function() {
-        var me = this,
-            contentArea = me.getContentArea(),
-            studentsStore = Ext.getStore('cbl-students-loaded'),
-            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-
-            syncCompetencyRowHeights = function() {
-                me.syncRowHeights(
-                    me.el.select('.cbl-grid-competencies thead tr, .cbl-grid-competencies .cbl-grid-progress-row'),
-                    me.el.select('.cbl-grid-main thead tr, .cbl-grid-main .cbl-grid-progress-row')
-                );
-            };
-
-        if (!studentsStore.isLoaded() || !contentArea) {
-            return;
-        }
-
-        if (!competenciesStore.isLoaded()) {
-            contentArea.getCompetenciesForStudents(studentsStore.collect('ID'), function(competencies) {
-                competenciesStore.loadRawData(competencies);
-            });
-            return;
-        }
-
-        Ext.suspendLayouts();
-
-        me.update(me.getDashboardData());
-
-        if (me.rendered) {
-            syncCompetencyRowHeights();
-        } else {
-            me.on('render', syncCompetencyRowHeights, me, { single: true });
-        }
-
-        Ext.resumeLayouts(true);
-    },
-
     syncRowHeights: function(table1Rows, table2Rows) {
         var table1RowHeights = [],
             table2RowHeights = [],
@@ -287,47 +263,6 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
 
         Ext.resumeLayouts(true);
     },
-
-    getDashboardData: function() {
-        var me = this,
-            contentArea = me.getContentArea(),
-            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-            competenciesData = Ext.pluck(competenciesStore.getRange(), 'data'),
-            competenciesLength = competenciesData.length, competencyIndex, competency, competencyStudents,
-            studentsStore = Ext.getStore('cbl-students-loaded'),
-            studentsData = Ext.pluck(studentsStore.getRange(), 'data'),
-            studentsLength = studentsData.length, studentIndex, student,
-            completion, percentComplete, demonstrationsAverage;
-
-
-        // build aligned students array for each competency
-        for (competencyIndex = 0; competencyIndex < competenciesLength; competencyIndex++) {
-            competency = competenciesData[competencyIndex];
-            competencyStudents = competency.students = [];
-
-            for (studentIndex = 0; studentIndex < studentsLength; studentIndex++) {
-                student = studentsData[studentIndex];
-                completion = competency.studentCompletions[student.ID] || {};
-                percentComplete = Math.round(100 * (completion.demonstrationsCount || 0) / competency.totalDemonstrationsRequired);
-                demonstrationsAverage = completion.demonstrationsAverage;
-
-                competencyStudents.push({
-                    student: student,
-                    level: completion.currentLevel,
-                    percentComplete: percentComplete,
-                    demonstrationsAverage: demonstrationsAverage,
-                    isAverageLow: percentComplete >= 50 && demonstrationsAverage < competency.minimumAverage
-                });
-            }
-        }
-
-
-        return {
-            contentArea: contentArea.getData(),
-            students: studentsData,
-            competencies: competenciesData
-        };
-    },
     
     expandCompetency: function(competency) {
         var me = this,
@@ -337,7 +272,7 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             skillsHeight = 0,
             _finishExpand, _finishToggle;
 
-
+// TODO: instead of loading data from here, fire a beforeexpand event that the contoller can cancel pending load, and then re-call expandCompetency
         Ext.suspendLayouts();
 
         _finishToggle = function() {
@@ -374,16 +309,16 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         }
 
         // load demonstrations and skills
-        competency.getDemonstrationsForStudents(Ext.getStore('cbl-students-loaded').collect('ID'), function(loadedDemonstrations) {
-            competency.set('demonstrations', loadedDemonstrations);
-            if (competency.get('skills')) {
+        Slate.cbl.API.getAllDemonstrationsByStudentsCompetency(Slate.cbl.store.Students.collect('ID'), competency.getId(), function(loadedDemonstrations) {
+            competency.set('demonstrations', loadedDemonstrations); // TODO: don't decorate models
+            if (competency.skills) {
                 me.refreshCompetency(competency);
                 _finishExpand();
             }
         });
 
-        competency.withSkills(function(loadedSkills) {
-            if (competency.get('demonstrations')) {
+        Slate.cbl.store.Skills.getAllByCompetency(competency, function() {
+            if (competency.get('demonstrations')) { // TODO: don't decorate models
                 me.refreshCompetency(competency);
                 _finishExpand();
             }
@@ -404,79 +339,5 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
             headers: rows.item(0),
             students: rows.item(1)
         };
-    },
-    
-    refreshCompetency: function(competency) {
-        var me = this,
-            rowEls = me.getRowElsForCompetency(competency),
-            headersRowEl = rowEls.headers,
-            studentsRowEl = rowEls.students;
-
-        competency.set('skillsRendered', true);
-
-        // render details tables
-        me.getTpl('skillHeadersTpl').overwrite(headersRowEl.down('tbody'), competency.get('skills').items);
-        me.getTpl('skillStudentsTpl').overwrite(studentsRowEl.down('tbody'), me.getCompetencyData(competency));
-
-        me.syncRowHeights(
-            headersRowEl.select('tr'),
-            studentsRowEl.select('tr')
-        );
-    },
-
-    getCompetencyData: function(competency) {
-        var competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-            skillsCollection = competency.get('skills'),
-            skillsData = skillsCollection.items,
-            skillsLength = skillsCollection.getCount(), skillIndex, skill,
-            skillCompetencyCompletions, demonstrationsRequired, skillStudents,
-            studentsStore = Ext.getStore('cbl-students-loaded'),
-            studentsData = Ext.pluck(studentsStore.getRange(), 'data'),
-            studentsLength = studentsStore.getCount(), studentIndex, student,
-            demonstrations = competency.get('demonstrations'),
-            demonstrationsLength = demonstrations.length, demonstrationIndex = 0, demonstration,
-            skillId, studentId,
-            demonstrationsBySkillStudent = {}, skillDemonstrationsByStudent, skillStudentDemonstrations;
-
-
-        // group demonstrations by skill and student
-        for (; demonstrationIndex < demonstrationsLength; demonstrationIndex++) {
-            demonstration = demonstrations[demonstrationIndex];
-            skillId = demonstration.SkillID;
-            studentId = demonstration.StudentID;
-
-            skillDemonstrationsByStudent = demonstrationsBySkillStudent[skillId] || (demonstrationsBySkillStudent[skillId] = {});
-            skillStudentDemonstrations = skillDemonstrationsByStudent[studentId] || (skillDemonstrationsByStudent[studentId] = []);
-
-            skillStudentDemonstrations.push(demonstration);
-        }
-
-
-        // build aligned students array with embedded demonstrations list for each skill+student
-        for (skillIndex = 0; skillIndex < skillsLength; skillIndex++) {
-            skill = skillsCollection.getAt(skillIndex);
-            skillCompetencyCompletions = competenciesStore.getById(skill.CompetencyID).get('studentCompletions') || {};
-            demonstrationsRequired = skill.DemonstrationsRequired;
-            skillDemonstrationsByStudent = demonstrationsBySkillStudent[skill.ID] || {};
-            skillStudents = skill.students = [];
-
-            for (studentIndex = 0; studentIndex < studentsLength; studentIndex++) {
-                student = studentsData[studentIndex];
-                studentId = student.ID;
-                skillStudentDemonstrations = skillDemonstrationsByStudent[studentId] || [];
-
-                skillStudentDemonstrations = Slate.cbl.util.CBL.sortDemonstrations(skillStudentDemonstrations, demonstrationsRequired);
-                Slate.cbl.util.CBL.padArray(skillStudentDemonstrations, demonstrationsRequired);
-
-                skillStudents.push({
-                    student: student,
-                    level: (skillCompetencyCompletions[studentId] || {}).currentLevel || null,
-                    demonstrations: skillStudentDemonstrations
-                });
-            }
-        }
-
-
-        return skillsData;
     }
 });

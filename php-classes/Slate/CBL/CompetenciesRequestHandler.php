@@ -16,11 +16,24 @@ class CompetenciesRequestHandler extends \RecordsRequestHandler
     public static function handleRecordsRequest($action = null)
     {
         switch ($action ?: $action = static::shiftPath()) {
-            case 'export':
+            case '*export':
                 return static::handleExportRequest();
             default:
                 return parent::handleRecordsRequest($action);
         }
+    }
+
+    public static function handleBrowseRequest($options = array(), $conditions = array(), $responseID = null, $responseData = array())
+    {
+        if (!empty($_GET['content-area'])) {
+            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content-area'])) {
+                return static::throwNotFoundError('Content area not found');
+            }
+
+            $conditions['ContentAreaID'] = $ContentArea->ID;
+        }
+
+        return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
 
     public static function handleRecordRequest(\ActiveRecord $Competency, $action = false)
