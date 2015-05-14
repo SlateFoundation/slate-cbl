@@ -8,6 +8,7 @@ class DemonstrationSkill extends \ActiveRecord
     public static $tableName = 'cbl_demonstration_skills';
     public static $singularNoun = 'demonstration skill';
     public static $pluralNoun = 'demonstration skills';
+    public static $collectionRoute = '/cbl/demonstration-skills';
 
     public static $fields = [
         'DemonstrationID' => [

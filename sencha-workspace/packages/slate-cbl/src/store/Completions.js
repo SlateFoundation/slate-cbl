@@ -13,7 +13,10 @@ Ext.define('Slate.cbl.store.Completions', {
     proxy: {
         type: 'api',
         connection: 'Slate.cbl.API',
-        url: '/cbl/teacher-dashboard/completions'
+        url: '/cbl/teacher-dashboard/completions',
+        reader: {
+            rootProperty: 'data'
+        }
     },
     
     /**
@@ -23,7 +26,7 @@ Ext.define('Slate.cbl.store.Completions', {
      * @param {Number[]} competencies
      * @param {Object} [options]
      */
-    load: function(students, competencies, options) {
+    loadByStudentsAndCompetencies: function(students, competencies, options) {
         options = options || {};
  
         options.params = Ext.apply(options.params || {}, {
@@ -31,6 +34,6 @@ Ext.define('Slate.cbl.store.Completions', {
             competencies: Ext.isArray(competencies) ? competencies.join(',') : competencies
         });
 
-        this.callParent([options]);
+        return this.load(options);
     }
 });

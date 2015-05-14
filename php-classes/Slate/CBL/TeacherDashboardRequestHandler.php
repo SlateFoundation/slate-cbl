@@ -22,8 +22,8 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                 return static::handleDashboardRequest();
             case 'completions':
                 return static::handleCompletionsRequest();
-            case 'skill-demonstrations':
-                return static::handleSkillDemonstrationsRequest();
+            case 'demonstration-skills':
+                return static::handleDemonstrationSkillsRequest();
             default:
                 return static::throwNotFoundError();
         }
@@ -74,10 +74,12 @@ class TeacherDashboardRequestHandler extends \RequestHandler
             }
         }
 
-        return static::respond('completions', $completions);
+        return static::respond('completions', [
+            'data' => $completions
+        ]);
     }
 
-    public static function handleSkillDemonstrationsRequest()
+    public static function handleDemonstrationSkillsRequest()
     {
         if (empty($_GET['students']) || !($students = Student::getAllByListIdentifier($_GET['students']))) {
             return static::throwNotFoundError('Students list required');
@@ -89,7 +91,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
 
         // query demonstrations sums
         try {
-            $skillDemonstrations = DB::allRecords('
+            $demonstrationSkills = DB::allRecords('
                  SELECT Demonstration.ID AS DemonstrationID,
                         Demonstration.StudentID,
                         Demonstration.Demonstrated,
@@ -126,20 +128,22 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                 ]
             );
         } catch (TableNotFoundException $e) {
-            $skillDemonstrations = [];
+            $demonstrationSkills = [];
         }
 
         // cast strings to integers
-        foreach ($skillDemonstrations AS &$skillDemonstration) {
-            $skillDemonstration['DemonstrationID'] = intval($skillDemonstration['DemonstrationID']);
-            $skillDemonstration['Demonstrated'] = intval($skillDemonstration['Demonstrated']);
-            $skillDemonstration['StudentID'] = intval($skillDemonstration['StudentID']);
-            $skillDemonstration['SkillID'] = intval($skillDemonstration['SkillID']);
-            $skillDemonstration['TargetLevel'] = intval($skillDemonstration['TargetLevel']);
-            $skillDemonstration['DemonstratedLevel'] = intval($skillDemonstration['DemonstratedLevel']);
-            $skillDemonstration['ID'] = intval($skillDemonstration['ID']);
+        foreach ($demonstrationSkills AS &$demonstrationSkill) {
+            $demonstrationSkill['DemonstrationID'] = intval($demonstrationSkill['DemonstrationID']);
+            $demonstrationSkill['Demonstrated'] = intval($demonstrationSkill['Demonstrated']);
+            $demonstrationSkill['StudentID'] = intval($demonstrationSkill['StudentID']);
+            $demonstrationSkill['SkillID'] = intval($demonstrationSkill['SkillID']);
+            $demonstrationSkill['TargetLevel'] = intval($demonstrationSkill['TargetLevel']);
+            $demonstrationSkill['DemonstratedLevel'] = intval($demonstrationSkill['DemonstratedLevel']);
+            $demonstrationSkill['ID'] = intval($demonstrationSkill['ID']);
         }
 
-        return static::respond('skillDemonstrations', $skillDemonstrations);
+        return static::respond('demonstrationSkills', [
+            'data' => $demonstrationSkills
+        ]);
     }
 }

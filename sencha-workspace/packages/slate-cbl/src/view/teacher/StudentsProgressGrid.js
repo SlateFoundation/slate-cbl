@@ -14,7 +14,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.Completions',
         'Slate.cbl.store.Skills',
-        'Slate.cbl.store.SkillDemonstrations'
+        'Slate.cbl.store.DemonstrationSkills'
     ],
 
     config: {
@@ -40,8 +40,8 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             xclass: 'Slate.cbl.store.Skills'
         },
         
-        skillDemonstrationsStore: {
-            xclass: 'Slate.cbl.store.SkillDemonstrations'
+        demonstrationSkillsStore: {
+            xclass: 'Slate.cbl.store.DemonstrationSkills'
         }
     },
 
@@ -228,11 +228,11 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         return Ext.StoreMgr.lookup(store);
     },
 
-    applySkillDemonstrationsStore: function(store) {
+    applyDemonstrationSkillsStore: function(store) {
         return Ext.StoreMgr.lookup(store);
     },
 
-    updateSkillDemonstrationsStore: function(store) {
+    updateDemonstrationSkillsStore: function(store) {
         if (store) {
             store.on({
                 scope: this,
@@ -241,7 +241,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 //                update: function() { debugger; console.log('update', arguments); },
 //                remove: function() { debugger; console.log('remove', arguments); },
 //                load: function() { debugger; console.log('load', arguments); },
-                load: 'onSkillDemonstrationsLoad'
+                load: 'onDemonstrationSkillsLoad'
             });
         }
     },
@@ -328,10 +328,10 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         // TODO: apply completion updates to DOM
     },
 
-    onSkillDemonstrationsLoad: function(skillDemonstrationsStore, skillDemonstrations) {
+    onDemonstrationSkillsLoad: function(demonstrationSkillsStore, demonstrationSkills) {
         var renderData = this.getData();
 
-        renderData.incomingSkillDemonstrations = (renderData.incomingSkillDemonstrations || []).concat(skillDemonstrations);
+        renderData.incomingDemonstrationSkills = (renderData.incomingDemonstrationSkills || []).concat(demonstrationSkills);
 
         this.flushDemonstrations();
     },
@@ -362,7 +362,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         }
 
         // TODO: should this be in finishRefresh instead? what happens if refresh called before render?
-        me.getCompletionsStore().load(
+        me.getCompletionsStore().loadByStudentsAndCompetencies(
             me.getStudentsStore().collect('ID'),
             me.getCompetenciesStore().collect('ID')
         );
@@ -429,7 +429,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         }
 
         // load demonstrations and skills
-        me.getSkillDemonstrationsStore().load(me.getStudentsStore().collect('ID'), competency.getId());
+        me.getDemonstrationSkillsStore().loadByStudentsAndCompetencies(me.getStudentsStore().collect('ID'), competency.getId());
 
         me.getSkillsStore().getAllByCompetency(competency, function(skillsCollection) {
             var renderData = me.getData(),
@@ -650,10 +650,10 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             renderData = me.getData(),
             skillsById = renderData.skillsById,
 
-            incomingSkillDemonstrations = renderData.incomingSkillDemonstrations || [],
-            incomingSkillDemonstrationsLength = incomingSkillDemonstrations.length,
+            incomingDemonstrationSkills = renderData.incomingDemonstrationSkills || [],
+            incomingDemonstrationSkillsLength = incomingDemonstrationSkills.length,
             skillDemonstrationIndex, skillDemonstration,
-            unsortedSkillDemonstrations = [],
+            unsortedDemonstrationSkills = [],
 
             competenciesRenderData = renderData.competencies,
             competenciesLength = competenciesRenderData.length, competencyIndex, competencyRenderData,
@@ -674,20 +674,20 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
 
     	// sort any incoming skill demonstrations that can be into skills->students render objects
-        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < incomingSkillDemonstrationsLength; skillDemonstrationIndex++) {
-            skillDemonstration = incomingSkillDemonstrations[skillDemonstrationIndex];
+        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < incomingDemonstrationSkillsLength; skillDemonstrationIndex++) {
+            skillDemonstration = incomingDemonstrationSkills[skillDemonstrationIndex];
 
             if (
                 (skillRenderData = skillsById[skillDemonstration.get('SkillID')]) &&
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.get('StudentID')])
             ) {
-                (skillStudentRenderData.incomingSkillDemonstrations || (skillStudentRenderData.incomingSkillDemonstrations = [])).push(skillDemonstration.data);
+                (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration.data);
             } else {
-                unsortedSkillDemonstrations.push(skillDemonstration);
+                unsortedDemonstrationSkills.push(skillDemonstration);
             }
         }
 
-        renderData.incomingSkillDemonstrations = unsortedSkillDemonstrations;
+        renderData.incomingDemonstrationSkills = unsortedDemonstrationSkills;
 
 
         // consume all pending changes, generate new demonstrationBlocks arrays, and render them
@@ -710,9 +710,9 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                     skillDemonstrationsChanged = false;
 
                     // append any incoming skill demonstrations
-                    if (skillStudentRenderData.incomingSkillDemonstrations) {
-                        skillDemonstrationBlocks = skillDemonstrationBlocks.concat(skillStudentRenderData.incomingSkillDemonstrations);
-                        skillStudentRenderData.incomingSkillDemonstrations = null;
+                    if (skillStudentRenderData.incomingDemonstrationSkills) {
+                        skillDemonstrationBlocks = skillDemonstrationBlocks.concat(skillStudentRenderData.incomingDemonstrationSkills);
+                        skillStudentRenderData.incomingDemonstrationSkills = null;
                         skillDemonstrationsChanged = true;
                     }
 
