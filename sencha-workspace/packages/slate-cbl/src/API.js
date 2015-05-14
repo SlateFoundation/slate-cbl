@@ -16,7 +16,8 @@ Ext.define('Slate.cbl.API', {
     recordKeyFn: function(recordData) {
         return recordData.ID;
     },
-    
+
+    // TODO: move to a model + store
     getRecentProgress: function(studentId, contentAreaCode, callback, scope) {
         var me = this;
 
@@ -30,33 +31,6 @@ Ext.define('Slate.cbl.API', {
             success: function(response) {
                 me.fireEvent('recentprogressload', response.data.data, studentId, contentAreaCode);
                 Ext.callback(callback, scope, [response.data.data]);
-            }
-        });
-    },
-
-    getDemonstrationsByStudentSkill: function(studentId, skillId, callback, scope) {
-        this.request({
-            method: 'GET',
-            url: '/cbl/skills/' + skillId + '/demonstrations',
-            params: {
-                student: studentId,
-                include: 'Demonstration,Demonstration.Creator'
-            },
-            success: function(response) {
-                Ext.callback(callback, scope, [response.data && response.data.data, response.data]);
-            }
-        });
-    },
-
-    getAllDemonstrationsByStudentsCompetency: function(studentIds, competencyId, callback, scope) {
-        this.request({
-            method: 'GET',
-            url: '/cbl/competencies/' + competencyId + '/demonstrations',
-            params: {
-                students: studentIds.join(',')
-            },
-            success: function(response) {
-                Ext.callback(callback, scope, [response.data && response.data.data]);
             }
         });
     }

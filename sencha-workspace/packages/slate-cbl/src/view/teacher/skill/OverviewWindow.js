@@ -4,7 +4,6 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
     xtype: 'slate-cbl-teacher-skill-overviewwindow',
     requires: [
         'Slate.cbl.view.teacher.skill.OverviewWindowController',
-        'Slate.cbl.model.Skill',
 
         'Ext.form.field.ComboBox',
         'Ext.data.ChainedStore'
@@ -14,7 +13,10 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
     config: {
         competency: null,
-        showEditLinks: true
+        showEditLinks: true,
+        studentsStore: null,
+        competenciesStore: null,
+        skillsStore: null
     },
 
     dockedItems: [
@@ -31,8 +33,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     xtype: 'combobox',
 
                     store: {
-                        type: 'chained',
-                        source: 'cbl-competencies-loaded'
+                        type: 'chained'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
@@ -48,7 +49,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     xtype: 'combobox',
 
                     store: {
-                        model: 'Slate.cbl.model.Skill'
+                        type: 'chained'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
@@ -71,8 +72,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     emptyText: 'Start typing student\'s name',
 
                     store: {
-                        type: 'chained',
-                        source: 'cbl-students-loaded'
+                        type: 'chained'
                     },
                     queryMode: 'local',
                     displayField: 'FullName',
@@ -102,11 +102,13 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
         }
     ],
     
-    applyCompetency: function(competency) {
-        if (Ext.isString(competency)) {
-            competency = parseInt(competency, 10);
-        }
+    initComponent: function() {
+        var me = this;
 
-        return competency ? competency : null;
+        me.callParent(arguments);
+
+        me.lookupReference('studentCombo').getStore().setSource(me.getStudentsStore());
+        me.lookupReference('competencyCombo').getStore().setSource(me.getCompetenciesStore());
+        me.lookupReference('skillCombo').getStore().setSource(me.getSkillsStore());
     }
 });

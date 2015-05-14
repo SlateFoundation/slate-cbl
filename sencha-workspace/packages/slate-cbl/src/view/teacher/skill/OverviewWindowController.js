@@ -47,17 +47,22 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         competency = competency && competencyCombo.findRecordByValue(competency);
 
         var me = this,
-            overviewWindow = me.getView();
+            overviewWindow = me.getView(),
+            skillsCombo = me.lookupReference('skillCombo'),
+            initialValue = overviewWindow.getSkill();
 
         if (!competency) {
             return;
         }
 
-        competency.withSkills(function(skills) {
-            var skillsCombo = me.lookupReference('skillCombo'),
-                initialValue = overviewWindow.getSkill();
+        skillsCombo.disable();
 
-            skillsCombo.getStore().loadData(skills.getRange());
+        overviewWindow.skillsStore.getAllByCompetency(competency, function() {
+            me.lookupReference('skillCombo').getStore().setFilters({
+                property: 'CompetencyID',
+                value: competency.getId()
+            });
+
             skillsCombo.enable();
 
             if (!skillsCombo.findRecordByValue(skillsCombo.getValue() || initialValue)) {

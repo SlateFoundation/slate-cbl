@@ -7,8 +7,8 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-dashboard',
     requires: [
+        'Slate.cbl.view.teacher.skill.OverviewWindow'
 //        'Slate.cbl.view.teacher.demonstration.EditWindow',
-//        'Slate.cbl.view.teacher.skill.OverviewWindow',
 //
 //        'Slate.cbl.API',
 //        'Slate.cbl.store.Students',
@@ -17,14 +17,14 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     ],
 
 
-//    config: {
-//        id: 'slate-cbl-teacher-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
-//        control: {
-//            '#': {
-//                democellclick: 'onDemoCellClick'
-//            }
-//        },
-//
+    config: {
+        id: 'slate-cbl-teacher-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        control: {
+            'slate-cbl-teacher-studentsprogressgrid': {
+                democellclick: 'onDemoCellClick'
+            }
+        },
+
 //        listen: {
 //            store: {
 //                '#cbl-students': {
@@ -38,36 +38,32 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 //                demonstrationsave: 'onDemonstrationSave'
 //            }
 //        }
-//    },
+    },
 //
 //
 //    // event handers
-//    onStudentsRefresh: function () {
-//        this.refreshDashboard();
-//    },
-//
-//    onCompetenciesRefresh: function () {
-//        this.refreshDashboard();
-//    },
-//
-//    onDemoCellClick: function(dashboardView, ev, targetEl) {
-//        Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
-//            autoShow: true,
-//            animateTarget: targetEl,
-//
-//            competency: parseInt(targetEl.up('.cbl-grid-skills-row').getAttribute('data-competency'), 10),
-//
-//            skill: parseInt(targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'), 10),
-//            student: parseInt(targetEl.up('.cbl-grid-demos-cell').getAttribute('data-student'), 10),
-//            selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10),
-//
+    onDemoCellClick: function(progressGrid, ev, targetEl) {
+        Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
+            ownerCmp: this.getView(),
+            autoShow: true,
+            animateTarget: targetEl,
+
+            competency: parseInt(targetEl.up('.cbl-grid-skills-row').getAttribute('data-competency'), 10),
+            studentsStore: progressGrid.getStudentsStore(),
+            competenciesStore: progressGrid.getCompetenciesStore(),
+            skillsStore: progressGrid.getSkillsStore(),
+
+            skill: parseInt(targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'), 10),
+            student: parseInt(targetEl.up('.cbl-grid-demos-cell').getAttribute('data-student'), 10),
+            selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
+
 //            listeners: {
 //                scope: this,
 //                createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
 //                editdemonstrationclick: 'onOverviewEditDemonstrationClick'
 //            }
-//        });
-//    },
+        });
+    },
 //
 //    onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {
 //        Ext.suspendLayouts();
