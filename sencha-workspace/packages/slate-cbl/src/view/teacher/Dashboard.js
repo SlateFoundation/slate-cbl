@@ -15,8 +15,8 @@ Ext.define('Slate.cbl.view.teacher.Dashboard', {
         progressGrid: true
     },
     
-    applyProgressGrid: function(progressGrid) {
-        return Ext.factory(progressGrid, 'Slate.cbl.view.teacher.StudentsProgressGrid', this.getProgressGrid());
+    applyProgressGrid: function(progressGrid, oldProgressGrid) {
+        return Ext.factory(progressGrid, 'Slate.cbl.view.teacher.StudentsProgressGrid', oldProgressGrid);
     },
     
     initComponent: function() {
