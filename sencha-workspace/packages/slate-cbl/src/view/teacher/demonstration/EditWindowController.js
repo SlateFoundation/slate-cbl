@@ -95,7 +95,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
         // load global competencies store the first time a window shows
         if (!store.isLoaded()) {
-            competenciesGrid.setLoading('Loading competencies&hellip;'); // todo shouldn't the grid handle this on its own?
+            competenciesGrid.setLoading('Loading competencies&hellip;');
 
             store.on('load', function() {
                 competenciesGrid.setLoading(false);
