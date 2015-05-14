@@ -289,7 +289,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                     body: targetEl.getAttribute('data-skill-description')
                 });
             }
-        } else {
+        } else if (!popover.hidden) {
             popover.hide();
         }
     },
@@ -387,16 +387,18 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             _finishExpand, _finishToggle;
 
 
-        if (me.fireEvent('beforecompetency'+eventName, me, competency, competencyRenderData) === false) {
+        if (me.fireEvent('beforecompetency'+eventName, me, competency) === false) {
             return;
         }
 
 
         Ext.suspendLayouts();
 
+
         _finishToggle = function() {
             skillsRowEl.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
             demonstrationsRowEl.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
+            me.fireEvent('competency'+eventName, me, competency)
             Ext.resumeLayouts(true);
         };
 
