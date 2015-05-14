@@ -6,7 +6,7 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
         'Ext.QuickTips',
 
         'Slate.cbl.store.Students',
-        'Slate.cbl.view.teacher.StudentsProgressGrid'
+        'Slate.cbl.view.teacher.Dashboard'
     ],
 
     constructor: function() {
@@ -30,16 +30,18 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
 
 
         // render teacher dashboard component
-        me.dashboardView = dashboardView = Ext.create('Slate.cbl.view.teacher.StudentsProgressGrid', {
+        me.dashboardView = dashboardView = Ext.create('Slate.cbl.view.teacher.Dashboard', {
             renderTo: teacherDashboardCt,
-            studentDashboardLink: contentAreaCode && '/cbl/student-dashboard?content-area=' + escape(contentAreaCode),
-            studentsStore: {
-                xclass: 'Slate.cbl.store.Students',
-                data: siteEnv.cblStudents
-            },
-            competenciesStore: {
-                xclass: 'Slate.cbl.store.Competencies',
-                data: siteEnv.cblCompetencies
+            progressGrid: {
+                studentDashboardLink: contentAreaCode && '/cbl/student-dashboard?content-area=' + escape(contentAreaCode),
+                studentsStore: {
+                    xclass: 'Slate.cbl.store.Students',
+                    data: siteEnv.cblStudents
+                },
+                competenciesStore: {
+                    xclass: 'Slate.cbl.store.Competencies',
+                    data: siteEnv.cblCompetencies
+                }
             }
         });
 
