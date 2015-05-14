@@ -5,11 +5,6 @@ Ext.define('Slate.cbl.store.Completions', {
     model: 'Slate.cbl.model.Completion',
     pageSize: 0,
 
-    constructor: function(config) {
-        console.log('constructing', this.$className, config);
-        this.callParent([config]);
-    },
-
     proxy: {
         type: 'api',
         connection: 'Slate.cbl.API',
