@@ -6,7 +6,7 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
         'Ext.QuickTips',
 
         'Slate.cbl.store.Students',
-        'Slate.cbl.view.teacher.StudentsProgressTable'
+        'Slate.cbl.view.teacher.StudentsProgressGrid'
     ],
 
     constructor: function() {
@@ -30,7 +30,7 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
 
 
         // render teacher dashboard component
-        me.dashboardView = dashboardView = Ext.create('Slate.cbl.view.teacher.StudentsProgressTable', {
+        me.dashboardView = dashboardView = Ext.create('Slate.cbl.view.teacher.StudentsProgressGrid', {
             renderTo: teacherDashboardCt,
             studentDashboardLink: contentAreaCode && '/cbl/student-dashboard?content-area=' + escape(contentAreaCode),
             studentsStore: {
