@@ -5,8 +5,10 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
     requires: [
         'Ext.QuickTips',
 
+        'Slate.cbl.view.teacher.Dashboard',
+
         'Slate.cbl.store.Students',
-        'Slate.cbl.view.teacher.Dashboard'
+        'Slate.cbl.store.Competencies'
     ],
 
     constructor: function() {
