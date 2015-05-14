@@ -5,7 +5,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     requires: [
         'Slate.cbl.view.teacher.demonstration.EditWindowController',
         'Slate.cbl.view.teacher.demonstration.CompetencyCard',
-        'Slate.cbl.store.Competencies',
+        'Slate.cbl.data.ContentAreas',
+        'Slate.cbl.data.Competencies',
         'Slate.cbl.model.Demonstration',
 
         'Ext.layout.container.Fit',
@@ -25,7 +26,10 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     controller: 'slate-cbl-teacher-demonstration-editwindow',
 
     config: {
-        demonstration: true
+        demonstration: true,
+        studentsStore: null,
+        defaultStudent: null,
+        defaultCompetency: null
     },
 
     title: 'Log a demonstration',
@@ -57,13 +61,15 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
         },
         items: [
             {
+                reference: 'studentCombo',
+
                 xtype: 'combobox',
                 name: 'StudentID',
                 fieldLabel: 'Student',
 
                 store: {
-                    type: 'chained',
-                    source: 'cbl-students-loaded'
+                    type: 'chained'
+//                    source: 'cbl-students-loaded'
                 },
                 queryMode: 'local',
                 displayField: 'FullName',
@@ -183,17 +189,13 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                                 id: 'grouping',
                                 ftype: 'grouping',
                                 groupHeaderTpl: [
-                                    '{[this.getContentAreaHeader(values)]}',
+                                    '<tpl for="this.getContentAreaData(values.groupValue)">',
+                                        '<span class="title">{Title}</span>',
+//                                        '<span class="count">{[parent.children.length]}</span>',
+                                    '</tpl>',
                                     {
-                                        contentAreaTpl: [
-                                            '<span class="title">{Title}</span>'
-//                                            '<span class="count">{[parent.children.length]}</span>'
-                                        ],
-                                        getContentAreaHeader: function(values) {
-                                            var contentAreaData = Ext.getStore('cbl-competencies').contentAreas.get(values.groupValue),
-                                                contentAreaTpl = Ext.XTemplate.getTpl(this, 'contentAreaTpl');
-
-                                            return contentAreaTpl.apply(contentAreaData, values);
+                                        getContentAreaData: function(contentAreaId) {
+                                            return Slate.cbl.data.ContentAreas.getById(contentAreaId).getData();
                                         }
                                     }
                                 ],
@@ -253,19 +255,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     },
 
     applyDemonstration: function(demonstration) {
-        if (!demonstration) {
-            return null;
-        }
-
-        if (demonstration.isModel) {
-            return demonstration;
-        }
-
-        if (demonstration === true) {
-            demonstration = {};
-        }
-
-        return Ext.create('Slate.cbl.model.Demonstration', demonstration);
+        return Ext.factory(demonstration, 'Slate.cbl.model.Demonstration');
     },
 
     updateDemonstration: function(demonstration) {
@@ -280,5 +270,16 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
         } else {
             me.on('render', _fireEvent, me, { single: true });
         }
+    },
+    
+    initComponent: function() {
+        var me = this,
+            studentCombo;
+
+        me.callParent(arguments);
+
+        studentCombo = me.lookupReference('studentCombo');
+        studentCombo.getStore().setSource(me.getStudentsStore());
+        studentCombo.setValue(me.getDefaultStudent());
     }
 });

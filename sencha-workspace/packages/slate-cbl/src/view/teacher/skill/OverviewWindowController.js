@@ -49,6 +49,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         var me = this,
             overviewWindow = me.getView(),
             skillsCombo = me.lookupReference('skillCombo'),
+            skillsComboStore = skillsCombo.getStore(),
             initialValue = overviewWindow.getSkill();
 
         if (!competency) {
@@ -57,8 +58,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
         skillsCombo.disable();
 
-        overviewWindow.skillsStore.getAllByCompetency(competency, function() {
-            me.lookupReference('skillCombo').getStore().setFilters({
+        skillsComboStore.getSource().getAllByCompetency(competency, function() {
+            skillsComboStore.setFilters({
                 property: 'CompetencyID',
                 value: competency.getId()
             });
@@ -95,8 +96,10 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     },
 
     onCreateDemonstrationClick: function() {
-        var overviewWindow = this.getView();
-        overviewWindow.fireEvent('createdemonstrationclick', overviewWindow, overviewWindow.getStudent(), overviewWindow.getCompetency());
+        var me = this,
+            overviewWindow = me.getView();
+
+        overviewWindow.fireEvent('createdemonstrationclick', overviewWindow, me.lookupReference('studentCombo').getValue(), me.lookupReference('competencyCombo').getValue());
     },
 
     onDemonstrationSave: function(demonstration) {

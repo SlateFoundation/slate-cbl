@@ -7,9 +7,9 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-dashboard',
     requires: [
-        'Slate.cbl.view.teacher.skill.OverviewWindow'
-//        'Slate.cbl.view.teacher.demonstration.EditWindow',
-//
+        'Slate.cbl.view.teacher.skill.OverviewWindow',
+        'Slate.cbl.view.teacher.demonstration.EditWindow'
+
 //        'Slate.cbl.API',
 //        'Slate.cbl.store.Students',
 //        'Slate.cbl.store.Competencies',
@@ -22,18 +22,14 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         control: {
             'slate-cbl-teacher-studentsprogressgrid': {
                 democellclick: 'onDemoCellClick'
+            },
+            'slate-cbl-teacher-skill-overviewwindow': {
+                createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
+                editdemonstrationclick: 'onOverviewEditDemonstrationClick'
             }
         },
 
 //        listen: {
-//            store: {
-//                '#cbl-students': {
-//                    refresh: 'onStudentsRefresh'
-//                },
-//                '#cbl-competencies': {
-//                    refresh: 'onCompetenciesRefresh'
-//                }
-//            },
 //            api: {
 //                demonstrationsave: 'onDemonstrationSave'
 //            }
@@ -51,29 +47,19 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             competency: parseInt(targetEl.up('.cbl-grid-skills-row').getAttribute('data-competency'), 10),
             studentsStore: progressGrid.getStudentsStore(),
             competenciesStore: progressGrid.getCompetenciesStore(),
-            skillsStore: progressGrid.getSkillsStore(),
 
             skill: parseInt(targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'), 10),
             student: parseInt(targetEl.up('.cbl-grid-demos-cell').getAttribute('data-student'), 10),
             selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
-
-//            listeners: {
-//                scope: this,
-//                createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
-//                editdemonstrationclick: 'onOverviewEditDemonstrationClick'
-//            }
         });
     },
-//
-//    onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {
-//        Ext.suspendLayouts();
-//
-//        var editWindow = this.showDemonstrationEditWindow();
-//        editWindow.down('field[name=StudentID]').setValue(student);
-//        editWindow.getController().addCompetency(competency);
-//
-//        Ext.resumeLayouts(true);
-//    },
+
+    onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {
+        this.showDemonstrationEditWindow({
+            defaultStudent: student,
+            defaultCompetency: competency
+        });
+    },
 //
 //    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId) {
 //        var me = this,
@@ -209,9 +195,14 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 //
 //
 //    // public methods
-//    showDemonstrationEditWindow: function(options) {
-//        return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
-//            autoShow: true
-//        }, options));
-//    }
+    showDemonstrationEditWindow: function(options) {
+        var dashboardView = this.getView();
+
+        return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
+            ownerCmp: dashboardView,
+            autoShow: true,
+            
+            studentsStore: dashboardView.progressGrid.getStudentsStore(),
+        }, options));
+    }
 });

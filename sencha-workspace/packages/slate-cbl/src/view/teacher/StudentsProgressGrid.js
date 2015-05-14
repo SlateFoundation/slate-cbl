@@ -13,8 +13,9 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         'Slate.cbl.store.Students',
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.Completions',
-        'Slate.cbl.store.Skills',
-        'Slate.cbl.store.DemonstrationSkills'
+        'Slate.cbl.store.DemonstrationSkills',
+
+        'Slate.cbl.data.Skills'
     ],
 
     config: {
@@ -36,9 +37,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             xclass: 'Slate.cbl.store.Completions'
         },
 
-        skillsStore: {
-            xclass: 'Slate.cbl.store.Skills'
-        },
+        skillsStore: 'cbl-skills',
         
         demonstrationSkillsStore: {
             xclass: 'Slate.cbl.store.DemonstrationSkills'

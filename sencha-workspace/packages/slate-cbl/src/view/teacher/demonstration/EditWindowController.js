@@ -5,7 +5,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     requires: [
         'Slate.cbl.API',
         'Slate.cbl.field.LevelSlider',
-        'Slate.cbl.store.Competencies',
+        'Slate.cbl.data.Skills',
 
         'Ext.MessageBox',
         'Ext.window.Toast',
@@ -16,6 +16,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         control: {
             '#': {
                 show: 'onShow',
+                beforeshow: 'onBeforeShow',
                 loaddemonstration: 'onLoadDemonstration'
             },
             'combobox[name=StudentID]': {
@@ -79,6 +80,14 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
 
     // event handlers
+    onBeforeShow: function(editWindow) {
+        var defaultCompetency = editWindow.getDefaultCompetency();
+
+        if (defaultCompetency) {
+            this.addCompetency(defaultCompetency);
+        }
+    },
+
     onShow: function(editWindow) {
         var me = this,
             competenciesGrid = me.lookupReference('competenciesGrid'),
@@ -86,7 +95,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
         // load global competencies store the first time a window shows
         if (!store.isLoaded()) {
-            competenciesGrid.setLoading('Loading competencies&hellip;');
+            competenciesGrid.setLoading('Loading competencies&hellip;'); // todo shouldn't the grid handle this on its own?
 
             store.on('load', function() {
                 competenciesGrid.setLoading(false);
@@ -362,7 +371,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
         competencyCardConfig.title = competency.get('Code');
 
-        competency.withSkills(function(skills) {
+        Slate.cbl.data.Skills.getAllByCompetency(competency, function(skills) {
             if (editWindow.destroying || editWindow.destroyed) {
                 return;
             }

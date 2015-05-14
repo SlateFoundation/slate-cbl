@@ -4,6 +4,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
     xtype: 'slate-cbl-teacher-skill-overviewwindow',
     requires: [
         'Slate.cbl.view.teacher.skill.OverviewWindowController',
+        
+        'Slate.cbl.data.Skills',
 
         'Ext.form.field.ComboBox',
         'Ext.data.ChainedStore'
@@ -15,8 +17,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
         competency: null,
         showEditLinks: true,
         studentsStore: null,
-        competenciesStore: null,
-        skillsStore: null
+        competenciesStore: null
     },
 
     dockedItems: [
@@ -49,7 +50,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     xtype: 'combobox',
 
                     store: {
-                        type: 'chained'
+                        type: 'chained',
+                        source: 'cbl-skills'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
@@ -109,6 +111,5 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
         me.lookupReference('studentCombo').getStore().setSource(me.getStudentsStore());
         me.lookupReference('competencyCombo').getStore().setSource(me.getCompetenciesStore());
-        me.lookupReference('skillCombo').getStore().setSource(me.getSkillsStore());
     }
 });
