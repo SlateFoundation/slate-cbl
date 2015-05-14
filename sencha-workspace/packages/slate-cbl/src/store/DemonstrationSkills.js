@@ -8,14 +8,7 @@ Ext.define('Slate.cbl.store.DemonstrationSkills', {
     model: 'Slate.cbl.model.DemonstrationSkill',
     pageSize: 0,
 
-    constructor: function(config) {
-        console.log('constructing', this.$className, config);
-        config = config || {};
-        config.session = Slate.cbl.API.getSession();
 
-        this.callParent([config]);
-    },
-    
     /**
      * Loads all current-level demonstrations for given lists of students and competencies and **add** them to this store.
      * Because demonstartions have a unique ID, any subsequent overlapping loads will not duplicate records
