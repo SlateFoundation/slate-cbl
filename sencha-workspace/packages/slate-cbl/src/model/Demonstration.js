@@ -15,7 +15,7 @@ Ext.define('Slate.cbl.model.Demonstration', {
         {
             name: "ID",
             type: "int",
-            useNull: true
+            allowNull: true
         },
         {
             name: "Class",
@@ -26,12 +26,12 @@ Ext.define('Slate.cbl.model.Demonstration', {
             name: "Created",
             type: "date",
             dateFormat: "timestamp",
-            useNull: true
+            allowNull: true
         },
         {
             name: "CreatorID",
             type: "int",
-            useNull: true
+            allowNull: true
         },
         {
             name: "StudentID",
@@ -41,7 +41,7 @@ Ext.define('Slate.cbl.model.Demonstration', {
             name: "Demonstrated",
             type: "date",
             dateFormat: "timestamp",
-            useNull: true
+            allowNull: true
         },
         {
             name: "ExperienceType",
@@ -58,12 +58,12 @@ Ext.define('Slate.cbl.model.Demonstration', {
         {
             name: "ArtifactURL",
             type: "string",
-            useNull: true
+            allowNull: true
         },
         {
             name: "Comments",
             type: "string",
-            useNull: true
+            allowNull: true
         },
 
         // server-provided metadata
