@@ -25,7 +25,7 @@ Ext.define('Slate.cbl.store.Competencies', {
         contentArea = contentArea.isModel ? contentArea.getId() : parseInt(contentArea, 10);
 
         if (contentArea in loadedContentAreas) {
-            return Ext.callback(callback, scope, loadedContentAreas[contentArea]);
+            return Ext.callback(callback, scope, [loadedContentAreas[contentArea]]);
         }
 
         me.load({

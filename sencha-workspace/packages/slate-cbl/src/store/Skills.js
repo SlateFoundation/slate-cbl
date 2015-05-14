@@ -25,7 +25,7 @@ Ext.define('Slate.cbl.store.Skills', {
         competency = competency.isModel ? competency.getId() : parseInt(competency, 10);
 
         if (competency in loadedCompetencies) {
-            return Ext.callback(callback, scope, loadedCompetencies[competency]);
+            return Ext.callback(callback, scope, [loadedCompetencies[competency]]);
         }
 
         me.load({
