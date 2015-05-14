@@ -6,12 +6,12 @@
 Ext.define('CompetencyTracker.Application', {
     extend: 'Ext.app.Application',
     requires: [
-        'Slate.cbl.view.teacher.Dashboard',
+        'Slate.cbl.view.teacher.StudentsProgressTable',
         'Ext.plugin.Viewport'
     ],
     
     launch: function () {
-        Ext.create('Slate.cbl.view.teacher.Dashboard', {
+        Ext.create('Slate.cbl.view.teacher.StudentsProgressTable', {
             plugins: 'viewport'
         });
     }

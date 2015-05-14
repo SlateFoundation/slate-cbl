@@ -3,7 +3,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-student-competencycard',
     requires: [,
-        'Slate.cbl.util.CBL'
+        'Slate.cbl.Util'
     ],
 
     config: {
@@ -250,8 +250,8 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
             skillData = skillsData[skillIndex];
             demonstrationsRequired = skillData.DemonstrationsRequired;
 
-            skillData.demonstrations = Slate.cbl.util.CBL.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
-            Slate.cbl.util.CBL.padArray(skillData.demonstrations, demonstrationsRequired);
+            skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
+            Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);
         }
 
         return skillsData;

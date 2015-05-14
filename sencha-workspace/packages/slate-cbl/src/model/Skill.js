@@ -1,10 +1,11 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
+/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('Slate.cbl.model.Skill', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.cbl.API',
         'Slate.cbl.proxy.Records',
-        'Ext.data.identifier.Negative'
+        'Ext.data.identifier.Negative',
+        'Ext.data.Store'
     ],
 
 

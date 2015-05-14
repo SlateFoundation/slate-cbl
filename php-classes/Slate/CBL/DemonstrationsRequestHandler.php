@@ -17,10 +17,11 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
     public static function handleRecordsRequest($action = null)
     {
         switch ($action ?: $action = static::shiftPath()) {
-            case 'export-legacy':
-                return static::handleLegacyExportRequest();
-            case 'export':
-                return static::handleExportRequest();
+            // TODO: move to exports folder
+//            case '*export-legacy':
+//                return static::handleLegacyExportRequest();
+//            case '*export':
+//                return static::handleExportRequest();
             default:
                 return parent::handleRecordsRequest($action);
         }
@@ -53,6 +54,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
     
+    // TODO: move to teacher-dashboard or to new folder exports
     // 04/02/2015: This is how the report was originally requested and is being kept here until we know it is no longer needed
     public static function handleLegacyExportRequest()
     {
@@ -119,6 +121,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         }
     }
 
+    // TODO: move to teacher-dashboard
     public static function handleExportRequest()
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');

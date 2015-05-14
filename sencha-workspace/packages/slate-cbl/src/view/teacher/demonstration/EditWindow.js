@@ -5,7 +5,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     requires: [
         'Slate.cbl.view.teacher.demonstration.EditWindowController',
         'Slate.cbl.view.teacher.demonstration.CompetencyCard',
-        'Slate.cbl.store.AllCompetencies',
+        'Slate.cbl.store.Competencies',
         'Slate.cbl.model.Demonstration',
 
         'Ext.layout.container.Fit',
@@ -151,7 +151,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                         },
                         store: {
                             type: 'chained',
-                            source: 'cbl-competencies-all',
+                            source: 'cbl-competencies',
                             groupField: 'ContentAreaID'
                         },
                         columns: [
@@ -190,7 +190,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
 //                                            '<span class="count">{[parent.children.length]}</span>'
                                         ],
                                         getContentAreaHeader: function(values) {
-                                            var contentAreaData = Ext.getStore('cbl-competencies-all').contentAreas.get(values.groupValue),
+                                            var contentAreaData = Ext.getStore('cbl-competencies').contentAreas.get(values.groupValue),
                                                 contentAreaTpl = Ext.XTemplate.getTpl(this, 'contentAreaTpl');
 
                                             return contentAreaTpl.apply(contentAreaData, values);

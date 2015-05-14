@@ -7,34 +7,29 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-dashboard',
     requires: [
-        'Slate.cbl.API',
-        'Slate.cbl.model.Student',
-        'Slate.cbl.model.Competency',
-        'Slate.cbl.model.Demonstration',
-        'Slate.cbl.store.AllCompetencies',
         'Slate.cbl.view.teacher.demonstration.EditWindow',
         'Slate.cbl.view.teacher.skill.OverviewWindow',
 
-        'Ext.util.Collection',
-        'Ext.data.Store'
+        'Slate.cbl.API',
+        'Slate.cbl.store.Students',
+        'Slate.cbl.store.Competencies',
+        'Slate.cbl.model.Demonstration'
     ],
 
     config: {
         id: 'slate-cbl-teacher-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         control: {
             '#': {
-                contentareachange: 'refresh',
-                progressrowclick: 'onProgressRowClick',
                 democellclick: 'onDemoCellClick'
             }
         },
 
         listen: {
             store: {
-                '#cbl-students-loaded': {
+                '#cbl-students': {
                     refresh: 'onStudentsRefresh'
                 },
-                '#cbl-competencies-loaded': {
+                '#cbl-competencies': {
                     refresh: 'onCompetenciesRefresh'
                 }
             },
@@ -45,35 +40,13 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     },
 
 
-    // lifecycle overrides
-    init: function() {
-        Ext.create('Ext.data.Store', {
-            storeId: 'cbl-students-loaded',
-            model: 'Slate.cbl.model.Student',
-            sorters: [{
-                property: 'FullName',
-                direction: 'ASC'
-            }]
-        });
-
-        Ext.create('Ext.data.Store', {
-            storeId: 'cbl-competencies-loaded',
-            model: 'Slate.cbl.model.Competency'
-        });
-
-        Ext.create('Slate.cbl.store.AllCompetencies', {
-            storeId: 'cbl-competencies-all'
-        });
-    },
-
-
     // event handers
     onStudentsRefresh: function () {
-        this.getView().refreshDashboard();
+        this.refreshDashboard();
     },
 
     onCompetenciesRefresh: function () {
-        this.getView().refreshDashboard();
+        this.refreshDashboard();
     },
 
     onDemoCellClick: function(dashboardView, ev, targetEl) {
@@ -133,7 +106,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
             demonstratedSkills = demonstration.get('Skills'),
             demonstratedSkillsLength = demonstratedSkills.length, demonstratedSkillIndex = 0, demonstratedSkill,
-            loadedCompetency, loadedCompetencySkills, loadedSkill, demonstrationsByStudent, loadedDemonstrations, skillDemonstrationsCell, existingDemonstrationSkill,
+            loadedCompetency, loadedSkill, demonstrationsByStudent, loadedDemonstrations, skillDemonstrationsList, existingDemonstrationSkill,
 
             competencyCompletions = demonstration.get('competencyCompletions'),
             competencyCompletionsLength = competencyCompletions.length, competencyCompletionIndex = 0, competencyCompletion,
@@ -149,9 +122,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             demonstratedSkill = demonstratedSkills[demonstratedSkillIndex];
 
             // update in-memory skills
-            loadedCompetency = competenciesStore.getById(demonstratedSkill.CompetencyID);
-            loadedCompetencySkills = loadedCompetency && loadedCompetency.get('skills');
-            loadedSkill = loadedCompetencySkills && loadedCompetencySkills.getByKey(demonstratedSkill.SkillID);
+            loadedSkill = Slate.cbl.model.Skill.globalStore.getById(demonstratedSkill.SkillID);
 
             // if the skill hasn't been loaded here yet, it hasn't been rendered yet either -- no updates are needed
             if (!loadedSkill) {
@@ -179,11 +150,11 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
 
             // update rendered demonstrations
-            skillDemonstrationsCell = mainGridEl.down('.cbl-grid-skill-row[data-skill="'+loadedSkill.ID+'"] .cbl-grid-demos-cell[data-student="'+studentId+'"]', true);
+            skillDemonstrationsList = mainGridEl.down('.cbl-grid-skill-row[data-skill="'+loadedSkill.getId()+'"] .cbl-grid-demos-cell[data-student="'+studentId+'"] ul', true);
 
-            if (skillDemonstrationsCell) {
+            if (skillDemonstrationsList) {
                 updatesDemonstrations.push({
-                    cellDom: skillDemonstrationsCell,
+                    listDom: skillDemonstrationsList,
                     values: {
                         skill: loadedSkill,
                         studentId: studentId
@@ -216,11 +187,12 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
 
         // apply DOM writes for all updates in batch
         Ext.Function.requestAnimationFrame(function() {
+            debugger;
             updatesLength = updatesDemonstrations.length;
             updateIndex = 0;
             for (; updateIndex < updatesLength; updateIndex++) {
                 update = updatesDemonstrations[updateIndex];
-                demonstrationsTpl.overwrite(update.cellDom, update.values);
+                demonstrationsTpl.overwrite(update.listDom, update.values);
             }
 
             Ext.Function.requestAnimationFrame(function() {
@@ -236,17 +208,6 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                 }
             });
         });
-    },
-
-    /**
-     * Attached via listeners config in view
-     */
-    onProgressRowClick: function(dashboardView, ev, targetEl) {
-        dashboardView.expandCompetency(
-            Ext.getStore('cbl-competencies-loaded').getById(
-                targetEl.getAttribute('data-competency')
-            )
-        );
     },
 
 

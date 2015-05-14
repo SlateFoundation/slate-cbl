@@ -57,7 +57,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
             var skillsCombo = me.lookupReference('skillCombo'),
                 initialValue = overviewWindow.getSkill();
 
-            skillsCombo.getStore().loadRawData(skills.getRange());
+            skillsCombo.getStore().loadData(skills.getRange());
             skillsCombo.enable();
 
             if (!skillsCombo.findRecordByValue(skillsCombo.getValue() || initialValue)) {

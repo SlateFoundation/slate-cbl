@@ -1,5 +1,5 @@
 /* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext*/
-Ext.define('Slate.cbl.util.CBL', function() {
+Ext.define('Slate.cbl.Util', function() {
 
     function _sortNewestDemonstrationFirstFn(a, b) {
         return a.Demonstrated > b.Demonstrated ? -1 : a.Demonstrated < b.Demonstrated ? 1 : 0;
@@ -24,6 +24,8 @@ Ext.define('Slate.cbl.util.CBL', function() {
             while (array.length < length) {
                 array[prefix ? 'unshift' : 'push'](typeof value == 'undefined' ? {} : value);
             }
+
+            return array;
         },
 
         sortDemonstrations: function sortDemonstrations(demonstrations, limit) {
@@ -40,15 +42,19 @@ Ext.define('Slate.cbl.util.CBL', function() {
                 displayDemonstrations = [],
                 scored = [],
                 missed = [];
-            
+
             // If no limit is specified, sort all demonstrations
             limit = isNaN(limit) ? len : limit;
 
             // Separate demonstrations by level
             for (x = 0; len > x; x++) {
                 demo = demonstrations[x];
-                sortedDemonstrations[demo.DemonstratedLevel] = sortedDemonstrations[demo.DemonstratedLevel] || [];
-                sortedDemonstrations[demo.DemonstratedLevel].push(demo);
+                
+                // skip placeholder blocks
+                if (demo !== true) {
+                    sortedDemonstrations[demo.DemonstratedLevel] = sortedDemonstrations[demo.DemonstratedLevel] || [];
+                    sortedDemonstrations[demo.DemonstratedLevel].push(demo);
+                }
             }
             
             // Sort the levels of demonstrations observed from greatest to least
@@ -84,6 +90,42 @@ Ext.define('Slate.cbl.util.CBL', function() {
             
             // Scored demonstrations go on the left, missed demonstrations go on the right
             return scored.concat(missed);
+        },
+
+        /**
+         * @protected
+         * Synchronizes the heights of two sets of table rows by setting the height of both to the max of the two
+         * 
+         * @param {Ext.dom.CompositeElement/Ext.dom.CompositeElementLite} table1Rows
+         * @param {Ext.dom.CompositeElement/Ext.dom.CompositeElementLite} table2Rows
+         */
+        syncRowHeights: function(table1Rows, table2Rows) {
+
+            Ext.batchLayouts(function() {
+                var table1RowHeights = [],
+                    table2RowHeights = [],
+                    rowCount, rowIndex, maxHeight;
+        
+                rowCount = table1Rows.getCount();
+        
+                if (table2Rows.getCount() != rowCount) {
+                    Ext.Logger.warn('tables\' row counts don\'t match');
+                }
+        
+                // read all the row height in batch first for both tables
+                for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                    table1RowHeights.push(table1Rows.item(rowIndex).getHeight());
+                    table2RowHeights.push(table2Rows.item(rowIndex).getHeight());
+                }
+        
+                // write all the max row heights
+                for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                    maxHeight = Math.max(table1RowHeights[rowIndex], table2RowHeights[rowIndex]);
+                    table1Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
+                    table2Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
+                }
+            });
+
         }
     };
 });

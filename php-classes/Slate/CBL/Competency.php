@@ -248,4 +248,21 @@ END_OF_SQL
 
         return $completion;
     }
+
+    public static function getAllByListIdentifier($identifier)
+    {
+        if (!$identifier) {
+            return array();
+        }
+
+        if ($identifier == 'all') {
+            return static::getAll();
+        }
+
+        if (preg_match('/^\d+(,\d+)*$/', $identifier)) {
+            return static::getAllByWhere('ID IN (' . $identifier . ')');
+        }
+
+        throw new \Exception('Invalid list identifier for competencies');
+    }
 }
