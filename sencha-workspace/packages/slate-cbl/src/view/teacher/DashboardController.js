@@ -60,24 +60,24 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             defaultCompetency: competency
         });
     },
-//
-//    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId) {
-//        var me = this,
-//            editWindow = me.showDemonstrationEditWindow({
-//                title: 'Edit demonstration #' + demonstrationId
-//            });
-//
-//        editWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
-//        Slate.cbl.model.Demonstration.load(demonstrationId, {
-//            params: {
-//                include: 'Skills.Skill'
-//            },
-//            success: function(demonstration) {
-//                editWindow.setDemonstration(demonstration);
-//                editWindow.setLoading(false);
-//            }
-//        });
-//    },
+
+    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId) {
+        var me = this,
+            editWindow = me.showDemonstrationEditWindow({
+                title: 'Edit demonstration #' + demonstrationId
+            });
+
+        editWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
+        Slate.cbl.model.Demonstration.load(demonstrationId, {
+            params: {
+                include: 'Skills.Skill'
+            },
+            success: function(demonstration) {
+                editWindow.setDemonstration(demonstration);
+                editWindow.setLoading(false);
+            }
+        });
+    },
 //
 //    onDemonstrationSave: function(demonstration) {
 //        var me = this,

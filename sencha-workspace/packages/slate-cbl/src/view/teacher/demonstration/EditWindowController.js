@@ -146,7 +146,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                 // load skills into competency
                 for (; competencySkillIndex < competencySkillsLength; competencySkillIndex++) {
                     competencySkill = competencySkills[competencySkillIndex];
-                    competencyCard.down('slate-cbl-levelsliderfield{skill.ID=='+competencySkill.SkillID+'}').setLevel(competencySkill.Level);
+                    competencyCard.down('slate-cbl-levelsliderfield{skill.getId()=='+competencySkill.SkillID+'}').setLevel(competencySkill.DemonstratedLevel);
                 }
 
                 // finish loading cycle when the queue is empty
