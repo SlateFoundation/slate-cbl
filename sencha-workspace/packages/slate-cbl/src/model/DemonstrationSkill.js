@@ -53,24 +53,32 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
         
         // dynamic fields that might be provided directly by server in some results
         {
-            name: 'Demonstration'
+            name: 'Demonstration',
+            persist: false
         },
         {
-            depends: ['Demonstration'],
-
             name: 'Demonstrated',
+            depends: ['Demonstration'],
+            persist: false,
+
+            type: 'date',
             convert: function(v, r) {
-                if (!v) {
-                    v = r.data.Demonstration && r.data.Demonstration.Demonstrated;
+                if (r.data.Demonstration && r.data.Demonstration.Demonstrated) {
+                    v = r.data.Demonstration.Demonstrated;
+                }
+
+                if (Ext.isDate(v)) {
+                    return v;
                 }
 
                 return v ? new Date(v * 1000) : null;
             }
         },
         {
-            depends: ['Demonstration'],
-
             name: 'StudentID',
+            depends: ['Demonstration'],
+            persist: false,
+
             type: 'int',
             convert: function(v, r) {
                 return v || (r.data.Demonstration && r.data.Demonstration.StudentID);
