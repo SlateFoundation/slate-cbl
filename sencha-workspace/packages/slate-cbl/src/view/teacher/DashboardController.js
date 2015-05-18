@@ -9,11 +9,6 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     requires: [
         'Slate.cbl.view.teacher.skill.OverviewWindow',
         'Slate.cbl.view.teacher.demonstration.EditWindow'
-
-//        'Slate.cbl.API',
-//        'Slate.cbl.store.Students',
-//        'Slate.cbl.store.Competencies',
-//        'Slate.cbl.model.Demonstration'
     ],
 
 
@@ -29,15 +24,15 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             }
         },
 
-//        listen: {
-//            api: {
-//                demonstrationsave: 'onDemonstrationSave'
-//            }
-//        }
+        listen: {
+            api: {
+                demonstrationsave: 'onDemonstrationSave'
+            }
+        }
     },
-//
-//
-//    // event handers
+
+
+    // event handers
     onDemoCellClick: function(progressGrid, ev, targetEl) {
         Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
             ownerCmp: this.getView(),
@@ -78,123 +73,13 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             }
         });
     },
-//
-//    onDemonstrationSave: function(demonstration) {
-//        var me = this,
-//            dashboardView = me.view,
-//            demonstrationsTpl = dashboardView.getTpl('demonstrationsTpl'),
-//            mainGridEl = dashboardView.el.down('.cbl-grid-main'),
-//            studentId = demonstration.get('StudentID'),
-//            competenciesStore = Ext.getStore('cbl-competencies-loaded'),
-//
-//            demonstratedSkills = demonstration.get('Skills'),
-//            demonstratedSkillsLength = demonstratedSkills.length, demonstratedSkillIndex = 0, demonstratedSkill,
-//            loadedCompetency, loadedSkill, demonstrationsByStudent, loadedDemonstrations, skillDemonstrationsList, existingDemonstrationSkill,
-//
-//            competencyCompletions = demonstration.get('competencyCompletions'),
-//            competencyCompletionsLength = competencyCompletions.length, competencyCompletionIndex = 0, competencyCompletion,
-//            competencyProgressCell, competencyPercent,
-//
-//            updatesDemonstrations = [],
-//            updatesCompetencies = [],
-//            updatesLength, updateIndex, update;
-//
-//
-//        // compile operations and DOM references for needed updates -- don't write to dom!
-//        for (; demonstratedSkillIndex < demonstratedSkillsLength; demonstratedSkillIndex++) {
-//            demonstratedSkill = demonstratedSkills[demonstratedSkillIndex];
-//
-//            // update in-memory skills
-//            loadedSkill = Slate.cbl.model.Skill.globalStore.getById(demonstratedSkill.SkillID);
-//
-//            // if the skill hasn't been loaded here yet, it hasn't been rendered yet either -- no updates are needed
-//            if (!loadedSkill) {
-//                continue;
-//            }
-//
-//            demonstrationsByStudent = loadedSkill.demonstrationsByStudent || (loadedSkill.demonstrationsByStudent = {});
-//            loadedDemonstrations = studentId in demonstrationsByStudent ? demonstrationsByStudent[studentId] : demonstrationsByStudent[studentId] = [];
-//
-//            // check if this is an update to an existing demonstration
-//            existingDemonstrationSkill = Ext.Array.findBy(loadedDemonstrations, function(loadedSkillDemonstration) {
-//                return loadedSkillDemonstration.DemonstrationID == demonstration.getId();
-//            });
-//
-//            if (existingDemonstrationSkill) {
-//                existingDemonstrationSkill.DemonstratedLevel = demonstratedSkill.DemonstratedLevel;
-//            } else {
-//                loadedDemonstrations.push({
-//                    DemonstrationID: demonstration.getId(),
-//                    DemonstratedLevel: demonstratedSkill.DemonstratedLevel,
-//                    SkillID: demonstratedSkill.SkillID,
-//                    StudentID: studentId
-//                });
-//            }
-//
-//
-//            // update rendered demonstrations
-//            skillDemonstrationsList = mainGridEl.down('.cbl-grid-skill-row[data-skill="'+loadedSkill.getId()+'"] .cbl-grid-demos-cell[data-student="'+studentId+'"] ul', true);
-//
-//            if (skillDemonstrationsList) {
-//                updatesDemonstrations.push({
-//                    listDom: skillDemonstrationsList,
-//                    values: {
-//                        skill: loadedSkill,
-//                        studentId: studentId
-//                    }
-//                });
-//            }
-//        }
-//
-//        for (; competencyCompletionIndex < competencyCompletionsLength; competencyCompletionIndex++) {
-//            competencyCompletion = competencyCompletions[competencyCompletionIndex];
-//            competencyProgressCell = mainGridEl.down('.cbl-grid-progress-row[data-competency="'+competencyCompletion.CompetencyID+'"] .cbl-grid-progress-cell[data-student="'+studentId+'"]', true);
-//            loadedCompetency = competenciesStore.getById(competencyCompletion.CompetencyID);
-//
-//            if (!competencyProgressCell || !loadedCompetency) {
-//                continue;
-//            }
-//
-//            competencyPercent = Math.round(100 * (competencyCompletion.demonstrationsCount || 0) / loadedCompetency.get('totalDemonstrationsRequired'));
-//
-//            updatesCompetencies.push({
-//                percent: competencyPercent,
-//                average: competencyCompletion.demonstrationsAverage || 0,
-//                isAverageLow: competencyCompletion.demonstrationsAverage < loadedCompetency.get('minimumAverage') && competencyPercent >= 50,
-//                cellDom: competencyProgressCell,
-//                textDom: Ext.fly(competencyProgressCell).down('.cbl-grid-progress-percent', true),
-//                barDom: Ext.fly(competencyProgressCell).down('.cbl-grid-progress-bar', true),
-//                averageDom: Ext.fly(competencyProgressCell).down('.cbl-grid-progress-average', true)
-//            });
-//        }
-//
-//        // apply DOM writes for all updates in batch
-//        Ext.Function.requestAnimationFrame(function() {
-//            debugger;
-//            updatesLength = updatesDemonstrations.length;
-//            updateIndex = 0;
-//            for (; updateIndex < updatesLength; updateIndex++) {
-//                update = updatesDemonstrations[updateIndex];
-//                demonstrationsTpl.overwrite(update.listDom, update.values);
-//            }
-//
-//            Ext.Function.requestAnimationFrame(function() {
-//                updatesLength = updatesCompetencies.length;
-//                updateIndex = 0;
-//                for (; updateIndex < updatesLength; updateIndex++) {
-//                    update = updatesCompetencies[updateIndex];
-//
-//                    Ext.fly(update.textDom).update(update.percent+'%');
-//                    Ext.fly(update.barDom).setWidth(update.percent+'%');
-//                    Ext.fly(update.averageDom).update(Ext.util.Format.number(update.average, '0.##'));
-//                    Ext.fly(update.cellDom).toggleCls('is-average-low', update.isAverageLow);
-//                }
-//            });
-//        });
-//    },
-//
-//
-//    // public methods
+
+    onDemonstrationSave: function(demonstration) {
+        this.getView().progressGrid.loadDemonstration(demonstration);
+    },
+
+
+    // public methods
     showDemonstrationEditWindow: function(options) {
         var dashboardView = this.getView();
 

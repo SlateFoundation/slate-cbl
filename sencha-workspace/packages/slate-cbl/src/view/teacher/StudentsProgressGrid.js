@@ -22,6 +22,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         studentDashboardLink: null,
         averageFormat: '0.##',
         progressFormat: '0%',
+        flushDemonstrationsBuffer: 10,
 
         popover: true,
 
@@ -235,12 +236,11 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         if (store) {
             store.on({
                 scope: this,
-//                refresh: function() { debugger; console.log('refresh', arguments); },
-//                add: function() { debugger; console.log('add', arguments); },
-//                update: function() { debugger; console.log('update', arguments); },
-//                remove: function() { debugger; console.log('remove', arguments); },
-//                load: function() { debugger; console.log('load', arguments); },
-                load: 'onDemonstrationSkillsLoad'
+                refresh: function() { console.log('ds->refresh', arguments); },
+                load: 'onDemonstrationSkillsLoad',
+                add: 'onDemonstrationSkillsAdd',
+                update: 'onDemonstrationSkillUpdate',
+                remove: 'onDemonstrationSkillsRemove'
             });
         }
     },
@@ -248,8 +248,14 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
     // component lifecycle
     afterRender: function() {
-        this.callParent(arguments);
-        this.refresh();
+        var me = this;
+
+        me.callParent(arguments);
+
+        me.refresh();
+
+        // create an instance-specific buffer for flushing demonstrations
+        me.flushDemonstrations = Ext.Function.createBuffered(me.flushDemonstrations, me.getFlushDemonstrationsBuffer(), me);
     },
 
 
@@ -323,16 +329,35 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
     },
     
     onCompletionUpdate: function(completionsStore, completion, operation, modifiedFieldNames, details) {
-//        debugger;
+        console.log('completion->update', arguments);
+        debugger;
         // TODO: apply completion updates to DOM
     },
 
-    onDemonstrationSkillsLoad: function(demonstrationSkillsStore, demonstrationSkills) {
-        var renderData = this.getData();
+    onDemonstrationSkillsLoad: function(demoSkillsStore, demoSkills) {
+        console.log('ds->load', demoSkills);
 
-        renderData.incomingDemonstrationSkills = (renderData.incomingDemonstrationSkills || []).concat(demonstrationSkills);
+        this.addDemonstrationSkills(demoSkills);
+    },
+    
+    onDemonstrationSkillsAdd: function(demoSkillsStore, demoSkills) {
+        console.log('ds->add', demoSkills);
 
-        this.flushDemonstrations();
+        this.addDemonstrationSkills(demoSkills);
+    },
+    
+    onDemonstrationSkillUpdate: function(demoSkillsStore, demoSkill, operation, modifiedFieldNames, details) {
+        console.log('ds->update', demoSkill, operation, modifiedFieldNames);
+
+        if (modifiedFieldNames.indexOf('DemonstratedLevel') != -1) {
+            this.updateDemonstrationSkills([demoSkill]);
+        }
+    },
+    
+    onDemonstrationSkillsRemove: function(demoSkillsStore, demoSkills) {
+        console.log('ds->remove', demoSkills);
+
+        this.removeDemonstrationSkills(demoSkills);
     },
 
 
@@ -397,7 +422,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         _finishToggle = function() {
             skillsRowEl.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
             demonstrationsRowEl.down('.cbl-grid-skills-ct').setHeight(skillsHeight);
-            me.fireEvent('competency'+eventName, me, competency)
+            me.fireEvent('competency'+eventName, me, competency);
             Ext.resumeLayouts(true);
         };
 
@@ -498,6 +523,81 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         });
     },
 
+    /**
+     * Read a new or updated demonstration model and apply it to the existing render
+     * 
+     * @param {Slate.cbl.model.Demonstration} demonstration A new or updated demonstration model
+     */
+    loadDemonstration: function(demonstration) {
+//        var me = this,
+//            renderData = me.getData(),
+//            demoSkillsStore = this.getDemonstrationSkillsStore(),
+//            existingDemoSkills = demoSkillsStore.query('DemonstrationID', demonstration.getId()),
+//
+//            oldSkillIds = existingDemoSkills.collect('SkillID', 'data'),
+//            newSkillIds = Ext.pluck(demonstration.get('Skills'), 'SkillID'),
+//
+//            updatedSkillIds = Ext.Array.intersect(oldSkillIds, newSkillIds),
+//            removedSkillIds = Ext.Array.difference(oldSkillIds, newSkillIds),
+//            addedSkillIds = Ext.Array.difference(newSkillIds, oldSkillIds);
+//
+//        console.log('updated skills', updatedSkillIds);
+//        console.log('removed skills', removedSkillIds);
+//        console.log('added skills', addedSkillIds);
+
+        this.getDemonstrationSkillsStore().mergeRawData(demonstration.get('Skills'), demonstration.getId());
+    },
+
+    /**
+     * Adds new demoonstration skills blocks
+     * 
+     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
+     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
+     */
+    addDemonstrationSkills: function(demoSkills, flush) {
+        var me = this,
+            renderData = me.getData();
+
+        renderData.incomingDemonstrationSkills = (renderData.incomingDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
+
+        if (flush !== false) {
+            me.flushDemonstrations();
+        }
+    },
+
+    /**
+     * Update already-rendered demonstration skill blocks
+     * 
+     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
+     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
+     */
+    updateDemonstrationSkills: function(demoSkills, flush) {
+        var me = this,
+            renderData = me.getData();
+
+        renderData.updatedDemonstrationSkills = (renderData.updatedDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
+
+        if (flush !== false) {
+            me.flushDemonstrations();
+        }
+    },
+
+    /**
+     * Remove already-rendered demonstration skills blocks
+     * 
+     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
+     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
+     */
+    removeDemonstrationSkills: function(demoSkills, flush) {
+        var me = this,
+            renderData = me.getData();
+
+        renderData.removedDemonstrationSkills = (renderData.removedDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
+
+        if (flush !== false) {
+            me.flushDemonstrations();
+        }
+    },
 
     // protected methods
     /**
@@ -531,7 +631,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             student = students[studentIndex];
             studentsData.push({
                 student: student.data,
-                dashboardUrl: studentDashboardLink && Ext.String.urlAppend(studentDashboardLink, 'student=' + escape(student.get('Username')))
+                dashboardUrl: studentDashboardLink && Ext.String.urlAppend(studentDashboardLink, 'student=' + window.escape(student.get('Username')))
             });
         }
 
@@ -649,10 +749,16 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             renderData = me.getData(),
             skillsById = renderData.skillsById,
 
+            updatedDemonstrationSkills = renderData.updatedDemonstrationSkills || [],
+            updatedDemonstrationSkillsLength = updatedDemonstrationSkills.length,
+
             incomingDemonstrationSkills = renderData.incomingDemonstrationSkills || [],
             incomingDemonstrationSkillsLength = incomingDemonstrationSkills.length,
-            skillDemonstrationIndex, skillDemonstration,
-            unsortedDemonstrationSkills = [],
+
+            removedDemonstrationSkills = renderData.removedDemonstrationSkills || [],
+            removedDemonstrationSkillsLength = removedDemonstrationSkills.length,
+
+            skillDemonstrationIndex, skillDemonstration, unsortedDemonstrationSkills,
 
             competenciesRenderData = renderData.competencies,
             competenciesLength = competenciesRenderData.length, competencyIndex, competencyRenderData,
@@ -660,7 +766,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             skillsRenderData, skillsLength, skillIndex, skillRenderData,
             skillDemonstrationsRequired,
             skillStudentsRenderData, skillStudentsLength, skillStudentIndex, skillStudentRenderData,
-            skillDemonstrationBlocks, skillDemonstrationsChanged,
+            skillDemonstrationBlocks, skillDemonstrationBlocksById, skillDemonstrationsChanged, oldSkillDemonstration,
             
             skillDemonstrationBlockEls, skillDemonstrationBlockEl,
             skillDemonstrationDemonstratedLevel, renderedDemonstrationLevel,
@@ -673,20 +779,60 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
 
     	// sort any incoming skill demonstrations that can be into skills->students render objects
+        unsortedDemonstrationSkills = [];
+
         for (skillDemonstrationIndex = 0; skillDemonstrationIndex < incomingDemonstrationSkillsLength; skillDemonstrationIndex++) {
             skillDemonstration = incomingDemonstrationSkills[skillDemonstrationIndex];
 
             if (
-                (skillRenderData = skillsById[skillDemonstration.get('SkillID')]) &&
-                (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.get('StudentID')])
+                (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
+                (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
-                (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration.data);
+                (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
             } else {
                 unsortedDemonstrationSkills.push(skillDemonstration);
             }
         }
 
         renderData.incomingDemonstrationSkills = unsortedDemonstrationSkills;
+
+
+    	// sort any updated skill demonstrations that can be into skills->students render objects
+        unsortedDemonstrationSkills = [];
+
+        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < updatedDemonstrationSkillsLength; skillDemonstrationIndex++) {
+            skillDemonstration = updatedDemonstrationSkills[skillDemonstrationIndex];
+
+            if (
+                (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
+                (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
+            ) {
+                (skillStudentRenderData.updatedDemonstrationSkills || (skillStudentRenderData.updatedDemonstrationSkills = [])).push(skillDemonstration);
+            } else {
+                unsortedDemonstrationSkills.push(skillDemonstration);
+            }
+        }
+
+        renderData.updatedDemonstrationSkills = unsortedDemonstrationSkills;
+
+
+    	// sort any removed skill demonstrations that can be into skills->students render objects
+        unsortedDemonstrationSkills = [];
+
+        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < removedDemonstrationSkillsLength; skillDemonstrationIndex++) {
+            skillDemonstration = removedDemonstrationSkills[skillDemonstrationIndex];
+
+            if (
+                (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
+                (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
+            ) {
+                (skillStudentRenderData.updatedDemonstratioremovedDemonstrationSkillsnSkills || (skillStudentRenderData.removedDemonstrationSkills = [])).push(skillDemonstration);
+            } else {
+                unsortedDemonstrationSkills.push(skillDemonstration);
+            }
+        }
+
+        renderData.removedDemonstrationSkills = unsortedDemonstrationSkills;
 
 
         // consume all pending changes, generate new demonstrationBlocks arrays, and render them
@@ -706,22 +852,58 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                 for (skillStudentIndex = 0, skillStudentsLength = skillStudentsRenderData.length; skillStudentIndex < skillStudentsLength; skillStudentIndex++) {
                     skillStudentRenderData = skillStudentsRenderData[skillStudentIndex];
                     skillDemonstrationBlocks = skillStudentRenderData.demonstrationBlocks;
+                    skillDemonstrationBlocksById = skillStudentRenderData.demonstrationBlocksById || {};
+                    updatedDemonstrationSkills = skillStudentRenderData.updatedDemonstrationSkills || [];
+                    incomingDemonstrationSkills = skillStudentRenderData.incomingDemonstrationSkills || [];
+                    removedDemonstrationSkills = skillStudentRenderData.removedDemonstrationSkills || [];
                     skillDemonstrationsChanged = false;
 
+                    // apply updated skill demonstrations
+                    if (updatedDemonstrationSkills.length) {
+                        skillDemonstrationIndex = 0;
+                        updatedDemonstrationSkillsLength = updatedDemonstrationSkills.length;
+                        for (; skillDemonstrationIndex < updatedDemonstrationSkillsLength; skillDemonstrationIndex++) {
+                            skillDemonstration = updatedDemonstrationSkills[skillDemonstrationIndex];
+                            oldSkillDemonstration = skillDemonstrationBlocksById[skillDemonstration.ID];
+
+                            if (oldSkillDemonstration) {
+                                if (oldSkillDemonstration !== skillDemonstration) {
+                                    Ext.apply(oldSkillDemonstration, skillDemonstration);
+                                }
+                                skillDemonstrationsChanged = true;
+                            } else {
+                                incomingDemonstrationSkills.push(skillDemonstration);
+                            }
+                        }
+                        skillStudentRenderData.updatedDemonstrationSkills = null;
+                    }
+
                     // append any incoming skill demonstrations
-                    if (skillStudentRenderData.incomingDemonstrationSkills) {
+                    if (incomingDemonstrationSkills.length) {
                         skillDemonstrationBlocks = skillDemonstrationBlocks.concat(skillStudentRenderData.incomingDemonstrationSkills);
                         skillStudentRenderData.incomingDemonstrationSkills = null;
                         skillDemonstrationsChanged = true;
                     }
 
-                    // TODO: handle other types of pending changes
+                    // delete removed skill demonstrations
+                    if (removedDemonstrationSkills.length) {
+                        skillDemonstrationIndex = 0;
+                        removedDemonstrationSkillsLength = removedDemonstrationSkills.length;
+                        for (; skillDemonstrationIndex < removedDemonstrationSkillsLength; skillDemonstrationIndex++) {
+                            Ext.Array.remove(skillDemonstrationBlocks, skillDemonstrationBlocksById[removedDemonstrationSkills[skillDemonstrationIndex].ID])
+                        }
+                        skillStudentRenderData.removedDemonstrationSkills = null;
+                        skillDemonstrationsChanged = true;
+                    }
 
                     // if demonstrations have changed, prepare new blocks array and patch the DOM
                     if (skillDemonstrationsChanged) {
                         skillDemonstrationBlocks = Slate.cbl.Util.sortDemonstrations(skillDemonstrationBlocks, skillDemonstrationsRequired);
                         Slate.cbl.Util.padArray(skillDemonstrationBlocks, skillDemonstrationsRequired);
                         skillStudentRenderData.demonstrationBlocks = skillDemonstrationBlocks;
+
+                        // reset block index
+                        skillDemonstrationBlocksById = skillStudentRenderData.demonstrationBlocksById = {};
 
                         skillDemonstrationBlockEls = skillStudentRenderData.demonstrationBlockEls;
                         for (skillDemonstrationIndex = 0; skillDemonstrationIndex < skillDemonstrationsRequired; skillDemonstrationIndex++) {
@@ -766,6 +948,9 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                                 skillDemonstrationBlockEl.renderedDemonstrationId = skillDemonstrationDemonstrationID;
                                 skillDemonstrationBlockEl.set({'data-demonstration': skillDemonstrationDemonstrationID || ''});
                             }
+
+                            // add reference to index
+                            skillDemonstrationBlocksById[skillDemonstration.ID] = skillDemonstration;
                         }
                     }
                 }
