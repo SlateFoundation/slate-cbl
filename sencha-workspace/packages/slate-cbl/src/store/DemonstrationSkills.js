@@ -28,5 +28,54 @@ Ext.define('Slate.cbl.store.DemonstrationSkills', {
         options.addRecords = true;
 
         return this.load(options);
+    },
+
+    mergeRawData: function(data, demonstrationId) {
+        var me = this,
+            reader = me.getProxy().getReader(),
+            Model = me.getModel(),
+            existingRecords = demonstrationId && me.query('DemonstrationID', demonstrationId).collect('ID', 'data'),
+            i, len,
+            datum, id, record,
+            newRecords = [];
+
+
+        me.beginUpdate();
+
+
+        // update existing records and build array of new records
+        for (i = 0, len = data.length; i < len; i++) {
+            datum = data[i];
+            id = Model.getIdFromData(datum);
+            record = id && me.getById(id);
+
+            datum = reader.extractModelData(datum);
+
+            if (id) {
+                Ext.Array.remove(existingRecords, id);
+            }
+
+            if (record) {
+                record.set(datum, {
+                    dirty: false
+                });
+            } else {
+                newRecords.push(datum);
+            }
+        }
+
+
+        // add new records all together
+        me.add(newRecords);
+
+
+        // remove missing skills from same demonstration
+        for (i = 0, len = existingRecords.length; i < len; i++) {
+            existingRecords[i] = me.getById(existingRecords[i]);
+        }
+        me.remove(existingRecords);
+
+
+        me.endUpdate();
     }
 });
