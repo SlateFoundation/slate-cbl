@@ -164,7 +164,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         '<tpl for="skills">',
             '<tr class="cbl-grid-skill-row" data-skill="{skill.ID}">',
                 '<tpl for="students">',
-                    '<td class="cbl-grid-demos-cell <tpl if="completion">cbl-level-{completion.currentLevel}</tpl>" data-student="{student.ID}">', // TODO: update currentlevel if already rendered when completion is loaded?
+                    '<td class="cbl-grid-demos-cell <tpl if="completion">cbl-level-{completion.currentLevel}</tpl>" data-student="{student.ID}">',
                         '<ul class="cbl-grid-demos">',
                             '<tpl for="demonstrationBlocks">',
                                 '<li class="cbl-grid-demo cbl-grid-demo-empty"></li>',
@@ -547,7 +547,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         
         var me = this,
             skillsStore = me.getSkillsStore(),
-            demoSkillsStore  = me.getDemonstrationSkillsStore(),
+            demoSkillsStore = me.getDemonstrationSkillsStore(),
             competenciesById = me.getData().competenciesById,
             averageFormat = me.getAverageFormat(),
             progressFormat = me.getProgressFormat(),
@@ -613,13 +613,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
                     needsFlush = true;
                     
-                    /**
-                     * TODO:
-                     * update demonstration cells and reset+reload blocks
-                     * - set level class on cells
-                     * - queue competency+levels to be reloaded for dirty students and execute at end after flushing removed demos
-                     */
-                     debugger;
+                    competencyStudentData.outgoingLevel = renderedLevel;
                 }
 
                 competencyStudentData.progressLevelEl.update('L'+level);
@@ -835,6 +829,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         var me = this,
             renderData = me.getData(),
             skillsById = renderData.skillsById,
+            demoSkillsStore = me.getDemonstrationSkillsStore(),
 
             updatedDemonstrationSkills = renderData.updatedDemonstrationSkills || [],
             updatedDemonstrationSkillsLength = updatedDemonstrationSkills.length,
@@ -848,16 +843,19 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             skillDemonstrationIndex, skillDemonstration, unsortedDemonstrationSkills,
 
             competenciesRenderData = renderData.competencies,
-            competenciesLength = competenciesRenderData.length, competencyIndex, competencyRenderData,
+            competenciesLength = competenciesRenderData.length, competencyIndex, competencyRenderData, competencyStudentsById,
             
             skillsRenderData, skillsLength, skillIndex, skillRenderData,
             skillDemonstrationsRequired,
             skillStudentsRenderData, skillStudentsLength, skillStudentIndex, skillStudentRenderData,
-            skillDemonstrationBlocks, skillDemonstrationBlocksById, skillDemonstrationsChanged, oldSkillDemonstration,
+            skillDemonstrationBlocks, skillDemonstrationBlocksById, skillDemonstrationsChanged, oldSkillDemonstration, outgoingLevel,
+            competencyStudentData,
             
             skillDemonstrationBlockEls, skillDemonstrationBlockEl,
             skillDemonstrationDemonstratedLevel, renderedDemonstrationLevel,
-            skillDemonstrationDemonstrationID;
+            skillDemonstrationDemonstrationID,
+            
+            competencyStudentLevelsFlushed = [], competencyStudentLevelsFlushedLength, competencyStudentLevelsIndex, competencyStudentCompletion;
 
         // nothing can be flushed if no skills are loaded yet
         if (!skillsById) {
@@ -932,6 +930,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         for (competencyIndex = 0; competencyIndex < competenciesLength; competencyIndex++) {
             competencyRenderData = competenciesRenderData[competencyIndex];
             skillsRenderData = competencyRenderData.skills;
+            competencyStudentsById = competencyRenderData.studentsById;
 
             if (!skillsRenderData) {
                 continue;
@@ -944,12 +943,14 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
                 for (skillStudentIndex = 0, skillStudentsLength = skillStudentsRenderData.length; skillStudentIndex < skillStudentsLength; skillStudentIndex++) {
                     skillStudentRenderData = skillStudentsRenderData[skillStudentIndex];
+                    competencyStudentData = competencyStudentsById[skillStudentRenderData.student.ID];
                     skillDemonstrationBlocks = skillStudentRenderData.demonstrationBlocks;
                     skillDemonstrationBlocksById = skillStudentRenderData.demonstrationBlocksById || {};
                     updatedDemonstrationSkills = skillStudentRenderData.updatedDemonstrationSkills || [];
                     incomingDemonstrationSkills = skillStudentRenderData.incomingDemonstrationSkills || [];
                     removedDemonstrationSkills = skillStudentRenderData.removedDemonstrationSkills || [];
                     skillDemonstrationsChanged = false;
+                    outgoingLevel = competencyStudentData.outgoingLevel;
 
                     // apply updated skill demonstrations
                     if (updatedDemonstrationSkills.length) {
@@ -1046,8 +1047,25 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                             skillDemonstrationBlocksById[skillDemonstration.ID] = skillDemonstration;
                         }
                     }
+
+                    // apply changed target level
+                    if (outgoingLevel) {
+                        skillStudentRenderData.demonstrationsCellEl.removeCls('cbl-level-'+outgoingLevel).addCls('cbl-level-'+competencyStudentData.renderedLevel);
+                        Ext.Array.include(competencyStudentLevelsFlushed, competencyStudentData);
+                    }
                 }
             }
+        }
+        
+        // remove outgoingLevel flag on any flushed student competencies and trigger demo reload
+        competencyStudentLevelsIndex = 0;
+        competencyStudentLevelsFlushedLength = competencyStudentLevelsFlushed.length;
+        for (; competencyStudentLevelsIndex < competencyStudentLevelsFlushedLength; competencyStudentLevelsIndex++) {
+            competencyStudentData = competencyStudentLevelsFlushed[competencyStudentLevelsIndex];
+            competencyStudentCompletion = competencyStudentData.completion;
+            competencyStudentData.outgoingLevel = null;
+            
+            demoSkillsStore.loadByStudentsAndCompetencies(competencyStudentCompletion.StudentID, competencyStudentCompletion.CompetencyID);
         }
     }
 }, function(Class) {
