@@ -546,18 +546,24 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         completions = Ext.isArray(completions) ? completions : [completions];
         
         var me = this,
+            skillsStore = me.getSkillsStore(),
+            demoSkillsStore  = me.getDemonstrationSkillsStore(),
             competenciesById = me.getData().competenciesById,
             averageFormat = me.getAverageFormat(),
             progressFormat = me.getProgressFormat(),
             completionsLength = completions.length, completionIndex,
-            completion, competencyData, competencyStudentData, progressCellEl,
-            count, average, level, renderedLevel, percentComplete,
-            countDirty, averageDirty, levelDirty;
+            needsFlush = false,
+            completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
+            count, average, level, renderedLevel,
+            countDirty, averageDirty, levelDirty,
+            percentComplete;
 
         for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
             completion = completions[completionIndex];
-            competencyData = competenciesById[completion.get('CompetencyID')];
-            competencyStudentData = competencyData.studentsById[completion.get('StudentID')];
+            competencyId = completion.get('CompetencyID');
+            competencyData = competenciesById[competencyId];
+            studentId = completion.get('StudentID');
+            competencyStudentData = competencyData.studentsById[studentId];
             progressCellEl = competencyStudentData.progressCellEl;
 
             count = completion.get('demonstrationsCount');
@@ -592,6 +598,28 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
                 if (renderedLevel) {
                     progressCellEl.removeCls('cbl-level-'+renderedLevel);
+
+                    me.removeDemonstrationSkills(demoSkillsStore.query([
+                        new Ext.util.Filter({
+                            property: 'StudentID',
+                            value: studentId
+                        }),
+                        new Ext.util.Filter({
+                            property: 'SkillID',
+                            operator: 'in',
+                            value: skillsStore.query('CompetencyID', competencyId).collect('ID', 'data')
+                        })
+                    ]).getRange(), false); // false to defer flushing demonstrations, we'll queue it for once at the end
+
+                    needsFlush = true;
+                    
+                    /**
+                     * TODO:
+                     * update demonstration cells and reset+reload blocks
+                     * - set level class on cells
+                     * - queue competency+levels to be reloaded for dirty students and execute at end after flushing removed demos
+                     */
+                     debugger;
                 }
 
                 competencyStudentData.progressLevelEl.update('L'+level);
@@ -600,6 +628,10 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             }
 
             competencyStudentData.completion = completion.data;
+        }
+
+        if (needsFlush) {
+            me.flushDemonstrations();
         }
     },
 
@@ -843,7 +875,10 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                 (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
-                (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
+                // discard demoSkills that match a loaded skill+student but aren't of the current level
+                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
+                    (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
+                }
             } else {
                 unsortedDemonstrationSkills.push(skillDemonstration);
             }
@@ -862,7 +897,10 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                 (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
-                (skillStudentRenderData.updatedDemonstrationSkills || (skillStudentRenderData.updatedDemonstrationSkills = [])).push(skillDemonstration);
+                // discard demoSkills that match a loaded skill+student but aren't of the current level
+                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
+                    (skillStudentRenderData.updatedDemonstrationSkills || (skillStudentRenderData.updatedDemonstrationSkills = [])).push(skillDemonstration);
+                }
             } else {
                 unsortedDemonstrationSkills.push(skillDemonstration);
             }
@@ -881,7 +919,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                 (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
-                (skillStudentRenderData.updatedDemonstratioremovedDemonstrationSkillsnSkills || (skillStudentRenderData.removedDemonstrationSkills = [])).push(skillDemonstration);
+                (skillStudentRenderData.removedDemonstrationSkills || (skillStudentRenderData.removedDemonstrationSkills = [])).push(skillDemonstration);
             } else {
                 unsortedDemonstrationSkills.push(skillDemonstration);
             }
@@ -945,7 +983,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                         skillDemonstrationIndex = 0;
                         removedDemonstrationSkillsLength = removedDemonstrationSkills.length;
                         for (; skillDemonstrationIndex < removedDemonstrationSkillsLength; skillDemonstrationIndex++) {
-                            Ext.Array.remove(skillDemonstrationBlocks, skillDemonstrationBlocksById[removedDemonstrationSkills[skillDemonstrationIndex].ID])
+                            Ext.Array.remove(skillDemonstrationBlocks, skillDemonstrationBlocksById[removedDemonstrationSkills[skillDemonstrationIndex].ID]);
                         }
                         skillStudentRenderData.removedDemonstrationSkills = null;
                         skillDemonstrationsChanged = true;
