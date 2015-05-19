@@ -301,39 +301,14 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
     onCompletionsRefresh: function(completionsStore) {
         console.log('completions->refresh', arguments);
-
-        var me = this,
-            competenciesById = me.data.competenciesById,
-            averageFormat = me.getAverageFormat(),
-            progressFormat = me.getProgressFormat(),
-            completionsLength = completionsStore.getCount(), completionIndex,
-            completion, competencyData, competencyStudentData, percentComplete, demonstrationsAverage;
         
-        for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
-            completion = completionsStore.getAt(completionIndex);
-            competencyData = competenciesById[completion.get('CompetencyID')];
-            competencyStudentData = competencyData.studentsById[completion.get('StudentID')];
-
-            percentComplete = 100 * (completion.get('demonstrationsCount') || 0) / competencyData.competency.totalDemonstrationsRequired;
-            demonstrationsAverage = completion.get('demonstrationsAverage');
-
-            competencyStudentData.progressCellEl
-                .addCls('cbl-level-'+completion.get('currentLevel'))
-                .toggleCls('is-average-low', percentComplete >= 50 && demonstrationsAverage < competencyData.competency.minimumAverage);
-
-            competencyStudentData.progressBarEl.setStyle('width', Math.round(percentComplete) + '%');
-            competencyStudentData.progressLevelEl.update('L'+completion.get('currentLevel'));
-            competencyStudentData.progressPercentEl.update(progressFormat(percentComplete));
-            competencyStudentData.progressAverageEl.update(averageFormat(demonstrationsAverage));
-            
-            competencyStudentData.completion = completion.data; // TODO: what if there is a completion already loaded? How do changes to it get propogated to the DOM and to demo cells?
-        }
+        this.loadCompletions(completionsStore.getRange());
     },
     
     onCompletionUpdate: function(completionsStore, completion, operation, modifiedFieldNames, details) {
         console.log('completion->update', completion, operation, modifiedFieldNames);
-        debugger;
-        // TODO: apply completion updates to DOM
+        
+        this.loadCompletions(completion);
     },
 
     onDemonstrationSkillsLoad: function(demoSkillsStore, demoSkills) {
@@ -559,6 +534,72 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
         if (skillsData) {
             me.getDemonstrationSkillsStore().mergeRawData(skillsData, demonstration.getId());
+        }
+    },
+
+    /**
+     * Reads one or more new or updated completion model and apply them to the existing render
+     * 
+     * @param {Slate.cbl.model.Completion/Slate.cbl.model.Completion[]} completions A new or updated completion model or array of models
+     */
+    loadCompletions: function(completions) {
+        completions = Ext.isArray(completions) ? completions : [completions];
+        
+        var me = this,
+            competenciesById = me.getData().competenciesById,
+            averageFormat = me.getAverageFormat(),
+            progressFormat = me.getProgressFormat(),
+            completionsLength = completions.length, completionIndex,
+            completion, competencyData, competencyStudentData, progressCellEl,
+            count, average, level, renderedLevel, percentComplete,
+            countDirty, averageDirty, levelDirty;
+
+        for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
+            completion = completions[completionIndex];
+            competencyData = competenciesById[completion.get('CompetencyID')];
+            competencyStudentData = competencyData.studentsById[completion.get('StudentID')];
+            progressCellEl = competencyStudentData.progressCellEl;
+
+            count = completion.get('demonstrationsCount');
+            average = completion.get('demonstrationsAverage');
+            level = completion.get('currentLevel');
+            renderedLevel = competencyStudentData.renderedLevel;
+
+            countDirty = count != competencyStudentData.renderedCount;
+            averageDirty = average != competencyStudentData.renderedAverage;
+            levelDirty = level != renderedLevel;
+
+            if (countDirty || averageDirty) {
+                percentComplete = 100 * (count || 0) / competencyData.competency.totalDemonstrationsRequired;
+                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average < competencyData.competency.minimumAverage);
+            }
+
+            if (countDirty) {
+                competencyStudentData.progressBarEl.setStyle('width', Math.round(percentComplete) + '%');
+                competencyStudentData.progressPercentEl.update(progressFormat(percentComplete));
+
+                competencyStudentData.renderedCount = count;
+            }
+
+            if (averageDirty) {
+                competencyStudentData.progressAverageEl.update(averageFormat(average));
+
+                competencyStudentData.renderedAverage = average;
+            }
+
+            if (levelDirty) {
+                progressCellEl.addCls('cbl-level-'+level);
+
+                if (renderedLevel) {
+                    progressCellEl.removeCls('cbl-level-'+renderedLevel);
+                }
+
+                competencyStudentData.progressLevelEl.update('L'+level);
+
+                competencyStudentData.renderedLevel = level;
+            }
+
+            competencyStudentData.completion = completion.data;
         }
     },
 
