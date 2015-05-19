@@ -339,38 +339,6 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
 
     // public methods
-
-    /**
-     * Redraw the dashboard's primary markup shell based on the already-loaded {@link #config-studentsStore} and {@link #config-competenciesStore}
-     */
-    refresh: function() {
-        var me = this,
-            studentsStore = me.getStudentsStore(),
-            competenciesStore = me.getCompetenciesStore();
-
-        if (!studentsStore.isLoaded() || !competenciesStore.isLoaded()) {
-            return;
-        }
-
-        Ext.suspendLayouts();
-
-        me.setData(me.buildRenderData());
-
-        if (me.rendered) {
-            me.finishRefresh();
-        } else {
-            me.on('render', 'finishRefresh', me, { single: true });
-        }
-
-        // TODO: should this be in finishRefresh instead? what happens if refresh called before render?
-        me.getCompletionsStore().loadByStudentsAndCompetencies(
-            me.getStudentsStore().collect('ID'),
-            me.getCompetenciesStore().collect('ID')
-        );
-
-        Ext.resumeLayouts(true);
-    },
-
     /**
      * Expand or collapse a give competency, loading and rendering associated skills if needed
      * 
@@ -537,150 +505,41 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         }
     },
 
-    /**
-     * Reads one or more new or updated completion model and apply them to the existing render
-     * 
-     * @param {Slate.cbl.model.Completion/Slate.cbl.model.Completion[]} completions A new or updated completion model or array of models
-     */
-    loadCompletions: function(completions) {
-        completions = Ext.isArray(completions) ? completions : [completions];
-        
-        var me = this,
-            skillsStore = me.getSkillsStore(),
-            demoSkillsStore = me.getDemonstrationSkillsStore(),
-            competenciesById = me.getData().competenciesById,
-            averageFormat = me.getAverageFormat(),
-            progressFormat = me.getProgressFormat(),
-            completionsLength = completions.length, completionIndex,
-            needsFlush = false,
-            completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
-            count, average, level, renderedLevel,
-            countDirty, averageDirty, levelDirty,
-            percentComplete;
-
-        for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
-            completion = completions[completionIndex];
-            competencyId = completion.get('CompetencyID');
-            competencyData = competenciesById[competencyId];
-            studentId = completion.get('StudentID');
-            competencyStudentData = competencyData.studentsById[studentId];
-            progressCellEl = competencyStudentData.progressCellEl;
-
-            count = completion.get('demonstrationsCount');
-            average = completion.get('demonstrationsAverage');
-            level = completion.get('currentLevel');
-            renderedLevel = competencyStudentData.renderedLevel;
-
-            countDirty = count != competencyStudentData.renderedCount;
-            averageDirty = average != competencyStudentData.renderedAverage;
-            levelDirty = level != renderedLevel;
-
-            if (countDirty || averageDirty) {
-                percentComplete = 100 * (count || 0) / competencyData.competency.totalDemonstrationsRequired;
-                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average < competencyData.competency.minimumAverage);
-            }
-
-            if (countDirty) {
-                competencyStudentData.progressBarEl.setStyle('width', Math.round(percentComplete) + '%');
-                competencyStudentData.progressPercentEl.update(progressFormat(percentComplete));
-
-                competencyStudentData.renderedCount = count;
-            }
-
-            if (averageDirty) {
-                competencyStudentData.progressAverageEl.update(averageFormat(average));
-
-                competencyStudentData.renderedAverage = average;
-            }
-
-            if (levelDirty) {
-                progressCellEl.addCls('cbl-level-'+level);
-
-                if (renderedLevel) {
-                    progressCellEl.removeCls('cbl-level-'+renderedLevel);
-
-                    me.removeDemonstrationSkills(demoSkillsStore.query([
-                        new Ext.util.Filter({
-                            property: 'StudentID',
-                            value: studentId
-                        }),
-                        new Ext.util.Filter({
-                            property: 'SkillID',
-                            operator: 'in',
-                            value: skillsStore.query('CompetencyID', competencyId).collect('ID', 'data')
-                        })
-                    ]).getRange(), false); // false to defer flushing demonstrations, we'll queue it for once at the end
-
-                    needsFlush = true;
-                    
-                    competencyStudentData.outgoingLevel = renderedLevel;
-                }
-
-                competencyStudentData.progressLevelEl.update('L'+level);
-
-                competencyStudentData.renderedLevel = level;
-            }
-
-            competencyStudentData.completion = completion.data;
-        }
-
-        if (needsFlush) {
-            me.flushDemonstrations();
-        }
-    },
-
-    /**
-     * Adds new demoonstration skills blocks
-     * 
-     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
-     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
-     */
-    addDemonstrationSkills: function(demoSkills, flush) {
-        var me = this,
-            renderData = me.getData();
-
-        renderData.incomingDemonstrationSkills = (renderData.incomingDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
-
-        if (flush !== false) {
-            me.flushDemonstrations();
-        }
-    },
-
-    /**
-     * Update already-rendered demonstration skill blocks
-     * 
-     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
-     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
-     */
-    updateDemonstrationSkills: function(demoSkills, flush) {
-        var me = this,
-            renderData = me.getData();
-
-        renderData.updatedDemonstrationSkills = (renderData.updatedDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
-
-        if (flush !== false) {
-            me.flushDemonstrations();
-        }
-    },
-
-    /**
-     * Remove already-rendered demonstration skills blocks
-     * 
-     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
-     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
-     */
-    removeDemonstrationSkills: function(demoSkills, flush) {
-        var me = this,
-            renderData = me.getData();
-
-        renderData.removedDemonstrationSkills = (renderData.removedDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
-
-        if (flush !== false) {
-            me.flushDemonstrations();
-        }
-    },
 
     // protected methods
+
+    /**
+     * @protected
+     * Redraw the dashboard's primary markup shell based on the already-loaded {@link #config-studentsStore} and {@link #config-competenciesStore}
+     */
+    refresh: function() {
+        var me = this,
+            studentsStore = me.getStudentsStore(),
+            competenciesStore = me.getCompetenciesStore();
+
+        if (!studentsStore.isLoaded() || !competenciesStore.isLoaded()) {
+            return;
+        }
+
+        Ext.suspendLayouts();
+
+        me.setData(me.buildRenderData());
+
+        if (me.rendered) {
+            me.finishRefresh();
+        } else {
+            me.on('render', 'finishRefresh', me, { single: true });
+        }
+
+        // TODO: should this be in finishRefresh instead? what happens if refresh called before render?
+        me.getCompletionsStore().loadByStudentsAndCompetencies(
+            me.getStudentsStore().collect('ID'),
+            me.getCompetenciesStore().collect('ID')
+        );
+
+        Ext.resumeLayouts(true);
+    },
+
     /**
      * @protected
      * Builds render data tree for the progress table's top-level template, {@link #config-tpl}
@@ -821,6 +680,154 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
     },
 
     /**
+     * @protected
+     * Reads one or more new or updated completion model and apply them to the existing render
+     * 
+     * @param {Slate.cbl.model.Completion/Slate.cbl.model.Completion[]} completions A new or updated completion model or array of models
+     */
+    loadCompletions: function(completions) {
+        completions = Ext.isArray(completions) ? completions : [completions];
+        
+        var me = this,
+            skillsStore = me.getSkillsStore(),
+            demoSkillsStore = me.getDemonstrationSkillsStore(),
+            competenciesById = me.getData().competenciesById,
+            averageFormat = me.getAverageFormat(),
+            progressFormat = me.getProgressFormat(),
+            completionsLength = completions.length, completionIndex,
+            needsFlush = false,
+            completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
+            count, average, level, renderedLevel,
+            countDirty, averageDirty, levelDirty,
+            percentComplete;
+
+        for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
+            completion = completions[completionIndex];
+            competencyId = completion.get('CompetencyID');
+            competencyData = competenciesById[competencyId];
+            studentId = completion.get('StudentID');
+            competencyStudentData = competencyData.studentsById[studentId];
+            progressCellEl = competencyStudentData.progressCellEl;
+
+            count = completion.get('demonstrationsCount');
+            average = completion.get('demonstrationsAverage');
+            level = completion.get('currentLevel');
+            renderedLevel = competencyStudentData.renderedLevel;
+
+            countDirty = count != competencyStudentData.renderedCount;
+            averageDirty = average != competencyStudentData.renderedAverage;
+            levelDirty = level != renderedLevel;
+
+            if (countDirty || averageDirty) {
+                percentComplete = 100 * (count || 0) / competencyData.competency.totalDemonstrationsRequired;
+                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average < competencyData.competency.minimumAverage);
+            }
+
+            if (countDirty) {
+                competencyStudentData.progressBarEl.setStyle('width', Math.round(percentComplete) + '%');
+                competencyStudentData.progressPercentEl.update(progressFormat(percentComplete));
+
+                competencyStudentData.renderedCount = count;
+            }
+
+            if (averageDirty) {
+                competencyStudentData.progressAverageEl.update(averageFormat(average));
+
+                competencyStudentData.renderedAverage = average;
+            }
+
+            if (levelDirty) {
+                progressCellEl.addCls('cbl-level-'+level);
+
+                if (renderedLevel) {
+                    progressCellEl.removeCls('cbl-level-'+renderedLevel);
+
+                    me.removeDemonstrationSkills(demoSkillsStore.query([
+                        new Ext.util.Filter({
+                            property: 'StudentID',
+                            value: studentId
+                        }),
+                        new Ext.util.Filter({
+                            property: 'SkillID',
+                            operator: 'in',
+                            value: skillsStore.query('CompetencyID', competencyId).collect('ID', 'data')
+                        })
+                    ]).getRange(), false); // false to defer flushing demonstrations, we'll queue it for once at the end
+
+                    needsFlush = true;
+                    
+                    competencyStudentData.outgoingLevel = renderedLevel;
+                }
+
+                competencyStudentData.progressLevelEl.update('L'+level);
+
+                competencyStudentData.renderedLevel = level;
+            }
+
+            competencyStudentData.completion = completion.data;
+        }
+
+        if (needsFlush) {
+            me.flushDemonstrations();
+        }
+    },
+
+    /**
+     * @protected
+     * Adds new demoonstration skills blocks
+     * 
+     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
+     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
+     */
+    addDemonstrationSkills: function(demoSkills, flush) {
+        var me = this,
+            renderData = me.getData();
+
+        renderData.incomingDemonstrationSkills = (renderData.incomingDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
+
+        if (flush !== false) {
+            me.flushDemonstrations();
+        }
+    },
+
+    /**
+     * @protected
+     * Update already-rendered demonstration skill blocks
+     * 
+     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
+     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
+     */
+    updateDemonstrationSkills: function(demoSkills, flush) {
+        var me = this,
+            renderData = me.getData();
+
+        renderData.updatedDemonstrationSkills = (renderData.updatedDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
+
+        if (flush !== false) {
+            me.flushDemonstrations();
+        }
+    },
+
+    /**
+     * @protected
+     * Remove already-rendered demonstration skills blocks
+     * 
+     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
+     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
+     */
+    removeDemonstrationSkills: function(demoSkills, flush) {
+        var me = this,
+            renderData = me.getData();
+
+        renderData.removedDemonstrationSkills = (renderData.removedDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
+
+        if (flush !== false) {
+            me.flushDemonstrations();
+        }
+    },
+
+    /**
+     * @protected
      * Writes any pending changes to demonstrations to the DOM.
      * 
      * This method must not trigger any reads from the DOM
