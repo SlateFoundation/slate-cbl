@@ -9,5 +9,17 @@ Ext.define('Slate.cbl.model.Completion', {
         { name: 'currentLevel', type: 'int', allowNull: true },
         { name: 'demonstrationsCount', type: 'int' },
         { name: 'demonstrationsAverage', type: 'float', allowNull: true }
-    ]
+    ],
+
+    // generate compound IDs
+    statics: {
+        getIdFromData: function(data) {
+            return data.StudentID + '-' + data.CompetencyID;
+        }
+    },
+    
+    constructor: function(data) {
+        data.id = data.id || this.self.getIdFromData(data);
+        this.callParent(arguments);
+    }
 });

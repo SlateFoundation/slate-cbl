@@ -300,6 +300,8 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
     },
 
     onCompletionsRefresh: function(completionsStore) {
+        console.log('completions->refresh', arguments);
+
         var me = this,
             competenciesById = me.data.competenciesById,
             averageFormat = me.getAverageFormat(),
@@ -329,7 +331,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
     },
     
     onCompletionUpdate: function(completionsStore, completion, operation, modifiedFieldNames, details) {
-        console.log('completion->update', arguments);
+        console.log('completion->update', completion, operation, modifiedFieldNames);
         debugger;
         // TODO: apply completion updates to DOM
     },
@@ -529,23 +531,35 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
      * @param {Slate.cbl.model.Demonstration} demonstration A new or updated demonstration model
      */
     loadDemonstration: function(demonstration) {
-//        var me = this,
-//            renderData = me.getData(),
-//            demoSkillsStore = this.getDemonstrationSkillsStore(),
-//            existingDemoSkills = demoSkillsStore.query('DemonstrationID', demonstration.getId()),
-//
-//            oldSkillIds = existingDemoSkills.collect('SkillID', 'data'),
-//            newSkillIds = Ext.pluck(demonstration.get('Skills'), 'SkillID'),
-//
-//            updatedSkillIds = Ext.Array.intersect(oldSkillIds, newSkillIds),
-//            removedSkillIds = Ext.Array.difference(oldSkillIds, newSkillIds),
-//            addedSkillIds = Ext.Array.difference(newSkillIds, oldSkillIds);
-//
-//        console.log('updated skills', updatedSkillIds);
-//        console.log('removed skills', removedSkillIds);
-//        console.log('added skills', addedSkillIds);
+        var me = this,
+            completionsStore = me.getCompletionsStore(),
+            skillsData = demonstration.get('Skills'),
+            competencyCompletions = demonstration.get('competencyCompletions'),
+            i = 0, competencyCompletionsLength = competencyCompletions.length,
+            competencyCompletionData, competencyCompletionId, competencyCompletionRecord,
+            newCompletions = [];
 
-        this.getDemonstrationSkillsStore().mergeRawData(demonstration.get('Skills'), demonstration.getId());
+        for(; i < competencyCompletionsLength; i++) {
+            competencyCompletionData = competencyCompletions[i];
+            competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
+            competencyCompletionRecord = completionsStore.getById(competencyCompletionId);
+
+            if (competencyCompletionRecord) {
+                competencyCompletionRecord.set(competencyCompletionData, {
+                    dirty: false
+                });
+            } else {
+                newCompletions.push(competencyCompletionData);
+            }
+        }
+
+        if (newCompletions.length) {
+            completionsStore.add(newCompletions);
+        }
+
+        if (skillsData) {
+            me.getDemonstrationSkillsStore().mergeRawData(skillsData, demonstration.getId());
+        }
     },
 
     /**

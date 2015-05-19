@@ -297,7 +297,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
         demonstration.save({
             params: {
-                include: ['competencyCompletions','Skills.Demonstration']
+                include: 'competencyCompletions,Skills.Demonstration'
             },
             callback: function(record, operation, success) {
                 var studentsFieldStore,

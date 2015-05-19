@@ -106,6 +106,7 @@ class Demonstration extends \VersionedRecord
         $completions = [];
         foreach ($competencies AS $Competency) {
             $completion = $Competency->getCompletionForStudent($this->Student);
+            $completion['StudentID'] = $this->StudentID;
             $completion['CompetencyID'] = $Competency->ID;
             $completions[] = $completion;
         }
