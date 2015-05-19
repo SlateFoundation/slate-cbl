@@ -87,7 +87,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             ownerCmp: dashboardView,
             autoShow: true,
             
-            studentsStore: dashboardView.progressGrid.getStudentsStore(),
+            studentsStore: dashboardView.progressGrid.getStudentsStore()
         }, options));
     }
 });

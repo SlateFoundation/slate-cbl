@@ -83,7 +83,7 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
             convert: function(v, r) {
                 return v || (r.data.Demonstration && r.data.Demonstration.StudentID);
             }
-        },
+        }
     ],
 
     proxy: {

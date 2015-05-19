@@ -173,7 +173,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                     '</td>',
                 '</tpl>',
             '</tr>',
-        '</tpl>',
+        '</tpl>'
     ],
 
 
@@ -723,7 +723,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
             competenciesData.push({
                 competency: competency.data,
-                students: competencyStudentsData = [],
+                students: competencyStudentsData = []
             });
 
             for (studentIndex = 0; studentIndex < studentsLength; studentIndex++) {
