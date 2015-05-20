@@ -429,9 +429,17 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
     scrollCompetenciesTabsToEnd: function() {
         var me = this,
-            competenciesTabPanel = me.lookupReference('competenciesTabPanel');
+            competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
+            competenciesTabBar = competenciesTabPanel.getTabBar(),
+            _doScroll = function() {
+                competenciesTabBar.getLayout().overflowHandler.scrollToItem(competenciesTabPanel.items.last().tab);
+            };
 
-        competenciesTabPanel.getTabBar().getLayout().overflowHandler.scrollToItem(competenciesTabPanel.items.last().tab);
+        if (competenciesTabBar.rendered) {
+            _doScroll();
+        } else {
+            competenciesTabBar.on('afterrender', _doScroll, me, { single: true });
+        }
     },
 
     updateCompetencyFilter: function(query) {
