@@ -71,7 +71,7 @@ class DemonstrationSkill extends \ActiveRecord
     {
         // default TargetLevel to student's current level
         if (!$this->TargetLevel) {
-            $this->TargetLevel = \DB::oneValue('SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u', [$this->Demonstration->StudentID, $this->Skill->CompetencyID]);
+            $this->TargetLevel = $this->Skill->Competency->getCurrentLevelForStudent($this->Demonstration->Student);
         }
         
         return parent::save($deep);

@@ -185,19 +185,12 @@ class Competency extends \VersionedRecord
 
         try {
             
-
-            DB::nonQuery(
-                'set @num := 0, @skill := "", @currentLevel = (SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u)',
-                [
-                    $Student->ID,
-                    $this->ID
-                ]
-            );
+            $currentLevel = $this->getCurrentLevelForStudent($Student);
+            DB::nonQuery('SET @num := 0, @skill := ""');
 
             $completion = DB::oneRecord(
                 <<<'END_OF_SQL'
-SELECT @currentLevel AS currentLevel,
-       COUNT(DemonstratedLevel) AS demonstrationsCount,
+SELECT COUNT(DemonstratedLevel) AS demonstrationsCount,
        AVG(DemonstratedLevel) AS demonstrationsAverage
   FROM (
        SELECT StudentDemonstrationSkill.TargetLevel,
@@ -212,7 +205,7 @@ SELECT @currentLevel AS currentLevel,
                 JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration
                   ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                WHERE DemonstrationSkill.SkillID IN (%s)
-                 AND DemonstrationSkill.TargetLevel = @currentLevel
+                 AND DemonstrationSkill.TargetLevel = %u
                  AND DemonstrationSkill.DemonstratedLevel > 0
               ) StudentDemonstrationSkill
         ORDER BY SkillID, DemonstratedLevel DESC
@@ -225,13 +218,14 @@ END_OF_SQL
                     Demonstration::$tableName,
                     $Student->ID,
                     implode(',', $this->getSkillIds()),
+                    $currentLevel,
                     Skill::$tableName
                 ]
             );
 
             // cast strings to floats
             $completion = [
-                'currentLevel' => $completion['currentLevel'] == null ? null : intval($completion['currentLevel']),
+                'currentLevel' => $currentLevel,
                 'demonstrationsCount' => intval($completion['demonstrationsCount']),
                 'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
             ];
@@ -264,5 +258,18 @@ END_OF_SQL
         }
 
         throw new \Exception('Invalid list identifier for competencies');
+    }
+
+    public function getCurrentLevelForStudent(Student $Student)
+    {
+        $level = \DB::oneValue(
+            'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
+            [
+                $Student->ID,
+                $this->ID
+            ]
+        );
+        
+        return $level ? intval($level) : null;
     }
 }
