@@ -229,15 +229,26 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
 
             // save new and update existing skills
             $touchedSkillIds = [];
+            $competencyLevels = []; // cache current competency levels so all skills saved in this request target the same level, even if it advances during
 
             foreach ($requestData['Skills'] AS $skill) {
                 $touchedSkillIds[] = $skill['SkillID'];
 
                 if (!array_key_exists($skill['SkillID'], $existingSkills)) {
+                    $Skill = Skill::getByID($skill['SkillID']);
+
+                    if (!empty($skill['TargetLevel'])) {
+                        $targetLevel = $skill['TargetLevel'];
+                    } elseif(array_key_exists($Skill->CompetencyID, $competencyLevels)) {
+                        $targetLevel = $competencyLevels[$Skill->CompetencyID];
+                    } else {
+                        $targetLevel = $competencyLevels[$Skill->CompetencyID] = $Skill->Competency->getCurrentLevelForStudent($Demonstration->Student);
+                    }
+                    
                     $DemoSkill = DemonstrationSkill::create([
                         'Demonstration' => $Demonstration
-                        ,'SkillID' => $skill['SkillID']
-                        ,'TargetLevel' => empty($skill['TargetLevel']) ? null : $skill['TargetLevel']
+                        ,'Skill' => $Skill
+                        ,'TargetLevel' => $targetLevel
                         ,'DemonstratedLevel' => $skill['DemonstratedLevel']
                     ], true);
                 } elseif ($existingSkills[$skill['SkillID']]['DemonstratedLevel'] != $skill['DemonstratedLevel']) {
