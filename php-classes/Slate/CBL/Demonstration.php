@@ -99,19 +99,23 @@ class Demonstration extends \VersionedRecord
     public function getCompetencyCompletions()
     {
         // use cached $this->Skills array to include skills that may have been destroyed in this session
-        $competencies = Competency::getAllByQuery(
-            'SELECT DISTINCT Competency.*'
-            .' FROM `%s` Skill'
-            .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
-            .' WHERE Skill.ID IN (%s)',
-            [
-                Skill::$tableName,
-                Competency::$tableName,
-                implode(',', array_map(function($DemonstrationSkill) {
-                    return $DemonstrationSkill->SkillID;
-                }, $this->Skills))
-            ]
-        );
+        if (count($this->Skills)) {
+            $competencies = Competency::getAllByQuery(
+                'SELECT DISTINCT Competency.*'
+                .' FROM `%s` Skill'
+                .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
+                .' WHERE Skill.ID IN (%s)',
+                [
+                    Skill::$tableName,
+                    Competency::$tableName,
+                    implode(',', array_map(function($DemonstrationSkill) {
+                        return $DemonstrationSkill->SkillID;
+                    }, $this->Skills))
+                ]
+            );
+        } else {
+            $competencies = [];
+        }
 
         $completions = [];
         foreach ($competencies AS $Competency) {
