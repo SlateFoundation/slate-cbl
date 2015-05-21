@@ -69,8 +69,7 @@ Ext.define('Slate.cbl.model.Demonstration', {
         // server-provided metadata
         {
             name: 'Skills',
-            defaultValue: [],
-            persist: false
+            defaultValue: []
         },
         {
             name: 'competencyCompletions',
