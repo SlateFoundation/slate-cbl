@@ -20,13 +20,15 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             },
             'slate-cbl-teacher-skill-overviewwindow': {
                 createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
-                editdemonstrationclick: 'onOverviewEditDemonstrationClick'
+                editdemonstrationclick: 'onOverviewEditDemonstrationClick',
+                deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick'
             }
         },
 
         listen: {
             api: {
-                demonstrationsave: 'onDemonstrationSave'
+                demonstrationsave: 'onDemonstrationSave',
+                demonstrationdelete: 'onDemonstrationDelete'
             }
         }
     },
@@ -74,8 +76,54 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         });
     },
 
+    onOverviewDeleteDemonstrationClick: function(overviewWindow, demonstrationId) {
+        var me = this;
+
+        overviewWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
+
+        Slate.cbl.model.Demonstration.load(demonstrationId, {
+            params: {
+                include: 'Skills.Skill'
+            },
+            success: function(demonstration) {
+                Ext.Msg.confirm(
+                    'Delete demonstration #' + demonstrationId,
+                    'Are you sure you want to permenantly delete this demonstration?' +
+                        ' Scores in all the following standards will be removed:' +
+                        '<ul>' +
+                            '<li>' +
+                            Ext.Array.map(demonstration.get('Skills'), function(demoSkill) {
+                                return '<strong>Level ' + demoSkill.DemonstratedLevel + '</strong> demonstrated in <strong>' + demoSkill.Skill.Code + '</strong>: <em>' + demoSkill.Skill.Statement + '</em>';
+                            }).join('</li><li>') +
+                            '</li>' +
+                        '</ul>',
+                    function(btnId) {
+                        if (btnId != 'yes') {
+                            overviewWindow.setLoading(false);
+                            return;
+                        }
+                        
+                        demonstration.erase({
+                            params: {
+                                include: 'competencyCompletions'
+                            },
+                            success: function(demonstration, operation) {
+                                Slate.cbl.API.fireEvent('demonstrationdelete', operation.getResultSet().getRecords()[0]);
+                                overviewWindow.setLoading(false);
+                            }
+                        });
+                    }
+                );
+            }
+        });
+    },
+
     onDemonstrationSave: function(demonstration) {
         this.getView().progressGrid.loadDemonstration(demonstration);
+    },
+    
+    onDemonstrationDelete: function(demonstration) {
+        this.getView().progressGrid.deleteDemonstration(demonstration);
     },
 
 

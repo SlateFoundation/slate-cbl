@@ -83,23 +83,33 @@ class Demonstration extends \VersionedRecord
         
         return parent::save($deep);
     }
+    
+    public function destroy()
+    {
+        foreach ($this->Skills AS $Skill) {
+            $Skill->destroy();
+        }
+
+        return parent::destroy();
+    }
 
     /**
      * Returns current completion state of all competencies affected by this demonstration
      */
     public function getCompetencyCompletions()
     {
+        // use cached $this->Skills array to include skills that may have been destroyed in this session
         $competencies = Competency::getAllByQuery(
             'SELECT DISTINCT Competency.*'
-            .' FROM `%s` DemonstrationSkill'
-            .' JOIN `%s` Skill ON Skill.ID = DemonstrationSkill.SkillID'
+            .' FROM `%s` Skill'
             .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
-            .' WHERE DemonstrationSkill.DemonstrationID = %u',
+            .' WHERE Skill.ID IN (%s)',
             [
-                DemonstrationSkill::$tableName,
                 Skill::$tableName,
                 Competency::$tableName,
-                $this->ID
+                implode(',', array_map(function($DemonstrationSkill) {
+                    return $DemonstrationSkill->SkillID;
+                }, $this->Skills))
             ]
         );
 

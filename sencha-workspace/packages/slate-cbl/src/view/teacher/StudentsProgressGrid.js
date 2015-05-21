@@ -505,6 +505,33 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         }
     },
 
+    /**
+     * Delete a demonstration model and apply it to the existing render
+     * 
+     * @param {Slate.cbl.model.Demonstration} demonstration The demonstration model that was deleted
+     */
+    deleteDemonstration: function(demonstration) {
+        var me = this,
+            completionsStore = me.getCompletionsStore(),
+            competencyCompletions = demonstration.get('competencyCompletions'),
+            i = 0, competencyCompletionsLength = competencyCompletions.length,
+            competencyCompletionData, competencyCompletionId, competencyCompletionRecord;
+
+        for(; i < competencyCompletionsLength; i++) {
+            competencyCompletionData = competencyCompletions[i];
+            competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
+            competencyCompletionRecord = completionsStore.getById(competencyCompletionId);
+
+            if (competencyCompletionRecord) {
+                competencyCompletionRecord.set(competencyCompletionData, {
+                    dirty: false
+                });
+            }
+        }
+
+        me.getDemonstrationSkillsStore().mergeRawData([], demonstration.getId());
+    },
+
 
     // protected methods
 
