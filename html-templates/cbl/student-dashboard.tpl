@@ -62,6 +62,7 @@
             SiteEnvironment.user = {$.User->getData()|json_encode};
             SiteEnvironment.cblStudent = {JSON::translateObjects($Student, true)|json_encode};
             SiteEnvironment.cblContentArea = {JSON::translateObjects($ContentArea)|json_encode};
+            SiteEnvironment.cblCompetencies = {JSON::translateObjects($ContentArea->Competencies, false, array('totalDemonstrationsRequired', 'minimumAverage'))|json_encode};
         </script>
 
         {$dwoo.parent}
