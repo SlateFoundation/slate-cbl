@@ -184,7 +184,8 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
             store.on({
                 scope: this,
                 refresh: 'onDemonstrationSkillsStoreRefresh',
-                clear: 'onDemonstrationSkillsStoreClear'
+                clear: 'onDemonstrationSkillsStoreClear',
+                remove: 'onDemonstrationSkillsStoreRemove'
             });
         }
     },
@@ -227,6 +228,10 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
 
     onDemonstrationSkillsStoreClear: function() {
         this.setLoadedSkill(null);
+        this.refreshDemonstrationsTable();
+    },
+    
+    onDemonstrationSkillsStoreRemove: function() {
         this.refreshDemonstrationsTable();
     },
 

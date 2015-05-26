@@ -28,7 +28,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
         listen: {
             api: {
-                demonstrationsave: 'onDemonstrationSave'
+                demonstrationsave: 'onDemonstrationSave',
+                demonstrationdelete: 'onDemonstrationDelete'
             }
         }
     },
@@ -109,5 +110,15 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         if (demonstration.get('StudentID') == overviewWindow.getStudent() && Ext.Array.contains(demonstrationSkillIds, overviewWindow.getSkill())) {
             overviewWindow.loadDemonstrationsTable(true);
         }
+    },
+    
+    onDemonstrationDelete: function(demonstration) {
+        var overviewWindow = this.getView(),
+            demoSkillsStore = overviewWindow.getDemonstrationSkillsStore();
+
+        if (demonstration.get('StudentID') == overviewWindow.getStudent()) {
+            demoSkillsStore.remove(demoSkillsStore.query('DemonstrationID', demonstration.getId()).getRange());
+        }
+        
     }
 });
