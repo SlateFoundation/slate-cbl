@@ -21,11 +21,12 @@ Ext.define('Slate.cbl.model.Competency', {
 
         // server-provided metadata
         { name: 'totalDemonstrationsRequired', persist: false, type: 'integer' },
-        { name: 'minimumAverage', persist: false, type: 'float' }
+        { name: 'minimumAverageOffset', persist: false, type: 'float' }
     ],
 
     proxy: {
         type: 'slate-cbl-records',
-        url: '/cbl/competencies'
+        url: '/cbl/competencies',
+        include: ['totalDemonstrationsRequired', 'minimumAverageOffset']
     }
 });

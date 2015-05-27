@@ -9,7 +9,7 @@ $completion = $Competency->getCompletionForStudent($Student);
 
 if (
     $completion['demonstrationsCount'] >= $Competency->getTotalDemonstrationsRequired() &&
-    $completion['demonstrationsAverage'] >= $Competency->getMinimumAverage() &&
+    $completion['demonstrationsAverage'] >= ($completion['currentLevel'] + $Competency->getMinimumAverageOffset()) &&
     $completion['currentLevel'] < $Competency->getMaximumTargetLevel()
     ) {
 

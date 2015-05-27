@@ -141,12 +141,13 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         var me = this,
             competency = me.getCompetency(),
             percentComplete = Math.round(100 * completion.get('demonstrationsCount') / competency.get('totalDemonstrationsRequired')),
-            demonstrationsAverage = completion.get('demonstrationsAverage');
+            demonstrationsAverage = completion.get('demonstrationsAverage'),
+            currentLevel = completion.get('currentLevel');
 
-        me.setLevel(completion.get('currentLevel'));
+        me.setLevel(currentLevel);
         me.setPercentComplete(percentComplete);
         me.setDemonstrationsAverage(demonstrationsAverage);
-        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage < competency.get('minimumAverage'));
+        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
 
         me.loadSkills();
     },

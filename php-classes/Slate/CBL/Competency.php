@@ -7,7 +7,7 @@ use Slate\People\Student;
 
 class Competency extends \VersionedRecord
 {
-    public static $minimumAverage = 8.5; // TODO: rename to minimumGraduatingAverage or get rid of
+    public static $minimumAverageOffset = -0.5;
     public static $maximumTargetLevel = 12;
 
     // VersionedRecord configuration
@@ -64,8 +64,8 @@ class Competency extends \VersionedRecord
         'totalDemonstrationsRequired' => [
             'getter' => 'getTotalDemonstrationsRequired'
         ],
-        'minimumAverage' => [
-            'getter' => 'getMinimumAverage'
+        'minimumAverageOffset' => [
+            'getter' => 'getMinimumAverageOffset'
         ]
     ];
 
@@ -102,10 +102,9 @@ class Competency extends \VersionedRecord
         return $this->finishValidation();
     }
 
-    public function getMinimumAverage()
+    public function getMinimumAverageOffset()
     {
-        // TODO: determine dynamically based on current grade level, convert to dynamic attribute if possible
-        return static::$minimumAverage;
+        return static::$minimumAverageOffset;
     }
 
     public function getMaximumTargetLevel()
