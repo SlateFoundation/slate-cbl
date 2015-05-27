@@ -28,7 +28,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
 
         listen: {
             api: {
-                demonstrationsave: 'onDemonstrationSave'
+                demonstrationsave: 'onDemonstrationSave',
+                demonstrationdelete: 'onDemonstrationDelete'
             }
         }
     },
@@ -47,17 +48,23 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         competency = competency && competencyCombo.findRecordByValue(competency);
 
         var me = this,
-            overviewWindow = me.getView();
+            overviewWindow = me.getView(),
+            skillsCombo = me.lookupReference('skillCombo'),
+            skillsComboStore = skillsCombo.getStore(),
+            initialValue = overviewWindow.getSkill();
 
         if (!competency) {
             return;
         }
 
-        competency.withSkills(function(skills) {
-            var skillsCombo = me.lookupReference('skillCombo'),
-                initialValue = overviewWindow.getSkill();
+        skillsCombo.disable();
 
-            skillsCombo.getStore().loadRawData(skills.getRange());
+        skillsComboStore.getSource().getAllByCompetency(competency, function() {
+            skillsComboStore.setFilters({
+                property: 'CompetencyID',
+                value: competency.getId()
+            });
+
             skillsCombo.enable();
 
             if (!skillsCombo.findRecordByValue(skillsCombo.getValue() || initialValue)) {
@@ -90,8 +97,10 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     },
 
     onCreateDemonstrationClick: function() {
-        var overviewWindow = this.getView();
-        overviewWindow.fireEvent('createdemonstrationclick', overviewWindow, overviewWindow.getStudent(), overviewWindow.getCompetency());
+        var me = this,
+            overviewWindow = me.getView();
+
+        overviewWindow.fireEvent('createdemonstrationclick', overviewWindow, me.lookupReference('studentCombo').getValue(), me.lookupReference('competencyCombo').getValue());
     },
 
     onDemonstrationSave: function(demonstration) {
@@ -101,5 +110,15 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
         if (demonstration.get('StudentID') == overviewWindow.getStudent() && Ext.Array.contains(demonstrationSkillIds, overviewWindow.getSkill())) {
             overviewWindow.loadDemonstrationsTable(true);
         }
+    },
+    
+    onDemonstrationDelete: function(demonstration) {
+        var overviewWindow = this.getView(),
+            demoSkillsStore = overviewWindow.getDemonstrationSkillsStore();
+
+        if (demonstration.get('StudentID') == overviewWindow.getStudent()) {
+            demoSkillsStore.remove(demoSkillsStore.query('DemonstrationID', demonstration.getId()).getRange());
+        }
+        
     }
 });

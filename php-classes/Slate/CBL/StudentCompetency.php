@@ -14,16 +14,17 @@ class StudentCompetency extends \ActiveRecord
 
     public static $fields = [
         'StudentID' => [
-            'type' => 'uint',
-            'index' => true
+            'type' => 'uint'
         ],
         'CompetencyID' => [
-            'type' => 'uint',
-            'index' => true
+            'type' => 'uint'
         ],
-        'CompletionType' => [
+        'Level' => [
+            'type' => 'tinyint'
+        ],
+        'EnteredVia' => [
             'type' => 'enum',
-            'values' => array('demonstrated', 'overridden')
+            'values' => array('enrollment', 'graduation')
         ]
     ];
 
@@ -45,7 +46,7 @@ class StudentCompetency extends \ActiveRecord
 
     public static $indexes = [
         'StudentCompetency' => [
-            'fields' => ['StudentID', 'CompetencyID'],
+            'fields' => ['StudentID', 'CompetencyID', 'Level'],
             'unique' => true
         ]
     ];

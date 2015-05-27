@@ -2,28 +2,22 @@
 Ext.define('Slate.cbl.API', {
     extend: 'Emergence.util.AbstractAPI',
     singleton: true,
+    requires: [
+        'Ext.data.Session'
+    ],
+
+
+    // TODO: merge upstream to Jarvus.util.AbstractAPI
+    getSession: function() {
+        return this.session || (this.session = new Ext.data.Session());
+    },
 
     // TODO: merge upstream to Emergence.util.AbstractAPI
     recordKeyFn: function(recordData) {
         return recordData.ID;
     },
 
-    getSkills: function(competencyId, callback, scope) {
-        var me = this;
-
-        me.request({
-            url: '/cbl/skills',
-            method: 'GET',
-            params: {
-                competency: competencyId
-            },
-            success: function(response) {
-                me.fireEvent('skillsload', response, competencyId);
-                Ext.callback(callback, scope, [response]);
-            }
-        });
-    },
-    
+    // TODO: move to a model + store
     getRecentProgress: function(studentId, contentAreaCode, callback, scope) {
         var me = this;
 
@@ -37,22 +31,6 @@ Ext.define('Slate.cbl.API', {
             success: function(response) {
                 me.fireEvent('recentprogressload', response.data.data, studentId, contentAreaCode);
                 Ext.callback(callback, scope, [response.data.data]);
-            }
-        });
-    },
-
-    getDemonstrationsByStudentSkill: function(studentId, skillId, callback, scope) {
-        var me = this;
-
-        me.request({
-            method: 'GET',
-            url: '/cbl/skills/' + skillId + '/demonstrations',
-            params: {
-                student: studentId,
-                include: 'Demonstration,Demonstration.Creator'
-            },
-            success: function(response) {
-                Ext.callback(callback, scope, [response.data && response.data.data, response.data]);
             }
         });
     }

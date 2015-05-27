@@ -83,29 +83,44 @@ class Demonstration extends \VersionedRecord
         
         return parent::save($deep);
     }
+    
+    public function destroy()
+    {
+        foreach ($this->Skills AS $Skill) {
+            $Skill->destroy();
+        }
+
+        return parent::destroy();
+    }
 
     /**
      * Returns current completion state of all competencies affected by this demonstration
      */
     public function getCompetencyCompletions()
     {
-        $competencies = Competency::getAllByQuery(
-            'SELECT DISTINCT Competency.*'
-            .' FROM `%s` DemonstrationSkill'
-            .' JOIN `%s` Skill ON Skill.ID = DemonstrationSkill.SkillID'
-            .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
-            .' WHERE DemonstrationSkill.DemonstrationID = %u',
-            [
-                DemonstrationSkill::$tableName,
-                Skill::$tableName,
-                Competency::$tableName,
-                $this->ID
-            ]
-        );
+        // use cached $this->Skills array to include skills that may have been destroyed in this session
+        if (count($this->Skills)) {
+            $competencies = Competency::getAllByQuery(
+                'SELECT DISTINCT Competency.*'
+                .' FROM `%s` Skill'
+                .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
+                .' WHERE Skill.ID IN (%s)',
+                [
+                    Skill::$tableName,
+                    Competency::$tableName,
+                    implode(',', array_map(function($DemonstrationSkill) {
+                        return $DemonstrationSkill->SkillID;
+                    }, $this->Skills))
+                ]
+            );
+        } else {
+            $competencies = [];
+        }
 
         $completions = [];
         foreach ($competencies AS $Competency) {
             $completion = $Competency->getCompletionForStudent($this->Student);
+            $completion['StudentID'] = $this->StudentID;
             $completion['CompetencyID'] = $Competency->ID;
             $completions[] = $completion;
         }

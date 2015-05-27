@@ -3,9 +3,12 @@
 Ext.define('Site.page.TeacherCompetencyDashboard', {
     singleton: true,
     requires: [
-        'Site.Common',
+        'Ext.QuickTips',
+
         'Slate.cbl.view.teacher.Dashboard',
-        'Ext.QuickTips'
+
+        'Slate.cbl.store.Students',
+        'Slate.cbl.store.Competencies'
     ],
 
     constructor: function() {
@@ -17,14 +20,8 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
             body = Ext.getBody(),
             teacherDashboardCt = body.down('#teacherDashboardCt'),
             siteEnv = window.SiteEnvironment || {},
-            studentsData = siteEnv.cblStudents,
-            contentAreaData = siteEnv.cblContentArea || null,
-            dashboard;
-
-        // ensure students are loaded
-        if (!studentsData || !studentsData.length) {
-            return;
-        }
+            contentAreaCode = (siteEnv.cblContentArea || {}).Code,
+            dashboardView;
 
         // initialize QuickTips
         Ext.QuickTips.init();
@@ -35,21 +32,27 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
 
 
         // render teacher dashboard component
-        me.dashboard = dashboard = Ext.create('Slate.cbl.view.teacher.Dashboard', {
+        me.dashboardView = dashboardView = Ext.create('Slate.cbl.view.teacher.Dashboard', {
             renderTo: teacherDashboardCt,
-            contentArea: contentAreaData
+            progressGrid: {
+                studentDashboardLink: contentAreaCode && '/cbl/student-dashboard?content-area=' + escape(contentAreaCode),
+                studentsStore: {
+                    xclass: 'Slate.cbl.store.Students',
+                    data: siteEnv.cblStudents
+                },
+                competenciesStore: {
+                    xclass: 'Slate.cbl.store.Competencies',
+                    data: siteEnv.cblCompetencies
+                }
+            }
         });
-
-
-        // load data embedded in page
-        Ext.getStore('cbl-students-loaded').loadRawData(studentsData);
 
 
         // wire Log a Demonstration button
         body.on('click', function(ev, t) {
             ev.stopEvent();
 
-            dashboard.getController().showDemonstrationEditWindow();
+            dashboardView.getController().showDemonstrationEditWindow();
         }, me, { delegate: 'button[data-action="demonstration-create"]'});
     }
 });

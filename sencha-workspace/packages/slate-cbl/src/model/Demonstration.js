@@ -15,7 +15,7 @@ Ext.define('Slate.cbl.model.Demonstration', {
         {
             name: "ID",
             type: "int",
-            useNull: true
+            allowNull: true
         },
         {
             name: "Class",
@@ -26,31 +26,23 @@ Ext.define('Slate.cbl.model.Demonstration', {
             name: "Created",
             type: "date",
             dateFormat: "timestamp",
-            useNull: true
+            allowNull: true
         },
         {
             name: "CreatorID",
             type: "int",
-            useNull: true
+            allowNull: true
         },
         {
             name: "StudentID",
             type: "int"
         },
-//        {
-//            name: "SkillID",
-//            type: "int"
-//        },
         {
             name: "Demonstrated",
             type: "date",
             dateFormat: "timestamp",
-            useNull: true
+            allowNull: true
         },
-//        {
-//            name: "Level",
-//            type: "string"
-//        },
         {
             name: "ExperienceType",
             type: "string"
@@ -66,15 +58,19 @@ Ext.define('Slate.cbl.model.Demonstration', {
         {
             name: "ArtifactURL",
             type: "string",
-            useNull: true
+            allowNull: true
         },
         {
             name: "Comments",
             type: "string",
-            useNull: true
+            allowNull: true
         },
 
         // server-provided metadata
+        {
+            name: 'Skills',
+            defaultValue: []
+        },
         {
             name: 'competencyCompletions',
             defaultValue: [],

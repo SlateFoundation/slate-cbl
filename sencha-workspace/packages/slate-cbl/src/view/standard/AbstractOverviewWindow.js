@@ -9,14 +9,30 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
     extend: 'Ext.window.Window',
     xtype: 'slate-cbl-standard-abstractoverviewwindow',
     requires: [
-        'Slate.cbl.API'
+        'Slate.cbl.API',
+        'Slate.cbl.model.Skill',
+        'Slate.cbl.store.DemonstrationSkills',
+        
+        'Ext.LoadMask'
     ],
 
     config: {
+        // required input
         skill: null,
         student: null,
+        
+        // optional config
         selectedDemonstration: null,
-        showEditLinks: false
+        showEditLinks: false,
+        loadingText: 'Loading demonstrations&hellip;',
+
+        demonstrationSkillsStore: {
+            xclass: 'Slate.cbl.store.DemonstrationSkills',
+            sorters: 'Demonstrated'
+        },
+
+        // internal state
+        loadedSkill: null
     },
 
     title: 'Standard Overview',
@@ -51,11 +67,11 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                     '</thead>',
 
                     '<tpl if="demonstrations && demonstrations.length">',
-                        '<tpl for="demonstrations">',
+                        '<tpl for="demonstrations">{% if (!values.Demonstration) debugger; %}',
                             '<tr class="skill-grid-demo-row" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
-                                '<td class="skill-grid-demo-data skill-grid-demo-date">{[fm.date(new Date(values.Demonstration.Demonstrated * 1000))]}</td>',
-                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{Level}"><tpl if="Level==0">M<tpl else>{Level}</tpl></div></td>',
+                                '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstrated:date}</td>',
+                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{DemonstratedLevel}"><tpl if="DemonstratedLevel==0">M<tpl else>{DemonstratedLevel}</tpl></div></td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-type">{Demonstration.ExperienceType:htmlEncode}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-context">{Demonstration.Context:htmlEncode}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-task">{Demonstration.PerformanceType:htmlEncode}</td>',
@@ -76,13 +92,13 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                                             '</div>',
                                         '</tpl>',
                                         '<div class="skill-grid-demo-meta">',
-                                            'Demonstration #{Demonstration.ID} &middot;&nbsp;',
+                                            'Demonstration #{DemonstrationID} &middot;&nbsp;',
                                             '<tpl for="Demonstration.Creator"><a href="/people/{Username}">{FirstName} {LastName}</a></tpl> &middot;&nbsp;',
-                                            '{[fm.date(new Date(values.Demonstration.Created * 1000), "F j, Y, g:i a")]}',
+                                            '{Created:date("F j, Y, g:i a")}',
                                             '<tpl if="parent.showEditLinks">',
                                                 ' &middot;&nbsp;',
-                                                '<a href="#demonstration-edit" data-demonstration="{Demonstration.ID}">Edit</a> | ',
-                                                '<a href="#demonstration-delete" data-demonstration="{Demonstration.ID}">Delete</a>',
+                                                '<a href="#demonstration-edit" data-demonstration="{DemonstrationID}">Edit</a> | ',
+                                                '<a href="#demonstration-delete" data-demonstration="{DemonstrationID}">Delete</a>',
                                             '</tpl>',
                                         '</div>',
                                     '</div>',
@@ -134,6 +150,12 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
             me.center();
         });
 
+        me.loadMask = Ext.create('Ext.LoadMask', {
+            target: me.demonstrationsTable,
+            store: me.getDemonstrationSkillsStore(),
+            msg: me.getLoadingText()
+        });
+
         if (me.getSkill() && me.getStudent()) {
             me.loadDemonstrationsTable();
         }
@@ -153,12 +175,71 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         }
     },
 
+    applyDemonstrationSkillsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    updateDemonstrationSkillsStore: function(store) {
+        if (store) {
+            store.on({
+                scope: this,
+                refresh: 'onDemonstrationSkillsStoreRefresh',
+                clear: 'onDemonstrationSkillsStoreClear',
+                remove: 'onDemonstrationSkillsStoreRemove'
+            });
+        }
+    },
+
+    applyLoadedSkill: function(skill) {
+        if (!skill) {
+            return null;
+        }
+        
+        return skill.isModel ? skill : Slate.cbl.API.getSession().getRecord(Slate.cbl.model.Skill, skill);
+    },
+
+    updateLoadedSkill: function(skill) {
+        var me = this,
+            skillStatementCmp = me.skillStatementCmp;
+
+        if (!skill) {
+            skillStatementCmp.update('Select a standard');
+            return;
+        }
+
+        if (skill.isLoading()) {
+            // framework will append our callback to the existing operation if the model is already loading
+            skill.load({
+                callback: function() {
+                    me.updateLoadedSkill(skill);
+                }
+            });
+            return;
+        }
+
+        skillStatementCmp.update(skill.get('Statement'));
+    },
+
+
+    // event handlers
+    onDemonstrationSkillsStoreRefresh: function() {
+        this.refreshDemonstrationsTable();
+    },
+
+    onDemonstrationSkillsStoreClear: function() {
+        this.setLoadedSkill(null);
+        this.refreshDemonstrationsTable();
+    },
+    
+    onDemonstrationSkillsStoreRemove: function() {
+        this.refreshDemonstrationsTable();
+    },
+
 
     // public methods
     loadDemonstrationsTable: function(forceReload) {
         var me = this,
-            skillStatementCmp = me.skillStatementCmp,
-            demonstrationsTable = me.demonstrationsTable,
+            demonstrationSkillsStore = me.getDemonstrationSkillsStore(),
             skillId = me.getSkill(),
             studentId = me.getStudent();
 
@@ -171,30 +252,17 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         me.loadedStudentId = studentId;
 
         if (skillId && studentId) {
-            demonstrationsTable.setLoading('Loading demonstrations&hellip;'); // currently not visible due to (fixed in 5.1) http://www.sencha.com/forum/showthread.php?290453-5.0.x-loadmask-on-component-inside-window-not-visible
-
-            Slate.cbl.API.getDemonstrationsByStudentSkill(studentId, skillId, function(skillDemonstrations, responseData) {
-                skillStatementCmp.update((responseData.skill && responseData.skill.Statement) || '');
-
-                skillDemonstrations.sort(function compare(a, b) {
-                    var aDemonstrated = new Date(a.Demonstration.Demonstrated),
-                        bDemonstrated = new Date(b.Demonstration.Demonstrated);
-
-                    return (aDemonstrated > bDemonstrated) ? 1 : (aDemonstrated < bDemonstrated) ? -1 : 0;
-                });
-
-                me.demonstrations = skillDemonstrations;
-                me.loadedSkillData = responseData.skill;
-                me.refreshDemonstrationsTable();
-
-                demonstrationsTable.setLoading(false);
+            demonstrationSkillsStore.load({
+                params: {
+                    student: studentId,
+                    skill: skillId
+                },
+                callback: function(demonstrationSkills, operation, success) {
+                    me.setLoadedSkill(skillId);
+                }
             });
         } else {
-            skillStatementCmp.update('Select a standard');
-
-            me.demonstrations = null;
-            me.loadedSkillData = null;
-            me.refreshDemonstrationsTable();
+            demonstrationSkillsStore.removeAll();
         }
     },
 
@@ -202,7 +270,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         var me = this;
 
         me.demonstrationsTable.update({
-            demonstrations: me.demonstrations || [],
+            demonstrations: Ext.pluck(me.getDemonstrationSkillsStore().getRange(), 'data'),
             selectedDemonstrationId: me.getSelectedDemonstration(),
             showEditLinks: me.getShowEditLinks()
         });

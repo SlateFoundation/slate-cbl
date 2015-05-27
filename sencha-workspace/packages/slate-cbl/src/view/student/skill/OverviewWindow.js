@@ -4,9 +4,11 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
     xtype: 'slate-cbl-student-skill-overviewwindow',
     requires: [
         'Slate.cbl.view.student.skill.OverviewWindowController',
-        'Slate.cbl.model.Skill',
 
-        'Ext.form.field.ComboBox'
+        'Slate.cbl.data.Skills',
+
+        'Ext.form.field.ComboBox',
+        'Ext.data.ChainedStore'
     ],
 
     controller: 'slate-cbl-student-skill-overviewwindow',
@@ -31,9 +33,11 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
                     flex: 1,
 
                     xtype: 'combobox',
+                    disabled: true,
 
                     store: {
-                        model: 'Slate.cbl.model.Skill'
+                        type: 'chained',
+                        source: 'cbl-skills'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',

@@ -17,10 +17,11 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
     public static function handleRecordsRequest($action = null)
     {
         switch ($action ?: $action = static::shiftPath()) {
-            case 'export-legacy':
-                return static::handleLegacyExportRequest();
-            case 'export':
-                return static::handleExportRequest();
+            // TODO: move to exports folder
+//            case '*export-legacy':
+//                return static::handleLegacyExportRequest();
+//            case '*export':
+//                return static::handleExportRequest();
             default:
                 return parent::handleRecordsRequest($action);
         }
@@ -53,6 +54,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
     
+    // TODO: move to teacher-dashboard or to new folder exports
     // 04/02/2015: This is how the report was originally requested and is being kept here until we know it is no longer needed
     public static function handleLegacyExportRequest()
     {
@@ -119,6 +121,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         }
     }
 
+    // TODO: move to teacher-dashboard
     public static function handleExportRequest()
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');
@@ -173,11 +176,11 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             foreach ($demonstrationSkills AS $DemonstrationSkill) {
                 $skill = $skills[$DemonstrationSkill->SkillID];
                 
-                $row[8]  = $skill->Competency->Code;
-                $row[9]  = $skill->Code;
-                $row[10] = $DemonstrationSkill->Level > 0 ?  $DemonstrationSkill->Level : 'M';
-                $row[11] = 9;
-                $row[12] = '';
+                $row[] = $skill->Competency->Code;
+                $row[] = $skill->Code;
+                $row[] = $DemonstrationSkill->DemonstratedLevel > 0 ?  $DemonstrationSkill->DemonstratedLevel : 'M';
+                $row[] = $DemonstrationSkill->TargetLevel;
+                $row[] = '';
                 $sw->writeRow($row);
             }
         }
@@ -196,8 +199,8 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     return static::throwInvalidRequestError("Skill at index $index is missing SkillID");
                 }
 
-                if (!isset($skill['Level']) || !is_numeric($skill['Level']) || $skill['Level'] < 0) {
-                    return static::throwInvalidRequestError("Skill at index $index is missing Level");
+                if (!isset($skill['DemonstratedLevel']) || !is_numeric($skill['DemonstratedLevel']) || $skill['DemonstratedLevel'] < 0) {
+                    return static::throwInvalidRequestError("Skill at index $index is missing DemonstratedLevel");
                 }
             }
         }
@@ -211,7 +214,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                 try {
                     $existingSkills = DB::table(
                         'SkillID'
-                        ,'SELECT ID, SkillID, Level FROM `%s` WHERE DemonstrationID = %u'
+                        ,'SELECT ID, SkillID, DemonstratedLevel FROM `%s` WHERE DemonstrationID = %u'
                         ,[
                             DemonstrationSkill::$tableName
                             ,$Demonstration->ID
@@ -226,22 +229,34 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
 
             // save new and update existing skills
             $touchedSkillIds = [];
+            $competencyLevels = []; // cache current competency levels so all skills saved in this request target the same level, even if it advances during
 
             foreach ($requestData['Skills'] AS $skill) {
                 $touchedSkillIds[] = $skill['SkillID'];
 
                 if (!array_key_exists($skill['SkillID'], $existingSkills)) {
+                    $Skill = Skill::getByID($skill['SkillID']);
+
+                    if (!empty($skill['TargetLevel'])) {
+                        $targetLevel = $skill['TargetLevel'];
+                    } elseif(array_key_exists($Skill->CompetencyID, $competencyLevels)) {
+                        $targetLevel = $competencyLevels[$Skill->CompetencyID];
+                    } else {
+                        $targetLevel = $competencyLevels[$Skill->CompetencyID] = $Skill->Competency->getCurrentLevelForStudent($Demonstration->Student);
+                    }
+                    
                     $DemoSkill = DemonstrationSkill::create([
-                        'DemonstrationID' => $Demonstration->ID
-                        ,'SkillID' => $skill['SkillID']
-                        ,'Level' => $skill['Level']
+                        'Demonstration' => $Demonstration
+                        ,'Skill' => $Skill
+                        ,'TargetLevel' => $targetLevel
+                        ,'DemonstratedLevel' => $skill['DemonstratedLevel']
                     ], true);
-                } elseif ($existingSkills[$skill['SkillID']]['Level'] != $skill['Level']) {
+                } elseif ($existingSkills[$skill['SkillID']]['DemonstratedLevel'] != $skill['DemonstratedLevel']) {
                     DB::nonQuery(
-                        'UPDATE `%s` SET Level = "%s" WHERE ID = %u'
+                        'UPDATE `%s` SET DemonstratedLevel = "%s" WHERE ID = %u'
                         ,[
                             DemonstrationSkill::$tableName
-                            ,DB::escape($skill['Level'])
+                            ,DB::escape($skill['DemonstratedLevel'])
                             ,$existingSkills[$skill['SkillID']]['ID']
                         ]
                     );

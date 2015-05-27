@@ -3,14 +3,18 @@ Ext.define('Slate.cbl.view.student.RecentProgress', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-student-recentprogress',
     requires: [
-    	'Slate.cbl.API'
+        'Slate.cbl.store.RecentProgress'
     ],
 
     config: {
     	studentId: null,
     	contentAreaId: null,
 
-    	loadStatus: 'unloaded'
+    	loadStatus: 'unloaded',
+        
+        recentProgressStore: {
+            xclass: 'Slate.cbl.store.RecentProgress'
+        }
     },
 
     renderTpl: [
@@ -39,14 +43,16 @@ Ext.define('Slate.cbl.view.student.RecentProgress', {
         '    <tpl for="progress">',
         '        <tr>',
         '            <td class="scoring-domain-col">',
-        '                <span class="domain-skill">{skill}</span>',
+        '                <span class="domain-skill">{skillDescriptor:htmlEncode}</span>',
         '                <div class="meta">',
-        '                    <span class="domain-competency">{competency}, </span>',
-        '                    <span class="domain-teacher">{teacher}</span>',
+        '                    <span class="domain-competency">{competencyDescriptor:htmlEncode}, </span>',
+        '                    <span class="domain-teacher">{teacherTitle:htmlEncode}</span>',
         '                </div>',
         '            </td>',
         '            <td class="level-col">',
-        '                <div class="level-color cbl-level-{level}">{[ values.level != 0 ? values.level : "M" ]}</div>',
+        '                <div class="level-color cbl-level-{demonstratedLevel}">',
+        '                   <tpl if="demonstratedLevel != 0">{demonstratedLevel}<tpl else>M</tpl>',
+        '               </div>',
         '            </td>',
         '        </tr>',
         '    </tpl>',
@@ -67,6 +73,16 @@ Ext.define('Slate.cbl.view.student.RecentProgress', {
 
         if (newStatus) {
             this.addCls('progress-' + newStatus);
+        }
+    },
+
+    applyRecentProgressStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    updateRecentProgressStore: function(store) {
+        if (store) {
+            store.on('refresh', 'refreshProgress', this);
         }
     },
 
@@ -93,22 +109,14 @@ Ext.define('Slate.cbl.view.student.RecentProgress', {
 
     	me.setLoadStatus('loading');
 
-        Slate.cbl.API.getRecentProgress(studentId, contentAreaId, function(progress) {
-        	me.loadedProgress = Ext.isArray(progress) ? progress : null;
-        	me.refreshProgress();
-        });
+        me.getRecentProgressStore().loadByStudentAndContentArea(studentId, contentAreaId);
     },
 
     refreshProgress: function() {
-    	var me = this,
-    		loadedProgress = me.loadedProgress;
-
-    	if (!loadedProgress || !me.rendered) {
-    		return;
-    	}
+    	var me = this;
 
         me.getTpl('progressTpl').overwrite(me.tableEl, {
-            progress: loadedProgress || []
+            progress: Ext.pluck(me.getRecentProgressStore().getRange(), 'data')
         });
 
     	me.setLoadStatus('loaded');

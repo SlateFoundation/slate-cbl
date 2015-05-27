@@ -7,8 +7,8 @@ use Slate\People\Student;
 
 class Competency extends \VersionedRecord
 {
-    public static $minimumLevel = 8;
-    public static $minimumAverage = 8.5;
+    public static $minimumAverageOffset = -0.5;
+    public static $maximumTargetLevel = 12;
 
     // VersionedRecord configuration
     public static $historyTable = 'history_cbl_competencies';
@@ -64,11 +64,8 @@ class Competency extends \VersionedRecord
         'totalDemonstrationsRequired' => [
             'getter' => 'getTotalDemonstrationsRequired'
         ],
-        'minimumLevel' => [
-            'getter' => 'getMinimumLevel'
-        ],
-        'minimumAverage' => [
-            'getter' => 'getMinimumAverage'
+        'minimumAverageOffset' => [
+            'getter' => 'getMinimumAverageOffset'
         ]
     ];
 
@@ -105,16 +102,15 @@ class Competency extends \VersionedRecord
         return $this->finishValidation();
     }
 
-    public function getMinimumLevel()
+    public function getMinimumAverageOffset()
     {
-        // TODO: determine dynamically based on current grade level, convert to dynamic attribute if possible
-        return static::$minimumLevel;
+        return static::$minimumAverageOffset;
     }
 
-    public function getMinimumAverage()
+    public function getMaximumTargetLevel()
     {
-        // TODO: determine dynamically based on current grade level, convert to dynamic attribute if possible
-        return static::$minimumAverage;
+        // TODO: convert to a database field for the competency or content area?
+        return static::$maximumTargetLevel;
     }
 
     public function getSkillIds($forceRefresh = false)
@@ -177,44 +173,56 @@ class Competency extends \VersionedRecord
 #        }
 
         try {
-            DB::nonQuery('set @num := 0, @skill := ""');
+            
+            $currentLevel = $this->getCurrentLevelForStudent($Student);
+            DB::nonQuery('SET @num := 0, @skill := ""');
 
             $completion = DB::oneRecord(
                 <<<'END_OF_SQL'
-SELECT COUNT(Level) AS demonstrationsCount, AVG(Level) AS demonstrationsAverage
-FROM (
-    SELECT StudentDemonstrationSkill.Level,
-        @num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber,
-        @skill := StudentDemonstrationSkill.SkillID AS SkillID
-    FROM (
-        SELECT DemonstrationSkill.SkillID, DemonstrationSkill.Level
-        FROM `%s` DemonstrationSkill
-        JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-        WHERE DemonstrationSkill.SkillID IN (%s) AND DemonstrationSkill.Level > 0
-    ) StudentDemonstrationSkill
-    ORDER BY SkillID, Level DESC
-) OrderedDemonstrationSkill
-JOIN `%s` Skill ON Skill.ID = OrderedDemonstrationSkill.SkillID
-WHERE rowNumber <= DemonstrationsRequired;
+SELECT COUNT(DemonstratedLevel) AS demonstrationsCount,
+       AVG(DemonstratedLevel) AS demonstrationsAverage
+  FROM (
+       SELECT StudentDemonstrationSkill.TargetLevel,
+              StudentDemonstrationSkill.DemonstratedLevel,
+              @num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber,
+              @skill := StudentDemonstrationSkill.SkillID AS SkillID
+         FROM (
+              SELECT DemonstrationSkill.TargetLevel,
+                     DemonstrationSkill.SkillID,
+                     DemonstrationSkill.DemonstratedLevel
+                FROM `%s` DemonstrationSkill
+                JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration
+                  ON Demonstration.ID = DemonstrationSkill.DemonstrationID
+               WHERE DemonstrationSkill.SkillID IN (%s)
+                 AND DemonstrationSkill.TargetLevel = %u
+                 AND DemonstrationSkill.DemonstratedLevel > 0
+              ) StudentDemonstrationSkill
+        ORDER BY SkillID, DemonstratedLevel DESC
+       ) OrderedDemonstrationSkill
+  JOIN `%s` Skill ON Skill.ID = OrderedDemonstrationSkill.SkillID
+ WHERE rowNumber <= DemonstrationsRequired;
 END_OF_SQL
                 ,[
                     DemonstrationSkill::$tableName,
                     Demonstration::$tableName,
                     $Student->ID,
                     implode(',', $this->getSkillIds()),
+                    $currentLevel,
                     Skill::$tableName
                 ]
             );
 
             // cast strings to floats
             $completion = [
+                'currentLevel' => $currentLevel,
                 'demonstrationsCount' => intval($completion['demonstrationsCount']),
-                'demonstrationsAverage' => floatval($completion['demonstrationsAverage'])
+                'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
             ];
         } catch (TableNotFoundException $e) {
             $completion = [
                 'demonstrationsCount' => 0,
-                'demonstrationsAverage' => null
+                'demonstrationsAverage' => null,
+                'currentLevel' => null
             ];
         }
 
@@ -222,5 +230,35 @@ END_OF_SQL
 #        Cache::store($cacheKey, $completion);
 
         return $completion;
+    }
+
+    public static function getAllByListIdentifier($identifier)
+    {
+        if (!$identifier) {
+            return array();
+        }
+
+        if ($identifier == 'all') {
+            return static::getAll();
+        }
+
+        if (preg_match('/^\d+(,\d+)*$/', $identifier)) {
+            return static::getAllByWhere('ID IN (' . $identifier . ')');
+        }
+
+        throw new \Exception('Invalid list identifier for competencies');
+    }
+
+    public function getCurrentLevelForStudent(Student $Student)
+    {
+        $level = \DB::oneValue(
+            'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
+            [
+                $Student->ID,
+                $this->ID
+            ]
+        );
+        
+        return $level ? intval($level) : null;
     }
 }

@@ -25,19 +25,18 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
     },
 
     onBeforeWindowShow: function(overviewWindow) {
-        var me = this,
-            competencyId = overviewWindow.getCompetency(),
-            skillsCombo = me.lookupReference('skillCombo'),
-            skillStore = skillsCombo.getStore();
+        var competencyId = overviewWindow.getCompetency(),
+            skillsCombo = this.lookupReference('skillCombo'),
+            skillsComboStore = skillsCombo.getStore();
 
-        if (!competencyId || skillStore.isLoaded()) {
-            return;
-        }
-
-        Slate.cbl.API.getSkills(competencyId, function(response){
-            skillStore.loadRawData(response.data);
-
-            skillsCombo.setValue(skillStore.findRecord('ID', overviewWindow.getSkill()));
+        skillsComboStore.getSource().getAllByCompetency(competencyId, function() {
+            skillsComboStore.setFilters({
+                property: 'CompetencyID',
+                value: competencyId
+            });
+            
+            skillsCombo.setValue(overviewWindow.getSkill());
+            skillsCombo.enable();
         });
     },
 

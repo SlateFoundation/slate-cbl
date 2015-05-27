@@ -1,5 +1,7 @@
 {extends "designs/site.tpl"}
 
+{block title}Student Competencies Dashboard &mdash; {$dwoo.parent}{/block}
+
 {block "css"}
     {$dwoo.parent}
     {cssmin "cbl/student-dashboard.css"}
@@ -60,6 +62,7 @@
             SiteEnvironment.user = {$.User->getData()|json_encode};
             SiteEnvironment.cblStudent = {JSON::translateObjects($Student, true)|json_encode};
             SiteEnvironment.cblContentArea = {JSON::translateObjects($ContentArea)|json_encode};
+            SiteEnvironment.cblCompetencies = {JSON::translateObjects($ContentArea->Competencies, false, array('totalDemonstrationsRequired', 'minimumAverageOffset'))|json_encode};
         </script>
 
         {$dwoo.parent}

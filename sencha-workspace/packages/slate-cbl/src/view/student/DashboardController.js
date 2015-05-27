@@ -3,7 +3,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-student-dashboard',
     requires: [
-        'Slate.cbl.model.Competency',
         'Slate.cbl.view.student.skill.OverviewWindow'
     ],
 
@@ -19,51 +18,42 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
         }
     },
 
-    // lifecycle overrides
-    init: function() {
-        Ext.create('Ext.data.Store', {
-            storeId: 'cbl-competencies-loaded',
-            model: 'Slate.cbl.model.Competency'
-        });
-    },
-
 
     // event handlers
     onComponentRender: function(dashboardView) {
-        var student = dashboardView.getStudent(),
-            studentId = student && student.getId(),
-            contentArea = dashboardView.getContentArea(),
-            competenciesStore = Ext.getStore('cbl-competencies-loaded');
+        var studentId = dashboardView.getStudentId(),
+            competenciesStore = dashboardView.getCompetenciesStore();
 
-        if (!studentId || !contentArea) {
+        if (!studentId || !competenciesStore.isLoaded()) { // TODO: check if competencies store is loaded instead
             return;
         }
 
         dashboardView.setCompetenciesStatus('loading');
 
-        contentArea.getCompetenciesForStudents([studentId], function(competencies) {
-            competenciesStore.loadRawData(competencies);
-
-            dashboardView.add(Ext.Array.map(competenciesStore.getRange(), function(competency) {
-                return {
-                    studentId: studentId,
-                    competency: competency,
-                    autoEl: 'li'
-                };
-            }));
-
-            dashboardView.setCompetenciesStatus('loaded');
+        dashboardView.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
+            callback: function(completions) {
+                dashboardView.add(Ext.Array.map(completions, function(completion) {
+                    return {
+                        competency: competenciesStore.getById(completion.get('CompetencyID')),
+                        completion: completion,
+                        autoEl: 'li'
+                    };
+                }));
+    
+                dashboardView.setCompetenciesStatus('loaded');
+            }
         });
     },
 
     onDemoCellClick: function(competencyCard, ev, targetEl) {
         Ext.create('Slate.cbl.view.student.skill.OverviewWindow', {
+            ownerCmp: this.getView(),
             autoShow: true,
             animateTarget: targetEl,
 
             competency: parseInt(targetEl.up('ul.cbl-skill-demos').up('li.cbl-competency-panel').getAttribute('data-competency'), 10),
             skill: parseInt(targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'), 10),
-            student: this.getView().getStudent().getId(),
+            student: this.getView().getStudentId(),
             selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
         });
     }

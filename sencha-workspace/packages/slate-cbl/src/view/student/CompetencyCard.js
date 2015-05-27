@@ -3,18 +3,22 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-student-competencycard',
     requires: [,
-        'Slate.cbl.util.CBL'
+        'Slate.cbl.Util',
+
+        'Slate.cbl.store.DemonstrationSkills',
+        
+        'Slate.cbl.data.Skills'
     ],
 
     config: {
         // required inputs
-        studentId: null,
         competency: null,
+        completion: null,
 
         // optional config
         averageFormat: '0.##',
 
-        // input-dependent configs
+        // input-dependent state
         level: null,
         percentComplete: null,
         demonstrationsAverage: null,
@@ -22,7 +26,12 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
 
         // internal state
         skillsStatus: 'unloaded',
+        
+        demonstrationSkillsStore: {
+            xclass: 'Slate.cbl.store.DemonstrationSkills'
+        },
 
+        // component config
         cls: 'cbl-competency-panel'
     },
 
@@ -71,19 +80,19 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     skillsTpl: [
         '<tpl foreach=".">',
         '    <li class="cbl-skill">',
-        '        <h5 class="cbl-skill-name">{Descriptor:htmlEncode}</h5>',
-        '        <ul class="cbl-skill-demos" data-skill="{ID}">',
+        '        <h5 class="cbl-skill-name">{skill.Descriptor:htmlEncode}</h5>',
+        '        <ul class="cbl-skill-demos" data-skill="{skill.ID}">',
         '            <tpl for="demonstrations">',
-        '                <li class="cbl-skill-demo <tpl if="values.Level==0">cbl-skill-demo-uncounted</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
-        '                    <tpl if="values.Level &gt;= 0">',
-        '                        {[values.Level == 0 ? "M" : values.Level]}',
+        '                <li class="cbl-skill-demo <tpl if="values.DemonstratedLevel==0">cbl-skill-demo-uncounted</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
+        '                    <tpl if="values.DemonstratedLevel &gt;= 0">',
+        '                        {[values.DemonstratedLevel == 0 ? "M" : values.DemonstratedLevel]}',
         '                    <tpl else>',
         '                        &nbsp;',
         '                    </tpl>',
         '                </li>',
         '            </tpl>',
         '        </ul>',
-        '        <div class="cbl-skill-description"><p>{Statement}</p></div>',
+        '        <div class="cbl-skill-description"><p>{skill.Statement}</p></div>',
                 /* TODO: FIXME: We need new design assets/styling for the checkmark, this doesn't render very well at all
                 '<div class="cbl-skill-complete-indicator cbl-level-{parent.level} is-checked">',
                     '<svg class="check-mark-image" width="16" height="16">',
@@ -120,20 +129,25 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     // config handlers
     updateCompetency: function(competency) {
         var me = this,
-            htmlEncode = Ext.util.Format.htmlEncode,
-            completion = competency.get('studentCompletions')[me.getStudentId()] || {},
-            percentComplete = Math.round(100 * (completion.demonstrationsCount || 0) / competency.get('totalDemonstrationsRequired')),
-            demonstrationsAverage = completion.demonstrationsAverage;
-
-        me.setLevel(competency && competency.get('level') || null);
-        me.setPercentComplete(percentComplete);
-        me.setDemonstrationsAverage(demonstrationsAverage);
-        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage < competency.get('minimumAverage'));
+            htmlEncode = Ext.util.Format.htmlEncode;
 
         if (me.rendered) {
             me.descriptorEl.update(htmlEncode(competency.get('Descriptor')));
             me.statementEl.update(htmlEncode(competency.get('Statement')));
         }
+    },
+
+    updateCompletion: function(completion) {
+        var me = this,
+            competency = me.getCompetency(),
+            percentComplete = Math.round(100 * completion.get('demonstrationsCount') / competency.get('totalDemonstrationsRequired')),
+            demonstrationsAverage = completion.get('demonstrationsAverage'),
+            currentLevel = completion.get('currentLevel');
+
+        me.setLevel(currentLevel);
+        me.setPercentComplete(percentComplete);
+        me.setDemonstrationsAverage(demonstrationsAverage);
+        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
 
         me.loadSkills();
     },
@@ -187,6 +201,10 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         }
     },
 
+    applyDemonstrationSkillsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
 
     // event handlers
     onDemoCellClick: function(ev, t) {
@@ -197,17 +215,19 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     // public methods
     loadSkills: function() {
         var me = this,
-            competency = me.getCompetency();
+            competency = me.getCompetency(),
+            demoSkillsStore = me.getDemonstrationSkillsStore();
 
         me.setSkillsStatus('loading');
 
-        competency.getDemonstrationsForStudents([me.getStudentId()], function(loadedDemonstrations) {
-            me.loadedDemonstrations = loadedDemonstrations;
-            me.refreshSkills();
+        demoSkillsStore.loadByStudentsAndCompetencies(me.getCompletion().get('StudentID'), competency.getId(), {
+            callback: function(demoSkills) {
+                me.refreshSkills();
+            }
         });
 
-        competency.withSkills(function(loadedSkills) {
-            me.loadedSkills = loadedSkills;
+        Slate.cbl.data.Skills.getAllByCompetency(competency, function(skills) {
+            me.loadedSkills = skills;
             me.refreshSkills();
         });
     },
@@ -215,7 +235,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     refreshSkills: function() {
         var me = this;
 
-        if (!me.loadedSkills || !me.loadedDemonstrations || !me.rendered) {
+        if (!me.loadedSkills || !me.getDemonstrationSkillsStore().isLoaded() || !me.rendered) {
             return;
         }
 
@@ -228,30 +248,32 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         var me = this,
             skills = me.loadedSkills,
             skillsLen = skills.getCount(), skillIndex = 0, skill,
-            demonstrations = me.loadedDemonstrations,
-            demonstrationsLen = demonstrations.length, demonstrationIndex = 0, demonstration,
+            demoSkillsStore = me.getDemonstrationSkillsStore(),
+            demoSkillsLen = demoSkillsStore.getCount(), demoSkillIndex = 0, demoSkill,
             skillsData = {}, skillData, demonstrationsRequired;
 
         // index skills by ID and create empty demonstrations array
         for (; skillIndex < skillsLen; skillIndex++) {
             skill = skills.getAt(skillIndex);
-            skill.demonstrations = [];
-            skillsData[skill.ID] = skill;
+            skillsData[skill.getId()] = {
+                skill: skill.getData(),
+                demonstrations: []
+            };
         }
 
         // group demonstrations by skill
-        for (; demonstrationIndex < demonstrationsLen; demonstrationIndex++) {
-            demonstration = demonstrations[demonstrationIndex];
-            skillsData[demonstration.SkillID].demonstrations.push(demonstration);
+        for (; demoSkillIndex < demoSkillsLen; demoSkillIndex++) {
+            demoSkill = demoSkillsStore.getAt(demoSkillIndex);
+            skillsData[demoSkill.get('SkillID')].demonstrations.push(demoSkill.getData());
         }
 
         // sort and pad demonstrations arrays
         for (skillIndex in skillsData) {
             skillData = skillsData[skillIndex];
-            demonstrationsRequired = skillData.DemonstrationsRequired;
+            demonstrationsRequired = skillData.skill.DemonstrationsRequired;
 
-            skillData.demonstrations = Slate.cbl.util.CBL.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
-            Slate.cbl.util.CBL.padArray(skillData.demonstrations, demonstrationsRequired);
+            skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
+            Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);
         }
 
         return skillsData;

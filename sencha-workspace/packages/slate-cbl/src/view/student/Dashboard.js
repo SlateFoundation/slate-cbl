@@ -4,22 +4,42 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
     xtype: 'slate-cbl-student-dashboard',
     requires:[
         'Slate.cbl.view.student.DashboardController',
+
+        'Slate.cbl.Util',
+
+        'Slate.cbl.widget.Popover',
         'Slate.cbl.view.student.CompetencyCard',
-        'Slate.cbl.model.Student',
-        'Slate.cbl.model.ContentArea',
-        'Slate.cbl.widget.Popover'
+
+        'Slate.cbl.store.Competencies',
+        'Slate.cbl.store.Completions',
+        'Slate.cbl.store.DemonstrationSkills',
+
+        'Slate.cbl.data.Skills'
     ],
 
     controller: 'slate-cbl-student-dashboard',
 
     config: {
-        student: null,
-        contentArea: null,
+        studentId: null,
 
         popover: {
             pointer: 'none'
         },
-        competenciesStatus: 'unloaded'
+        competenciesStatus: 'unloaded',
+
+        competenciesStore: {
+            xclass: 'Slate.cbl.store.Competencies'
+        },
+
+        skillsStore: 'cbl-skills',
+
+        completionsStore: {
+            xclass: 'Slate.cbl.store.Completions'
+        },
+        
+        demonstrationSkillsStore: {
+            xclass: 'Slate.cbl.store.DemonstrationSkills'
+        }
     },
 
     autoEl: {
@@ -35,42 +55,6 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
     },
 
-    applyStudent: function(student) {
-        if (!student) {
-            return null;
-        }
-
-        if (student.isModel) {
-            return student;
-        }
-
-        return Ext.create('Slate.cbl.model.Student', student);
-    },
-
-    updateStudent: function(newStudent, oldStudent) {
-        this.fireEvent('studentchange', this, newStudent, oldStudent);
-    },
-
-    applyContentArea: function(contentArea) {
-        if (!contentArea) {
-            return null;
-        }
-
-        if (contentArea.isModel) {
-            return contentArea;
-        }
-
-        if (contentArea === true) {
-            contentArea = {};
-        }
-
-        return Ext.create('Slate.cbl.model.ContentArea', contentArea);
-    },
-
-    updateContentArea: function(newContentArea, oldContentArea) {
-        this.fireEvent('contentareachange', this, newContentArea, oldContentArea);
-    },
-
     updateCompetenciesStatus: function(newStatus, oldStatus) {
         if (oldStatus) {
             this.removeCls('competencies-' + oldStatus);
@@ -79,5 +63,21 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         if (newStatus) {
             this.addCls('competencies-' + newStatus);
         }
+    },
+
+    applyCompetenciesStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    applySkillsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    applyCompletionsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    applyDemonstrationSkillsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
     }
 });
