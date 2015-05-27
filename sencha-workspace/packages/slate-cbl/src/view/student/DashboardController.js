@@ -30,7 +30,6 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
 
         dashboardView.setCompetenciesStatus('loading');
 
-        // TODO: load competencies+skills first --- render shell before applying demonstrations/completions? or just block UI?
         dashboardView.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
             callback: function(completions) {
                 dashboardView.add(Ext.Array.map(completions, function(completion) {
@@ -47,8 +46,8 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
     },
 
     onDemoCellClick: function(competencyCard, ev, targetEl) {
-        // TODO: review params against teacher dashboard changes
         Ext.create('Slate.cbl.view.student.skill.OverviewWindow', {
+            ownerCmp: this.getView(),
             autoShow: true,
             animateTarget: targetEl,
 
