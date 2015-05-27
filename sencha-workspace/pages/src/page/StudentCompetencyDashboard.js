@@ -26,7 +26,6 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
         Ext.QuickTips.init();
 
         // render student dashboard component
-        // TODO: feed competencies list in via SiteEnvironment
         me.dashboard = Ext.create('Slate.cbl.view.student.Dashboard', {
             renderTo: Ext.get('studentDashboardCt'),
             studentId: cblStudentId,
