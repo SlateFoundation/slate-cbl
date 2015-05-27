@@ -2,6 +2,8 @@
 
 namespace Slate\CBL;
 
+use DB, TableNotFoundException;
+use Emergence\People\PeopleRequestHandler;
 use Slate\People\Student;
 
 class StudentDashboardRequestHandler extends \RequestHandler
@@ -16,6 +18,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
         $GLOBALS['Session']->requireAccountLevel('Student');
 
         switch ($action = static::shiftPath()) {
+            case 'recent-progress':
+                return static::handleRecentProgressRequest();
             case '':
             case false:
                 return static::handleDashboardRequest();
@@ -26,17 +30,69 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleDashboardRequest()
     {
-        if (!empty($_GET['content-area'])) {
-            if (ctype_digit($_GET['content-area'])) {
-                $ContentArea = ContentArea::getByID($_GET['content-area']);
-            } else {
-                $ContentArea = ContentArea::getByCode($_GET['content-area']);
-            }
-        }
-
         return static::respond('student-dashboard', [
             'Student' => static::_getRequestedStudent(),
-            'ContentArea' => $ContentArea
+            'ContentArea' => static::_getRequestedContentArea()
+        ]);
+    }
+
+    public static function handleRecentProgressRequest() {
+        $Student = static::_getRequestedStudent();
+        $ContentArea = static::_getRequestedContentArea();
+
+        if (!$ContentArea) {
+            return static::throwInvalidRequestError('Content area required');
+        }
+
+        $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+
+        try {
+            // TODO: do name formatting on the client-side
+            $progress = DB::allRecords('
+                SELECT ds.DemonstratedLevel AS demonstratedLevel,
+                       d.Created AS demonstrationCreated,
+                       CONCAT(CASE p.Gender
+                         WHEN "Male"   THEN "Mr. "
+                         WHEN "Female" THEN "Ms. "
+                          END, p.lastName) AS teacherTitle,
+                       c.Descriptor AS competencyDescriptor,
+                       s.Descriptor AS skillDescriptor
+                  FROM %s AS ds
+                  JOIN %s AS p
+                    ON ds.CreatorID = p.ID
+                  JOIN %s AS d
+                    ON d.ID = ds.DemonstrationID
+                  JOIN %s AS s
+                    ON s.ID = ds.SkillID
+                  JOIN %s AS c
+                    ON c.ID = s.CompetencyID
+                  WHERE d.StudentID = %s
+                    AND c.ContentAreaID = %s
+                  ORDER BY d.Created DESC
+                  LIMIT %d',
+                [
+                    DemonstrationSkill::$tableName,
+                    \Emergence\People\Person::$tableName,
+                    Demonstration::$tableName,
+                    Skill::$tableName,
+                    Competency::$tableName,
+                    $Student->ID,
+                    $ContentArea->ID,
+                    $limit
+                ]
+            );
+        } catch (TableNotFoundException $e) {
+            $progress = [];
+        }
+
+        // cast strings to integers
+        foreach ($progress AS &$progressRecord) {
+            $progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
+            $progressRecord['demonstrationCreated'] = strtotime($progressRecord['demonstrationCreated']);
+        }
+        
+        return static::respond('progress', [
+            'data' => $progress
         ]);
     }
 
@@ -46,7 +102,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
             !empty($_GET['student']) &&
             $GLOBALS['Session']->hasAccountLevel('Staff')
         ) {
-            if (!$Student = Student::getByHandle($_GET['student'])) {
+            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
                 return static::throwNotFoundError('Student not found');
             }
         } else {
@@ -58,5 +114,18 @@ class StudentDashboardRequestHandler extends \RequestHandler
         }
 
         return $Student;
+    }
+
+    protected static function _getRequestedContentArea()
+    {
+        $ContentArea = null;
+
+        if (!empty($_GET['content-area'])) {
+            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content-area'])) {
+                return static::throwNotFoundError('Content area not found');
+            }
+        }
+
+        return $ContentArea;
     }
 }
