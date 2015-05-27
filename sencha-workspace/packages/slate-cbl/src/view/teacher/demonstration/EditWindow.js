@@ -36,12 +36,12 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     width: 600,
     constrainHeader: true,
 
-    tools: [
-        {
-            type: 'gear',
-            tooltip: 'Override'
-        }
-    ],
+//    tools: [
+//        {
+//            type: 'gear',
+//            tooltip: 'Override'
+//        }
+//    ],
 
     layout: 'fit',
     items: {
