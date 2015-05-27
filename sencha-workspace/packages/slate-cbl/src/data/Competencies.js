@@ -17,9 +17,9 @@ Ext.define('Slate.cbl.data.Competencies', {
     onProxyLoad: function(operation) {
         var me = this,
             rawData = me.getProxy().getReader().rawData;
-            
+
         if (rawData.related && rawData.related.ContentArea) {
-            Slate.cbl.data.ContentAreas.loadRawData(rawData.related.ContentArea);
+            Slate.cbl.data.ContentAreas.loadRawData(rawData.related.ContentArea, true);
         }
 
         me.callParent(arguments);
