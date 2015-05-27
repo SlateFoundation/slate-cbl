@@ -4,7 +4,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
     xtype: 'slate-cbl-teacher-skill-overviewwindow',
     requires: [
         'Slate.cbl.view.teacher.skill.OverviewWindowController',
-        
+
         'Slate.cbl.data.Skills',
 
         'Ext.form.field.ComboBox',
@@ -48,6 +48,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     flex: 1,
 
                     xtype: 'combobox',
+                    disabled: true,
 
                     store: {
                         type: 'chained',
