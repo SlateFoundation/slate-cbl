@@ -28,6 +28,10 @@ class DemonstrationSkill extends \ActiveRecord
         'DemonstratedLevel' => [
             'type' => 'tinyint',
             'unsigned' => true
+        ],
+        'Override' => [
+            'type' => 'boolean',
+            'default' => false
         ]
     ];
 
