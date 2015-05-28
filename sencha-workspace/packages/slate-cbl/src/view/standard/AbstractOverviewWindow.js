@@ -67,7 +67,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                     '</thead>',
 
                     '<tpl if="demonstrations && demonstrations.length">',
-                        '<tpl for="demonstrations">{% if (!values.Demonstration) debugger; %}',
+                        '<tpl for="demonstrations">',
                             '<tr class="skill-grid-demo-row" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstrated:date}</td>',
