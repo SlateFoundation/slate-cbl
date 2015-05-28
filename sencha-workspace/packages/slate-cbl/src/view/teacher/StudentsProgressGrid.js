@@ -886,7 +886,10 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             competencyStudentData,
             
             skillDemonstrationBlockEls, skillDemonstrationBlockEl,
+            skillDemonstrationsOverridden, renderedOverridden,
             skillDemonstrationDemonstratedLevel, renderedDemonstrationLevel,
+            skillDemonstrationOverride, renderedOverride,
+            skillDemonstrationOverrideSpan, renderedOverrideSpan,
             skillDemonstrationDemonstrationID,
             
             competencyStudentLevelsFlushed = [], competencyStudentLevelsFlushedLength, competencyStudentLevelsIndex, competencyStudentCompletion;
@@ -1029,6 +1032,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                         skillDemonstrationBlocks = Slate.cbl.Util.sortDemonstrations(skillDemonstrationBlocks, skillDemonstrationsRequired);
                         Slate.cbl.Util.padArray(skillDemonstrationBlocks, skillDemonstrationsRequired);
                         skillStudentRenderData.demonstrationBlocks = skillDemonstrationBlocks;
+                        skillDemonstrationsOverridden = false;
 
                         // reset block index
                         skillDemonstrationBlocksById = skillStudentRenderData.demonstrationBlocksById = {};
@@ -1037,22 +1041,75 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                         for (skillDemonstrationIndex = 0; skillDemonstrationIndex < skillDemonstrationsRequired; skillDemonstrationIndex++) {
                             skillDemonstration = skillDemonstrationBlocks[skillDemonstrationIndex];
                             skillDemonstrationDemonstratedLevel = skillDemonstration.DemonstratedLevel;
+                            skillDemonstrationOverride = skillDemonstration.Override;
+                            skillDemonstrationOverrideSpan = skillDemonstrationOverride ? skillDemonstrationsRequired - skillDemonstrationIndex : undefined;
                             skillDemonstrationDemonstrationID = skillDemonstration.DemonstrationID;
 
                             skillDemonstrationBlockEl = skillDemonstrationBlockEls.item(skillDemonstrationIndex);
                             renderedDemonstrationLevel = skillDemonstrationBlockEl.renderedDemonstrationLevel;
+                            renderedOverridden = skillDemonstrationBlockEl.renderedOverridden;
+                            renderedOverride = skillDemonstrationBlockEl.renderedOverride;
+                            renderedOverrideSpan = skillDemonstrationBlockEl.renderedOverrideSpan;
+
+                            // apply overridden class to all blocks following an override block
+                            if (renderedOverridden != skillDemonstrationsOverridden) {
+                                skillDemonstrationBlockEl.renderedOverridden = skillDemonstrationsOverridden;
+
+                                if (skillDemonstrationsOverridden) {
+                                    skillDemonstrationBlockEl.addCls('cbl-grid-demo-overridden');
+                                    console.log("%o.addCls('cbl-grid-demo-overridden')", skillDemonstrationBlockEl.dom);
+
+                                    continue; // an overridden block doesn't need any further updates because it'll be hidden
+                                } else if (renderedOverridden) {
+                                    skillDemonstrationBlockEl.removeCls('cbl-grid-demo-overridden');
+                                    console.log("%o.removeCls('cbl-grid-demo-overridden')", skillDemonstrationBlockEl.dom);
+                                }
+                            }
+
+                            skillDemonstrationsOverridden = skillDemonstrationsOverridden || skillDemonstrationOverride;
+
+                            // apply override class to an override block
+                            if (renderedOverride != skillDemonstrationOverride) {
+                                skillDemonstrationBlockEl.renderedOverride = skillDemonstrationOverride;
+
+                                if (skillDemonstrationOverride) {
+                                    skillDemonstrationBlockEl.addCls('cbl-grid-override');
+                                } else if (renderedOverride) {
+                                    skillDemonstrationBlockEl.removeCls('cbl-grid-override');
+                                }
+                            }
+
+                            // apply override span
+                            if (renderedOverrideSpan != skillDemonstrationOverrideSpan) {
+                                skillDemonstrationBlockEl.renderedOverrideSpan = skillDemonstrationOverrideSpan;
+
+                                if (skillDemonstrationOverrideSpan) {
+                                    skillDemonstrationBlockEl.addCls('cbl-grid-span-' + skillDemonstrationOverrideSpan);
+                                } else if (renderedOverrideSpan) {
+                                    skillDemonstrationBlockEl.removeCls('cbl-grid-span-' + renderedOverrideSpan);
+                                }
+                            }
+                            
+                            // normalize level to output code
+                            if (skillDemonstrationOverride) {
+                                skillDemonstrationDemonstratedLevel = 'O'; // letter O for override
+                            } else if (skillDemonstrationDemonstratedLevel === 0) {
+                                skillDemonstrationDemonstratedLevel = 'M';
+                            }
 
                             // apply demonstrated level change
                             if (renderedDemonstrationLevel !== skillDemonstrationDemonstratedLevel) {
-                                if (skillDemonstrationBlockEl === undefined) {
+                                skillDemonstrationBlockEl.renderedDemonstrationLevel = skillDemonstrationDemonstratedLevel;
+                                
+                                if (renderedDemonstrationLevel === undefined) {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-empty');
                                 } else if (skillDemonstrationDemonstratedLevel === undefined) {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-empty');
                                 }
 
-                                if (renderedDemonstrationLevel === 0) {
+                                if (renderedDemonstrationLevel === 'M') {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-uncounted');
-                                } else if (skillDemonstrationDemonstratedLevel === 0) {
+                                } else if (skillDemonstrationDemonstratedLevel === 'M') {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-uncounted');
                                 }
 
@@ -1062,13 +1119,8 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-counted');
                                 }
 
-                                skillDemonstrationBlockEl.update(
-                                    skillDemonstrationDemonstratedLevel === undefined ?
-                                        '' :
-                                        (skillDemonstrationDemonstratedLevel === 0 ? 'M' : skillDemonstrationDemonstratedLevel)
-                                );
+                                skillDemonstrationBlockEl.update(skillDemonstrationDemonstratedLevel === undefined ? '' : skillDemonstrationDemonstratedLevel);
 
-                                skillDemonstrationBlockEl.renderedDemonstrationLevel = skillDemonstrationDemonstratedLevel;
                             }
 
                             // apply demo ID change

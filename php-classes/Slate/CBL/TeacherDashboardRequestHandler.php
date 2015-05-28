@@ -98,6 +98,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                         DemonstrationSkill.SkillID,
                         DemonstrationSkill.TargetLevel,
                         DemonstrationSkill.DemonstratedLevel,
+                        DemonstrationSkill.Override,
                         DemonstrationSkill.ID
                    FROM (SELECT ID
                            FROM `%1$s`
@@ -139,6 +140,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
             $demonstrationSkill['SkillID'] = intval($demonstrationSkill['SkillID']);
             $demonstrationSkill['TargetLevel'] = intval($demonstrationSkill['TargetLevel']);
             $demonstrationSkill['DemonstratedLevel'] = intval($demonstrationSkill['DemonstratedLevel']);
+            $demonstrationSkill['Override'] = boolval($demonstrationSkill['Override']);
             $demonstrationSkill['ID'] = intval($demonstrationSkill['ID']);
         }
 
