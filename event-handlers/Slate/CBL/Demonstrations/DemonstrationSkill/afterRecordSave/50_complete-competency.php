@@ -8,7 +8,7 @@ $Competency = $_EVENT['Record']->Skill->Competency;
 $completion = $Competency->getCompletionForStudent($Student);
 
 if (
-    $completion['demonstrationsCount'] >= $Competency->getTotalDemonstrationsRequired() &&
+    $completion['demonstrationsComplete'] >= $Competency->getTotalDemonstrationsRequired() &&
     $completion['demonstrationsAverage'] >= ($completion['currentLevel'] + $Competency->getMinimumAverageOffset()) &&
     $completion['currentLevel'] < $Competency->getMaximumTargetLevel()
     ) {

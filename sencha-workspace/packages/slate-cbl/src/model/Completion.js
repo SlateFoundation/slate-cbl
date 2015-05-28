@@ -7,7 +7,8 @@ Ext.define('Slate.cbl.model.Completion', {
         { name: 'StudentID', type: 'int' },
         { name: 'CompetencyID', type: 'int' },
         { name: 'currentLevel', type: 'int', allowNull: true },
-        { name: 'demonstrationsCount', type: 'int' },
+        { name: 'demonstrationsLogged', type: 'int' },
+        { name: 'demonstrationsComplete', type: 'int' },
         { name: 'demonstrationsAverage', type: 'float', allowNull: true }
     ],
 

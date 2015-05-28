@@ -736,7 +736,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             competencyStudentData = competencyData.studentsById[studentId];
             progressCellEl = competencyStudentData.progressCellEl;
 
-            count = completion.get('demonstrationsCount');
+            count = completion.get('demonstrationsComplete');
             average = completion.get('demonstrationsAverage');
             level = completion.get('currentLevel');
             renderedLevel = competencyStudentData.renderedLevel;

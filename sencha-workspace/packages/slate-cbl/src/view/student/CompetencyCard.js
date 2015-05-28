@@ -140,7 +140,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     updateCompletion: function(completion) {
         var me = this,
             competency = me.getCompetency(),
-            percentComplete = Math.round(100 * completion.get('demonstrationsCount') / competency.get('totalDemonstrationsRequired')),
+            percentComplete = Math.round(100 * completion.get('demonstrationsComplete') / competency.get('totalDemonstrationsRequired')),
             demonstrationsAverage = completion.get('demonstrationsAverage'),
             currentLevel = completion.get('currentLevel');
 
