@@ -116,8 +116,8 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                     AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
                 ,[
                     Skill::$tableName                   // 1
-                    ,DemonstrationSkill::$tableName     // 2
-                    ,Demonstration::$tableName          // 3
+                    ,Demonstrations\DemonstrationSkill::$tableName     // 2
+                    ,Demonstrations\Demonstration::$tableName          // 3
                     ,StudentCompetency::$tableName      // 4
                     ,implode(',', array_map(function($Competency) {
                         return $Competency->ID;

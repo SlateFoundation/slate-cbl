@@ -1,6 +1,8 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
+
+use Slate\CBL\Skill;
 
 class DemonstrationSkill extends \ActiveRecord
 {

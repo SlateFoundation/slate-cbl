@@ -316,7 +316,10 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                     );
 
                     if (wasPhantom && me.lookupReference('loadNextStudentCheck').checked && !editWindow.destroying && !editWindow.destroyed) {
-                        editWindow.setDemonstration(true); // start a new demonstration
+                        // start a new demonstration
+                        editWindow.setDemonstration({
+                            Class: demonstration.get('Class')
+                        });
 
                         studentsFieldStore = studentField.getStore();
                         studentField.select(studentsFieldStore.getAt(studentsFieldStore.indexOf(selectedStudent) + 1));

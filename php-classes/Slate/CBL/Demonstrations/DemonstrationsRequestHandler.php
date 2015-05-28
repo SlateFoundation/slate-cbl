@@ -1,12 +1,13 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
 
 use DB;
 use ActiveRecord;
 use SpreadsheetWriter;
 use TableNotFoundException;
 use Slate\People\Student;
+use Slate\CBL\Skill;
 
 class DemonstrationsRequestHandler extends \RecordsRequestHandler
 {

@@ -20,7 +20,7 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
         {
             name: 'Class',
             type: 'string',
-            defaultValue: 'Slate\\CBL\\DemonstrationSkill'
+            defaultValue: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill'
         },
         {
             name: 'Created',

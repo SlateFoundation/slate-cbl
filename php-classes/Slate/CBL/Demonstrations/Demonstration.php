@@ -1,19 +1,13 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
 
 use Slate\People\Student;
-
-/**
- * Tracks the demonstration of one skill at one level
- */
+use Slate\CBL\Competency;
+use Slate\CBL\Skill;
 
 class Demonstration extends \VersionedRecord
 {
-    public static $experienceTypeOptions = ['Core Studio', 'Choice Studio', 'Workshop', 'Health and Wellness', 'PE/Fitness', 'Online Courseware', 'Situated Learning', 'Work-based Learning', 'Advisory'];
-    public static $contextOptions = ['Journalism', 'Mythbusters', 'Personal Finance', 'Math Workshop', 'Literacy Workshop', 'Culinary Arts', 'Entrepreneurship', 'Performing Arts', 'Help Desk'];
-    public static $performanceTypeOptions = ['Position paper', 'Lab report', 'Media presentation', 'Argumentative essay', 'Speech'];
-    
     // VersionedRecord configuration
     public static $historyTable = 'history_demonstrations';
 
@@ -23,6 +17,11 @@ class Demonstration extends \VersionedRecord
     public static $pluralNoun = 'demonstrations';
     public static $collectionRoute = '/cbl/demonstrations';
     public static $useCache = true;
+    public static $subClasses = [
+        __CLASS__,
+        ExperienceDemonstration::class,
+        OverrideDemonstration::class
+    ];
 
     public static $fields = [
         'StudentID' => [
@@ -30,9 +29,6 @@ class Demonstration extends \VersionedRecord
             ,'index' => true
         ]
         ,'Demonstrated' => 'timestamp'
-        ,'ExperienceType'
-        ,'Context'
-        ,'PerformanceType'
         ,'ArtifactURL' => [
             'notnull' => false
         ]
@@ -59,9 +55,6 @@ class Demonstration extends \VersionedRecord
             'validator' => 'number'
             ,'min' => 1
         ]
-        ,'ExperienceType'
-        ,'Context'
-        ,'PerformanceType'
     ];
     
     public static $dynamicFields = [

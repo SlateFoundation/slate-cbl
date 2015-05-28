@@ -4,7 +4,7 @@ namespace Slate\CBL;
 use DB;
 
 
-$tableName = DemonstrationSkill::$tableName;
+$tableName = Demonstrations\DemonstrationSkill::$tableName;
 
 
 // skip conditions

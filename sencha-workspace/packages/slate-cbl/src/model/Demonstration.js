@@ -20,7 +20,7 @@ Ext.define('Slate.cbl.model.Demonstration', {
         {
             name: "Class",
             type: "string",
-            defaultValue: "Slate\\CBL\\Demonstration"
+            defaultValue: "Slate\\CBL\\Demonstrations\\Demonstration"
         },
         {
             name: "Created",
@@ -45,15 +45,18 @@ Ext.define('Slate.cbl.model.Demonstration', {
         },
         {
             name: "ExperienceType",
-            type: "string"
+            type: "string",
+            allowNull: true
         },
         {
             name: "Context",
-            type: "string"
+            type: "string",
+            allowNull: true
         },
         {
             name: "PerformanceType",
-            type: "string"
+            type: "string",
+            allowNull: true
         },
         {
             name: "ArtifactURL",

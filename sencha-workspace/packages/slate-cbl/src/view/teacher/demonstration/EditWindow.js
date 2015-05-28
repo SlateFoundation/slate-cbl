@@ -26,7 +26,9 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     controller: 'slate-cbl-teacher-demonstration-editwindow',
 
     config: {
-        demonstration: true,
+        demonstration: {
+            Class: 'Slate\\CBL\\Demonstrations\\ExperienceDemonstration'
+        },
         studentsStore: null,
         defaultStudent: null,
         defaultCompetency: null

@@ -1,6 +1,6 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
 
 $newDemonstratedType = 'TIMESTAMP';
 // skip conditions

@@ -203,8 +203,8 @@ SELECT COUNT(DemonstratedLevel) AS demonstrationsCount,
  WHERE rowNumber <= DemonstrationsRequired;
 END_OF_SQL
                 ,[
-                    DemonstrationSkill::$tableName,
-                    Demonstration::$tableName,
+                    Demonstrations\DemonstrationSkill::$tableName,
+                    Demonstrations\Demonstration::$tableName,
                     $Student->ID,
                     implode(',', $this->getSkillIds()),
                     $currentLevel,
