@@ -8,6 +8,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     alias: 'controller.slate-cbl-teacher-dashboard',
     requires: [
         'Slate.cbl.view.teacher.skill.OverviewWindow',
+        'Slate.cbl.view.teacher.skill.OverrideWindow',
         'Slate.cbl.view.teacher.demonstration.EditWindow'
     ],
 
@@ -21,7 +22,8 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
             'slate-cbl-teacher-skill-overviewwindow': {
                 createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
                 editdemonstrationclick: 'onOverviewEditDemonstrationClick',
-                deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick'
+                deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
+                createoverrideclick: 'onOverviewCreateOverrideClick'
             }
         },
 
@@ -77,8 +79,6 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     },
 
     onOverviewDeleteDemonstrationClick: function(overviewWindow, demonstrationId) {
-        var me = this;
-
         overviewWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
 
         Slate.cbl.model.Demonstration.load(demonstrationId, {
@@ -115,6 +115,16 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                     }
                 );
             }
+        });
+    },
+
+    onOverviewCreateOverrideClick: function(overviewWindow, studentId, standardId) {
+        Ext.create('Slate.cbl.view.teacher.skill.OverrideWindow', {
+            ownerCmp: this.getView(),
+            autoShow: true,
+
+            student: studentId,
+            standard: standardId
         });
     },
 

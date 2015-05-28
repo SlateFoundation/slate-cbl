@@ -98,7 +98,10 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     },
 
     onOverrideClick: function() {
-        alert('Not yet implemented');
+        var me = this,
+            overviewWindow = me.getView();
+
+        overviewWindow.fireEvent('createoverrideclick', overviewWindow, me.lookupReference('studentCombo').getValue(), me.lookupReference('skillCombo').getValue());
     },
 
     onCreateDemonstrationClick: function() {
