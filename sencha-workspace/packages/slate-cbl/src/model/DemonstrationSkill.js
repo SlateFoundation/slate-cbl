@@ -89,6 +89,6 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
     proxy: {
         type: 'records',
         url: '/cbl/demonstration-skills',
-        include: 'Demonstration'
+        include: 'Demonstration.Creator'
     }
 });
