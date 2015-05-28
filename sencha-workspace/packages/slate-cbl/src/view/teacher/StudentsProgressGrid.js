@@ -501,7 +501,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         }
 
         if (skillsData) {
-            me.getDemonstrationSkillsStore().mergeRawData(skillsData, demonstration.getId());
+            me.getDemonstrationSkillsStore().mergeRawData(skillsData, demonstration);
         }
     },
 
@@ -529,7 +529,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             }
         }
 
-        me.getDemonstrationSkillsStore().mergeRawData([], demonstration.getId());
+        me.getDemonstrationSkillsStore().mergeRawData([], demonstration);
     },
 
 

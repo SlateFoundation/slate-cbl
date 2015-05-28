@@ -296,9 +296,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         demonstration.set('Skills', skills);
 
         demonstration.save({
-            params: {
-                include: 'competencyCompletions,Skills.Demonstration'
-            },
             callback: function(record, operation, success) {
                 var studentsFieldStore,
                     tplData;
