@@ -50,6 +50,10 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
             name: 'DemonstratedLevel',
             type: 'int'
         },
+        {
+            name: 'Override',
+            type: 'boolean'
+        },
         
         // dynamic fields that might be provided directly by server in some results
         {
