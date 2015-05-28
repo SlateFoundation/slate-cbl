@@ -3,6 +3,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-skill-overridewindow',
     requires: [
+        'Ext.window.Toast',
+
         'Slate.cbl.model.Demonstration'
     ],
 
@@ -21,6 +23,19 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindowController', {
         listen: {
         }
     },
+
+
+    toastTitleTpl: [
+        'Standard Override Saved'
+    ],
+
+    toastBodyTpl: [
+        'Overrode',
+        ' <strong>{standard.Code}</strong>',
+        ' for',
+        ' <strong>{student.FullName}.</strong>'
+    ],
+
 
     // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
     applyId: function(id) {
@@ -64,19 +79,52 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindowController', {
 
     // event handlers
     onSubmitClick: function() {
-        var overrideWindow = this.getView(),
-            demonstration = Ext.create('Slate.cbl.model.Demonstration');
+        var me = this,
+            overrideWindow = me.getView(),
+            student = overrideWindow.getStudent(),
+            standard = overrideWindow.getStandard(),
+            demonstration = Ext.create('Slate.cbl.model.Demonstration', {
+                Class: 'Slate\\CBL\\Demonstrations\\OverrideDemonstration',
+                StudentID: student.getId(),
+                Skills: [
+                    {
+                        SkillID: standard.getId(),
+                        Override: 1
+                    }
+                ],
+                Comments: me.lookupReference('commentsField').getValue()
+            });
 
-        demonstration.set({
-            StudentID: overrideWindow.getStudent().getId(),
-            Skills: [
-                {
-                    SkillID: overrideWindow.getStandard().getId()
+        overrideWindow.setLoading('Submitting override&hellip;');
+        demonstration.save({
+            callback: function(record, operation, success) {
+                var tplData;
+
+                if (success) {
+                    tplData = {
+                        student: student.getData(),
+                        standard: standard.getData()
+                    };
+
+                    Ext.toast(
+                        Ext.XTemplate.getTpl(me, 'toastBodyTpl').apply(tplData),
+                        Ext.XTemplate.getTpl(me, 'toastTitleTpl').apply(tplData)
+                    );
+
+                    overrideWindow.close();
+
+                    Slate.cbl.API.fireEvent('demonstrationsave', demonstration);
+                } else {
+                    overrideWindow.setLoading(false);
+
+                    Ext.Msg.show({
+                        title: 'Failed to apply override',
+                        message: operation.getError() || 'Please backup your work to another application and report this to your technical support contact',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
                 }
-            ],
-            Comments: this.lookupReference('commentsField').getValue()
+            }
         });
-
-        debugger;
     }
 });
