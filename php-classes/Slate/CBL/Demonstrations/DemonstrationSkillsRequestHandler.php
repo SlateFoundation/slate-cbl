@@ -1,9 +1,10 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
 
 use DB;
 use Emergence\People\PeopleRequestHandler;
+use Slate\CBL\SkillsRequestHandler;
 
 class DemonstrationSkillsRequestHandler extends \RecordsRequestHandler
 {

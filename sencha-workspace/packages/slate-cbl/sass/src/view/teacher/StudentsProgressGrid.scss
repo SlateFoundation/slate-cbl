@@ -381,6 +381,16 @@
         background-color: #ccc;
     }
 }
+    
+@for $n from 2 through 10 {
+    .#{$g}-span-#{$n} {
+        @include box-flex($n);
+    }
+}
+
+.#{$g}-demo-overridden {
+    display: none;
+}
 
 .#{$g}-demo-counted {
     @extend .level-n;

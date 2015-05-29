@@ -71,9 +71,9 @@ class StudentDashboardRequestHandler extends \RequestHandler
                   ORDER BY d.Created DESC
                   LIMIT %d',
                 [
-                    DemonstrationSkill::$tableName,
+                    Demonstrations\DemonstrationSkill::$tableName,
                     \Emergence\People\Person::$tableName,
-                    Demonstration::$tableName,
+                    Demonstrations\Demonstration::$tableName,
                     Skill::$tableName,
                     Competency::$tableName,
                     $Student->ID,

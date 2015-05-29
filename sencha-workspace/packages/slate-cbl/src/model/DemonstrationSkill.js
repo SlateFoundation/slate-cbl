@@ -20,7 +20,7 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
         {
             name: 'Class',
             type: 'string',
-            defaultValue: 'Slate\\CBL\\DemonstrationSkill'
+            defaultValue: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill'
         },
         {
             name: 'Created',
@@ -49,6 +49,10 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
         {
             name: 'DemonstratedLevel',
             type: 'int'
+        },
+        {
+            name: 'Override',
+            type: 'boolean'
         },
         
         // dynamic fields that might be provided directly by server in some results
@@ -89,6 +93,6 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
     proxy: {
         type: 'records',
         url: '/cbl/demonstration-skills',
-        include: 'Demonstration'
+        include: 'Demonstration.Creator'
     }
 });

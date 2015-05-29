@@ -1,3 +1,3 @@
 <?php
 
-Slate\CBL\DemonstrationSkillsRequestHandler::handleRequest();
+Slate\CBL\Demonstrations\DemonstrationSkillsRequestHandler::handleRequest();

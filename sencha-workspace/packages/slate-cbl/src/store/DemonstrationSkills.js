@@ -30,11 +30,19 @@ Ext.define('Slate.cbl.store.DemonstrationSkills', {
         return this.load(options);
     },
 
-    mergeRawData: function(data, demonstrationId) {
+    /**
+     * Loads an array of raw DemonstrationSkill data into the store, updating records that already exist. If demonstration
+     * is provided, existing skills not in the new list will be removed and embedded demonstration data may be omitted.
+     * 
+     * @param {Object[]} data Array of DemonstrationSkill raw data
+     * @param {Slate.cbl.model.Demonstration} [demonstration] If provided, the data array is assumed to contain all skills for this demonstration
+     */
+    mergeRawData: function(data, demonstration) {
         var me = this,
             reader = me.getProxy().getReader(),
             Model = me.getModel(),
-            existingRecords = demonstrationId && me.query('DemonstrationID', demonstrationId).collect('ID', 'data'),
+            existingRecords = demonstration && me.query('DemonstrationID', demonstration.getId()).collect('ID', 'data'),
+            demonstrationData = demonstration && demonstration.getData(),
             i, len,
             datum, id, record,
             newRecords = [];
@@ -50,6 +58,10 @@ Ext.define('Slate.cbl.store.DemonstrationSkills', {
             record = id && me.getById(id);
 
             datum = reader.extractModelData(datum);
+
+            if (!datum.Demonstration && demonstrationData) {
+                datum.Demonstration = demonstrationData;
+            }
 
             if (id) {
                 Ext.Array.remove(existingRecords, id);

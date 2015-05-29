@@ -13,17 +13,15 @@ if (!static::tableExists($tableName)) {
     return static::STATUS_SKIPPED;
 }
 
-if (static::columnExists($tableName, 'TargetLevel')) {
-    printf("Skipping migration because column `%s`.TargetLevel already exists\n", $tableName);
+if (static::columnExists($tableName, 'Override')) {
+    printf("Skipping migration because column `%s`.Override already exists\n", $tableName);
     return static::STATUS_SKIPPED;
 }
 
 
 // migration
 printf("Updating table `%s`\n", $tableName);
-DB::nonQuery('ALTER TABLE `%s` ADD `TargetLevel` tinyint NULL DEFAULT NULL AFTER `SkillID`', $tableName);
-DB::nonQuery('ALTER TABLE `%s` CHANGE `Level` `DemonstratedLevel` tinyint NOT NULL', $tableName);
-DB::nonQuery('UPDATE `%s` SET `TargetLevel` = 9', $tableName);
+DB::nonQuery('ALTER TABLE `%s` ADD `Override` boolean NOT NULL default 0', $tableName);
 
 
 // done

@@ -103,14 +103,5 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                 }
             ]
         }
-    ],
-    
-    initComponent: function() {
-        var me = this;
-
-        me.callParent(arguments);
-
-        me.lookupReference('studentCombo').getStore().setSource(me.getStudentsStore());
-        me.lookupReference('competencyCombo').getStore().setSource(me.getCompetenciesStore());
-    }
+    ]
 });

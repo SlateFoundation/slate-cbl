@@ -1,6 +1,8 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
+
+use Slate\CBL\Skill;
 
 class DemonstrationSkill extends \ActiveRecord
 {
@@ -26,6 +28,10 @@ class DemonstrationSkill extends \ActiveRecord
         'DemonstratedLevel' => [
             'type' => 'tinyint',
             'unsigned' => true
+        ],
+        'Override' => [
+            'type' => 'boolean',
+            'default' => false
         ]
     ];
 

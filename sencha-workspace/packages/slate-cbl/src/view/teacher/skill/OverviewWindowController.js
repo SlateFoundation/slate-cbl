@@ -38,6 +38,11 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     applyId: function(id) {
         return Ext.id(null, id);
     },
+    
+    init: function(overviewWindow) {
+        this.lookupReference('competencyCombo').getStore().setSource(overviewWindow.getCompetenciesStore());
+        this.lookupReference('studentCombo').getStore().setSource(overviewWindow.getStudentsStore());
+    },
 
     onBeforeWindowShow: function(overviewWindow) {
         this.lookupReference('competencyCombo').setValue(overviewWindow.getCompetency());
@@ -93,7 +98,10 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     },
 
     onOverrideClick: function() {
-        alert('Not yet implemented');
+        var me = this,
+            overviewWindow = me.getView();
+
+        overviewWindow.fireEvent('createoverrideclick', overviewWindow, me.lookupReference('studentCombo').getValue(), me.lookupReference('skillCombo').getValue());
     },
 
     onCreateDemonstrationClick: function() {

@@ -377,3 +377,13 @@ $level-12-color-dark;
         display: block;
     }
 }
+
+@for $n from 2 through 10 {
+    .cbl-skill-span-#{$n} {
+        flex: $n;
+    }
+}
+
+.cbl-skill-demo-overridden {
+    display: none;
+}

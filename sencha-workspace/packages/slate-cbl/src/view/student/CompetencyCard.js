@@ -82,9 +82,20 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         '    <li class="cbl-skill">',
         '        <h5 class="cbl-skill-name">{skill.Descriptor:htmlEncode}</h5>',
         '        <ul class="cbl-skill-demos" data-skill="{skill.ID}">',
+        '            {% this.standardOverridden = false %}',
         '            <tpl for="demonstrations">',
-        '                <li class="cbl-skill-demo <tpl if="values.DemonstratedLevel==0">cbl-skill-demo-uncounted</tpl>" <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>>',
-        '                    <tpl if="values.DemonstratedLevel &gt;= 0">',
+        '                <li',
+        '                    class="',
+        '                        cbl-skill-demo',
+        '                        <tpl if="values.DemonstratedLevel==0">cbl-skill-demo-uncounted</tpl>',
+        '                        <tpl if="this.standardOverridden">cbl-skill-demo-overridden</tpl>', // parens force raw JS evaluation
+        '                        <tpl if="Override">cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}</tpl>',
+        '                    "',
+        '                    <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>',
+        '                >',
+        '                    <tpl if="Override">',
+        '                        O',
+        '                    <tpl elseif="values.DemonstratedLevel &gt;= 0">',
         '                        {[values.DemonstratedLevel == 0 ? "M" : values.DemonstratedLevel]}',
         '                    <tpl else>',
         '                        &nbsp;',
@@ -140,14 +151,14 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
     updateCompletion: function(completion) {
         var me = this,
             competency = me.getCompetency(),
-            percentComplete = Math.round(100 * completion.get('demonstrationsCount') / competency.get('totalDemonstrationsRequired')),
+            percentComplete = Math.round(100 * completion.get('demonstrationsComplete') / competency.get('totalDemonstrationsRequired')),
             demonstrationsAverage = completion.get('demonstrationsAverage'),
             currentLevel = completion.get('currentLevel');
 
         me.setLevel(currentLevel);
         me.setPercentComplete(percentComplete);
         me.setDemonstrationsAverage(demonstrationsAverage);
-        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
+        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
 
         me.loadSkills();
     },
