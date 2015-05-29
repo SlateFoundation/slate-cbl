@@ -747,7 +747,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
             if (countDirty || averageDirty) {
                 percentComplete = 100 * (count || 0) / competencyData.competency.totalDemonstrationsRequired;
-                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average < (level + competencyData.competency.minimumAverageOffset));
+                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competencyData.competency.minimumAverageOffset));
             }
 
             if (countDirty) {
