@@ -11,7 +11,7 @@
 {block "content"}
     {$allContentAreas = Slate\CBL\ContentArea::getAll()}
 
-    <aside id="studentDashboardRecentProgress" class="panel cbl-recent-progress">
+    <aside id="studentDashboardRecentProgress">
     </aside>
 
     <header class="page-header">

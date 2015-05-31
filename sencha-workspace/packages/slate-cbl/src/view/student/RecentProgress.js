@@ -10,11 +10,17 @@ Ext.define('Slate.cbl.view.student.RecentProgress', {
     	studentId: null,
     	contentAreaId: null,
 
-    	loadStatus: 'unloaded',
-        
+        loadStatus: 'unloaded',
+
         recentProgressStore: {
             xclass: 'Slate.cbl.store.RecentProgress'
-        }
+        },
+        
+        componentCls: 'cbl-recent-progress',
+        cls: 'panel',
+
+        borderBoxCls: null,
+        rootCls: null
     },
 
     renderTpl: [
