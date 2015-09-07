@@ -1100,7 +1100,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                             // apply demonstrated level change
                             if (renderedDemonstrationLevel !== skillDemonstrationDemonstratedLevel) {
                                 skillDemonstrationBlockEl.renderedDemonstrationLevel = skillDemonstrationDemonstratedLevel;
-                                
+
                                 if (renderedDemonstrationLevel === undefined) {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-empty');
                                 } else if (skillDemonstrationDemonstratedLevel === undefined) {
@@ -1113,7 +1113,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-uncounted');
                                 }
 
-                                if (skillDemonstrationDemonstratedLevel) {
+                                if (skillDemonstrationDemonstratedLevel && skillDemonstrationDemonstratedLevel != 'M') {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-counted');
                                 } else if (renderedDemonstrationLevel) {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-counted');
