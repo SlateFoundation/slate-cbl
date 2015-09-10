@@ -19,7 +19,6 @@ $headers = [
     'Demonstrated',
     'Student Name',
     'Student Number',
-    'Portfolio Level',
     'Context',
     'Experience',
     'Task',
@@ -40,7 +39,6 @@ foreach ($demonstrations AS $Demonstration) {
         date('Y-m-d', $Demonstration->Demonstrated),
         $Demonstration->Student->FullName,
         $Demonstration->Student->StudentNumber,
-        9, // TODO: don't hard code
         $Demonstration->Context,
         $Demonstration->ExperienceType,
         $Demonstration->PerformanceType,
@@ -52,7 +50,7 @@ foreach ($demonstrations AS $Demonstration) {
 
     foreach ($skills AS $Skill) {
         if (array_key_exists($Skill->ID, $demonstrationSkills)) {
-            $row[] = $demonstrationSkills[$Skill->ID]->Level ? $demonstrationSkills[$Skill->ID]->Level : 'M';
+            $row[] = $demonstrationSkills[$Skill->ID]->DemonstratedLevel ? $demonstrationSkills[$Skill->ID]->DemonstratedLevel : 'M';
         } else {
             $row[] = null;
         }
