@@ -164,7 +164,7 @@ class Competency extends \VersionedRecord
         return $total;
     }
 
-    public function getCompletionForStudent(Student $Student)
+    public function getCompletionForStudent(Student $Student, $level=false)
     {
 #        $cacheKey = "cbl-competency/$this->ID/student-completion/$Student->ID";
 #
@@ -173,7 +173,6 @@ class Competency extends \VersionedRecord
 #        }
 
         try {
-            
             $currentLevel = $this->getCurrentLevelForStudent($Student);
             DB::nonQuery('SET @num := 0, @skill := ""');
 
@@ -202,7 +201,7 @@ SELECT SUM(demonstrationsLogged) AS demonstrationsLogged,
                          ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                       WHERE DemonstrationSkill.SkillID IN (%s)
                         AND DemonstrationSkill.TargetLevel = %u
-                        AND DemonstrationSkill.DemonstratedLevel > 0
+                        AND %s
                      ) StudentDemonstrationSkill
                ORDER BY SkillID, DemonstratedLevel DESC
               ) OrderedDemonstrationSkill
@@ -217,6 +216,7 @@ END_OF_SQL
                     $Student->ID,
                     implode(',', $this->getSkillIds()),
                     $currentLevel,
+                    $level ? ('DemonstrationSkill.DemonstratedLevel = '.$level) : 'DemonstrationSkill.DemonstratedLevel > 0',
                     Skill::$tableName
                 ]
             );
@@ -269,7 +269,7 @@ END_OF_SQL
                 $this->ID
             ]
         );
-        
+
         return $level ? intval($level) : null;
     }
 }

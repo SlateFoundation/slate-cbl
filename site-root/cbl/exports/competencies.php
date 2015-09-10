@@ -78,46 +78,58 @@ $sw->writeRow($headers);
 
 // one row for each demonstration
 foreach ($students AS $Student) {
-    $row = [
-        $Student->FullName,
-        $Student->StudentNumber,
-        9// TODO: don't hardcode
-    ];
+    $uniqueLevels = \DB::allValues(
+        'DemonstratedLevel',
+        'SELECT DISTINCT(demo_skill.DemonstratedLevel) FROM `%s` demo '.
+        'RIGHT JOIN `%s` demo_skill ON (demo.ID = demo_skill.DemonstrationID) '.
+        'WHERE demo.StudentID=%u AND DemonstratedLevel != 0 ORDER BY DemonstratedLevel ASC',
+        [
+            Slate\CBL\Demonstrations\Demonstration::$tableName,
+            Slate\CBL\Demonstrations\DemonstrationSkill::$tableName,
+            $Student->ID
+        ]
+    );
 
-    foreach ($contentAreas AS $ContentArea) {
-        $demonstrationsCounted = 0;
-        $demonstrationsRequired = 0;
-        $demonstrationsMissing = 0;
-        $contentAreaAverageTotal = 0;
-        
-        foreach ($ContentArea->Competencies AS $Competency) {
-            $competencyCompletion = $Competency->getCompletionForStudent($Student);
+    foreach ($uniqueLevels as $level) {
+        $row = [
+            $Student->FullName,
+            $Student->StudentNumber,
+            $level
+        ];
+        foreach ($contentAreas AS $ContentArea) {
+            $demonstrationsCounted = 0;
+            $demonstrationsRequired = 0;
+            $demonstrationsMissing = 0;
+            $contentAreaAverageTotal = 0;
 
-            // Logged
-            $row[] = intval($competencyCompletion['demonstrationsLogged']);
-            // Total
-            $row[] = intval($Competency->getTotalDemonstrationsRequired());
-            // Average
-            $row[] = intval($competencyCompletion['demonstrationsAverage'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null);
+            foreach ($ContentArea->Competencies AS $Competency) {
+                $competencyCompletion = $Competency->getCompletionForStudent($Student, $level);
 
-            $demonstrationsCounted += $competencyCompletion['demonstrationsLogged'];
-            $demonstrationsRequired += $Competency->getTotalDemonstrationsRequired();
-            
-            // averages are weighted by number of demonstrations
-            $contentAreaAverageTotal += $competencyCompletion['demonstrationsAverage'] * $competencyCompletion['demonstrationsCount'];
+                // Logged
+                $row[] = intval($competencyCompletion['demonstrationsLogged']);
+                // Total
+                $row[] = intval($Competency->getTotalDemonstrationsRequired());
+                // Average
+                $row[] = intval($competencyCompletion['demonstrationsAverage'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null);
 
-            if(isset($missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID])) {
-                $demonstrationsMissing += $missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID];
+                $demonstrationsCounted += $competencyCompletion['demonstrationsLogged'];
+                $demonstrationsRequired += $Competency->getTotalDemonstrationsRequired();
+
+                // averages are weighted by number of demonstrations
+                $contentAreaAverageTotal += $competencyCompletion['demonstrationsAverage'] * $competencyCompletion['demonstrationsCount'];
+
+                if(isset($missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID])) {
+                    $demonstrationsMissing += $missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID];
+                }
+
+                $row[] = $demonstrationsCounted;
+                $row[] = $demonstrationsRequired;
+                $row[] = $demonstrationsMissing;
+                $row[] = intval($demonstrationsCounted ? round($contentAreaAverageTotal / $demonstrationsCounted, 2) : null);
             }
         }
-
-        $row[] = $demonstrationsCounted;
-        $row[] = $demonstrationsRequired;
-        $row[] = $demonstrationsMissing;
-        $row[] = intval($demonstrationsCounted ? round($contentAreaAverageTotal / $demonstrationsCounted, 2) : null);
+        $sw->writeRow($row);
     }
-
-   $sw->writeRow($row);
 }
 
 $sw->close();
