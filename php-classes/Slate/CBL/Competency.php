@@ -164,7 +164,7 @@ class Competency extends \VersionedRecord
         return $total;
     }
 
-    public function getCompletionForStudent(Student $Student, $level=false)
+    public function getCompletionForStudent(Student $Student, $level = null)
     {
 #        $cacheKey = "cbl-competency/$this->ID/student-completion/$Student->ID";
 #
