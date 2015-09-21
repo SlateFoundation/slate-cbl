@@ -201,7 +201,6 @@ SELECT SUM(demonstrationsLogged) AS demonstrationsLogged,
                          ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                       WHERE DemonstrationSkill.SkillID IN (%s)
                         AND DemonstrationSkill.TargetLevel = %u
-                        AND %s
                      ) StudentDemonstrationSkill
                ORDER BY SkillID, DemonstratedLevel DESC
               ) OrderedDemonstrationSkill
@@ -215,8 +214,7 @@ END_OF_SQL
                     Demonstrations\Demonstration::$tableName,
                     $Student->ID,
                     implode(',', $this->getSkillIds()),
-                    $currentLevel,
-                    $level ? ('DemonstrationSkill.DemonstratedLevel = '.$level) : 'DemonstrationSkill.DemonstratedLevel > 0',
+                    $level ? $level : $currentLevel,
                     Skill::$tableName
                 ]
             );
