@@ -19,6 +19,7 @@ $headers = [
     'Demonstrated',
     'Student Name',
     'Student Number',
+    'Portfolio Level',
     'Context',
     'Experience',
     'Task',
@@ -39,6 +40,7 @@ foreach ($demonstrations AS $Demonstration) {
         date('Y-m-d', $Demonstration->Demonstrated),
         $Demonstration->Student->FullName,
         $Demonstration->Student->StudentNumber,
+        'Portfolio Level' => null,
         $Demonstration->Context,
         $Demonstration->ExperienceType,
         $Demonstration->PerformanceType,
@@ -49,6 +51,10 @@ foreach ($demonstrations AS $Demonstration) {
     $demonstrationSkills = Slate\CBL\Demonstrations\DemonstrationSkill::getAllByField('DemonstrationID', $Demonstration->ID, ['indexField' => 'SkillID']);
 
     foreach ($skills AS $Skill) {
+        if(!$row['Portfolio Level']) {
+            $row['Portfolio Level'] = $demonstrationSkills[$Skill->ID]->TargetLevel;
+        }
+
         if (array_key_exists($Skill->ID, $demonstrationSkills)) {
             $row[] = $demonstrationSkills[$Skill->ID]->DemonstratedLevel ? $demonstrationSkills[$Skill->ID]->DemonstratedLevel : 'M';
         } else {

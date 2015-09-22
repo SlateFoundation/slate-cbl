@@ -51,25 +51,16 @@ class StudentCompetency extends \ActiveRecord
         ]
     ];
 
-    public static function isCurrentLevelComplete($Student, $Competency, $pretend=true)
+    public static function isCurrentLevelComplete($Student, $Competency)
     {
         $completion = $Competency->getCompletionForStudent($Student);
 
-        if (
+        return (
                 $completion['demonstrationsComplete'] >= $Competency->getTotalDemonstrationsRequired() &&
                 (
                     $completion['demonstrationsLogged'] == 0 || // if demonstrationsComplete is full but none are logged, the student has fulfilled all their demonstrations via overrides and the average is irrelevant
                     $completion['demonstrationsAverage'] >= ($completion['currentLevel'] + $Competency->getMinimumAverageOffset())
                 )
-        ) {
-
-            // enroll student in next level
-            return StudentCompetency::create([
-                'StudentID' => $Student->ID,
-                'CompetencyID' => $Competency->ID,
-                'Level' => $completion['currentLevel'] + 1,
-                'EnteredVia' => 'graduation'
-            ], !$pretend);
-        }
+        );
     }
 }

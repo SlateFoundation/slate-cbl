@@ -14,9 +14,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ];
 
         foreach (\Slate\CBL\Competency::getAll() as $Competency) {
-            $StudentCompetency = \Slate\CBL\StudentCompetency::isCurrentLevelComplete($Student, $Competency, $_REQUEST['Pretend']);
+            $completion = $Competency->getCompletionForStudent($Student);
+            
+            if (
+                \Slate\CBL\StudentCompetency::isCurrentLevelComplete($Student, $Competency) &&
+                $completion['currentLevel'] < $Competency->getMaximumTargetLevel()
+            ) {
+                // enroll student in next level
+                \Slate\CBL\StudentCompetency::create([
+                    'StudentID' => $Student->ID,
+                    'CompetencyID' => $Competency->ID,
+                    'Level' => $completion['currentLevel'] + 1,
+                    'EnteredVia' => 'graduation'
+                ], $_REQUEST['Pretend']);
 
-            if($StudentCompetency) {
                 $data[$Student->ID]['Competencies'][] = $Competency->Code;
             }
         }

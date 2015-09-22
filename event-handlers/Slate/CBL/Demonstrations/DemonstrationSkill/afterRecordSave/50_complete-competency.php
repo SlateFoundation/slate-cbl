@@ -8,11 +8,7 @@ $Competency = $_EVENT['Record']->Skill->Competency;
 $completion = $Competency->getCompletionForStudent($Student);
 
 if (
-        $completion['demonstrationsComplete'] >= $Competency->getTotalDemonstrationsRequired() &&
-        (
-            $completion['demonstrationsLogged'] == 0 || // if demonstrationsComplete is full but none are logged, the student has fulfilled all their demonstrations via overrides and the average is irrelevant
-            $completion['demonstrationsAverage'] >= ($completion['currentLevel'] + $Competency->getMinimumAverageOffset())
-        ) &&
+        \Slate\CBL\StudentCompetency::isCurrentLevelComplete($Student, $Competency) &&
         $completion['currentLevel'] < $Competency->getMaximumTargetLevel()
    ) {
 
