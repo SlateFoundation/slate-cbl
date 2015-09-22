@@ -20,7 +20,7 @@ $maxSkills = DB::oneValue(
           Slate\CBL\Demonstrations\DemonstrationSkill::$tableName,
           ($demonstrations ? 'WHERE DemonstrationID IN ('.implode(',', array_map(function ($Demo) {
                 return $Demo->ID;
-          }, $demonstrations)).')' : '') 
+          }, $demonstrations)).')' : '')
     ]
 );
 
@@ -33,23 +33,20 @@ $headers = [
     'Type of experience',
     'Context',
     'Perfromance task',
-    'Artifact'
+    'Artifact',
+    'Competency',
+    'Standard',
+    'Rating',
+    'Level',
+    'Mapping'
 ];
-
-for ($i=0;$i<$maxSkills;$i++) {
-    $headers = array_merge($headers, [
-        'Competency',
-        'Standard',
-        'Rating',
-        'Level',
-        'Mapping'
-    ]);
-}
 
 $sw->writeRow($headers);
 
 // one row for each demonstration standard
 foreach ($demonstrations AS $Demonstration) {
+    $demonstrationSkills = Slate\CBL\Demonstrations\DemonstrationSkill::getAllByField('DemonstrationID', $Demonstration->ID);
+
     $row = [
         date('Y-m-d H:i', $Demonstration->Created),
         $Demonstration->Creator->FullName,
@@ -60,18 +57,15 @@ foreach ($demonstrations AS $Demonstration) {
         $Demonstration->PerformanceType,
         $Demonstration->ArtifactURL
     ];
-                
-    $demonstrationSkills = Slate\CBL\Demonstrations\DemonstrationSkill::getAllByField('DemonstrationID', $Demonstration->ID);
-
     // Don't rebuild the row for each standard demonstrated, just overwrite the last set of values
     foreach ($demonstrationSkills AS $DemonstrationSkill) {
         $skill = $skills[$DemonstrationSkill->SkillID];
-        
-        $row[] = $skill->Competency->Code;
-        $row[] = $skill->Code;
-        $row[] = $DemonstrationSkill->DemonstratedLevel > 0 ?  $DemonstrationSkill->DemonstratedLevel : 'M';
-        $row[] = $DemonstrationSkill->TargetLevel;
-        $row[] = '';
+
+        $row['Competency'] = $skill->Competency->Code;
+        $row['Standard'] = $skill->Code;
+        $row['Rating'] = $DemonstrationSkill->DemonstratedLevel > 0 ?  $DemonstrationSkill->DemonstratedLevel : 'M';
+        $row['Level'] = $DemonstrationSkill->TargetLevel;
+        $row['Mapping'] = '';
         $sw->writeRow($row);
     }
 }
