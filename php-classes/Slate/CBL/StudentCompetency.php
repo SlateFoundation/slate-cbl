@@ -14,16 +14,17 @@ class StudentCompetency extends \ActiveRecord
 
     public static $fields = [
         'StudentID' => [
-            'type' => 'uint',
-            'index' => true
+            'type' => 'uint'
         ],
         'CompetencyID' => [
-            'type' => 'uint',
-            'index' => true
+            'type' => 'uint'
         ],
-        'CompletionType' => [
+        'Level' => [
+            'type' => 'tinyint'
+        ],
+        'EnteredVia' => [
             'type' => 'enum',
-            'values' => array('demonstrated', 'overridden')
+            'values' => array('enrollment', 'graduation')
         ]
     ];
 
@@ -45,8 +46,21 @@ class StudentCompetency extends \ActiveRecord
 
     public static $indexes = [
         'StudentCompetency' => [
-            'fields' => ['StudentID', 'CompetencyID'],
+            'fields' => ['StudentID', 'CompetencyID', 'Level'],
             'unique' => true
         ]
     ];
+
+    public static function isCurrentLevelComplete($Student, $Competency)
+    {
+        $completion = $Competency->getCompletionForStudent($Student);
+
+        return (
+                $completion['demonstrationsComplete'] >= $Competency->getTotalDemonstrationsRequired() &&
+                (
+                    $completion['demonstrationsLogged'] == 0 || // if demonstrationsComplete is full but none are logged, the student has fulfilled all their demonstrations via overrides and the average is irrelevant
+                    $completion['demonstrationsAverage'] >= ($completion['currentLevel'] + $Competency->getMinimumAverageOffset())
+                )
+        );
+    }
 }

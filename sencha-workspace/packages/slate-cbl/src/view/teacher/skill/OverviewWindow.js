@@ -4,7 +4,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
     xtype: 'slate-cbl-teacher-skill-overviewwindow',
     requires: [
         'Slate.cbl.view.teacher.skill.OverviewWindowController',
-        'Slate.cbl.model.Skill',
+
+        'Slate.cbl.data.Skills',
 
         'Ext.form.field.ComboBox',
         'Ext.data.ChainedStore'
@@ -14,7 +15,9 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
 
     config: {
         competency: null,
-        showEditLinks: true
+        showEditLinks: true,
+        studentsStore: null,
+        competenciesStore: null
     },
 
     dockedItems: [
@@ -31,8 +34,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     xtype: 'combobox',
 
                     store: {
-                        type: 'chained',
-                        source: 'cbl-competencies-loaded'
+                        type: 'chained'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
@@ -46,9 +48,11 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     flex: 1,
 
                     xtype: 'combobox',
+                    disabled: true,
 
                     store: {
-                        model: 'Slate.cbl.model.Skill'
+                        type: 'chained',
+                        source: 'cbl-skills'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
@@ -71,8 +75,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     emptyText: 'Start typing student\'s name',
 
                     store: {
-                        type: 'chained',
-                        source: 'cbl-students-loaded'
+                        type: 'chained'
                     },
                     queryMode: 'local',
                     displayField: 'FullName',
@@ -100,13 +103,5 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                 }
             ]
         }
-    ],
-    
-    applyCompetency: function(competency) {
-        if (Ext.isString(competency)) {
-            competency = parseInt(competency, 10);
-        }
-
-        return competency ? competency : null;
-    }
+    ]
 });

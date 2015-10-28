@@ -5,6 +5,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     requires: [
         'Slate.cbl.API',
         'Slate.cbl.field.LevelSlider',
+        'Slate.cbl.data.Skills',
 
         'Ext.MessageBox',
         'Ext.window.Toast',
@@ -15,6 +16,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         control: {
             '#': {
                 show: 'onShow',
+                beforeshow: 'onBeforeShow',
                 loaddemonstration: 'onLoadDemonstration'
             },
             'combobox[name=StudentID]': {
@@ -78,10 +80,18 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
 
     // event handlers
+    onBeforeShow: function(editWindow) {
+        var defaultCompetency = editWindow.getDefaultCompetency();
+
+        if (defaultCompetency) {
+            this.addCompetency(defaultCompetency);
+        }
+    },
+
     onShow: function(editWindow) {
         var me = this,
             competenciesGrid = me.lookupReference('competenciesGrid'),
-            store = Ext.getStore('cbl-competencies-all');
+            store = Ext.getStore('cbl-competencies');
 
         // load global competencies store the first time a window shows
         if (!store.isLoaded()) {
@@ -100,7 +110,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     onLoadDemonstration: function(editWindow, demonstration) {
         var me = this,
             competenciesGrid = me.lookupReference('competenciesGrid'),
-            competenciesStore = Ext.getStore('cbl-competencies-all'),
+            competenciesStore = Ext.getStore('cbl-competencies'),
             _restoreSavedSkills;
 
         // if loading a phantom, leave the form unloaded so empty fields aren't marked invalid
@@ -136,7 +146,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                 // load skills into competency
                 for (; competencySkillIndex < competencySkillsLength; competencySkillIndex++) {
                     competencySkill = competencySkills[competencySkillIndex];
-                    competencyCard.down('slate-cbl-levelsliderfield{skill.ID=='+competencySkill.SkillID+'}').setLevel(competencySkill.Level);
+                    competencyCard.down('slate-cbl-levelsliderfield{skill.getId()=='+competencySkill.SkillID+'}').setLevel(competencySkill.DemonstratedLevel);
                 }
 
                 // finish loading cycle when the queue is empty
@@ -268,9 +278,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         for (; activeSliderIndex < activeSlidersLength; activeSliderIndex++) {
             activeSlider = activeSliders[activeSliderIndex];
             skills.push({
-                CompetencyID: activeSlider.skill.CompetencyID,
-                SkillID: activeSlider.skill.ID,
-                Level: activeSlider.getLevel()
+                SkillID: activeSlider.skill.getId(),
+                DemonstratedLevel: activeSlider.getLevel()
             });
         }
 
@@ -287,9 +296,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         demonstration.set('Skills', skills);
 
         demonstration.save({
-            params: {
-                include: 'competencyCompletions'
-            },
             callback: function(record, operation, success) {
                 var studentsFieldStore,
                     tplData;
@@ -307,7 +313,10 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                     );
 
                     if (wasPhantom && me.lookupReference('loadNextStudentCheck').checked && !editWindow.destroying && !editWindow.destroyed) {
-                        editWindow.setDemonstration(true); // start a new demonstration
+                        // start a new demonstration
+                        editWindow.setDemonstration({
+                            Class: demonstration.get('Class')
+                        });
 
                         studentsFieldStore = studentField.getStore();
                         studentField.select(studentsFieldStore.getAt(studentsFieldStore.indexOf(selectedStudent) + 1));
@@ -336,7 +345,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     addCompetency: function(competency, callback, scope, insertSorted) {
         var me = this,
             editWindow = me.getView(),
-            competenciesStore = Ext.getStore('cbl-competencies-all'),
+            competenciesStore = Ext.getStore('cbl-competencies'),
             competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
             competenciesSearchField = me.lookupReference('competenciesSearchField'),
             competencyCardConfig = {
@@ -362,7 +371,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
         competencyCardConfig.title = competency.get('Code');
 
-        competency.withSkills(function(skills) {
+        Slate.cbl.data.Skills.getAllByCompetency(competency, function(skills) {
             if (editWindow.destroying || editWindow.destroyed) {
                 return;
             }
@@ -371,7 +380,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
             skills.each(function(skill) {
                 skillFieldsConfig.push({
-                    fieldLabel: skill.Descriptor,
+                    fieldLabel: skill.get('Descriptor'),
                     skill: skill
                 });
             });
@@ -420,9 +429,17 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
     scrollCompetenciesTabsToEnd: function() {
         var me = this,
-            competenciesTabPanel = me.lookupReference('competenciesTabPanel');
+            competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
+            competenciesTabBar = competenciesTabPanel.getTabBar(),
+            _doScroll = function() {
+                competenciesTabBar.getLayout().overflowHandler.scrollToItem(competenciesTabPanel.items.last().tab);
+            };
 
-        competenciesTabPanel.getTabBar().getLayout().overflowHandler.scrollToItem(competenciesTabPanel.items.last().tab);
+        if (competenciesTabBar.rendered) {
+            _doScroll();
+        } else {
+            competenciesTabBar.on('afterrender', _doScroll, me, { single: true });
+        }
     },
 
     updateCompetencyFilter: function(query) {

@@ -15,66 +15,65 @@ Ext.define('Slate.cbl.model.Demonstration', {
         {
             name: "ID",
             type: "int",
-            useNull: true
+            allowNull: true
         },
         {
             name: "Class",
             type: "string",
-            defaultValue: "Slate\\CBL\\Demonstration"
+            defaultValue: "Slate\\CBL\\Demonstrations\\Demonstration"
         },
         {
             name: "Created",
             type: "date",
             dateFormat: "timestamp",
-            useNull: true
+            allowNull: true
         },
         {
             name: "CreatorID",
             type: "int",
-            useNull: true
+            allowNull: true
         },
         {
             name: "StudentID",
             type: "int"
         },
-//        {
-//            name: "SkillID",
-//            type: "int"
-//        },
         {
             name: "Demonstrated",
             type: "date",
             dateFormat: "timestamp",
-            useNull: true
+            allowNull: true
         },
-//        {
-//            name: "Level",
-//            type: "string"
-//        },
         {
             name: "ExperienceType",
-            type: "string"
+            type: "string",
+            allowNull: true
         },
         {
             name: "Context",
-            type: "string"
+            type: "string",
+            allowNull: true
         },
         {
             name: "PerformanceType",
-            type: "string"
+            type: "string",
+            allowNull: true
         },
         {
             name: "ArtifactURL",
             type: "string",
-            useNull: true
+            allowNull: true
         },
         {
             name: "Comments",
             type: "string",
-            useNull: true
+            allowNull: true
         },
 
         // server-provided metadata
+        {
+            name: 'Skills',
+            defaultValue: []
+        },
         {
             name: 'competencyCompletions',
             defaultValue: [],
@@ -84,6 +83,7 @@ Ext.define('Slate.cbl.model.Demonstration', {
 
     proxy: {
         type: 'slate-cbl-records',
-        url: '/cbl/demonstrations'
+        url: '/cbl/demonstrations',
+        include: ['competencyCompletions', 'Skills']
     }
 });

@@ -1,6 +1,8 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
+
+use Slate\CBL\Skill;
 
 class DemonstrationSkill extends \ActiveRecord
 {
@@ -8,6 +10,7 @@ class DemonstrationSkill extends \ActiveRecord
     public static $tableName = 'cbl_demonstration_skills';
     public static $singularNoun = 'demonstration skill';
     public static $pluralNoun = 'demonstration skills';
+    public static $collectionRoute = '/cbl/demonstration-skills';
 
     public static $fields = [
         'DemonstrationID' => [
@@ -17,10 +20,18 @@ class DemonstrationSkill extends \ActiveRecord
         'SkillID' => [
             'type' => 'uint'
             ,'index' => true
-        ]
-        ,'Level' => [
+        ],
+        'TargetLevel' => [
+            'type' => 'tinyint',
+            'notnull' => false
+        ],
+        'DemonstratedLevel' => [
             'type' => 'tinyint',
             'unsigned' => true
+        ],
+        'Override' => [
+            'type' => 'boolean',
+            'default' => false
         ]
     ];
 
@@ -44,7 +55,13 @@ class DemonstrationSkill extends \ActiveRecord
             'validator' => 'number'
             ,'min' => 1
         ]
-        ,'Level' => [
+        ,'TargetLevel' => [
+            'validator' => 'number'
+            ,'min' => 1
+            ,'max' => 13
+            ,'required' => false
+        ]
+        ,'DemonstratedLevel' => [
             'validator' => 'number'
             ,'min' => 0
             ,'max' => 13
@@ -55,4 +72,14 @@ class DemonstrationSkill extends \ActiveRecord
         'Demonstration',
         'Skill'
     ];
+    
+    public function save($deep = true)
+    {
+        // default TargetLevel to student's current level
+        if (!$this->TargetLevel) {
+            $this->TargetLevel = $this->Skill->Competency->getCurrentLevelForStudent($this->Demonstration->Student);
+        }
+        
+        return parent::save($deep);
+    }
 }

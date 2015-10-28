@@ -1,19 +1,13 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
 
 use Slate\People\Student;
-
-/**
- * Tracks the demonstration of one skill at one level
- */
+use Slate\CBL\Competency;
+use Slate\CBL\Skill;
 
 class Demonstration extends \VersionedRecord
 {
-    public static $experienceTypeOptions = ['Core Studio', 'Choice Studio', 'Workshop', 'Health and Wellness', 'PE/Fitness', 'Online Courseware', 'Situated Learning', 'Work-based Learning', 'Advisory'];
-    public static $contextOptions = ['Journalism', 'Mythbusters', 'Personal Finance', 'Math Workshop', 'Literacy Workshop', 'Culinary Arts', 'Entrepreneurship', 'Performing Arts', 'Help Desk'];
-    public static $performanceTypeOptions = ['Position paper', 'Lab report', 'Media presentation', 'Argumentative essay', 'Speech'];
-    
     // VersionedRecord configuration
     public static $historyTable = 'history_demonstrations';
 
@@ -23,6 +17,11 @@ class Demonstration extends \VersionedRecord
     public static $pluralNoun = 'demonstrations';
     public static $collectionRoute = '/cbl/demonstrations';
     public static $useCache = true;
+    public static $subClasses = [
+        __CLASS__,
+        ExperienceDemonstration::class,
+        OverrideDemonstration::class
+    ];
 
     public static $fields = [
         'StudentID' => [
@@ -30,9 +29,6 @@ class Demonstration extends \VersionedRecord
             ,'index' => true
         ]
         ,'Demonstrated' => 'timestamp'
-        ,'ExperienceType'
-        ,'Context'
-        ,'PerformanceType'
         ,'ArtifactURL' => [
             'notnull' => false
         ]
@@ -59,9 +55,6 @@ class Demonstration extends \VersionedRecord
             'validator' => 'number'
             ,'min' => 1
         ]
-        ,'ExperienceType'
-        ,'Context'
-        ,'PerformanceType'
     ];
     
     public static $dynamicFields = [
@@ -83,29 +76,44 @@ class Demonstration extends \VersionedRecord
         
         return parent::save($deep);
     }
+    
+    public function destroy()
+    {
+        foreach ($this->Skills AS $Skill) {
+            $Skill->destroy();
+        }
+
+        return parent::destroy();
+    }
 
     /**
      * Returns current completion state of all competencies affected by this demonstration
      */
     public function getCompetencyCompletions()
     {
-        $competencies = Competency::getAllByQuery(
-            'SELECT DISTINCT Competency.*'
-            .' FROM `%s` DemonstrationSkill'
-            .' JOIN `%s` Skill ON Skill.ID = DemonstrationSkill.SkillID'
-            .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
-            .' WHERE DemonstrationSkill.DemonstrationID = %u',
-            [
-                DemonstrationSkill::$tableName,
-                Skill::$tableName,
-                Competency::$tableName,
-                $this->ID
-            ]
-        );
+        // use cached $this->Skills array to include skills that may have been destroyed in this session
+        if (count($this->Skills)) {
+            $competencies = Competency::getAllByQuery(
+                'SELECT DISTINCT Competency.*'
+                .' FROM `%s` Skill'
+                .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
+                .' WHERE Skill.ID IN (%s)',
+                [
+                    Skill::$tableName,
+                    Competency::$tableName,
+                    implode(',', array_map(function($DemonstrationSkill) {
+                        return $DemonstrationSkill->SkillID;
+                    }, $this->Skills))
+                ]
+            );
+        } else {
+            $competencies = [];
+        }
 
         $completions = [];
         foreach ($competencies AS $Competency) {
             $completion = $Competency->getCompletionForStudent($this->Student);
+            $completion['StudentID'] = $this->StudentID;
             $completion['CompetencyID'] = $Competency->ID;
             $completions[] = $completion;
         }
