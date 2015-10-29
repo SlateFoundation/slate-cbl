@@ -173,7 +173,7 @@ class Competency extends \VersionedRecord
 #        }
 
         try {
-            $currentLevel = $this->getCurrentLevelForStudent($Student);
+            $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
             DB::nonQuery('SET @num := 0, @skill := ""');
 
             $completion = DB::oneRecord(
@@ -214,7 +214,7 @@ END_OF_SQL
                     Demonstrations\Demonstration::$tableName,
                     $Student->ID,
                     implode(',', $this->getSkillIds()),
-                    $level ? $level : $currentLevel,
+                    $currentLevel,
                     Skill::$tableName
                 ]
             );
