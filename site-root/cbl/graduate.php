@@ -1,5 +1,7 @@
 <?php
 
+$GLOBALS['Session']->requireAccountLevel('Staff');
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = [];
     $students = \Slate\People\Student::getAllByWhere([
