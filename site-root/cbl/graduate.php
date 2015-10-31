@@ -1,19 +1,22 @@
 <?php
 
+$GLOBALS['Session']->requireAccountLevel('Staff');
+$pretend = !empty($_REQUEST['pretend']);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $data = [];
+    $studentsGraduating = [];
+
     $students = \Slate\People\Student::getAllByWhere([
         'Class' => \Slate\People\Student::class
     ]);
-    // \Debug::dump($students);
+
+    $competencies = \Slate\CBL\Competency::getAll();
+
+    \Site::$debug = !empty($_GET['debug']);
+
     foreach ($students as $Student) {
 
-        $data[$Student->ID] = [
-            'Name' => $Student->FullName,
-            'Competencies' => []
-        ];
-
-        foreach (\Slate\CBL\Competency::getAll() as $Competency) {
+        foreach ($competencies as $Competency) {
             $currentLevel = $Competency->getCurrentLevelForStudent($Student);
 
             if (
@@ -26,27 +29,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'CompetencyID' => $Competency->ID,
                     'Level' => $currentLevel + 1,
                     'EnteredVia' => 'graduation'
-                ], $_REQUEST['Pretend']);
+                ], !$pretend);
 
-                $data[$Student->ID]['Competencies'][] = $Competency->Code;
+                if (!isset($studentsGraduating[$Student->ID])) {
+                    $studentsGraduating[$Student->ID] = [
+                        'name' => $Student->FullName,
+                        'competencies' => []
+                    ];
+                }
+
+                $studentsGraduating[$Student->ID]['competencies'][] = [
+                    'code' => $Competency->Code,
+                    'currentLevel' => $currentLevel,
+                    'nextLevel' => $currentLevel + 1
+                ];
             }
         }
-
-        if (!count($data[$Student->ID]['Competencies'])) {
-            unset($data[$Student->ID]);
-        }
     }
 
-    if (!empty($data)) {
-        $responseData = [
-            'data' => $data,
-            'pretend' => $_REQUEST['Pretend']
-        ];
-    } else {
-        $responseData = [
-            'noStudents' => true
-        ];
-    }
+
+    RequestHandler::respond('cbl/graduate', [
+        'studentsGraduating' => $studentsGraduating,
+        'pretend' => $pretend
+    ]);
 }
 
-RequestHandler::respond('cbl/graduate', $responseData);
+RequestHandler::respond('cbl/graduate');

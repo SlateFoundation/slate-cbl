@@ -30,11 +30,15 @@
                             {/foreach}
                         </optgroup>
                     {else}
-                        <optgroup label="All Sections">
-                            {foreach item=Section from=Slate\Courses\Section::getAll()}
-                                <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
-                            {/foreach}
-                        </optgroup>
+                        {$Term = Slate\Term::getClosest()}
+                        {if $Term}
+                            {$termIds = $Term->getRelatedTermIDs()|implode:','}
+                            <optgroup label="All Sections in {$Term->Title}">
+                                {foreach item=Section from=Slate\Courses\Section::getAllByWhere("TermID IN ($termIds)")}
+                                    <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
+                                {/foreach}
+                            </optgroup>
+                        {/if}
                     {/if}
                     <optgroup label="All Groups">
                         {foreach item=Group from=Emergence\People\Groups\Group::getAll(array(order=array(Left=ASC)))}
