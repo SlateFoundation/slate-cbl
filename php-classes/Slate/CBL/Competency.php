@@ -201,6 +201,7 @@ SELECT SUM(demonstrationsLogged) AS demonstrationsLogged,
                          ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                       WHERE DemonstrationSkill.SkillID IN (%s)
                         AND DemonstrationSkill.TargetLevel = %u
+                        AND DemonstrationSkill.DemonstratedLevel > 0
                      ) StudentDemonstrationSkill
                ORDER BY SkillID, DemonstratedLevel DESC
               ) OrderedDemonstrationSkill
