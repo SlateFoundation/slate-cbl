@@ -16,7 +16,8 @@
 
     <form method="POST">
         <label for="pretend">Pretend</label>
-        <input id="pretend" type="checkbox" checked=true name="Pretend" value="1">
+        <input type="hidden" name="pretend" value="0">
+        <input id="pretend" type="checkbox" name="pretend" value="1" {refill field=pretend checked=1 default=1}>
         <input type="submit">
     </form>
 {/block}

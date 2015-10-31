@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'CompetencyID' => $Competency->ID,
                     'Level' => $currentLevel + 1,
                     'EnteredVia' => 'graduation'
-                ], $_REQUEST['Pretend']);
+                ], !empty($_REQUEST['pretend']));
 
                 $data[$Student->ID]['Competencies'][] = $Competency->Code;
             }
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty($data)) {
         $responseData = [
             'data' => $data,
-            'pretend' => $_REQUEST['Pretend']
+            'pretend' => !empty($_REQUEST['pretend'])
         ];
     } else {
         $responseData = [
