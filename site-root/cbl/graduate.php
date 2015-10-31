@@ -4,6 +4,8 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 $pretend = !empty($_REQUEST['pretend']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    set_time_limit(0);
+
     $studentsGraduating = [];
 
     $students = \Slate\People\Student::getAllByWhere([
