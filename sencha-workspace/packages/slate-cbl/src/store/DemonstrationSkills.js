@@ -15,14 +15,17 @@ Ext.define('Slate.cbl.store.DemonstrationSkills', {
      */
     loadByStudentsAndCompetencies: function(students, competencies, options) {
         options = options || {};
- 
+
         options.params = Ext.apply(options.params || {}, {
-            students: Ext.isArray(students) ? students.join(',') : students,
             competencies: Ext.isArray(competencies) ? competencies.join(',') : competencies
         });
-        
-        if (!options.url) {
+
+        if (Ext.isArray(students)) {
             options.url = '/cbl/teacher-dashboard/demonstration-skills';
+            options.params.students = students.join(',');
+        } else {
+            options.url = '/cbl/student-dashboard/demonstration-skills';
+            options.params.student = students;
         }
 
         options.addRecords = true;
