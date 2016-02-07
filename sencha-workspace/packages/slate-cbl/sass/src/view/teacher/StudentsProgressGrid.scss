@@ -1,3 +1,4 @@
+// TODO: don't export such a broad and generic selector from such a specific place
 .loading-spinner {
     height: 16px;
     margin-right: 4px;
@@ -381,7 +382,7 @@
         background-color: #ccc;
     }
 }
-    
+
 @for $n from 2 through 10 {
     .#{$g}-span-#{$n} {
         @include box-flex($n);
