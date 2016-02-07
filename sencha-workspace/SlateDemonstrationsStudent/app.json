@@ -155,7 +155,8 @@
         "var": [
             "sass/var/all.scss",
             "sass/var",
-            "${toolkit.name}/sass/var"
+            "${toolkit.name}/sass/var",
+            "resources/slate-frame/sass/_variables-all.scss"
         ],
 
         /**
