@@ -54,7 +54,7 @@
      */
     
     
-    "theme": "theme-triton",
+    "theme": "slate-theme",
     
     
     /**
@@ -67,7 +67,9 @@
      *      ]
      */
     "requires": [
-        "font-awesome"
+        "jarvus-hotfixes",
+        "font-awesome",
+        "slate-cbl"
     ],
 
     /**
