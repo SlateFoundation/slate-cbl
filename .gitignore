@@ -1,3 +1,7 @@
 .emergence
 /config.json
 /watcher.log
+.DS_Store
+
+/sencha-workspace/build/
+/sencha-workspace/ext-*/
