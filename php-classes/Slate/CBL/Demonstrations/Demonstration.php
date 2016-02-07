@@ -8,9 +8,6 @@ use Slate\CBL\Skill;
 
 class Demonstration extends \VersionedRecord
 {
-    // VersionedRecord configuration
-    public static $historyTable = 'history_demonstrations';
-
     // ActiveRecord configuration
     public static $tableName = 'cbl_demonstrations';
     public static $singularNoun = 'demonstration';

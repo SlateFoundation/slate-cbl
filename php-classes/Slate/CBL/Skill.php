@@ -4,9 +4,6 @@ namespace Slate\CBL;
 
 class Skill extends \VersionedRecord
 {
-    // VersionedRecord configuration
-    public static $historyTable = 'history_cbl_skills';
-
     // ActiveRecord configuration
     public static $tableName = 'cbl_skills';
     public static $singularNoun = 'skill';
