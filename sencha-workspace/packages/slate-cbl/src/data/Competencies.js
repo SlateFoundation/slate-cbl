@@ -3,13 +3,14 @@ Ext.define('Slate.cbl.data.Competencies', {
     extend: 'Slate.cbl.store.Competencies',
     singleton: true,
     requires: [
+        'Slate.proxy.Records',
         'Slate.cbl.data.ContentAreas'
     ],
-	
+
     storeId: 'cbl-competencies',
 
     proxy: {
-        type: 'slate-cbl-records',
+        type: 'slate-records',
         url: '/cbl/competencies',
         relatedTable: 'ContentArea'
     },

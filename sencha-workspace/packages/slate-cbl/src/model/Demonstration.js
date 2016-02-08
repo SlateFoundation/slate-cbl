@@ -2,7 +2,7 @@
 Ext.define('Slate.cbl.model.Demonstration', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.cbl.proxy.Records',
+        'Slate.proxy.Records',
         'Ext.data.identifier.Negative'
     ],
 
@@ -82,7 +82,7 @@ Ext.define('Slate.cbl.model.Demonstration', {
     ],
 
     proxy: {
-        type: 'slate-cbl-records',
+        type: 'slate-records',
         url: '/cbl/demonstrations',
         include: ['competencyCompletions', 'Skills']
     }

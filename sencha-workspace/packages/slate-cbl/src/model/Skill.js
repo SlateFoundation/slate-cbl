@@ -2,8 +2,7 @@
 Ext.define('Slate.cbl.model.Skill', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.cbl.API',
-        'Slate.cbl.proxy.Records',
+        'Slate.proxy.Records',
         'Ext.data.identifier.Negative',
         'Ext.data.Store'
     ],
@@ -64,7 +63,7 @@ Ext.define('Slate.cbl.model.Skill', {
     ],
 
     proxy: {
-        type: 'slate-cbl-records',
+        type: 'slate-records',
         url: '/cbl/skills'
     }
 });

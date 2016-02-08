@@ -2,8 +2,7 @@
 Ext.define('Slate.cbl.model.Competency', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.cbl.API',
-        'Slate.cbl.proxy.Records',
+        'Slate.proxy.Records',
         'Ext.data.identifier.Negative'
     ],
 
@@ -25,7 +24,7 @@ Ext.define('Slate.cbl.model.Competency', {
     ],
 
     proxy: {
-        type: 'slate-cbl-records',
+        type: 'slate-records',
         url: '/cbl/competencies',
         include: ['totalDemonstrationsRequired', 'minimumAverageOffset']
     }
