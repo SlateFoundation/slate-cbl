@@ -8,15 +8,9 @@ Ext.define('SlateDemonstrationsStudent.Application', {
 
     name: 'SlateDemonstrationsStudent',
 
-    views: [
-        'main.Main'
+    controllers: [
+        'Viewport'
     ],
-
-    launch: function () {
-        this.getMainMainView().create({
-            renderTo: 'slateapp-viewport'
-        });
-    },
 
     onAppUpdate: function () {
         Ext.Msg.confirm('Application Update', 'This application has an update, reload?',
