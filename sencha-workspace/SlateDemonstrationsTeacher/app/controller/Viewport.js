@@ -25,7 +25,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
             contentAreaCode = (siteEnv.cblContentArea || {}).Code,
             dashboardCt, progressGrid;
 
-        dashboardCt = this.getDashboardCt({});
+        dashboardCt = this.getDashboardCt();
         progressGrid = dashboardCt.getProgressGrid();
 
         // configure dashboard with any available embedded data
