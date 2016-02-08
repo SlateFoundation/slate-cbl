@@ -5,15 +5,17 @@
  */
 Ext.define('SlateDemonstrationsStudent.Application', {
     extend: 'Ext.app.Application',
-    
+
     name: 'SlateDemonstrationsStudent',
 
-    stores: [
-        // TODO: add global / shared stores here
+    views: [
+        'main.Main'
     ],
-    
+
     launch: function () {
-        // TODO - Launch the application
+        this.getMainMainView().create({
+            renderTo: 'slateapp-viewport'
+        });
     },
 
     onAppUpdate: function () {

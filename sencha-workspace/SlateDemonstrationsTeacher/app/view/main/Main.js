@@ -10,7 +10,6 @@ Ext.define('SlateDemonstrationsTeacher.view.main.Main', {
     xtype: 'app-main',
 
     requires: [
-        'Ext.plugin.Viewport',
         'Ext.window.MessageBox',
 
         'SlateDemonstrationsTeacher.view.main.MainController',
