@@ -5,6 +5,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindowController', {
     requires: [
         'Ext.window.Toast',
 
+        'Slate.API',
+
         'Slate.cbl.model.Demonstration'
     ],
 
@@ -113,7 +115,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindowController', {
 
                     overrideWindow.close();
 
-                    Slate.cbl.API.fireEvent('demonstrationsave', demonstration);
+                    Slate.API.fireEvent('demonstrationsave', demonstration);
                 } else {
                     overrideWindow.setLoading(false);
 

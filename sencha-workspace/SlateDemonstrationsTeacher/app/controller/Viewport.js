@@ -30,7 +30,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
 
         // configure dashboard with any available embedded data
         if (contentAreaCode) {
-            progressGrid.setStudentDashboardLink('/cbl/student-dashboard?content-area=' + escape(contentAreaCode));
+            progressGrid.setStudentDashboardLink('/cbl/student-dashboard?content-area=' + encodeURIComponent(contentAreaCode));
         }
 
         if (siteEnv.cblStudents) {

@@ -3,7 +3,8 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-demonstration-editwindow',
     requires: [
-        'Slate.cbl.API',
+        'Slate.API',
+
         'Slate.cbl.field.LevelSlider',
         'Slate.cbl.data.Skills',
 
@@ -326,7 +327,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
                         editWindow.close();
                     }
 
-                    Slate.cbl.API.fireEvent('demonstrationsave', demonstration);
+                    Slate.API.fireEvent('demonstrationsave', demonstration);
                 } else {
                     editWindow.setLoading(false);
                     Ext.Msg.show({

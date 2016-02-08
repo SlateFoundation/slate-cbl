@@ -9,6 +9,8 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     requires: [
         'Jarvus.util.APIDomain',
 
+        'Slate.API',
+
         'Slate.cbl.view.teacher.skill.OverviewWindow',
         'Slate.cbl.view.teacher.skill.OverrideWindow',
         'Slate.cbl.view.teacher.demonstration.EditWindow'
@@ -104,13 +106,13 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
                             overviewWindow.setLoading(false);
                             return;
                         }
-                        
+
                         demonstration.erase({
                             params: {
                                 include: 'competencyCompletions'
                             },
                             success: function(demonstration, operation) {
-                                Slate.cbl.API.fireEvent('demonstrationdelete', operation.getResultSet().getRecords()[0]);
+                                Slate.API.fireEvent('demonstrationdelete', operation.getResultSet().getRecords()[0]);
                                 overviewWindow.setLoading(false);
                             }
                         });
@@ -133,7 +135,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     onDemonstrationSave: function(demonstration) {
         this.getView().progressGrid.loadDemonstration(demonstration);
     },
-    
+
     onDemonstrationDelete: function(demonstration) {
         this.getView().progressGrid.deleteDemonstration(demonstration);
     },
@@ -146,7 +148,7 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
         return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
             ownerCmp: dashboardView,
             autoShow: true,
-            
+
             studentsStore: dashboardView.progressGrid.getStudentsStore()
         }, options));
     }
