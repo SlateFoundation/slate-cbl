@@ -5,6 +5,9 @@
  */
 Ext.define('SlateDemonstrationsStudent.Application', {
     extend: 'Ext.app.Application',
+    requires: [
+        'Ext.window.MessageBox',
+    ],
 
     name: 'SlateDemonstrationsStudent',
 

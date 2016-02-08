@@ -7,7 +7,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         'Slate.cbl.field.LevelSlider',
         'Slate.cbl.data.Skills',
 
-        'Ext.MessageBox',
+        'Ext.window.MessageBox',
         'Ext.window.Toast',
         'Ext.util.MixedCollection'
     ],
