@@ -1,8 +1,17 @@
 # Ext JS: The Core
 
-## Loading the core
+The "core" of Ext JS is the bare minimum set of JavaScript code you need to load into your page before you start using the
+framework. The UI toolkits commonly associated with Ext JS are not part of the core, but can be incrementally loaded on
+top of it. The core provides a foundation comperable to frameworks like jQuery, but with an added emphasis on enabling
+the creation of reusable and integratable JavaScript code and UI components.
+
+## Loading the Core
 The bare minimum you need to load into your page to use Ext JS is `build/ext-debug.js` or it's minified
-form `build/ext.js` from the framework's distribution archive.
+form `build/ext.js` from the framework's distribution archive. These includes all sources from the framework
+"tagged" with `// @tag core` or `// @tag class`.
+
+The other stock builds available in the archive include various themes and bundles of UI components on top of the
+core that are useful if you want to use those higher-level components without doing any custom builds or configuring the loader.
 
 The [HTML template](../eg-iframe.html) powering all the inline examples in these docs loads the Ext JS core JavaScript build
 from Sencha's CDN:
@@ -11,8 +20,8 @@ from Sencha's CDN:
 
 That HTML template _also_ loads a stock build of the `triton` theme for the `classic` UI toolkit, but that is only needed to
 provide styling for later guides that get into using components from the UI toolkits. UI toolkit classes can be loaded by the
-core builds but none are included in it and having a theme loaded is not a requirement for using any of the core JavaScript library
-described in this guide.
+core builds but none are included in them, and having a theme loaded is not a requirement for using any of the core JavaScript
+library described in this guide.
 
 To verify that the core is loaded, query `Ext.getVersion('core')` in your console or via a JavaScript snippet in your page:
 
@@ -20,7 +29,7 @@ To verify that the core is loaded, query `Ext.getVersion('core')` in your consol
     alert('Ext JS version: ' + Ext.getVersion('core').toString());
 
 
-## Included in the core
+## Included in the Core
 - A manifest of all Ext.* classes for easy loading
 - `Ext.Boot`: An undocumented low-level internal component of the framework that provides for basic
 asset loading and platform detection
@@ -59,11 +68,9 @@ information about the current operating system
 A collection of feature/bug detectors and API for testing them
 - [`Ext.Loader`*](http://docs.sencha.com/extjs/6.0/6.0.0-classic/#!/api/Ext.Loader): A highly configurable
 class that provides for dynamic loading of JavaScript classes
-- [`Ext.onReady()`](http://docs.sencha.com/extjs/6.0/6.0.0-classic/#!/api/Ext-method-onReady): Method for registering functions to run after
+- [`Ext.onReady(function)`](http://docs.sencha.com/extjs/6.0/6.0.0-classic/#!/api/Ext-method-onReady): Method for registering functions to run after
 both the browser's "dom ready" event has fired and after `Ext.Loader` has finished loading all already-`require`d classes
-- [`Ext.dom.Element`*](http://docs.sencha.com/extjs/6.0/6.0.0-classic/#!/api/Ext.dom.Element): Class for wrapping DOM elements and providing
-high-level manipulation of them
-- [`Ext.application()`*](http://docs.sencha.com/extjs/6.0/6.0.0-classic/#!/api/Ext-method-application): A factory method for defining an
+- [`Ext.application(config)`*](http://docs.sencha.com/extjs/6.0/6.0.0-classic/#!/api/Ext-method-application): A factory method for defining an
 MVC application and loading all it's requirements
 
 _Classes marked with __*__ have thorough documentation worth reviewing_

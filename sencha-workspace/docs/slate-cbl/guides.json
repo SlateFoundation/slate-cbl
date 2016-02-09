@@ -13,9 +13,9 @@
                 "title": "The Core"
             },
             {
-                "name": "extjs_build",
-                "url": "guides/extjs/build",
-                "title": "Building for Production"
+                "name": "extjs_dom",
+                "url": "guides/extjs/dom",
+                "title": "Manipulating the DOM"
             },
             {
                 "name": "extjs_components",
@@ -31,6 +31,11 @@
                 "name": "extjs_apps",
                 "url": "guides/extjs/apps",
                 "title": "Apps & the MVC pattern"
+            },
+            {
+                "name": "extjs_build",
+                "url": "guides/extjs/build",
+                "title": "Building for Production"
             }
         ]
     }
