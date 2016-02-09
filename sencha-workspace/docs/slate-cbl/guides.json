@@ -36,6 +36,11 @@
                 "name": "extjs_build",
                 "url": "guides/extjs/build",
                 "title": "Building for Production"
+            },
+            {
+                "name": "extjs_fiddle",
+                "url": "guides/extjs/fiddle",
+                "title": "Sharing Snippets"
             }
         ]
     }
