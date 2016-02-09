@@ -4,10 +4,10 @@
 The bare minimum you need to load into your page to use Ext JS is `build/ext-debug.js` or it's minified
 form `build/ext.js` from the framework's distribution archive.
 
-The [HTML template](../eg-iframe.html) powering all the inline examples loads the Ext JS core JavaScript build
-from Cloudflare's CDN:
+The [HTML template](../eg-iframe.html) powering all the inline examples in these docs loads the Ext JS core JavaScript build
+from Sencha's CDN:
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.0.0/ext-debug.js"></script>
+    <script type="text/javascript" src="https://cdn.sencha.com/ext/commercial/6.0.0/build/ext-all-debug.js"></script>
 
 That HTML template _also_ loads a stock build of the `triton` theme for the `classic` UI toolkit, but that is only needed to
 provide styling for later guides that get into using components from the UI toolkits. UI toolkit classes can be loaded by the
