@@ -23,22 +23,22 @@ Ext.define('SlateTasksTeacher.controller.Viewport', {
     onLaunch: function () {
         var siteEnv = window.SiteEnvironment || {},
             contentAreaCode = (siteEnv.cblContentArea || {}).Code,
-            dashboardCt, progressGrid;
+            dashboardCt, taskGrid;
 
         dashboardCt = this.getDashboardCt();
-        progressGrid = dashboardCt.getProgressGrid();
+        taskGrid = dashboardCt.getTaskGrid();
 
         // configure dashboard with any available embedded data
         if (contentAreaCode) {
-            progressGrid.setStudentDashboardLink('/cbl/student-dashboard?content-area=' + encodeURIComponent(contentAreaCode));
+            taskGrid.setStudentDashboardLink('/cbl/student-dashboard?content-area=' + encodeURIComponent(contentAreaCode));
         }
 
         if (siteEnv.cblStudents) {
-            progressGrid.getStudentsStore().loadData(siteEnv.cblStudents);
+            taskGrid.getStudentsStore().loadData(siteEnv.cblStudents);
         }
 
         if (siteEnv.cblCompetencies) {
-            progressGrid.getCompetenciesStore().loadData(siteEnv.cblCompetencies);
+            taskGrid.getCompetenciesStore().loadData(siteEnv.cblCompetencies);
         }
 
         // render dashboard
