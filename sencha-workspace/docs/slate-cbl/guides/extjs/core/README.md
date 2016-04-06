@@ -74,3 +74,19 @@ both the browser's "dom ready" event has fired and after `Ext.Loader` has finish
 MVC application and loading all it's requirements
 
 _Classes marked with __*__ have thorough documentation worth reviewing_
+
+
+
+## Defining and Using Classes
+
+### Example 1: Ext.require with callback
+
+### Example 2: Ext.require + Ext.onReady
+
+### Example 3: Singleton with constructor
+
+
+
+## Configuring the Loader
+
+
