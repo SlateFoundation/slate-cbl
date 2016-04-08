@@ -6,13 +6,13 @@ Ext.define('AggregridExample.view.MyAggregrid', {
     config: {
         columnsStore: {
             //type: 'store',
-            fields: ['id', 'name'],
+            fields: ['id', 'fullName'],
             data: [
-                {id: 1, name: 'Ali'},
-                {id: 2, name: 'Chris'},
-                {id: 3, name: 'Ryon'},
-                {id: 4, name: 'Kevin'},
-                {id: 5, name: 'Christian'}
+                {id: 1, fullName: 'Ali'},
+                {id: 2, fullName: 'Chris'},
+                {id: 3, fullName: 'Ryon'},
+                {id: 4, fullName: 'Kevin'},
+                {id: 5, fullName: 'Christian'}
             ]
         },
         rowsStore: {
