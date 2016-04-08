@@ -5,13 +5,19 @@
  */
 Ext.define('AggregridExample.Application', {
     extend: 'Ext.app.Application',
-    
+
     name: 'AggregridExample',
 
     stores: [
         // TODO: add global / shared stores here
     ],
-    
+
+    views: [
+        'Main'
+    ],
+
+    mainView: 'AggregridExample.view.Main',
+
     launch: function () {
         // TODO - Launch the application
     },
