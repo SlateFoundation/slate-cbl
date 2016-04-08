@@ -55,7 +55,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
                 '<thead>',
                     '<tr>',
-                        '<td class="cbl-grid-corner-cell"></td>',
+                        '<td class="cbl-grid-corner-cell">&nbsp;</td>',
                     '</tr>',
                 '</thead>',
 

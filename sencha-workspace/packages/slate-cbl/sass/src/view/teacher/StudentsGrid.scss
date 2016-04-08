@@ -1,0 +1,154 @@
+.#{$g} {
+    display: flex;
+    max-width: 100%;
+
+    table {
+        margin: 0;
+        table-layout: fixed;
+        width: auto;
+    }
+
+    td,
+    th {
+        background-color: $slate-studentsgrid-cell-bg-color;
+        border: 1px solid $slate-studentsgrid-border-color;
+        border-width: 1px 0 0 1px;
+        max-width: $slate-studentsgrid-cell-width;
+        overflow: hidden;
+        padding: $slate-studentsgrid-cell-padding;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: $slate-studentsgrid-cell-width;
+    }
+
+    .#{$g}-cornercell,
+    .#{$g}-rowheaders-table,
+    .#{$g}-rowheader {
+        width: $slate-studentsgrid-rowheader-width;
+    }
+
+    .#{$g}-cornercell {
+        height: 150px;
+    }
+
+    .#{$g}-rowheader {
+        background-color: $slate-studentsgrid-rowheader-bg-color;
+    }
+
+    .#{$g}-expander-table {
+        width: 100%;
+    }
+
+    .#{$g}-expander-cell {
+        border: none;
+        padding: 0;
+    }
+
+    .#{$g}-subrow {
+        .#{$g}-rowheader {
+            background-color: $slate-studentsgrid-cell-bg-color;
+            font-weight: normal;
+            padding-left: 1.75em;
+        }
+    }
+
+    .#{$g}-colheader {
+        border: none;
+        height: 150px;
+        overflow: visible;
+        padding: 0;
+        vertical-align: bottom;
+    
+        .#{$g}-header-clip {
+            height: 100%;
+            overflow: hidden;
+            width: 300%;
+        }
+    
+        .#{$g}-header-link {
+            background-color: $slate-studentsgrid-colheader-bg-color;
+            border-bottom: 1px solid #ccc;
+            bottom: -125px;
+            color: $color;
+            display: block;
+            height: 58px;
+            left: 48px;
+            line-height: 1;
+            padding: 20px 30px 20px 40px;
+            position: relative;
+            text-align: left;
+            transform: rotate(-55deg);
+            transform-origin: bottom left;
+            width: 223px;
+
+            &:hover,
+            &:focus {
+                background-color: mix($link-color, $slate-studentsgrid-colheader-bg-color, 10%);
+                text-decoration: none;
+            }
+        }
+    
+        &:first-child a {
+            border-top: 1px solid #ccc;
+        }
+    }
+
+    .#{$g}-cell {
+        border-color: $color;
+        text-align: center;
+
+        &:first-child {
+            border-left: 0;
+        }
+    }
+}
+
+.#{$g}-rowheaders-ct {
+    border-bottom: 1px solid $slate-studentsgrid-border-color;
+    width: $slate-studentsgrid-rowheader-width;
+}
+
+.#{$g}-rowheader {
+    &::before {
+        content: '\f0da'; // fa-caret-right
+        display: inline-block;
+        float: left;
+        font-family: 'FontAwesome';
+        margin-right: .25em;
+        text-align: center;
+        transition: 250ms;
+        width: 1em;
+    }
+
+    &.is-expanded::before {
+        transform: rotate(90deg);
+    }
+
+    .#{$g}-subrow &::before {
+        display: none;
+    }
+}
+
+.#{$g}-expander-ct {
+    // height: 0;
+    overflow: hidden;
+    transition: 250ms;
+}
+
+.#{$g}-header-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.#{$g}-scroller {
+    border: 1px solid;
+    border-width: 0 0 1px 1px;
+    flex: 1;
+    overflow: auto;
+}
+
+.#{$g}-data-table {
+    border-right: 1px solid;
+}
