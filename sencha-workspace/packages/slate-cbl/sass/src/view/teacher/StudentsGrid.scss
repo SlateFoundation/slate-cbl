@@ -41,6 +41,7 @@
     }
 
     .#{$g}-expander-cell {
+        background-color: #999;
         border: none;
         padding: 0;
     }
@@ -109,6 +110,10 @@
     width: $slate-studentsgrid-rowheader-width;
 }
 
+.#{$g}-row {
+    cursor: pointer;
+}
+
 .#{$g}-rowheader {
     &::before {
         content: '\f0da'; // fa-caret-right
@@ -121,7 +126,7 @@
         width: 1em;
     }
 
-    &.is-expanded::before {
+    .is-expanded &::before {
         transform: rotate(90deg);
     }
 
@@ -131,9 +136,16 @@
 }
 
 .#{$g}-expander-ct {
-    // height: 0;
+    background-color: transparent;
+    height: 0;
     overflow: hidden;
+    opacity: 0;
     transition: 250ms;
+
+    .is-expanded + .#{$g}-expander & {
+        height: 123px; // TODO don't hardcode this, obviously should be set in JS
+        opacity: 1;
+    }
 }
 
 .#{$g}-header-text {

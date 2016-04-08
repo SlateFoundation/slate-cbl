@@ -283,19 +283,29 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
         '</div>'
     ],
 
-/*
     listeners: {
         scope: 'this',
         click: {
             fn: 'onGridClick',
             element: 'el',
-            delegate: '.slate-studentsgrid-progress-row, .slate-studentsgrid-demo'
-        },
-        mouseover: {
-            fn: 'onSkillNameMouseOver',
-            element: 'el'
-        },
-        competencyrowclick: 'onCompetencyRowClick'
+            delegate: '.slate-studentsgrid-row'
+        }
+    },
+
+    // TODO make this much better
+    onGridClick: function(ev, t) {
+        var target = Ext.get(t);
+
+        if (target.is('.slate-studentsgrid-row')) {
+            var grid = this.el,
+                rowheadersTable = grid.down('.slate-studentsgrid-rowheaders-table'),
+                dataTable       = grid.down('.slate-studentsgrid-data-table'),
+                targetTable     = target.up('table'),
+                targetTableRows = targetTable.select('.slate-studentsgrid-row'),
+                rowIndex        = targetTableRows.indexOf(target);
+
+            dataTable.select('.slate-studentsgrid-row').item(rowIndex).toggleCls('is-expanded');
+            rowheadersTable.select('.slate-studentsgrid-row').item(rowIndex).toggleCls('is-expanded');
+        }
     }
-*/
 });
