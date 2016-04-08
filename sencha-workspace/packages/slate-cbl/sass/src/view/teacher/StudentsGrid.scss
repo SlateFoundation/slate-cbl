@@ -28,6 +28,7 @@
     }
 
     .#{$g}-cornercell {
+        border-top: 0;
         height: 150px;
     }
 
@@ -71,8 +72,8 @@
             bottom: -125px;
             color: $color;
             display: block;
-            height: 58px;
-            left: 48px;
+            height: 57px;
+            left: 49px;
             line-height: 1;
             padding: 20px 30px 20px 40px;
             position: relative;

@@ -186,7 +186,9 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
             '<table class="slate-studentsgrid-rowheaders-table">',
                 '<thead>',
                     '<tr>',
-                        '<td class="slate-studentsgrid-cornercell">&nbsp;</td>',
+                        '<td class="slate-studentsgrid-cornercell">',
+                            '&nbsp;',
+                        '</td>',
                     '</tr>',
                 '</thead>',
 
