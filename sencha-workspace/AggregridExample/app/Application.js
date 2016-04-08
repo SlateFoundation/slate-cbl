@@ -19,7 +19,7 @@ Ext.define('AggregridExample.Application', {
     mainView: 'AggregridExample.view.Main',
 
     launch: function () {
-        // TODO - Launch the application
+        window.mainView = this.getMainView();
     },
 
     onAppUpdate: function () {
