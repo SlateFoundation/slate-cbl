@@ -13,10 +13,10 @@ Ext.define('AggregridExample.Application', {
     ],
 
     views: [
-        'Main'
+        'MyAggregrid'
     ],
 
-    mainView: 'AggregridExample.view.Main',
+    mainView: 'AggregridExample.view.MyAggregrid',
 
     launch: function () {
         window.mainView = this.getMainView();

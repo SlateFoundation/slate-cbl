@@ -1,6 +1,6 @@
-Ext.define('AggregridExample.view.Main', {
+Ext.define('AggregridExample.view.MyAggregrid', {
     extend: 'Jarvus.aggregrid.Aggregrid',
-    xtype: 'app-main',
+    xtype: 'app-myaggregrid',
 
 
     config: {
