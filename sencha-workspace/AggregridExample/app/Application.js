@@ -22,6 +22,17 @@ Ext.define('AggregridExample.Application', {
         window.mainView = this.getMainView();
     },
 
+    control: {
+        'app-myaggregrid': {
+            beforerefresh: function() {
+                console.info('app.myaggregrid->beforerefresh');
+            },
+            refresh: function() {
+                console.info('app.myaggregrid->refresh');
+            }
+        }
+    },
+
     onAppUpdate: function () {
         Ext.Msg.confirm('Application Update', 'This application has an update, reload?',
             function (choice) {
