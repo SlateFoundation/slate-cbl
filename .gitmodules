@@ -26,3 +26,7 @@
 	path = sencha-workspace/packages/slate-core-data
 	url = https://github.com/SlateFoundation/slate-core-data.git
 	branch = master
+[submodule "jarvus-aggregrid"]
+	path = sencha-workspace/packages/jarvus-aggregrid
+	url = https://github.com/JarvusInnovations/jarvus-aggregrid.git
+	branch = master
