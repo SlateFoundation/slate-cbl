@@ -105,6 +105,48 @@
     }
 }
 
+.#{$g}-scroll-control {
+    align-items: center;
+    background: #ddd;
+    box-sizing: border-box;
+    cursor: w-resize;
+    display: flex;
+    font-size: 1.5em;
+    height: 150px;
+    justify-content: center;
+    left: $slate-studentsgrid-rowheader-width;
+    padding: .125em;
+    position: absolute;
+    top: 0;
+    width: .5em;
+    z-index: 1;
+
+    &:hover,
+    &:focus {
+        background-color: #ccc;
+    }
+
+    &::before {
+        content: '\00ab';
+    }
+
+    &.scroll-right {
+        cursor: e-resize;
+        left: auto;
+        right: 0;
+
+        &::before {
+            content: '\00bb';
+        }
+    }
+
+    &.is-disabled {
+        background-color: #e5e5e5;
+        color: #bbb;
+        cursor: default;
+    }
+}
+
 .#{$g}-rowheaders-ct {
     border-bottom: 1px solid $slate-studentsgrid-border-color;
     width: $slate-studentsgrid-rowheader-width;

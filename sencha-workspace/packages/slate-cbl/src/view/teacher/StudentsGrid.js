@@ -230,6 +230,9 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
 
         '<div class="slate-studentsgrid-scroller">',
             '<div class="slate-studentsgrid-data-ct">',
+                '<div tabindex="0" class="slate-studentsgrid-scroll-control is-disabled scroll-left"></div>',
+                '<div tabindex="0" class="slate-studentsgrid-scroll-control is-disabled scroll-right"></div>',
+
                 '<table class="slate-studentsgrid-data-table">',
                     '<thead>',
                         '<tr>',
