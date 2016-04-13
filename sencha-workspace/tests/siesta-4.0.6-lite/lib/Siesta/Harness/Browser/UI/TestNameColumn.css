@@ -1,0 +1,19 @@
+/*
+
+Siesta 4.0.6
+Copyright(c) 2009-2016 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.test-name-cell .x-grid-cell-inner {
+    user-select         : none;
+    -o-user-select      : none;
+    -ms-user-select     : none;
+    -moz-user-select    : -moz-none;
+    -webkit-user-select : none;
+}
+
+.test-name-cell .x-grid-cell-inner {
+    cursor : pointer;
+}

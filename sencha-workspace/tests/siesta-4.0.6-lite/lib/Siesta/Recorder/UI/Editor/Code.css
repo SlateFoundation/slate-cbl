@@ -1,0 +1,20 @@
+/*
+
+Siesta 4.0.6
+Copyright(c) 2009-2016 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.siesta-recorder-codeeditor .CodeMirror {
+}
+
+.siesta-recorder-codeeditor.siesta-invalid-syntax .CodeMirror:before {
+    content     : "\f00d" !important;
+    font-family : FontAwesome;
+    position    : absolute;
+    top         : 0px;
+    right       : 2px;
+    color       : red;
+    font-size   : 10px;
+}

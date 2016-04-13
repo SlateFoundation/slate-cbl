@@ -1,0 +1,26 @@
+/*
+
+Siesta 4.0.6
+Copyright(c) 2009-2016 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.x-grid-tree-node-leaf .action-level-0 .x-tree-elbow-img,
+.siesta-recorderpanel-typecolumn .x-tree-icon {
+    display : none;
+}
+
+.action-icon {
+    color : #a2a2a2;
+}
+
+.action-icon {
+    font-size    : 0.85em;
+    position     : relative;
+}
+
+.siesta-recorderpanel-action-icon-column .x-grid-cell-inner {
+    padding-left  : 1px;
+    padding-right : 1px;
+}

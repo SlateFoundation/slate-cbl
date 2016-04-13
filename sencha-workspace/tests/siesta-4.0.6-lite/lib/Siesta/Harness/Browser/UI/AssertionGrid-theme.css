@@ -1,0 +1,117 @@
+/*
+
+Siesta 4.0.6
+Copyright(c) 2009-2016 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+/*=======================================================================================================================================================================================================================
+    Common and unsorted
+*/
+
+.siesta-test-initializing .x-grid-item-container:empty::after {
+    font-size   : 0.85em;
+    color       : #777;
+    white-space : nowrap;
+}
+
+.siesta-assertion-grid .x-grid-body {
+    border-top : 0 none;
+}
+
+/*=======================================================================================================================================================================================================================
+    Summary row
+*/
+
+.tr-summary-row .x-grid-cell-inner {
+    border-top-color : rgb(89, 205, 82);
+}
+
+.tr-summary-failure .x-grid-cell-inner {
+    border-top-color : #ff1111;
+}
+
+.tr-summary-failure span {
+    font-weight : bold;
+}
+
+/*=======================================================================================================================================================================================================================
+    Diagnostic row
+*/
+
+.tr-diagnostic-row {
+    background-color : #f7f7f7 !important;
+}
+
+.tr-warning-row span.assertion-text {
+    color : #ff1111;
+}
+
+.tr-diagnostic-row td {
+    border-top-color    : #e6e6e6 !important;
+    border-bottom-color : #e6e6e6 !important;
+}
+
+/*=======================================================================================================================================================================================================================
+    Annotation
+*/
+
+.tr-assert-row-annontation {
+    font-family : "Courier New", monospace, serif;
+    font-size   : 1em;
+}
+
+/*=======================================================================================================================================================================================================================
+    Assertion row
+*/
+
+.tr-assertion-row-passed .x-tree-icon,
+.tr-exception-todo-row .x-tree-icon,
+.tr-subtest-row-green .x-tree-icon {
+    color : #59CD52;
+}
+
+.tr-assertion-row-failed .x-tree-icon,
+.tr-exception-row .x-tree-icon,
+.tr-subtest-row-red .x-tree-icon {
+    color : #8B0000;
+}
+
+.tr-assertion-row-failed {
+    background-color : #ff8186;
+}
+
+.tr-todo-row-passed .x-tree-icon {
+    color : rgb(192, 50, 216);
+}
+
+.tr-todo-row-failed .x-tree-icon {
+    color   : rgb(89, 205, 82);
+    opacity : 0.7;
+}
+
+.tr-waiting-row .assertion-text {
+    color : #666;
+}
+
+.tr-waiting-row-passed .assertion-text {
+    color : #666;
+}
+
+/*=======================================================================================================================================================================================================================
+    Exception row
+*/
+
+.tr-exception-row {
+    background-color : #ff8186;
+}
+
+/*=======================================================================================================================================================================================================================
+    Sub test row (including describe/it)
+*/
+
+.tr-subtest-row-describe .x-tree-node-text {
+    font-weight : bold;
+}
+
