@@ -1,16 +1,11 @@
 var harness = new Siesta.Harness.Browser.ExtJS();
 
 harness.configure({
-    title       : 'My Test Suite',
+    title       : 'Aggregrid Example Tests',
 
     preload     : [
-        // version of ExtJS used by your application
-        // (not needed if you use Sencha Cmd which builds a complete 'all-file' including Ext JS itself)
-        '../ext-6.0.1.250/build/ext-all.js',
-        '../ext-6.0.1.250/build/ext-debug.js',
-
-        // Your application files
-        '../build/production/AggregridExample/app.js'
+        '../AggregridExample/.sencha/app/Boot.js',
+        '../build/testing/AggregridExample/app.js'
     ]
 });
 
