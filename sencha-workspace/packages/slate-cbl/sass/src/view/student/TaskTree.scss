@@ -1,21 +1,24 @@
-.slate-tasktree {
-    .x-panel-body-default {
-        background-color: #e3e3e3;
-    }
-}
-
 .slate-tasktree-list {
-    margin: 1em;
+    background-color: #e3e3e3;
     list-style: none;
-    padding: 0;
+    margin: 0;
+    padding: 1em;
 }
 
 .slate-tasktree-item {
-    margin: 1em 0;
+    margin: 0;
 
     .flex-ct {
         align-items: stretch;
         display: flex;
+    }
+
+    > .flex-ct {
+        position: relative; // sit above subtasks
+    }
+
+    + .slate-tasktree-item {
+        margin-top: 1em;
     }
 }
 
@@ -29,8 +32,18 @@
     justify-content: center;
     width: 1em;
 
-    .has-subtasks & {
+    &.is-clickable {
         cursor: pointer;
+
+        &::before {
+            content: '\002b'; // plus sign
+        }
+    }
+
+    .is-expanded &.is-clickable {
+        &::before {
+            content: '\2212'; // minus sign
+        }
     }
 }
 
@@ -65,8 +78,14 @@
 }
 
 .slate-tasktree-sublist {
-    @extend .slate-tasktree-list;
+    height: 0;
+    list-style: none;
     margin: 0 0 0 1.5em;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    transform: translateX(-1.5em);
+    transition: 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeInCirc
 
     .slate-tasktree-item {
         margin: 1px 0 0;
@@ -88,6 +107,12 @@
         .slate-tasktree-text {
             border-radius: 0 0 .25em 0;
         }
+    }
+
+    .is-expanded & {
+        height: 134px; // TODO make this dynamic!
+        opacity: 1;
+        transform: none;
     }
 }
 

@@ -1,5 +1,5 @@
 Ext.define('Slate.cbl.view.student.TaskTree', {
-    extend: 'Ext.Panel',
+    extend: 'Slate.cbl.widget.SimplePanel',
     xtype: 'slate-tasktree',
     requires:[
     ],
@@ -12,16 +12,9 @@ Ext.define('Slate.cbl.view.student.TaskTree', {
         }
     },
 
-    componentCls: 'slate-tasktree',
+    title: 'Current Tasks',
 
-    header: {
-        title: 'Current English Tasks',
-        items: [{
-            xtype: 'combo',
-            forceSelection: true,
-            emptyText: 'Filter'
-        }]
-    },
+    componentCls: 'slate-tasktree',
 
     data: {
         tasks: [
@@ -103,7 +96,7 @@ Ext.define('Slate.cbl.view.student.TaskTree', {
                 '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{status}">',
 
                     '<div class="flex-ct">',
-                        '<div class="slate-tasktree-nub"><tpl if="subtasks">+</tpl></div>',
+                        '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
                         '<div class="slate-tasktree-data">',
                             '<div class="slate-tasktree-category">{category}</div>',
                             '<div class="slate-tasktree-text">',
@@ -153,5 +146,25 @@ Ext.define('Slate.cbl.view.student.TaskTree', {
                 return statusStrings[key] || '';
             }
         }
-    ]
+    ],
+
+    listeners: {
+        scope: 'this',
+        click: {
+            fn: 'onTreeClick',
+            element: 'el',
+            delegate: '.slate-tasktree-nub.is-clickable'
+        }
+    },
+
+    onTreeClick: function(ev, t) {
+        var target = Ext.get(t);
+
+        if (target.is('.slate-tasktree-nub.is-clickable')) {
+            var tree = this.el,
+                treeItem = target.up('.slate-tasktree-item');
+
+            treeItem.toggleCls('is-expanded');
+        }
+    }
 });
