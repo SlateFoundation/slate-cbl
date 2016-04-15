@@ -48,8 +48,19 @@ StartTest(function(t){
         t.is(AggregridView.getColumnsStore().getCount(), 5, 'columnsStore has 5 records');
         t.is(AggregridView.getRowsStore().getCount(), 4, 'rowsStore has 4 records');
 
+        // ensure refresh only ran once
         t.waitForMs(2000, function() {
             t.is(refreshCount, 1, 'refresh event fired only once during setup');
+
+            // check dom
+            t.selectorCountIs('table.jarvus-aggregrid-rowheaders-table', AggregridView, 1, 'rendered one rowheaders table');
+            t.selectorCountIs('table.jarvus-aggregrid-rowheaders-table tr', AggregridView, 9, 'rendered 9 rows in rowheaders table');
+
+            t.selectorCountIs('table.jarvus-aggregrid-data-table', AggregridView, 1, 'rendered one data table');
+            t.selectorCountIs('table.jarvus-aggregrid-data-table tr', AggregridView, 9, 'rendered 9 rows in data table');
+
+            t.contentLike('table.jarvus-aggregrid-data-table .jarvus-aggregrid-colheader .jarvus-aggregrid-header-text', 'Ali (Pro)', 'first column header rendered with template');
+
             t.done();
         });
     });
