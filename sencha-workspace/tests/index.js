@@ -5,7 +5,9 @@ harness.configure({
 
     preload     : [
         '../AggregridExample/.sencha/app/Boot.js',
-        '../build/testing/AggregridExample/app.js'
+        '../build/testing/AggregridExample/app.js',
+
+        '../build/testing/AggregridExample/resources/AggregridExample-all.css'
     ]
 });
 
