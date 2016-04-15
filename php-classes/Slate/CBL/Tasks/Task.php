@@ -6,7 +6,7 @@ class Task extends \VersionedRecord
 {
     //VersionedRecord configuration
     public static $historyTable = 'history_cbl_tasks';
-    
+
     // ActiveRecord configuration
     public static $tableName = 'cbl_tasks';
     public static $singularNoun = 'task';
@@ -17,7 +17,7 @@ class Task extends \VersionedRecord
         __CLASS__,
         ExperienceTask::class,
     ];
-    
+
     public static $fields = [
         'Title',
         'Handle' => [
@@ -41,23 +41,22 @@ class Task extends \VersionedRecord
         ],
         'Shared' => [
             'type' => 'enum',
-            'notnull' => true,
             'values' => ['course', 'school', 'public'],
             'default' => null
         ]
     ];
-    
+
     public static $validators = [
         'Title'
     ];
-    
+
     public function save($deep = true)
     {
         HandleBehavior::onSave($this);
-        
+
         return parent::save($deep);
     }
-    
+
     public function validate($deep = true)
     {
         // call parent
