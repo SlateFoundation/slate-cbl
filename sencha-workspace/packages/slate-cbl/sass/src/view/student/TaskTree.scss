@@ -1,0 +1,113 @@
+.slate-tasktree {
+    .x-panel-body-default {
+        background-color: #e3e3e3;
+    }
+}
+
+.slate-tasktree-list {
+    margin: 1em;
+    list-style: none;
+    padding: 0;
+}
+
+.slate-tasktree-item {
+    margin: 1em 0;
+
+    .flex-ct {
+        align-items: stretch;
+        display: flex;
+    }
+}
+
+.slate-tasktree-nub {
+    align-items: center;
+    background-color: #ccc;
+    border-radius: .25em 0 0 .25em;
+    display: flex;
+    font-size: 1.5em;
+    font-weight: bold;
+    justify-content: center;
+    width: 1em;
+
+    .has-subtasks & {
+        cursor: pointer;
+    }
+}
+
+.slate-tasktree-data {
+    flex: 1;
+}
+
+.slate-tasktree-category {
+    background-color: #f5f5f5;
+    border-radius: 0 .4375em 0 0;
+    color: $muted-color;
+    font-size: .875em;
+    padding: .125em .75em;
+    text-transform: uppercase;
+}
+
+.slate-tasktree-text {
+    align-items: center;
+    background-color: white;
+    border-radius: 0 0 .25em 0;
+    display: flex;
+    line-height: (4/3);
+    padding: .5em .625em;
+
+    .has-subtasks & {
+        border-radius: 0;
+    }
+}
+
+.slate-tasktree-title {
+    flex: 1;
+}
+
+.slate-tasktree-sublist {
+    @extend .slate-tasktree-list;
+    margin: 0 0 0 1.5em;
+
+    .slate-tasktree-item {
+        margin: 1px 0 0;
+    }
+
+    .slate-tasktree-nub {
+        border-radius: 0;
+    }
+
+    .slate-tasktree-text {
+        border-radius: 0;
+    }
+
+    > :last-child {
+        .slate-tasktree-nub {
+            border-radius: 0 0 0 .25em;
+        }
+
+        .slate-tasktree-text {
+            border-radius: 0 0 .25em 0;
+        }
+    }
+}
+
+.slate-tasktree-status,
+.slate-tasktree-date {
+    align-items: center;
+    display: flex;
+    font-size: .8125em;
+    justify-content: center;
+    padding: .125em .5em;
+}
+
+.slate-tasktree-status {
+    background-color: #ccc;
+    border-radius: .25em 0 0 .25em;
+    margin-left: 1em;
+}
+
+.slate-tasktree-date {
+    background-color: #eee;
+    border-radius: 0 .25em .25em 0;
+    font-weight: bold;
+}
