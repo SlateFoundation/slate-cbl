@@ -6,7 +6,6 @@ StartTest(function(t){
         var AggregridView = Ext.create('Jarvus.aggregrid.Aggregrid', {
             renderTo: Ext.getBody(),
             columnsStore: {
-                //type: 'store',
                 fields: ['id', 'fullName'],
                 data: [
                     {id: 1, fullName: 'Ali', rank: 'Pro'},
@@ -24,7 +23,6 @@ StartTest(function(t){
             ],
 
             rowsStore: {
-                //type: 'store',
                 fields: ['id', 'taskName'],
                 data: [
                     {id: 1, taskName: 'Task 1'},

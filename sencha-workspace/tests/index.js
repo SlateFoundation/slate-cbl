@@ -11,5 +11,5 @@ harness.configure({
 
 harness.start(
     'jarvus-aggregrid/010_sanity.t.js',
-    'jarvus-aggregrid/020_aggregrid.t.js'
+    'jarvus-aggregrid/020_fully-configured.t.js'
 );
