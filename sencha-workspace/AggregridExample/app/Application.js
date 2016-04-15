@@ -5,6 +5,10 @@
  */
 Ext.define('AggregridExample.Application', {
     extend: 'Ext.app.Application',
+    requires: [
+        'Ext.plugin.Viewport'
+    ],
+
 
     name: 'AggregridExample',
 
