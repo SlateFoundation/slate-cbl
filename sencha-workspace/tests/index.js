@@ -1,17 +1,16 @@
 var harness = new Siesta.Harness.Browser.ExtJS();
 
 harness.configure({
-    title       : 'Aggregrid Example Tests',
-
-    preload     : [
-        '../AggregridExample/.sencha/app/Boot.js',
-        '../build/testing/AggregridExample/app.js',
-
-        '../build/testing/AggregridExample/resources/AggregridExample-all.css'
-    ]
+    title: 'Aggregrid Tests'
 });
 
 harness.start(
-    'jarvus-aggregrid/010_sanity.t.js',
-    'jarvus-aggregrid/020_fully-configured.t.js'
+    {
+        group: 'Application Tests',
+        pageUrl: '../AggregridExample/index.html',
+        items: [
+            'jarvus-aggregrid/010_sanity.t.js',
+            'jarvus-aggregrid/020_fully-configured.t.js'
+        ]
+    }
 );
