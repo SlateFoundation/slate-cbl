@@ -3,7 +3,6 @@ StartTest(function(t){
 
         var refreshCount = 0,
             AggregridView = Ext.create('Jarvus.aggregrid.Aggregrid', {
-                renderTo: Ext.getBody(),
                 columnsStore: {
                     fields: ['id', 'fullName'],
                     data: [
@@ -47,6 +46,10 @@ StartTest(function(t){
 
         t.is(AggregridView.getColumnsStore().getCount(), 5, 'columnsStore has 5 records');
         t.is(AggregridView.getRowsStore().getCount(), 4, 'rowsStore has 4 records');
+
+        t.is(refreshCount, 0, 'refresh event not fired until rendered');
+
+        AggregridView.render(Ext.getBody());
 
         t.waitForMs(2000, function() {
             t.is(refreshCount, 1, 'refresh event fired only once during setup');
