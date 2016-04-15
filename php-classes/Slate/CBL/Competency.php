@@ -10,9 +10,6 @@ class Competency extends \VersionedRecord
     public static $minimumAverageOffset = -0.5;
     public static $maximumTargetLevel = 12;
 
-    // VersionedRecord configuration
-    public static $historyTable = 'history_cbl_competencies';
-
     // ActiveRecord configuration
     public static $tableName = 'cbl_competencies';
     public static $singularNoun = 'competency';

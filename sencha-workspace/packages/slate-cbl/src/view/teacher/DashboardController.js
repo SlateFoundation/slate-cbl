@@ -7,6 +7,8 @@ Ext.define('Slate.cbl.view.teacher.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-dashboard',
     requires: [
+        'Jarvus.util.APIDomain',
+
         'Slate.cbl.view.teacher.skill.OverviewWindow',
         'Slate.cbl.view.teacher.skill.OverrideWindow',
         'Slate.cbl.view.teacher.demonstration.EditWindow'
