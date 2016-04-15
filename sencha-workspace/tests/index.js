@@ -10,6 +10,6 @@ harness.configure({
 });
 
 harness.start(
-    'siesta-4.0.6-lite/tests/sanity/010_sanity.t.js',
-    'siesta-4.0.6-lite/tests/jarvus-aggregrid/Aggregrid.js'
+    'jarvus-aggregrid/010_sanity.t.js',
+    'jarvus-aggregrid/020_aggregrid.t.js'
 );
