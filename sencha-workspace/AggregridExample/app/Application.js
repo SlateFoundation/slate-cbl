@@ -13,7 +13,9 @@ Ext.define('AggregridExample.Application', {
     name: 'AggregridExample',
 
     stores: [
-        // TODO: add global / shared stores here
+        'Absence',
+        'Student',
+        'TimePeriod'
     ],
 
     views: [
