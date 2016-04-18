@@ -1,0 +1,53 @@
+/*
+
+Siesta 4.0.6
+Copyright(c) 2009-2016 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.resultPanel-panel {
+    border : 0 none;
+}
+
+.resultpanel-testtitle {
+    white-space : nowrap;
+    overflow    : hidden;
+    line-height : 35px; /*prevent text from clipping vertically */
+}
+
+.test-source-ct .syntaxhighlighter {
+    overflow : hidden !important;
+}
+
+.si-sourcepanel-close {
+    width    : 14px;
+    height   : 14px;
+    position : absolute;
+    top      : 2px;
+    right    : 2px;
+    font     : normal normal normal 14px/1 FontAwesome;
+    cursor   : pointer;
+    z-index  : 1000;
+    color    : #666;
+}
+
+.test-source-ct .toolbar {
+    display : none;
+}
+
+/* fixes row height sync in Chrome */
+.syntaxhighlighter .line {
+    height         : 1.2em !important;
+    vertical-align : middle !important;
+}
+
+.siesta-test-title {
+    position : absolute;
+    top      : -23px;
+    left     : 0
+}
+
+.resultPanel-panel > .x-panel-body > .x-splitter-vertical div {
+    display : none;
+}

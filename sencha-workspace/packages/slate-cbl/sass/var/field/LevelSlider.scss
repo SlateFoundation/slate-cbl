@@ -1,0 +1,66 @@
+$cbl-level-6-color:             dynamic(#ccc);
+$cbl-level-7-color:             dynamic(#999);
+
+$cbl-level-8-color:             dynamic(#666);
+$cbl-level-9-color:             dynamic(#d94181);
+$cbl-level-10-color:            dynamic(#ffa200);
+$cbl-level-11-color:            dynamic(#5dc02a);
+$cbl-level-12-color:            dynamic(#008cc1);
+$cbl-level-13-color:            dynamic(#a0522d);
+
+$cbl-level-8-color-light:       dynamic(#999);
+$cbl-level-9-color-light:       dynamic(#ea97ba);
+$cbl-level-10-color-light:      dynamic(#ffcc73);
+$cbl-level-11-color-light:      dynamic(#a6dc8a);
+$cbl-level-12-color-light:      dynamic(#73c0dd);
+$cbl-level-13-color-light:      dynamic(#da845c);
+
+$cbl-level-8-color-medium:      dynamic(#777);
+$cbl-level-9-color-medium:      dynamic(#e1679a);
+$cbl-level-10-color-medium:     dynamic(#ffb533);
+$cbl-level-11-color-medium:     dynamic(#7dcd55);
+$cbl-level-12-color-medium:     dynamic(#33a3cd);
+$cbl-level-13-color-medium:     dynamic(#b66540);
+
+$cbl-level-8-color-dark:        dynamic(#555);
+$cbl-level-9-color-dark:        dynamic(#ca274f);
+$cbl-level-10-color-dark:       dynamic(#ff7d00);
+$cbl-level-11-color-dark:       dynamic(#38a719);
+$cbl-level-12-color-dark:       dynamic(#005ea8);
+$cbl-level-13-color-dark:       dynamic(#8e4320);
+
+$cbl-level-colors: dynamic(
+    $cbl-level-8-color,
+    $cbl-level-9-color,
+    $cbl-level-10-color,
+    $cbl-level-11-color,
+    $cbl-level-12-color,
+    $cbl-level-13-color
+);
+
+$cbl-level-colors-light: dynamic(
+    $cbl-level-8-color-light,
+    $cbl-level-9-color-light,
+    $cbl-level-10-color-light,
+    $cbl-level-11-color-light,
+    $cbl-level-12-color-light,
+    $cbl-level-13-color-light
+);
+
+$cbl-level-colors-medium: dynamic(
+    $cbl-level-8-color-medium,
+    $cbl-level-9-color-medium,
+    $cbl-level-10-color-medium,
+    $cbl-level-11-color-medium,
+    $cbl-level-12-color-medium,
+    $cbl-level-13-color-medium
+);
+
+$cbl-level-colors-dark: dynamic(
+    $cbl-level-8-color-dark,
+    $cbl-level-9-color-dark,
+    $cbl-level-10-color-dark,
+    $cbl-level-11-color-dark,
+    $cbl-level-12-color-dark,
+    $cbl-level-13-color-dark
+);

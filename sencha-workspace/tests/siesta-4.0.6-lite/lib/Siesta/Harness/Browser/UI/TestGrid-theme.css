@@ -1,0 +1,104 @@
+/*
+
+Siesta 4.0.6
+Copyright(c) 2009-2016 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.tr-testgrid .x-column-header-text {
+    color : #fff;
+}
+
+.tr-testgrid .x-grid-body {
+    border-top    : 0 none;
+    border-bottom : 0 none;
+}
+
+.tr-testgrid .x-tree-view,
+.test-name-cell .x-grid-cell-inner {
+    cursor : pointer;
+}
+
+.tr-testgrid .x-column-header,
+.tr-testgrid .x-column-header-over {
+    border           : 0 none;
+    background       : transparent;
+    background-image : none;
+}
+
+.tr-testgrid .x-column-header-inner-empty {
+    display : none;
+}
+
+.tr-testgrid {
+    color : #444;
+}
+
+.tr-testgrid .siesta-test-failed,
+.tr-testgrid .siesta-test-file-missing,
+.tr-testgrid .siesta-folder-fail {
+    color : #8B0000;
+}
+
+.tr-testgrid .siesta-test-passed {
+    color : #59CD52;
+}
+
+
+/* BOTTOM TOOLBAR STYLES */
+
+.main-bbar .x-btn-inner {
+    padding : 0;
+}
+
+.main-bbar .x-btn {
+    overflow : visible;
+}
+
+.x-ie9m .main-bbar .x-btn * {
+    background : transparent !important;
+}
+
+.subicon {
+    position    : absolute;
+    right       : 0px;
+    bottom      : -10px;
+    font-family : FontAwesome;
+    font-size   : 9px;
+    color       : #fff;
+    display     : block;
+    width       : 8px;
+}
+
+.x-safari .subicon,
+.x-ie9m .subicon {
+    left : 10px;
+}
+
+/* EOF Bottom toolbar styling */
+
+/* SUMMARY BAR */
+.summary-bar {
+    color : #fff;
+}
+
+.summary-bar div {
+    height : 50%;
+}
+
+.summary-bar .icon {
+    color       : #fff;
+    text-shadow : none;
+}
+
+/* Sizing toolbar */
+.size-toolbar {
+    background       : #fff;
+    border-top-color : #cecece;
+}
+
+.size-label,
+.x-form-cb-label {
+    color : #666;
+}
