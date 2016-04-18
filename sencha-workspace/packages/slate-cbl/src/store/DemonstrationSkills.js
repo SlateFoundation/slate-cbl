@@ -1,9 +1,6 @@
 /*jslint browser: true, undef: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.store.DemonstrationSkills', {
     extend: 'Ext.data.Store',
-    requires: [
-        'Slate.cbl.API'
-    ],
 
     model: 'Slate.cbl.model.DemonstrationSkill',
     pageSize: 0,
@@ -36,7 +33,7 @@ Ext.define('Slate.cbl.store.DemonstrationSkills', {
     /**
      * Loads an array of raw DemonstrationSkill data into the store, updating records that already exist. If demonstration
      * is provided, existing skills not in the new list will be removed and embedded demonstration data may be omitted.
-     * 
+     *
      * @param {Object[]} data Array of DemonstrationSkill raw data
      * @param {Slate.cbl.model.Demonstration} [demonstration] If provided, the data array is assumed to contain all skills for this demonstration
      */

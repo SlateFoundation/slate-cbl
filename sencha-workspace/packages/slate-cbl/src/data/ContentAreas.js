@@ -2,6 +2,10 @@
 Ext.define('Slate.cbl.data.ContentAreas', {
     extend: 'Ext.data.Store',
     singleton: true,
+    requires: [
+        'Slate.cbl.API'
+    ],
+
 
     storeId: 'cbl-contentareas',
 	model: 'Slate.cbl.model.ContentArea',

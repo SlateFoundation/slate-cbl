@@ -11,6 +11,7 @@
     "requires": [
         "emergence-apikit",
         "jarvus-ext-glyphs",
-        "jarvus-ext-actionevents"
+        "jarvus-ext-actionevents",
+        "slate-core-data"
     ]
 }

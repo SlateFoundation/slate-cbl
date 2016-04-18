@@ -4,21 +4,22 @@
  */
 Ext.define('Slate.cbl.view.teacher.Dashboard', {
     extend: 'Ext.Container',
+    xtype: 'slate-cbl-teacher-dashboard',
     requires:[
         'Slate.cbl.view.teacher.DashboardController',
         'Slate.cbl.view.teacher.StudentsProgressGrid'
     ],
 
     controller: 'slate-cbl-teacher-dashboard',
-    
+
     config: {
         progressGrid: true
     },
-    
+
     applyProgressGrid: function(progressGrid, oldProgressGrid) {
         return Ext.factory(progressGrid, 'Slate.cbl.view.teacher.StudentsProgressGrid', oldProgressGrid);
     },
-    
+
     initComponent: function() {
         var me = this;
 

@@ -2,7 +2,7 @@
 Ext.define('Slate.cbl.model.DemonstrationSkill', {
     extend: 'Ext.data.Model',
     requires: [
-        'Emergence.proxy.Records',
+        'Slate.proxy.Records',
         'Ext.data.identifier.Negative'
     ],
 
@@ -54,7 +54,7 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
             name: 'Override',
             type: 'boolean'
         },
-        
+
         // dynamic fields that might be provided directly by server in some results
         {
             name: 'Demonstration',
@@ -91,7 +91,7 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
     ],
 
     proxy: {
-        type: 'records',
+        type: 'slate-records',
         url: '/cbl/demonstration-skills',
         include: 'Demonstration.Creator'
     }
