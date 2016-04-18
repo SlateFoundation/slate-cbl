@@ -42,14 +42,14 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
             {
                 title: 'Performance Task 1',
                 students: [
-                    { text: 'Foo' },
-                    { text: 'Foole' },
-                    { text: 'Foo' },
-                    { text: 'Fooianson' },
-                    { text: 'Foods' },
-                    { text: 'Fooo' },
-                    { text: 'Foo' },
-                    { text: 'Foo' },
+                    { text: '<i class="fa fa-lg fa-check-circle-o"></i>', cls: 'slate-task-status-completed' },
+                    { text: '',         cls: 'slate-task-status-notassigned' },
+                    { text: '10/14',    cls: 'slate-task-status-revision' },
+                    { text: '11/5',     cls: 'slate-task-status-late' },
+                    { text: '',         cls: 'slate-task-status-due' },
+                    { text: '12/3',     cls: 'slate-task-status-due slate-task-status-needsrated' },
+                    { text: '',         cls: 'slate-task-status-late slate-task-status-needsrated' },
+                    { text: '',         cls: 'slate-task-status-revision slate-task-status-needsrated' },
                     { text: 'Foole' },
                     { text: 'Foo' },
                     { text: 'Fooianson' },
@@ -186,7 +186,9 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
             '<table class="slate-studentsgrid-rowheaders-table">',
                 '<thead>',
                     '<tr>',
-                        '<td class="slate-studentsgrid-cornercell">&nbsp;</td>',
+                        '<td class="slate-studentsgrid-cornercell">',
+                            '&nbsp;',
+                        '</td>',
                     '</tr>',
                 '</thead>',
 
@@ -228,6 +230,9 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
 
         '<div class="slate-studentsgrid-scroller">',
             '<div class="slate-studentsgrid-data-ct">',
+                '<div tabindex="0" class="slate-studentsgrid-scroll-control is-disabled scroll-left"></div>',
+                '<div tabindex="0" class="slate-studentsgrid-scroll-control is-disabled scroll-right"></div>',
+
                 '<table class="slate-studentsgrid-data-table">',
                     '<thead>',
                         '<tr>',
@@ -247,7 +252,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
                         '<tpl for="rows">',
                             '<tr class="slate-studentsgrid-row">',
                                 '<tpl for="students">',
-                                    '<td class="slate-studentsgrid-cell">{text}</td>',
+                                    '<td class="slate-studentsgrid-cell {cls}">{text}</td>',
                                 '</tpl>',
                             '</tr>',
     
@@ -262,7 +267,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
                                                 '<tpl for="rows">',
                                                     '<tr class="slate-studentsgrid-subrow">',
                                                         '<tpl for="students">',
-                                                            '<td class="slate-studentsgrid-cell">{text}</td>',
+                                                            '<td class="slate-studentsgrid-cell {cls}">{text}</td>',
                                                         '</tpl>',
                                                     '</tr>',
                                                 '</tpl>',
@@ -281,19 +286,29 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
         '</div>'
     ],
 
-/*
     listeners: {
         scope: 'this',
         click: {
             fn: 'onGridClick',
             element: 'el',
-            delegate: '.slate-studentsgrid-progress-row, .slate-studentsgrid-demo'
-        },
-        mouseover: {
-            fn: 'onSkillNameMouseOver',
-            element: 'el'
-        },
-        competencyrowclick: 'onCompetencyRowClick'
+            delegate: '.slate-studentsgrid-row'
+        }
+    },
+
+    // TODO make this much better
+    onGridClick: function(ev, t) {
+        var target = Ext.get(t);
+
+        if (target.is('.slate-studentsgrid-row')) {
+            var grid = this.el,
+                rowheadersTable = grid.down('.slate-studentsgrid-rowheaders-table'),
+                dataTable       = grid.down('.slate-studentsgrid-data-table'),
+                targetTable     = target.up('table'),
+                targetTableRows = targetTable.select('.slate-studentsgrid-row'),
+                rowIndex        = targetTableRows.indexOf(target);
+
+            dataTable.select('.slate-studentsgrid-row').item(rowIndex).toggleCls('is-expanded');
+            rowheadersTable.select('.slate-studentsgrid-row').item(rowIndex).toggleCls('is-expanded');
+        }
     }
-*/
 });

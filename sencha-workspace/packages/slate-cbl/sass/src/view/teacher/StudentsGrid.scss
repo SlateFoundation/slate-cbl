@@ -28,6 +28,7 @@
     }
 
     .#{$g}-cornercell {
+        border-top: 0;
         height: 150px;
     }
 
@@ -40,6 +41,7 @@
     }
 
     .#{$g}-expander-cell {
+        background-color: #999;
         border: none;
         padding: 0;
     }
@@ -71,8 +73,8 @@
             bottom: -125px;
             color: $color;
             display: block;
-            height: 58px;
-            left: 48px;
+            height: 57px;
+            left: 49px;
             line-height: 1;
             padding: 20px 30px 20px 40px;
             position: relative;
@@ -103,9 +105,55 @@
     }
 }
 
+.#{$g}-scroll-control {
+    align-items: center;
+    background: #ddd;
+    box-sizing: border-box;
+    cursor: w-resize;
+    display: flex;
+    font-size: 1.5em;
+    height: 150px;
+    justify-content: center;
+    left: $slate-studentsgrid-rowheader-width;
+    padding: .125em;
+    position: absolute;
+    top: 0;
+    width: .5em;
+    z-index: 1;
+
+    &:hover,
+    &:focus {
+        background-color: #ccc;
+    }
+
+    &::before {
+        content: '\00ab';
+    }
+
+    &.scroll-right {
+        cursor: e-resize;
+        left: auto;
+        right: 0;
+
+        &::before {
+            content: '\00bb';
+        }
+    }
+
+    &.is-disabled {
+        background-color: #e5e5e5;
+        color: #bbb;
+        cursor: default;
+    }
+}
+
 .#{$g}-rowheaders-ct {
     border-bottom: 1px solid $slate-studentsgrid-border-color;
     width: $slate-studentsgrid-rowheader-width;
+}
+
+.#{$g}-row {
+    cursor: pointer;
 }
 
 .#{$g}-rowheader {
@@ -120,7 +168,7 @@
         width: 1em;
     }
 
-    &.is-expanded::before {
+    .is-expanded &::before {
         transform: rotate(90deg);
     }
 
@@ -130,9 +178,16 @@
 }
 
 .#{$g}-expander-ct {
-    // height: 0;
+    background-color: transparent;
+    height: 0;
     overflow: hidden;
+    opacity: 0;
     transition: 250ms;
+
+    .is-expanded + .#{$g}-expander & {
+        height: 123px; // TODO don't hardcode this, obviously should be set in JS
+        opacity: 1;
+    }
 }
 
 .#{$g}-header-text {

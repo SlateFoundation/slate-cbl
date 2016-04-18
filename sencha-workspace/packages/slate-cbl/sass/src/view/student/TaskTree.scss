@@ -1,0 +1,138 @@
+.slate-tasktree-list {
+    background-color: #e3e3e3;
+    list-style: none;
+    margin: 0;
+    padding: 1em;
+}
+
+.slate-tasktree-item {
+    margin: 0;
+
+    .flex-ct {
+        align-items: stretch;
+        display: flex;
+    }
+
+    > .flex-ct {
+        position: relative; // sit above subtasks
+    }
+
+    + .slate-tasktree-item {
+        margin-top: 1em;
+    }
+}
+
+.slate-tasktree-nub {
+    align-items: center;
+    background-color: #ccc;
+    border-radius: .25em 0 0 .25em;
+    display: flex;
+    font-size: 1.5em;
+    font-weight: bold;
+    justify-content: center;
+    width: 1em;
+
+    &.is-clickable {
+        cursor: pointer;
+
+        &::before {
+            content: '\002b'; // plus sign
+        }
+    }
+
+    .is-expanded &.is-clickable {
+        &::before {
+            content: '\2212'; // minus sign
+        }
+    }
+}
+
+.slate-tasktree-data {
+    flex: 1;
+}
+
+.slate-tasktree-category {
+    background-color: #f5f5f5;
+    border-radius: 0 .4375em 0 0;
+    color: $muted-color;
+    font-size: .875em;
+    padding: .125em .75em;
+    text-transform: uppercase;
+}
+
+.slate-tasktree-text {
+    align-items: center;
+    background-color: white;
+    border-radius: 0 0 .25em 0;
+    display: flex;
+    line-height: (4/3);
+    padding: .5em .625em;
+
+    .has-subtasks & {
+        border-radius: 0;
+    }
+}
+
+.slate-tasktree-title {
+    flex: 1;
+}
+
+.slate-tasktree-sublist {
+    height: 0;
+    list-style: none;
+    margin: 0 0 0 1.5em;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    transform: translateX(-1.5em);
+    transition: 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeInCirc
+
+    .slate-tasktree-item {
+        margin: 1px 0 0;
+    }
+
+    .slate-tasktree-nub {
+        border-radius: 0;
+    }
+
+    .slate-tasktree-text {
+        border-radius: 0;
+    }
+
+    > :last-child {
+        .slate-tasktree-nub {
+            border-radius: 0 0 0 .25em;
+        }
+
+        .slate-tasktree-text {
+            border-radius: 0 0 .25em 0;
+        }
+    }
+
+    .is-expanded & {
+        height: 134px; // TODO make this dynamic!
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.slate-tasktree-status,
+.slate-tasktree-date {
+    align-items: center;
+    display: flex;
+    font-size: .8125em;
+    justify-content: center;
+    padding: .125em .5em;
+}
+
+.slate-tasktree-status {
+    background-color: #ccc;
+    border-radius: .25em 0 0 .25em;
+    margin-left: 1em;
+}
+
+.slate-tasktree-date {
+    background-color: #eee;
+    border-radius: 0 .25em .25em 0;
+    font-weight: bold;
+}
