@@ -67,7 +67,7 @@
      *      ]
      */
     "requires": [
-        "jarvus-hotfixes",
+        //"jarvus-hotfixes",
         "font-awesome",
         "jarvus-aggregrid"
     ],

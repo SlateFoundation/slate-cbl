@@ -1,0 +1,63 @@
+/*
+
+Siesta 4.0.6
+Copyright(c) 2009-2016 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.resultpanel-toolbar .testaction-button,
+.x-ie9m .resultpanel-toolbar .testaction-button * {
+    background : none !important;
+    border     : 0 none;
+}
+
+.resultpanel-toolbar .x-btn-glyph,
+.x-ie9m .resultpanel-toolbar .x-btn-glyph {
+    font-size   : 21px !important;
+    color       : #fff;
+    opacity     : 1;
+    text-shadow : none;
+}
+
+.resultpanel-toolbar .x-btn-pressed .x-btn-glyph {
+    color : #81D4FA;
+}
+
+.resultpanel-testtitle {
+    font-size : 1.3em;
+    color     : #fff;
+    cursor    : text;
+}
+
+.test-source-ct {
+    background : #fff;
+}
+
+.siesta-test-title {
+    color       : #fff;
+    font-size   : 1.4em;
+    font-weight : bold;
+    text-shadow : 0 1px rgba(55, 55, 55, 0.5);
+}
+
+.x-btn.rerun-button {
+    background-image    : none;
+    background-color    : rgb(89, 205, 82);
+    border-color        : #00a164;
+}
+
+.x-ie9m .rerun-button * {
+    background-image : none !important;
+    background-color : transparent !important;
+}
+
+.x-btn.rerun-button .x-btn-inner {
+    color : #fff;
+}
+
+.x-btn.rerun-button:hover,
+.x-btn.rerun-button.x-btn-pressed {
+    background-color : rgb(79, 185, 72);
+    border-color     : #007c4d;
+}

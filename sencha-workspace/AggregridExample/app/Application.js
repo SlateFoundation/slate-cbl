@@ -5,11 +5,20 @@
  */
 Ext.define('AggregridExample.Application', {
     extend: 'Ext.app.Application',
+    requires: [
+        'Ext.plugin.Viewport',
+        'AggregridExample.store.Student',
+        'AggregridExample.store.TimePeriod',
+        'AggregridExample.store.Absence'
+    ],
+
 
     name: 'AggregridExample',
 
     stores: [
-        // TODO: add global / shared stores here
+        'Absence',
+        'Student',
+        'TimePeriod'
     ],
 
     views: [

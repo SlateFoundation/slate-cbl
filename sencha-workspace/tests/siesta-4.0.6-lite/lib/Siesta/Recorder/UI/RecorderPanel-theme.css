@@ -1,0 +1,95 @@
+/*
+
+Siesta 4.0.6
+Copyright(c) 2009-2016 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.siesta-recorderpanel-offsetcolumn > .x-grid-cell-inner {
+    color : #777;
+}
+
+.siesta-recorderpanel-clearoffset {
+    cursor : pointer;
+    color  : #bbb;
+}
+
+.recorder-tool .x-btn-inner,
+.recorder-tool .x-btn-split-right:after,
+.recorder-tool .x-btn-icon-el {
+    color : #fff;
+}
+
+.x-grid-item-selected .siesta-recorderpanel-typecolumn .x-grid-cell-inner,
+.x-grid-item-selected .eventview-targetcolumn .x-grid-cell-inner {
+    font-weight : 400;
+}
+
+.recorder-tool .x-btn-icon-el {
+    line-height : 21px;
+}
+
+
+.icon-clear .x-btn-glyph {
+    font-size : 19px;
+}
+
+/* RECORDED ACTION STEP ICONS */
+.step-icon {
+    color : #cecece;
+}
+
+.step-icon:hover {
+    color : #aaa;
+}
+
+/* EOF RECORDED ACTION STEP ICONS */
+
+.icon-add .x-btn-glyph {
+    font-size  : 21px;
+    margin-top : 2px;
+}
+
+.cheatsheet {
+    background : #eee;
+}
+
+.cheatsheet-type {
+    font-weight : bold;
+}
+
+.cheatsheet td {
+    color : #555;
+}
+
+.siesta-toolbar .x-form-item-label-inner-default {
+    color : #fff;
+}
+
+@keyframes blink {
+    0% {
+        opacity : 0;
+    }
+    100% {
+        opacity : 1;
+    }
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity : 0;
+    }
+    100% {
+        opacity : 1;
+    }
+}
+
+.recorder-recording .icon-record {
+    -webkit-animation                 : blink 0.7s linear infinite;
+    -moz-animation                    : blink 0.7s linear infinite;
+    animation                         : blink 0.7s linear infinite;
+    -webkit-animation-timing-function : cubic-bezier(1.0, 0, 0, 1.0);
+    -webkit-animation-direction       : alternate;
+    animation-direction               : alternate;
+}
