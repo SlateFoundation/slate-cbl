@@ -1,4 +1,4 @@
-Ext.define('AggregridExample.store.Student', {
+Ext.define('AggregridExample.store.Students', {
     extend: 'Ext.data.Store',
 
     fields: [
