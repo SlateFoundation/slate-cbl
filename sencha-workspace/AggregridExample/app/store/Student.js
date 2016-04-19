@@ -1,8 +1,6 @@
 Ext.define('AggregridExample.store.Student', {
     extend: 'Ext.data.Store',
 
-    alias: 'store.student',
-
     fields: [
         'id', 'fullName', 'email', 'phone', 'guardianName', 'guardianPhone'
     ],

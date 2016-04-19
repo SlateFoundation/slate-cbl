@@ -1,8 +1,6 @@
 Ext.define('AggregridExample.store.TimePeriod', {
     extend: 'Ext.data.Store',
 
-    alias: 'store.timeperiod',
-
     fields: [
        'id', 'month', 'week', 'year'
     ],
