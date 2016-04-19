@@ -76,9 +76,10 @@ $level-12-color-dark;
         }
 
         .cbl-skill-complete-indicator {
-            background: none;
-            color: $level-color;
-            text-shadow: none;
+            &.is-checked {
+                border-color: $level-color;
+                color: $level-color;
+            }
         }
 
         .check-mark {
@@ -299,7 +300,7 @@ $level-12-color-dark;
 
 .cbl-skill-demos {
     display: flex;
-    margin: .5em 0 0;
+    margin: .5em 0 0 2em;
     padding: 0;
 
     &:empty {
@@ -308,7 +309,7 @@ $level-12-color-dark;
 }
 
 .cbl-skill-demo {
-    background-color: rgba(white, .5);
+    background-color: rgba(white, .3333);
     border: 1px solid rgba(black, .2);
     border-radius: 2px;
     display: block;
@@ -337,24 +338,32 @@ $level-12-color-dark;
     appearance: none;
 
     border: 2px solid;
+    border-color: rgba(black, .1);
     border-radius: 100%;
     box-shadow: none;
     height: 1.5em;
+    list-style: none;
+    margin: .25em 0 0 1em;
+    text-align: center;
     width: 1.5em;
 
-    &:checked::before {
-        content: '\2713';
-        display: block;
-        line-height: 20px;
-        text-align: center;
+    .check-mark-image {
+        display: none;
+        margin-top: 4px;
     }
 
-    .check-mark-image {
-        margin-top: 4px;
+    &.is-checked .check-mark-image {
+        display: inline-block;
     }
 }
 
+@keyframes slide-in {
+    from { opacity: 0; transform: translateY(-.5em); }
+      to { opacity: 1; transform: none; }
+}
+
 .cbl-skill-description {
+    animation: slide-in .2s;
     background: rgba(white, .95);
     border: 1px solid darken($border-color, 10);
     border-top-width: 0;
