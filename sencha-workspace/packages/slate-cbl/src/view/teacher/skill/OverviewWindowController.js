@@ -2,6 +2,11 @@
 Ext.define('Slate.cbl.view.teacher.skill.OverviewWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-skill-overviewwindow',
+    requires: [
+        'Jarvus.util.APIDomain'
+    ],
+
+
     config: {
         // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         id: 'slate-cbl-teacher-skill-overviewwindow',

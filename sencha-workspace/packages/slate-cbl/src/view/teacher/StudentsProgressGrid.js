@@ -351,6 +351,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
             demonstrationsRowEl = competencyRenderData.demonstrationsRowEl,
             isExpand = !competencyRenderData.expanded,
             eventName = isExpand ? 'expand' : 'collapse',
+            loadingCls = 'is-loading',
             expandedCls = 'is-expanded',
             skillsHeight = 0,
             _finishExpand, _finishToggle;
@@ -398,6 +399,9 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
         }
 
         // load demonstrations and skills
+        skillsRowEl.addCls(loadingCls);
+        demonstrationsRowEl.addCls(loadingCls);
+
         me.getDemonstrationSkillsStore().loadByStudentsAndCompetencies(me.getStudentsStore().collect('ID'), competency.getId());
 
         me.getSkillsStore().getAllByCompetency(competency, function(skillsCollection) {
@@ -437,6 +441,10 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                     studentsById[student.getId()] = studentRenderData;
                 }
             }
+
+            // remove loading state
+            skillsRowEl.removeCls(loadingCls);
+            demonstrationsRowEl.removeCls(loadingCls);
 
             // render skill subtables within expanded competency
             me.getTpl('competencySkillsTpl').overwrite(skillsRowEl.down('tbody'), competencyRenderData);
