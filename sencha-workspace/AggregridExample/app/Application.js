@@ -17,9 +17,9 @@ Ext.define('AggregridExample.Application', {
     ],
     
     stores: [
-        'AggregridExample.store.Student',
-        'AggregridExample.store.TimePeriod',
-        'AggregridExample.store.Absence'
+        'Students',
+        'TimePeriods',
+        'Absences'
     ],
 
     mainView: 'AggregridExample.view.MyAggregrid',
