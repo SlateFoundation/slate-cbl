@@ -1,0 +1,353 @@
+.cbl-level-colored {
+    background-color: #666;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(black, .8);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@for $n from 9 through 12 {
+    .cbl-level-#{$n} {
+        $level-color:        nth($level-colors,        ($n - 8));
+        $level-color-light:  nth($level-colors-light,  ($n - 8));
+        $level-color-medium: nth($level-colors-medium, ($n - 8));
+        $level-color-dark:   nth($level-colors-dark,   ($n - 8));
+
+        &.cbl-level-colored {
+            background-color: nth($level-colors, ($n - 8));
+        }
+
+        .cbl-progress-meter {
+            background-color: $level-color-light;
+        }
+
+        .cbl-progress-bar {
+            @include background-image(linear-gradient(
+                            $level-color,
+                            $level-color-dark
+            ));
+        }
+
+        .cbl-skill-complete-indicator {
+            &.is-checked {
+                border-color: $level-color;
+                color: $level-color;
+            }
+        }
+
+        .check-mark {
+            fill: $level-color;
+        }
+
+        .cbl-skill-demo[data-demonstration] {
+            background-color: $level-color;
+
+            &.cbl-skill-demo-uncounted {
+                background-color: mix($text-color, $page-bg-color, 17%);
+                color: mix($text-color, $page-bg-color, 67%);
+                font-weight: normal;
+                text-shadow: none;
+            }
+            
+            &.cbl-grid-demo-missed {
+                background-color: #C8C8C8;
+            }
+        }
+    }
+}
+
+.student-dashboard-tpl {
+    .page-header > .header-title {
+        float: none;
+    }
+}
+
+.cbl-grad-progress {
+    .cbl-progress-level,
+    .cbl-progress-percent {
+        background-color: rgba(black, .1667);
+        border-radius: 3px;
+        padding: 0 .5em;
+    }
+}
+
+.cbl-labeled-meter {
+    align-items: center;
+    clear: both;
+    display: flex;
+    margin: 1em 0;
+
+    .cbl-progress-meter {
+        border-radius: .25em;
+        flex: 1;
+        overflow: hidden;
+    }
+}
+
+.cbl-meter-label {
+    color: inherit;
+    font: inherit;
+    margin: 0 2em 0 0;
+}
+
+.cbl-progress-meter {
+    @extend .cbl-level-colored;
+    background-color: #ddd;
+    height: 2.5em;
+    position: relative;
+}
+
+.is-average-low {
+    background-image: image-url('cbl/halted-progress.png');
+}
+
+.cbl-progress-bar {
+    height: 100%;
+
+    .is-average-low & {
+        opacity: .6;
+    }
+}
+
+.cbl-progress-level {
+    left: .5em;
+    position: absolute;
+    top: 50%;
+    @include translateY(-50%);
+
+    &.no-select {
+        left: 1em;
+    }
+}
+
+.cbl-progress-percent {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    @include translate(-50%, -50%);
+}
+
+.cbl-progress-average {
+    font-size: .75em;
+    right: 1em;
+    position: absolute;
+    top: 50%;
+    @include translateY(-50%);
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: subpixel-antialiased;
+
+    .is-average-low & {
+        background: red;
+        padding: 0 .3em;
+    }
+}
+
+.explainer {
+    color: #888;
+    font-style: italic;
+    margin: 1em 0;
+
+    p {
+        margin: 0 0 1em;
+    }
+}
+
+.student-dashboard-tpl {
+    .page-header {
+        overflow: hidden;
+    }
+}
+
+.cbl-recent-progress {
+    float: right;
+    margin: 1em 0 3% 3%;
+    width: 31.3333%;
+
+    .table-ct {
+        max-height: 12em;
+        overflow: auto;
+    }
+
+    .scoring-domain-col {
+        white-space: normal;
+    }
+
+    .level-col {
+        text-align: center;
+        width: 2.75em;
+
+        > div {
+            border-radius: 3px;
+        }
+    }
+
+    .domain-skill {
+        display: block;
+        font-size: small;
+        line-height: 1.3333;
+    }
+
+    .meta {
+        color: $muted-color;
+        font-size: small;
+        line-height: 1.3333;
+    }
+}
+
+.cbl-competency-panels {
+    clear: both;
+    list-style: none;
+    margin: 0 -1.5%;
+    padding: 0;
+}
+
+.cbl-competency-panel {
+    background: none;
+    display: inline-block;
+    margin: 0 1.5% 3%;
+    vertical-align: top;
+    width: 47%;
+
+    .header-title {
+        float: none;
+    }
+
+    .cbl-progress-meter {
+        margin: -1em -1em 0;
+    }
+    .panel-body {
+        color: $text-color;
+        font: $body-font;
+        font-size: $font-size;
+        text-align: left;
+        text-shadow: none;
+    }
+}
+
+.cbl-skill-meter {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cbl-skill {
+    border-top: 1px solid $border-color;
+    clear: both;
+    margin: 0 -1em;
+    padding: 1em;
+    position: relative;
+
+    &:hover {
+        background-color: rgba(white, .95);
+        border-color: transparent;
+        box-shadow: 0 0 0 1px darken($border-color, 10);
+    }
+}
+
+.cbl-skill-name {
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    width: 100%;
+}
+
+.cbl-skill-demos {
+    display: flex;
+    margin: .5em 0 0 2em;
+    padding: 0;
+
+    &:empty {
+        margin: 0;
+    }
+}
+
+.cbl-skill-demo {
+    background-color: rgba(white, .3333);
+    border: 1px solid rgba(black, .2);
+    border-radius: 2px;
+    display: block;
+    flex: 1;
+    padding: .25em;
+
+    + .cbl-skill-demo {
+        margin-left: .25em;
+    }
+}
+
+.cbl-skill-demo[data-demonstration] {
+    @extend .cbl-level-colored;
+    border-color: $text-color;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        box-shadow: inset 0 0 0 2px rgba(white, .5);
+    }
+}
+
+.cbl-skill-complete-indicator {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    border: 2px solid;
+    border-color: rgba(black, .1);
+    border-radius: 100%;
+    box-shadow: none;
+    height: 1.5em;
+    list-style: none;
+    margin: .25em 0 0 1em;
+    text-align: center;
+    width: 1.5em;
+
+    .check-mark-image {
+        display: none;
+        margin-top: 4px;
+    }
+
+    &.is-checked .check-mark-image {
+        display: inline-block;
+    }
+}
+
+@keyframes slide-in {
+    from { opacity: 0; transform: translateY(-.5em); }
+      to { opacity: 1; transform: none; }
+}
+
+.cbl-skill-description {
+    animation: slide-in .2s;
+    background: rgba(white, .95);
+    border: 1px solid darken($border-color, 10);
+    border-top-width: 0;
+    box-shadow: 0 1em 1em -1em rgba(black, .4);
+    display: none;
+    left: -1px;
+    padding: 0 3em 1.5em;
+    position: absolute;
+    right: -1px;
+    top: 100%;
+    z-index: 1;
+
+    p {
+        color: $muted-color;
+        font-style: italic;
+        margin: 0;
+    }
+
+    .cbl-skill:hover & {
+        display: block;
+    }
+}
+
+@for $n from 2 through 10 {
+    .cbl-skill-span-#{$n} {
+        flex: $n;
+    }
+}
+
+.cbl-skill-demo-overridden {
+    display: none;
+}
