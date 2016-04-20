@@ -7,9 +7,9 @@
 /sencha-workspace/ext-*/
 
 /sencha-workspace/Slate*/bootstrap.*
-/sencha-workspace/Slate*/sass/example/
+/sencha-workspace/Slate*/sass/example/bootstrap.*
 
 /sencha-workspace/*Example/bootstrap.*
-/sencha-workspace/*Example/sass/example/
+/sencha-workspace/*Example/sass/example/bootstrap.*
 
 /sencha-workspace/docs/*/build/
