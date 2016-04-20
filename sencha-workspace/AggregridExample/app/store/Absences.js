@@ -1,7 +1,5 @@
-Ext.define('AggregridExample.store.Absence', {
+Ext.define('AggregridExample.store.Absences', {
     extend: 'Ext.data.Store',
-
-    alias: 'store.absence',
 
     fields: [
        'id', 'student_id', 'time_period_id', 'attendance'
