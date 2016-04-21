@@ -3,14 +3,14 @@ Ext.define('AggregridExample.view.MyAggregrid', {
     xtype: 'app-myaggregrid',
 
     config: {
-        columnsStore: Ext.create('AggregridExample.store.Student'),
+        columnsStore: 'Students',
         columnHeaderTpl: [
             '{fullName}'
         ],
         rowHeaderTpl: [
             '{week}'
         ],
-        rowsStore: Ext.create('AggregridExample.store.TimePeriod'),
+        rowsStore: 'TimePeriods',
         rowHeaderField: 'taskName'
     }
 });
