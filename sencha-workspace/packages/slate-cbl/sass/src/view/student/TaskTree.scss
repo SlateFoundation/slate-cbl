@@ -1,3 +1,23 @@
+@mixin slate-tasktree-item-status($status, $color) {
+    &.slate-tasktree-status-#{$status} {
+        .slate-tasktree-nub {
+            background-color: darken($color, 5);
+
+            &.is-clickable:hover {
+                background-color: $color;
+            }
+        }
+
+        .slate-tasktree-status {
+            background-color: $color;
+        }
+
+        .slate-tasktree-date {
+            background-color: lighten($color, 10);
+        }
+    }
+}
+
 .slate-tasktree-list {
     background-color: #e3e3e3;
     list-style: none;
@@ -20,6 +40,12 @@
     + .slate-tasktree-item {
         margin-top: 1em;
     }
+
+    @include slate-tasktree-item-status('notassigned',  $slate-task-color-notassigned);
+    @include slate-tasktree-item-status('due',          $slate-task-color-due);
+    @include slate-tasktree-item-status('completed',    $slate-task-color-completed);
+    @include slate-tasktree-item-status('revision',     $slate-task-color-revision);
+    @include slate-tasktree-item-status('late',         $slate-task-color-late);
 }
 
 .slate-tasktree-nub {
