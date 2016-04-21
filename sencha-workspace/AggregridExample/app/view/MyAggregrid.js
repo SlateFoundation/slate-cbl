@@ -11,7 +11,6 @@ Ext.define('AggregridExample.view.MyAggregrid', {
         rowsStore: 'TimePeriods',
         rowHeaderTpl: [
             '{week}'
-        ],
-        rowHeaderField: 'taskName'
+        ]
     }
 });
