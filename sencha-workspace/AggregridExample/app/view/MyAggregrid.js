@@ -7,10 +7,11 @@ Ext.define('AggregridExample.view.MyAggregrid', {
         columnHeaderTpl: [
             '{fullName}'
         ],
+
+        rowsStore: 'TimePeriods',
         rowHeaderTpl: [
             '{week}'
         ],
-        rowsStore: 'TimePeriods',
         rowHeaderField: 'taskName'
     }
 });
