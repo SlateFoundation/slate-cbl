@@ -1,12 +1,13 @@
 Ext.define('AggregridExample.store.Students', {
     extend: 'Ext.data.Store',
 
-    fields: [
-        'id', 'fullName', 'email', 'phone', 'guardianName', 'guardianPhone'
-    ],
 
-    data: { 
-        items: [
+    config: {
+        fields: [
+            'id', 'fullName', 'email', 'phone', 'guardianName', 'guardianPhone'
+        ],
+
+        data: [
             {id: 1, fullName: 'Ali', email: 'abc@gmail.com', phone: '215-555-0123', guardianName: 'Linda', guardianPhone: '215-666-9999'},
             {id: 2, fullName: 'John', email: 'abc@gmail.com', phone: '215-555-0123', guardianName: 'Ashley', guardianPhone: '215-666-9999'},
             {id: 3, fullName: 'Bill', email: 'abc@gmail.com', phone: '215-555-0123', guardianName: 'Marykate', guardianPhone: '215-666-9999'},
@@ -28,13 +29,5 @@ Ext.define('AggregridExample.store.Students', {
             {id: 19, fullName: 'Ashley', email: 'abc@gmail.com', phone: '215-555-0123', guardianName: 'John', guardianPhone: '215-666-9999'},
             {id: 20, fullName: 'Linda', email: 'abc@gmail.com', phone: '215-555-0123', guardianName: 'Ali', guardianPhone: '215-666-9999'}
         ]
-    },
-
-    proxy: {
-        type: 'memory',
-        reader: {
-            type: 'json',
-            rootProperty: 'items'
-        }
     }
 });

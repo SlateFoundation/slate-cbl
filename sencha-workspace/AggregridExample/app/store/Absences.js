@@ -1,12 +1,13 @@
 Ext.define('AggregridExample.store.Absences', {
     extend: 'Ext.data.Store',
 
-    fields: [
-       'id', 'student_id', 'time_period_id', 'attendance'
-    ],
 
-    data: { 
-        items: [
+    config: {
+        fields: [
+            'id', 'student_id', 'time_period_id', 'attendance'
+        ],
+
+        data: [
             {id: 1, student_id: '1', time_period_id: 1, attendance: '100%'},
             {id: 2, student_id: '2', time_period_id: 1, attendance: '90%'},
             {id: 3, student_id: '3', time_period_id: 1, attendance: '80%'},
@@ -40,15 +41,7 @@ Ext.define('AggregridExample.store.Absences', {
             {id: 31, student_id: '31', time_period_id: 1, attendance: '100%'},
             {id: 32, student_id: '32', time_period_id: 1, attendance: '80%'},
             {id: 33, student_id: '33', time_period_id: 1, attendance: '100%'},
-            {id: 34, student_id: '34', time_period_id: 1, attendance: '100%'}           
+            {id: 34, student_id: '34', time_period_id: 1, attendance: '100%'}
         ]
-    },
-
-    proxy: {
-        type: 'memory',
-        reader: {
-            type: 'json',
-            rootProperty: 'items'
-        }
     }
 });
