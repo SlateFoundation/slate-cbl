@@ -63,12 +63,15 @@
 
         &::before {
             content: '\002b'; // plus sign
+            transition: 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeOutCirc
+            transform: rotate(-360deg);
         }
     }
 
     .is-expanded &.is-clickable {
         &::before {
             content: '\2212'; // minus sign
+            transform: none;
         }
     }
 }
@@ -93,8 +96,9 @@
     display: flex;
     line-height: (4/3);
     padding: .5em .625em;
+    transition: border-radius 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeOutCirc
 
-    .has-subtasks & {
+    .has-subtasks.is-expanded & {
         border-radius: 0;
     }
 }
@@ -111,7 +115,7 @@
     overflow: hidden;
     padding: 0;
     transform: translateX(-1.5em);
-    transition: 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeInCirc
+    transition: 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeOutCirc
 
     .slate-tasktree-item {
         margin: 1px 0 0;
@@ -131,7 +135,7 @@
         }
 
         .slate-tasktree-text {
-            border-radius: 0 0 .25em 0;
+            border-radius: 0 0 .4375em 0;
         }
     }
 
