@@ -1,0 +1,18 @@
+{
+    "globals": {
+        "Ext": true
+    },
+
+    "undef": true,
+    "unused": true,
+    "quotmark": "single",
+    "curly": true,
+    "noempty": true,
+    "latedef": true,
+    "immed": true,
+    "freeze": true,
+    "forin": true,
+    "maxlen": 120,
+
+    "browser": true
+}

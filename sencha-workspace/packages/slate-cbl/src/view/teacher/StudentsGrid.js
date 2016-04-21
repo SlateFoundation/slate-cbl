@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 /**
  * Renders tasks for a given list of students across a given list of competencies
  */
@@ -247,7 +246,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
                             '</tpl>',
                         '</tr>',
                     '</thead>',
-    
+
                     '<tbody>',
                         '<tpl for="rows">',
                             '<tr class="slate-studentsgrid-row">',
@@ -255,7 +254,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
                                     '<td class="slate-studentsgrid-cell {cls}">{text}</td>',
                                 '</tpl>',
                             '</tr>',
-    
+
                             // expander infrastructure
                             '<tr class="slate-studentsgrid-expander">',
                                 '<td class="slate-studentsgrid-expander-cell" colspan="{[ studentsCount ]}">',
@@ -263,7 +262,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
                                         '<table class="slate-studentsgrid-expander-table">',
                                             '<tbody>',
                                             //
-    
+
                                                 '<tpl for="rows">',
                                                     '<tr class="slate-studentsgrid-subrow">',
                                                         '<tpl for="students">',
@@ -271,7 +270,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
                                                         '</tpl>',
                                                     '</tr>',
                                                 '</tpl>',
-    
+
                                             //
                                             '</tbody>',
                                         '</table>',

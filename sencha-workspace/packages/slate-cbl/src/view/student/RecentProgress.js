@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.view.student.RecentProgress', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-student-recentprogress',
@@ -15,7 +14,7 @@ Ext.define('Slate.cbl.view.student.RecentProgress', {
         recentProgressStore: {
             xclass: 'Slate.cbl.store.RecentProgress'
         },
-        
+
         componentCls: 'cbl-recent-progress',
         cls: 'panel',
 

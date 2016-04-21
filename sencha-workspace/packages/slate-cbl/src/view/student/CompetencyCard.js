@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.view.student.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-student-competencycard',
@@ -6,7 +5,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
         'Slate.cbl.Util',
 
         'Slate.cbl.store.DemonstrationSkills',
-        
+
         'Slate.cbl.data.Skills'
     ],
 
@@ -26,7 +25,7 @@ Ext.define('Slate.cbl.view.student.CompetencyCard', {
 
         // internal state
         skillsStatus: 'unloaded',
-        
+
         demonstrationSkillsStore: {
             xclass: 'Slate.cbl.store.DemonstrationSkills'
         },

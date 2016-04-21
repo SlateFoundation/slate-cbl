@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext*/
 Ext.define('Slate.cbl.view.student.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-student-dashboard',
@@ -39,7 +38,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
                         autoEl: 'li'
                     };
                 }));
-    
+
                 dashboardView.setCompetenciesStatus('loaded');
             }
         });

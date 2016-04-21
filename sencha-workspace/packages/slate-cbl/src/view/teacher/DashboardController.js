@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 /**
  * TODO:
  * - move rendering responsibilities to the view?

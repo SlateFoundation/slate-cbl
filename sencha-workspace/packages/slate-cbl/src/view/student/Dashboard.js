@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext*/
 Ext.define('Slate.cbl.view.student.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-cbl-student-dashboard',
@@ -36,7 +35,7 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         completionsStore: {
             xclass: 'Slate.cbl.store.Completions'
         },
-        
+
         demonstrationSkillsStore: {
             xclass: 'Slate.cbl.store.DemonstrationSkills'
         }

@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 /**
  * Renders progress for a given list of students across a given list of competencies
  */

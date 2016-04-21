@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext*/
 // @require-package slate-cbl
 Ext.define('Site.page.StudentCompetencyDashboard', {
     singleton: true,
@@ -41,7 +40,7 @@ Ext.define('Site.page.StudentCompetencyDashboard', {
             studentId: cblStudentId,
             contentAreaId: cblContentArea && cblContentArea.ID
         });
-        
+
         // contentAreaEl.on('change', function(ev, t) {
             // Placeholder for future functionality
         // });

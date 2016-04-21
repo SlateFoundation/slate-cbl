@@ -1,4 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-student-skill-overviewwindow',
@@ -34,7 +33,7 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
                 property: 'CompetencyID',
                 value: competencyId
             });
-            
+
             skillsCombo.setValue(overviewWindow.getSkill());
             skillsCombo.enable();
         });

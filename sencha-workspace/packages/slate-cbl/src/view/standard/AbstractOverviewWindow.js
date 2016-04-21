@@ -1,8 +1,7 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true *//*global Ext,Slate*/
 /**
  * Provides a foundation for the window used in both the student and teacher
  * UIs to display all the demonstrations affecting a given standard.
- * 
+ *
  * @abstract
  */
 Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
@@ -12,7 +11,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         'Slate.cbl.API',
         'Slate.cbl.model.Skill',
         'Slate.cbl.store.DemonstrationSkills',
-        
+
         'Ext.LoadMask'
     ],
 
@@ -20,7 +19,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         // required input
         skill: null,
         student: null,
-        
+
         // optional config
         selectedDemonstration: null,
         showEditLinks: false,
@@ -72,7 +71,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstrated:date}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{DemonstratedLevel}"><tpl if="DemonstratedLevel==0">M<tpl else>{DemonstratedLevel}</tpl></div></td>',
-                                '<tpl if="Override">',  
+                                '<tpl if="Override">',
                                     '<td colspan="3" class="skill-grid-demo-data skill-grid-override">Override</td>',
                                 '<tpl else>',
                                     '<td class="skill-grid-demo-data skill-grid-demo-type">{Demonstration.ExperienceType:htmlEncode}</td>',
@@ -198,7 +197,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         if (!skill) {
             return null;
         }
-        
+
         return skill.isModel ? skill : Slate.cbl.API.getSession().getRecord(Slate.cbl.model.Skill, skill);
     },
 
@@ -234,7 +233,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         this.setLoadedSkill(null);
         this.refreshDemonstrationsTable();
     },
-    
+
     onDemonstrationSkillsStoreRemove: function() {
         this.refreshDemonstrationsTable();
     },
