@@ -2,7 +2,7 @@ Ext.define('Slate.cbl.widget.SimplePanel', {
     extend: 'Ext.Container',
     xtype: 'slate-simplepanel',
 
-    componentCls: 'slate-simplepanel',
+    baseCls: 'slate-simplepanel',
 
     items: [
         {
@@ -14,7 +14,7 @@ Ext.define('Slate.cbl.widget.SimplePanel', {
                     flex: 1,
                     xtype: 'component',
                     cls: 'slate-simplepanel-title',
-                    html: 'Current Tasks',
+                    html: 'Simple Panel',
                     itemId: 'title'
                 },
                 {
