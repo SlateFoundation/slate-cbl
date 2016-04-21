@@ -6,7 +6,7 @@ harness.configure({
 
 harness.start(
     {
-        group: 'Unit Tests',
+        group: 'jarvus-aggregrid package tests',
         preload: [
             '../ext-6.0.1.250/build/ext-all.js',
             '../packages/jarvus-aggregrid/src/Aggregrid.js'
@@ -21,10 +21,17 @@ harness.start(
         ]
     },
     {
-        group: 'Application Tests',
+        group: 'AggregridExample app tests',
         pageUrl: '../AggregridExample/index.html',
         items: [
             'AggregridExample/010_sanity.t.js'
+        ]
+    },
+    {
+        group: 'SlateTasksStudent',
+        pageUrl: '../SlateTasksStudent/index.html',
+        items: [
+            'SlateTasksStudent/010_sanity.t.js'
         ]
     }
 );
