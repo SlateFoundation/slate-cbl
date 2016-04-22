@@ -31,7 +31,8 @@ harness.start(
         group: 'SlateTasksStudent',
         pageUrl: '../SlateTasksStudent/index.html',
         items: [
-            'SlateTasksStudent/010_sanity.t.js'
+            'SlateTasksStudent/010_sanity.t.js',
+            'SlateTasksStudent/020_dom-render.t.js'
         ]
     }
 );
