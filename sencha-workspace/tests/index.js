@@ -32,7 +32,8 @@ harness.start(
         pageUrl: '../SlateTasksStudent/index.html',
         items: [
             'SlateTasksStudent/010_sanity.t.js',
-            'SlateTasksStudent/020_dom-render.t.js'
+            'SlateTasksStudent/020_dom-render.t.js',
+            'SlateTasksStudent/021_ui-tests.t.js'
         ]
     }
 );
