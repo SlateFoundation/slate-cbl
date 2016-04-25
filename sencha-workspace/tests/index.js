@@ -40,7 +40,8 @@ harness.start(
         group: 'SlateTasksTeacher',
         pageUrl: '../SlateTasksTeacher/index.html',
         items: [
-            'SlateTasksTeacher/010_sanity.t.js'
+            'SlateTasksTeacher/010_sanity.t.js',
+            'SlateTasksTeacher/020_dom-render.t.js'
         ]
     }
 );
