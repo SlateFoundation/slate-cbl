@@ -15,7 +15,7 @@ Ext.define('AggregridExample.Application', {
     views: [
         'MyAggregrid'
     ],
-    
+
     stores: [
         'Students',
         'TimePeriods',
@@ -35,6 +35,12 @@ Ext.define('AggregridExample.Application', {
             },
             refresh: function() {
                 console.info('app.myaggregrid->refresh');
+            },
+            beforeaggregate: function() {
+                console.info('app.myaggregrid->beforeaggregate');
+            },
+            aggregate: function() {
+                console.info('app.myaggregrid->aggregate');
             }
         }
     },
