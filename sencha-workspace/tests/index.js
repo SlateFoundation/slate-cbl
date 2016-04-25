@@ -41,7 +41,8 @@ harness.start(
         pageUrl: '../SlateTasksTeacher/index.html',
         items: [
             'SlateTasksTeacher/010_sanity.t.js',
-            'SlateTasksTeacher/020_dom-render.t.js'
+            'SlateTasksTeacher/020_dom-render.t.js',
+            'SlateTasksTeacher/021_ui-tests.t.js'
         ]
     }
 );
