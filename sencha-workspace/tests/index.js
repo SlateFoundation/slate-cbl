@@ -44,5 +44,19 @@ harness.start(
             'SlateTasksTeacher/020_dom-render.t.js',
             'SlateTasksTeacher/021_ui-tests.t.js'
         ]
+    },
+    {
+        group: 'SlateDemonstrationsStudent',
+        pageUrl: '../SlateDemonstrationsStudent/index.html',
+        items: [
+            'SlateDemonstrationsStudent/010_sanity.t.js'
+        ]
+    },
+    {
+        group: 'SlateDemonstrationsTeacher',
+        pageUrl: '../SlateDemonstrationsTeacher/index.html',
+        items: [
+            'SlateDemonstrationsTeacher/010_sanity.t.js'
+        ]
     }
 );
