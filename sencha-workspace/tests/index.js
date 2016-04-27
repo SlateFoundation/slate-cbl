@@ -47,7 +47,7 @@ harness.start(
     },
     {
         group: 'SlateDemonstrationsStudent',
-        pageUrl: '../SlateDemonstrationsStudent/index.html',
+        pageUrl: '../SlateDemonstrationsStudent/index.html?apiHost=dev-cbl.node0.slate.is',
         items: [
             'SlateDemonstrationsStudent/010_sanity.t.js'
         ]
