@@ -6,7 +6,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
 
 
     views: [
-        'Dashboard@Slate.cbl.view.teacher'
+        'Dashboard@SlateDemonstrationsTeacher.view.main'
     ],
 
     config: {

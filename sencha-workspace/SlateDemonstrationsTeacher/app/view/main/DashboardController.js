@@ -2,7 +2,7 @@
  * TODO:
  * - move rendering responsibilities to the view?
  */
-Ext.define('Slate.cbl.view.teacher.DashboardController', {
+Ext.define('SlateDemonstrationsTeacher.view.main.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-teacher-dashboard',
     requires: [

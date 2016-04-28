@@ -1,7 +1,7 @@
 /**
  * Renders progress for a given list of students across a given list of competencies
  */
-Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
+Ext.define('SlateDemonstrationsTeacher.view.main.StudentsProgressGrid', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-teacher-studentsprogressgrid',
     requires:[
