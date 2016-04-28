@@ -1,5 +1,8 @@
-.#{$g}-xheader {
+.#{$g}-xheader-col {
     width: $cbl-grid-xheader-width;
+}
+
+.#{$g}-xheader {
 }
 
 .#{$g}-tasks-ct {
@@ -53,19 +56,18 @@
     }
 
     .#{$g}-yheader-clip {
-        background-color: $page-bg-color;
         height: 100%;
         overflow: hidden;
         width: 300%;
     }
 }
 
-.#{$g}-task-cell,
-.#{$g}-yheader {
+.#{$g}-tasks-col {
     width: $cbl-grid-task-width;
 }
 
 .#{$g}-task-cell {
+    position: relative;
     text-align: center;
 
     &.cbl-status-not-assigned       { background-color: $cbl-task-color-not-assigned; }
