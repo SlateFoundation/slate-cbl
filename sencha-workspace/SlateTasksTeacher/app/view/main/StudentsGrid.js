@@ -1,7 +1,7 @@
 /**
  * Renders tasks for a given list of students across a given list of competencies
  */
-Ext.define('Slate.cbl.view.teacher.StudentsGrid', {
+Ext.define('SlateTasksTeacher.view.main.StudentsGrid', {
     extend: 'Ext.Component',
     xtype: 'slate-studentsgrid',
     requires:[
