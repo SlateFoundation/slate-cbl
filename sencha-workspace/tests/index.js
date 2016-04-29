@@ -56,9 +56,10 @@ harness.start(
     },
     {
         group: 'SlateDemonstrationsTeacher',
-        pageUrl: '../SlateDemonstrationsTeacher/index.html',
+        pageUrl: '../SlateDemonstrationsTeacher/index.html?apiHost=dev-cbl.node0.slate.is',
         items: [
-            'SlateDemonstrationsTeacher/010_sanity.t.js'
+            'SlateDemonstrationsTeacher/010_sanity.t.js',
+            'SlateDemonstrationsTeacher/020_dom-render.t.js'
         ]
     }
 );
