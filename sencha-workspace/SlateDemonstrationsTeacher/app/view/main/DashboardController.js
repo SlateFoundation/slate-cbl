@@ -4,7 +4,7 @@
  */
 Ext.define('SlateDemonstrationsTeacher.view.main.DashboardController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.slate-cbl-teacher-dashboard',
+    alias: 'controller.slate-demonstrations-teacher-dashboard',
     requires: [
         'Jarvus.util.APIDomain',
 
@@ -17,9 +17,9 @@ Ext.define('SlateDemonstrationsTeacher.view.main.DashboardController', {
 
 
     config: {
-        id: 'slate-cbl-teacher-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        id: 'slate-demonstrations-teacher-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         control: {
-            'slate-cbl-teacher-studentsprogressgrid': {
+            'slate-demonstrations-teacher-studentsprogressgrid': {
                 democellclick: 'onDemoCellClick'
             },
             'slate-cbl-teacher-skill-overviewwindow': {

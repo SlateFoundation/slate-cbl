@@ -12,10 +12,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
     config: {
         refs: {
             dashboardCt: {
-                selector: 'slate-cbl-teacher-dashboard',
+                selector: 'slate-demonstrations-teacher-dashboard',
                 autoCreate: true,
 
-                xtype: 'slate-cbl-teacher-dashboard'
+                xtype: 'slate-demonstrations-teacher-dashboard'
             }
         },
     },

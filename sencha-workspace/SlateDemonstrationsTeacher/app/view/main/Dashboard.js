@@ -3,13 +3,13 @@
  */
 Ext.define('SlateDemonstrationsTeacher.view.main.Dashboard', {
     extend: 'Ext.Container',
-    xtype: 'slate-cbl-teacher-dashboard',
+    xtype: 'slate-demonstrations-teacher-dashboard',
     requires:[
         'SlateDemonstrationsTeacher.view.main.DashboardController',
         'SlateDemonstrationsTeacher.view.main.StudentsProgressGrid'
     ],
 
-    controller: 'slate-cbl-teacher-dashboard',
+    controller: 'slate-demonstrations-teacher-dashboard',
 
     config: {
         progressGrid: true

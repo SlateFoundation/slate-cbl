@@ -3,7 +3,7 @@
  */
 Ext.define('SlateDemonstrationsTeacher.view.main.StudentsProgressGrid', {
     extend: 'Ext.Component',
-    xtype: 'slate-cbl-teacher-studentsprogressgrid',
+    xtype: 'slate-demonstrations-teacher-studentsprogressgrid',
     requires:[
         'Slate.cbl.Util',
 
