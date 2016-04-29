@@ -59,7 +59,8 @@ harness.start(
         pageUrl: '../SlateDemonstrationsTeacher/index.html?apiHost=dev-cbl.node0.slate.is',
         items: [
             'SlateDemonstrationsTeacher/010_sanity.t.js',
-            'SlateDemonstrationsTeacher/020_dom-render.t.js'
+            'SlateDemonstrationsTeacher/020_dom-render.t.js',
+            'SlateDemonstrationsTeacher/021_ui-tests.t.js'
         ]
     }
 );
