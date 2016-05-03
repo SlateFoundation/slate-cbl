@@ -4,7 +4,6 @@
 .DS_Store
 
 /sencha-workspace/build/
-/sencha-workspace/ext-*/
 
 /sencha-workspace/Slate*/bootstrap.*
 /sencha-workspace/Slate*/sass/example/bootstrap.*
