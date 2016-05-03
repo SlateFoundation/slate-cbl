@@ -1,4 +1,3 @@
-// TODO: don't export such a broad and generic selector from such a specific place
 .loading-spinner {
     height: 16px;
     margin-right: 4px;
@@ -17,10 +16,10 @@
 
 @for $n from 8 through 13 {
     .cbl-level-#{$n} {
-        $level-color:        nth($cbl-level-colors,        ($n - 7));
-        $level-color-light:  nth($cbl-level-colors-light,  ($n - 7));
-        $level-color-medium: nth($cbl-level-colors-medium, ($n - 7));
-        $level-color-dark:   nth($cbl-level-colors-dark,   ($n - 7));
+        $level-color:        nth($level-colors,        ($n - 7));
+        $level-color-light:  nth($level-colors-light,  ($n - 7));
+        $level-color-medium: nth($level-colors-medium, ($n - 7));
+        $level-color-dark:   nth($level-colors-dark,   ($n - 7));
 
         &.level-color {
             @extend .level-n;
@@ -121,14 +120,13 @@
 }
 
 .#{$g}-scroll-ct {
-    background-color: #999;
-    border-left: 1px solid $text-color;
+    border: 1px solid $grid-border-color;
+    border-width: 0 1px;
     @include box-flex(1);
     overflow-x: auto;
 }
 
 .#{$g} {
-    border-bottom: 1px solid;
     margin: 0;
     table-layout: fixed;
     width: auto;
@@ -138,26 +136,25 @@
 
         tr {
             > :first-child { border-left:  none; }
+            > :last-child  { border-right: none; }
         }
     }
 
     td, th {
         background-color: $page-bg-color;
-        border: 1px solid $text-color;
-        border-bottom-width: 0;
+        border: 1px solid $grid-border-color;
+        border-bottom: none;
         @include box-sizing(border-box);
-        padding: $cbl-grid-cell-padding;
+        padding: $data-cell-padding;
     }
 
-/*
-    td {
-        border-color: $text-color;
+    th {
+        background: rgba($grid-border-color, .1);
     }
-*/
 
     > tbody > tr:last-child {
         > td, > th {
-            border-bottom: 1px solid inherit;
+            border-bottom: 1px solid $grid-border-color;
         }
     }
 
@@ -166,32 +163,23 @@
         border: none;
     }
 
-    .#{$g}-xheader {
-        background-color: $cbl-grid-xheader-bg-color;
-        border-color: $cbl-grid-border-color;
-        padding-left: 1em;
-    }
-
-    .#{$g}-yheader {
-        border-top: none;
+    .#{$g}-student-name {
         line-height: 1.3;
         padding: 0;
         text-align: center;
     }
 }
 
-.#{$g}-yheader {
-    a {
-        background-color: $page-bg-color;
+.#{$g}-student-name {
+    > a {
         color: $color;
         display: block;
-        height: 100%;
-        padding: $cbl-grid-cell-padding;
+        padding: $data-cell-padding;
         text-decoration: none;
 
         &:hover,
         &:focus {
-            background-color: mix(#00a6e5, $page-bg-color, 10%); // TODO get the Slate theme color
+            background-color: rgba(#00a6e5, .1); // TODO get the Slate theme color
         }
 
         &:visited {
@@ -201,20 +189,15 @@
 }
 
 .#{$g}-legend {
-    margin: 1em 0;
-    padding: 1em;
+    padding: 2em 0;
 }
 
-.#{$g}-xheaders {
-    border-bottom-color: $cbl-grid-border-color;
-}
-
-.#{$g}-xheader-col {
-    width: $cbl-grid-xheader-width;
+.#{$g}-competency-col {
+    width: $label-cell-width;
 }
 
 .#{$g}-progress-col {
-    width: $cbl-grid-data-width;
+    width: $data-cell-width;
 }
 
 .#{$g}-progress-row {
@@ -236,7 +219,7 @@
 }
 
 .#{$g}-progress-bar {
-    background-color: lighten($cbl-grid-border-color, 10);
+    background-color: lighten($grid-border-color, 10);
     left: 0;
     height: 100%;
     position: absolute;
@@ -254,13 +237,13 @@
     font-size: .75em;
     left: -100%;
     line-height: 1;
-    margin-top: -($cbl-grid-cell-padding);
+    margin-top: -($data-cell-padding);
     position: absolute;
     top: 50%;
 
     .#{$g}-progress-cell:hover &,
     .#{$g}-progress-cell:focus & {
-        left: $cbl-grid-cell-padding;
+        left: $data-cell-padding;
     }
 }
 
@@ -273,7 +256,7 @@
 .#{$g}-progress-average {
     font-size: .75em;
     line-height: 1;
-    margin-top: -($cbl-grid-cell-padding);
+    margin-top: -($data-cell-padding);
     position: absolute;
     right: -100%;
     top: 50%;
@@ -283,7 +266,7 @@
     .is-average-low &,
     .#{$g}-progress-cell:hover &,
     .#{$g}-progress-cell:focus & {
-        right: $cbl-grid-cell-padding;
+        right: $data-cell-padding;
     }
 
     .is-average-low & {
@@ -325,11 +308,11 @@
 }
 
 .#{$g}-skill-col {
-    width: $cbl-grid-xheader-width;
+    width: $label-cell-width;
 }
 
 .#{$g}-demos-col {
-    width: $cbl-grid-data-width;
+    width: $data-cell-width;
 }
 
 .#{$g}-skills-ct {
@@ -380,7 +363,7 @@
 
 .#{$g}-demo {
     background-color: $page-bg-color;
-    border-right: 1px solid $cbl-grid-border-color;
+    border-right: 1px solid $grid-border-color;
     @include box-align(center);
     @include box-flex(1);
     @include box-pack(center);
@@ -397,16 +380,6 @@
     &.is-complete {
         background-color: #ccc;
     }
-}
-
-@for $n from 2 through 10 {
-    .#{$g}-span-#{$n} {
-        @include box-flex($n);
-    }
-}
-
-.#{$g}-demo-overridden {
-    display: none;
 }
 
 .#{$g}-demo-counted {

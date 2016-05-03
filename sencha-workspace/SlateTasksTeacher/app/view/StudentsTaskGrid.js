@@ -1,9 +1,9 @@
 /**
- * Renders progress for a given list of students across a given list of competencies
+ * Renders tasks for a given list of students across a given list of competencies
  */
-Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
+Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
     extend: 'Ext.Component',
-    xtype: 'slate-cbl-teacher-studentsprogressgrid',
+    xtype: 'slate-cbl-teacher-studentstaskgrid',
     requires:[
         'Slate.cbl.Util',
 
@@ -48,48 +48,58 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
     tpl: [
         '{%var studentsCount = values.students.length%}',
-        '<div class="cbl-grid-ct">',
-            '<table class="cbl-grid cbl-grid-competencies">',
-                '<colgroup class="cbl-grid-competency-col"></colgroup>',
+        '<div class="cbl-grid-ct cbl-grid-tasks-ct">',
+            '<table class="cbl-grid cbl-grid-xheaders">',
+                '<colgroup class="cbl-grid-xheader-col"></colgroup>',
 
                 '<thead>',
                     '<tr>',
-                        '<td class="cbl-grid-corner-cell">&nbsp;</td>',
+                        '<td class="cbl-grid-corner-cell"></td>',
                     '</tr>',
                 '</thead>',
 
                 '<tbody>',
-                    '<tpl for="competencies">',
-                        '<tpl for="competency">',
-                            '<tr class="cbl-grid-progress-row" data-competency="{ID}">',
-                                '<th class="cbl-grid-competency-name"><div class="ellipsis">{Descriptor}</div></th>',
+                    '<tpl for="competencies">', // TODO switch to skills properly
+                        // '<tpl for="competency">',
+                            '<tr class="cbl-grid-group-row">',
+                                '<th class="cbl-grid-xheader"><div class="ellipsis">Performance Task {#}</div></th>',
                             '</tr>',
-                            '<tr class="cbl-grid-skills-row" data-competency="{ID}">',
+                            '<tr class="cbl-grid-subgroup-row" data-competency="{ID}">',
                                 '<td class="cbl-grid-skills-cell">',
                                     '<div class="cbl-grid-skills-ct">',
                                         '<table class="cbl-grid-skills-grid">',
-                                            '<colgroup class="cbl-grid-skill-col"></colgroup>',
-                                            '<tbody></tbody>',
+                                            '<colgroup class="cbl-grid-tasks-col"></colgroup>',
+                                            '<tbody>',
+                                                '<tpl for="skills">',
+                                                    '<tr class="cbl-grid-skill-row" data-skill="{skill.ID}">',
+                                                        '<th class="cbl-grid-skill-name" data-skill-name="{skill.Descriptor:htmlEncode}" data-skill-description="{skill.Statement:htmlEncode}">',
+                                                            '<div class="ellipsis">{skill.Descriptor:htmlEncode}</div>',
+                                                        '</th>',
+                                                    '</tr>',
+                                                '</tpl>',
+                                            '</tbody>',
                                         '</table>',
                                     '</div>',
                                 '</td>',
                             '</tr>',
-                        '</tpl>',
+                        // '</tpl>',
                     '</tpl>',
                 '</tbody>',
             '</table>',
 
             '<div class="cbl-grid-scroll-ct">',
                 '<table class="cbl-grid cbl-grid-main">',
-                    '<colgroup span="{[studentsCount]}" class="cbl-grid-progress-col"></colgroup>',
+                    '<colgroup span="{[studentsCount]}" class="cbl-grid-tasks-col"></colgroup>',
 
                     '<thead>',
                         '<tr>',
                             '<tpl for="students">',
-                                '<th class="cbl-grid-student-name" data-student="{student.ID}">',
-                                    '<tpl if="dashboardUrl"><a href="{dashboardUrl}"></tpl>',
-                                        '{student.FirstName} {student.LastName}',
-                                    '<tpl if="dashboardUrl"></a></tpl>',
+                                '<th class="cbl-grid-yheader" data-student="{student.ID}">',
+                                    '<div class="cbl-grid-yheader-clip">',
+                                        '<tpl if="dashboardUrl"><a href="{dashboardUrl}"></tpl>',
+                                            '{student.FirstName} {student.LastName}</div>',
+                                        '<tpl if="dashboardUrl"></a></tpl>',
+                                    '</div>',
                                 '</th>',
                             '</tpl>',
                         '</tr>',
@@ -97,13 +107,10 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
 
                     '<tbody>',
                         '<tpl for="competencies">',
-                            '<tr class="cbl-grid-progress-row" data-competency="{competency.ID}">',
+                            '<tr class="cbl-grid-data-row" data-competency="{competency.ID}">',
                                 '<tpl for="students">',
-                                    '<td class="cbl-grid-progress-cell" data-student="{student.ID}">',
-                                        '<span class="cbl-grid-progress-bar" style="width: 0%"></span>',
-                                        '<span class="cbl-grid-progress-level"></span>',
-                                        '<span class="cbl-grid-progress-percent"></span>',
-                                        '<span class="cbl-grid-progress-average"></span>',
+                                    '<td class="cbl-grid-task-cell {[this.getRandomCellStatus()]}" data-student="{student.ID}">',
+                                        '12/10',
                                     '</td>',
                                 '</tpl>',
                             '</tr>',
@@ -111,7 +118,7 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                                 '<td class="cbl-grid-skills-cell" colspan="{[studentsCount]}"">',
                                     '<div class="cbl-grid-skills-ct">',
                                         '<table class="cbl-grid-skills-grid">',
-                                            '<colgroup span="{[studentsCount]}"" class="cbl-grid-demos-col"></colgroup>',
+                                            '<colgroup span="{[studentsCount]}"" class="cbl-grid-tasks-col"></colgroup>',
                                             '<tbody></tbody>',
                                         '</table>',
                                     '</div>',
@@ -122,15 +129,68 @@ Ext.define('Slate.cbl.view.teacher.StudentsProgressGrid', {
                 '</table>',
             '</div>',
         '</div>',
+
+        // TODO make more dynamic?
         '<div class="cbl-grid-legend">',
-            '<span class="cbl-grid-legend-label">Legend:&ensp;</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-8">8</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-9">9</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-10">10</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-11">11</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-12">12</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-13">13</span>',
-        '</div>'
+            '<span class="cbl-legend-title">Legend</span>',
+            '<ul class="cbl-legend-items">',
+                '<tpl for="this.legendItems">',
+                    '<li class="cbl-legend-item cbl-status-{cls} <tpl if="needsRated">cbl-status-needs-rated</tpl>">',
+                        '<span class="cbl-legend-swatch"></span>',
+                        '<span class="cbl-legend-label">{title}</span>',
+                    '</li>',
+                '</tpl>',
+            '</ul>',
+        '</div>',
+        {
+            legendItems: [
+                {
+                    cls: 'not-assigned',
+                    title: 'Not Assigned'
+                },
+                {
+                    cls: 'due',
+                    title: 'Due'
+                },
+                {
+                    cls: 'due',
+                    needsRated: true,
+                    title: 'Needs Rated'
+                },
+                {
+                    cls: 'completed',
+                    title: 'Completed'
+                },
+                {
+                    cls: 'revision-assigned',
+                    title: 'Revision Assigned'
+                },
+                {
+                    cls: 'revision-assigned',
+                    needsRated: true,
+                    title: 'Revision, Needs Rated'
+                },
+                {
+                    cls: 'past-due',
+                    title: 'Past Due'
+                },
+                {
+                    cls: 'past-due',
+                    needsRated: true,
+                    title: 'Late, Needs Rated'
+                },
+            ]
+        },
+        {
+            getRandomCellStatus: function() {
+                var legendItems = this.legendItems,
+                    randomItem = legendItems[Math.floor(Math.random() * legendItems.length)],
+                    baseStatus = 'cbl-status-' + randomItem.cls,
+                    needsRated = randomItem.needsRated ? ' cbl-status-needs-rated' : '';
+
+                return baseStatus + needsRated;
+            }
+        }
     ],
 
     listeners: {

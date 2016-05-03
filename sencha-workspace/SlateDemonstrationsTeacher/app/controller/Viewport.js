@@ -6,16 +6,16 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
 
 
     views: [
-        'Dashboard@Slate.cbl.view.teacher'
+        'Dashboard'
     ],
 
     config: {
         refs: {
             dashboardCt: {
-                selector: 'slate-cbl-teacher-dashboard',
+                selector: 'slate-demonstrations-teacher-dashboard',
                 autoCreate: true,
 
-                xtype: 'slate-cbl-teacher-dashboard'
+                xtype: 'slate-demonstrations-teacher-dashboard'
             }
         },
     },

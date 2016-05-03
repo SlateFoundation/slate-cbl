@@ -6,8 +6,8 @@ Ext.define('SlateTasksTeacher.controller.Viewport', {
 
 
     views: [
-        'StudentsGrid@Slate.cbl.view.teacher',
-        'GridLegend@Slate.cbl.view.teacher'
+        'StudentsGrid',
+        'GridLegend'
     ],
 
     config: {
