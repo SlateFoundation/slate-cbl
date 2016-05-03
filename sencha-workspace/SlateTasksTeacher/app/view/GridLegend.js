@@ -1,4 +1,4 @@
-Ext.define('SlateTasksTeacher.view.main.GridLegend', {
+Ext.define('SlateTasksTeacher.view.GridLegend', {
     extend: 'Ext.Component',
     xtype: 'slate-gridlegend',
 

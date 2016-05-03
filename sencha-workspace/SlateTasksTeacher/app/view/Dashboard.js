@@ -1,12 +1,12 @@
 /**
  * Renders progress for a given list of students across a given list of competencies
  */
-Ext.define('SlateTasksTeacher.view.main.Dashboard', {
+Ext.define('SlateTasksTeacher.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-cbl-teacher-dashboard',
     requires:[
-        'SlateTasksTeacher.view.main.DashboardController',
-        'SlateTasksTeacher.view.main.StudentsTaskGrid'
+        'SlateTasksTeacher.view.DashboardController',
+        'SlateTasksTeacher.view.StudentsTaskGrid'
     ],
 
     controller: 'slate-cbl-teacher-dashboard',
@@ -16,7 +16,7 @@ Ext.define('SlateTasksTeacher.view.main.Dashboard', {
     },
 
     applyTaskGrid: function(taskGrid, oldTaskGrid) {
-        return Ext.factory(taskGrid, 'SlateTasksTeacher.view.main.StudentsTaskGrid', oldTaskGrid);
+        return Ext.factory(taskGrid, 'SlateTasksTeacher.view.StudentsTaskGrid', oldTaskGrid);
     },
 
     initComponent: function() {
