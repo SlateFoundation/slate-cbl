@@ -6,7 +6,8 @@ Provides server-side extensions for slate-v2, several [Ext JS 6 Classic](http://
 ## Getting started with development
 1. [Install latest 6.x Sencha CMD](https://www.sencha.com/products/extjs/cmd-download/)
 2. `git clone --recursive -b releases/v2/develop git@github.com:SlateFoundation/slate-cbl.git`
-3. `./build-all-apps.sh`
+3. `cd ./slate-cbl`
+4. `./build-all-apps.sh`
 
 If you have a version of GIT older than 1.6, get a newer version of git.
 
