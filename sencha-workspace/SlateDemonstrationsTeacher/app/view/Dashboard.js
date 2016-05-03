@@ -1,12 +1,12 @@
 /**
  * Renders progress for a given list of students across a given list of competencies
  */
-Ext.define('SlateDemonstrationsTeacher.view.main.Dashboard', {
+Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-demonstrations-teacher-dashboard',
     requires:[
-        'SlateDemonstrationsTeacher.view.main.DashboardController',
-        'SlateDemonstrationsTeacher.view.main.StudentsProgressGrid'
+        'SlateDemonstrationsTeacher.view.DashboardController',
+        'SlateDemonstrationsTeacher.view.StudentsProgressGrid'
     ],
 
     controller: 'slate-demonstrations-teacher-dashboard',
@@ -16,7 +16,7 @@ Ext.define('SlateDemonstrationsTeacher.view.main.Dashboard', {
     },
 
     applyProgressGrid: function(progressGrid, oldProgressGrid) {
-        return Ext.factory(progressGrid, 'SlateDemonstrationsTeacher.view.main.StudentsProgressGrid', oldProgressGrid);
+        return Ext.factory(progressGrid, 'SlateDemonstrationsTeacher.view.StudentsProgressGrid', oldProgressGrid);
     },
 
     initComponent: function() {
