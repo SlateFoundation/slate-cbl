@@ -29,7 +29,23 @@ StartTest(function(t) {
                 
                 { click: 'li.cbl-grid-demo.cbl-grid-demo-empty' },
                 
-                { waitForCQ: 'slate-cbl-teacher-skill-overviewwindow' }
+                { waitForCQ: 'slate-cbl-teacher-skill-overviewwindow' },
+                
+                function(next, el) {
+                  overviewWindow = el[0];
+                  t.ok(overviewWindow, 'Overviewwindow is here');  
+                  next();
+                },
+                
+                { click: 'combobox => .x-form-trigger'},
+                
+                { click: 'li.x-boundlist-item:contains("Conducting Research")' },
+                
+                { click: 'li.x-boundlist-item:contains("Manage the research process")' },
+                
+                function(next) {
+                    t.contentLike(overviewWindow, 'I can establish and implement my own work plan for completing my research in a timely manner.', 'Clicking combo item changes data in window');
+                }
             )
         })
 
