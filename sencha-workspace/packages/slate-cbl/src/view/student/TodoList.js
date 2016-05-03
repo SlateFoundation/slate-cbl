@@ -14,6 +14,7 @@ Ext.define('Slate.cbl.view.student.TodoList', {
     data: [
         {
             title: 'Active Items',
+            canAdd: true,
             items: [
                 {
                     title: 'Apply for scholarship by January 6th: https://scienceleadership.org/scholarship',
@@ -93,6 +94,15 @@ Ext.define('Slate.cbl.view.student.TodoList', {
                                 '<div class="slate-todolist-item-category">{category}</div>',
                             '</div>',
                             '<div class="slate-todolist-item-date">{date:date("M j, Y")}</div>',
+                        '</li>',
+                    '</tpl>',
+                    '<tpl if="canAdd">',
+                        '<li class="slate-todolist-item slate-todolist-blank-item">',
+                            '<input id="todo-item-new" class="slate-todolist-item-checkbox" type="checkbox" disabled>',
+                            '<div class="slate-todolist-item-text">',
+                                '<input class="slate-todolist-item-title" placeholder="New task&hellip;">',
+                            '</div>',
+                            '<div class="slate-todolist-item-date"><i class="fa fa-2x fa-calendar slate-todolist-date-trigger"></i></button></div>',
                         '</li>',
                     '</tpl>',
                 '</ul>',

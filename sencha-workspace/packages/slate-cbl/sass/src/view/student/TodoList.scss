@@ -7,6 +7,16 @@
     }
 }
 
+.slate-todolist {
+    .fa {
+        font-size: 14px;
+    }
+
+    .fa-2x{ 
+        font-size: 28px;
+    }
+}
+
 .slate-todolist-itemgroup-header {
     background-color: #e3e3e3;
     display: flex;
@@ -59,7 +69,7 @@
 }
 
 .slate-todolist-list {
-    background-color: white;
+    background-color: #fafafa;
     list-style: none;
     margin: 0;
     padding: 0 1em;
@@ -97,6 +107,10 @@
     overflow-wrap: break-word;
     word-break: break-word;
     word-wrap: break-word;
+
+    input& {
+        width: 100%;
+    }
 }
 
 .slate-todolist-item-category {
@@ -110,4 +124,8 @@
     color: $muted-color;
     font-size: .75em;
     margin-top: .3125em;
+}
+
+.slate-todolist-date-trigger {
+    cursor: pointer;
 }
