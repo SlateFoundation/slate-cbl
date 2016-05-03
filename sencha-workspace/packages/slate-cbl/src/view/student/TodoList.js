@@ -13,7 +13,7 @@ Ext.define('Slate.cbl.view.student.TodoList', {
 
     data: [
         {
-            title: 'Active',
+            title: 'Active Items',
             items: [
                 {
                     title: 'Apply for scholarship by January 6th: https://scienceleadership.org/scholarship',
@@ -35,7 +35,17 @@ Ext.define('Slate.cbl.view.student.TodoList', {
             ]
         },
         {
-            title: 'Completed',
+            title: 'Completed Items',
+            buttons: [
+                {
+                    icon: 'times',
+                    text: 'Clear All'
+                },
+                {
+                    icon: 'caret-up',
+                    text: 'Hide'
+                }
+            ],
             items: [
                 {
                     title: 'Apply for scholarship by January 6th: https://scienceleadership.org/scholarship',
@@ -63,7 +73,15 @@ Ext.define('Slate.cbl.view.student.TodoList', {
         '<tpl for=".">',
             '<section class="slate-todolist-itemgroup">',
                 '<header class="slate-todolist-itemgroup-header">',
-                    '<h4 class="slate-todolist-itemgroup-title">{title} Items</h4>',
+                    '<h4 class="slate-todolist-itemgroup-title">{title}</h4>',
+                    '<tpl if="buttons">',
+                        '<ul class="slate-todolist-itemgroup-actions">',
+                        '<tpl for="buttons">',
+                            '<li class="slate-todolist-itemgroup-action">',
+                                '<button><tpl if="icon"><i class="fa fa-{icon}"></i>&nbsp;</tpl>{text}</button>',
+                            '</li>',
+                        '</tpl>',
+                    '</tpl>',
                 '</header>',
                 '<ul class="slate-todolist-list">',
                     '<tpl for="items">',
