@@ -12,12 +12,11 @@ Ext.define('SlateDemonstrationsStudent.view.main.Main', {
     requires: [
         'Ext.window.MessageBox',
 
-        'SlateDemonstrationsStudent.view.main.MainController',
+        'SlateDemonstrationsStudent.controller.MainController',
         'SlateDemonstrationsStudent.view.main.MainModel',
         'SlateDemonstrationsStudent.view.main.List'
     ],
 
-    controller: 'main',
     viewModel: 'main',
 
     ui: 'navigation',

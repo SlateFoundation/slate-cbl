@@ -4,8 +4,8 @@
  *
  * TODO - Replace this content of this view to suite the needs of your application.
  */
-Ext.define('SlateDemonstrationsStudent.view.main.MainController', {
-    extend: 'Ext.app.ViewController',
+Ext.define('SlateDemonstrationsStudent.controller.MainController', {
+    extend: 'Ext.app.Controller',
 
     alias: 'controller.main',
 
