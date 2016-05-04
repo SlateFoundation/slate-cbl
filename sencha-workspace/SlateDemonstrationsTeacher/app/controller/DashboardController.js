@@ -2,9 +2,9 @@
  * TODO:
  * - move rendering responsibilities to the view?
  */
-Ext.define('SlateDemonstrationsTeacher.view.DashboardController', {
-    extend: 'Ext.app.ViewController',
-    alias: 'controller.slate-demonstrations-teacher-dashboard',
+Ext.define('SlateDemonstrationsTeacher.controller.DashboardController', {
+    extend: 'Ext.app.Controller',
+    alias: 'controller.slate-demonstrations-teacher-dashboardcontroller',
     requires: [
         'Jarvus.util.APIDomain',
 
@@ -12,17 +12,24 @@ Ext.define('SlateDemonstrationsTeacher.view.DashboardController', {
 
         'Slate.cbl.view.teacher.skill.OverviewWindow',
         'Slate.cbl.view.teacher.skill.OverrideWindow',
-        'Slate.cbl.view.teacher.demonstration.EditWindow'
+        'Slate.cbl.view.teacher.demonstration.EditWindow',
+        
     ],
+    
+    refs: {
+        dashboardCt: 'slate-demonstrations-teacher-dashboard',
+        
+        studentProgressGrid: 'slate-demonstrations-teacher-studentsprogressgrid',
+        teacherOverviewwindow: 'slate-cbl-teacher-skill-overviewwindow'
+    },
 
 
     config: {
-        id: 'slate-demonstrations-teacher-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         control: {
-            'slate-demonstrations-teacher-studentsprogressgrid': {
+            studentProgressGrid: {
                 democellclick: 'onDemoCellClick'
             },
-            'slate-cbl-teacher-skill-overviewwindow': {
+            teacherOverviewwindow: {
                 createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
                 editdemonstrationclick: 'onOverviewEditDemonstrationClick',
                 deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
@@ -42,7 +49,7 @@ Ext.define('SlateDemonstrationsTeacher.view.DashboardController', {
     // event handers
     onDemoCellClick: function(progressGrid, ev, targetEl) {
         Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
-            ownerCmp: this.getView(),
+            ownerCmp: this.getDashboardCt(),
             autoShow: true,
             animateTarget: targetEl,
 
@@ -123,7 +130,7 @@ Ext.define('SlateDemonstrationsTeacher.view.DashboardController', {
 
     onOverviewCreateOverrideClick: function(overviewWindow, studentId, standardId) {
         Ext.create('Slate.cbl.view.teacher.skill.OverrideWindow', {
-            ownerCmp: this.getView(),
+            ownerCmp: this.getDashboardCt(),
             autoShow: true,
 
             student: studentId,
@@ -132,17 +139,17 @@ Ext.define('SlateDemonstrationsTeacher.view.DashboardController', {
     },
 
     onDemonstrationSave: function(demonstration) {
-        this.getView().progressGrid.loadDemonstration(demonstration);
+        this.getDashboardCt().progressGrid.loadDemonstration(demonstration);
     },
 
     onDemonstrationDelete: function(demonstration) {
-        this.getView().progressGrid.deleteDemonstration(demonstration);
+        this.getDashboardCt().progressGrid.deleteDemonstration(demonstration);
     },
 
 
     // public methods
     showDemonstrationEditWindow: function(options) {
-        var dashboardView = this.getView();
+        var dashboardView = this.getDashboardCt();
 
         return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
             ownerCmp: dashboardView,
