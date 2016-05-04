@@ -6,30 +6,24 @@ Ext.define('SlateTasksTeacher.controller.Viewport', {
 
 
     views: [
-        'StudentsGrid',
-        'GridLegend'
+        'Dashboard'
     ],
 
     config: {
         refs: {
-            studentsGrid: {
-                selector: 'slate-studentsgrid',
+            dashboardCt: {
+                selector: 'slate-tasks-teacher-dashboard',
                 autoCreate: true,
-
-                xtype: 'slate-studentsgrid'
-            },
-            gridLegend: {
-                selector: 'slate-gridlegend',
-                autoCreate: true,
-
-                xtype: 'slate-gridlegend'
+                
+                xtype: 'slate-tasks-teacher-dashboard'
             }
         },
     },
 
     onLaunch: function () {
-        // render dashboard
-        this.getStudentsGrid().render('slateapp-viewport');
-        this.getGridLegend().render('slateapp-viewport');
+        var dashboardCt;
+        
+        dashboardCt = this.getDashboardCt();      
+        dashboardCt.render('slateapp-viewport')
     }
 });

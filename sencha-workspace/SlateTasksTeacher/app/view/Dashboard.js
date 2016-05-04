@@ -3,20 +3,24 @@
  */
 Ext.define('SlateTasksTeacher.view.Dashboard', {
     extend: 'Ext.Container',
-    xtype: 'slate-cbl-teacher-dashboard',
+    xtype: 'slate-tasks-teacher-dashboard',
     requires:[
-        'SlateTasksTeacher.view.DashboardController',
-        'SlateTasksTeacher.view.StudentsTaskGrid'
+        'SlateTasksTeacher.controller.DashboardController',
+        'SlateTasksTeacher.view.StudentsGrid',
+        'SlateTasksTeacher.view.GridLegend'
     ],
 
-    controller: 'slate-cbl-teacher-dashboard',
-
     config: {
-        taskGrid: true
+        taskGrid: true,
+        gridLegend: true
     },
 
     applyTaskGrid: function(taskGrid, oldTaskGrid) {
-        return Ext.factory(taskGrid, 'SlateTasksTeacher.view.StudentsTaskGrid', oldTaskGrid);
+        return Ext.factory(taskGrid, 'SlateTasksTeacher.view.StudentsGrid', oldTaskGrid);
+    },
+    
+    applyGridLegend: function(gridLegend, oldGridLegend) {
+        return Ext.factory(gridLegend, 'SlateTasksTeacher.view.GridLegend', oldGridLegend);  
     },
 
     initComponent: function() {
@@ -25,5 +29,6 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
         me.callParent(arguments);
 
         me.add(me.getTaskGrid());
+        me.add(me.getGridLegend());
     }
 });

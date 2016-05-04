@@ -3,7 +3,7 @@
  */
 Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
     extend: 'Ext.Component',
-    xtype: 'slate-cbl-teacher-studentstaskgrid',
+    xtype: 'slate-tasks-teacher-studentstaskgrid',
     requires:[
         'Slate.cbl.Util',
 
