@@ -1,9 +1,9 @@
 /**
  * This view is an example list of people.
  */
-Ext.define('SlateDemonstrationsStudent.view.main.List', {
+Ext.define('SlateDemonstrationsStudent.view.List', {
     extend: 'Ext.grid.Panel',
-    xtype: 'mainlist',
+    xtype: 'slate-demonstrations-student-list',
 
     requires: [
         'SlateDemonstrationsStudent.store.Personnel'
@@ -19,9 +19,6 @@ Ext.define('SlateDemonstrationsStudent.view.main.List', {
         { text: 'Name',  dataIndex: 'name' },
         { text: 'Email', dataIndex: 'email', flex: 1 },
         { text: 'Phone', dataIndex: 'phone', flex: 1 }
-    ],
-
-    listeners: {
-        select: 'onItemSelected'
-    }
+    ]
+    
 });

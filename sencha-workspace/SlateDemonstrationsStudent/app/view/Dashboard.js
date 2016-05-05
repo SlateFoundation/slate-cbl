@@ -5,16 +5,15 @@
  *
  * TODO - Replace this content of this view to suite the needs of your application.
  */
-Ext.define('SlateDemonstrationsStudent.view.main.Main', {
+Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     extend: 'Ext.tab.Panel',
     xtype: 'app-main',
 
     requires: [
         'Ext.window.MessageBox',
 
-        'SlateDemonstrationsStudent.controller.MainController',
-        'SlateDemonstrationsStudent.view.main.MainModel',
-        'SlateDemonstrationsStudent.view.main.List'
+        'SlateDemonstrationsStudent.view.MainModel',
+        'SlateDemonstrationsStudent.view.List'
     ],
 
     viewModel: 'main',

@@ -1,7 +1,7 @@
 /**
  * This class is the view model for the Main view of the application.
  */
-Ext.define('SlateDemonstrationsStudent.view.main.MainModel', {
+Ext.define('SlateDemonstrationsStudent.view.MainModel', {
     extend: 'Ext.app.ViewModel',
 
     alias: 'viewmodel.main',

@@ -13,7 +13,7 @@ Ext.define('SlateDemonstrationsStudent.Application', {
 
     controllers: [
         'Viewport',
-        'MainController'
+        'Dashboard'
     ],
 
     onAppUpdate: function () {
