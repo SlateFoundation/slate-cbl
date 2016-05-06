@@ -21,10 +21,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
         
         studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
-        teacherOverviewwindow: 'slate-cbl-teacher-skill-overviewwindow',
-        
-        gridProgressRow: 'cbl-grid-progress-row',
-        gridDemoCell: 'cbl-grid-demo'
+        teacherOverviewwindow: 'slate-cbl-teacher-skill-overviewwindow'
     },
 
 
