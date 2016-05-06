@@ -5,7 +5,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-tasks-teacher-dashboard',
     requires:[
-        'SlateTasksTeacher.controller.DashboardController',
+        'SlateTasksTeacher.controller.Dashboard',
         'SlateTasksTeacher.view.StudentsGrid',
         'SlateTasksTeacher.view.GridLegend'
     ],
