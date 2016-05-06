@@ -204,7 +204,6 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
             fn: 'onSkillNameMouseOver',
             element: 'el'
         },
-        // competencyrowclick: 'onCompetencyRowClick'
     },
 
 
