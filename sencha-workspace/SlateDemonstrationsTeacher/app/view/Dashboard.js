@@ -5,7 +5,6 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-demonstrations-teacher-dashboard',
     requires:[
-        'SlateDemonstrationsTeacher.controller.DashboardController',
         'SlateDemonstrationsTeacher.view.StudentsProgressGrid'
     ],
 

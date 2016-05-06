@@ -2,7 +2,7 @@
  * TODO:
  * - move rendering responsibilities to the view?
  */
-Ext.define('SlateDemonstrationsTeacher.controller.DashboardController', {
+Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     alias: 'controller.slate-demonstrations-teacher-dashboard',
     requires: [
@@ -12,6 +12,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.DashboardController', {
 
         'Slate.cbl.view.teacher.skill.OverviewWindow',
         'Slate.cbl.view.teacher.skill.OverrideWindow',
+        'SlateDemonstrationsTeacher.view.Dashboard',
         'Slate.cbl.view.teacher.demonstration.EditWindow',
         
     ],
@@ -19,14 +20,18 @@ Ext.define('SlateDemonstrationsTeacher.controller.DashboardController', {
     refs: {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
         
-        studentProgressGrid: 'slate-demonstrations-teacher-studentsprogressgrid',
-        teacherOverviewwindow: 'slate-cbl-teacher-skill-overviewwindow'
+        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
+        teacherOverviewwindow: 'slate-cbl-teacher-skill-overviewwindow',
+        
+        gridProgressRow: 'cbl-grid-progress-row',
+        gridDemoCell: 'cbl-grid-demo'
     },
 
 
     config: {
         control: {
             studentProgressGrid: {
+                competencyrowclick: 'onCompetencyRowClick',
                 democellclick: 'onDemoCellClick'
             },
             teacherOverviewwindow: {
@@ -47,6 +52,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.DashboardController', {
 
 
     // event handers
+    onCompetencyRowClick: function(me, competency, ev, targetEl) {
+        me.toggleCompetency(competency);
+    },
+    
     onDemoCellClick: function(progressGrid, ev, targetEl) {
         Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
             ownerCmp: this.getDashboardCt(),
