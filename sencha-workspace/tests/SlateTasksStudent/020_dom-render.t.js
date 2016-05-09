@@ -36,7 +36,7 @@ StartTest(function(t) {
                 function() {
                     t.ok(todolist, 'slate-todolist panel is rendered');
                     t.selectorCountIs('.slate-todolist-list', todolist, 2, "There are 2 slate-todolist-list");
-                    t.selectorCountIs('.slate-todolist-item', todolist, 6, "There are 6 slate-todolist-items");
+                    t.selectorCountIs('.slate-todolist-item', todolist, 7, "There are 7 slate-todolist-items");
                     t.contentLike(todolist, 'Research internships and apply', '\'Research internships and apply\' task is there');
                 }
             )
