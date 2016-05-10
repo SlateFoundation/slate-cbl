@@ -3,23 +3,28 @@ Ext.define('SlateTasksTeacher.controller.Viewport', {
     requires: [
         'Slate.API'
     ],
-
-
+    
+    
+    config: {
+    },
+    
+    
+    // controller configuration
     views: [
         'Dashboard'
     ],
 
-    config: {
-        refs: {
-            dashboardCt: {
-                selector: 'slate-tasks-teacher-dashboard',
-                autoCreate: true,
-                
-                xtype: 'slate-tasks-teacher-dashboard'
-            }
-        },
+    refs: {
+        dashboardCt: {
+            selector: 'slate-tasks-teacher-dashboard',
+            autoCreate: true,
+            
+            xtype: 'slate-tasks-teacher-dashboard'
+        }
     },
 
+
+    // controller templates method overrides
     onLaunch: function () {
         var dashboardCt;
         

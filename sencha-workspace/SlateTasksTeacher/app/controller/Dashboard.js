@@ -8,7 +8,26 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'Jarvus.util.APIDomain',
 
         'Slate.API',
-
+    ],
+    
+    
+    config: {
+    },
+    
+    
+    // entry points
+    listen: {
+    },
+    
+    control: {
+        taskGrid: {
+            competencyrowclick: 'onCompetencyRowClick'
+        }
+    },
+    
+    
+    // controller configuration
+    views: [
         'Slate.cbl.view.teacher.skill.OverviewWindow',
         'Slate.cbl.view.teacher.skill.OverrideWindow',
         'Slate.cbl.view.teacher.demonstration.EditWindow'
@@ -20,18 +39,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
       taskGrid: 'slate-tasks-teacher-dashboard slate-tasks-teacher-studentstaskgrid'
     },
 
-
-    config: {
-        control: {
-            taskGrid: {
-                competencyrowclick: 'onCompetencyRowClick'
-            }
-        }
-    },
-
-
-    listen: {
-    },
     
     // event handlers 
     onCompetencyRowClick: function(me, competency, ev, targetEl) {

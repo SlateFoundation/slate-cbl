@@ -3,23 +3,28 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
     requires: [
         'Slate.API'
     ],
+    
+    
+    config: {
+    },
 
 
+    // controller configuration
     views: [
         'Dashboard'
     ],
+    
+    refs: {
+        dashboardCt: {
+            selector: 'slate-demonstrations-teacher-dashboard',
+            autoCreate: true,
 
-    config: {
-        refs: {
-            dashboardCt: {
-                selector: 'slate-demonstrations-teacher-dashboard',
-                autoCreate: true,
-
-                xtype: 'slate-demonstrations-teacher-dashboard'
-            }
-        },
+            xtype: 'slate-demonstrations-teacher-dashboard'
+        }
     },
+        
 
+    // controller templates method overrides
     onLaunch: function () {
         var siteEnv = window.SiteEnvironment || {},
             contentAreaCode = (siteEnv.cblContentArea || {}).Code,

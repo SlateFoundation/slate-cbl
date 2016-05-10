@@ -5,28 +5,33 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
     ],
 
 
+    config: {
+    },
+    
+    
+    // controller configuration
     views: [
         'Dashboard@Slate.cbl.view.student',
         'RecentProgress@Slate.cbl.view.student'
     ],
+    
+    refs: {
+        dashboardCt: {
+            selector: 'slate-cbl-student-dashboard',
+            autoCreate: true,
 
-    config: {
-        refs: {
-            dashboardCt: {
-                selector: 'slate-cbl-student-dashboard',
-                autoCreate: true,
-
-                xtype: 'slate-cbl-student-dashboard'
-            },
-            recentProgressCmp: {
-                selector: 'slate-cbl-student-recentprogress',
-                autoCreate: true,
-
-                xtype: 'slate-cbl-student-recentprogress'
-            }
+            xtype: 'slate-cbl-student-dashboard'
         },
+        recentProgressCmp: {
+            selector: 'slate-cbl-student-recentprogress',
+            autoCreate: true,
+
+            xtype: 'slate-cbl-student-recentprogress'
+        }
     },
 
+
+    // controller templates method overrides
     onLaunch: function () {
         var siteEnv = window.SiteEnvironment || {},
             cblStudentId = (siteEnv.cblStudent || {}).ID,

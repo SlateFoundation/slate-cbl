@@ -8,12 +8,42 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         'Jarvus.util.APIDomain',
 
         'Slate.API',
-
-        'Slate.cbl.view.teacher.skill.OverviewWindow',
-        'Slate.cbl.view.teacher.skill.OverrideWindow',
-        'Slate.cbl.view.teacher.demonstration.EditWindow',
         
         'Ext.window.MessageBox'
+    ],
+    
+    
+    config: {
+    },
+    
+    
+    // entry points
+    listen: {
+        api: {
+            demonstrationsave: 'onDemonstrationSave',
+            demonstrationdelete: 'onDemonstrationDelete'
+        }
+    },
+    
+    control: {
+        studentProgressGrid: {
+            competencyrowclick: 'onCompetencyRowClick',
+            democellclick: 'onDemoCellClick'
+        },
+        teacherOverviewwindow: {
+            createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
+            editdemonstrationclick: 'onOverviewEditDemonstrationClick',
+            deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
+            createoverrideclick: 'onOverviewCreateOverrideClick'
+        }
+    },
+    
+    
+    // controller configuration
+    views: [
+        'Slate.cbl.view.teacher.skill.OverviewWindow',
+        'Slate.cbl.view.teacher.skill.OverrideWindow',
+        'Slate.cbl.view.teacher.demonstration.EditWindow'
     ],
     
     refs: {
@@ -21,29 +51,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         
         studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
         teacherOverviewwindow: 'slate-cbl-teacher-skill-overviewwindow'
-    },
-
-
-    config: {
-        control: {
-            studentProgressGrid: {
-                competencyrowclick: 'onCompetencyRowClick',
-                democellclick: 'onDemoCellClick'
-            },
-            teacherOverviewwindow: {
-                createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
-                editdemonstrationclick: 'onOverviewEditDemonstrationClick',
-                deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
-                createoverrideclick: 'onOverviewCreateOverrideClick'
-            }
-        },
-
-        listen: {
-            api: {
-                demonstrationsave: 'onDemonstrationSave',
-                demonstrationdelete: 'onDemonstrationDelete'
-            }
-        }
     },
 
 
