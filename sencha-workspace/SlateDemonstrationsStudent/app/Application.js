@@ -12,8 +12,7 @@ Ext.define('SlateDemonstrationsStudent.Application', {
     name: 'SlateDemonstrationsStudent',
 
     controllers: [
-        'Viewport',
-        'Dashboard'
+        'Viewport'
     ],
 
     onAppUpdate: function () {
