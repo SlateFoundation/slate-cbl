@@ -13,6 +13,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         'Slate.cbl.view.teacher.skill.OverrideWindow',
         'Slate.cbl.view.teacher.demonstration.EditWindow',
         
+        'Ext.window.MessageBox'
     ],
     
     refs: {
