@@ -2,16 +2,16 @@
 cd sencha-workspace
 
 cd SlateDemonstrationsTeacher
-sencha app build
+sencha app build testing
 
 cd ../SlateDemonstrationsStudent
-sencha app build
+sencha app build testing
 
 cd ../SlateTasksTeacher
-sencha app build
+sencha app build testing
 
 cd ../SlateTasksStudent
-sencha app build
+sencha app build testing
 
 cd ../AggregridExample
-sencha app build
+sencha app build testing
