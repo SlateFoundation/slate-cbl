@@ -6,7 +6,8 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
 
     views: [
         'TaskTree@Slate.cbl.view.student',
-        'TodoList@Slate.cbl.view.student'
+        'TodoList@Slate.cbl.view.student',
+        'TaskHistory@Slate.cbl.view.student'
     ],
 
     config: {
@@ -22,6 +23,12 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
                 autoCreate: true,
 
                 xtype: 'slate-todolist'
+            },
+            taskHistory: {
+                selector: 'slate-taskhistory',
+                autoCreate: true,
+
+                xtype: 'slate-taskhistory'
             }
         },
     },
@@ -30,5 +37,6 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
         // render dashboard
         this.getTaskTree().render('slate-tasktree');
         this.getTodoList().render('slate-todolist');
+        this.getTaskHistory().render('slate-taskhistory');
     }
 });
