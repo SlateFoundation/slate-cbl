@@ -4,7 +4,6 @@
  */
 Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
-    alias: 'controller.slate-demonstrations-teacher-dashboard',
     requires: [
         'Jarvus.util.APIDomain',
 
