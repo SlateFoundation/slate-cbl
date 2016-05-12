@@ -11,8 +11,8 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
 
     // controller configuration
     views: [
-        'TaskTree@Slate.cbl.view.student',
-        'TodoList@Slate.cbl.view.student'
+        'TaskTree',
+        'TodoList'
     ],
     
     refs: {
