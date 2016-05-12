@@ -71,12 +71,9 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
             '<tbody>',
                 '<tpl for="tasks">',
                     // TODO wire collapsing
-                    '<tr class="slate-taskhistory-row <tpl if="subtasks"><tpl else>is-standalone</tpl>">',
+                    '<tr class="slate-taskhistory-row <tpl if="subtasks">is-expandable</tpl>">',
                         '<td class="slate-taskhistory-cell">',
-                            '<span class="slate-taskhistory-taskbullet">',
-                                '<tpl if="subtasks"><i class="fa fa-minus"></i>',
-                                '<tpl else><i class="fa fa-circle"></i></tpl>',
-                            '</span>',
+                            '<span class="slate-taskhistory-taskbullet"></span>',
                             '<span class="slate-taskhistory-tasktitle">{title}</span>',
                         '</td>',
 
@@ -84,7 +81,7 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
                             '<tpl foreach="skills">',
                                 '{[ this.printSomeIndicators(values, xkey) ]}',
                             '</tpl>',
-                            '<div class="slate-taskhistory-skills-overlay">{[ this.printOverlayString(values.skills) ]}</div>',
+                            '<div class="slate-taskhistory-skills-overlay"><span class="slate-taskhistory-skills-caption">{[ this.printOverlayString(values.skills) ]}</span></div>',
                         '</td>',
 
                         '<td class="slate-taskhistory-cell text-center">',
@@ -101,10 +98,7 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
                                             '<tpl foreach="subtasks">',
                                                 '<tr class="slate-taskhistory-subrow <tpl if="subtasks"><tpl else>is-standalone</tpl>">',
                                                     '<td class="slate-taskhistory-cell">',
-                                                        '<span class="slate-taskhistory-taskbullet">',
-                                                            '<tpl if="subtasks"><i class="fa fa-minus"></i>',
-                                                            '<tpl else><i class="fa fa-circle"></i></tpl>',
-                                                        '</span>',
+                                                        '<span class="slate-taskhistory-taskbullet"></span>',
                                                         '<span class="slate-taskhistory-tasktitle">{title}</span>',
                                                     '</td>',
                             
@@ -112,7 +106,7 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
                                                         '<tpl foreach="skills">',
                                                             '{[ this.printSomeIndicators(values, xkey) ]}',
                                                         '</tpl>',
-                                                        '<div class="slate-taskhistory-skills-overlay">{[ this.printOverlayString(values.skills) ]}</div>',
+                                                        '<div class="slate-taskhistory-skills-overlay"><span class="slate-taskhistory-skills-caption">{[ this.printOverlayString(values.skills) ]}</span></div>',
                                                     '</td>',
                             
                                                     '<td class="slate-taskhistory-cell text-center">',
@@ -164,5 +158,24 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
                 return html;
             }
         }
-    ]
+    ],
+
+    listeners: {
+        scope: 'this',
+        click: {
+            fn: 'onExpandClick',
+            element: 'el',
+            delegate: '.is-expandable .slate-taskhistory-taskbullet'
+        }
+    },
+
+    onExpandClick: function(ev, t) {
+        var target = Ext.get(t);
+
+        if (target.is('.slate-taskhistory-taskbullet')) {
+            var row = target.up('.slate-taskhistory-row');
+
+            row.toggleCls('is-expanded');
+        }
+    }
 });

@@ -22,16 +22,35 @@
 .slate-taskhistory-taskbullet {
     color: #999;
     display: inline-block;
-    font-size: 14px;
-    margin-right: .5em;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-right: .25em;
     text-align: center;
+    vertical-align: -(1em/16);
     width: 1em;
 
-    .is-standalone & {
-        font-size: 7px;
-        margin-right: 1em;
-        vertical-align: 3px;
-        width: 2em;
+    &::before {
+        content: '\00b7'; // middot;
+    }
+
+    .is-expandable & {
+        cursor: pointer;
+
+        &:hover {
+            color: #666;
+        }
+
+        &::before {
+            content: '+';
+            display: block;
+            transition: 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeOutCirc
+            transform: rotate(-360deg);
+        }
+    }
+
+    .is-expanded &::before {
+        content: '\2212'; // minus sign
+        transform: none;
     }
 }
 
@@ -46,6 +65,15 @@
     &:hover .slate-taskhistory-skills-overlay {
         display: flex;
     }
+}
+
+@keyframes caption-in {
+      0% { opacity: 0; transform: scaleY(.5) translateX(-25%); }
+    100% { opacity: 1; transform: none; }
+}
+
+.slate-taskhistory-skills-caption {
+    animation: caption-in 150ms both $easeOutBack;
 }
 
 .slate-taskhistory-skills-overlay {
@@ -65,11 +93,18 @@
 }
 
 .slate-taskhistory-skillindicator {
+    animation: 150ms caption-in both $easeOutBack;
     font-size: 1.5em;
 
     @include slate-taskhistory-skill-status('on-level',     $slate-taskhistory-on-level-color);
     @include slate-taskhistory-skill-status('off-level',    $slate-taskhistory-off-level-color);
     @include slate-taskhistory-skill-status('incomplete',   $slate-taskhistory-incomplete-color);
+
+    @for $i from 1 through 20 {
+        &:nth-child($i) {
+            animation-delay: $i * 50ms;
+        }
+    }
 }
 
 .slate-taskhistory-subrow-cell,
@@ -78,12 +113,26 @@
     width: 100%;
 }
 
+.slate-taskhistory-subrow-ct {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateX(-10%);
+    transition: 250ms $easeOutCirc;
+
+    .is-expanded + .slate-taskhistory-row & {
+        height: 45px; // TODO js-ify this
+        opacity: 1;
+        transform: none;
+    }
+}
+
 .slate-taskhistory-subrow-table {
     margin: 0;
 }
 
 .slate-taskhistory-subrow {
     .slate-taskhistory-taskbullet {
-        margin-left: 3em;
+        margin-left: 1em;
     }
 }
