@@ -1,6 +1,6 @@
-Ext.define('Slate.cbl.view.student.DashboardController', {
+Ext.define('SlateDemonstrationsStudent.view.DashboardController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.slate-cbl-student-dashboard',
+    alias: 'controller.slate-demonstrations-student-dashboardcontroller',
     requires: [
         'Slate.cbl.view.student.skill.OverviewWindow'
     ],
@@ -11,7 +11,7 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
             '#': {
                 render: 'onComponentRender'
             },
-            'slate-cbl-student-competencycard': {
+            'slate-demonstrations-student-competencycard': {
                 democellclick: 'onDemoCellClick'
             }
         }

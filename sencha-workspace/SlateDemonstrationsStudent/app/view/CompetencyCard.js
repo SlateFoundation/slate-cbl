@@ -1,6 +1,6 @@
-Ext.define('Slate.cbl.view.student.CompetencyCard', {
+Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     extend: 'Ext.Component',
-    xtype: 'slate-cbl-student-competencycard',
+    xtype: 'slate-demonstrations-student-competencycard',
     requires: [,
         'Slate.cbl.Util',
 

@@ -1,6 +1,6 @@
-Ext.define('Slate.cbl.view.student.RecentProgress', {
+Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
     extend: 'Ext.Component',
-    xtype: 'slate-cbl-student-recentprogress',
+    xtype: 'slate-demonstrations-student-recentprogress',
     requires: [
         'Slate.cbl.store.RecentProgress'
     ],

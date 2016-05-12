@@ -11,22 +11,24 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
     
     // controller configuration
     views: [
-        'Dashboard@Slate.cbl.view.student',
-        'RecentProgress@Slate.cbl.view.student'
+        'CompetencyCard',
+        'Dashboard',
+        'DashboardController',
+        'RecentProgress',
     ],
     
     refs: {
         dashboardCt: {
-            selector: 'slate-cbl-student-dashboard',
+            selector: 'slate-demonstrations-student-dashboard',
             autoCreate: true,
 
-            xtype: 'slate-cbl-student-dashboard'
+            xtype: 'slate-demonstrations-student-dashboard'
         },
         recentProgressCmp: {
-            selector: 'slate-cbl-student-recentprogress',
+            selector: 'slate-demonstrations-student-recentprogress',
             autoCreate: true,
 
-            xtype: 'slate-cbl-student-recentprogress'
+            xtype: 'slate-demonstrations-student-recentprogress'
         }
     },
 

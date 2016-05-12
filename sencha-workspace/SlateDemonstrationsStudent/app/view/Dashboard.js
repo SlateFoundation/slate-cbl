@@ -1,13 +1,13 @@
-Ext.define('Slate.cbl.view.student.Dashboard', {
+Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     extend: 'Ext.Container',
-    xtype: 'slate-cbl-student-dashboard',
+    xtype: 'slate-demonstrations-student-dashboard',
     requires:[
-        'Slate.cbl.view.student.DashboardController',
+        // 'SlateDemonstrationsStudent.view.DashboardController',
+        'SlateDemonstrationsStudent.view.CompetencyCard',
 
         'Slate.cbl.Util',
 
         'Slate.cbl.widget.Popover',
-        'Slate.cbl.view.student.CompetencyCard',
 
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.Completions',
@@ -16,7 +16,7 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         'Slate.cbl.data.Skills'
     ],
 
-    controller: 'slate-cbl-student-dashboard',
+    controller: 'slate-demonstrations-student-dashboardcontroller',
 
     config: {
         studentId: null,
@@ -45,7 +45,7 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         tag: 'ul',
         cls: 'cbl-competency-panels'
     },
-    defaultType: 'slate-cbl-student-competencycard',
+    defaultType: 'slate-demonstrations-student-competencycard',
     layout: 'container',
 
 
