@@ -19,7 +19,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindowController', {
 //            }
             'button[action=submit]': {
                 click: 'onSubmitClick'
-            },
+            }
         },
 
         listen: {

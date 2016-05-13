@@ -24,7 +24,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
 
                 xtype: 'slate-cbl-student-recentprogress'
             }
-        },
+        }
     },
 
     onLaunch: function () {

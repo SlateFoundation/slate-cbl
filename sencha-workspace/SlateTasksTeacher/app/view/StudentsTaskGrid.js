@@ -178,7 +178,7 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                     cls: 'past-due',
                     needsRated: true,
                     title: 'Late, Needs Rated'
-                },
+                }
             ]
         },
         {

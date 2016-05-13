@@ -24,7 +24,7 @@ Ext.define('SlateTasksTeacher.controller.Viewport', {
 
                 xtype: 'slate-gridlegend'
             }
-        },
+        }
     },
 
     onLaunch: function () {

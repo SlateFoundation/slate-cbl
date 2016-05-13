@@ -16,7 +16,7 @@ Ext.define('SlateTasksManager.controller.Viewport', {
 
                 xtype: 'slate-tasksmanager'
             }
-        },
+        }
     },
 
     onLaunch: function () {

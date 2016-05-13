@@ -6,7 +6,7 @@
 Ext.define('SlateTasksManager.Application', {
     extend: 'Ext.app.Application',
     requires: [
-        'Ext.window.MessageBox',
+        'Ext.window.MessageBox'
     ],
 
     name: 'SlateTasksManager',

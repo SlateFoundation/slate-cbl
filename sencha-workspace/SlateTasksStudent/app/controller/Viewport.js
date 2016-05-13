@@ -30,7 +30,7 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
 
                 xtype: 'slate-taskhistory'
             }
-        },
+        }
     },
 
     onLaunch: function () {

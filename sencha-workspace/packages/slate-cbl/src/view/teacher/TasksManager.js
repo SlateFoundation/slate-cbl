@@ -26,7 +26,7 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
             { text: 'Skills',               dataIndex: 'skills',    flex: 1     },
             { text: 'Year',                 dataIndex: 'year',      width: 64   },
             { text: 'Created by',           dataIndex: 'creator',   width: 160  },
-            { text: 'Created',              dataIndex: 'created',   width: 128  },
+            { text: 'Created',              dataIndex: 'created',   width: 128  }
         ]
     }
 });

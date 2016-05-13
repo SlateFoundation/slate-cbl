@@ -24,7 +24,6 @@ Ext.define('AggregridExample.store.Absences', {
             }                                                                   
             
             return arr
-        },
-    },
-    
+        }
+    }
 });

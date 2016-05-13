@@ -17,7 +17,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
 
                 xtype: 'slate-demonstrations-teacher-dashboard'
             }
-        },
+        }
     },
 
     onLaunch: function () {

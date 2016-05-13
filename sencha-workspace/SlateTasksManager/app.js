@@ -6,7 +6,7 @@
 Ext.application({
     name: 'SlateTasksManager',
 
-    extend: 'SlateTasksManager.Application',
+    extend: 'SlateTasksManager.Application'
 
 
     //-------------------------------------------------------------------------
