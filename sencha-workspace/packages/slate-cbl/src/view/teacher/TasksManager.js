@@ -129,7 +129,7 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
                 year: 'Y2',
                 creator: 'Thomas Gaffney',
                 created: '2015-04-10'
-            },
+            }
         ]
     }
 });
