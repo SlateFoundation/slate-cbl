@@ -3,37 +3,3 @@
         margin-bottom: 8px;
     }
 }
-
-.slate-attachments-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.slate-attachments-item {
-    display: flex;
-
-    button.plain {
-        background: none;
-        border: none;
-        box-shadow: none;
-        margin-bottom: 0;
-        margin-left: .5em;
-        opacity: .6;
-        padding: 0;
-
-        &:hover,
-        &:focus {
-            opacity: .8;
-        }
-
-        &:active {
-            opacity: 1;
-        }
-    }
-}
-
-.slate-attachment-title {
-    @include ellipsis;
-    flex: 1;
-}

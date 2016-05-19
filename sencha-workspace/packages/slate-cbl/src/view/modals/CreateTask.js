@@ -2,6 +2,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
     extend: 'Slate.cbl.view.modals.Modal',
     xtype: 'slate-createtaskwindow',
     requires: [
+        'Slate.cbl.view.AttachmentsList',
         'Slate.cbl.view.modals.ModalForm'
     ],
 
@@ -84,39 +85,25 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                             width: '100%'
                         },
                         {
-                            xtype: 'dataview',
+                            xtype: 'slate-attachmentslist',
                             margin: '0 0 8',
-                            data: {
-                                attachments: [
-                                    {
-                                        kind: 'googledoc',
-                                        title: 'Document List Name'
-                                    },
-                                    {
-                                        kind: 'googlefolder',
-                                        title: 'Shared Collection Name'
-                                    },
-                                    {
-                                        title: 'Generic Item Name'
-                                    },
-                                    {
-                                        kind: 'image',
-                                        title: 'Image Name'
-                                    }
-                                ]
-                            },
-                            itemSelector: '.slate-attachments-item',
-                            tpl: [
-                                '<ul class="slate-attachments-list">',
-                                    '<tpl for="attachments">',
-                                        '<li class="slate-attachments-item <tpl if="kind">slate-attachment-{kind}</tpl>">',
-                                            '<span class="slate-attachment-title">{title}</span>',
-                                            '<button class="plain"><i class="fa fa-gear"></i></button>',
-                                            '<button class="plain"><i class="fa fa-times-circle"></i></button>',
-                                        '</li>',
-                                    '</tpl>',
-                                '</ul>'
-                            ]
+                            data: [
+                                {
+                                    kind: 'googledoc',
+                                    title: 'Document List Name'
+                                },
+                                {
+                                    kind: 'googlefolder',
+                                    title: 'Shared Collection Name'
+                                },
+                                {
+                                    title: 'Generic Item Name'
+                                },
+                                {
+                                    kind: 'image',
+                                    title: 'Image Name'
+                                }
+                            ],
                         },
                         {
                             xtype: 'button',
