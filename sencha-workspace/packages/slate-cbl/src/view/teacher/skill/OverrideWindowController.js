@@ -4,6 +4,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindowController', {
     alias: 'controller.slate-cbl-teacher-skill-overridewindow',
     requires: [
         'Ext.window.Toast',
+        'Ext.window.MessageBox',
 
         'Slate.API',
 
