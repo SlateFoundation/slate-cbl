@@ -8,6 +8,7 @@ Ext.define('Slate.cbl.view.modals.ModalForm', {
     defaults: {
         anchor: '100%',
         labelAlign: 'right',
+        labelPad: 16,
         labelWidth: 144
     }
 });
