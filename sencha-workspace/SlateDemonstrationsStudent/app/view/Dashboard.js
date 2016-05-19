@@ -1,13 +1,12 @@
-Ext.define('Slate.cbl.view.student.Dashboard', {
+Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     extend: 'Ext.Container',
-    xtype: 'slate-cbl-student-dashboard',
+    xtype: 'slate-demonstrations-student-dashboard',
     requires:[
-        'Slate.cbl.view.student.DashboardController',
-
         'Slate.cbl.Util',
 
         'Slate.cbl.widget.Popover',
         'Slate.cbl.view.student.CompetencyCard',
+        'Slate.cbl.view.student.RecentProgress',
 
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.Completions',
@@ -16,7 +15,7 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         'Slate.cbl.data.Skills'
     ],
 
-    controller: 'slate-cbl-student-dashboard',
+    // controller: 'slate-demonstrations-student-dashboard',
 
     config: {
         studentId: null,
@@ -24,6 +23,11 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
         popover: {
             pointer: 'none'
         },
+        
+        competencyCard: true,
+        
+        recentProgress: true,
+        
         competenciesStatus: 'unloaded',
 
         competenciesStore: {
@@ -53,6 +57,14 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
     applyPopover: function(newPopover, oldPopover) {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
     },
+    
+    applyCompetencyCard: function(newCard, oldCard) {
+        return Ext.factory(newCard, 'Slate.cbl.view.student.CompetencyCard', oldCard);  
+    },
+    
+    applyRecentProgress: function(newRecentProgress, oldRecentProgress) {
+        return Ext.factory(newRecentProgress, 'Slate.cbl.view.student.RecentProgress', oldRecentProgress);  
+    },
 
     updateCompetenciesStatus: function(newStatus, oldStatus) {
         if (oldStatus) {
@@ -78,5 +90,14 @@ Ext.define('Slate.cbl.view.student.Dashboard', {
 
     applyDemonstrationSkillsStore: function(store) {
         return Ext.StoreMgr.lookup(store);
+    },
+    
+    initComponent: function() {
+        var me = this;
+        
+        me.callParent(arguments);
+        
+        me.add(me.getCompetencyCard());
+        me.add(me.getRecentProgress());
     }
 });

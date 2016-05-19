@@ -11,23 +11,24 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
     
     // controller configuration
     views: [
-        'Dashboard@Slate.cbl.view.student',
-        'RecentProgress@Slate.cbl.view.student'
+        'Dashboard'
     ],
+    
+    // controller: 'SlateDemonstrationsStudent.controller.Dashboard',
     
     refs: {
         dashboardCt: {
-            selector: 'slate-cbl-student-dashboard',
+            selector: 'slate-demonstrations-student-dashboard',
             autoCreate: true,
 
-            xtype: 'slate-cbl-student-dashboard'
+            xtype: 'slate-demonstrations-student-dashboard'
         },
-        recentProgressCmp: {
-            selector: 'slate-cbl-student-recentprogress',
-            autoCreate: true,
+        // recentProgressCmp: {
+        //     selector: 'slate-cbl-student-recentprogress',
+        //     autoCreate: true,
 
-            xtype: 'slate-cbl-student-recentprogress'
-        }
+        //     xtype: 'slate-cbl-student-recentprogress'
+        // }
     },
 
 
@@ -36,11 +37,12 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
         var siteEnv = window.SiteEnvironment || {},
             cblStudentId = (siteEnv.cblStudent || {}).ID,
             cblContentArea = siteEnv.cblContentArea || null,
-            recentProgressCmp, dashboardCt;
+            recentProgressCmp, competenctCardCmp, dashboardCt;
 
         // fetch component instances
-        recentProgressCmp = this.getRecentProgressCmp();
         dashboardCt = this.getDashboardCt();
+        recentProgressCmp = dashboardCt.getRecentProgress();
+        competenctCardCmp = dashboardCt.getCompetencyCard();
 
         // configure recent progress component with any available embedded data
         if (cblStudentId) {
@@ -63,6 +65,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
         // render components
         Ext.suspendLayouts();
         recentProgressCmp.render('slateapp-viewport');
+        competenctCardCmp.render('slateapp-viewport');
         dashboardCt.render('slateapp-viewport');
         Ext.resumeLayouts(true);
     }

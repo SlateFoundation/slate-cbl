@@ -1,22 +1,33 @@
-Ext.define('Slate.cbl.view.student.DashboardController', {
-    extend: 'Ext.app.ViewController',
-    alias: 'controller.slate-cbl-student-dashboard',
+Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
+    extend: 'Ext.app.Controller',
     requires: [
-        'Slate.cbl.view.student.skill.OverviewWindow'
     ],
-
-    config: {
-        id: 'slate-cbl-student-dashboard', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
-        control: {
-            '#': {
-                render: 'onComponentRender'
-            },
-            'slate-cbl-student-competencycard': {
-                democellclick: 'onDemoCellClick'
-            }
+ 
+ 
+    config: {        
+    },
+    
+    // entry points
+    control: {
+        // '#': {
+        //     render: 'onComponentRender'
+        // },
+        'slate-cbl-student-competencycard': {
+            democellclick: 'onDemoCellClick'
         }
     },
-
+   
+   
+   // controller configuration
+    views: [
+        'Slate.cbl.view.student.CompetencyCard',
+        'Slate.cbl.view.student.skill.OverviewWindow'        
+    ],
+    
+    refs: {
+        dashboardCt: 'slate-demonstrations-student-dashboard',
+        competencyCard: 'slate-cbl-student-competencycard'
+    },
 
     // event handlers
     onComponentRender: function(dashboardView) {
@@ -46,13 +57,13 @@ Ext.define('Slate.cbl.view.student.DashboardController', {
 
     onDemoCellClick: function(competencyCard, ev, targetEl) {
         Ext.create('Slate.cbl.view.student.skill.OverviewWindow', {
-            ownerCmp: this.getView(),
+            ownerCmp: this.getDashboardCt(),
             autoShow: true,
             animateTarget: targetEl,
 
             competency: parseInt(targetEl.up('ul.cbl-skill-demos').up('li.cbl-competency-panel').getAttribute('data-competency'), 10),
             skill: parseInt(targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'), 10),
-            student: this.getView().getStudentId(),
+            student: this.getDashboardCt().getStudentId(),
             selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
         });
     }
