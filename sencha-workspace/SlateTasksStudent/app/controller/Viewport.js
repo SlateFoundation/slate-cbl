@@ -12,7 +12,8 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
     // controller configuration
     views: [
         'TaskTree@Slate.cbl.view.student',
-        'TodoList@Slate.cbl.view.student'
+        'TodoList@Slate.cbl.view.student',
+        'TaskHistory@Slate.cbl.view.student'
     ],
     
     refs: {
@@ -36,5 +37,6 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
         // render dashboard
         this.getTaskTree().render('slate-tasktree');
         this.getTodoList().render('slate-todolist');
+        this.getTaskHistory().render('slate-taskhistory');
     }
 });

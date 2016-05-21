@@ -145,7 +145,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                             { text: 'Foo' },
                             { text: 'Foo' }
                         ]
-                    },
+                    }
                 ]
             },
             {
@@ -173,7 +173,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                     { text: 'Fooo' },
                     { text: 'Foo' },
                     { text: 'Foo' }
-                ],
+                ]
             }
         ]
     },

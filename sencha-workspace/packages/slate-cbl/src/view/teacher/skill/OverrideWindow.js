@@ -50,7 +50,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindow', {
             text: 'Submit',
             scale: 'large',
             action: 'submit'
-        },
+        }
     ],
 
 

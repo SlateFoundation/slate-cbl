@@ -70,7 +70,7 @@ Ext.define('AggregridExample.store.TimePeriods', {
             {id: 49, month: '12', week: '49', year: '2016'},
             {id: 50, month: '12', week: '50', year: '2016'},
             {id: 51, month: '12', week: '51', year: '2016'},
-            {id: 52, month: '12', week: '52', year: '2016'},
+            {id: 52, month: '12', week: '52', year: '2016'}
         ]
     }
 });
