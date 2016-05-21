@@ -143,8 +143,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
         mouseover: {
             fn: 'onSkillNameMouseOver',
             element: 'el'
-        },
-        competencyrowclick: 'onCompetencyRowClick'
+        }
     },
 
 
@@ -273,10 +272,6 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
         } else if (targetEl = ev.getTarget('.cbl-grid-demo', me.el, true)) {
             me.fireEvent('democellclick', me, ev, targetEl);
         }
-    },
-
-    onCompetencyRowClick: function(me, competency, ev, targetEl) {
-        me.toggleCompetency(competency);
     },
 
     onSkillNameMouseOver: function(ev) {

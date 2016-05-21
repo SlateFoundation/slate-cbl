@@ -6,7 +6,8 @@
 Ext.define('AggregridExample.Application', {
     extend: 'Ext.app.Application',
     requires: [
-        'Ext.plugin.Viewport'
+        'Ext.plugin.Viewport',
+        'Ext.window.MessageBox'
     ],
 
 

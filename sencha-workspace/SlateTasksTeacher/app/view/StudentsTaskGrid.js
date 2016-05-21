@@ -3,7 +3,7 @@
  */
 Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
     extend: 'Ext.Component',
-    xtype: 'slate-cbl-teacher-studentstaskgrid',
+    xtype: 'slate-tasks-teacher-studentstaskgrid',
     requires:[
         'Slate.cbl.Util',
 
@@ -204,7 +204,6 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
             fn: 'onSkillNameMouseOver',
             element: 'el'
         },
-        competencyrowclick: 'onCompetencyRowClick'
     },
 
 
@@ -333,10 +332,6 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
         } else if (targetEl = ev.getTarget('.cbl-grid-demo', me.el, true)) {
             me.fireEvent('democellclick', me, ev, targetEl);
         }
-    },
-
-    onCompetencyRowClick: function(me, competency, ev, targetEl) {
-        me.toggleCompetency(competency);
     },
 
     onSkillNameMouseOver: function(ev) {
