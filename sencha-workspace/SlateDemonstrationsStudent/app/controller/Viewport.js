@@ -14,21 +14,13 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
         'Dashboard'
     ],
     
-    // controller: 'SlateDemonstrationsStudent.controller.Dashboard',
-    
     refs: {
         dashboardCt: {
             selector: 'slate-demonstrations-student-dashboard',
             autoCreate: true,
 
             xtype: 'slate-demonstrations-student-dashboard'
-        },
-        // recentProgressCmp: {
-        //     selector: 'slate-cbl-student-recentprogress',
-        //     autoCreate: true,
-
-        //     xtype: 'slate-cbl-student-recentprogress'
-        // }
+        }
     },
 
 
@@ -64,8 +56,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
 
         // render components
         Ext.suspendLayouts();
-        recentProgressCmp.render('slateapp-viewport');
-        competenctCardCmp.render('slateapp-viewport');
         dashboardCt.render('slateapp-viewport');
         Ext.resumeLayouts(true);
     }
