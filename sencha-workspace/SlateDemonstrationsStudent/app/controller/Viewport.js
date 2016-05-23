@@ -16,10 +16,10 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
     
     refs: {
         dashboardCt: {
-            selector: 'slate-demonstrations-student-dashboard',
+            selector: 'slate-demonstrations-student-demonstration-dashboard',
             autoCreate: true,
 
-            xtype: 'slate-demonstrations-student-dashboard'
+            xtype: 'slate-demonstrations-student-demonstration-dashboard'
         }
     },
 

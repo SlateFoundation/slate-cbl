@@ -1,6 +1,6 @@
 Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     extend: 'Ext.Container',
-    xtype: 'slate-demonstrations-student-dashboard',
+    xtype: 'slate-demonstrations-student-demonstration-dashboard',
     requires:[
         'Slate.cbl.Util',
 
