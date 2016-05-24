@@ -13,7 +13,8 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
     views: [
         'TaskTree@Slate.cbl.view.student',
         'TodoList@Slate.cbl.view.student',
-        'TaskHistory@Slate.cbl.view.student'
+        'TaskHistory@Slate.cbl.view.student',
+        'OverallProgress@Slate.cbl.view.student'
     ],
     
     refs: {
@@ -28,15 +29,27 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
             autoCreate: true,
 
             xtype: 'slate-todolist'
+        },
+        taskHistory: {
+            selector: 'slate-taskhistory',
+            autoCreate: true,
+
+            xtype: 'slate-taskhistory'
+        },
+        overallProgress: {
+            selector: 'slate-overallprogress',
+            autoCreate: true,
+
+            xtype: 'slate-cbl-student-overallprogress'
         }
     },
 
 
     // controller templates method overrides
     onLaunch: function () {
-        // render dashboard
         this.getTaskTree().render('slate-tasktree');
         this.getTodoList().render('slate-todolist');
         this.getTaskHistory().render('slate-taskhistory');
+        this.getOverallProgress().render('slate-overallprogress');
     }
 });
