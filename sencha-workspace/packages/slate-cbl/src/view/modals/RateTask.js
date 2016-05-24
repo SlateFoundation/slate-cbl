@@ -43,8 +43,7 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     },
                     items: [
                         {
-                            text: 'Unassign Task',
-                            margin: '0 0 8'
+                            text: 'Unassign Task'
                         },
                         {
                             xtype: 'tbfill'
@@ -110,6 +109,14 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     xtype: 'tagfield',
                     fieldLabel: 'Skills',
                     emptyText: 'Competency code or statement&hellip;'
+                },
+                {
+                    fieldLabel: 'Submitted Date',
+                    value: '5/9/15'
+                },
+                {
+                    xtype: 'textareafield',
+                    fieldLabel: 'Comments'
                 }
             ]
         }
