@@ -26,8 +26,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     ],
     
     refs: {
-        dashboardCt: 'slate-demonstrations-student-demonstration-dashboard',
-        competencyCard: 'slate-demonstrations-student-demonstration-competencycard'
+        dashboardCt: 'slate-demonstrations-student-dashboard',
+        competencyCard: 'slate-demonstrations-student-competencycard'
     },
 
     
