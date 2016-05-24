@@ -27,6 +27,12 @@ Ext.define('Slate.cbl.view.modals.Modals', {
             handler: function() {
                 Ext.create('Slate.cbl.view.modals.RateTask').show();
             }
+        },
+        {
+            text: 'Assign Later',
+            handler: function() {
+                Ext.create('Slate.cbl.view.modals.AssignLater').show();
+            }
         }
     ]
 });

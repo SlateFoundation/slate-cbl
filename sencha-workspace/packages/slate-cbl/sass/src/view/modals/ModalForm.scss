@@ -2,4 +2,14 @@
     .x-form-item {
         margin-bottom: 8px;
     }
+
+    .is-editable .is-clickable {
+        border-bottom: $slate-editable-displayfield-border-width $slate-editable-displayfield-border-style $slate-editable-displayfield-border-color;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+            color: $color;
+        }
+    }
 }
