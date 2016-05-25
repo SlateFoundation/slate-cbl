@@ -26,12 +26,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
             autoCreate: true,
 
             xtype: 'slate-demonstrations-student-recentprogress'
-        },
-        competencyCardCmp: {
-            selector: 'slate-demonstrations-student-competencycard',
-            autoCreate: true,
-            
-            xtype: 'slate-demonstrations-student-competencycard'
         }
     },
 
@@ -41,12 +35,11 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
         var siteEnv = window.SiteEnvironment || {},
             cblStudentId = (siteEnv.cblStudent || {}).ID,
             cblContentArea = siteEnv.cblContentArea || null,
-            dashboardCt, competencyCardCmp, recentProgressCmp;
+            dashboardCt, recentProgressCmp;
 
         // fetch component instances
         dashboardCt = this.getDashboardCt();
         recentProgressCmp = this.getRecentProgressCmp();
-        competencyCardCmp = this.getCompetencyCardCmp();
 
         // configure recent progress component with any available embedded data
         if (cblStudentId) {
@@ -70,7 +63,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
         Ext.suspendLayouts();
         dashboardCt.render('slateapp-viewport');
         recentProgressCmp.render('slateapp-viewport');
-        competencyCardCmp.render('slateapp-viewport');
         Ext.resumeLayouts(true);
     }
 });
