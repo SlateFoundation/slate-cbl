@@ -43,7 +43,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     views: [
         'Slate.cbl.view.teacher.skill.OverviewWindow',
         'Slate.cbl.view.teacher.skill.OverrideWindow',
-        'Slate.cbl.view.teacher.demonstration.EditWindow'
+        'SlateDemonstrationsTeacher.view.EditWindow'
     ],
     
     refs: {

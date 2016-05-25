@@ -1,7 +1,6 @@
 /*jslint browser: true, undef: true *//*global Ext,Slate*/
-Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
-    extend: 'Ext.app.ViewController',
-    alias: 'controller.slate-cbl-teacher-demonstration-editwindow',
+Ext.define('SlateDemonstrationsTeacher.controller.EditWindow', {
+    extend: 'Ext.app.Controller',
     requires: [
         'Slate.API',
 
