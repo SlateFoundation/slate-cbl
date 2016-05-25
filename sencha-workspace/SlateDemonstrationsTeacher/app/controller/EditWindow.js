@@ -11,35 +11,44 @@ Ext.define('SlateDemonstrationsTeacher.controller.EditWindow', {
         'Ext.window.Toast',
         'Ext.util.MixedCollection'
     ],
-
+    
     config: {
-        control: {
-            '#': {
-                show: 'onShow',
-                beforeshow: 'onBeforeShow',
-                loaddemonstration: 'onLoadDemonstration'
-            },
-            'combobox[name=StudentID]': {
-                select: 'onStudentSelect'
-            },
-            'container[reference=competenciesTabPanel] > container': {
-                removed: 'onCompetencyCardRemoved'
-            },
-            'tabpanel[reference=competenciesTabPanel]': {
-                tabchange: 'onCompetenciesTabChange'
-            },
-            'textfield[reference=competenciesSearchField]': {
-                change: 'onCompetenciesSearchFieldChange',
-                specialkey: 'onCompetenciesSearchFieldSpecialKey'
-            },
-            'gridpanel[reference=competenciesGrid]': {
-                addclick: 'onCompetencyAddClick',
-                rowclick: 'onCompetencyRowDoubleClick'
-            },
-            'button[action=submit]': {
-                click: 'onSubmitClick'
-            }
+    },
+    
+    
+    // entry points
+    control: {
+        editWindow: {
+            show: 'onShow',
+            beforeshow: 'onBeforeShow',
+            loaddemonstration: 'onLoadDemonstration'
+        },
+        'combobox[name=StudentID]': {
+            select: 'onStudentSelect'
+        },
+        'container[reference=competenciesTabPanel] > container': {
+            removed: 'onCompetencyCardRemoved'
+        },
+        'tabpanel[reference=competenciesTabPanel]': {
+            tabchange: 'onCompetenciesTabChange'
+        },
+        'textfield[reference=competenciesSearchField]': {
+            change: 'onCompetenciesSearchFieldChange',
+            specialkey: 'onCompetenciesSearchFieldSpecialKey'
+        },
+        'gridpanel[reference=competenciesGrid]': {
+            addclick: 'onCompetencyAddClick',
+            rowclick: 'onCompetencyRowDoubleClick'
+        },
+        'button[action=submit]': {
+            click: 'onSubmitClick'
         }
+    },
+    
+    
+    // controller configuration
+    refs: {
+        editWindow: 'slate-demonstrations-teacher-demonstration-editwindow'
     },
 
 
@@ -187,7 +196,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.EditWindow', {
     },
 
     onStudentSelect: function(studentCombo, student) {
-        this.getView().setTitle('Log a demonstration' + (student.length ? ' for ' + student[0].getDisplayName() : ''));
+        this.getEditWindow().setTitle('Log a demonstration' + (student.length ? ' for ' + student[0].getDisplayName() : ''));
     },
 
     onCompetenciesSearchFieldChange: function(searchField, value) {
@@ -264,7 +273,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.EditWindow', {
 
     onSubmitClick: function(btn) {
         var me = this,
-            editWindow = me.getView(),
+            editWindow = me.getEditWindow(),
             demonstration = editWindow.getDemonstration(),
             wasPhantom = demonstration.phantom,
             formPanel = me.lookupReference('form'),
@@ -344,7 +353,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.EditWindow', {
     // protected methods
     addCompetency: function(competency, callback, scope, insertSorted) {
         var me = this,
-            editWindow = me.getView(),
+            editWindow = me.getEditWindow(),
             competenciesStore = Ext.getStore('cbl-competencies'),
             competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
             competenciesSearchField = me.lookupReference('competenciesSearchField'),
@@ -447,7 +456,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.EditWindow', {
             tabPanelItems = me.lookupReference('competenciesTabPanel').items,
             grid = me.lookupReference('competenciesGrid'),
             store = grid.getStore(),
-            groupingFeature = grid.getView().getFeature('grouping'),
+            groupingFeature = grid.getEditWindow().getFeature('grouping'),
             isCompetencyAvailable = function(competency) {
                 return !tabPanelItems.findBy(function(card) {
                     return card.competency === competency;

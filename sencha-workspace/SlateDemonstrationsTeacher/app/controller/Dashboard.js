@@ -163,7 +163,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     showDemonstrationEditWindow: function(options) {
         var dashboardView = this.getDashboardCt();
 
-        return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
+        return Ext.create('SlateDemonstrationsTeacher.view.EditWindow', Ext.apply({
             ownerCmp: dashboardView,
             autoShow: true,
 

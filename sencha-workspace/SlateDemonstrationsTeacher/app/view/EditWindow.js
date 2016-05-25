@@ -3,8 +3,6 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
     extend: 'Ext.window.Window',
     xtype: 'slate-demonstrations-teacher-demonstration-editwindow',
     requires: [
-        'SlateDemonstrationsTeacher.controller.EditWindow',
-        
         'SlateDemonstrationsTeacher.view.CompetencyCard',
         
         'Slate.cbl.data.ContentAreas',
@@ -24,8 +22,6 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
         'Ext.form.field.Date',
         'Ext.data.ChainedStore'
     ],
-
-    // controller: 'slate-cbl-teacher-demonstration-editwindow',
 
     config: {
         demonstration: {
