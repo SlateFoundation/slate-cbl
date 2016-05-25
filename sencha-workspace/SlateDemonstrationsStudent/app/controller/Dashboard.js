@@ -10,11 +10,11 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     
     // entry points
     control: {
-        // '#': {
-        //     render: 'onComponentRender'
-        // },
+        dashboardCt: {
+            render: 'onComponentRender'
+        },
         competencyCard: {
-            democellclick: 'onDemoCellClick'
+            democellclick: 'onDemoCellClick',
         }
     },
    

@@ -6,8 +6,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
         'Slate.cbl.widget.Popover',
         
-        'SlateDemonstrationsStudent.controller.Dashboard',
-        
         'SlateDemonstrationsStudent.view.CompetencyCard',
         'SlateDemonstrationsStudent.view.RecentProgress',
 
@@ -24,9 +22,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         popover: {
             pointer: 'none'
         },
-        
-        competencyCard: true,
-        recentProgress: true,
         
         competenciesStatus: 'unloaded',
 
@@ -45,12 +40,12 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         }   
     },
 
-    // autoEl: {
-    //     tag: 'ul',
-    //     cls: 'cbl-competency-panels'
-    // },
-    // defaultType: 'slate-demonstrations-student-competencycard',
-    // layout: 'container',
+    autoEl: {
+        tag: 'ul',
+        cls: 'cbl-competency-panels'
+    },
+    defaultType: 'slate-demonstrations-student-competencycard',
+    layout: 'container',
 
 
     // config handlers
@@ -58,14 +53,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
     },
     
-    applyCompetencyCard: function(newCard, oldCard) {
-        return Ext.factory(newCard, 'SlateDemonstrationsStudent.view.CompetencyCard', oldCard);  
-    },
-    
-    applyRecentProgress: function(newRecentProgress, oldRecentProgress) {
-        return Ext.factory(newRecentProgress, 'SlateDemonstrationsStudent.view.RecentProgress', oldRecentProgress);  
-    },
-
     updateCompetenciesStatus: function(newStatus, oldStatus) {
         if (oldStatus) {
             this.removeCls('competencies-' + oldStatus);
@@ -90,14 +77,5 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
     applyDemonstrationSkillsStore: function(store) {
         return Ext.StoreMgr.lookup(store);
-    },
-    
-    initComponent: function() {
-        var me = this;
-        
-        me.callParent(arguments);
-        
-        me.add(me.getRecentProgress());
-        me.add(me.getCompetencyCard());
     }
 });
