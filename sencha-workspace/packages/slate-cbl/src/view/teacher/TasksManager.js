@@ -2,7 +2,8 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
     extend: 'Ext.grid.GridPanel',
     xtype: 'slate-tasksmanager',
     requires:[
-        'Slate.cbl.view.teacher.TaskDetails'
+        'Slate.cbl.view.teacher.TaskDetails',
+		'Ext.saki.grid.MultiSearch'
     ],
 
     config: {
@@ -25,20 +26,57 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
         }
     ],
 
+	plugins: [
+		{
+			ptype: 'saki-gms',
+			pluginId: 'gms'
+		}
+	],
+
     columns: {
+	    defaults: {
+		    filterField: true
+	    },
         items: [
-            { text: 'Title',                dataIndex: 'title',     flex: 1     },
-            { text: 'Subtask of&hellip;',   dataIndex: 'parent',    flex: 1     },
-            { text: 'Type of Exp.',         dataIndex: 'type',      width: 128  },
-            { text: 'Skills',               dataIndex: 'skills',    flex: 1,
+            {
+	            text: 'Title',
+	            dataIndex: 'title',
+	            flex: 1
+	        },
+            {
+	            text: 'Subtask of&hellip;',
+	            dataIndex: 'parent',
+	            flex: 1
+	        },
+            {
+	            text: 'Type of Exp.',
+	            dataIndex: 'type',
+				width: 128
+			},
+            {
+	            text: 'Skills',
+	            dataIndex: 'skills',
+	            flex: 1,
 	            xtype: 'templatecolumn',
 	            tpl: [
 		            '<tpl for="skills" between=", ">{.}</tpl>'
 	            ]
             },
-            { text: 'Year',                 dataIndex: 'year',      width: 64   },
-            { text: 'Created by',           dataIndex: 'creator',   width: 160  },
-            { text: 'Created',              dataIndex: 'created',   width: 128  }
+            {
+	            text: 'Year',
+	            dataIndex: 'year',
+	            width: 64
+	        },
+            {
+	            text: 'Created by',
+	            dataIndex: 'creator',
+	            width: 160
+	        },
+            {
+	            text: 'Created',
+	            dataIndex: 'created',
+	            width: 128
+	        }
         ]
     },
 
