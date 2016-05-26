@@ -15,7 +15,8 @@ Ext.define('SlateDemonstrationsTeacher.Application', {
         'Viewport',
         'Dashboard',
         'EditWindow',
-        'OverviewWindow'
+        'OverviewWindow',
+        'OverrideWindow'
     ],
 
     onAppUpdate: function () {
