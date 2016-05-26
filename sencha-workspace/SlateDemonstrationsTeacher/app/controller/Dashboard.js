@@ -41,7 +41,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     
     // controller configuration
     views: [
-        'Slate.cbl.view.teacher.skill.OverviewWindow',
+        'SlateDemonstrationsTeacher.view.OverviewWindow',
         'Slate.cbl.view.teacher.skill.OverrideWindow',
         'SlateDemonstrationsTeacher.view.EditWindow'
     ],
@@ -50,8 +50,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
         
         studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
-        teacherOverviewwindow: 'slate-cbl-teacher-skill-overviewwindow'
-    },
+        teacherOverviewwindow: 'slate-demonstrations-teacher-skill-overviewwindow'
+    },  
 
 
     // event handers
@@ -60,7 +60,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     },
     
     onDemoCellClick: function(progressGrid, ev, targetEl) {
-        Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
+        Ext.create('SlateDemonstrationsTeacher.view.OverviewWindow', {
             ownerCmp: this.getDashboardCt(),
             autoShow: true,
             animateTarget: targetEl,
