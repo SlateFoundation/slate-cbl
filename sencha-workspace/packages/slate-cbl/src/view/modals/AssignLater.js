@@ -87,7 +87,7 @@ Ext.define('Slate.cbl.view.modals.AssignLater', {
                                     kind: 'googlefolder',
                                     title: 'Shared Collection Name'
                                 }
-                            ],
+                            ]
                         }
                     ]
                 },

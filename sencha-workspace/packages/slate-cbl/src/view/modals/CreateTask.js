@@ -62,7 +62,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     items: [
                         {
                             flex: 1,
-                            xtype: 'combo',
+                            xtype: 'combo'
                         },
                         {
                             xtype: 'checkboxfield',
@@ -103,7 +103,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                                     kind: 'image',
                                     title: 'Image Name'
                                 }
-                            ],
+                            ]
                         },
                         {
                             xtype: 'button',
@@ -119,7 +119,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 {
                     xtype: 'textareafield',
                     fieldLabel: 'Instructions',
-                    grow: true,
+                    grow: true
                 }
             ]
         }
