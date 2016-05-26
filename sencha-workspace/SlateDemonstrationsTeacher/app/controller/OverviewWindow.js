@@ -42,7 +42,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.OverviewWindow', {
     
     // controller configuration
     views: [
-      'SlateDemonstrationsTeacher.view.OverviewWindow'  
+      'SlateDemonstrationsTeacher.view.OverviewWindow'
     ],
     
     refs: {
