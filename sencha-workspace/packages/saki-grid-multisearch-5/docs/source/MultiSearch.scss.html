@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+ This file is part of Saki Grid MultiSearch Package
+
+ Copyright (c) 2014, Jozef Sakalos, Saki
+
+ Package:  saki-grid-multisearch
+ Author:   Jozef Sakalos, Saki
+ Contact:  http://extjs.eu/contact
+ Date:     6. March 2014
+
+ Commercial License
+ Developer, or the specified number of developers, may use this file in any number
+ of projects during the license period in accordance with the license purchased.
+
+ Uses other than including the file in the project are prohibited.
+ See http://extjs.eu/licensing for details.
+ */
+
+<span id='Ext-saki-grid-MultiSearch'>/**
+</span> * @class Ext.saki.grid.MultiSearch
+ */
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-bgcolor'>/**
+</span> * @var {color}
+ * Background color of the container
+ */
+$gms-bgcolor: white !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-container-border-color'>/**
+</span> * @var {color}
+ * Border color of the container
+ */
+$gms-container-border-color: #99bce8 !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-border-color'>/**
+</span> * @var {color}
+ * Border color of fields
+ */
+$gms-border-color: silver !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-border-width'>/**
+</span> * @var {number}
+ * Border width of fields
+ */
+$gms-border-width: 1px !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-border-style'>/**
+</span> * @var {string}
+ * Border style of fields
+ */
+$gms-border-style: solid !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-nofilter-bgcolor'>/**
+</span> * @var {color}
+ * Background color of column without filter
+ */
+$gms-nofilter-bgcolor: #f5f5f5 !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-nofilter-border-color'>/**
+</span> * @var {color}
+ * Border color of column without filter
+ */
+$gms-nofilter-border-color: #cecece !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-nofilter-border-right-color'>/**
+</span> * @var {color}
+ * Right border color of column without filter
+ */
+$gms-nofilter-border-right-color: #cecece !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-right'>/**
+</span> * @var {number}
+ * Filter field clear icon right position
+ */
+$gms-clear-right: 4px !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-top'>/**
+</span> * @var {number}
+ * Filter field clear icon top position
+ */
+$gms-clear-top: 5px !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-icon'>/**
+</span> * @var {url}
+ * Inline data for clear icon picture
+ */
+$gms-clear-icon: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAABNElEQVQYlXWQUUvDMACEv2aZq7VpnaVDNjsVrf//72gFcVFhdJtuqcVIlvqgThS8x7vj7riAL7y2bbdcLmmahq1z9KQkjmOyLOMgigKAAGC9Xm+11sJ7z18IISiKwqdp2hNv1nZaa+EJOTrc/2UMkyNC4dFaizdrO7Goa7z3RPmYSXHJyWEfgH46oTydMMkivPcs6hppjAGgnd+i+yVFcQWDNeloyPvLI9W8BcAYg3DO7WpfHioeDAxHQ0TzxLVe7TTnHEJK+bMxO+VEQbNp8PGYszzaaVJKhFLqy3hOOU541jfc3d9xM1uhji+4yEMAlFIE1tquqio8feLQ0bTbXVpvP2bvvcF2grIsP3/ebDbb2Wz278/T6dQnSdILvklrbVfXNcYYnHNIKVFKkec5g8EgAPgAu0uKVJCfBBYAAAAASUVORK5CYII=) !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-width'>/**
+</span> * @var {number}
+ * Clear icon width
+ */
+$gms-clear-width: 11px !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-height'>/**
+</span> * @var {number}
+ * Clear icon height
+ */
+$gms-clear-height: 11px !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-cursor'>/**
+</span> * @var {string}
+ * Cursor style over clear icon
+ */
+$gms-clear-cursor: pointer !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-combo-right'>/**
+</span> * @var {string}
+ * Right spacing of clear icon inside combobox
+ */
+$gms-clear-combo-right: 0 !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-duration'>/**
+</span> * @var {number}
+ * Fade time of clear icon
+ */
+$gms-clear-duration: 150ms !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-clear-transition'>/**
+</span> * @var {string}
+ * Clear icon transition type
+ */
+$gms-clear-transition: linear !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-filtered-font-weight'>/**
+</span> * @var {string}
+ * Font weight of filtered header text
+ */
+$gms-filtered-font-weight: bold !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-filtered-font-style'>/**
+</span> * @var {string}
+ * Font style of filtered header text
+ */
+$gms-filtered-font-style: italic !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-filtered-font-color'>/**
+</span> * @var {color}
+ * Font color of filtered header text
+ */
+$gms-filtered-font-color: #052BD9 !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-tool-margin'>/**
+</span> * @var {number/list}
+ * Margins of tool (menu) icon
+ */
+$gms-tool-margin: 3px 1px 4px 3px !default;
+
+<span id='Ext-saki-grid-MultiSearch-css_var-S-gms-tool-cursor'>/**
+</span> * @var {string}
+ * Cursor style over tool (menu) icon
+ */
+$gms-tool-cursor: pointer !default;
+
+// eof</pre>
+</body>
+</html>

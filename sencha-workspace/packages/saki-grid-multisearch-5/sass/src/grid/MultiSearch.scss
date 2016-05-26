@@ -1,0 +1,125 @@
+/*
+ This file is part of Saki Grid MultiSearch Package
+
+ Copyright (c) 2014, Jozef Sakalos, Saki
+
+ Package:  saki-grid-multisearch
+ Author:   Jozef Sakalos, Saki
+ Contact:  http://extjs.eu/contact
+ Date:     6. March 2014
+
+ Commercial License
+ Developer, or the specified number of developers, may use this file in any number
+ of projects during the license period in accordance with the license purchased.
+
+ Uses other than including the file in the project are prohibited.
+ See http://extjs.eu/licensing for details.
+
+ @member Ext.saki.grid.MultiSearch
+ */
+
+/**
+ * @member Ext.saki.grid.MultiSearch
+ */
+.saki-gms-ct + div {
+  border-top-width:0;
+}
+
+.saki-gms-ct {
+  background-color: $gms-bgcolor;
+  border: {
+    width: $gms-border-width;
+    style: $gms-border-style;
+    color: $gms-container-border-color;
+    bottom:none;
+    top:none;
+  }
+}
+
+.saki-gms-ct {
+  .x-form-trigger-wrap-default {
+      border:{
+        left:{
+          width:0;
+        }
+      };
+  }
+}
+.saki-gms-ct {
+  .x-form-trigger-wrap-default.x-form-trigger-wrap-focus {
+    border: {
+      left:{
+        width:1px;
+      }
+    }
+  }
+}
+
+.saki-gms-nofilter {
+  background: {
+    color: $gms-nofilter-bgcolor;
+  };
+  border:{
+    color: $gms-nofilter-border-color;
+    width: $gms-border-width;
+    right:{
+      color: $gms-nofilter-border-right-color;
+      style: $gms-border-style;
+    }
+    bottom:{
+      color: $gms-nofilter-border-color;
+      style: $gms-border-style;
+    }
+    top: {
+      style: $gms-border-style;
+    }
+  }
+}
+
+.saki-gms-clear {
+  position:absolute;
+  right: $gms-clear-right;
+  top: $gms-clear-top;
+  background: $gms-clear-icon;
+  width: $gms-clear-width;
+  height: $gms-clear-height;
+  cursor: $gms-clear-cursor;
+  visibility:hidden;
+  -webkit-transition:all $gms-clear-duration $gms-clear-transition;
+  -moz-transition:all $gms-clear-duration $gms-clear-transition;
+  -o-transition:all $gms-clear-duration $gms-clear-transition;
+  opacity:0;
+}
+
+// position of clear icon within a combo
+input[role=combobox] + div.saki-gms-clear {
+  right: $gms-clear-combo-right;
+}
+
+.saki-gms-hasvalue {
+  padding-right: 18px;
+}
+
+.saki-gms-hasvalue:hover .saki-gms-clear {
+  visibility:visible;
+  -webkit-transition:all $gms-clear-duration $gms-clear-transition;
+  -moz-transition:all $gms-clear-duration $gms-clear-transition;
+  -o-transition:all $gms-clear-duration $gms-clear-transition;
+  opacity:1;
+}
+
+.saki-gms-filtered {
+  font: {
+    weight: $gms-filtered-font-weight;
+    style: $gms-filtered-font-style;
+  }
+  color: $gms-filtered-font-color;
+}
+.x-tool {
+  .saki-gms-icon {
+    margin: $gms-tool-margin;
+    cursor: $gms-tool-cursor;
+  }
+}
+
+// eof
