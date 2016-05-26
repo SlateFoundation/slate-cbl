@@ -34,24 +34,40 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
 	],
 
     columns: {
-	    defaults: {
-		    filterField: true
-	    },
         items: [
             {
-	            text: 'Title',
-	            dataIndex: 'title',
-	            flex: 1
+                text: 'Title',
+                dataIndex: 'title',
+                flex: 1,
+                filterField: {
+                    xtype: 'textfield',
+                    triggers: {
+                        search: {
+                            cls: 'x-form-search-trigger'
+                        }
+                    }
+                }
 	        },
             {
 	            text: 'Subtask of&hellip;',
 	            dataIndex: 'parent',
-	            flex: 1
+	            flex: 1,
+                filterField: {
+                    xtype: 'textfield',
+                    triggers: {
+                        search: {
+                            cls: 'x-form-search-trigger'
+                        }
+                    }
+                }
 	        },
             {
 	            text: 'Type of Exp.',
 	            dataIndex: 'type',
-				width: 128
+				width: 128,
+				filterField: {
+    				xtype: 'combo'
+				}
 			},
             {
 	            text: 'Skills',
@@ -60,22 +76,34 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
 	            xtype: 'templatecolumn',
 	            tpl: [
 		            '<tpl for="skills" between=", ">{.}</tpl>'
-	            ]
+	            ],
+	            filterField: {
+    	            xtype: 'combo'
+	            }
             },
             {
 	            text: 'Year',
 	            dataIndex: 'year',
-	            width: 64
+	            width: 64,
+	            filterField: {
+    	            xtype: 'combo'
+	            }
 	        },
             {
 	            text: 'Created by',
 	            dataIndex: 'creator',
-	            width: 160
+	            width: 160,
+	            filterField: {
+    	            xtype: 'combo'
+	            }
 	        },
             {
 	            text: 'Created',
 	            dataIndex: 'created',
-	            width: 128
+	            width: 128,
+	            filterField: {
+    	            xtype: 'datefield'
+	            }
 	        }
         ]
     },

@@ -26,39 +26,36 @@
 }
 
 .saki-gms-ct {
-  background-color: $gms-bgcolor;
-  border: {
-    width: $gms-border-width;
-    style: $gms-border-style;
-    color: $gms-container-border-color;
-    bottom:none;
-    top:none;
+  background-color: #e5e5e5; // $gms-bgcolor;
+  border-top: 1px solid $grid-header-border-color;
+
+  .x-field {
+      border-right: 1px solid $border-color;
+  }
+
+  .x-form-field {
+      padding: 4px 10px;
+  }
+
+  .x-form-field,
+  .x-form-trigger {
+      background-color: transparent;
+      box-shadow: inset 0 4px 4px -4px rgba(black, .1);
   }
 }
 
 .saki-gms-ct {
   .x-form-trigger-wrap-default {
-      border:{
-        left:{
-          width:0;
-        }
-      };
+      border: none;
   }
-}
-.saki-gms-ct {
-  .x-form-trigger-wrap-default.x-form-trigger-wrap-focus {
-    border: {
-      left:{
-        width:1px;
-      }
-    }
+
+  .x-form-trigger-wrap-focus {
+      background-color: white;
+      box-shadow: inset 0 -1px 0 $link-color;
   }
 }
 
 .saki-gms-nofilter {
-  background: {
-    color: $gms-nofilter-bgcolor;
-  };
   border:{
     color: $gms-nofilter-border-color;
     width: $gms-border-width;
@@ -97,7 +94,12 @@ input[role=combobox] + div.saki-gms-clear {
 }
 
 .saki-gms-hasvalue {
-  padding-right: 18px;
+    background-color: mix(#f5f5f5, $link-color, 95%);
+
+    .x-form-field,
+    .x-form-trigger {
+        box-shadow: inset 0 -1px 0 $link-color;
+    }
 }
 
 .saki-gms-hasvalue:hover .saki-gms-clear {
@@ -109,11 +111,7 @@ input[role=combobox] + div.saki-gms-clear {
 }
 
 .saki-gms-filtered {
-  font: {
-    weight: $gms-filtered-font-weight;
-    style: $gms-filtered-font-style;
-  }
-  color: $gms-filtered-font-color;
+  color: $link-color;
 }
 .x-tool {
   .saki-gms-icon {
