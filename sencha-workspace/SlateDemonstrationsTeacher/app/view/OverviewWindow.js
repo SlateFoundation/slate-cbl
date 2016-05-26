@@ -1,23 +1,17 @@
 /*jslint browser: true, undef: true *//*global Ext*/
-Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
+Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
     extend: 'Slate.cbl.view.standard.AbstractOverviewWindow',
-    xtype: 'slate-cbl-teacher-skill-overviewwindow',
+    xtype: 'slate-demonstrations-teacher-skill-overviewwindow',
     requires: [
-        'Slate.cbl.view.teacher.skill.OverviewWindowController',
-
         'Slate.cbl.data.Skills',
 
         'Ext.form.field.ComboBox',
         'Ext.data.ChainedStore'
     ],
 
-    controller: 'slate-cbl-teacher-skill-overviewwindow',
-
     config: {
         competency: null,
-        showEditLinks: true,
-        studentsStore: null,
-        competenciesStore: null
+        showEditLinks: true
     },
 
     dockedItems: [
@@ -34,7 +28,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     xtype: 'combobox',
 
                     store: {
-                        type: 'chained'
+                        type: 'chained',
+                        source: 'cbl-competencies'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
@@ -75,7 +70,8 @@ Ext.define('Slate.cbl.view.teacher.skill.OverviewWindow', {
                     emptyText: 'Start typing student\'s name',
 
                     store: {
-                        type: 'chained'
+                        // type: 'chained',
+                        source: 'cbl-students'
                     },
                     queryMode: 'local',
                     displayField: 'FullName',
