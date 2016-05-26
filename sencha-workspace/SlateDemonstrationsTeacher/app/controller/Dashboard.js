@@ -42,7 +42,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     // controller configuration
     views: [
         'SlateDemonstrationsTeacher.view.OverviewWindow',
-        'Slate.cbl.view.teacher.skill.OverrideWindow',
+        'SlateDemonstrationsTeacher.view.OverrideWindow',
         'SlateDemonstrationsTeacher.view.EditWindow'
     ],
     
@@ -141,7 +141,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     },
 
     onOverviewCreateOverrideClick: function(overviewWindow, studentId, standardId) {
-        Ext.create('Slate.cbl.view.teacher.skill.OverrideWindow', {
+        Ext.create('SlateDemonstrationsTeacher.view.OverrideWindow', {
             ownerCmp: this.getDashboardCt(),
             autoShow: true,
 
