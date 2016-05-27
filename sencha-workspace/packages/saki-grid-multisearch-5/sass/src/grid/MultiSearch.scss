@@ -1,3 +1,5 @@
+// modified by jarvus/rc
+
 /*
  This file is part of Saki Grid MultiSearch Package
 
@@ -21,76 +23,70 @@
 /**
  * @member Ext.saki.grid.MultiSearch
  */
+
 .saki-gms-ct + div {
-  border-top-width:0;
+    border-top-width: 0;
 }
 
 .saki-gms-ct {
-  background-color: #e5e5e5; // $gms-bgcolor;
-  border-top: 1px solid $grid-header-border-color;
+    background-color: #e5e5e5;
 
-  .x-field {
-      border-right: 1px solid $border-color;
-  }
+    border-top: 1px solid $grid-header-border-color;
 
-  .x-form-field {
-      padding: 4px 10px;
-  }
+    .x-field {
+        border-right: 1px solid rgba(black, .1);
+    }
 
-  .x-form-field,
-  .x-form-trigger {
-      background-color: transparent;
-      box-shadow: inset 0 4px 4px -4px rgba(black, .1);
-  }
+    .x-form-field {
+        padding: 4px 10px;
+    }
+
+    .x-form-field,
+    .x-form-trigger {
+        background-color: transparent;
+        box-shadow: inset 0 4px 4px -4px rgba(black, 0.1);
+    }
 }
 
 .saki-gms-ct {
-  .x-form-trigger-wrap-default {
-      border: none;
-  }
+    .x-form-trigger-wrap-default {
+        border: none;
 
-  .x-form-trigger-wrap-focus {
-      background-color: white;
-      box-shadow: inset 0 -1px 0 $link-color;
-  }
-}
+		.x-form-field {
+			padding-right: 0;
+		}
+    }
 
-.saki-gms-nofilter {
-  border:{
-    color: $gms-nofilter-border-color;
-    width: $gms-border-width;
-    right:{
-      color: $gms-nofilter-border-right-color;
-      style: $gms-border-style;
+    .x-form-trigger-wrap-focus {
+        background-color: white;
+        box-shadow: inset 0 -1px 0 $link-color;
     }
-    bottom:{
-      color: $gms-nofilter-border-color;
-      style: $gms-border-style;
-    }
-    top: {
-      style: $gms-border-style;
-    }
-  }
 }
 
 .saki-gms-clear {
-  position:absolute;
-  right: $gms-clear-right;
-  top: $gms-clear-top;
-  background: $gms-clear-icon;
-  width: $gms-clear-width;
-  height: $gms-clear-height;
-  cursor: $gms-clear-cursor;
-  visibility:hidden;
-  -webkit-transition:all $gms-clear-duration $gms-clear-transition;
-  -moz-transition:all $gms-clear-duration $gms-clear-transition;
-  -o-transition:all $gms-clear-duration $gms-clear-transition;
-  opacity:0;
+	align-items: center;
+	bottom: 0;
+	color: $muted-color;
+    cursor: $gms-clear-cursor;
+    display: flex;
+    padding: .375em .25em .25em;
+    position: absolute;
+    right: 0;
+    top: 0;
+    visibility: hidden;
+
+	&::before {
+		content: '\f057'; // fa-times-circle;
+		font-family: FontAwesome;
+		font-size: 14px;
+		-moz-osx-font-smoothing: antialiased;
+		-webkit-font-smoothing: antialiased;
+	}
 }
 
 // position of clear icon within a combo
 input[role=combobox] + div.saki-gms-clear {
-  right: $gms-clear-combo-right;
+    right: $gms-clear-combo-right;
 }
 
 .saki-gms-hasvalue {
@@ -102,22 +98,44 @@ input[role=combobox] + div.saki-gms-clear {
     }
 }
 
-.saki-gms-hasvalue:hover .saki-gms-clear {
-  visibility:visible;
-  -webkit-transition:all $gms-clear-duration $gms-clear-transition;
-  -moz-transition:all $gms-clear-duration $gms-clear-transition;
-  -o-transition:all $gms-clear-duration $gms-clear-transition;
-  opacity:1;
+.saki-gms-hasvalue:hover {
+	.saki-gms-clear {
+	    visibility: visible;
+	}
+
+	.x-form-trigger {
+		background-image: none;
+		pointer-events: none;
+	}
 }
 
 .saki-gms-filtered {
-  color: $link-color;
+    color: $link-color;
 }
-.x-tool {
-  .saki-gms-icon {
-    margin: $gms-tool-margin;
-    cursor: $gms-tool-cursor;
-  }
+
+.saki-gms-nofilter {
+	border: none;
+	color: $muted-color;
+	text-align: center;
+
+	&:hover,
+	&:focus {
+		color: darken($muted-color, 10);
+	}
+
+	&::before {
+		content: '\f142'; // fa-ellipsis-v;
+		font-family: FontAwesome;
+		font-size: 14px;
+		line-height: 2;
+		width: 100%;
+		-moz-osx-font-smoothing: antialiased;
+		-webkit-font-smoothing: antialiased;
+	}
+	
+    .saki-gms-icon {
+		display: none;
+    }
 }
 
 // eof
