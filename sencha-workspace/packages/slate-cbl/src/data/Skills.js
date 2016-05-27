@@ -3,5 +3,6 @@ Ext.define('Slate.cbl.data.Skills', {
     extend: 'Slate.cbl.store.Skills',
     singleton: true,
 	
-    storeId: 'cbl-skills'
+    storeId: 'cbl-skills',
+    model: 'Slate.cbl.model.Skill'
 });
