@@ -1,3 +1,17 @@
+@mixin slate-attachmentslist-filetype($type, $image: null) {
+    @if $image == null {
+        $image: '#{$type}.svg';
+    }
+
+    .slate-attachment-#{$type} {
+        .slate-attachment-title {
+            a::before {
+                content: url(get-resource-path('images/attachment-filetypes/#{$image}'));
+            }
+        }
+    }
+}
+
 .slate-attachmentslist {
     list-style: none;
     margin: 0;
@@ -28,6 +42,20 @@
 }
 
 .slate-attachment-title {
-    @include ellipsis;
     flex: 1;
+
+    @include ellipsis;
+
+    a::before {
+        content: url(get-resource-path('images/attachment-filetypes/generic.svg'));
+        display: inline-block;
+        height: 16px;
+        margin-right: .375em;
+        vertical-align: -.125em;
+        width: 16px;
+    }
 }
+
+@include slate-attachmentslist-filetype('doc');
+@include slate-attachmentslist-filetype('folder');
+@include slate-attachmentslist-filetype('image');

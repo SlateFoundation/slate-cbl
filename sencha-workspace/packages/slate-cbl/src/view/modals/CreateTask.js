@@ -89,11 +89,11 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                             margin: '0 0 8',
                             data: [
                                 {
-                                    kind: 'googledoc',
+                                    kind: 'doc',
                                     title: 'Document List Name'
                                 },
                                 {
-                                    kind: 'googlefolder',
+                                    kind: 'folder',
                                     title: 'Shared Collection Name'
                                 },
                                 {

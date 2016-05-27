@@ -94,11 +94,11 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                             xtype: 'slate-attachmentslist',
                             data: [
                                 {
-                                    kind: 'googledoc',
+                                    kind: 'doc',
                                     title: 'Document Name'
                                 },
                                 {
-                                    kind: 'googlefolder',
+                                    kind: 'folder',
                                     title: 'Folder Name'
                                 }
                             ]
