@@ -246,11 +246,10 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
     initComponent: function() {
         var me = this,
             studentCombo;
-
+            
         me.callParent(arguments);
-
-        studentCombo = me.lookupReference('studentCombo');
-        studentCombo.getStore().setSource(me.getStudentsStore());
+        
+        studentCombo = Ext.ComponentQuery.query('combobox[reference=studentCombo]')[0];
         studentCombo.setValue(me.getDefaultStudent());
     }
 });
