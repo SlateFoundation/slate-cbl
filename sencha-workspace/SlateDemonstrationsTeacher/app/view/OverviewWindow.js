@@ -3,7 +3,9 @@ Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
     extend: 'Slate.cbl.view.standard.AbstractOverviewWindow',
     xtype: 'slate-demonstrations-teacher-skill-overviewwindow',
     requires: [
+        'Slate.cbl.data.Competencies',
         'Slate.cbl.data.Skills',
+        'Slate.cbl.data.Students',
 
         'Ext.form.field.ComboBox',
         'Ext.data.ChainedStore'
@@ -70,7 +72,7 @@ Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
                     emptyText: 'Start typing student\'s name',
 
                     store: {
-                        // type: 'chained',
+                        type: 'chained',
                         source: 'cbl-students'
                     },
                     queryMode: 'local',
