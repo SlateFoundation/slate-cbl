@@ -8,21 +8,34 @@ Ext.define('SlateDemonstrationsTeacher.controller.OverrideWindow', {
 
         'Slate.cbl.model.Demonstration'
     ],
-
+    
     config: {
-        // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
-        id: 'slate-cbl-teacher-skill-overridewindow',
-        control: {
-//            '#': {
-//                beforeshow: 'onBeforeWindowShow'
-//            }
-            'button[action=submit]': {
-                click: 'onSubmitClick'
-            },
-        },
+    },
 
-        listen: {
-        }
+
+    // entry points
+    listen: {
+    },
+    
+    control: {
+        overrideWindow: {
+            beforeshow: 'onBeforeWindowShow'
+        },
+        'button[action=submit]': {
+            click: 'onSubmitClick'
+        },
+    },
+
+
+    // controller configuration
+    views: [
+      'SlateDemonstrationsTeacher.view.OverrideWindow'  
+    ],
+    
+    refs: {
+        overrideWindow: 'slate-demonstrations-teacher-skill-overridewindow',
+        
+        summaryCmp: 'component[reference=summary]'
     },
 
 
@@ -45,37 +58,37 @@ Ext.define('SlateDemonstrationsTeacher.controller.OverrideWindow', {
 
 
     // // template methods
-    // init: function(overrideWindow) {
-    //     var me = this,
-    //         student = overrideWindow.getStudent(),
-    //         standard = overrideWindow.getStandard(),
-    //         summaryCmp = me.lookupReference('summary');
+    onBeforeWindowShow: function(overrideWindow) {
+        var me = this,
+            student = overrideWindow.getStudent(),
+            standard = overrideWindow.getStandard(),
+            summaryCmp = me.getSummaryCmp();
 
-    //     if (student.isLoading()) {
-    //         // framework will append our callback to the existing operation if the model is already loading
-    //         student.load({
-    //             callback: function() {
-    //                 me.init(overrideWindow);
-    //             }
-    //         });
-    //         return;
-    //     }
+        if (student.isLoading()) {
+            // framework will append our callback to the existing operation if the model is already loading
+            student.load({
+                callback: function() {
+                    me.init(overrideWindow);
+                }
+            });
+            return;
+        }
 
-    //     if (standard.isLoading()) {
-    //         // framework will append our callback to the existing operation if the model is already loading
-    //         standard.load({
-    //             callback: function() {
-    //                 me.init(overrideWindow);
-    //             }
-    //         });
-    //         return;
-    //     }
+        if (standard.isLoading()) {
+            // framework will append our callback to the existing operation if the model is already loading
+            standard.load({
+                callback: function() {
+                    me.init(overrideWindow);
+                }
+            });
+            return;
+        }
 
-    //     summaryCmp.update({
-    //         student: student.getData(),
-    //         standard: standard.getData()
-    //     });
-    // },
+        summaryCmp.update({
+            student: student.getData(),
+            standard: standard.getData()
+        });
+    },
 
 
     // event handlers
