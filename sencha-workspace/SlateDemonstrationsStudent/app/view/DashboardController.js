@@ -2,7 +2,7 @@ Ext.define('SlateDemonstrationsStudent.view.DashboardController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-demonstrations-student-dashboardcontroller',
     requires: [
-        'Slate.cbl.view.student.skill.OverviewWindow'
+        'SlateDemonstrationsStudent.view.OverviewWindow'
     ],
 
     config: {
@@ -45,7 +45,7 @@ Ext.define('SlateDemonstrationsStudent.view.DashboardController', {
     },
 
     onDemoCellClick: function(competencyCard, ev, targetEl) {
-        Ext.create('Slate.cbl.view.student.skill.OverviewWindow', {
+        Ext.create('SlateDemonstrationsStudent.view.OverviewWindow', {
             ownerCmp: this.getView(),
             autoShow: true,
             animateTarget: targetEl,
