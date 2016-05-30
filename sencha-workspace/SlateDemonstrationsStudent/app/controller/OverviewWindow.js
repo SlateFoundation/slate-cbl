@@ -1,22 +1,35 @@
 Ext.define('SlateDemonstrationsStudent.controller.OverviewWindow', {
-    extend: 'Ext.app.ViewController',
-    alias: 'controller.slate-cbl-student-skill-overviewwindow',
+    extend: 'Ext.app.Controller',
+    // alias: 'controller.slate-cbl-student-skill-overviewwindow',
     requires: [
         'Slate.cbl.model.Competency',
         'Slate.cbl.model.Skill'
     ],
-
+    
+    
     config: {
-        id: 'slate-cbl-student-skill-overviewwindow', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
-        control: {
-            '#': {
-                beforeshow: 'onBeforeWindowShow'
-            },
-            'combobox[reference=skillCombo]': {
-                change: 'onSkillChange'
-            }
+    },
+    
+    control: {
+        overviewWindow: {
+            beforeshow: 'onBeforeWindowShow'
+        },
+        skillCombo: {
+            change: 'onSkillChange'
         }
     },
+    
+    
+    // controller configuration
+    views: [
+      'SlateDemonstrationsStudent.view.OverviewWindow'  
+    ],
+    
+    refs: {
+        overviewWindow: 'slate-demonstrations-student-skill-overviewwindow',
+        skillCombo: 'combobox[reference=skillCombo]'
+    },
+
 
     // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
     applyId: function(id) {
