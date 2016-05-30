@@ -1,8 +1,8 @@
-Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
+Ext.define('SlateDemonstrationsStudent.view.OverviewWindow', {
     extend: 'Slate.cbl.view.standard.AbstractOverviewWindow',
     xtype: 'slate-cbl-student-skill-overviewwindow',
     requires: [
-        'Slate.cbl.view.student.skill.OverviewWindowController',
+        'SlateDemonstrationsStudent.controller.OverviewWindow',
 
         'Slate.cbl.data.Skills',
 
@@ -10,7 +10,7 @@ Ext.define('Slate.cbl.view.student.skill.OverviewWindow', {
         'Ext.data.ChainedStore'
     ],
 
-    controller: 'slate-cbl-student-skill-overviewwindow',
+    controller: 'slate-demonstrations-student-skill-overviewwindow',
 
     config: {
         competency: null

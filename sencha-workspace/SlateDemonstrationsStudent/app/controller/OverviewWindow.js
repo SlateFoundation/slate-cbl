@@ -1,4 +1,4 @@
-Ext.define('Slate.cbl.view.student.skill.OverviewWindowController', {
+Ext.define('SlateDemonstrationsStudent.controller.OverviewWindow', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.slate-cbl-student-skill-overviewwindow',
     requires: [
