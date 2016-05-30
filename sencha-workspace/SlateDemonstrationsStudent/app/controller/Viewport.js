@@ -15,6 +15,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
         'Dashboard',
         'DashboardController',
         'RecentProgress',
+        'OverviewWindow'
     ],
     
     refs: {
