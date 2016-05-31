@@ -1,6 +1,5 @@
 Ext.define('SlateDemonstrationsStudent.controller.OverviewWindow', {
     extend: 'Ext.app.Controller',
-    // alias: 'controller.slate-cbl-student-skill-overviewwindow',
     requires: [
         'Slate.cbl.model.Competency',
         'Slate.cbl.model.Skill'
@@ -38,7 +37,7 @@ Ext.define('SlateDemonstrationsStudent.controller.OverviewWindow', {
 
     onBeforeWindowShow: function(overviewWindow) {
         var competencyId = overviewWindow.getCompetency(),
-            skillsCombo = this.lookupReference('skillCombo'),
+            skillsCombo = this.getSkillCombo(),
             skillsComboStore = skillsCombo.getStore();
 
         skillsComboStore.getSource().getAllByCompetency(competencyId, function() {
@@ -56,9 +55,9 @@ Ext.define('SlateDemonstrationsStudent.controller.OverviewWindow', {
         skill = skill && skillCombo.findRecordByValue(skill);
 
         if (skill) {
-            this.lookupReference('skillStatement').update(skill.get('Statement'));
+            Ext.ComponentQuery.query('[reference=skillStatement]')[0].update(skill.get('Statement'));
         }
 
-        this.getView().setSkill(skill ? skill.getId() : null);
+        this.getOverviewWindow().setSkill(skill ? skill.getId() : null);
     }
 });
