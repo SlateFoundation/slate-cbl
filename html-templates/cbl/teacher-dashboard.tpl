@@ -72,17 +72,6 @@
 
 {block js-bottom}
     {if $ContentArea && $students}
-        <script type="text/javascript">
-            var SiteEnvironment = SiteEnvironment || { };
-            SiteEnvironment.user = {$.User->getData()|json_encode};
-            SiteEnvironment.cblStudents = {JSON::translateObjects($students, true)|json_encode};
-            SiteEnvironment.cblContentArea = {JSON::translateObjects($ContentArea)|json_encode};
-            SiteEnvironment.cblCompetencies = {JSON::translateObjects($ContentArea->Competencies, false, array('totalDemonstrationsRequired', 'minimumAverageOffset'))|json_encode};
-
-            SiteEnvironment.cblExperienceTypeOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$experienceTypeOptions|json_encode};
-            SiteEnvironment.cblContextOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$contextOptions|json_encode};
-            SiteEnvironment.cblPerformanceTypeOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$performanceTypeOptions|json_encode};
-        </script>
     
         {$dwoo.parent}
     
