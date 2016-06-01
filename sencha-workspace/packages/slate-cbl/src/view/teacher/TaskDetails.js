@@ -11,6 +11,7 @@ Ext.define('Slate.cbl.view.teacher.TaskDetails', {
 
     componentCls: 'slate-taskdetails',
 
+    bodyBorder: 1,
     bodyPadding: 16,
 
     header: {

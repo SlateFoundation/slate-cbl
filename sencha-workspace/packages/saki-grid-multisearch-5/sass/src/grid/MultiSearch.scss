@@ -24,14 +24,15 @@
  * @member Ext.saki.grid.MultiSearch
  */
 
-.saki-gms-ct + div {
+.saki-gms-ct + .x-grid-body {
     border-top-width: 0;
 }
 
 .saki-gms-ct {
     background-color: #e5e5e5;
 
-    border-top: 1px solid $grid-header-border-color;
+    border: 1px solid $grid-header-border-color;
+    border-width: 1px 1px 0 0;
 
     .x-field {
         border-right: 1px solid rgba(black, .1);

@@ -84,7 +84,7 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
             {
 	            text: 'Year',
 	            dataIndex: 'year',
-	            width: 64,
+	            width: 70,
 	            filterField: {
     	            xtype: 'combo'
 	            }
