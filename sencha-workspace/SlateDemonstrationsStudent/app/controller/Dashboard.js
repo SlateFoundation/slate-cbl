@@ -2,32 +2,34 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
     ],
- 
- 
-    config: {        
+
+
+    config: {
     },
-    
+
+
     // entry points
     control: {
-        // '#': {
-        //     render: 'onComponentRender'
-        // },
-        'slate-cbl-student-competencycard': {
+        dashboardCt: {
+            render: 'onComponentRender'
+        },
+        competencyCard: {
             democellclick: 'onDemoCellClick'
         }
     },
-   
-   
+
+
    // controller configuration
     views: [
-        'Slate.cbl.view.student.CompetencyCard',
-        'Slate.cbl.view.student.skill.OverviewWindow'        
+        'SlateDemonstrationsStudent.view.CompetencyCard',
+        'Slate.cbl.view.student.skill.OverviewWindow'
     ],
-    
+
     refs: {
         dashboardCt: 'slate-demonstrations-student-dashboard',
-        competencyCard: 'slate-cbl-student-competencycard'
+        competencyCard: 'slate-demonstrations-student-competencycard'
     },
+
 
     // event handlers
     onComponentRender: function(dashboardView) {
