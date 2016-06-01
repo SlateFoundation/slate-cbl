@@ -29,7 +29,7 @@ StartTest(function(t) {
                 
                 { click: 'li.cbl-grid-demo.cbl-grid-demo-empty' },
                 
-                { waitForCQ: 'slate-cbl-teacher-skill-overviewwindow' },
+                { waitForCQ: 'slate-demonstrations-teacher-skill-overviewwindow' },
                 
                 function(next, el) {
                   overviewWindow = el[0];
