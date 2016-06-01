@@ -61,8 +61,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
 
         // render components
         Ext.suspendLayouts();
-        dashboardCt.render('slateapp-viewport');
         recentProgressCmp.render('slateapp-viewport');
+        dashboardCt.render('slateapp-viewport');
         Ext.resumeLayouts(true);
     }
 });
