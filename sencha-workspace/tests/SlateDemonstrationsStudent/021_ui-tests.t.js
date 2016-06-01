@@ -5,11 +5,11 @@ StartTest(function(t) {
         
         t.it('Should render student-dashboard and have clickable UI under competency panel', function(t) {
             t.chain(
-                { waitForCQ: 'slate-cbl-student-competencycard' },
+                { waitForCQ: 'slate-demonstrations-student-competencycard' },
                 
                 { click: '.cbl-skill-demo'},
                 
-                { waitForCQ: 'slate-cbl-student-skill-overviewwindow' },
+                { waitForCQ: 'slate-demonstrations-student-skill-overviewwindow' },
                 
                 function(next, el) {
                     overviewWindow = el[0];
