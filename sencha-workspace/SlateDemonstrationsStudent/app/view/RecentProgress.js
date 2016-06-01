@@ -2,7 +2,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-student-recentprogress',
     requires: [
-        'Slate.cbl.store.RecentProgress',
+        'Slate.cbl.store.RecentProgress'
     ],
 
     config: {

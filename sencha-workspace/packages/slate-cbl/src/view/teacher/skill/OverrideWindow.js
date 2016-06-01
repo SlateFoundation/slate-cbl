@@ -50,7 +50,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindow', {
             text: 'Submit',
             scale: 'large',
             action: 'submit'
-        },
+        }
     ],
 
 
@@ -59,7 +59,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindow', {
         if (!student) {
             return null;
         }
-        
+
         return student.isModel ? student : Slate.cbl.API.getSession().getRecord(Slate.cbl.model.Student, student);
     },
 
@@ -67,7 +67,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindow', {
         if (!standard) {
             return null;
         }
-        
+
         return standard.isModel ? standard : Slate.cbl.API.getSession().getRecord(Slate.cbl.model.Skill, standard);
     }
 });

@@ -7,8 +7,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         'Slate.cbl.store.DemonstrationSkills',
 
         'Slate.cbl.data.Skills',
-        
-        'Slate.cbl.store.Competencies',
+
+        'Slate.cbl.store.Competencies'
     ],
 
     config: {
@@ -129,7 +129,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     },
 
     initRenderData: function() {
-        var me = this;  
+        var me = this;
 
         return Ext.apply(this.callParent(), {
             competency: me.getCompetency().getData(),

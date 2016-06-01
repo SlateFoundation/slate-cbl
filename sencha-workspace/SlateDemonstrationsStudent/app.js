@@ -6,7 +6,7 @@
 Ext.application({
     name: 'SlateDemonstrationsStudent',
 
-    extend: 'SlateDemonstrationsStudent.Application',
+    extend: 'SlateDemonstrationsStudent.Application'
 
 
     //-------------------------------------------------------------------------
