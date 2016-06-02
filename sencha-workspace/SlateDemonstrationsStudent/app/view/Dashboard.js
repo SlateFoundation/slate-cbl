@@ -5,7 +5,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'Slate.cbl.Util',
 
         'Slate.cbl.widget.Popover',
-        
+
         'SlateDemonstrationsStudent.view.CompetencyCard',
         'SlateDemonstrationsStudent.view.RecentProgress',
 
@@ -22,7 +22,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         popover: {
             pointer: 'none'
         },
-        
+
         competenciesStatus: 'unloaded',
 
         competenciesStore: {
@@ -37,7 +37,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
         demonstrationSkillsStore: {
             xclass: 'Slate.cbl.store.DemonstrationSkills'
-        }   
+        }
     },
 
     autoEl: {
@@ -52,7 +52,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     applyPopover: function(newPopover, oldPopover) {
         return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
     },
-    
+
     updateCompetenciesStatus: function(newStatus, oldStatus) {
         if (oldStatus) {
             this.removeCls('competencies-' + oldStatus);

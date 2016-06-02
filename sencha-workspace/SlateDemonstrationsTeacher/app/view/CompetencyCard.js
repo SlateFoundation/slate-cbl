@@ -1,7 +1,7 @@
 /*jslint browser: true, undef: true *//*global Ext*/
-Ext.define('Slate.cbl.view.teacher.demonstration.CompetencyCard', {
+Ext.define('SlateDemonstrationsTeacher.view.CompetencyCard', {
     extend: 'Ext.panel.Panel',
-    xtype: 'slate-cbl-teacher-demonstration-competencycard',
+    xtype: 'slate-demonstrations-teacher-demonstration-competencycard',
     requires: [
         'Slate.cbl.field.LevelSlider'
     ],

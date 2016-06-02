@@ -1,10 +1,10 @@
 /*jslint browser: true, undef: true *//*global Ext*/
-Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
+Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
     extend: 'Ext.window.Window',
-    xtype: 'slate-cbl-teacher-demonstration-editwindow',
+    xtype: 'slate-demonstrations-teacher-demonstration-editwindow',
     requires: [
-        'Slate.cbl.view.teacher.demonstration.EditWindowController',
-        'Slate.cbl.view.teacher.demonstration.CompetencyCard',
+        'SlateDemonstrationsTeacher.view.CompetencyCard',
+        
         'Slate.cbl.data.ContentAreas',
         'Slate.cbl.data.Competencies',
         'Slate.cbl.model.Demonstration',
@@ -23,8 +23,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
         'Ext.data.ChainedStore'
     ],
 
-    controller: 'slate-cbl-teacher-demonstration-editwindow',
-
     config: {
         demonstration: {
             Class: 'Slate\\CBL\\Demonstrations\\ExperienceDemonstration'
@@ -37,14 +35,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     title: 'Log a demonstration',
     width: 600,
     constrainHeader: true,
-
-//    tools: [
-//        {
-//            type: 'gear',
-//            tooltip: 'Override'
-//        }
-//    ],
-
     layout: 'fit',
     items: {
         reference: 'form',
@@ -71,7 +61,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
 
                 store: {
                     type: 'chained'
-//                    source: 'cbl-students-loaded'
                 },
                 queryMode: 'local',
                 displayField: 'FullName',
@@ -124,21 +113,15 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
             {
                 reference: 'competenciesTabPanel',
                 anchor: '100%',
-
-//              competencyTipTitleTpl: '{Descriptor}',
-//              competencyTipBodyTpl: '{Statement}',
-
                 xtype: 'tabpanel',
                 tabBar: {
                     hidden: true
                 },
                 margin: '10 -16',
-//                bodyPadding: '16 75',
                 bodyStyle: {
                     backgroundColor: '#ddd'
                 },
-                // title: 'Competencies',
-                defaultType: 'slate-cbl-teacher-demonstration-competencycard',
+                defaultType: 'slate-demonstrations-teacher-demonstration-competencycard',
                 defaults: {
                     closable: true
                 },
@@ -171,19 +154,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                                 text: 'Descriptor',
                                 dataIndex: 'Descriptor',
                                 flex: 1
-/*
-                            },
-                            {
-                                xtype: 'actioncolumn',
-                                width: 40,
-                                items: [
-                                    {
-                                        action: 'add',
-                                        glyph: 0xf0fe + '@FontAwesome',
-                                        tooltip: 'Add competency to this demonstration'
-                                    }
-                                ]
-*/
                             }
                         ],
                         features: [
@@ -193,7 +163,6 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
                                 groupHeaderTpl: [
                                     '<tpl for="this.getContentAreaData(values.groupValue)">',
                                         '<span class="title">{Title}</span>',
-//                                        '<span class="count">{[parent.children.length]}</span>',
                                     '</tpl>',
                                     {
                                         getContentAreaData: function(contentAreaId) {
@@ -277,11 +246,10 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindow', {
     initComponent: function() {
         var me = this,
             studentCombo;
-
+            
         me.callParent(arguments);
-
-        studentCombo = me.lookupReference('studentCombo');
-        studentCombo.getStore().setSource(me.getStudentsStore());
+        
+        studentCombo = Ext.ComponentQuery.query('combobox[reference=studentCombo]')[0];
         studentCombo.setValue(me.getDefaultStudent());
     }
 });

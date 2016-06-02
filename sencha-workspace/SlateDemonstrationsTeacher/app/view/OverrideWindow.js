@@ -1,9 +1,9 @@
 /*jslint browser: true, undef: true *//*global Ext*/
-Ext.define('Slate.cbl.view.teacher.skill.OverrideWindow', {
+Ext.define('SlateDemonstrationsTeacher.view.OverrideWindow', {
     extend: 'Ext.window.Window',
-    xtype: 'slate-cbl-teacher-skill-overridewindow',
+    xtype: 'slate-demonstrations-teacher-skill-overridewindow',
     requires: [
-        'Slate.cbl.view.teacher.skill.OverrideWindowController',
+        // 'SlateDemonstrationsTeacher.controller.OverrideWindow',
 
         'Slate.cbl.API',
 
@@ -13,7 +13,7 @@ Ext.define('Slate.cbl.view.teacher.skill.OverrideWindow', {
         'Ext.form.field.TextArea'
     ],
 
-    controller: 'slate-cbl-teacher-skill-overridewindow',
+    // controller: 'slate-cbl-teacher-skill-overridewindow',
 
     config: {
         student: null,

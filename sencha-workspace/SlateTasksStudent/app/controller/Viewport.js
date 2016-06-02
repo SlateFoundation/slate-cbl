@@ -3,20 +3,18 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
     requires: [
         'Slate.API'
     ],
-    
-    
+
+
     config: {
     },
 
 
     // controller configuration
     views: [
-        'TaskTree@Slate.cbl.view.student',
-        'TodoList@Slate.cbl.view.student',
-        'TaskHistory@Slate.cbl.view.student',
-        'OverallProgress@Slate.cbl.view.student'
+        'TaskTree',
+        'TodoList'
     ],
-    
+
     refs: {
         taskTree: {
             selector: 'slate-tasktree',

@@ -41,17 +41,17 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     
     // controller configuration
     views: [
-        'Slate.cbl.view.teacher.skill.OverviewWindow',
-        'Slate.cbl.view.teacher.skill.OverrideWindow',
-        'Slate.cbl.view.teacher.demonstration.EditWindow'
+        'SlateDemonstrationsTeacher.view.OverviewWindow',
+        'SlateDemonstrationsTeacher.view.OverrideWindow',
+        'SlateDemonstrationsTeacher.view.EditWindow'
     ],
     
     refs: {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
         
         studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
-        teacherOverviewwindow: 'slate-cbl-teacher-skill-overviewwindow'
-    },
+        teacherOverviewwindow: 'slate-demonstrations-teacher-skill-overviewwindow'
+    },  
 
 
     // event handers
@@ -60,7 +60,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     },
     
     onDemoCellClick: function(progressGrid, ev, targetEl) {
-        Ext.create('Slate.cbl.view.teacher.skill.OverviewWindow', {
+        Ext.create('SlateDemonstrationsTeacher.view.OverviewWindow', {
             ownerCmp: this.getDashboardCt(),
             autoShow: true,
             animateTarget: targetEl,
@@ -141,7 +141,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     },
 
     onOverviewCreateOverrideClick: function(overviewWindow, studentId, standardId) {
-        Ext.create('Slate.cbl.view.teacher.skill.OverrideWindow', {
+        Ext.create('SlateDemonstrationsTeacher.view.OverrideWindow', {
             ownerCmp: this.getDashboardCt(),
             autoShow: true,
 
@@ -163,7 +163,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     showDemonstrationEditWindow: function(options) {
         var dashboardView = this.getDashboardCt();
 
-        return Ext.create('Slate.cbl.view.teacher.demonstration.EditWindow', Ext.apply({
+        return Ext.create('SlateDemonstrationsTeacher.view.EditWindow', Ext.apply({
             ownerCmp: dashboardView,
             autoShow: true,
 

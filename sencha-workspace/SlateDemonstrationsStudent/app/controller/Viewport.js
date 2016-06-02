@@ -7,13 +7,17 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
 
     config: {
     },
-    
-    
+
+
     // controller configuration
     views: [
-        'Dashboard'
+        'CompetencyCard',
+        'Dashboard',
+        'DashboardController',
+        'RecentProgress',
+        'OverviewWindow'
     ],
-    
+
     refs: {
         dashboardCt: {
             selector: 'slate-demonstrations-student-dashboard',

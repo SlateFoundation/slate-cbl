@@ -1,7 +1,6 @@
 /*jslint browser: true, undef: true *//*global Ext,Slate*/
-Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
-    extend: 'Ext.app.ViewController',
-    alias: 'controller.slate-cbl-teacher-demonstration-editwindow',
+Ext.define('SlateDemonstrationsTeacher.controller.EditWindow', {
+    extend: 'Ext.app.Controller',
     requires: [
         'Slate.API',
 
@@ -12,35 +11,49 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         'Ext.window.Toast',
         'Ext.util.MixedCollection'
     ],
-
+    
     config: {
-        control: {
-            '#': {
-                show: 'onShow',
-                beforeshow: 'onBeforeShow',
-                loaddemonstration: 'onLoadDemonstration'
-            },
-            'combobox[name=StudentID]': {
-                select: 'onStudentSelect'
-            },
-            'container[reference=competenciesTabPanel] > container': {
-                removed: 'onCompetencyCardRemoved'
-            },
-            'tabpanel[reference=competenciesTabPanel]': {
-                tabchange: 'onCompetenciesTabChange'
-            },
-            'textfield[reference=competenciesSearchField]': {
-                change: 'onCompetenciesSearchFieldChange',
-                specialkey: 'onCompetenciesSearchFieldSpecialKey'
-            },
-            'gridpanel[reference=competenciesGrid]': {
-                addclick: 'onCompetencyAddClick',
-                rowclick: 'onCompetencyRowDoubleClick'
-            },
-            'button[action=submit]': {
-                click: 'onSubmitClick'
-            }
+    },
+    
+    
+    // entry points
+    control: {
+        editWindow: {
+            show: 'onShow',
+            beforeshow: 'onBeforeShow',
+            loaddemonstration: 'onLoadDemonstration'
+        },
+        studentCombobox: {
+            select: 'onStudentSelect'
+        },
+        'container[reference=competenciesTabPanel] > container': {
+            removed: 'onCompetencyCardRemoved'
+        },
+        competenciesTabPanel: {
+            tabchange: 'onCompetenciesTabChange'
+        },
+        competenciesSearchField: {
+            change: 'onCompetenciesSearchFieldChange',
+            specialkey: 'onCompetenciesSearchFieldSpecialKey'
+        },
+        competenciesGrid: {
+            addclick: 'onCompetencyAddClick',
+            rowclick: 'onCompetencyRowDoubleClick'
+        },
+        submitBtn: {
+            click: 'onSubmitClick'
         }
+    },
+    
+    
+    // controller configuration
+    refs: {
+        editWindow: 'slate-demonstrations-teacher-demonstration-editwindow',
+        studentCombobox: 'combobox[name=StudentID]',
+        competenciesTabPanel: 'tabpanel[reference=competenciesTabPanel]',
+        competenciesSearchField: 'textfield[reference=competenciesSearchField]',
+        competenciesGrid: 'gridpanel[reference=competenciesGrid]',
+        submitBtn: 'button[action=submit]'
     },
 
 
@@ -91,7 +104,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
     onShow: function(editWindow) {
         var me = this,
-            competenciesGrid = me.lookupReference('competenciesGrid'),
+            competenciesGrid = me.getCompetenciesGrid(),
             store = Ext.getStore('cbl-competencies');
 
         // load global competencies store the first time a window shows
@@ -110,7 +123,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
     onLoadDemonstration: function(editWindow, demonstration) {
         var me = this,
-            competenciesGrid = me.lookupReference('competenciesGrid'),
+            competenciesGrid = me.getCompetenciesGrid(),
             competenciesStore = Ext.getStore('cbl-competencies'),
             _restoreSavedSkills;
 
@@ -122,7 +135,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
         Ext.suspendLayouts();
 
         // if loading an existing demonstration, load it into the form immediately.
-        me.lookupReference('form').loadRecord(demonstration);
+        Ext.ComponentQuery.query('form')[0].loadRecord(demonstration);
         me.lookupReference('loadNextStudentCheck').setVisible(demonstration.phantom);
 
         competenciesGrid.setLoading('Loading competencies&hellip;');
@@ -188,7 +201,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     },
 
     onStudentSelect: function(studentCombo, student) {
-        this.getView().setTitle('Log a demonstration' + (student.length ? ' for ' + student[0].getDisplayName() : ''));
+        this.getEditWindow().setTitle('Log a demonstration' + (student.length ? ' for ' + student[0].getDisplayName() : ''));
     },
 
     onCompetenciesSearchFieldChange: function(searchField, value) {
@@ -265,7 +278,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
     onSubmitClick: function(btn) {
         var me = this,
-            editWindow = me.getView(),
+            editWindow = me.getEditWindow(),
             demonstration = editWindow.getDemonstration(),
             wasPhantom = demonstration.phantom,
             formPanel = me.lookupReference('form'),
@@ -345,10 +358,11 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
     // protected methods
     addCompetency: function(competency, callback, scope, insertSorted) {
         var me = this,
-            editWindow = me.getView(),
+            editWindow = me.getEditWindow(),
             competenciesStore = Ext.getStore('cbl-competencies'),
-            competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
-            competenciesSearchField = me.lookupReference('competenciesSearchField'),
+            competenciesTabPanel = me.getCompetenciesTabPanel(),
+            competenciesSearchField = me.getCompetenciesSearchField();
+            
             competencyCardConfig = {
                 competency: competency,
                 items: []
@@ -430,7 +444,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
     scrollCompetenciesTabsToEnd: function() {
         var me = this,
-            competenciesTabPanel = me.lookupReference('competenciesTabPanel'),
+            competenciesTabPanel = me.getCompetenciesTabPanel(),
             competenciesTabBar = competenciesTabPanel.getTabBar(),
             _doScroll = function() {
                 competenciesTabBar.getLayout().overflowHandler.scrollToItem(competenciesTabPanel.items.last().tab);
@@ -445,10 +459,11 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
     updateCompetencyFilter: function(query) {
         var me = this,
-            tabPanelItems = me.lookupReference('competenciesTabPanel').items,
-            grid = me.lookupReference('competenciesGrid'),
+            tabPanelItems = competenciesTabPanel = me.getCompetenciesTabPanel().items
+            
+            grid = me.getCompetenciesGrid(),
             store = grid.getStore(),
-            groupingFeature = grid.getView().getFeature('grouping'),
+            groupingFeature = me.getEditWindow().getFeature('grouping'),
             isCompetencyAvailable = function(competency) {
                 return !tabPanelItems.findBy(function(card) {
                     return card.competency === competency;
@@ -458,7 +473,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
         Ext.suspendLayouts();
 
-        query = Ext.String.trim(query || me.lookupReference('competenciesSearchField').getValue());
+        query = Ext.String.trim(query || me.getCompetenciesSearchField().getValue());
 
         store.clearFilter(false);
         if (query) {
@@ -486,7 +501,7 @@ Ext.define('Slate.cbl.view.teacher.demonstration.EditWindowController', {
 
     syncAddComptencyButtonVisibility: function() {
         var me = this,
-            tabPanel = me.lookupReference('competenciesTabPanel');
+            tabPanel = me.getCompetenciesTabPanel();
 
         tabPanel.getTabBar().setHidden(tabPanel.items.getCount() == 1);
     }

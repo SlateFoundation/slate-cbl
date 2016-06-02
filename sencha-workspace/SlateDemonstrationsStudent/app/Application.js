@@ -13,6 +13,7 @@ Ext.define('SlateDemonstrationsStudent.Application', {
 
     controllers: [
         'Viewport',
+        'OverviewWindow',
         'Dashboard'
     ],
 
