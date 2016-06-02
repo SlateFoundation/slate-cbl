@@ -2,12 +2,12 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-demonstrations-student-dashboard',
     requires:[
-        // 'SlateDemonstrationsStudent.view.DashboardController',
-        'SlateDemonstrationsStudent.view.CompetencyCard',
-
         'Slate.cbl.Util',
 
         'Slate.cbl.widget.Popover',
+
+        'SlateDemonstrationsStudent.view.CompetencyCard',
+        'SlateDemonstrationsStudent.view.RecentProgress',
 
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.Completions',
@@ -16,14 +16,13 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'Slate.cbl.data.Skills'
     ],
 
-    controller: 'slate-demonstrations-student-dashboardcontroller',
-
     config: {
         studentId: null,
 
         popover: {
             pointer: 'none'
         },
+
         competenciesStatus: 'unloaded',
 
         competenciesStore: {

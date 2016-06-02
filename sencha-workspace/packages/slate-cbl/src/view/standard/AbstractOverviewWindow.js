@@ -137,7 +137,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         me.mon(me.demonstrationsTable.el, 'click', function(ev, targetEl) {
             if (targetEl = ev.getTarget('.skill-grid-demo-row', me.el, true)) {
                 targetEl.next('.skill-grid-demo-detail-row').toggleCls('is-expanded');
-                me.doLayout();
+                me.updateLayout();
                 me.fireEvent('demorowclick', me, ev, targetEl);
             } else if (targetEl = ev.getTarget('a[href="#demonstration-edit"]', me.el, true)) {
                 ev.stopEvent();

@@ -1,12 +1,14 @@
 Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-student-competencycard',
-    requires: [,
+    requires: [
         'Slate.cbl.Util',
 
         'Slate.cbl.store.DemonstrationSkills',
 
-        'Slate.cbl.data.Skills'
+        'Slate.cbl.data.Skills',
+
+        'Slate.cbl.store.Competencies'
     ],
 
     config: {

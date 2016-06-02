@@ -17,7 +17,6 @@ Provides extensions for Slate to implement Competency-Based Learning
   - `php-migrations/Slate/CBL`
   - `site-root/cbl/`
   - `site-root/img/cbl/`
-  - `site-root/sass/cbl/`
 
 
 ## Technologies used

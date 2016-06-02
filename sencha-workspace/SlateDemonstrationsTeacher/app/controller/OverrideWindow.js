@@ -3,12 +3,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.OverrideWindow', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.window.Toast',
+        'Ext.window.MessageBox',
 
         'Slate.API',
 
         'Slate.cbl.model.Demonstration'
     ],
-    
+
     config: {
     },
 
@@ -16,7 +17,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.OverrideWindow', {
     // entry points
     listen: {
     },
-    
+
     control: {
         overrideWindow: {
             beforeshow: 'onBeforeWindowShow'
@@ -29,12 +30,12 @@ Ext.define('SlateDemonstrationsTeacher.controller.OverrideWindow', {
 
     // controller configuration
     views: [
-      'SlateDemonstrationsTeacher.view.OverrideWindow'  
+      'SlateDemonstrationsTeacher.view.OverrideWindow'
     ],
-    
+
     refs: {
         overrideWindow: 'slate-demonstrations-teacher-skill-overridewindow',
-        
+
         summaryCmp: 'component[reference=summary]'
     },
 

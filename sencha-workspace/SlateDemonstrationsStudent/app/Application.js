@@ -6,14 +6,15 @@
 Ext.define('SlateDemonstrationsStudent.Application', {
     extend: 'Ext.app.Application',
     requires: [
-        'Ext.window.MessageBox',
+        'Ext.window.MessageBox'
     ],
 
     name: 'SlateDemonstrationsStudent',
 
     controllers: [
         'Viewport',
-        'OverviewWindow'
+        'OverviewWindow',
+        'Dashboard'
     ],
 
     onAppUpdate: function () {

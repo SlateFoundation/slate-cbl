@@ -7,8 +7,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
 
     config: {
     },
-    
-    
+
+
     // controller configuration
     views: [
         'CompetencyCard',
@@ -17,7 +17,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
         'RecentProgress',
         'OverviewWindow'
     ],
-    
+
     refs: {
         dashboardCt: {
             selector: 'slate-demonstrations-student-dashboard',
@@ -39,11 +39,11 @@ Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
         var siteEnv = window.SiteEnvironment || {},
             cblStudentId = (siteEnv.cblStudent || {}).ID,
             cblContentArea = siteEnv.cblContentArea || null,
-            recentProgressCmp, dashboardCt;
+            dashboardCt, recentProgressCmp;
 
         // fetch component instances
-        recentProgressCmp = this.getRecentProgressCmp();
         dashboardCt = this.getDashboardCt();
+        recentProgressCmp = this.getRecentProgressCmp();
 
         // configure recent progress component with any available embedded data
         if (cblStudentId) {

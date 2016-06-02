@@ -58,6 +58,6 @@ Ext.define('SlateTasksTeacher.view.GridLegend', {
             flags: [
                 'needsrated'
             ]
-        },
+        }
     ]
 });
