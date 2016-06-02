@@ -1,32 +1,21 @@
-Ext.define('SlateDemonstrationsStudent.controller.OverviewWindow', {
-    extend: 'Ext.app.Controller',
+Ext.define('SlateDemonstrationsStudent.view.OverviewWindowController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.slate-demonstrations-student-skill-overviewwindow',
     requires: [
         'Slate.cbl.model.Competency',
         'Slate.cbl.model.Skill'
     ],
-    
-    
+
     config: {
-    },
-    
-    control: {
-        overviewWindow: {
-            beforeshow: 'onBeforeWindowShow'
-        },
-        skillCombo: {
-            change: 'onSkillChange'
+        id: 'slate-demonstrations-student-skill-overviewwindow', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        control: {
+            '#': {
+                beforeshow: 'onBeforeWindowShow'
+            },
+            'combobox[reference=skillCombo]': {
+                change: 'onSkillChange'
+            }
         }
-    },
-    
-    
-    // controller configuration
-    views: [
-      'SlateDemonstrationsStudent.view.OverviewWindow'  
-    ],
-    
-    refs: {
-        overviewWindow: 'slate-demonstrations-student-skill-overviewwindow',
-        skillCombo: 'combobox[reference=skillCombo]'
     },
 
 
@@ -37,7 +26,7 @@ Ext.define('SlateDemonstrationsStudent.controller.OverviewWindow', {
 
     onBeforeWindowShow: function(overviewWindow) {
         var competencyId = overviewWindow.getCompetency(),
-            skillsCombo = this.getSkillCombo(),
+            skillsCombo = this.lookupReference('skillCombo'),
             skillsComboStore = skillsCombo.getStore();
 
         skillsComboStore.getSource().getAllByCompetency(competencyId, function() {
@@ -55,9 +44,9 @@ Ext.define('SlateDemonstrationsStudent.controller.OverviewWindow', {
         skill = skill && skillCombo.findRecordByValue(skill);
 
         if (skill) {
-            Ext.ComponentQuery.query('[reference=skillStatement]')[0].update(skill.get('Statement'));
+            this.lookupReference('skillStatement').update(skill.get('Statement'));
         }
 
-        this.getOverviewWindow().setSkill(skill ? skill.getId() : null);
+        this.getView().setSkill(skill ? skill.getId() : null);
     }
 });

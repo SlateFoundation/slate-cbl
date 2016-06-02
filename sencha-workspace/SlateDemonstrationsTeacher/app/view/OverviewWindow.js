@@ -3,17 +3,21 @@ Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
     extend: 'Slate.cbl.view.standard.AbstractOverviewWindow',
     xtype: 'slate-demonstrations-teacher-skill-overviewwindow',
     requires: [
-        'Slate.cbl.data.Competencies',
+        'SlateDemonstrationsTeacher.view.OverviewWindowController',
+
         'Slate.cbl.data.Skills',
-        'Slate.cbl.data.Students',
 
         'Ext.form.field.ComboBox',
         'Ext.data.ChainedStore'
     ],
 
+    controller: 'slate-demonstrations-teacher-skill-overviewwindow',
+
     config: {
         competency: null,
-        showEditLinks: true
+        showEditLinks: true,
+        studentsStore: null,
+        competenciesStore: null
     },
 
     dockedItems: [
@@ -30,8 +34,7 @@ Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
                     xtype: 'combobox',
 
                     store: {
-                        type: 'chained',
-                        source: 'cbl-competencies'
+                        type: 'chained'
                     },
                     queryMode: 'local',
                     displayField: 'Descriptor',
@@ -72,8 +75,7 @@ Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
                     emptyText: 'Start typing student\'s name',
 
                     store: {
-                        type: 'chained',
-                        source: 'cbl-students'
+                        type: 'chained'
                     },
                     queryMode: 'local',
                     displayField: 'FullName',

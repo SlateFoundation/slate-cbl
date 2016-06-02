@@ -21,8 +21,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
    // controller configuration
     views: [
-        'SlateDemonstrationsStudent.view.CompetencyCard',
-        'SlateDemonstrationsStudent.view.OverviewWindow'
+        'OverviewWindow'
     ],
 
     refs: {
@@ -58,7 +57,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     },
 
     onDemoCellClick: function(competencyCard, ev, targetEl) {
-        Ext.create('SlateDemonstrationsStudent.view.OverviewWindow', {
+        this.getOverviewWindowView().create({
             ownerCmp: this.getDashboardCt(),
             autoShow: true,
             animateTarget: targetEl,

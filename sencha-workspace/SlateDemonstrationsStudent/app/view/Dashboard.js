@@ -7,7 +7,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'Slate.cbl.widget.Popover',
 
         'SlateDemonstrationsStudent.view.CompetencyCard',
-        'SlateDemonstrationsStudent.view.RecentProgress',
 
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.Completions',
@@ -44,7 +43,10 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         tag: 'ul',
         cls: 'cbl-competency-panels'
     },
-    defaultType: 'slate-demonstrations-student-competencycard',
+    defaults: {
+        xtype: 'slate-demonstrations-student-competencycard',
+        autoEl: 'li'
+    },
     layout: 'container',
 
 

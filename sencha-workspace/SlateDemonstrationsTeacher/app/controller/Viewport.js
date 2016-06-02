@@ -3,8 +3,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
     requires: [
         'Slate.API'
     ],
-    
-    
+
+
     config: {
     },
 
@@ -13,7 +13,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
     views: [
         'Dashboard'
     ],
-    
+
     refs: {
         dashboardCt: {
             selector: 'slate-demonstrations-teacher-dashboard',
@@ -22,7 +22,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Viewport', {
             xtype: 'slate-demonstrations-teacher-dashboard'
         }
     },
-        
+
 
     // controller templates method overrides
     onLaunch: function () {
