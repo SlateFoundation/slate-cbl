@@ -6,5 +6,7 @@ Ext.define('Slate.cbl.view.modals.Modal', {
     bodyStyle: {
         backgroundColor: '#f5f5f5'
     },
+    constrain: true,
+    scrollable: true,
     width: 560
 })
