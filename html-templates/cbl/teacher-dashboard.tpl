@@ -48,7 +48,7 @@
                 </select>
             {/capture}
             {labeledField html=$studentsSelect type=select label=Students class=auto-width}
-            
+
             {capture assign=contentAreaSelect}
                 <select class="field-control inline medium" name="content-area" onchange="this.form.submit()">
                     <option value="">&ndash;select&ndash;</option>
