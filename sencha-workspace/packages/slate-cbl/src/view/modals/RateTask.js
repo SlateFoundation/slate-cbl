@@ -3,7 +3,8 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
     xtype: 'slate-ratetaskwindow',
     requires: [
         'Slate.cbl.view.AttachmentsList',
-        'Slate.cbl.view.modals.ModalForm'
+        'Slate.cbl.view.modals.ModalForm',
+        'Slate.cbl.widget.RatingView'
     ],
 
     title: 'Rate Task',
@@ -109,6 +110,9 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     xtype: 'tagfield',
                     fieldLabel: 'Skills',
                     emptyText: 'Competency code or statement&hellip;'
+                },
+                {
+                    xtype: 'slate-ratingview'
                 },
                 {
                     fieldLabel: 'Submitted Date',

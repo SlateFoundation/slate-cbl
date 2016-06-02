@@ -1,4 +1,10 @@
 .slate-modalform {
+    overflow: visible;
+
+    .x-panel-body {
+        overflow: visible;
+    }
+
     .x-form-item {
         margin-bottom: 8px;
     }
