@@ -12,7 +12,9 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
     // controller configuration
     views: [
         'TaskTree',
-        'TodoList'
+        'TodoList',
+        'Slate.cbl.view.student.OverallProgress',
+        'Slate.cbl.view.student.TaskHistory'
     ],
 
     refs: {
