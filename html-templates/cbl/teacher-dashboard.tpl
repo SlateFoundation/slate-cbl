@@ -71,24 +71,13 @@
 {/block}
 
 {block js-bottom}
-    {if $ContentArea && $students}
-    
-        {$dwoo.parent}
-    
-        {if $.get.jsdebug}
-            {sencha_bootstrap
-                patchLoader=false
-                packages=array('slate-theme')
-                packageRequirers=array('sencha-workspace/pages/src/page/TeacherCompetencyDashboard.js')
-            }
-        {else}
-            <script src="{Site::getVersionedRootUrl('js/pages/TeacherCompetencyDashboard.js')}"></script>
-        {/if}
-    
-        <script>
-            Ext.require('Site.page.TeacherCompetencyDashboard');
-        </script>
+    {if $.get.jsdebug}
+        {sencha_bootstrap
+            patchLoader=false
+            packages=array('slate-theme')
+            packageRequirers=array('sencha-workspace/pages/src/page/TeacherCompetencyDashboard.js')
+        }
     {else}
-        {$dwoo.parent}
+        <script src="{Site::getVersionedRootUrl('js/pages/TeacherCompetencyDashboard.js')}"></script>
     {/if}
 {/block}
