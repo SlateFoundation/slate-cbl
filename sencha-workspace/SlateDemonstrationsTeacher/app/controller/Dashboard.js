@@ -13,6 +13,19 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     ],
 
 
+    config: {
+    },
+
+    stores: [
+        'Students@Slate.cbl.store',
+        'ContentAreas@Slate.cbl.store'
+    ],
+
+    routes: {
+       'dashboard/:students/:contentArea': 'showDashboard'
+    },
+
+
     // entry points
     listen: {
         api: {
@@ -84,6 +97,16 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
 
     // event handers
+    showDashboard: function(student, contentArea) {
+        var me = this,
+            dashboardCt = me.getDashboardCt(),
+            studentStore = me.getStudentsStore(),
+            contentAreaStore = me.getContentAreasStore();
+
+        dashboardCt.setStudentsStore(studentStore);
+        dashboardCt.setContentAreasStore(contentArea);
+    },
+
     onCompetencyRowClick: function(me, competency, ev, targetEl) {
         me.toggleCompetency(competency);
     },
