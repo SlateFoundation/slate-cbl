@@ -1,0 +1,76 @@
+.slate-ratingview {
+    background-color: white;
+    margin: .25em -2em .25em -1em;
+    padding: 1em 2em;
+}
+
+.slate-ratingview-competencies {
+    list-style: none;
+    margin: 1em 0;
+    padding: 0;
+}
+
+.slate-ratingview-competency {
+    margin: 1.5em 0;
+}
+
+.slate-ratingview-competency-title {
+    font-size: 1.125em;
+    margin: 1.5em 0 1em;
+}
+
+.slate-ratingview-skills {
+    list-style: none;
+    margin: 1em 0;
+    padding: 0;
+}
+
+.slate-ratingview-skill-header {
+    align-items: flex-start;
+    display: flex;
+}
+
+.slate-ratingview-remove {
+    background: none;
+    border: none;
+    box-shadow: none;
+    color: #999;
+    line-height: 1;
+    margin: -1px .5em 0 0;
+    padding: 0;
+
+    &:hover,
+    &:focus {
+        background: none;
+        color: $color;
+    }
+}
+
+.slate-ratingview-skill-title {
+    font-family: $body-font;
+    font-weight: normal;
+}
+
+.slate-ratingview-ratings {
+    display: flex;
+    list-style: none;
+    justify-content: space-around;
+    margin: 1em 0;
+    padding: 0 .75em;
+}
+
+.slate-ratingview-rating {
+    $size: 2em;
+
+    align-items: center;
+    border: 1px solid;
+    border-radius: 100%;
+    display: flex;
+    height: $size;
+    justify-content: center;
+    width: $size;
+}
+
+.slate-ratingview-rating-label {
+    font-size: .8em;
+}
