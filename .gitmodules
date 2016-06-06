@@ -38,3 +38,7 @@
 	path = sencha-workspace/ext-6.0.1.250
 	url = https://github.com/JarvusInnovations/extjs.git
 	branch = 6.0.1.250
+[submodule "saki-grid-multisearch"]
+	path = sencha-workspace/packages/saki-grid-multisearch-5
+	url = git@github.com:JarvusInnovations/saki-grid-multisearch.git
+	branch = master
