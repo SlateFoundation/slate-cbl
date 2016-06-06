@@ -1,6 +1,0 @@
-<IfModule mod_rewrite.c>
-RewriteEngine On
-
-RewriteRule ^cities\.php$ - [QSA]
-RewriteRule ^cities(/?)$ cities.php?objName=cities&cmd=getData [QSA]
-</IfModule>
