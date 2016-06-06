@@ -13,5 +13,8 @@ sencha app build
 cd ../SlateTasksStudent
 sencha app build
 
+cd ../SlateTasksManager
+sencha app build
+
 cd ../AggregridExample
 sencha app build
