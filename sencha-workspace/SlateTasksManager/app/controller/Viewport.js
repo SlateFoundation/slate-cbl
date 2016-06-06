@@ -5,22 +5,22 @@ Ext.define('SlateTasksManager.controller.Viewport', {
     ],
 
     views: [
-        'TasksManager@Slate.cbl.view.teacher'
+        'TasksManager'
     ],
 
     config: {
         refs: {
             tasksManager: {
-                selector: 'slate-tasksmanager',
+                selector: 'slate-tasks-manager',
                 autoCreate: true,
 
-                xtype: 'slate-tasksmanager'
+                xtype: 'slate-tasks-manager'
             }
         }
     },
 
     onLaunch: function () {
         // render dashboard
-        this.getTasksManager().render('slate-tasksmanager');
+        this.getTasksManager().render('slate-tasks-manager');
     }
 });

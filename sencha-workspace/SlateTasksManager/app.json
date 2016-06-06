@@ -69,7 +69,8 @@
     "requires": [
         "jarvus-hotfixes",
         "font-awesome",
-        "slate-cbl"
+        "slate-cbl",
+        "saki-grid-multisearch-5"
     ],
 
     /**

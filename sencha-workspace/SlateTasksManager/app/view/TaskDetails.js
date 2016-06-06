@@ -1,6 +1,6 @@
-Ext.define('Slate.cbl.view.teacher.TaskDetails', {
+Ext.define('SlateTasksManager.view.TaskDetails', {
     extend: 'Ext.Panel',
-    xtype: 'slate-taskdetails',
+    xtype: 'slate-tasks-manager-details',
     requires:[
     ],
 
@@ -9,7 +9,7 @@ Ext.define('Slate.cbl.view.teacher.TaskDetails', {
 
     title: 'Task Details',
 
-    componentCls: 'slate-taskdetails',
+    componentCls: 'slate-tasks-manager-details',
 
     bodyBorder: 1,
     bodyPadding: 16,
@@ -20,7 +20,7 @@ Ext.define('Slate.cbl.view.teacher.TaskDetails', {
 
     html: [
         '<h4>Google Docs:</h4>',
-        '<ul class="slate-taskdetails-doclist">',
+        '<ul class="slate-tasks-manager-details-doclist">',
             '<li><span class="title">Document Name</span></li>',
             '<li><span class="title">Document Name</span></li>',
         '</ul>',

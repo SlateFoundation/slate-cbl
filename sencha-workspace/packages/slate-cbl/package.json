@@ -12,7 +12,6 @@
         "emergence-apikit",
         "jarvus-ext-glyphs",
         "jarvus-ext-actionevents",
-        "slate-core-data",
-        "saki-grid-multisearch-5"
+        "slate-core-data"
     ]
 }

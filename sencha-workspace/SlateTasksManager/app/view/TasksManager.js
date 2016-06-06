@@ -1,8 +1,8 @@
-Ext.define('Slate.cbl.view.teacher.TasksManager', {
+Ext.define('SlateTasksManager.view.TasksManager', {
     extend: 'Ext.grid.GridPanel',
-    xtype: 'slate-tasksmanager',
+    xtype: 'slate-tasks-manager',
     requires:[
-        'Slate.cbl.view.teacher.TaskDetails',
+        'SlateTasksManager.view.TaskDetails',
 		'Ext.saki.grid.MultiSearch'
     ],
 
@@ -12,7 +12,7 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
     title: 'Task Database',
     header: false,
 
-    componentCls: 'slate-tasksmanager',
+    componentCls: 'slate-tasks-manager',
 
     dockedItems: [
         {
@@ -20,7 +20,7 @@ Ext.define('Slate.cbl.view.teacher.TasksManager', {
             dock: 'bottom'
         },
         {
-            xtype: 'slate-taskdetails',
+            xtype: 'slate-tasks-manager-details',
             dock: 'right',
             width: 240
         }
