@@ -1,11 +1,5 @@
 Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
-    requires: [
-    ],
-
-
-    config: {
-    },
 
 
     // entry points

@@ -6,6 +6,7 @@ Ext.define('SlateDemonstrationsStudent.view.OverviewWindowController', {
         'Slate.cbl.model.Skill'
     ],
 
+
     config: {
         id: 'slate-demonstrations-student-skill-overviewwindow', // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
         control: {
@@ -17,7 +18,6 @@ Ext.define('SlateDemonstrationsStudent.view.OverviewWindowController', {
             }
         }
     },
-
 
     // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
     applyId: function(id) {

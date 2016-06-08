@@ -11,6 +11,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         'Slate.cbl.data.Skills'
     ],
 
+
     config: {
         // required inputs
         competency: null,

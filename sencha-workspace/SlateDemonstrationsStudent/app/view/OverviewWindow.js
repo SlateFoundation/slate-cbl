@@ -9,8 +9,8 @@ Ext.define('SlateDemonstrationsStudent.view.OverviewWindow', {
         'Ext.data.ChainedStore'
     ],
 
-    controller: 'slate-demonstrations-student-skill-overviewwindow',
 
+    controller: 'slate-demonstrations-student-skill-overviewwindow',
 
     config: {
         competency: null

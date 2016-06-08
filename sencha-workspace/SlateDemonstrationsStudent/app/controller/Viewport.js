@@ -1,9 +1,6 @@
 Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
     extend: 'Ext.app.Controller',
 
-    config: {
-    },
-
 
     // controller configuration
     views: [
