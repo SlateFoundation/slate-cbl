@@ -2,11 +2,12 @@ Ext.define('SlateDemonstrationsStudent.view.OverviewWindow', {
     extend: 'Slate.cbl.view.standard.AbstractOverviewWindow',
     xtype: 'slate-demonstrations-student-skill-overviewwindow',
     requires: [
-        'SlateDemonstrationsStudent.view.OverviewWindowController',
+        'Ext.form.field.ComboBox',
+        'Ext.data.ChainedStore',
+
         'Slate.cbl.data.Skills',
 
-        'Ext.form.field.ComboBox',
-        'Ext.data.ChainedStore'
+        'SlateDemonstrationsStudent.view.OverviewWindowController'
     ],
 
 

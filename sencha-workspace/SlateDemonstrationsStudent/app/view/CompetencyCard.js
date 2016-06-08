@@ -5,10 +5,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         'Ext.util.Format',
 
         'Slate.cbl.Util',
-
-        'Slate.cbl.store.DemonstrationSkills',
-
-        'Slate.cbl.data.Skills'
+        'Slate.cbl.data.Skills',
+        'Slate.cbl.store.DemonstrationSkills'
     ],
 
 
