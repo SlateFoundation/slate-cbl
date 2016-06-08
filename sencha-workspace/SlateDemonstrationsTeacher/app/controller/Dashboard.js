@@ -46,6 +46,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         'EditWindow'
     ],
 
+    models: [
+        'Demonstration@Slate.cbl.model'
+    ],
+
     refs: {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
 
