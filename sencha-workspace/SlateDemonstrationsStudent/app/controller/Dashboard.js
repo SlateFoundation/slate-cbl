@@ -5,7 +5,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     // entry points
     control: {
         dashboardCt: {
-            render: 'onComponentRender'
+            render: 'onDashboardCtRender'
         },
         competencyCard: {
             democellclick: 'onDemoCellClick'
@@ -25,19 +25,19 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
 
     // event handlers
-    onComponentRender: function(dashboardView) {
-        var studentId = dashboardView.getStudentId(),
-            competenciesStore = dashboardView.getCompetenciesStore();
+    onDashboardCtRender: function(dashboardCt) {
+        var studentId = dashboardCt.getStudentId(),
+            competenciesStore = dashboardCt.getCompetenciesStore();
 
         if (!studentId || !competenciesStore.isLoaded()) { // TODO: check if competencies store is loaded instead
             return;
         }
 
-        dashboardView.setCompetenciesStatus('loading');
+        dashboardCt.setCompetenciesStatus('loading');
 
-        dashboardView.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
+        dashboardCt.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
             callback: function(completions) {
-                dashboardView.add(Ext.Array.map(completions, function(completion) {
+                dashboardCt.add(Ext.Array.map(completions, function(completion) {
                     return {
                         competency: competenciesStore.getById(completion.get('CompetencyID')),
                         completion: completion,
@@ -45,7 +45,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
                     };
                 }));
 
-                dashboardView.setCompetenciesStatus('loaded');
+                dashboardCt.setCompetenciesStatus('loaded');
             }
         });
     },
