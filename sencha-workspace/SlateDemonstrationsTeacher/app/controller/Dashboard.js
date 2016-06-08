@@ -13,10 +13,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     ],
 
 
-    config: {
-    },
-
-
     // entry points
     listen: {
         api: {
