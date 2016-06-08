@@ -1,9 +1,5 @@
 Ext.define('SlateDemonstrationsStudent.controller.Viewport', {
     extend: 'Ext.app.Controller',
-    requires: [
-        'Slate.API'
-    ],
-
 
     config: {
     },

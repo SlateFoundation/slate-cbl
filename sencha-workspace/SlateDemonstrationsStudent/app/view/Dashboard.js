@@ -2,17 +2,13 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-demonstrations-student-dashboard',
     requires:[
-        'Slate.cbl.Util',
-
         'Slate.cbl.widget.Popover',
 
         'SlateDemonstrationsStudent.view.CompetencyCard',
 
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.Completions',
-        'Slate.cbl.store.DemonstrationSkills',
-
-        'Slate.cbl.data.Skills'
+        'Slate.cbl.store.DemonstrationSkills'
     ],
 
     config: {
