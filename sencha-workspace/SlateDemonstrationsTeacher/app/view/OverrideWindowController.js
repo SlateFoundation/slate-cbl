@@ -1,9 +1,8 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
-Ext.define('SlateDemonstrationsTeacher.controller.OverrideWindow', {
-    extend: 'Ext.app.Controller',
+Ext.define('SlateDemonstrationsTeacher.view.OverrideWindowController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.slate-demonstrations-teacher-skill-overridewindow',
     requires: [
         'Ext.window.Toast',
-        'Ext.window.MessageBox',
 
         'Slate.API',
 
@@ -11,32 +10,19 @@ Ext.define('SlateDemonstrationsTeacher.controller.OverrideWindow', {
     ],
 
     config: {
-    },
-
-
-    // entry points
-    listen: {
-    },
-
-    control: {
-        overrideWindow: {
-            beforeshow: 'onBeforeWindowShow'
+        // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        id: 'slate-demonstrations-teacher-skill-overridewindow',
+        control: {
+           '#': {
+               beforeshow: 'onBeforeWindowShow'
+           },
+            'button[action=submit]': {
+                click: 'onSubmitClick'
+            }
         },
-        'button[action=submit]': {
-            click: 'onSubmitClick'
-        },
-    },
 
-
-    // controller configuration
-    views: [
-      'SlateDemonstrationsTeacher.view.OverrideWindow'
-    ],
-
-    refs: {
-        overrideWindow: 'slate-demonstrations-teacher-skill-overridewindow',
-
-        summaryCmp: 'component[reference=summary]'
+        listen: {
+        }
     },
 
 
@@ -58,12 +44,12 @@ Ext.define('SlateDemonstrationsTeacher.controller.OverrideWindow', {
     },
 
 
-    // // template methods
+    // template methods
     onBeforeWindowShow: function(overrideWindow) {
         var me = this,
             student = overrideWindow.getStudent(),
             standard = overrideWindow.getStandard(),
-            summaryCmp = me.getSummaryCmp();
+            summaryCmp = me.lookupReference('summary');
 
         if (student.isLoading()) {
             // framework will append our callback to the existing operation if the model is already loading

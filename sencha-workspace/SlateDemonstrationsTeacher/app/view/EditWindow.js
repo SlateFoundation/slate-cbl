@@ -3,8 +3,9 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
     extend: 'Ext.window.Window',
     xtype: 'slate-demonstrations-teacher-demonstration-editwindow',
     requires: [
+        'SlateDemonstrationsTeacher.view.EditWindowController',
         'SlateDemonstrationsTeacher.view.CompetencyCard',
-        
+
         'Slate.cbl.data.ContentAreas',
         'Slate.cbl.data.Competencies',
         'Slate.cbl.model.Demonstration',
@@ -23,6 +24,8 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
         'Ext.data.ChainedStore'
     ],
 
+    controller: 'slate-demonstrations-teacher-demonstration-editwindow',
+
     config: {
         demonstration: {
             Class: 'Slate\\CBL\\Demonstrations\\ExperienceDemonstration'
@@ -35,6 +38,14 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
     title: 'Log a demonstration',
     width: 600,
     constrainHeader: true,
+
+//    tools: [
+//        {
+//            type: 'gear',
+//            tooltip: 'Override'
+//        }
+//    ],
+
     layout: 'fit',
     items: {
         reference: 'form',
@@ -61,6 +72,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
 
                 store: {
                     type: 'chained'
+//                    source: 'cbl-students-loaded'
                 },
                 queryMode: 'local',
                 displayField: 'FullName',
@@ -113,14 +125,20 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
             {
                 reference: 'competenciesTabPanel',
                 anchor: '100%',
+
+//              competencyTipTitleTpl: '{Descriptor}',
+//              competencyTipBodyTpl: '{Statement}',
+
                 xtype: 'tabpanel',
                 tabBar: {
                     hidden: true
                 },
                 margin: '10 -16',
+//                bodyPadding: '16 75',
                 bodyStyle: {
                     backgroundColor: '#ddd'
                 },
+                // title: 'Competencies',
                 defaultType: 'slate-demonstrations-teacher-demonstration-competencycard',
                 defaults: {
                     closable: true
@@ -154,6 +172,19 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                                 text: 'Descriptor',
                                 dataIndex: 'Descriptor',
                                 flex: 1
+/*
+                            },
+                            {
+                                xtype: 'actioncolumn',
+                                width: 40,
+                                items: [
+                                    {
+                                        action: 'add',
+                                        glyph: 0xf0fe + '@FontAwesome',
+                                        tooltip: 'Add competency to this demonstration'
+                                    }
+                                ]
+*/
                             }
                         ],
                         features: [
@@ -163,6 +194,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                                 groupHeaderTpl: [
                                     '<tpl for="this.getContentAreaData(values.groupValue)">',
                                         '<span class="title">{Title}</span>',
+//                                        '<span class="count">{[parent.children.length]}</span>',
                                     '</tpl>',
                                     {
                                         getContentAreaData: function(contentAreaId) {
@@ -242,14 +274,15 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
             me.on('render', _fireEvent, me, { single: true });
         }
     },
-    
+
     initComponent: function() {
         var me = this,
             studentCombo;
-            
+
         me.callParent(arguments);
-        
-        studentCombo = Ext.ComponentQuery.query('combobox[reference=studentCombo]')[0];
+
+        studentCombo = me.lookupReference('studentCombo');
+        studentCombo.getStore().setSource(me.getStudentsStore());
         studentCombo.setValue(me.getDefaultStudent());
     }
 });

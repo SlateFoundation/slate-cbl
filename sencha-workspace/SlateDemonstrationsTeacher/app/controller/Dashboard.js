@@ -8,15 +8,15 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         'Jarvus.util.APIDomain',
 
         'Slate.API',
-        
+
         'Ext.window.MessageBox'
     ],
-    
-    
+
+
     config: {
     },
-    
-    
+
+
     // entry points
     listen: {
         api: {
@@ -24,7 +24,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
             demonstrationdelete: 'onDemonstrationDelete'
         }
     },
-    
+
     control: {
         studentProgressGrid: {
             competencyrowclick: 'onCompetencyRowClick',
@@ -37,30 +37,30 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
             createoverrideclick: 'onOverviewCreateOverrideClick'
         }
     },
-    
-    
+
+
     // controller configuration
     views: [
-        'SlateDemonstrationsTeacher.view.OverviewWindow',
-        'SlateDemonstrationsTeacher.view.OverrideWindow',
-        'SlateDemonstrationsTeacher.view.EditWindow'
+        'OverviewWindow',
+        'OverrideWindow',
+        'EditWindow'
     ],
-    
+
     refs: {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
-        
+
         studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
         teacherOverviewwindow: 'slate-demonstrations-teacher-skill-overviewwindow'
-    },  
+    },
 
 
     // event handers
     onCompetencyRowClick: function(me, competency, ev, targetEl) {
         me.toggleCompetency(competency);
     },
-    
+
     onDemoCellClick: function(progressGrid, ev, targetEl) {
-        Ext.create('SlateDemonstrationsTeacher.view.OverviewWindow', {
+        this.getOverviewWindowView().create({
             ownerCmp: this.getDashboardCt(),
             autoShow: true,
             animateTarget: targetEl,
@@ -141,7 +141,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     },
 
     onOverviewCreateOverrideClick: function(overviewWindow, studentId, standardId) {
-        Ext.create('SlateDemonstrationsTeacher.view.OverrideWindow', {
+        this.getOverrideWindowView().create({
             ownerCmp: this.getDashboardCt(),
             autoShow: true,
 
@@ -163,7 +163,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     showDemonstrationEditWindow: function(options) {
         var dashboardView = this.getDashboardCt();
 
-        return Ext.create('SlateDemonstrationsTeacher.view.EditWindow', Ext.apply({
+        return this.getEditWindowView().create(Ext.apply({
             ownerCmp: dashboardView,
             autoShow: true,
 

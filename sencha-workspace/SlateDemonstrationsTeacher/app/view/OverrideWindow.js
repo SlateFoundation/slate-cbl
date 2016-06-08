@@ -3,7 +3,7 @@ Ext.define('SlateDemonstrationsTeacher.view.OverrideWindow', {
     extend: 'Ext.window.Window',
     xtype: 'slate-demonstrations-teacher-skill-overridewindow',
     requires: [
-        // 'SlateDemonstrationsTeacher.controller.OverrideWindow',
+        'SlateDemonstrationsTeacher.view.OverrideWindowController',
 
         'Slate.cbl.API',
 
@@ -13,7 +13,7 @@ Ext.define('SlateDemonstrationsTeacher.view.OverrideWindow', {
         'Ext.form.field.TextArea'
     ],
 
-    // controller: 'slate-cbl-teacher-skill-overridewindow',
+    controller: 'slate-demonstrations-teacher-skill-overridewindow',
 
     config: {
         student: null,
