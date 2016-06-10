@@ -63,9 +63,17 @@ foreach ($demonstrations AS $Demonstration) {
 
         $row['Competency'] = $skill->Competency->Code;
         $row['Standard'] = $skill->Code;
-        $row['Rating'] = $DemonstrationSkill->DemonstratedLevel > 0 ?  $DemonstrationSkill->DemonstratedLevel : 'M';
+
+        // For overriden demonstrations, rating should be "O" rather than the DemonstratedLevel
+        if ($DemonstrationSkill->Override==1) {
+            $row['Rating'] = "O";
+        } else {
+            $row['Rating'] = $DemonstrationSkill->DemonstratedLevel > 0 ?  $DemonstrationSkill->DemonstratedLevel : 'M';
+        }
+
         $row['Level'] = $DemonstrationSkill->TargetLevel;
         $row['Mapping'] = '';
+
         $sw->writeRow($row);
     }
 }
