@@ -3,6 +3,7 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 
 // This was causing a script timeout (30 seconds), this should help speed it up
 \Site::$debug = false;
+set_time_limit(0);
 
 $sw = new SpreadsheetWriter();
 
