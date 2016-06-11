@@ -8,6 +8,17 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
 
     title: 'Create Task',
 
+    afterRender: function() {
+        this.callParent(arguments);
+
+        this.down('#experience-type').markInvalid([
+            'Thomas Drake',
+            'Ryan Miller',
+            'Jenna Smith',
+            'Kelly Williams'
+        ]);
+    },
+
     dockedItems: [
         {
             dock: 'bottom',
@@ -44,6 +55,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     emptyText: '(Optional)'
                 },
                 {
+                    itemId: 'experience-type',
                     fieldLabel: 'Type of Experience'
                 },
                 {
@@ -78,6 +90,8 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 {
                     xtype: 'fieldcontainer',
                     fieldLabel: 'Attachments',
+                    msgTarget: 'side',
+                    autoFitErrors: false,
                     items: [
                         {
                             xtype: 'textfield',

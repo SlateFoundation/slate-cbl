@@ -7,8 +7,11 @@ Ext.define('Slate.cbl.view.modals.ModalForm', {
     defaultType: 'combo',
     defaults: {
         anchor: '100%',
+        autoFitErrors: false,
+        combineErrors: true,
         labelAlign: 'right',
         labelPad: 16,
-        labelWidth: 144
-    }
+        labelWidth: 144,
+        msgTarget: 'side'
+    },
 });
