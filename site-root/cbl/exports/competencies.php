@@ -121,12 +121,11 @@ foreach ($students AS $Student) {
                 if(isset($missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID])) {
                     $demonstrationsMissing += $missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID];
                 }
-
-                $row[] = $demonstrationsCounted;
-                $row[] = $demonstrationsRequired;
-                $row[] = $demonstrationsMissing;
-                $row[] = intval($demonstrationsCounted ? round($contentAreaAverageTotal / $demonstrationsCounted, 2) : null);
             }
+            $row[] = $demonstrationsCounted;
+            $row[] = $demonstrationsRequired;
+            $row[] = $demonstrationsMissing;
+            $row[] = intval($demonstrationsCounted ? round($contentAreaAverageTotal / $demonstrationsCounted, 2) : null);
         }
         $sw->writeRow($row);
     }
