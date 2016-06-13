@@ -27,13 +27,24 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
 
     // controller configuration
-    views: [
-    ],
-
     refs: {
-      dashboardCt: 'slate-tasks-teacher-dashboard',
+        dashboardCt: {
+            selector: 'slate-tasks-teacher-dashboard',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-dashboard'
+        },
 
       taskGrid: 'slate-tasks-teacher-dashboard slate-tasks-teacher-studentstaskgrid'
+    },
+
+
+    // controller templates method overrides
+    onLaunch: function () {
+        var dashboardCt;
+
+        dashboardCt = this.getDashboardCt();
+        dashboardCt.render('slateapp-viewport')
     },
 
 
