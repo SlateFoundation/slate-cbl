@@ -13,9 +13,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     ],
 
 
-    config: {
-    },
-
     stores: [
         'Students@Slate.cbl.store',
         'ContentAreas@Slate.cbl.store',
