@@ -4,11 +4,6 @@
  */
 Ext.define('SlateTasksTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
-    requires: [
-        'Jarvus.util.APIDomain',
-
-        'Slate.API',
-    ],
 
 
     // entry points
