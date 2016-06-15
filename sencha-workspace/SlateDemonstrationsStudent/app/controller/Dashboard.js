@@ -15,9 +15,9 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
    // controller configuration
     views: [
-        'OverviewWindow',
+        'Dashboard',
         'RecentProgress',
-        'CompetencyCard'
+        'OverviewWindow'
     ],
 
 
