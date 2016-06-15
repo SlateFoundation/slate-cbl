@@ -26,6 +26,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     // entry points
     listen: {
+        store: {
+            'ContentAreas': {
+                load: 'onContentAreasStoreLoad'
+            }
+        },
         api: {
             demonstrationsave: 'onDemonstrationSave',
             demonstrationdelete: 'onDemonstrationDelete'
@@ -101,8 +106,21 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
             studentStore = me.getStudentsStore(),
             contentAreaStore = me.getContentAreasStore();
 
-        dashboardCt.setStudentsStore(studentStore);
-        dashboardCt.setContentAreasStore(contentArea);
+        contentAreaStore.load();
+
+        // debugger;
+    },
+
+    onContentAreasStoreLoad: function(store, records, success, operation) {
+        var responseData;
+
+        debugger;
+
+        if (!success) {
+            responseData = Ext.decode(operation.getError().response.responseText, true) || {};
+            store.removeAll();
+            Ext.Msg.alert('Applies not loaded', responseData.error || 'Failed to fetch applies from server');
+        }
     },
 
     onCompetencyRowClick: function(me, competency, ev, targetEl) {
