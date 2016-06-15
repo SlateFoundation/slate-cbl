@@ -37,6 +37,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     // controller configuration
     views: [
+        'Dashboard',
         'OverviewWindow',
         'OverrideWindow',
         'EditWindow'
