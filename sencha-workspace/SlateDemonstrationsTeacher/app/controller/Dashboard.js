@@ -26,7 +26,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
             competencyrowclick: 'onCompetencyRowClick',
             democellclick: 'onDemoCellClick'
         },
-        teacherOverviewwindow: {
+        'slate-demonstrations-teacher-skill-overviewwindow': {
             createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
             editdemonstrationclick: 'onOverviewEditDemonstrationClick',
             deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
@@ -37,6 +37,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     // controller configuration
     views: [
+        'Dashboard',
         'OverviewWindow',
         'OverrideWindow',
         'EditWindow'
@@ -47,10 +48,38 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     ],
 
     refs: {
-        dashboardCt: 'slate-demonstrations-teacher-dashboard',
+        dashboardCt: {
+            selector: 'slate-demonstrations-teacher-dashboard',
+            autoCreate: true,
 
-        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
-        teacherOverviewwindow: 'slate-demonstrations-teacher-skill-overviewwindow'
+            xtype: 'slate-demonstrations-teacher-dashboard'
+        },
+        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid'
+    },
+
+
+    // controller templates method overrides
+    onLaunch: function () {
+        var siteEnv = window.SiteEnvironment || {},
+            contentAreaCode = (siteEnv.cblContentArea || {}).Code,
+            dashboardCt = this.getDashboardCt(),
+            progressGrid = dashboardCt.getProgressGrid();
+
+        // configure dashboard with any available embedded data
+        if (contentAreaCode) {
+            progressGrid.setStudentDashboardLink('/cbl/student-dashboard?content-area=' + encodeURIComponent(contentAreaCode));
+        }
+
+        if (siteEnv.cblStudents) {
+            progressGrid.getStudentsStore().loadData(siteEnv.cblStudents);
+        }
+
+        if (siteEnv.cblCompetencies) {
+            progressGrid.getCompetenciesStore().loadData(siteEnv.cblCompetencies);
+        }
+
+        // render dashboard
+        dashboardCt.render('slateapp-viewport');
     },
 
 

@@ -12,7 +12,6 @@ Ext.define('SlateTasksTeacher.Application', {
     name: 'SlateTasksTeacher',
 
     controllers: [
-        'Viewport',
         'Dashboard'
     ],
 
