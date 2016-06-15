@@ -22,7 +22,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
             xtype: 'slate-tasks-teacher-dashboard'
         },
-
         taskGrid: 'slate-tasks-teacher-dashboard slate-tasks-teacher-studentstaskgrid'
     },
 
