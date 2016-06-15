@@ -38,6 +38,5 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     // event handlers
     onCompetencyRowClick: function(me, competency, ev, targetEl) {
         me.toggleCompetency(competency);
-    },
-
+    }
 });
