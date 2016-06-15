@@ -28,10 +28,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     // controller templates method overrides
     onLaunch: function () {
-        var dashboardCt;
-
-        dashboardCt = this.getDashboardCt();
-        dashboardCt.render('slateapp-viewport')
+        this.getDashboardCt().render('slateapp-viewport');
     },
 
 
