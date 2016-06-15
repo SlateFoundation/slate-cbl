@@ -15,6 +15,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
 
     // controller configuration
+    views: [
+        'Dashboard'
+    ],
+
     refs: {
         dashboardCt: {
             selector: 'slate-tasks-teacher-dashboard',
