@@ -11,10 +11,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     ],
 
 
-    config: {
-    },
-
-
     // entry points
     listen: {
     },
