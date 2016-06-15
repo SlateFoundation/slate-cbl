@@ -7,11 +7,22 @@ Ext.define('Slate.cbl.view.modals.ModalForm', {
     defaultType: 'combo',
     defaults: {
         anchor: '100%',
-        autoFitErrors: false,
+        beforeSubTpl: [
+            '<div class="slate-field-warning">',
+                '<div class="slate-field-warning-popover">',
+                    '<strong>Some students will not be affected because of reasons:</strong>',
+                    '<ul>',
+                        '<li>Foo Bar Baz</li>',
+                        '<li>Wibble Wobble Wubble</li>',
+                        '<li>Jane Doe</li>',
+                    '</ul>',
+                '</div>',
+            '</div>',
+        ],
         combineErrors: true,
         labelAlign: 'right',
         labelPad: 16,
         labelWidth: 144,
-        msgTarget: 'side'
+        msgTarget: 'under'
     },
 });

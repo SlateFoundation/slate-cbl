@@ -11,12 +11,9 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
     afterRender: function() {
         this.callParent(arguments);
 
-        this.down('#experience-type').markInvalid([
-            'Thomas Drake',
-            'Ryan Miller',
-            'Jenna Smith',
-            'Kelly Williams'
-        ]);
+        this.down('#experience-type').addCls('has-warning');
+
+        this.down('#assigned-to').markInvalid('Foo bar baz qux');
     },
 
     dockedItems: [
@@ -73,6 +70,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     defaults: { margin: 0 },
                     items: [
                         {
+                            itemId: 'assigned-to',
                             flex: 1,
                             xtype: 'combo'
                         },
@@ -90,8 +88,6 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 {
                     xtype: 'fieldcontainer',
                     fieldLabel: 'Attachments',
-                    msgTarget: 'side',
-                    autoFitErrors: false,
                     items: [
                         {
                             xtype: 'textfield',
