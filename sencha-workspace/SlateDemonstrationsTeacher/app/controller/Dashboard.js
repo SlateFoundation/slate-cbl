@@ -62,10 +62,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     onLaunch: function () {
         var siteEnv = window.SiteEnvironment || {},
             contentAreaCode = (siteEnv.cblContentArea || {}).Code,
-            dashboardCt, progressGrid;
-
-        dashboardCt = this.getDashboardCt();
-        progressGrid = dashboardCt.getProgressGrid();
+            dashboardCt = this.getDashboardCt(),
+            progressGrid = dashboardCt.getProgressGrid();
 
         // configure dashboard with any available embedded data
         if (contentAreaCode) {
