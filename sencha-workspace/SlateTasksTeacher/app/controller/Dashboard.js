@@ -7,9 +7,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
 
     // entry points
-    listen: {
-    },
-
     control: {
         taskGrid: {
             competencyrowclick: 'onCompetencyRowClick'
