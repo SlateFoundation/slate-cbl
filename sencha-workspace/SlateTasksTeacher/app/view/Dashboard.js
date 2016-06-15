@@ -9,6 +9,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
         'SlateTasksTeacher.view.GridLegend'
     ],
 
+
     config: {
         taskGrid: true,
         gridLegend: true
