@@ -5,7 +5,6 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-tasks-teacher-dashboard',
     requires:[
-        'SlateTasksTeacher.controller.Dashboard',
         'SlateTasksTeacher.view.StudentsGrid',
         'SlateTasksTeacher.view.GridLegend'
     ],
@@ -18,9 +17,9 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     applyTaskGrid: function(taskGrid, oldTaskGrid) {
         return Ext.factory(taskGrid, 'SlateTasksTeacher.view.StudentsGrid', oldTaskGrid);
     },
-    
+
     applyGridLegend: function(gridLegend, oldGridLegend) {
-        return Ext.factory(gridLegend, 'SlateTasksTeacher.view.GridLegend', oldGridLegend);  
+        return Ext.factory(gridLegend, 'SlateTasksTeacher.view.GridLegend', oldGridLegend);
     },
 
     initComponent: function() {
