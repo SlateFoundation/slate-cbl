@@ -48,13 +48,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     ],
 
     refs: {
-        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
         dashboardCt: {
             selector: 'slate-demonstrations-teacher-dashboard',
             autoCreate: true,
 
             xtype: 'slate-demonstrations-teacher-dashboard'
-        }
+        },
+        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid'
     },
 
 
