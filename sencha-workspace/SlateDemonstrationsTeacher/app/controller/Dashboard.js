@@ -26,7 +26,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
             competencyrowclick: 'onCompetencyRowClick',
             democellclick: 'onDemoCellClick'
         },
-        teacherOverviewwindow: {
+        'slate-demonstrations-teacher-skill-overviewwindow': {
             createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
             editdemonstrationclick: 'onOverviewEditDemonstrationClick',
             deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
@@ -49,7 +49,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     refs: {
         studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
-        teacherOverviewwindow: 'slate-demonstrations-teacher-skill-overviewwindow',
         dashboardCt: {
             selector: 'slate-demonstrations-teacher-dashboard',
             autoCreate: true,
