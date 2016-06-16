@@ -3,13 +3,13 @@
      *  An array of the paths to all the applications present in this workspace
      */
     "apps": [
-        "SlateTasksStudent",
+        "AggregridExample",
         "SlateDemonstrationsStudent",
         "SlateDemonstrationsTeacher",
         "SlateTasksManager",
+        "SlateTasksStudent",
         "SlateTasksTeacher",
-        "SlateModals",
-        "AggregridExample"
+        "SlateModals"
     ],
 
     /**
