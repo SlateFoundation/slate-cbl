@@ -30,10 +30,6 @@
 	path = sencha-workspace/packages/jarvus-aggregrid
 	url = https://github.com/JarvusInnovations/jarvus-aggregrid.git
 	branch = master
-[submodule "ext-6.0.0.640"]
-	path = sencha-workspace/ext-6.0.0.640
-	url = https://github.com/JarvusInnovations/extjs.git
-	branch = 6.0.0.640
 [submodule "ext-6.0.1.250"]
 	path = sencha-workspace/ext-6.0.1.250
 	url = https://github.com/JarvusInnovations/extjs.git
