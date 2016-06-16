@@ -6,7 +6,8 @@
         "SlateTasksStudent",
         "SlateDemonstrationsStudent",
         "SlateDemonstrationsTeacher",
-        "SlateTasksManager"
+        "SlateTasksManager",
+        "SlateTasksTeacher"
     ],
 
     /**
