@@ -1,6 +1,12 @@
-Ext.define('Slate.cbl.view.modals.Modals', {
+Ext.define('SlateModals.view.Modals', {
     extend: 'Ext.Container',
     xtype: 'slate-modals',
+
+    requires: [
+        'SlateModals.view.CreateTask',
+        'SlateModals.view.RateTask',
+        'SlateModals.view.AssignLater'
+    ],
 
     layout: {
         type: 'vbox',
@@ -19,19 +25,19 @@ Ext.define('Slate.cbl.view.modals.Modals', {
         {
             text: 'Create Task',
             handler: function() {
-                Ext.create('Slate.cbl.view.modals.CreateTask').show();
+                Ext.create('SlateModals.view.CreateTask').show();
             }
         },
         {
             text: 'Rate Task',
             handler: function() {
-                Ext.create('Slate.cbl.view.modals.RateTask').show();
+                Ext.create('SlateModals.view.RateTask').show();
             }
         },
         {
             text: 'Assign Later',
             handler: function() {
-                Ext.create('Slate.cbl.view.modals.AssignLater').show();
+                Ext.create('SlateModals.view.AssignLater').show();
             }
         }
     ]

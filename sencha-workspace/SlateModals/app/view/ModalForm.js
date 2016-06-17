@@ -1,4 +1,4 @@
-Ext.define('Slate.cbl.view.modals.ModalForm', {
+Ext.define('SlateModals.view.ModalForm', {
     extend: 'Ext.form.Panel',
     xtype: 'slate-modalform',
 
@@ -17,7 +17,7 @@ Ext.define('Slate.cbl.view.modals.ModalForm', {
                         '<li>Jane Doe</li>',
                     '</ul>',
                 '</div>',
-            '</div>',
+            '</div>'
         ],
         combineErrors: true,
         labelAlign: 'right',

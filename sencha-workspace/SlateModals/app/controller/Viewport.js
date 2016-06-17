@@ -5,7 +5,7 @@ Ext.define('SlateModals.controller.Viewport', {
     ],
 
     views: [
-        'Modals@Slate.cbl.view.modals'
+        'Modals@SlateModals.view'
     ],
 
     config: {

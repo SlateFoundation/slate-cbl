@@ -1,9 +1,9 @@
-Ext.define('Slate.cbl.view.modals.RateTask', {
-    extend: 'Slate.cbl.view.modals.Modal',
+Ext.define('SlateModals.view.RateTask', {
+    extend: 'SlateModals.view.Modal',
     xtype: 'slate-ratetaskwindow',
     requires: [
         'Slate.cbl.view.AttachmentsList',
-        'Slate.cbl.view.modals.ModalForm',
+        'SlateModals.view.ModalForm',
         'Slate.cbl.widget.RatingView'
     ],
 

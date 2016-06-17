@@ -1,9 +1,9 @@
-Ext.define('Slate.cbl.view.modals.AssignLater', {
-    extend: 'Slate.cbl.view.modals.Modal',
+Ext.define('SlateModals.view.AssignLater', {
+    extend: 'SlateModals.view.Modal',
     xtype: 'slate-assignlaterwindow',
     requires: [
         'Slate.cbl.view.AttachmentsList',
-        'Slate.cbl.view.modals.ModalForm'
+        'SlateModals.view.ModalForm'
     ],
 
     title: 'Assign Later',

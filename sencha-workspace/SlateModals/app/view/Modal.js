@@ -1,4 +1,4 @@
-Ext.define('Slate.cbl.view.modals.Modal', {
+Ext.define('SlateModals.view.Modal', {
     extend: 'Ext.Window',
     xtype: 'slate-modal',
 
