@@ -3,6 +3,7 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 
 // This was causing a script timeout (30 seconds), this should help speed it up
 \Site::$debug = false;
+set_time_limit(0);
 
 $sw = new SpreadsheetWriter();
 
@@ -63,9 +64,19 @@ foreach ($demonstrations AS $Demonstration) {
 
         $row['Competency'] = $skill->Competency->Code;
         $row['Standard'] = $skill->Code;
-        $row['Rating'] = $DemonstrationSkill->DemonstratedLevel > 0 ?  $DemonstrationSkill->DemonstratedLevel : 'M';
+
+        // For overriden demonstrations, rating should be "O" rather than the DemonstratedLevel
+        if ($DemonstrationSkill->Override) {
+            $row['Rating'] = 'O';
+        } elseif ($DemonstrationSkill->DemonstratedLevel > 0) {
+            $row['Rating'] = $DemonstrationSkill->DemonstratedLevel;
+        } else {
+            $row['Rating'] = 'M';
+        }
+
         $row['Level'] = $DemonstrationSkill->TargetLevel;
         $row['Mapping'] = '';
+
         $sw->writeRow($row);
     }
 }
