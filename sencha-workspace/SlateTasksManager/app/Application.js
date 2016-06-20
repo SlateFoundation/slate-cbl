@@ -12,7 +12,8 @@ Ext.define('SlateTasksManager.Application', {
     name: 'SlateTasksManager',
 
     controllers: [
-        'Viewport'
+        'Viewport',
+        'Tasks'
     ],
 
     onAppUpdate: function () {

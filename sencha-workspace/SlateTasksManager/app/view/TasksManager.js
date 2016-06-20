@@ -3,6 +3,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     xtype: 'slate-tasks-manager',
     requires:[
         'SlateTasksManager.view.TaskDetails',
+        'SlateTasksManager.view.TaskManagerToolbar',
 		'Ext.saki.grid.MultiSearch'
     ],
 
@@ -23,6 +24,9 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             xtype: 'slate-tasks-manager-details',
             dock: 'right',
             width: 240
+        },
+        {
+            xtype: 'slate-tasks-manager-toolbar'
         }
     ],
 
