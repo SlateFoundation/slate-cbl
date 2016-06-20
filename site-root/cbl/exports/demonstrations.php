@@ -66,10 +66,10 @@ foreach ($demonstrations AS $Demonstration) {
         $row['Standard'] = $skill->Code;
 
         // For overriden demonstrations, rating should be "O" rather than the DemonstratedLevel
-        if ($DemonstrationSkill->Override==1) {
-            $row['Rating'] = "O";
+        if ($DemonstrationSkill->Override) {
+            $row['Rating'] = 'O';
         } else {
-            $row['Rating'] = $DemonstrationSkill->DemonstratedLevel > 0 ?  $DemonstrationSkill->DemonstratedLevel : 'M';
+            $row['Rating'] = $DemonstrationSkill->DemonstratedLevel > 0 ? $DemonstrationSkill->DemonstratedLevel : 'M';
         }
 
         $row['Level'] = $DemonstrationSkill->TargetLevel;
