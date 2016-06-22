@@ -9,6 +9,10 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'TasksManager'
     ],
 
+    stores: [
+        'Tasks'
+    ],
+
     config: {
         refs: {
             tasksManager: {
@@ -25,25 +29,25 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slatetasksmanager-task-editor'
             },
 
-            taskEditorForm: {
-                selector: 'slatetasksmanager-task-editor slate-modalform'
-            }
+            taskEditorForm: 'slatetasksmanager-task-editor slate-modalform'
         }
     },
 
     control: {
-        'slate-tasks-manager toolbar button[reference=deletebtn]': {
+        'slate-tasks-manager toolbar button[action=deletebtn]': {
             click: 'onDeleteTaskClick'
         },
-        'slate-tasks-manager toolbar button[reference=editbtn]': {
+        'slate-tasks-manager toolbar button[action=editbtn]': {
             click: 'onEditTaskClick'
         },
-        'slate-tasks-manager toolbar button[reference=createbtn]': {
+        'slate-tasks-manager toolbar button[action=createbtn]': {
             click: 'onCreateTaskClick'
         }
     },
 
-    onLaunch: function () {},
+    onLaunch: function () {
+        this.getTasksManager().render('slate-tasks-manager');
+    },
 
     onCreateTaskClick: function() {
         return this.editTask();
@@ -91,10 +95,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     deleteTask: function(taskRecord) {
-        var store = taskRecord.store;
+        var store = this.getTasksStore();
 
-        if (store) {
-            store.remove(taskRecord);
-        }
+        store.remove(taskRecord);
+        store.sync();
     }
 });
