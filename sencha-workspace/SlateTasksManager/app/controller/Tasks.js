@@ -34,13 +34,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     control: {
-        'slate-tasks-manager toolbar button[action=deletebtn]': {
+        'slate-tasks-manager toolbar button[action=delete]': {
             click: 'onDeleteTaskClick'
         },
-        'slate-tasks-manager toolbar button[action=editbtn]': {
+        'slate-tasks-manager toolbar button[action=edit]': {
             click: 'onEditTaskClick'
         },
-        'slate-tasks-manager toolbar button[action=createbtn]': {
+        'slate-tasks-manager toolbar button[action=create]': {
             click: 'onCreateTaskClick'
         }
     },

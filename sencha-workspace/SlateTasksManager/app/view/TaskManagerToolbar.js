@@ -8,13 +8,13 @@ Ext.define('SlateTasksManager.view.TaskManagerToolbar', {
         '->',
     {
         text: 'Create',
-        action: 'createbtn'
+        action: 'create'
     },{
         text: 'Edit',
-        action: 'editbtn'
+        action: 'edit'
     },{
         text: 'Delete',
-        action: 'deletebtn'
+        action: 'delete'
     }]
 
 });
