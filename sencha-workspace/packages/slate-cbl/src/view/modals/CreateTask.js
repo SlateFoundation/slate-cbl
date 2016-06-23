@@ -3,17 +3,23 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
     xtype: 'slate-createtaskwindow',
     requires: [
         'Slate.cbl.view.AttachmentsList',
-        'Slate.cbl.view.modals.ModalForm'
+        'Slate.cbl.view.modals.ModalForm',
+        'Slate.cbl.view.modals.WarningWindow'
     ],
 
     title: 'Create Task',
 
     afterRender: function() {
-        this.callParent(arguments);
+        var me = this;
+        me.callParent();
 
-        this.down('#experience-type').addCls('has-warning');
-
-        this.down('#assigned-to').markInvalid('Foo bar baz qux');
+        me.down('#experience-type').addCls('has-warning');
+        me.down('#assigned-to').markInvalid('Foo bar baz qux');
+        me.el.on('click', function(ev, t) {
+            Ext.create('Slate.cbl.view.modals.WarningWindow').show();
+        }, {
+            delegate: '.slate-field-warning'
+        });
     },
 
     dockedItems: [
