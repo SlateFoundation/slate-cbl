@@ -16,7 +16,9 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         me.down('#experience-type').addCls('has-warning');
         me.down('#assigned-to').markInvalid('Foo bar baz qux');
         me.el.on('click', function(ev, t) {
-            Ext.create('Slate.cbl.view.modals.WarningWindow').show();
+            if (Ext.fly(t).hasCls('slate-field-warning')) {
+                Ext.create('Slate.cbl.view.modals.WarningWindow').show();
+            }
         }, {
             delegate: '.slate-field-warning'
         });
