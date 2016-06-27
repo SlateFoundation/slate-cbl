@@ -106,12 +106,12 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                             '</div>',
                         '</div>',
                     '</div>',
-                    
+
                     '<tpl if="subtasks">',
                         '<ul class="slate-tasktree-sublist">',
 
                             '<tpl for="subtasks">',
-                                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{status}">',                
+                                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{status}">',
 
                                     '<div class="flex-ct">',
                                         '<div class="slate-tasktree-nub"></div>',
@@ -142,7 +142,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                     late: 'Past Due',
                     revision: 'Revision Due'
                 };
-    
+
                 return statusStrings[key] || '';
             }
         }
