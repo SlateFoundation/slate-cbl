@@ -4,7 +4,8 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
     requires: [
         'Slate.cbl.view.AttachmentsList',
         'Slate.cbl.view.modals.ModalForm',
-        'Slate.cbl.view.modals.WarningWindow'
+        'Slate.cbl.view.modals.WarningWindow',
+        'Slate.cbl.widget.SkillsField'
     ],
 
     title: 'Create Task',
@@ -134,8 +135,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     ]
                 },
                 {
-                    fieldLabel: 'Skills',
-                    emptyText: 'Competency code or statement&hellip;'
+                    xtype: 'slate-skillsfield',
                 },
                 {
                     xtype: 'fieldcontainer',
