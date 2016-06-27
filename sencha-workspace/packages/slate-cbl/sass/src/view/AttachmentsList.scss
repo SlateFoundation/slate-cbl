@@ -39,6 +39,10 @@
             opacity: 1;
         }
     }
+
+    &:hover {
+        background-color: rgba($base-color, .1);
+    }
 }
 
 .slate-attachment-title {
