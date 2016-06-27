@@ -13,6 +13,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     },
 
     title: 'Current Tasks',
+    showTools: true,
 
     componentCls: 'slate-tasktree',
 

@@ -4,6 +4,33 @@ Ext.define('Slate.cbl.widget.SimplePanel', {
 
     baseCls: 'slate-simplepanel',
 
+    config: {
+        title: '',
+        showTools: false
+    },
+
+    updateShowTools: function(showTools) {
+        var me = this;
+        if (me.rendered && Ext.isBoolean(showTools)) {
+            me.down('#tools').setVisible(showTools);
+        }
+    },
+
+    updateTitle: function(title) {
+        var me = this;
+        if (me.rendered) {
+            me.down('#title').update(title);
+        }
+    },
+
+    afterRender: function() {
+        var me = this;
+        me.callParent();
+
+        me.down('#title').update(me.getTitle());
+        me.down('#tools').setVisible(me.getShowTools());
+    },
+
     items: [
         {
             xtype: 'container',
@@ -14,7 +41,7 @@ Ext.define('Slate.cbl.widget.SimplePanel', {
                     flex: 1,
                     xtype: 'component',
                     cls: 'slate-simplepanel-title',
-                    html: 'Simple Panel',
+                    html: '',
                     itemId: 'title'
                 },
                 {
