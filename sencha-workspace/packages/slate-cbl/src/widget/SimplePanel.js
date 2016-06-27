@@ -45,13 +45,49 @@ Ext.define('Slate.cbl.widget.SimplePanel', {
                     itemId: 'title'
                 },
                 {
+                    // TODO make this configurable
                     xtype: 'container',
                     layout: 'hbox',
                     itemId: 'tools',
                     items: [
                         {
-                            xtype: 'combo',
-                            emptyText: 'Filter'
+                            xtype: 'button',
+                            ui: 'light',
+                            text: 'Filter',
+                            menu: {
+                                plain: true,
+                                showSeparator: false,
+                                defaults: {
+                                    xtype: 'menucheckitem'
+                                },
+                                items: [
+                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Status' },
+                                    { text: 'Past Due Tasks' },
+                                    { text: 'Revision Tasks' },
+                                    { text: 'On-Time Tasks' },
+                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Timeline' },
+                                    { text: 'Past Due' },
+                                    { text: 'Due Today' },
+                                    { text: 'Due This Week' },
+                                    { text: 'Due Next Week' },
+                                    { text: 'Due in Future' },
+                                    { xtype: 'menuseparator' },
+                                    {
+                                        xtype: 'container',
+                                        padding: 8,
+                                        layout: {
+                                            type: 'hbox',
+                                            pack: 'center'
+                                        },
+                                        items: [
+                                            {
+                                                xtype: 'button',
+                                                text: 'View All'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
                         }
                     ]
                 }
