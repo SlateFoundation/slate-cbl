@@ -4,7 +4,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     requires:[
         'SlateTasksManager.view.TaskDetails',
         'SlateTasksManager.view.TaskManagerToolbar',
-        'SlateTasksManager.store.Tasks',
+        'Slate.cbl.store.Tasks',
 		'Ext.saki.grid.MultiSearch'
     ],
 
