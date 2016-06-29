@@ -10,7 +10,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     ],
 
     stores: [
-        'Tasks'
+        'Tasks@Slate.cbl.store',
+        'ParentTasks@Slate.cbl.store',
+        'Skills@Slate.cbl.store'
     ],
 
     config: {

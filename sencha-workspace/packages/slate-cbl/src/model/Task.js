@@ -1,4 +1,4 @@
-Ext.define('SlateTasksManager.model.Task', {
+Ext.define('Slate.cbl.model.Task', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records',
