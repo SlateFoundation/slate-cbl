@@ -19,7 +19,15 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             queryParam: 'q',
             displayField: 'Code_Descriptor',
             valueField: 'ID',
-            emptyText: 'Competency code or statement\u2026' // &hellip;
+            emptyText: 'Competency code or statement\u2026', // &hellip;
+            listeners: {
+                beforeselect: function(combo, record) {
+                    var dataview = combo.next('dataview'),
+                        store = dataview.getStore();
+                    store.add(record);
+                    return false;
+                }
+            }
         },
         {
             xtype: 'dataview',
@@ -40,7 +48,15 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                         '</div>',
                     '</li>',
                 '</tpl>'
-            ]
+            ],
+            listeners: {
+                itemclick: function(view, record, item, idx, event) {
+
+                    if (event.target.classList.contains('slate-skillsfield-item-remove')) {
+                        view.getStore().remove(record);
+                    }
+                }
+            }
         }
     ]
 });
