@@ -59,6 +59,14 @@ Ext.define('Slate.cbl.model.Skill', {
             name: "DemonstrationsRequired",
             type: "int",
             defaultValue: 2
+        },
+        {
+            name: 'Code_Descriptor',
+            depends: ['Code', 'Descriptor'],
+            persist: false,
+            calculate: function(data) {
+                return [data.Code, '-', data.Descriptor].join(' ');
+            }
         }
     ],
 
