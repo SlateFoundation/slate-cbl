@@ -5,7 +5,8 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         'Slate.cbl.view.AttachmentsList',
         'Slate.cbl.view.modals.ModalForm',
         'Slate.cbl.view.modals.WarningWindow',
-        'Slate.cbl.widget.SkillsField'
+        'Slate.cbl.widget.SkillsField',
+        'Slate.cbl.store.ParentTasks'
     ],
 
     title: 'Create Task',
@@ -85,8 +86,11 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 },
                 {
                     fieldLabel: 'Subtask of',
+                    emptyText: '(Optional)',
+                    displayField: 'Title',
+                    valueField: 'ID',
                     name: 'ParentTaskID',
-                    emptyText: '(Optional)'
+                    store: 'ParentTasks'
                 },
                 {
                     itemId: 'experience-type',
