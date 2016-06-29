@@ -55,6 +55,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             items: [
                 {
                     fieldLabel: 'Title',
+                    name: 'Title',
                     valueField: 'title',
                     listConfig: {
                         cls: 'slate-boundlist'
@@ -84,10 +85,12 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 },
                 {
                     fieldLabel: 'Subtask of',
+                    name: 'ParentTaskID',
                     emptyText: '(Optional)'
                 },
                 {
                     itemId: 'experience-type',
+                    name: 'ExperienceType',
                     fieldLabel: 'Type of Experience',
                     store: [
                         'Studio',
@@ -97,10 +100,12 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 },
                 {
                     xtype: 'datefield',
+                    name: 'DueDate',
                     fieldLabel: 'Due Date'
                 },
                 {
                     xtype: 'datefield',
+                    name: 'ExpirationDate',
                     fieldLabel: 'Expiration Date'
                 },
                 {
@@ -111,6 +116,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     items: [
                         {
                             itemId: 'assigned-to',
+                            name: 'Assignees',
                             flex: 1,
                             xtype: 'combo',
                             multiSelect: true,
@@ -129,6 +135,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                         },
                         {
                             xtype: 'checkboxfield',
+                            name: 'AssignAll',
                             boxLabel: 'All',
                             margin: '0 0 0 8'
                         }
