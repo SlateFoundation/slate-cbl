@@ -4,5 +4,7 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
 
     config: {
         task: null
-    }
+    },
+
+    enableAssignments: false
 });
