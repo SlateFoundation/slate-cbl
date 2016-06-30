@@ -6,6 +6,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         'Slate.cbl.view.modals.ModalForm',
         'Slate.cbl.view.modals.WarningWindow',
         'Slate.cbl.widget.SkillsField',
+        'Slate.cbl.widget.AssignmentsField',
         'Slate.cbl.store.ParentTasks'
     ],
 
@@ -113,37 +114,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     fieldLabel: 'Expiration Date'
                 },
                 {
-                    xtype: 'fieldcontainer',
-                    fieldLabel: 'Assigned To',
-                    layout: 'hbox',
-                    defaults: { margin: 0 },
-                    items: [
-                        {
-                            itemId: 'assigned-to',
-                            name: 'Assignees',
-                            flex: 1,
-                            xtype: 'combo',
-                            multiSelect: true,
-                            store: [
-                                'Assign All',
-                                'Student A',
-                                'Student B',
-                                'Student C',
-                                'Student D',
-                                'Student E',
-                                'Student F',
-                                'Student G',
-                                'Student H',
-                                'Student I'
-                            ]
-                        },
-                        {
-                            xtype: 'checkboxfield',
-                            name: 'AssignAll',
-                            boxLabel: 'All',
-                            margin: '0 0 0 8'
-                        }
-                    ]
+                    xtype: 'slate-tasks-assignmentsfield'
                 },
                 {
                     xtype: 'slate-skillsfield',
