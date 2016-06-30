@@ -12,12 +12,34 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
 
     title: 'Create Task',
 
+    config: {
+        enableAssignments: true
+    },
+
+    initComponent: function() {
+        var me = this,
+            form;
+
+        me.callParent(arguments);
+        form = me.down('slate-modalform');
+
+        //check if this form allows assigning
+        if (me.getEnableAssignments()) {
+            form.insert(5, {xtype: 'slate-tasks-assignmentsfield'});
+            form.insert(3, {
+                xtype: 'datefield',
+                name: 'DueDate',
+                fieldLabel: 'Due Date'
+            });
+        }
+    },
+
     afterRender: function() {
         var me = this;
         me.callParent();
 
         me.down('#experience-type').addCls('has-warning');
-        me.down('#assigned-to').markInvalid('Foo bar baz qux');
+        // me.down('#assigned-to').markInvalid('Foo bar baz qux');
         me.el.on('click', function(ev, t) {
             if (Ext.fly(t).hasCls('slate-field-warning')) {
                 Ext.create('Slate.cbl.view.modals.WarningWindow').show();
@@ -105,16 +127,8 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 },
                 {
                     xtype: 'datefield',
-                    name: 'DueDate',
-                    fieldLabel: 'Due Date'
-                },
-                {
-                    xtype: 'datefield',
                     name: 'ExpirationDate',
                     fieldLabel: 'Expiration Date'
-                },
-                {
-                    xtype: 'slate-tasks-assignmentsfield'
                 },
                 {
                     xtype: 'slate-skillsfield',
