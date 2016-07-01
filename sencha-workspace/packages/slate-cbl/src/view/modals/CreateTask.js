@@ -5,6 +5,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         'Slate.cbl.view.AttachmentsList',
         'Slate.cbl.view.modals.ModalForm',
         'Slate.cbl.view.modals.WarningWindow',
+        'Slate.cbl.widget.TaskTitleField',
         'Slate.cbl.widget.SkillsField',
         'Slate.cbl.widget.AssignmentsField',
         'Slate.cbl.store.ParentTasks'
@@ -78,40 +79,12 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             xtype: 'slate-modalform',
             items: [
                 {
-                    fieldLabel: 'Title',
-                    name: 'Title',
-                    valueField: 'title',
-                    listConfig: {
-                        cls: 'slate-boundlist'
-                    },
-                    store: {
-                        fields: [ 'title', 'date', 'creator' ],
-                        data: [
-                            { title: 'Title of Project',                        date: '10/17/15', creator: 'Christian Kunkel' },
-                            { title: 'Title of Project with Extra Skill',       date: '10/17/15', creator: 'Christian Kunkel' },
-                            { title: 'Title of Project with Two Extra Skills',  date: '10/17/15', creator: 'Christian Kunkel' }
-                        ]
-                    },
-                    tpl: [
-                        '<tpl for=".">',
-                            '<li class="x-boundlist-item">',
-                                '<div class="slate-boundlist-primary"><span class="slate-boundlist-datum slate-boundlist-title">{title}</span></div>',
-                                '<div class="slate-boundlist-secondary">',
-                                    '<span class="slate-boundlist-datum slate-boundlist-creator">{creator}</span>',
-                                    '<span class="slate-boundlist-datum slate-boundlist-date">{date}</span>',
-                                '</div>',
-                            '</li>',
-                        '</tpl>'
-                    ],
-                    displayTpl: [
-                        '<tpl for=".">{title}</tpl>'
-                    ]
+                    xtype: 'slate-tasks-titlefield'
                 },
                 {
+                    xtype: 'slate-tasks-titlefield',
                     fieldLabel: 'Subtask of',
                     emptyText: '(Optional)',
-                    displayField: 'Title',
-                    valueField: 'ID',
                     name: 'ParentTaskID',
                     store: 'ParentTasks'
                 },
