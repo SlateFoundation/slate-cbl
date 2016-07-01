@@ -176,6 +176,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 },
                 {
                     xtype: 'textareafield',
+                    name: 'Instructions',
                     fieldLabel: 'Instructions',
                     grow: true
                 }
