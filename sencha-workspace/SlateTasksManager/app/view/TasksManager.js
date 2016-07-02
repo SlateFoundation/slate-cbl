@@ -2,8 +2,8 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     extend: 'Ext.grid.GridPanel',
     xtype: 'slate-tasks-manager',
     requires:[
+        'SlateTasksManager.view.AppHeader',
         'SlateTasksManager.view.TaskDetails',
-        'SlateTasksManager.view.TaskManagerToolbar',
         'Slate.cbl.store.Tasks',
 		'Ext.saki.grid.MultiSearch'
     ],
@@ -28,7 +28,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             width: 240
         },
         {
-            xtype: 'slate-tasks-manager-toolbar'
+            xtype: 'slate-tasks-manager-appheader'
         }
     ],
 
