@@ -56,6 +56,19 @@ class Skill extends \VersionedRecord
     public static $dynamicFields = [
         'Competency'
     ];
+    
+    public static $searchConditions = [
+        'Code' => [
+            'qualifiers' => ['code', 'any'],
+            'points' => 2,
+            'sql' => 'Code LIKE "%%%s%%"'
+        ],
+        'Descriptor' => [
+            'qualifiers' => ['descriptor', 'any'],
+            'points' => 1,
+            'sql' => 'Descriptor LIKE "%%%s%%"'
+        ]
+    ];
 
     public function getHandle()
     {
