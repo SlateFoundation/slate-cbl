@@ -1,6 +1,9 @@
 Ext.define('Slate.cbl.view.AttachmentsList', {
     extend: 'Ext.view.View',
     xtype: 'slate-attachmentslist',
+    requires: [
+        'Slate.cbl.model.tasks.Attachment'
+    ],
 
     autoEl: 'ul',
     componentCls: 'slate-attachmentslist',
@@ -9,7 +12,7 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
     tpl: [
         '<tpl for=".">',
             '<li class="slate-attachmentslist-item <tpl if="kind">slate-attachment-{kind}</tpl>">',
-                '<span class="slate-attachment-title"><a href="{url}" target=_blank>{title}</a></span>',
+                '<span class="slate-attachment-title"><a href="{URL}" target=_blank>{title}</a></span>',
                 // TODO hide/show based on whether it's editable
                 '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
                 '<button class="plain" action="remove"><i class="fa fa-times-circle"></i></button>',
@@ -17,13 +20,17 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
         '</tpl>'
     ],
 
+    store: {
+        model: 'Slate.cbl.model.tasks.Attachment'
+    },
+
     afterRender: function() {
         var me = this;
         me.callParent();
 
         me.el.on('click', function(ev, t) {
             var btn = ev.getTarget('button'),
-                action;
+                action, record;
 
             if (btn) {
                 action = btn.getAttribute('action');
@@ -48,7 +55,12 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                             }
                         ]
                     }).showAt(Ext.fly(btn).getXY());
+                    break;
+                case 'remove':
+                    record = me.getRecord(Ext.fly(event.target).parent(me.getItemSelector()));
+                    me.getStore().remove(record);
+                    break;
             }
-        }, { delegate: 'button'});
+        }, null, { delegate: 'button'});
     }
 });

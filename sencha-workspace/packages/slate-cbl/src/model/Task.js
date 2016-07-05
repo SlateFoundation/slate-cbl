@@ -17,7 +17,7 @@ Ext.define('Slate.cbl.model.Task', {
         {
             name: 'Class',
             type: 'string',
-            defaultValue: 'Slate\\CBL\\Tasks\\Task'
+            defaultValue: 'Slate\\CBL\\Tasks\\ExperienceTask'
         },
         {
             name: 'Created',
@@ -87,20 +87,41 @@ Ext.define('Slate.cbl.model.Task', {
 
         'Creator',
         'Attachments',
-        'Skills',
         'ParentTask',
-
+        {
+            name: 'Skills',
+            persist: false
+        },
         {
             name: 'ParentTaskTitle',
             depends: 'ParentTask',
             mapping: 'ParentTask.Title',
             persist: false
-        },{
+        },
+        {
             name: 'CreatorFullName',
             depends: 'Creator',
             persist: false,
             calculate: function(data) {
+                if (!data.Creator) {
+                    return null;
+                }
                 return data.Creator.FirstName + ' ' + data.Creator.LastName;
+            }
+        },
+        {
+            name: 'SkillIDs',
+            depends: 'Skills',
+            persist: true,
+            calculate: function(data) {
+                if (!Ext.isEmpty(data.Skills)) {
+                    console.log(data.Skills, 'skills');
+                    return Ext.Array.map(data.Skills, function(skill) {
+                        return skill.ID;
+                    });
+                }
+
+                return [];
             }
         }
     ],
@@ -110,7 +131,9 @@ Ext.define('Slate.cbl.model.Task', {
         url: '/cbl/tasks',
         include: [
             'Creator',
-            'ParentTask'
+            'ParentTask',
+            'Skills',
+            'Attachments'
         ]
     }
 });

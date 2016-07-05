@@ -31,7 +31,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slatetasksmanager-task-editor'
             },
 
-            taskEditorForm: 'slatetasksmanager-task-editor slate-modalform'
+            taskEditorForm: 'slatetasksmanager-task-editor slate-modalform',
+            skillsField: 'slate-skillsfield',
+            attachmentsField: 'slate-tasks-attachmentsfield'
         }
     },
 
@@ -44,6 +46,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         },
         'slate-tasks-manager toolbar button[action=create]': {
             click: 'onCreateTaskClick'
+        },
+        'slatetasksmanager-task-editor button[action=save]': {
+            click: 'onSaveTaskClick'
         }
     },
 
@@ -82,17 +87,42 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         }
     },
 
+    onSaveTaskClick: function() {
+        return this.saveTask();
+    },
+
+    saveTask: function() {
+        var me = this,
+            form = me.getTaskEditorForm(),
+            skillsField = me.getSkillsField(),
+            attachmentsField = me.getAttachmentsField(),
+            record = form.updateRecord().getRecord(),
+            validator;
+
+        //set skills
+        record.set('Skills', skillsField.getSkills(false)); // returnRecords, idsOnly
+        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
+        if (!form.isValid()) {
+            return;
+        }
+
+        record.save({
+            success: function(rec) {
+                me.editTask(rec);
+            }
+        });
+    },
+
     editTask: function(taskRecord) {
         var me = this,
             taskEditor = me.getTaskEditor(),
             form = me.getTaskEditorForm();
 
-        form.reset();
-
-        if (taskRecord) {
-            form.loadRecord(taskRecord);
+        if (!taskRecord) {
+            taskRecord = Ext.create('Slate.cbl.model.Task');
         }
 
+        taskEditor.setTask(taskRecord);
         taskEditor.show();
     },
 

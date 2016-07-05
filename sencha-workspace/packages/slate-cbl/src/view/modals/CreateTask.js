@@ -8,11 +8,10 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         'Slate.cbl.widget.TaskTitleField',
         'Slate.cbl.widget.SkillsField',
         'Slate.cbl.widget.AssignmentsField',
-        'Slate.cbl.store.ParentTasks'
+        'Slate.cbl.widget.AttachmentsField'
     ],
 
     title: 'Create Task',
-
     config: {
         enableAssignments: true
     },
@@ -39,7 +38,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         var me = this;
         me.callParent();
 
-        me.down('#experience-type').addCls('has-warning');
+        // me.down('#experience-type').addCls('has-warning');
         // me.down('#assigned-to').markInvalid('Foo bar baz qux');
         me.el.on('click', function(ev, t) {
             if (Ext.fly(t).hasCls('slate-field-warning')) {
@@ -68,7 +67,8 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     xtype: 'button',
                     scale: 'large',
                     text: 'Create',
-                    margin: '0 0 0 16'
+                    margin: '0 0 0 16',
+                    action: 'save'
                 }
             ]
         }
@@ -80,23 +80,32 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             items: [
                 {
                     xtype: 'slate-tasks-titlefield'
+                    ,allowBlank: false
                 },
                 {
                     xtype: 'slate-tasks-titlefield',
                     fieldLabel: 'Subtask of',
                     emptyText: '(Optional)',
                     name: 'ParentTaskID',
+                    valueField: 'ID',
                     store: 'ParentTasks'
                 },
                 {
                     itemId: 'experience-type',
                     name: 'ExperienceType',
                     fieldLabel: 'Type of Experience',
-                    store: [
-                        'Studio',
-                        'Flex Time',
-                        'Internship'
-                    ]
+                    displayField: 'name',
+                    valueField: 'name',
+                    allowBlank: true,
+                    forceSelection: true,
+                    store: {
+                        fields: ['name'],
+                        pageSize: 0,
+                        proxy: {
+                            type: 'slate-records',
+                            url: '/cbl/tasks/*experience-types'
+                        }
+                    }
                 },
                 {
                     xtype: 'datefield',
@@ -107,45 +116,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     xtype: 'slate-skillsfield',
                 },
                 {
-                    xtype: 'fieldcontainer',
-                    fieldLabel: 'Attachments',
-                    items: [
-                        {
-                            xtype: 'textfield',
-                            emptyText: 'Enter URL',
-                            width: '100%'
-                        },
-                        {
-                            xtype: 'slate-attachmentslist',
-                            margin: '0 0 8',
-                            data: [
-                                {
-                                    kind: 'doc',
-                                    title: 'Document List Name'
-                                },
-                                {
-                                    kind: 'folder',
-                                    title: 'Shared Collection Name'
-                                },
-                                {
-                                    title: 'Generic Item Name'
-                                },
-                                {
-                                    kind: 'image',
-                                    title: 'Image Name'
-                                }
-                            ]
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Add Link',
-                            margin: '0 8 0 0'
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Attachment'
-                        }
-                    ]
+                    xtype: 'slate-tasks-attachmentsfield'
                 },
                 {
                     xtype: 'textareafield',

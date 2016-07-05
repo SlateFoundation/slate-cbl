@@ -8,13 +8,21 @@ Ext.define('Slate.cbl.widget.TaskTitleField', {
 
     fieldLabel: 'Title',
     name: 'Title',
-    valueField: 'ID',
+    valueField: 'Title',
     queryParam: 'q',
     listConfig: {
         cls: 'slate-boundlist'
     },
     store: {
-        model: 'Slate.cbl.model.Task'
+        model: 'Slate.cbl.model.Task',
+        autoLoad: true,
+        proxy: {
+            type: 'slate-records',
+            url: '/cbl/tasks',
+            extraParams: {
+                summary: true
+            }
+        }
     },
     tpl: [
         '<tpl for=".">',

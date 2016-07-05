@@ -58,5 +58,32 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                 }
             }
         }
-    ]
+    ],
+
+    getSkills: function(returnRecords, idsOnly) {
+        var me = this,
+            skillsList = me.down('#skills-list'),
+            skillsStore = skillsList.getStore();
+
+        if (returnRecords === false) {
+            if (idsOnly === true) {
+                return skillsStore.collect('ID');
+            }
+            return Ext.Array.map(skillsStore.getRange(), function(s) {
+                return s.getData();
+            });
+        }
+        return skillsStore.getRange();
+    },
+
+    setSkills: function(skills, append) {
+        var me = this,
+            skillsList = me.down('#skills-list'),
+            skillsStore = skillsList.getStore();
+
+        if (append !== true) {
+            skillsStore.removeAll();
+        }
+        skillsStore.add(skills);
+    }
 });
