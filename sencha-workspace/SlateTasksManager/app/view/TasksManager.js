@@ -75,11 +75,6 @@ Ext.define('SlateTasksManager.view.TasksManager', {
                 ]
             },
             {
-                text: 'Year',
-                dataIndex: 'Year',
-                width: 70
-            },
-            {
                 text: 'Created by',
                 dataIndex: 'CreatorFullName',
                 width: 160
