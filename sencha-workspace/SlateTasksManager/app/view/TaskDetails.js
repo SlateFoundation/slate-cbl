@@ -15,7 +15,7 @@ Ext.define('SlateTasksManager.view.TaskDetails', {
     bodyPadding: 16,
 
     header: {
-        padding: '11 16'
+        padding: '8 16'
     },
 
     html: [
