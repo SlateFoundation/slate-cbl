@@ -68,7 +68,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             selection = me.getTasksManager().getSelection()[0];
 
         if (!selection) {
-            return Ext.Msg.alert('Error', 'Please select a task first.');
+            return Ext.Msg.alert('Edit Task', 'Nothing selected. Please select a task to edit.');
         }
         return me.editTask(selection);
     },
@@ -81,12 +81,14 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
         if (selection) {
             title = 'Delete Task';
-            message = 'Are you sure you want to delete this task (' + selection.get('Title') + ')?';
+            message = 'Are you sure you want to delete this task?' + '<br><strong>' + selection.get('Title') + '</strong>';
             return Ext.Msg.confirm(title, message, function(response){
                 if (response === 'yes') {
                     return me.deleteTask(selection);
                 }
             });
+        } else {
+            return Ext.Msg.alert('Delete Task', 'Nothing selected. Please select a task to delete.');
         }
     },
 
@@ -97,8 +99,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     onClonableTitleFieldSelect: function(combo) {
         var me = this,
             record = combo.getSelectedRecord(),
-            title = "Are you sure?",
-            message = "Do you want to clone the task: " + record.get('Title') + "?";
+            title = "New Task",
+            message = "Do you want to clone this task?" + '<br><strong>' + record.get('Title') + '</strong>';
 
         Ext.Msg.confirm(title, message, function(btnId) {
             if (btnId === 'yes') {
