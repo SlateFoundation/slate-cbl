@@ -71,7 +71,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
                 dataIndex: 'Skills',
                 xtype: 'templatecolumn',
                 tpl: [
-                    '<tpl for="skills" between=", ">{.}</tpl>'
+                    '<tpl for="Skills" between=", ">{Code}</tpl>'
                 ]
             },
             {
