@@ -15,6 +15,7 @@ Ext.define('Slate.cbl.widget.SkillsField', {
         {
             width: '100%',
             xtype: 'combo',
+            name: 'Skills',
             store: 'Skills',
             queryParam: 'q',
             displayField: 'Code_Descriptor',

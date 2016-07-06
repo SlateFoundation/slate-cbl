@@ -116,12 +116,21 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             attachmentsField = me.getAttachmentsField(),
             record = form.updateRecord().getRecord(),
             wasPhantom = record.phantom,
-            validator;
+            errors;
 
         //set skills
         record.set('Skills', skillsField.getSkills(false)); // returnRecords
         record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
-        if (!form.isValid()) {
+
+        errors = record.validate();
+
+        if (errors.length) {
+            Ext.each(errors.items, function(item) {
+                var itemField = form.down('[name='+item.field +']');
+                if (itemField) {
+                    itemField.markInvalid(item.message);
+                }
+            });
             return;
         }
 

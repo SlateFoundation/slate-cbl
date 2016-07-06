@@ -135,5 +135,16 @@ Ext.define('Slate.cbl.model.Task', {
             'Skills',
             'Attachments'
         ]
-    }
+    },
+
+    validators: [{
+        type: 'presence',
+        field: 'Title',
+        message: 'Title is required'
+    },{
+        type: 'length',
+        field: 'Skills',
+        min: 1,
+        minOnlyMessage: 'You must select at least one skill'
+    }]
 });
