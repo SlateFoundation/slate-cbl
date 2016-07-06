@@ -23,7 +23,7 @@ Ext.define('Slate.cbl.widget.TaskTitleField', {
                 '<div class="slate-boundlist-primary"><span class="slate-boundlist-datum slate-boundlist-title">{Title}</span></div>',
                 '<div class="slate-boundlist-secondary">',
                     '<span class="slate-boundlist-datum slate-boundlist-creator">{CreatorFullName}</span>',
-                    '<span class="slate-boundlist-datum slate-boundlist-date">{Created}</span>',
+                    '<span class="slate-boundlist-datum slate-boundlist-date">{Created:date("M j Y")}</span>',
                 '</div>',
             '</li>',
         '</tpl>'
