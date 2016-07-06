@@ -79,8 +79,9 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             xtype: 'slate-modalform',
             items: [
                 {
-                    xtype: 'slate-tasks-titlefield'
-                    ,allowBlank: false
+                    xtype: 'slate-tasks-titlefield',
+                    allowBlank: false,
+                    clonable: true
                 },
                 {
                     xtype: 'slate-tasks-titlefield',

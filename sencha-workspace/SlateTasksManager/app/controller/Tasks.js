@@ -49,6 +49,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         },
         'slatetasksmanager-task-editor button[action=save]': {
             click: 'onSaveTaskClick'
+        },
+        'slatetasksmanager-task-editor slate-tasks-titlefield[clonable]' : {
+            select: 'onClonableTitleFieldSelect'
         }
     },
 
@@ -91,16 +94,30 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         return this.saveTask();
     },
 
+    onClonableTitleFieldSelect: function(combo) {
+        var me = this,
+            record = combo.getSelectedRecord(),
+            title = "Are you sure?",
+            message = "Do you want to clone the task: " + record.get('Title') + "?";
+
+        Ext.Msg.confirm(title, message, function(btnId) {
+            if (btnId === 'yes') {
+                me.cloneTask(record);
+            }
+        });
+    },
+
     saveTask: function() {
         var me = this,
             form = me.getTaskEditorForm(),
             skillsField = me.getSkillsField(),
             attachmentsField = me.getAttachmentsField(),
             record = form.updateRecord().getRecord(),
+            wasPhantom = record.phantom,
             validator;
 
         //set skills
-        record.set('Skills', skillsField.getSkills(false)); // returnRecords, idsOnly
+        record.set('Skills', skillsField.getSkills(false)); // returnRecords
         record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
         if (!form.isValid()) {
             return;
@@ -108,7 +125,10 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
         record.save({
             success: function(rec) {
-                me.editTask(rec);
+                me.getTaskEditor().close();
+                if (wasPhantom) {
+                    me.getTasksStore().loadRecords([rec], {addRecords: true});
+                }
             }
         });
     },
@@ -131,5 +151,16 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
         store.remove(taskRecord);
         store.sync();
+    },
+
+    cloneTask: function(taskRecord) {
+        var me = this,
+            taskEditor = me.getTaskEditor(),
+            taskCopy = taskRecord.copy(null);
+
+        taskCopy.set('Title', taskCopy.get('Title') + ' Clone');
+        //reset handle to prevent validation error
+        taskCopy.set('Handle', null);
+        me.editTask(taskCopy);
     }
 });

@@ -15,14 +15,7 @@ Ext.define('Slate.cbl.widget.TaskTitleField', {
     },
     store: {
         model: 'Slate.cbl.model.Task',
-        autoLoad: true,
-        proxy: {
-            type: 'slate-records',
-            url: '/cbl/tasks',
-            extraParams: {
-                summary: true
-            }
-        }
+        autoLoad: true
     },
     tpl: [
         '<tpl for=".">',
