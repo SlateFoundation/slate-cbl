@@ -165,10 +165,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         var target = Ext.get(t);
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            var tree = this.el,
-                treeItem = target.up('.slate-tasktree-item');
-
-            treeItem.toggleCls('is-expanded');
+            target.up('.slate-tasktree-item').toggleCls('is-expanded');
         }
     }
 });
