@@ -17,6 +17,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
     componentCls: 'slate-tasktree',
 
+//TODO: remove this test data when no longer needed for reference
+/*
     data: {
         tasks: [
             {
@@ -89,6 +91,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             }
         ]
     },
+*/
 
     tpl: [
         '<ul class="slate-tasktree-list">',
