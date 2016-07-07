@@ -20,70 +20,70 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     data: {
         tasks: [
             {
-                id: 0,
-                category: 'Mythbusters',
-                title: 'Gravity Lab Report',
-                status: 'late',
-                date: 'Jan 5'
+                ID: 0,
+                Category: 'Mythbusters',
+                Title: 'Gravity Lab Report',
+                Status: 'late',
+                DueDate: 'Jan 5'
             },
             {
-                id: 1,
-                category: 'Narrative Writing Workshop',
-                title: 'My Autobiography',
-                status: 'revision',
-                date: 'Jan 15'
+                ID: 1,
+                Category: 'Narrative Writing Workshop',
+                Title: 'My Autobiography',
+                Status: 'revision',
+                DueDate: 'Jan 15'
             },
             {
-                id: 2,
-                category: 'Entrepeneurship',
-                title: 'Business Plan',
-                status: 'due',
-                date: 'Jan 22',
+                Id: 2,
+                Category: 'Entrepeneurship',
+                Title: 'Business Plan',
+                Status: 'due',
+                DueDate: 'Jan 22',
                 subtasks: [
                     {
-                        id: 3,
-                        title: 'Peer Review',
-                        status: 'due',
-                        date: 'Jan 15'
+                        ID: 3,
+                        Title: 'Peer Review',
+                        Status: 'due',
+                        DueDate: 'Jan 15'
                     },
                     {
-                        id: 4,
-                        title: 'Middle East Timeline',
-                        status: 'revision',
-                        date: 'Jan 15'
+                        ID: 4,
+                        Title: 'Middle East Timeline',
+                        Status: 'revision',
+                        DueDate: 'Jan 15'
                     },
                     {
-                        id: 5,
-                        title: 'Summary of New York Times article, with a really long task title that will have to wrap',
-                        status: 'due',
-                        date: 'Feb 2'
+                        ID: 5,
+                        Title: 'Summary of New York Times article, with a really long task title that will have to wrap',
+                        Status: 'due',
+                        DueDate: 'Feb 2'
                     }
                 ]
             },
             {
-                id: 6,
-                category: 'Entrepeneurship',
-                title: 'Business Plan',
-                status: 'due',
-                date: 'Jan 22',
+                ID: 6,
+                Category: 'Entrepeneurship',
+                Title: 'Business Plan',
+                Status: 'due',
+                DueDate: 'Jan 22',
                 subtasks: [
                     {
-                        id: 7,
-                        title: 'Peer Review',
-                        status: 'due',
-                        date: 'Jan 15'
+                        ID: 7,
+                        Title: 'Peer Review',
+                        Status: 'due',
+                        DueDate: 'Jan 15'
                     },
                     {
-                        id: 8,
-                        title: 'Middle East Timeline',
-                        status: 'revision',
-                        date: 'Jan 15'
+                        ID: 8,
+                        Title: 'Middle East Timeline',
+                        Status: 'revision',
+                        DueDate: 'Jan 15'
                     },
                     {
-                        id: 9,
-                        title: 'Summary of New York Times article, with a really long task title that will have to wrap',
-                        status: 'due',
-                        date: 'Feb 2'
+                        ID: 9,
+                        Title: 'Summary of New York Times article, with a really long task title that will have to wrap',
+                        Status: 'due',
+                        DueDate: 'Feb 2'
                     }
                 ]
             }
@@ -94,16 +94,16 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '<ul class="slate-tasktree-list">',
 
             '<tpl for="tasks">',
-                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{status}">',
+                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{Status}">',
 
                     '<div class="flex-ct">',
                         '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
                         '<div class="slate-tasktree-data">',
-                            '<div class="slate-tasktree-category">{category}</div>',
+                            '<div class="slate-tasktree-category">{Category}</div>',
                             '<div class="slate-tasktree-text">',
-                                '<div class="slate-tasktree-title">{title}</div>',
-                                '<div class="slate-tasktree-status">{[ this.getStatusString(values.status) ]}</div>',
-                                '<div class="slate-tasktree-date">{date}</div>',
+                                '<div class="slate-tasktree-title">{Title}</div>',
+                                '<div class="slate-tasktree-status">{[ this.getStatusString(values.Status) ]}</div>',
+                                '<div class="slate-tasktree-date">{DueDate:date("M d, Y")}</div>',
                             '</div>',
                         '</div>',
                     '</div>',
@@ -112,15 +112,15 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                         '<ul class="slate-tasktree-sublist">',
 
                             '<tpl for="subtasks">',
-                                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{status}">',
+                                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{Status}">',
 
                                     '<div class="flex-ct">',
                                         '<div class="slate-tasktree-nub"></div>',
                                         '<div class="slate-tasktree-data">',
                                             '<div class="slate-tasktree-text">',
-                                                '<div class="slate-tasktree-title">{title}</div>',
-                                                '<div class="slate-tasktree-status">{[ this.getStatusString(values.status) ]}</div>',
-                                                '<div class="slate-tasktree-date">{date}</div>',
+                                                '<div class="slate-tasktree-title">{Title}</div>',
+                                                '<div class="slate-tasktree-status">{[ this.getStatusString(values.Status) ]}</div>',
+                                                '<div class="slate-tasktree-date">{DueDate:date("M d, Y")}</div>',
                                             '</div>',
                                         '</div>',
                                     '</div>',
