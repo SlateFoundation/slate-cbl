@@ -71,7 +71,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
 
         return tasks;
-
     },
 
     getParentTasks: function(recs) {
