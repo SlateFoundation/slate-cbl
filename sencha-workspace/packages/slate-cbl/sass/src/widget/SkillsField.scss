@@ -4,6 +4,10 @@
     flex-direction: column;
     margin: 0;
     padding: 0;
+
+    &:empty {
+        margin-bottom: -8px;
+    }
 }
 
 .slate-skillsfield-item {
