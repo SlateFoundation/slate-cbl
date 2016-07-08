@@ -48,7 +48,7 @@
                 </select>
             {/capture}
             {labeledField html=$studentsSelect type=select label=Students class=auto-width}
-            
+
             {capture assign=contentAreaSelect}
                 <select class="field-control inline medium" name="content-area" onchange="this.form.submit()">
                     <option value="">&ndash;select&ndash;</option>
@@ -71,35 +71,13 @@
 {/block}
 
 {block js-bottom}
-    {if $ContentArea && $students}
-        <script type="text/javascript">
-            var SiteEnvironment = SiteEnvironment || { };
-            SiteEnvironment.user = {$.User->getData()|json_encode};
-            SiteEnvironment.cblStudents = {JSON::translateObjects($students, true)|json_encode};
-            SiteEnvironment.cblContentArea = {JSON::translateObjects($ContentArea)|json_encode};
-            SiteEnvironment.cblCompetencies = {JSON::translateObjects($ContentArea->Competencies, false, array('totalDemonstrationsRequired', 'minimumAverageOffset'))|json_encode};
-
-            SiteEnvironment.cblExperienceTypeOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$experienceTypeOptions|json_encode};
-            SiteEnvironment.cblContextOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$contextOptions|json_encode};
-            SiteEnvironment.cblPerformanceTypeOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$performanceTypeOptions|json_encode};
-        </script>
-    
-        {$dwoo.parent}
-    
-        {if $.get.jsdebug}
-            {sencha_bootstrap
-                patchLoader=false
-                packages=array('slate-theme')
-                packageRequirers=array('sencha-workspace/pages/src/page/TeacherCompetencyDashboard.js')
-            }
-        {else}
-            <script src="{Site::getVersionedRootUrl('js/pages/TeacherCompetencyDashboard.js')}"></script>
-        {/if}
-    
-        <script>
-            Ext.require('Site.page.TeacherCompetencyDashboard');
-        </script>
+    {if $.get.jsdebug}
+        {sencha_bootstrap
+            patchLoader=false
+            packages=array('slate-theme')
+            packageRequirers=array('sencha-workspace/pages/src/page/TeacherCompetencyDashboard.js')
+        }
     {else}
-        {$dwoo.parent}
+        <script src="{Site::getVersionedRootUrl('js/pages/TeacherCompetencyDashboard.js')}"></script>
     {/if}
 {/block}
