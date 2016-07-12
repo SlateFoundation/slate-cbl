@@ -6,7 +6,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     // entry points
     control: {
         'slate-tasktree': {
-            render: 'onTaskTreeRender'
+            render: 'onTaskTreeRender',
+            itemclick: 'onTaskTreeItemClick'
         }
     },
 
@@ -21,7 +22,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // controller configuration
     views: [
-        'TaskTree'
+        'TaskTree',
+        'TaskDetails'
     ],
 
     stores: [
@@ -34,6 +36,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             autoCreate: true,
 
             xtype: 'slate-tasktree'
+        },
+        taskDetails: {
+            selector: 'slate-taskdetails',
+            autoCreate: true,
+
+            xtype: 'slate-taskdetails'
         }
     },
 
@@ -41,6 +49,18 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     // event handlers
     onTaskTreeRender: function() {
         this.getTasksStore().load();
+    },
+
+    onTaskTreeItemClick: function(id) {
+        var me = this,
+            store = me.getTasksStore(),
+            rec = store.getById(id),
+            details = me.getTaskDetails();
+
+        console.log('id: ' +rec.get('ID'));
+        console.log('id: ' +rec.get('Title'));
+        console.log(rec);
+        details.show();
     },
 
     onTasksStoreLoad: function(store) {
