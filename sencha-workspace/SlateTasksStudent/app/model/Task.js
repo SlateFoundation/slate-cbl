@@ -42,8 +42,11 @@ Ext.define('SlateTasksStudent.model.Task', {
         },
         {
             name: 'Status',
-            type: 'string',
-            defaultValue: 'Live'
+            type: 'string'
+        },
+        {
+            name: 'TaskStatus',
+            type: 'string'
         },
         {
             name: 'DueDate',
