@@ -52,6 +52,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         },
         'slatetasksmanager-task-editor slate-tasks-titlefield[clonable]' : {
             select: 'onClonableTitleFieldSelect'
+        },
+        tasksManager: {
+            rowdblclick: 'onEditTaskClick'
         }
     },
 
