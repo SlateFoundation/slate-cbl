@@ -140,6 +140,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 if (wasPhantom) {
                     me.getTasksStore().loadRecords([rec], {addRecords: true});
                 }
+                Ext.toast('Task succesfully saved!');
             }
         });
     },
