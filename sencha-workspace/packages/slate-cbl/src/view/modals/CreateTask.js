@@ -98,6 +98,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     valueField: 'name',
                     allowBlank: true,
                     forceSelection: true,
+                    queryParam: 'q',
                     store: {
                         fields: ['name'],
                         pageSize: 0,
