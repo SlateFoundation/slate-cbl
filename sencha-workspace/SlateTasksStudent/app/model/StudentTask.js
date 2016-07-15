@@ -1,5 +1,5 @@
 /*jslint browser: true, undef: true *//*global Ext*/
-Ext.define('SlateTasksStudent.model.Task', {
+Ext.define('SlateTasksStudent.model.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records'
@@ -17,7 +17,7 @@ Ext.define('SlateTasksStudent.model.Task', {
         {
             name: 'Class',
             type: 'string',
-            defaultValue: '\\Slate\\CBL\\Tasks\\Task'
+            defaultValue: '\\Slate\\CBL\\Tasks\\StudentTask'
         },
         {
             name: 'Created',
@@ -74,7 +74,7 @@ Ext.define('SlateTasksStudent.model.Task', {
 
     proxy: {
         type: 'slate-records',
-        url: 'cbl/tasks'
+        url: 'cbl/student-tasks'
     }
 
 });

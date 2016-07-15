@@ -13,8 +13,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     listen: {
         store: {
-            '#Tasks': {
-                load: 'onTasksStoreLoad'
+            '#StudentTasks': {
+                load: 'onStudentTasksStoreLoad'
             }
         }
     },
@@ -27,7 +27,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     ],
 
     stores: [
-        'Tasks'
+        'StudentTasks'
     ],
 
     refs: {
@@ -48,12 +48,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // event handlers
     onTaskTreeRender: function() {
-        this.getTasksStore().load();
+        this.getStudentTasksStore().load();
     },
 
     onTaskTreeItemClick: function(id) {
         var me = this,
-            store = me.getTasksStore(),
+            store = me.getStudentTasksStore(),
             rec = store.getById(id),
             details = me.getTaskDetails();
 
@@ -63,7 +63,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         details.show();
     },
 
-    onTasksStoreLoad: function(store) {
+    onStudentTasksStoreLoad: function(store) {
         var me = this,
             recs = store.getRange(),
             tree = me.getTaskTree(),
