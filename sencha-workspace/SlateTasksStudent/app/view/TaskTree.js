@@ -26,7 +26,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                     '<div class="flex-ct">',
                         '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
                         '<div class="slate-tasktree-data">',
-                            '<div class="slate-tasktree-category">{Category} - {ID}</div>',
+                            '<div class="slate-tasktree-category">{Category}</div>',
                             '<div class="slate-tasktree-text">',
                                 '<div class="slate-tasktree-title">{Title}</div>',
                                 '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
@@ -39,7 +39,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                         '<ul class="slate-tasktree-sublist">',
 
                             '<tpl for="subtasks">',
-                                '<li class="slate-tasktree-item slate-tasktree-status-{TaskStatus}">',
+                                '<li class="slate-tasktree-item slate-tasktree-status-{TaskStatus}" recordId="{ID}">',
 
                                     '<div class="flex-ct">',
                                         '<div class="slate-tasktree-nub"></div>',
