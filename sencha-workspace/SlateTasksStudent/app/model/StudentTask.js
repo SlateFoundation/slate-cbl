@@ -89,6 +89,23 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             type: 'int',
             mapping: 'Task.ParentTaskID',
             allowNull: true
+        },
+        {
+            name: 'FirstName',
+            mapping: 'Student.FirstName',
+            type: 'string'
+        },
+        {
+            name: 'LastName',
+            mapping: 'Student.LastName',
+            type: 'string'
+        },
+        {
+            name: 'FullName',
+            depends: ['FirstName', 'LastName'],
+            convert: function(v,r) {
+                return r.get('FirstName') + ' ' + r.get('LastName');
+            }
         }
     ],
 
@@ -96,7 +113,8 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         type: 'slate-records',
         url: 'cbl/student-tasks',
         include: [
-            'Task'
+            'Task',
+            'Student'
         ]
     }
 
