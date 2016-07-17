@@ -75,7 +75,8 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         },
         {
             fieldLabel: 'Submitted Date',
-            value: '5/9/15'
+            name: 'SubmittedDate',
+            renderer: Ext.util.Format.dateRenderer('m/d/y')
         },
         {
             xtype: 'textareafield',
