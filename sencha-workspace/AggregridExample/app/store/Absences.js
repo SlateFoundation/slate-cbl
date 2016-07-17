@@ -2,28 +2,26 @@ Ext.define('AggregridExample.store.Absences', {
     extend: 'Ext.data.Store',
 
     config: {
-        fields: [
-            'id', 'student_id', 'time_period_id', 'attendance'
-        ],
-        
-        data: function() {
-            var arr = [],
-                amount = 100,
-                i,
-                obj;
-                
-            for (i=0; i<amount; i++) {
-                obj = {
-                    id: Math.floor(Math.random() * 100) + 1,
+        fields: ['id', 'student_id', 'date']
+    },
+
+    applyData: function(data) {
+        var randomRecords = [],
+            amount = Math.floor(Math.random() * 500),
+            i = 0;
+
+        if (!data) {
+            for (i; i < amount; i++) {
+                randomRecords.push({
+                    id: i + 1,
                     student_id: Math.floor(Math.random() * 20) + 1,
-                    time_period_id: Math.floor(Math.random() * 52) + 1,
-                    attendance: Math.floor(Math.random() * 100) + 1   
-                }
-                
-                arr.push(obj);
-            }                                                                   
-            
-            return arr
+                    date: new Date(2016, Math.floor(Math.random() * 12), Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60))
+                });
+            }
+
+            data = randomRecords;
         }
+
+        return this.callParent([data]);
     }
 });
