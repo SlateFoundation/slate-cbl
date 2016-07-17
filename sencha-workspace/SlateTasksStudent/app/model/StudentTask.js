@@ -114,7 +114,8 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         url: 'cbl/student-tasks',
         include: [
             'Task',
-            'Student'
+            'Student',
+            'Task.Skills.Competencies'
         ]
     }
 
