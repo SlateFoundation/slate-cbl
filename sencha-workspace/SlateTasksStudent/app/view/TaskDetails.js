@@ -65,15 +65,15 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             items: [
                 {
                     fieldLabel: 'Student',
-                    value: 'Chris Alfano'
+                    name: 'FullName'
                 },
                 {
                     fieldLabel: 'Title',
-                    value: 'Senior Thesis Project Synopsis'
+                    name: 'Title'
                 },
                 {
                     fieldLabel: 'Subtask of',
-                    value: 'Senior Thesis'
+                    name: 'ParentTask'
                 },
                 {
                     fieldLabel: 'Type of Experience',
@@ -81,11 +81,13 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
                 },
                 {
                     fieldLabel: 'Due Date',
-                    value: '5/3/15'
+                    name: 'DueDate',
+                    renderer: Ext.util.Format.dateRenderer('m/d/y')
                 },
                 {
                     fieldLabel: 'Expiration Date',
-                    value: '5/10/15'
+                    name: 'ExpirationDate',
+                    renderer: Ext.util.Format.dateRenderer('m/d/y')
                 },
                 {
                     xtype: 'fieldcontainer',
@@ -105,11 +107,6 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
                             ]
                         }
                     ]
-                },
-                {
-                    xtype: 'tagfield',
-                    fieldLabel: 'Skills',
-                    emptyText: 'Competency code or statement&hellip;'
                 },
                 {
                     xtype: 'slate-ratingview'
