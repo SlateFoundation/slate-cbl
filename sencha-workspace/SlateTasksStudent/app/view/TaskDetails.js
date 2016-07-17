@@ -7,56 +7,24 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         'Slate.cbl.widget.RatingView'
     ],
 
-    title: 'Rate Task',
+    title: 'Task',
 
-    dockedItems: [
-        {
-            dock: 'bottom',
+    dockedItems: [{
+        dock: 'bottom',
+        xtype: 'container',
+        cls: 'slate-modalfooter',
+        items: [{
             xtype: 'container',
-            cls: 'slate-modalfooter',
-            items: [
-                {
-                    xtype: 'container',
-                    layout: 'hbox',
-                    defaults: {
-                        xtype: 'button',
-                        scale: 'large'
-                    },
-                    items: [
-                        {
-                            text: 'Edit Task',
-                            margin: '0 0 8'
-                        },
-                        {
-                            xtype: 'tbfill'
-                        },
-                        {
-                            text: 'Accept Task'
-                        }
-                    ]
-                },
-                {
-                    xtype: 'container',
-                    layout: 'hbox',
-                    defaults: {
-                        xtype: 'button',
-                        scale: 'large'
-                    },
-                    items: [
-                        {
-                            text: 'Unassign Task'
-                        },
-                        {
-                            xtype: 'tbfill'
-                        },
-                        {
-                            text: 'Assign Revision'
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
+            layout: 'hbox',
+            items: [{
+                xtype: 'tbfill'
+            },{
+                xtype: 'button',
+                text: 'Submit',
+                scale: 'large'
+            }]
+        }]
+    }],
 
    items: [
         {
