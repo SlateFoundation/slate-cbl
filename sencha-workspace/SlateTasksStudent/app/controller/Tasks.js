@@ -42,7 +42,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             autoCreate: true,
 
             xtype: 'slate-taskdetails'
-        }
+        },
+        taskForm: 'slate-taskdetails slate-modalform',
+        parentTaskField: 'slate-modalform field[name="ParentTask"]',
+        ratingView: 'slate-modalform slate-ratingview'
     },
 
 
@@ -55,11 +58,17 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         var me = this,
             store = me.getStudentTasksStore(),
             rec = store.getById(id),
-            details = me.getTaskDetails();
+            details = me.getTaskDetails(),
+            form = me.getTaskForm(),
+            parentTaskField = me.getParentTaskField();
+            ratingView = me.getRatingView();
 
-        console.log('id: ' +rec.get('ID'));
-        console.log('id: ' +rec.get('Title'));
-        console.log(rec);
+        form.getForm().setValues(rec.getData());
+
+        ratingView.setData(rec.get('Competencies'));
+
+        parentTaskField.setVisible(rec.get('ParentTaskID') !== null);
+
         details.show();
     },
 
@@ -84,7 +93,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         for (; i<tasksLength; i++) {
             task = tasks[i];
-            subTasks = me.getSubTasks(recs, task.ID);
+            subTasks = me.getSubTasks(recs, task.TaskID);
             if (subTasks.length > 0) {
                 task.subtasks = subTasks;
             }
@@ -118,7 +127,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         for (; i<recsLength; i++) {
             rec = recs[i];
             if (rec.get('ParentTaskID') === parentId) {
-                subTasks.push(rec.getData());
+                subTasks.push(Ext.apply(rec.getData()));
             }
         }
 
