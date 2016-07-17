@@ -1,8 +1,9 @@
 /*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('SlateTasksStudent.model.StudentTask', {
-    extend: 'Ext.data.Model',
+    extend: 'SlateTasksStudent.model.Base',
     requires: [
-        'Slate.proxy.Records'
+        'Slate.proxy.Records',
+        'SlateTasksStudent.model.Task'
     ],
 
     // model config
@@ -31,50 +32,72 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             allowNull: true
         },
         {
-            name: 'Title',
-            type: 'string',
-            allowNull: true
-        },
-        {
-            name: 'Handle',
-            type: 'string',
-            allowNull: true
-        },
-        {
-            name: 'Status',
-            type: 'string'
+            name: 'TaskID',
+            reference: 'Task',
+            type: 'int'
         },
         {
             name: 'TaskStatus',
             type: 'string'
         },
         {
+            name: 'TaskClass',
+            type: 'string',
+            mapping: 'Task.Class',
+            defaultValue: '\\Slate\\CBL\\Tasks\\Task'
+        },
+        {
+            name: 'TaskCreated',
+            type: 'date',
+            mapping: 'Task.Created',
+            dateFormat: 'timestamp',
+            allowNull: true
+        },
+        {
+            name: 'Title',
+            type: 'string',
+            mapping: 'Task.Title',
+            allowNull: true
+        },
+        {
+            name: 'Status',
+            mapping: 'Task.Status',
+            type: 'string'
+        },
+        {
             name: 'DueDate',
             type: 'date',
+            mapping: 'Task.DueDate',
             dateFormat: 'timestamp',
             allowNull: true
         },
         {
             name: 'ExpirationDate',
             type: 'date',
+            mapping: 'Task.ExpirationDate',
             dateFormat: 'timestamp',
             allowNull: true
         },
         {
             name: 'Instructions',
             type: 'string',
+            mapping: 'Task.Instructions',
             allowNull: true
         },
         {
             name: 'ParentTaskID',
             type: 'int',
+            mapping: 'Task.ParentTaskID',
             allowNull: true
         }
     ],
 
     proxy: {
         type: 'slate-records',
-        url: 'cbl/student-tasks'
+        url: 'cbl/student-tasks',
+        include: [
+            'Task'
+        ]
     }
 
 });
