@@ -39,7 +39,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                         '<ul class="slate-tasktree-sublist">',
 
                             '<tpl for="subtasks">',
-                                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{TaskStatus}">',
+                                '<li class="slate-tasktree-item slate-tasktree-status-{TaskStatus}">',
 
                                     '<div class="flex-ct">',
                                         '<div class="slate-tasktree-nub"></div>',
