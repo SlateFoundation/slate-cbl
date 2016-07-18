@@ -1,9 +1,8 @@
 /*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('SlateTasksStudent.model.StudentTask', {
-    extend: 'SlateTasksStudent.model.Base',
+    extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records',
-        'SlateTasksStudent.model.Task'
+        'Slate.proxy.Records'
     ],
 
     // model config
@@ -115,6 +114,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         include: [
             'Task',
             'Student',
+            'Task.ParentTask',
             'Task.Skills.Competencies'
         ]
     }
