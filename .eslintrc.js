@@ -72,7 +72,12 @@ module.exports = {
             "error",
             "unix"
         ],
-        "lines-around-comment": "error",
+        "lines-around-comment": [
+            "error",
+            {
+                "allowArrayStart": true
+            }
+        ],
         "max-depth": "error",
         "max-len": "off",
         "max-nested-callbacks": "error",
@@ -86,7 +91,12 @@ module.exports = {
             "always"
         ],
         "newline-before-return": "off",
-        "newline-per-chained-call": "error",
+        "newline-per-chained-call": [
+            "error",
+            {
+                "ignoreChainWithDepth": 3
+            }
+        ],
         "no-alert": "error",
         "no-array-constructor": "error",
         "no-bitwise": "error",
