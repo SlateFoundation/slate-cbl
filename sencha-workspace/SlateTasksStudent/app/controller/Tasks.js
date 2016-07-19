@@ -8,6 +8,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         'slate-tasktree': {
             render: 'onTaskTreeRender',
             itemclick: 'onTaskTreeItemClick'
+        },
+        ratingView: {
+            afterrender: 'onRatingViewAfterRender'
         }
     },
 
@@ -54,6 +57,14 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         this.getStudentTasksStore().load();
     },
 
+    onStudentTasksStoreLoad: function(store) {
+        var me = this,
+            tree = me.getTaskTree(),
+            tasks = me.formatTaskData(store.getRange());
+
+        tree.update({tasks: tasks});
+    },
+
     onTaskTreeItemClick: function(id) {
         var me = this,
             rec = me.getStudentTasksStore().getById(id),
@@ -64,19 +75,50 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         form.getForm().loadRecord(rec);
 
-        ratingView.setData(rec.get('Competencies'));
+        ratingView.setData({
+            ratings: [ 7, 8, 9, 10, 11, 12, 'M' ],
+            //competencies: rec.get('Competencies')
+            competencies: [
+                {
+                    code: 'ELA.2',
+                    desc: 'Reading Informational Texts',
+                    skills: [
+                        {
+                            code: 'ELA.2.HS.1',
+                            desc: 'Cite evidence',
+                            level: 9,
+                            rating: 10
+                        },
+                        {
+                            code: 'ELA.2.HS.3',
+                            desc: 'Analyze developments',
+                            level: 11
+                        }
+                    ]
+                },
+                {
+                    code: 'ELA.3',
+                    desc: 'Writing Evidence-Based Arguments',
+                    skills: [
+                        {
+                            code: 'ELA.3.HS.2',
+                            desc: 'Use evidence to develop claims and counterclaims',
+                            level: 9,
+                            rating: 8
+                        }
+                    ]
+                }
+            ]
+        });
+        me.hideRatingViewElements(ratingView);
 
         parentTaskField.setVisible(rec.get('ParentTaskID') !== null);
 
         details.show();
     },
 
-    onStudentTasksStoreLoad: function(store) {
-        var me = this,
-            tree = me.getTaskTree(),
-            tasks = me.formatTaskData(store.getRange());
-
-        tree.update({tasks: tasks});
+    onRatingViewAfterRender: function(view) {
+        this.hideRatingViewElements(view);
     },
 
 
@@ -131,6 +173,22 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
 
         return subTasks;
+    },
+
+    /* TODO: hiding elements that don't need to be in student view, but maybe we should do a
+     * custom component instead
+     */
+    hideRatingViewElements: function(view) {
+        var viewEl = view.getEl();
+
+        if (viewEl) {
+            Ext.each(viewEl.query('button.slate-ratingview-remove',false), function(el) {
+                el.hide();
+            });
+            Ext.each(viewEl.query('li.slate-ratingview-rating-null',false), function(el) {
+                el.hide();
+            });
+        }
     }
 
 });
