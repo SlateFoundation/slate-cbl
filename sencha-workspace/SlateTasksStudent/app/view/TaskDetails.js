@@ -61,14 +61,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             fieldLabel: 'Attachments',
             items: [{
                 xtype: 'slate-attachmentslist',
-                editable: false,
-                data: [{
-                    kind: 'doc',
-                    title: 'Document Name'
-                },{
-                    kind: 'folder',
-                    title: 'Folder Name'
-                }]
+                editable: false
             }]
         },
         {
