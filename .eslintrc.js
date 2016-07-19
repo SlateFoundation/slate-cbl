@@ -47,7 +47,7 @@ module.exports = {
         "dot-location": "error",
         "dot-notation": "error",
         "eol-last": "off",
-        "eqeqeq": "error",
+        "eqeqeq": "warn",
         "func-names": "off",
         "func-style": "error",
         "generator-star-spacing": "error",
@@ -142,12 +142,7 @@ module.exports = {
         "no-octal-escape": "error",
         "no-param-reassign": "off",
         "no-path-concat": "error",
-        "no-plusplus": [
-            "error",
-            {
-                "allowForLoopAfterthoughts": true
-            }
-        ],
+        "no-plusplus": "off",
         "no-process-env": "error",
         "no-process-exit": "error",
         "no-proto": "error",
