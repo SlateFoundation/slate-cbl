@@ -90,6 +90,10 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             allowNull: true
         },
         {
+            name: 'ParentTaskTitle',
+            type: 'string'
+        },
+        {
             name: 'FirstName',
             mapping: 'Student.FirstName',
             type: 'string'
