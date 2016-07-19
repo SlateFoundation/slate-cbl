@@ -60,8 +60,8 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
                 switch (data.Class) {
                     case 'Slate\\CBL\\Tasks\\Attachments\\GoogleDocument':
                         return 'doc';
-
                     case 'Slate\\CBL\\Tasks\\Attachments\\Link':
+                        return 'link';
                     default:
                         return null;
                 }
