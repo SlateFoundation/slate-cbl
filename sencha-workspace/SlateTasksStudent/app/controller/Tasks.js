@@ -56,8 +56,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     onTaskTreeItemClick: function(id) {
         var me = this,
-            store = me.getStudentTasksStore(),
-            rec = store.getById(id),
+            rec = me.getStudentTasksStore().getById(id),
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
             parentTaskField = me.getParentTaskField();
