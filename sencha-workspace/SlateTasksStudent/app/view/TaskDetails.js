@@ -40,7 +40,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         },
         {
             fieldLabel: 'Subtask of',
-            name: 'ParentTask'
+            name: 'ParentTaskTitle'
         },
         {
             fieldLabel: 'Type of Experience',
