@@ -5,6 +5,10 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
         'Slate.cbl.model.tasks.Attachment'
     ],
 
+    config: {
+        editable: true
+    },
+
     autoEl: 'ul',
     componentCls: 'slate-attachmentslist',
 
@@ -13,7 +17,6 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
         '<tpl for=".">',
             '<li class="slate-attachmentslist-item <tpl if="kind">slate-attachment-{kind}</tpl>">',
                 '<span class="slate-attachment-title"><a href="{URL}" target=_blank>{title}</a></span>',
-                // TODO hide/show based on whether it's editable
                 '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
                 '<button class="plain" action="remove"><i class="fa fa-times-circle"></i></button>',
             '</li>',
@@ -27,6 +30,12 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
     afterRender: function() {
         var me = this;
         me.callParent();
+
+        if (me.el) {
+            Ext.each(me.el.query('button',false), function(el) {
+                el.setVisible(me.getEditable());
+            });
+        }
 
         me.el.on('click', function(ev, t) {
             var btn = ev.getTarget('button'),
