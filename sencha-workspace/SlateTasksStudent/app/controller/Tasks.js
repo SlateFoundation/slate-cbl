@@ -44,7 +44,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             xtype: 'slate-taskdetails'
         },
         taskForm: 'slate-taskdetails slate-modalform',
-        parentTaskField: 'slate-modalform field[name="ParentTask"]',
+        parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview'
     },
 
@@ -59,8 +59,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             rec = me.getStudentTasksStore().getById(id),
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
+            ratingView = me.getRatingView(),
             parentTaskField = me.getParentTaskField();
-            ratingView = me.getRatingView();
 
         form.getForm().setValues(rec.getData());
 
@@ -126,7 +126,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         for (; i<recsLength; i++) {
             rec = recs[i];
             if (rec.get('ParentTaskID') === parentId) {
-                subTasks.push(Ext.apply(rec.getData()));
+                rec.set('ParentTaskTitle',rec.get('Task').ParentTask.Title);
+                subTasks.push(rec.getData());
             }
         }
 
