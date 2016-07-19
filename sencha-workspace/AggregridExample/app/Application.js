@@ -3,6 +3,7 @@
  * calls Ext.application(). This is the ideal place to handle application launch and
  * initialization details.
  */
+/* eslint no-console: "off" */
 Ext.define('AggregridExample.Application', {
     extend: 'Ext.app.Application',
     requires: [
