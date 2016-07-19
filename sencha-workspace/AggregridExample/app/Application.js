@@ -43,6 +43,12 @@ Ext.define('AggregridExample.Application', {
             aggregate: function() {
                 console.info('app.myaggregrid->aggregate');
             },
+            beforerendercells: function() {
+                console.info('app.myaggregrid->beforerendercells');
+            },
+            rendercells: function() {
+                console.info('app.myaggregrid->rendercells');
+            },
             aggregatechange: function(aggregrid, action, recordMetadata) {
                 console.info('app.myaggregrid->aggregatechange: %s record %s in group %o at %sx%s', action, recordMetadata.record.getId(), recordMetadata.group, recordMetadata.row.getId(), recordMetadata.column.getId());
             }
