@@ -62,7 +62,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             ratingView = me.getRatingView(),
             parentTaskField = me.getParentTaskField();
 
-        form.getForm().setValues(rec.getData());
+        form.getForm().loadRecord(rec);
 
         ratingView.setData(rec.get('Competencies'));
 
@@ -73,9 +73,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     onStudentTasksStoreLoad: function(store) {
         var me = this,
-            recs = store.getRange(),
             tree = me.getTaskTree(),
-            tasks = me.formatTaskData(recs);
+            tasks = me.formatTaskData(store.getRange());
 
         tree.update({tasks: tasks});
     },
