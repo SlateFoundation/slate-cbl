@@ -110,12 +110,6 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             convert: function(v,r) {
                 return r.get('FirstName') + ' ' + r.get('LastName');
             }
-/*
-        },
-        {
-            name: 'Attachments',
-            mapping: 'Task.Attachments'
-*/
         }
     ],
 
