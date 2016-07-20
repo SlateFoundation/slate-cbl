@@ -1,6 +1,6 @@
-Ext.define('AggregridExample.view.BasicAggregrid', {
+Ext.define('AggregridExample.view.RollupAggregrid', {
     extend: 'Jarvus.aggregrid.Aggregrid',
-    xtype: 'app-basicaggregrid',
+    xtype: 'app-rollupaggregrid',
 
     config: {
         columnsStore: 'Students',
@@ -36,6 +36,14 @@ Ext.define('AggregridExample.view.BasicAggregrid', {
             cellEl.toggleCls('attendance-perfect', absences == 0);
             cellEl.toggleCls('attendance-ok', absences == 1);
             cellEl.toggleCls('attendance-bad', absences >= 2);
-        }
+        },
+
+        rollupRowsStore: 'SummaryTimePeriods',
+        rollupDataStore: 'SummaryAbsences'
+        // rollupRowHeaderField: 'title',
+        // rollupRowHeaderTpl: false,
+        // rollupRowMapper: false,
+        // rollupCellTpl: '{records.length}',
+        // rollupRenderer: false,
     }
 });
