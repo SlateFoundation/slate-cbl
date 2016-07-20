@@ -3,7 +3,8 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records',
-        'Slate.cbl.model.tasks.Attachment'
+        'Slate.cbl.model.tasks.Attachment',
+        'Slate.cbl.model.tasks.Comment'
     ],
 
     // model config
@@ -113,11 +114,15 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         }
     ],
 
-    hasMany: {
+    hasMany: [{
         model: 'Slate.cbl.model.tasks.Attachment',
         name: 'Attachments',
         associationKey: 'Task.Attachments'
-    },
+    },{
+        model: 'Slate.cbl.model.tasks.Comment',
+        name: 'Comments',
+        associationKey: 'Comments'
+    }],
 
     proxy: {
         type: 'slate-records',
@@ -125,6 +130,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         include: [
             'Task',
             'Student',
+            'Comments',
             'Task.Attachments',
             'Task.ParentTask',
             'Task.Skills.Competencies'

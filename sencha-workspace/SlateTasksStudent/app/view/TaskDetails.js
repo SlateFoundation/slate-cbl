@@ -74,18 +74,13 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         },
         {
             xtype: 'component',
-            data: {
-                comments: [
-                    { CreationDate: Date(), Text: 'This is a teacher comment'},
-                    { CreationDate: Date(), Text: 'This is another teacher comment'}
-                ]
-            },
+            itemId: 'comments',
             //TODO: I didn't find a modal example for this comment list, so I made the CSS classnames up.
             tpl: [
                 '<ul class="slate-task-comments">',
                     '<tpl for="comments">',
-                        '<div class="slate-task-comment-date">{CreationDate:date("M d, Y")}</div>',
-                        '<div class="slate-task-comment-text">{Text}</div>',
+                        '<div class="slate-task-comment-date">{Created:date("M d, Y")}</div>',
+                        '<div class="slate-task-comment-text">{Message}</div>',
                     '</tpl>',
                 '</ul>'
             ]

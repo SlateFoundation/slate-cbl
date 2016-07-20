@@ -49,7 +49,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         taskForm: 'slate-taskdetails slate-modalform',
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
-        attachmentsList: 'slate-modalform slate-attachmentslist'
+        attachmentsList: 'slate-modalform slate-attachmentslist',
+        comments: 'slate-modalform #comments'
     },
 
 
@@ -115,6 +116,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
 
         me.getAttachmentsList().getStore().setData(rec.Attachments().getRange());
+
+        me.getComments().setData(me.formatCommentData(rec.Comments().getRange()));
 
         details.show();
     },
@@ -191,6 +194,18 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 el.hide();
             });
         }
+    },
+
+    formatCommentData: function(recs) {
+        var recsLength = recs.length,
+            comments = [],
+            i = 0;
+
+        for (; i<recsLength; i++) {
+            comments.push(recs[i].getData());
+        }
+
+        return {comments: comments};
     }
 
 });
