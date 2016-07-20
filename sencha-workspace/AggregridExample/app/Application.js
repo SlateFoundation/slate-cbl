@@ -15,7 +15,7 @@ Ext.define('AggregridExample.Application', {
     name: 'AggregridExample',
 
     views: [
-        'MyAggregrid'
+        'Main'
     ],
 
     stores: [
@@ -24,7 +24,7 @@ Ext.define('AggregridExample.Application', {
         'Absences'
     ],
 
-    mainView: 'AggregridExample.view.MyAggregrid',
+    mainView: 'Main',
 
     launch: function () {
         window.mainView = this.getMainView();
