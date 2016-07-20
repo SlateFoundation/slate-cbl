@@ -4,7 +4,8 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
     requires: [
         'Slate.proxy.Records',
         'Slate.cbl.model.tasks.Attachment',
-        'Slate.cbl.model.tasks.Comment'
+        'Slate.cbl.model.tasks.Comment',
+        'Slate.cbl.model.Skill'
     ],
 
     // model config
@@ -111,6 +112,9 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             convert: function(v,r) {
                 return r.get('FirstName') + ' ' + r.get('LastName');
             }
+        },
+        {
+            name: 'Competencies'
         }
     ],
 
@@ -122,6 +126,10 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         model: 'Slate.cbl.model.tasks.Comment',
         name: 'Comments',
         associationKey: 'Comments'
+    },{
+        model: 'Slate.cbl.model.Skill',
+        name: 'Skills',
+        associationKey: 'Task.Skills'
     }],
 
     proxy: {
@@ -133,7 +141,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             'Comments',
             'Task.Attachments',
             'Task.ParentTask',
-            'Task.Skills.Competencies'
+            'Task.Skills.Competency'
         ]
     }
 
