@@ -64,6 +64,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             tree = me.getTaskTree(),
             tasks = me.formatTaskData(store.getRange());
 
+        me.formatCompetencies(store);
         tree.update({tasks: tasks});
     },
 
@@ -76,41 +77,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         form.getForm().loadRecord(rec);
 
+
         ratingView.setData({
             ratings: [ 7, 8, 9, 10, 11, 12, 'M' ],
-            //competencies: rec.get('Competencies')
-            competencies: [
-                {
-                    code: 'ELA.2',
-                    desc: 'Reading Informational Texts',
-                    skills: [
-                        {
-                            code: 'ELA.2.HS.1',
-                            desc: 'Cite evidence',
-                            level: 9,
-                            rating: 10
-                        },
-                        {
-                            code: 'ELA.2.HS.3',
-                            desc: 'Analyze developments',
-                            level: 11
-                        }
-                    ]
-                },
-                {
-                    code: 'ELA.3',
-                    desc: 'Writing Evidence-Based Arguments',
-                    skills: [
-                        {
-                            code: 'ELA.3.HS.2',
-                            desc: 'Use evidence to develop claims and counterclaims',
-                            level: 9,
-                            rating: 8
-                        }
-                    ]
-                }
-            ]
+            competencies: rec.get('Competencies')
         });
+
         me.hideRatingViewElements(ratingView);
 
         me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
@@ -179,6 +151,42 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         return subTasks;
     },
+
+    /*
+     * Group skills by Competency for each task.
+     * Task Object has Skills, Skills have a Competency, but we wish to group skills by Competency
+     */
+    formatCompetencies: function(store) {
+        var recs = store.getRange(),
+            recsLength = recs.length,
+            skill,
+            skills,
+            skillsLength,
+            competencies = {},
+            i = 0, j;
+
+        for (; i<recsLength; i++) {
+            rec = recs[i];
+
+            skills = rec.Skills().getRange();
+            skillsLength = skills.length;
+
+            // Index competencies by ID, filtering out duplicates
+            for (j=0; j<skillsLength; j++) {
+                skill = skills[j];
+                competencies[skill.get('CompetencyID')] = Ext.apply({Skills:[]}, skill.get('Competency'));
+            }
+
+            // Assign skills to their competency
+            for (j=0; j<skillsLength; j++) {
+                skill = skills[j];
+                competencies[skill.get('CompetencyID')].Skills.push(Ext.apply({level: 9, rating: 10},skill.getData()));
+            }
+
+            rec.set('Competencies',Ext.Object.getValues(competencies));
+        }
+    },
+
 
     /* TODO: hiding elements that don't need to be in student view, but maybe we should do a
      * custom component instead
