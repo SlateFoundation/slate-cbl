@@ -8,175 +8,30 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
     ],
 
     config: {
+        students: [],
+        tasks: [],
+        statusClasses: {
+            unassigned: 'slate-task-status-notassigned',
+
+            assigned: "slate-task-status-due",
+            "re-assigned": 'slate-task-status-revision',
+
+            submitted : 'slate-task-status-due slate-task-status-needsrated',
+            "re-submitted" : 'slate-task-status-revision slate-task-status-needsrated',
+
+            late: {
+                submitted: 'slate-task-status-late slate-task-status-needsrated',
+                "re-submitted": 'slate-task-status-late slate-task-status-needsrated',
+
+                assigned: "slate-task-status-late"
+                // "re-assigned": 'slate-task-status-late'
+            },
+
+            completed: 'slate-task-status-completed'
+        }
     },
 
     componentCls: 'slate-studentsgrid',
-
-    data: {
-        students: [
-            { fullName: 'Jessica Alfred' },
-            { fullName: 'Christian Bumble' },
-            { fullName: 'David Calloway' },
-            { fullName: 'William Christianson' },
-            { fullName: 'Christian Davids' },
-            { fullName: 'Johnathan Fazio' },
-            { fullName: 'Tyler Fellows' },
-            { fullName: 'Jessica Alfred' },
-            { fullName: 'Christian Bumble' },
-            { fullName: 'David Calloway' },
-            { fullName: 'William Christianson' },
-            { fullName: 'Christian Davids' },
-            { fullName: 'Johnathan Fazio' },
-            { fullName: 'Tyler Fellows' },
-            { fullName: 'Jessica Alfred' },
-            { fullName: 'Christian Bumble' },
-            { fullName: 'David Calloway' },
-            { fullName: 'William Christianson' },
-            { fullName: 'Christian Davids' },
-            { fullName: 'Johnathan Fazio' },
-            { fullName: 'Tyler Fellows' },
-            { fullName: 'Nafis Guthery' }
-        ],
-        rows: [
-            {
-                title: 'Performance Task 1',
-                students: [
-                    { text: '<i class="fa fa-lg fa-check-circle-o"></i>', cls: 'slate-task-status-completed' },
-                    { text: '',         cls: 'slate-task-status-notassigned' },
-                    { text: '10/14',    cls: 'slate-task-status-revision' },
-                    { text: '11/5',     cls: 'slate-task-status-late' },
-                    { text: '',         cls: 'slate-task-status-due' },
-                    { text: '12/3',     cls: 'slate-task-status-due slate-task-status-needsrated' },
-                    { text: '',         cls: 'slate-task-status-late slate-task-status-needsrated' },
-                    { text: '',         cls: 'slate-task-status-revision slate-task-status-needsrated' },
-                    { text: 'Foole' },
-                    { text: 'Foo' },
-                    { text: 'Fooianson' },
-                    { text: 'Foods' },
-                    { text: 'Fooo' },
-                    { text: 'Foo' },
-                    { text: 'Foo' },
-                    { text: 'Foole' },
-                    { text: 'Foo' },
-                    { text: 'Fooianson' },
-                    { text: 'Foods' },
-                    { text: 'Fooo' },
-                    { text: 'Foo' },
-                    { text: 'Foo' }
-                ],
-                rows: [
-                    {
-                        title: 'Performance Task 1, Subtask 1',
-                        students: [
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' }
-                        ]
-                    },
-                    {
-                        title: 'Performance Task 1, Subtask 2',
-                        students: [
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' }
-                        ]
-                    },
-                    {
-                        title: 'Performance Task 1, Subtask 3',
-                        students: [
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' },
-                            { text: 'Foole' },
-                            { text: 'Foo' },
-                            { text: 'Fooianson' },
-                            { text: 'Foods' },
-                            { text: 'Fooo' },
-                            { text: 'Foo' },
-                            { text: 'Foo' }
-                        ]
-                    }
-                ]
-            },
-            {
-                title: 'Performance Task 2',
-                students: [
-                    { text: 'Foo' },
-                    { text: 'Foole' },
-                    { text: 'Foo' },
-                    { text: 'Fooianson' },
-                    { text: 'Foods' },
-                    { text: 'Fooo' },
-                    { text: 'Foo' },
-                    { text: 'Foo' },
-                    { text: 'Foole' },
-                    { text: 'Foo' },
-                    { text: 'Fooianson' },
-                    { text: 'Foods' },
-                    { text: 'Fooo' },
-                    { text: 'Foo' },
-                    { text: 'Foo' },
-                    { text: 'Foole' },
-                    { text: 'Foo' },
-                    { text: 'Fooianson' },
-                    { text: 'Foods' },
-                    { text: 'Fooo' },
-                    { text: 'Foo' },
-                    { text: 'Foo' }
-                ]
-            }
-        ]
-    },
 
     tpl: [
         '{% var studentsCount = values.students.length %}',
@@ -193,34 +48,39 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
                 '<tbody>',
                     '<tpl for="rows">',
-                        '<tr class="slate-studentsgrid-row">',
-                            '<th class="slate-studentsgrid-rowheader">',
-                                '<div class="slate-studentsgrid-header-text">{title}</div>',,
+                        '<tr class="slate-studentsgrid-row',
+                            '<tpl if="rows.length"> expandable</tpl>',
+                        '">',
+                            '<th class="slate-studentsgrid-rowheader',
+                                '<tpl if="rows.length"> expandable</tpl>',
+                            ,'">',
+                                '<div class="slate-studentsgrid-header-text">{Title}</div>',,
                             '</th>',
                         '</tr>',
 
                         // expander infrastructure
+
+                    '<tpl if="rows">',
                         '<tr class="slate-studentsgrid-expander">',
                             '<td class="slate-studentsgrid-expander-cell">',
                                 '<div class="slate-studentsgrid-expander-ct">',
                                     '<table class="slate-studentsgrid-expander-table">',
                                         '<tbody>',
                                         //
-
                                             '<tpl for="rows">',
-                                                '<tr class="slate-studentsgrid-subrow">',
+                                                '<tr class="slate-studentsgrid-row slate-studentsgrid-subrow">',
                                                     '<th class="slate-studentsgrid-rowheader">',
-                                                        '<span class="slate-studentsgrid-header-text">{title}</span>',
+                                                        '<span class="slate-studentsgrid-header-text">{Title}</span>',
                                                     '</th>',
                                                 '</tr>',
                                             '</tpl>',
-
                                         //
                                         '</tbody>',
                                     '</table>',
                                 '</div>',
                             '</td>',
                         '</tr>',
+                    '</tpl>',
                         //
                     '</tpl>',
                 '</tbody>',
@@ -239,7 +99,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                                 '<th class="slate-studentsgrid-colheader">',
                                     '<div class="slate-studentsgrid-header-clip">',
                                         '<a class="slate-studentsgrid-header-link" href="javascript:void(0)">',
-                                            '<span class="slate-studentsgrid-header-text">{fullName}</span>',
+                                            '<span class="slate-studentsgrid-header-text">{FullName}</span>',
                                         '</a>',
                                     '</div>',
                                 '</th>',
@@ -249,9 +109,9 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
                     '<tbody>',
                         '<tpl for="rows">',
-                            '<tr class="slate-studentsgrid-row">',
+                            '<tr class="slate-studentsgrid-row" data-id="{ID}">',
                                 '<tpl for="students">',
-                                    '<td class="slate-studentsgrid-cell {cls}">{text}</td>',
+                                    '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}">{[Ext.Date.format(new Date(values.DueDate * 1000), "m/d")]}</td>',
                                 '</tpl>',
                             '</tr>',
 
@@ -262,15 +122,15 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                                         '<table class="slate-studentsgrid-expander-table">',
                                             '<tbody>',
                                             //
-
-                                                '<tpl for="rows">',
-                                                    '<tr class="slate-studentsgrid-subrow">',
+                                            '<tpl if="rows">',
+                                                '<tpl for="rows" >',
+                                                    '<tr class="slate-studentsgrid-row slate-studentsgrid-subrow" data-id="{ID}">',
                                                         '<tpl for="students">',
-                                                            '<td class="slate-studentsgrid-cell {cls}">{text}</td>',
+                                                            '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}" data-parent-task-id="{[parent.ParentTaskID]}">{[Ext.Date.format(new Date(values.DueDate * 1000), "m/d")]}</td>',
                                                         '</tpl>',
                                                     '</tr>',
                                                 '</tpl>',
-
+                                            '</tpl>',
                                             //
                                             '</tbody>',
                                         '</table>',
@@ -290,24 +150,108 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         click: {
             fn: 'onGridClick',
             element: 'el',
-            delegate: '.slate-studentsgrid-row'
+            delegate: ['.slate-studentsgrid-cell', '.slate-studentsgrid-row']
         }
     },
 
     // TODO make this much better
     onGridClick: function(ev, t) {
-        var target = Ext.get(t);
+        var target = Ext.get(t),
+            rowSelector = '.slate-studentsgrid-row',
+            subRowSelector = '.slate-studentsgrid-subrow',
+            cellSelector = '.slate-studentsgrid-cell';
 
-        if (target.is('.slate-studentsgrid-row')) {
-            var grid = this.el,
+
+
+        if (target.is(cellSelector)) {
+            this.onDataCellClick(target);
+        } else if (target.is(subRowSelector)) {
+
+        } else if (target.is(rowSelector)) {
+            var grid            = this.el,
                 rowheadersTable = grid.down('.slate-studentsgrid-rowheaders-table'),
                 dataTable       = grid.down('.slate-studentsgrid-data-table'),
                 targetTable     = target.up('table'),
                 targetTableRows = targetTable.select('.slate-studentsgrid-row'),
-                rowIndex        = targetTableRows.indexOf(target);
-
-            dataTable.select('.slate-studentsgrid-row').item(rowIndex).toggleCls('is-expanded');
-            rowheadersTable.select('.slate-studentsgrid-row').item(rowIndex).toggleCls('is-expanded');
+                rowIndex = targetTableRows.indexOf(target),
+                expandable      = rowheadersTable.select('.slate-studentsgrid-row').item(rowIndex).hasCls('expandable');
+            //expand parent tasks
+            if (expandable && rowheadersTable.isAncestor(target)) {
+                dataTable.select('.slate-studentsgrid-row').item(rowIndex).toggleCls('is-expanded');
+                rowheadersTable.select('.slate-studentsgrid-row').item(rowIndex).toggleCls('is-expanded');
+            }
         }
+    },
+
+    onDataCellClick: function(target) {
+        this.fireEvent('datacellclick', this, target);
+    },
+
+    applyStudents: function(students) {
+        return Ext.Array.map(students, function(r) {
+            return r.isModel ? r.getData() : r;
+        });
+    },
+
+    applyTasks: function(tasks) {
+        var me = this,
+            statusClasses = me.getStatusClasses(),
+            rows = [],
+            rowIds = [],
+            students = this.getStudents(),
+            taskData,
+            date = new Date(),
+            isLate,
+            time = (date.getTime() / 1000),
+            _applyStudentTasksData = function(taskObj) {
+                var studentSubtaskIds = {},
+                    studentTaskCells = [];
+
+                Ext.Array.each(taskObj.StudentTasks, function(studentTask) {
+                    isLate = ['assigned', 'submitted', 're-submitted'].indexOf(studentTask.TaskStatus) > -1 && studentTask.DueDate > time;
+                    studentTask.cls = isLate ? statusClasses.late[studentTask.TaskStatus] : statusClasses[studentTask.TaskStatus];
+                    // Ext.Array.each(studentTask.S)
+                    studentSubtaskIds[studentTask.StudentID] = studentTask;
+                });
+
+                Ext.each(students, function(student) {
+                    if (studentSubtaskIds.hasOwnProperty(student.ID)) {
+                        studentTaskCells.push(studentSubtaskIds[student.ID]);
+                    } else {
+                        studentTaskCells.push({
+                            text: '',
+                            cls: statusClasses.unassigned
+                        });
+                    }
+                });
+
+                taskObj["students"] = studentTaskCells;
+            };
+
+        Ext.each(tasks, function(r) {
+            taskData = r.isModel ? r.getData() : r;
+            taskData.rows = taskData.SubTasks;
+            delete taskData.SubTasks;
+
+            _applyStudentTasksData(taskData);
+
+            Ext.each(taskData.rows, function(row) {
+                _applyStudentTasksData(row);
+                // Ext.each(row.StudentTasks, function(studentTask) {
+                //     studentTask.cls = statusClasses[studentTask.TaskStatus];
+                // });
+                // row.students = row.StudentTasks;
+                // delete row.StudentTasks;
+            });
+            rows.push(taskData);
+        });
+        return rows;
+    },
+
+    syncData: function() {
+        return this.update({
+            students: this.getStudents(),
+            rows: this.getTasks()
+        });
     }
 });
