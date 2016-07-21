@@ -23,8 +23,8 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                 submitted: 'slate-task-status-late slate-task-status-needsrated',
                 "re-submitted": 'slate-task-status-late slate-task-status-needsrated',
 
-                assigned: "slate-task-status-late"
-                // "re-assigned": 'slate-task-status-late'
+                assigned: "slate-task-status-late",
+                "re-assigned": 'slate-task-status-late'
             },
 
             completed: 'slate-task-status-completed'
@@ -111,7 +111,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                         '<tpl for="rows">',
                             '<tr class="slate-studentsgrid-row" data-id="{ID}">',
                                 '<tpl for="students">',
-                                    '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}">{[Ext.Date.format(new Date(values.DueDate * 1000), "m/d")]}</td>',
+                                    '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}">{[this.showDueDate(values)]}</td>',
                                 '</tpl>',
                             '</tr>',
 
@@ -126,7 +126,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                                                 '<tpl for="rows" >',
                                                     '<tr class="slate-studentsgrid-row slate-studentsgrid-subrow" data-id="{ID}">',
                                                         '<tpl for="students">',
-                                                            '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}" data-parent-task-id="{[parent.ParentTaskID]}">{[Ext.Date.format(new Date(values.DueDate * 1000), "m/d")]}</td>',
+                                                            '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}" data-parent-task-id="{[parent.ParentTaskID]}">{[this.showDueDate(values)]}</td>',
                                                         '</tpl>',
                                                     '</tr>',
                                                 '</tpl>',
@@ -142,7 +142,20 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                     '</tbody>',
                 '</table>',
             '</div>',
-        '</div>'
+        '</div>',
+        {
+            showDueDate: function(values) {
+                var date = '';
+
+                if (values.TaskStatus == 'completed') {
+                    date = '<i class="fa fa-lg fa-check-circle-o"></i>';
+                } else if (values.DueDate) {
+                    date = Ext.Date.format(new Date(values.DueDate * 1000), 'm/d');
+                }
+
+                return date;
+            }
+        }
     ],
 
     listeners: {
@@ -208,7 +221,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                     studentTaskCells = [];
 
                 Ext.Array.each(taskObj.StudentTasks, function(studentTask) {
-                    isLate = ['assigned', 'submitted', 're-submitted'].indexOf(studentTask.TaskStatus) > -1 && studentTask.DueDate > time;
+                    isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(studentTask.TaskStatus) > -1 && studentTask.DueDate < time;
                     studentTask.cls = isLate ? statusClasses.late[studentTask.TaskStatus] : statusClasses[studentTask.TaskStatus];
                     // Ext.Array.each(studentTask.S)
                     studentSubtaskIds[studentTask.StudentID] = studentTask;
@@ -220,6 +233,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                     } else {
                         studentTaskCells.push({
                             text: '',
+                            TaskID: taskObj.ID,
                             cls: statusClasses.unassigned
                         });
                     }
