@@ -10,14 +10,14 @@ Ext.define('AggregridExample.view.Main', {
     config: {
         items: [
             {
-                title: 'Basic Aggregrid',
-
-                xtype: 'app-basicaggregrid'
-            },
-            {
                 title: 'Rollup Aggregrid',
 
                 xtype: 'app-rollupaggregrid'
+            },
+            {
+                title: 'Basic Aggregrid',
+
+                xtype: 'app-basicaggregrid'
             }
         ]
     }

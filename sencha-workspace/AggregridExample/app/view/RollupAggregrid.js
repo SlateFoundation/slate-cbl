@@ -1,5 +1,5 @@
 Ext.define('AggregridExample.view.RollupAggregrid', {
-    extend: 'Jarvus.aggregrid.Aggregrid',
+    extend: 'Jarvus.aggregrid.RollupAggregrid',
     xtype: 'app-rollupaggregrid',
 
     config: {
@@ -9,41 +9,30 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
         ],
         columnMapper: 'student_id',
 
-        rowsStore: 'TimePeriods',
-        rowHeaderTpl: [
-            'Week #{week}'
-        ],
+        rowsStore: 'SummaryTimePeriods',
         rowMapper: function(dataRecord, rowsStore) {
-            var date = dataRecord.get('date'),
-                year = date.getFullYear(),
-                week = Ext.Date.getWeekOfYear(date);
-
-            // week 53 in January should be considered in the previous year
-            if (week == 53 && date.getMonth() == 0) {
-                year--;
-            }
+            var year = dataRecord.get('year'),
+                month = dataRecord.get('month');
 
             return rowsStore.getAt(rowsStore.findBy(function(rowRecord) {
-                return rowRecord.get('year') == year && rowRecord.get('week') == week;
+                return rowRecord.get('year') == year && rowRecord.get('month') == month;
             }));
         },
 
-        dataStore: 'Absences',
+        dataStore: 'SummaryAbsences',
 
+        cellTpl: [
+            '<tpl if="records.length">',
+                '{[values.records[0].record.get("absences")]}',
+            '</tpl>'
+        ],
         cellRenderer: function(group, cellEl) {
-            var absences = group.records.length;
+            var records = group.records,
+                absences = records.length && records[0].record.get('absences') || 0;
 
             cellEl.toggleCls('attendance-perfect', absences == 0);
-            cellEl.toggleCls('attendance-ok', absences == 1);
-            cellEl.toggleCls('attendance-bad', absences >= 2);
-        },
-
-        rollupRowsStore: 'SummaryTimePeriods',
-        rollupDataStore: 'SummaryAbsences'
-        // rollupRowHeaderField: 'title',
-        // rollupRowHeaderTpl: false,
-        // rollupRowMapper: false,
-        // rollupCellTpl: '{records.length}',
-        // rollupRenderer: false,
+            cellEl.toggleCls('attendance-ok', absences > 0 && absences < 4);
+            cellEl.toggleCls('attendance-bad', absences >= 4);
+        }
     }
 });
