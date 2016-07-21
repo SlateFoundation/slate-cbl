@@ -204,7 +204,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 });
             });
         }
-        me.editTask(task, studentTask.StudentID);
+        me.editStudentTask(task, studentTask.StudentID);
     },
 
     onGridDataCellClick: function(taskGrid, target) {
@@ -273,12 +273,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         console.log('updated assignees store');
     },
 
-    saveTask: function() {
+    saveStudentTask: function() {
         var me = this,
-            // form = me.getTaskEditorForm(),
+            form = me.getTaskEditorForm(),
             taskEditor = me.getTaskEditor(),
-            task = form.getTask(),
-            studentTask = form.getStudentTask(),
+            task = taskEditor.getTask(),
+            studentTask = taskEditor.getStudentTask(),
             record = Ext.create('Slate.cbl.model.StudentTask', studentTask);
 
         form.updateRecord(record);
@@ -286,11 +286,62 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         record.save({
             success: function(rec) {
                 taskEditor.close();
+                Ext.toast('Student Task successfully saved!');
             }
         });
     },
 
-    editTask: function(taskRecord, studentId) {
+    saveTask: function() {
+        var me = this,
+            form = me.getTaskEditorForm(),
+            skillsField = me.getSkillsField(),
+            attachmentsField = me.getAttachmentsField(),
+            assignmentsField = me.getAssignmentsField(),
+            record = form.updateRecord().getRecord(),
+            wasPhantom = record.phantom,
+            errors;
+
+        //set skills
+        record.set('Skills', skillsField.getSkills(false)); // returnRecords
+        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
+        record.set('Assignees', assignmentsField.getAssignees(false)); // returnRecords
+        record.set('CourseSectionID', me.getDashboardCt().getCourseSection().getId());
+
+        errors = record.validate();
+
+        if (errors.length) {
+            Ext.each(errors.items, function(item) {
+                var itemField = form.down('[name='+item.field +']');
+                if (itemField) {
+                    itemField.markInvalid(item.message);
+                }
+            });
+            return;
+        }
+
+        record.save({
+            success: function(rec) {
+                me.getTaskEditor().close();
+
+                Ext.toast('Task succesfully saved!');
+            }
+        });
+    },
+
+    editTask: function(taskRecord) {
+        var me = this,
+            taskEditor = me.getTaskEditor(),
+            form = me.getTaskEditorForm();
+
+        if (!taskRecord) {
+            taskRecord = Ext.create('Slate.cbl.model.Task');
+        }
+
+        taskEditor.setTask(taskRecord);
+        taskEditor.show();
+    },
+
+    editStudentTask: function(taskRecord, studentId) {
         var me = this,
             taskEditor = me.getTaskEditor(),
             form = me.getTaskEditorForm(),
@@ -322,10 +373,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 }
             });
         }
-
-        // taskEditor.setTask(taskRecord);
-        //set students
-
 
     },
 

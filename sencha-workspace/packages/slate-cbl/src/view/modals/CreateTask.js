@@ -13,6 +13,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
 
     title: 'Create Task',
     config: {
+        task: null,
         enableAssignments: true
     },
 
@@ -28,6 +29,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             form.insert(5, {xtype: 'slate-tasks-assignmentsfield'});
             form.insert(3, {
                 xtype: 'datefield',
+                itemId: 'due-date',
                 name: 'DueDate',
                 fieldLabel: 'Due Date'
             });
@@ -61,6 +63,9 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             items: [
                 {
                     xtype: 'checkboxfield',
+                    itemId: 'status',
+                    inputValue: 'shared',
+                    name: 'Status',
                     boxLabel: 'Add task to database'
                 },
                 {
@@ -88,7 +93,20 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     emptyText: '(Optional)',
                     name: 'ParentTaskID',
                     valueField: 'ID',
-                    store: 'ParentTasks'
+                    store: {
+                        model: 'Slate.cbl.model.Task',
+                        autoLoad: true,
+                        proxy: {
+                            type: 'slate-records',
+                            url: '/cbl/tasks',
+                            extraParams: {
+                                excludeSubtasks: true
+                            },
+                            include: [
+                                'Creator'
+                            ]
+                        }
+                    }
                 },
                 {
                     itemId: 'experience-type',
@@ -110,6 +128,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 },
                 {
                     xtype: 'datefield',
+                    itemId: 'expiration-date',
                     name: 'ExpirationDate',
                     fieldLabel: 'Expiration Date'
                 },
@@ -121,6 +140,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 },
                 {
                     xtype: 'textareafield',
+                    itemId: 'instructions',
                     name: 'Instructions',
                     fieldLabel: 'Instructions',
                     grow: true

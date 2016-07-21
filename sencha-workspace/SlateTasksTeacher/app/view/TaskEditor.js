@@ -13,7 +13,13 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
             assignmentsfieldCheckbox = assignmentsfield.down('checkboxfield'),
             titleField = me.down('slate-tasks-titlefield'),
             parentTaskField = titleField.next('slate-tasks-titlefield'),
-            experienceField = me.down('#experience-type');
+            experienceField = me.down('#experience-type'),
+            duedateField = me.down('#due-date'),
+            expirationdateField = me.down('#expiration-date'),
+            skillsField = me.down('slate-skillsfield'),
+            attachmentsfield = me.down('slate-tasks-attachmentsfield'),
+            instructionsField = me.down('#instructions'),
+            taskPrivacyField = me.down('#status');
 
         //move to controller?
 
@@ -23,24 +29,37 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
 
         me.insert(0, assignmentsfield);
 
+        //hide & disable fields
         assignmentsfield.down('combo').setReadOnly(true);
         titleField.setReadOnly(true);
         parentTaskField.setReadOnly(true);
         experienceField.setReadOnly(true);
-        // assignmentsfieldStore.removeAll();
-
-        // assignmentsfieldStore.add(selectedStudents);
+        skillsField.down('combo').hide(true);
+        instructionsField.setReadOnly(true);
+        attachmentsfield.down('textfield').hide(true);
+        Ext.each(attachmentsfield.query('button'), function(b) {
+            b.hide();
+        });
+        taskPrivacyField.setDisabled(true);
 
         assignmentsfield.down('combo').setValue(studentTask.StudentID);
-        // assignmentsfield.down('combo').setValueOnData();
 
+        //override fields
+        if (studentTask.DueDate) {
+            duedateField.setValue(Ext.Date.format(new Date(studentTask.DueDate * 1000), 'm/d/Y'));
+        }
+
+        if (studentTask.ExpirationDate) {
+            expirationdateField.setValue(Ext.Dahe.format(new Date(studentTask.DueDate * 1000), 'm/d/Y'));
+        }
     },
 
     updateTask: function(task, oldTask) {
         var me = this,
             form = me.down('slate-modalform'),
             skillsField = form.down('slate-skillsfield'),
-            attachmentsField = form.down('slate-tasks-attachmentsfield');
+            attachmentsField = form.down('slate-tasks-attachmentsfield'),
+            taskPrivacyField = me.down('#status'), taskStatus;
 
         form.reset();
         form.loadRecord(task);
@@ -67,5 +86,16 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
                 });
             }
         }
+
+        switch (task.get('Status')) {
+            case 'shared':
+                taskStatus = 'shared';
+                break;
+            case 'private':
+                taskStatus = false;
+                break;
+        }
+
+        taskPrivacyField.setValue(taskStatus);
     }
 });
