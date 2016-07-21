@@ -95,6 +95,8 @@ Ext.define('AggregridExample.Application', {
 
         // export global references for testing/debugging, only because this is an example app
         window.mainView = me.getMainView();
+        window.basicAggregrid = window.mainView.down('app-basicaggregrid');
+        window.rollupAggregrid = window.mainView.down('app-rollupaggregrid');
     },
 
     onAppUpdate: function () {
