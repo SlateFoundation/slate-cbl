@@ -52,6 +52,17 @@ Ext.define('AggregridExample.Application', {
             },
             aggregatechange: function(aggregrid, action, recordMetadata) {
                 this.logInfo('%s->aggregatechange: %s record %s in group %o at %sx%s', aggregrid.getId(), action, recordMetadata.record.getId(), recordMetadata.group, recordMetadata.row.getId(), recordMetadata.column.getId());
+            },
+
+            // interaction events
+            rowheaderclick: function(aggregrid, rowId) {
+                this.logInfo('%s->rowheaderclick: row %s', aggregrid.getId(), rowId);
+            },
+            columnheaderclick: function(aggregrid, columnId) {
+                this.logInfo('%s->columnheaderclick: column %s', aggregrid.getId(), columnId);
+            },
+            cellclick: function(aggregrid, rowId, columnId) {
+                this.logInfo('%s->cellclick: row %s, column %s', aggregrid.getId(), rowId, columnId);
             }
         }
     },
