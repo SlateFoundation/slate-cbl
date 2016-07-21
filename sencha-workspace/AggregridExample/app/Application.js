@@ -30,27 +30,28 @@ Ext.define('AggregridExample.Application', {
     mainView: 'Main',
 
     control: {
-        'app-myaggregrid': {
-            beforerefresh: function() {
-                console.info('app.myaggregrid->beforerefresh');
+        'jarvus-aggregrid': {
+            // lifecycle events
+            beforerefresh: function(aggregrid) {
+                this.logInfo('%s->beforerefresh', aggregrid.getId());
             },
-            refresh: function() {
-                console.info('app.myaggregrid->refresh');
+            refresh: function(aggregrid) {
+                this.logInfo('%s->refresh', aggregrid.getId());
             },
-            beforeaggregate: function() {
-                console.info('app.myaggregrid->beforeaggregate');
+            beforeaggregate: function(aggregrid) {
+                this.logInfo('%s->beforeaggregate', aggregrid.getId());
             },
-            aggregate: function() {
-                console.info('app.myaggregrid->aggregate');
+            aggregate: function(aggregrid) {
+                this.logInfo('%s->aggregate', aggregrid.getId());
             },
-            beforerendercells: function() {
-                console.info('app.myaggregrid->beforerendercells');
+            beforerendercells: function(aggregrid) {
+                this.logInfo('%s->beforerendercells', aggregrid.getId());
             },
-            rendercells: function() {
-                console.info('app.myaggregrid->rendercells');
+            rendercells: function(aggregrid) {
+                this.logInfo('%s->rendercells', aggregrid.getId());
             },
             aggregatechange: function(aggregrid, action, recordMetadata) {
-                console.info('app.myaggregrid->aggregatechange: %s record %s in group %o at %sx%s', action, recordMetadata.record.getId(), recordMetadata.group, recordMetadata.row.getId(), recordMetadata.column.getId());
+                this.logInfo('%s->aggregatechange: %s record %s in group %o at %sx%s', aggregrid.getId(), action, recordMetadata.record.getId(), recordMetadata.group, recordMetadata.row.getId(), recordMetadata.column.getId());
             }
         }
     },
@@ -138,5 +139,18 @@ Ext.define('AggregridExample.Application', {
         }
 
         this.getSummaryAbsencesStore().loadData(summaryData);
+    },
+
+    logInfo: function() {
+        if (!window.console) {
+            return;
+        }
+
+        var args = Array.prototype.slice.call(arguments);
+
+        args[0] = '%c[APP] ' + args[0];
+        Ext.Array.insert(args, 1, 'color: #999');
+
+        console.info.apply(console, args);
     }
 });
