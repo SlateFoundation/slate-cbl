@@ -20,6 +20,7 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
         skillsField.setSkills(task.get('Skills'));
         attachmentsField.setAttachments(task.get('Attachments'));
 
+        statusField.setValue('shared');
         statusField.setDisabled(true);
 
         me.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
