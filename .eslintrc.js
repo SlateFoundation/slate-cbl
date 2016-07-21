@@ -234,7 +234,7 @@ module.exports = {
             "never"
         ],
         "template-curly-spacing": "error",
-        "vars-on-top": "off",
+        "vars-on-top": "error",
         "wrap-iife": "error",
         "wrap-regex": "error",
         "yield-star-spacing": "error",
