@@ -21,6 +21,7 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             displayField: 'Code_Descriptor',
             valueField: 'ID',
             emptyText: 'Competency code or statement\u2026', // &hellip;
+            multiSelect: true,
             listeners: {
                 beforeselect: function(combo, record) {
                     var dataview = combo.next('dataview'),
@@ -28,6 +29,23 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                     store.add(record);
                     return false;
                 }
+            },
+            listConfig: {
+                tpl: [
+                    '<ul>',
+                        '<tpl for=".">',
+                            '<tpl if="xindex == 1 || this.getGroupStr(parent[xindex - 2]) != this.getGroupStr(values)">',
+                                '<li class="x-combo-list-group"><b>{[this.getGroupStr(values)]}</b></li>',
+                            '</tpl>',
+                            '<li role="option" class="x-boundlist-item" style="padding-left: 12px">{Code_Descriptor}</li>',
+                        '</tpl>',
+                    '</ul>',
+                    {
+                        getGroupStr: function (values) {
+                            return values.CompetencyDescriptor;
+                        }
+                    }
+                ]
             }
         },
         {

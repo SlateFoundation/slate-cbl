@@ -67,11 +67,17 @@ Ext.define('Slate.cbl.model.Skill', {
             calculate: function(data) {
                 return [data.Code, '-', data.Descriptor].join(' ');
             }
+        },
+        {
+            name: "CompetencyDescriptor",
+            type: "string",
+            persist: false
         }
     ],
 
     proxy: {
         type: 'slate-records',
-        url: '/cbl/skills'
+        url: '/cbl/skills',
+        include: 'CompetencyDescriptor'
     }
 });
