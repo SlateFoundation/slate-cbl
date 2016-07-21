@@ -63,6 +63,23 @@ Ext.define('AggregridExample.Application', {
             },
             cellclick: function(aggregrid, rowId, columnId) {
                 this.logInfo('%s->cellclick: row %s, column %s', aggregrid.getId(), rowId, columnId);
+            },
+            beforeexpand: function(aggregrid, rowId, el, ev, controller) {
+                var pauseTime = Math.floor(Math.random() * 3000);
+
+                this.logInfo('%s->beforexpand: row %s, pausing for %oms', aggregrid.getId(), rowId, pauseTime);
+
+                controller.pause();
+                Ext.defer(controller.resume, pauseTime, controller);
+            },
+            expand: function(aggregrid, rowId) {
+                this.logInfo('%s->expand: row %s', aggregrid.getId(), rowId);
+            },
+            beforecollapse: function(aggregrid, rowId) {
+                this.logInfo('%s->beforecollapse: row %s', aggregrid.getId(), rowId);
+            },
+            collapse: function(aggregrid, rowId) {
+                this.logInfo('%s->collapse: row %s', aggregrid.getId(), rowId);
             }
         }
     },
