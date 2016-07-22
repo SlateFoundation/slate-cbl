@@ -11,6 +11,15 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         },
         ratingView: {
             afterrender: 'onRatingViewAfterRender'
+        },
+        addLinkButton: {
+            click: 'onAddLinkButtonClick'
+        },
+        addAttachmentButton: {
+            click: 'onAddAttachmentButtonClick'
+        },
+        submitButton: {
+            click: 'onSubmitButtonClick'
         }
     },
 
@@ -50,7 +59,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
         attachmentsList: 'slate-modalform slate-attachmentslist',
-        comments: 'slate-modalform #comments'
+        comments: 'slate-modalform #comments',
+        addLinkButton: 'slate-taskdetails #add-link',
+        addAttachmentButton: 'slate-taskdetails #add-attachment',
+        submitButton: 'slate-taskdetails button#submit'
     },
 
 
@@ -96,6 +108,18 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     onRatingViewAfterRender: function(view) {
         this.hideRatingViewElements(view);
+    },
+
+    onAddLinkButtonClick: function() {
+        Ext.Msg.alert('currently not implemented');
+    },
+
+    onAddAttachmentButtonClick: function() {
+        Ext.Msg.alert('currently not implemented');
+    },
+
+    onSubmitButtonClick: function() {
+        Ext.Msg.alert('currently not implemented');
     },
 
 
