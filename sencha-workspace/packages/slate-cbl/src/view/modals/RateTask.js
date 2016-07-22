@@ -106,15 +106,7 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     fieldLabel: 'Skills'
                 },
                 {
-                    xtype: 'slate-ratingview',
-                    listeners: {
-                        rateskill: function() {
-                            this.up('slate-ratetaskwindow').fireEvent('rateskill', ...arguments);
-                        },
-                        removerating: function() {
-                            this.up('slate-ratetaskwindow').fireEvent('removerating', ...arguments);
-                        }
-                    }
+                    xtype: 'slate-ratingview'
                 },
                 {
                     fieldLabel: 'Submitted Date',

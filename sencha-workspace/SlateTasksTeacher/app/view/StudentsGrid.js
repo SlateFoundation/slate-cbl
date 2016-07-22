@@ -223,7 +223,6 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                 Ext.Array.each(taskObj.StudentTasks, function(studentTask) {
                     isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(studentTask.TaskStatus) > -1 && studentTask.DueDate < time;
                     studentTask.cls = isLate ? statusClasses.late[studentTask.TaskStatus] : statusClasses[studentTask.TaskStatus];
-                    // Ext.Array.each(studentTask.S)
                     studentSubtaskIds[studentTask.StudentID] = studentTask;
                 });
 
@@ -251,11 +250,6 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
             Ext.each(taskData.rows, function(row) {
                 _applyStudentTasksData(row);
-                // Ext.each(row.StudentTasks, function(studentTask) {
-                //     studentTask.cls = statusClasses[studentTask.TaskStatus];
-                // });
-                // row.students = row.StudentTasks;
-                // delete row.StudentTasks;
             });
             rows.push(taskData);
         });

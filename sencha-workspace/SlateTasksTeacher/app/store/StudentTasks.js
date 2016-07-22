@@ -10,9 +10,9 @@ Ext.define('SlateTasksTeacher.store.StudentTasks', {
             excludeSubtasks: true
         },
         include: [
-            'StudentTasks',
-            'SubTasks.StudentTasks',
-            '*.Skills',
+            '*.StudentTasks.SkillRatings',
+            '*.Skills.CompetencyCode',
+            '*.Skills.CompetencyDescriptor',
             '*.Attachments'
         ]
     }

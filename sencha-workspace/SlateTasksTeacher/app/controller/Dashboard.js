@@ -26,9 +26,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         assignmentsComboField: {
             render: 'onAssigneeComboRender'
         },
-        taskRater: {
-            rateskill: 'onRateSkillClick',
-            removerating: 'onRemoveSkillRatingClick'
+        'slate-tasks-teacher-taskrater slate-ratingview' : {
+            rateskill: 'onRateSkillClick'
         },
         'slate-tasks-teacher-dashboardtoolbar button[action=delete]': {
             click: 'onDeleteTaskClick'
@@ -294,13 +293,24 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         this.rateStudentTask(studentTask);
     },
 
-    onRateSkillClick: function() {
-        console.log(arguments);
-        // debugger;
-    },
+    onRateSkillClick: function(ratingView, ratingObject) {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = taskRater.getStudentTask();
 
-    onRemoveSkillRatingClick: function() {
-        console.log(arguments);
+        Slate.API.request({
+            url: '/cbl/student-tasks/'+studentTask.ID+'/rate',
+            method: 'POST',
+            params: {
+                SkillID: ratingObject.SkillID,
+                Score: ratingObject.rating
+            },
+            callback: function(opts, success, response) {
+                if (!success) {
+                    Ext.toast('Error. Please try again.');
+                }
+            }
+        });
         // debugger;
     },
 

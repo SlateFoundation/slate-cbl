@@ -9,59 +9,23 @@ Ext.define('Slate.cbl.widget.RatingView', {
         menu: null,
         menuRatings: [1,2,3,4,5,6,7]
     },
-
-    data: {
-        ratings: [ 7, 8, 9, 10, 11, 12, 'M' ],
-        competencies: [
-            {
-                code: 'ELA.2',
-                desc: 'Reading Informational Texts',
-                skills: [
-                    {
-                        code: 'ELA.2.HS.1',
-                        desc: 'Cite evidence',
-                        level: 9,
-                        rating: 10
-                    },
-                    {
-                        code: 'ELA.2.HS.3',
-                        desc: 'Analyze developments',
-                        level: 11,
-                        rating: 4
-                    }
-                ]
-            },
-            {
-                code: 'ELA.3',
-                desc: 'Writing Evidence-Based Arguments',
-                skills: [
-                    {
-                        code: 'ELA.3.HS.2',
-                        desc: 'Use evidence to develop claims and counterclaims',
-                        level: 9,
-                        rating: 8
-                    }
-                ]
-            }
-        ]
-    },
-
+    //todo: add ratings as config.
     tpl: [
         '{% this.ratings = values.ratings %}',
 
         '<ul class="slate-ratingview-competencies">',
             '<tpl for="competencies">',
                 '<li class="slate-ratingview-competency">',
-                    '<h4 class="slate-ratingview-competency-title">{code}<tpl if="code &amp;&amp; desc"> – </tpl>{desc}</h4>',
+                    '<h4 class="slate-ratingview-competency-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h4>',
                     '<ul class="slate-ratingview-skills">',
                         '<tpl for="skills">',
-                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{level}" data-competency="{[parent.code]}" data-skill="{code}">',
+                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{level}" data-competency="{[parent.Code]}" data-skill="{Code}">',
                                 '<header class="slate-ratingview-skill-header">',
                                     '<button class="slate-ratingview-remove"><i class="fa fa-times-circle"></i></button>',
-                                    '<h5 class="slate-ratingview-skill-title">{code}<tpl if="code &amp;&amp; desc"> – </tpl>{desc}</h5>',
+                                    '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.rating < this.ratings[0] || values.rating == null">is-selected</tpl>" data-rating="{[values.rating < this.ratings[0] ? values.rating : "N/A"]}">',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.rating < this.ratings[0] || values.rating == null || values.rating == &quot;N/A&quot;">is-selected</tpl>" data-rating="{[values.rating < this.ratings[0] ? values.rating : "N/A"]}">',
                                         '<div class="slate-ratingview-rating-bubble" tabindex="0">',
                                             '<span class="slate-ratingview-rating-label">{[values.rating <  this.ratings[0] ? values.rating : "N/A"]}</span>',
                                         '</div>',
@@ -118,9 +82,6 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
         if (!rating || target == naRating) {
             naRating.addCls('is-selected');
-            // if (target.is('.slate-ratingview-remove')) {
-
-            // }
             if (target == naRating && showMenu !== false) {
                 me.showMenu(target, target.getXY());
             } else {
