@@ -11,8 +11,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskGrid: {
             // competencyrowclick: 'onCompetencyRowClick',
             datacellclick: 'onGridDataCellClick',
-            editstudenttask: 'onEditStudentTask'
-            // ratestudenttask: 'onRateStudentTask'
+            editstudenttask: 'onEditStudentTask',
+            ratestudenttask: 'onRateStudentTask'
         },
 
         dashboardCt: {
@@ -26,7 +26,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         assignmentsComboField: {
             render: 'onAssigneeComboRender'
         },
-
+        taskRater: {
+            rateskill: 'onRateSkillClick',
+            removerating: 'onRemoveSkillRatingClick'
+        },
         'slate-tasks-teacher-dashboardtoolbar button[action=delete]': {
             click: 'onDeleteTaskClick'
         },
@@ -45,7 +48,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     // controller configuration
     views: [
         'Dashboard',
-        'TaskEditor'
+        'TaskEditor',
+        'TaskRater'
     ],
 
     stores: [
@@ -73,6 +77,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             autoCreate: true,
 
             xtype: 'slate-tasks-teacher-taskeditor'
+        },
+        taskRater: {
+            selector: 'slate-tasks-teacher-taskrater',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskrater'
         },
         taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
         skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
@@ -192,19 +202,26 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     onEditStudentTask: function(taskGrid, studentTask) {
         var me = this,
-            task = me.getStudentTasksStore().getById(studentTask.TaskID);
+            task;
 
+        me.getStudentTasksStore().findBy(function(t) {
+            if (t.getId() == studentTask.TaskID) {
+                return task = t;
+            }
 
-        if (!task) {
-            me.getStudentTasksStore().findBy(function(t) {
-                Ext.each(t.get("SubTasks"), function(st) {
-                    if (st.ID == studentTask.TaskID) {
-                        task = Ext.create('Slate.cbl.model.Task', st);
-                    }
-                });
+            Ext.each(t.get("SubTasks"), function(st) {
+                if (st.ID == studentTask.TaskID) {
+                    return task = Ext.create('Slate.cbl.model.Task', st);
+                }
             });
+        });
+
+        if (task) {
+            me.editStudentTask(task, studentTask.StudentID);
+        } else {
+            //handle failure?
+            Ext.Msg.alert('Task not found. Please refresh.');
         }
-        me.editStudentTask(task, studentTask.StudentID);
     },
 
     onGridDataCellClick: function(taskGrid, target) {
@@ -271,6 +288,59 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         comboStore.add(studentsStore.getRange());
         combo.setValueOnData();
         console.log('updated assignees store');
+    },
+
+    onRateStudentTask: function(taskGrid, studentTask) {
+        this.rateStudentTask(studentTask);
+    },
+
+    onRateSkillClick: function() {
+        console.log(arguments);
+        // debugger;
+    },
+
+    onRemoveSkillRatingClick: function() {
+        console.log(arguments);
+        // debugger;
+    },
+
+    rateStudentTask: function(studentTask) {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            task;
+
+        me.getStudentTasksStore().findBy(function(t) {
+            if (t.getId() == studentTask.TaskID) {
+                return task = t;
+            }
+
+            Ext.each(t.get("SubTasks"), function(st) {
+                if (st.ID == studentTask.TaskID) {
+                    return task = Ext.create('Slate.cbl.model.Task', st);
+                }
+            });
+        });
+
+        if (!task) {
+            //handle failure / how can this fail?
+            Ext.Msg.alert('Task not found. Please refresh.');
+            return;
+        }
+
+        Slate.API.request({
+            url: '/cbl/student-tasks/'+studentTask.ID,
+            method: 'GET',
+            params: {
+                include: 'Student,SkillRatings'
+            },
+            callback: function(opts, success, response) {
+                // debugger;
+                taskRater.setTask(task);
+                taskRater.setStudentTask(response.data.data);
+
+                taskRater.show();
+            }
+        });
     },
 
     saveStudentTask: function() {

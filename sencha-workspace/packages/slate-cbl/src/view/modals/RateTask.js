@@ -9,6 +9,11 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
 
     title: 'Rate Task',
 
+    config: {
+        task: null,
+        studentTask: null
+    },
+
     dockedItems: [
         {
             dock: 'bottom',
@@ -25,13 +30,15 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     items: [
                         {
                             text: 'Edit Task',
+                            action: 'edit',
                             margin: '0 0 8'
                         },
                         {
                             xtype: 'tbfill'
                         },
                         {
-                            text: 'Accept Task'
+                            text: 'Accept Task',
+                            action: 'accept'
                         }
                     ]
                 },
@@ -44,13 +51,15 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     },
                     items: [
                         {
-                            text: 'Unassign Task'
+                            text: 'Unassign Task',
+                            action: 'unassign'
                         },
                         {
                             xtype: 'tbfill'
                         },
                         {
-                            text: 'Assign Revision'
+                            text: 'Assign Revision',
+                            action: 'reassign'
                         }
                     ]
                 }
@@ -65,62 +74,56 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
             items: [
                 {
                     fieldLabel: 'Student',
-                    value: 'Chris Alfano'
+                    name: 'StudentFullName'
                 },
                 {
                     fieldLabel: 'Title',
-                    value: 'Senior Thesis Project Synopsis'
+                    name: 'Title'
                 },
                 {
                     fieldLabel: 'Subtask of',
-                    value: 'Senior Thesis'
+                    name: 'ParentTaskTitle'
                 },
                 {
                     fieldLabel: 'Type of Experience',
-                    value: 'Workshop'
+                    name: 'ExperienceType'
                 },
                 {
                     fieldLabel: 'Due Date',
-                    value: '5/3/15'
+                    name: 'DueDate'
                 },
                 {
                     fieldLabel: 'Expiration Date',
-                    value: '5/10/15'
+                    name: 'ExpirationDate'
                 },
                 {
-                    xtype: 'fieldcontainer',
+                    xtype: 'slate-tasks-attachmentsfield',
                     fieldLabel: 'Attachments',
-                    items: [
-                        {
-                            xtype: 'slate-attachmentslist',
-                            data: [
-                                {
-                                    kind: 'doc',
-                                    title: 'Document Name'
-                                },
-                                {
-                                    kind: 'folder',
-                                    title: 'Folder Name'
-                                }
-                            ]
+                    readOnly: true
+                },
+                {
+                    xtype: 'slate-skillsfield',
+                    fieldLabel: 'Skills'
+                },
+                {
+                    xtype: 'slate-ratingview',
+                    listeners: {
+                        rateskill: function() {
+                            this.up('slate-ratetaskwindow').fireEvent('rateskill', ...arguments);
+                        },
+                        removerating: function() {
+                            this.up('slate-ratetaskwindow').fireEvent('removerating', ...arguments);
                         }
-                    ]
-                },
-                {
-                    xtype: 'tagfield',
-                    fieldLabel: 'Skills',
-                    emptyText: 'Competency code or statement&hellip;'
-                },
-                {
-                    xtype: 'slate-ratingview'
+                    }
                 },
                 {
                     fieldLabel: 'Submitted Date',
-                    value: '5/9/15'
+                    name: 'Submitted'
                 },
                 {
                     xtype: 'textareafield',
-                    fieldLabel: 'Comments'
+                    fieldLabel: 'Comments',
+                    name: 'Comment'
                 }
             ]
         }
