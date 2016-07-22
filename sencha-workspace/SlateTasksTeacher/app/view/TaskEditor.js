@@ -34,12 +34,10 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
         titleField.setReadOnly(true);
         parentTaskField.setReadOnly(true);
         experienceField.setReadOnly(true);
-        skillsField.down('combo').hide(true);
         instructionsField.setReadOnly(true);
-        attachmentsfield.down('textfield').hide(true);
-        Ext.each(attachmentsfield.query('button'), function(b) {
-            b.hide();
-        });
+        skillsField.setReadOnly(true);
+        attachmentsfield.setReadOnly(true);
+
         taskPrivacyField.setDisabled(true);
 
         assignmentsfield.down('combo').setValue(studentTask.StudentID);
