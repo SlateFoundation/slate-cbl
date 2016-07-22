@@ -20,6 +20,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
                 xtype: 'tbfill'
             },{
                 xtype: 'button',
+                itemId: 'submit',
                 text: 'Submit',
                 scale: 'large'
             }]
@@ -85,6 +86,19 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
                     '</tpl>',
                 '</ul>'
             ]
+        },
+        {
+            xtype: 'fieldcontainer',
+            fieldLabel: 'Attachments',
+            items: [{
+                xtype: 'button',
+                itemId: 'add-link',
+                text: 'Add Link'
+            },{
+                xtype: 'button',
+                itemId: 'add-attachment',
+                text: 'Attachment'
+            }]
         }]
     }]
 });
