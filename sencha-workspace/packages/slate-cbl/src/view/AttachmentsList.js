@@ -13,18 +13,27 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
     componentCls: 'slate-attachmentslist',
 
     itemSelector: '.slate-attachmentslist-item',
-    tpl: [
-        '<tpl for=".">',
-            '<li class="slate-attachmentslist-item <tpl if="kind">slate-attachment-{kind}</tpl>">',
-                '<span class="slate-attachment-title"><a href="{URL}" target=_blank>{title}</a></span>',
-                '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
-                '<button class="plain" action="remove"><i class="fa fa-times-circle"></i></button>',
-            '</li>',
-        '</tpl>'
-    ],
 
     store: {
         model: 'Slate.cbl.model.tasks.Attachment'
+    },
+
+    initComponent: function() {
+        var me = this;
+
+        me.initConfig();
+        me.tpl = [
+            '<tpl for=".">',
+                '<li class="slate-attachmentslist-item <tpl if="kind">slate-attachment-{kind}</tpl>">',
+                    '<span class="slate-attachment-title"><a href="{URL}" target=_blank>{title}</a></span>',
+                    '<tpl if="this.owner.getEditable()">',
+                        '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
+                        '<button class="plain" action="remove"><i class="fa fa-times-circle"></i></button>',
+                    '</tpl>',
+                '</li>',
+            '</tpl>'
+        ];
+        me.callParent(arguments);
     },
 
     afterRender: function() {

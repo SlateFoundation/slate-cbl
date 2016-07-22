@@ -10,6 +10,9 @@ Ext.define('Slate.cbl.widget.SkillsField', {
     componentCls: 'slate-skillsfield',
 
     fieldLabel: 'Skills',
+    config: {
+        readOnly: false
+    },
 
     items: [
         {
@@ -56,6 +59,7 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                 model: 'Slate.cbl.model.Skill'
             },
             autoEl: 'ul',
+            enableEditing: true,
             itemSelector: '.slate-skillsfield-item',
             tpl: [
                 '<tpl for=".">',
@@ -63,7 +67,9 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                         '<div class="slate-skillsfield-token">',
                             '<strong class="slate-skillsfield-item-code">{Code}</strong>',
                             '<span class="slate-skillsfield-item-title" title="{Descriptor}">{Descriptor}</span>',
-                            '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>',
+                            '<tpl if="this.owner.enableEditing">',
+                                '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>',
+                            '</tpl>',
                         '</div>',
                     '</li>',
                 '</tpl>'
@@ -78,6 +84,24 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             }
         }
     ],
+
+    updateReadOnly: function(readOnly) {
+        if (!this.rendered) {
+            return this.on('render', function() {
+                return this.updateReadOnly(readOnly);
+            });
+        }
+
+        var me = this,
+            field = me.down('combo'),
+            view = me.down('dataview'),
+            action = readOnly === undefined || !!readOnly;
+
+        view.enableEditing = !action;
+        view.refreshView();
+
+        field[action ? 'hide' : 'show']();
+    },
 
     getSkills: function(returnRecords, idsOnly) {
         var me = this,
