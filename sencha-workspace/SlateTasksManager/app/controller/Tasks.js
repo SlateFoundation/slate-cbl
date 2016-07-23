@@ -6,7 +6,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     views: [
         'TaskEditor',
-        'TasksManager'
+        'TasksManager',
+        'TaskDetails'
     ],
 
     stores: [
@@ -30,7 +31,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
                 xtype: 'slatetasksmanager-task-editor'
             },
-
+            taskDetails: 'slate-tasks-manager-details',
             taskEditorForm: 'slatetasksmanager-task-editor slate-modalform',
             skillsField: 'slate-skillsfield',
             attachmentsField: 'slate-tasks-attachmentsfield'
@@ -54,7 +55,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             select: 'onClonableTitleFieldSelect'
         },
         tasksManager: {
-            rowdblclick: 'onEditTaskClick'
+            rowdblclick: 'onEditTaskClick',
+            select: 'onTaskManagerRecordSelect'
         }
     },
 
@@ -110,6 +112,22 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 me.cloneTask(record);
             }
         });
+    },
+
+    onTaskManagerRecordSelect: function() {
+        this.showTaskDetails();
+    },
+
+    showTaskDetails: function(task) {
+        var me = this,
+            taskDetails = me.getTaskDetails(),
+            taskManager = me.getTasksManager();
+
+        if (!task && !(task = taskManager.getSelection()[0])) {
+            return;
+        }
+
+        taskDetails.setTask(task);
     },
 
     saveTask: function() {
