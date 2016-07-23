@@ -33,7 +33,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
             taskEditorForm: 'slatetasksmanager-task-editor slate-modalform',
             skillsField: 'slate-skillsfield',
-            attachmentsField: 'slate-tasks-attachmentsfield'
+            attachmentsField: 'slate-tasks-attachmentsfield',
+            taskStatusField: 'slatetasksmanager-task-editor #status'
         }
     },
 
@@ -117,10 +118,14 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             form = me.getTaskEditorForm(),
             skillsField = me.getSkillsField(),
             attachmentsField = me.getAttachmentsField(),
-            record = form.updateRecord().getRecord(),
+            statusField = me.getTaskStatusField(),
+            record = form.getRecord(),
             wasPhantom = record.phantom,
             errors;
 
+        form.updateRecord(record);
+
+        record.set('Status', statusField.getSubmitValue());
         //set skills
         record.set('Skills', skillsField.getSkills(false)); // returnRecords
         record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords

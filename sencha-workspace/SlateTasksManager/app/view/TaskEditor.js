@@ -16,12 +16,11 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
             statusField = me.down('#status');
 
         form.reset();
+        statusField.setValue(task.get('Status') ? task.get('Status') : 'shared');
         form.loadRecord(task);
         skillsField.setSkills(task.get('Skills'));
         attachmentsField.setAttachments(task.get('Attachments'));
 
-        statusField.setValue('shared');
-        statusField.setDisabled(true);
 
         me.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
         me.down('button[action=save]').setText(task.phantom ? 'Create' : 'Save');
