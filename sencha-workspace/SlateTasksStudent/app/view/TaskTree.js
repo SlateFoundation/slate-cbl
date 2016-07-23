@@ -4,18 +4,75 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     requires:[
     ],
 
-    config: {
-        statusStrings: {
-            due: 'Due',
-            late: 'Past Due',
-            revision: 'Revision Due'
-        }
-    },
-
     title: 'Current Tasks',
     showTools: true,
 
     componentCls: 'slate-tasktree',
+
+    items: [
+        {
+            xtype: 'container',
+            componentCls: 'slate-simplepanel-header',
+            layout: 'hbox',
+            items: [
+                {
+                    flex: 1,
+                    xtype: 'component',
+                    cls: 'slate-simplepanel-title',
+                    html: '',
+                    itemId: 'title'
+                },
+                {
+                    // TODO make this configurable
+                    xtype: 'container',
+                    layout: 'hbox',
+                    itemId: 'tools',
+                    items: [
+                        {
+                            xtype: 'button',
+                            ui: 'light',
+                            text: 'Filter',
+                            itemId: 'filter',
+                            menu: {
+                                plain: true,
+                                showSeparator: false,
+                                defaults: {
+                                    xtype: 'menucheckitem'
+                                },
+                                items: [
+                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Status' },
+                                    { text: 'Past Due Tasks' },
+                                    { text: 'Revision Tasks' },
+                                    { text: 'On-Time Tasks' },
+                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Timeline' },
+                                    { text: 'Past Due' },
+                                    { text: 'Due Today' },
+                                    { text: 'Due This Week' },
+                                    { text: 'Due Next Week' },
+                                    { text: 'Due in Future' },
+                                    { xtype: 'menuseparator' },
+                                    {
+                                        xtype: 'container',
+                                        padding: 8,
+                                        layout: {
+                                            type: 'hbox',
+                                            pack: 'center'
+                                        },
+                                        items: [
+                                            {
+                                                xtype: 'button',
+                                                text: 'View All'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
 
     tpl: [
         '<ul class="slate-tasktree-list">',
@@ -29,7 +86,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                             '<div class="slate-tasktree-category">{Category}</div>',
                             '<div class="slate-tasktree-text">',
                                 '<div class="slate-tasktree-title">{Title}</div>',
-                                '<div class="slate-tasktree-status">{[ this.getDueStatusString(values.DueDate) ]}</div>',
+                                '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
                                 '<div class="slate-tasktree-date">{DueDate:date("M d, Y")}</div>',
                             '</div>',
                         '</div>',
@@ -46,7 +103,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                         '<div class="slate-tasktree-data">',
                                             '<div class="slate-tasktree-text">',
                                                 '<div class="slate-tasktree-title">{Title}</div>',
-                                                '<div class="slate-tasktree-status">{[ this.getDueStatusString(values.DueDate) ]}</div>',
+                                                '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
                                                 '<div class="slate-tasktree-date">{DueDate:date("M d, Y")}</div>',
                                             '</div>',
                                         '</div>',
@@ -63,23 +120,19 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
         '</ul>',
         {
-            getDueStatusString: function(due, taskStatus) {
-                var now = new Date();
+            getStatusString: function(taskStatus) {
+                var statusStrings = {
+                    'assigned': 'Due',
+                    're-assigned': 'Revision',
+                    'submitted': 'Submitted',
+                    're-submitted': 'Resubmitted',
+                    'completed': 'Completed'
+                };
 
-                if (due > now) {
-                    if (taskStatus === 'revision') {
-                        return 'Revision Due';
-                    } else {
-                        return 'Due';
-                    }
-                } else {
-                    return 'Past Due';
-                }
+                return statusStrings[taskStatus] || '';
             },
             getDueStatusCls: function(due, taskStatus) {
                 var now = new Date();
-
-                console.log(taskStatus);
 
                 if (due > now) {
                     if (taskStatus === 'completed') {
