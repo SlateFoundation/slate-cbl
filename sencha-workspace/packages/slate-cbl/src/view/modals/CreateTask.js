@@ -25,12 +25,17 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
 
         //check if this form allows assigning
         if (me.getEnableAssignments()) {
-            form.insert(5, {xtype: 'slate-tasks-assignmentsfield'});
             form.insert(3, {
                 xtype: 'datefield',
                 name: 'DueDate',
                 fieldLabel: 'Due Date'
             });
+            form.insert(4, {
+                xtype: 'datefield',
+                name: 'ExpirationDate',
+                fieldLabel: 'Expiration Date'
+            });
+            form.insert(5, {xtype: 'slate-tasks-assignmentsfield'});
         }
     },
 
@@ -107,11 +112,6 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                             url: '/cbl/tasks/*experience-types'
                         }
                     }
-                },
-                {
-                    xtype: 'datefield',
-                    name: 'ExpirationDate',
-                    fieldLabel: 'Expiration Date'
                 },
                 {
                     xtype: 'slate-skillsfield',
