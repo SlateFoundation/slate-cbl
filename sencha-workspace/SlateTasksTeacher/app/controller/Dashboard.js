@@ -26,6 +26,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         assignmentsComboField: {
             render: 'onAssigneeComboRender'
         },
+
+        'slate-tasks-teacher-taskrater button[action=edit]': {
+            click: 'onEditStudentTaskClick'
+        },
         'slate-tasks-teacher-taskrater slate-ratingview' : {
             rateskill: 'onRateSkillClick'
         },
@@ -311,7 +315,15 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 }
             }
         });
-        // debugger;
+    },
+
+    onEditStudentTaskClick: function(btn) {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = taskRater.getStudentTask();
+
+        taskRater.close();
+        me.onEditStudentTask(null, studentTask);
     },
 
     rateStudentTask: function(studentTask) {
