@@ -58,6 +58,13 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
             return subRowsStore.getAt(subRowsStore.findBy(function(rowRecord) {
                 return rowRecord.get('year') == year && rowRecord.get('week') == week;
             }));
+        },
+        subCellRenderer: function(group, cellEl) {
+            var absences = group.records.length;
+
+            cellEl.toggleCls('attendance-perfect', absences == 0);
+            cellEl.toggleCls('attendance-ok', absences == 1);
+            cellEl.toggleCls('attendance-bad', absences >= 2);
         }
     }
 });
