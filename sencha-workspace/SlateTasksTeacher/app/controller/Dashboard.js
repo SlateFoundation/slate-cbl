@@ -437,7 +437,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         taskAssigner.setStudent(student);
         taskAssigner.setTask(task);
-        taskAssigner.setStudentTask(studentTask);
         taskAssigner.show();
 
     },

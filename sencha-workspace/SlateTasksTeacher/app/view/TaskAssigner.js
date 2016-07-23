@@ -5,11 +5,10 @@ Ext.define('SlateTasksTeacher.view.TaskAssigner', {
 
     config: {
         student: null,
-        studentTask: null,
         task: null
     },
 
-    updateStudent(student) {
+    updateStudent: function(student) {
         this.down('#informationCmp').update(student.getData());
     },
 
@@ -33,9 +32,5 @@ Ext.define('SlateTasksTeacher.view.TaskAssigner', {
         // instructionsField.setValue(task.get('Instructions'));
         // console.log(task.getData(), 'task data');
         me.down('slate-modalform').getForm().setValues(task.getData());
-    },
-
-    updateStudentTask: function(studentTask) {
-
     }
-})
+});
