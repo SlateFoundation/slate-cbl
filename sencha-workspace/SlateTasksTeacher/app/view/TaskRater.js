@@ -46,7 +46,6 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
                 }
             });
         });
-        console.log(groupedSkills);
         ratingsView.setData({
             ratings: [7, 8, 9, 10, 11, 12, 'M'],
             competencies: groupedSkills
