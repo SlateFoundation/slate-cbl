@@ -12,7 +12,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             // competencyrowclick: 'onCompetencyRowClick',
             datacellclick: 'onGridDataCellClick',
             editstudenttask: 'onEditStudentTask',
-            ratestudenttask: 'onRateStudentTask'
+            ratestudenttask: 'onRateStudentTask',
+            assignstudenttask: 'onAssignStudentTaskClick'
         },
 
         dashboardCt: {
@@ -27,6 +28,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             render: 'onAssigneeComboRender'
         },
 
+        'slate-tasks-teacher-taskassigner button[action=assign]': {
+            click: 'onAssignTaskClick'
+        },
         'slate-tasks-teacher-taskrater button[action=accept]': {
             click: 'onAcceptTaskClick'
         },
@@ -61,7 +65,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     views: [
         'Dashboard',
         'TaskEditor',
-        'TaskRater'
+        'TaskRater',
+        'TaskAssigner'
     ],
 
     stores: [
@@ -96,6 +101,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             autoCreate: true,
 
             xtype: 'slate-tasks-teacher-taskrater'
+        },
+        taskAssigner: {
+            selector: 'slate-tasks-teacher-taskassigner',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskassigner'
         },
         taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
         skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
@@ -252,6 +263,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onGridDataCellClick: function(taskGrid, target) {
         var me = this,
             taskId = target.getAttribute('data-task-id'),
+            studentId = target.getAttribute('data-student-id'),
             parentTaskId = target.getAttribute('data-parent-task-id'),
             studentTaskId = target.getAttribute('data-id'),
             tasksStore = me.getTasksStore(),
@@ -297,6 +309,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             }
         } else {
             fireEvent = 'assignstudenttask';
+            studentTask = {
+                TaskID: taskRecord.getId(),
+                StudentID: studentId
+            };
         }
 
         if (fireEvent) {
@@ -392,6 +408,60 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             taskRater.close();
             me.reloadTasks();
         });
+    },
+
+    onAssignStudentTaskClick: function(taskGrid, studentTask) {
+        var me = this,
+            taskAssigner = me.getTaskAssigner(),
+            student = me.getStudentsStore().getById(studentTask.StudentID),
+            task;
+
+        //can this fail?
+        me.getTasksStore().findBy(function(t) {
+            if (t.getId() == studentTask.TaskID) {
+                return task = t;
+            }
+
+            Ext.each(t.get("SubTasks"), function(st) {
+                if (st.ID == studentTask.TaskID) {
+                    return task = Ext.create('Slate.cbl.model.Task', st);
+                }
+            });
+        });
+
+        if (!task) {
+            //handle failure / how can this fail?
+            Ext.Msg.alert('Task not found. Please refresh.');
+            return;
+        }
+
+        taskAssigner.setStudent(student);
+        taskAssigner.setTask(task);
+        taskAssigner.setStudentTask(studentTask);
+        taskAssigner.show();
+
+    },
+
+    onAssignTaskClick: function() {
+        var me = this,
+            taskAssigner = me.getTaskAssigner(),
+            taskAssignerValues = taskAssigner.down('slate-modalform').getValues(),
+            task = taskAssigner.getTask(),
+            student = taskAssigner.getStudent(),
+            studentTask = Ext.create('Slate.cbl.model.StudentTask', {
+                TaskID: task.getId(),
+                StudentID: student.getId(),
+                DueDate: taskAssignerValues.DueDate,
+                ExpirationDate: taskAssignerValues.ExpirationDate,
+                ExperienceType: taskAssignerValues.ExperienceType
+            });
+
+        me.saveStudentTask(studentTask, function() {
+            me.reloadTasks();
+            taskAssigner.close();
+            Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
+        });
+
     },
 
     assignStudentTaskRevision: function(date) {

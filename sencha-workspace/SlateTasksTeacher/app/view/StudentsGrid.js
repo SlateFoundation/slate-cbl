@@ -111,7 +111,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                         '<tpl for="rows">',
                             '<tr class="slate-studentsgrid-row" data-id="{ID}">',
                                 '<tpl for="students">',
-                                    '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}">{[this.showDueDate(values)]}</td>',
+                                    '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}" data-student-id="{StudentID}">{[this.showDueDate(values)]}</td>',
                                 '</tpl>',
                             '</tr>',
 
@@ -126,7 +126,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                                                 '<tpl for="rows" >',
                                                     '<tr class="slate-studentsgrid-row slate-studentsgrid-subrow" data-id="{ID}">',
                                                         '<tpl for="students">',
-                                                            '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}" data-parent-task-id="{[parent.ParentTaskID]}">{[this.showDueDate(values)]}</td>',
+                                                            '<td class="slate-studentsgrid-cell {cls}" data-id="{ID}" data-task-id="{TaskID}" data-parent-task-id="{[parent.ParentTaskID]}" data-student-id="{StudentID}">{[this.showDueDate(values)]}</td>',
                                                         '</tpl>',
                                                     '</tr>',
                                                 '</tpl>',
@@ -233,6 +233,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                         studentTaskCells.push({
                             text: '',
                             TaskID: taskObj.ID,
+                            StudentID: student.ID,
                             cls: statusClasses.unassigned
                         });
                     }

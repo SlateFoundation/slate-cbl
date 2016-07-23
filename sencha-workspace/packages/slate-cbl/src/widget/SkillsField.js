@@ -18,13 +18,26 @@ Ext.define('Slate.cbl.widget.SkillsField', {
         {
             width: '100%',
             xtype: 'combo',
-            name: 'Skills',
+            name: 'SkillIDs',
             store: 'Skills',
+            autoLoadOnValue: true,
             queryParam: 'q',
             displayField: 'Code_Descriptor',
             valueField: 'ID',
             emptyText: 'Competency code or statement\u2026', // &hellip;
             multiSelect: true,
+            onValueCollectionEndUpdate: function() {
+                //workaround for showing values
+                var me = this,
+                    collection = me.valueCollection.getRange();
+
+                if (collection.length) {
+                    Ext.each(collection, function(r) {
+                        me.fireEvent('beforeselect', me, r);
+                    });
+                    me.setValue(null);
+                }
+            },
             listeners: {
                 beforeselect: function(combo, record) {
                     var dataview = combo.next('dataview'),

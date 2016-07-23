@@ -3,7 +3,9 @@ Ext.define('Slate.cbl.view.modals.AssignLater', {
     xtype: 'slate-assignlaterwindow',
     requires: [
         'Slate.cbl.view.AttachmentsList',
-        'Slate.cbl.view.modals.ModalForm'
+        'Slate.cbl.view.modals.ModalForm',
+        'Slate.cbl.widget.SkillsField',
+        'Slate.cbl.widget.AttachmentsField'
     ],
 
     title: 'Assign Later',
@@ -22,6 +24,7 @@ Ext.define('Slate.cbl.view.modals.AssignLater', {
                     xtype: 'button',
                     scale: 'large',
                     text: 'Assign',
+                    action: 'assign',
                     margin: '0 0 0 16'
                 }
             ]
@@ -31,8 +34,9 @@ Ext.define('Slate.cbl.view.modals.AssignLater', {
     items: [
         {
             xtype: 'component',
+            itemId: 'informationCmp',
             margin: '0 0 16',
-            html: '<strong>This task was not assigned to Student Name.<br>Click below to assign it.</strong>'
+            tpl: ['<strong>This task was not assigned to {FirstName} {LastName}<br>Click below to assign it.</strong>']
         },
         {
             xtype: 'slate-modalform',
@@ -40,60 +44,43 @@ Ext.define('Slate.cbl.view.modals.AssignLater', {
             items: [
                 {
                     fieldLabel: 'Title',
-                    value: 'Senior Thesis Project Synopsis'
+                    name: 'Title'
                 },
                 {
                     fieldLabel: 'Subtask of',
-                    value: 'Senior Thesis'
+                    name: 'ParentTaskTitle'
                 },
                 {
                     fieldLabel: 'Type of Experience',
-                    cls: 'is-editable',
-                    value: '<span class="is-clickable">Workshop</span>'
+                    xtype: 'textfield',
+                    name: 'ExperienceType',
+                    readOnly: true,
+                    cls: 'is-editable'
                 },
                 {
                     cls: 'is-editable',
+                    xtype: 'datefield',
                     fieldLabel: 'Due Date',
-                    value: '<span class="is-clickable">5/3/15</span>'
+                    name: 'DueDate',
+                    submitFormat: 'timestamp'
                 },
                 {
                     cls: 'is-editable',
+                    xtype: 'datefield',
                     fieldLabel: 'Expiration Date',
-                    value: '<span class="is-clickable">5/10/15</span>'
+                    name: 'ExpirationDate'
                 },
                 {
-                    xtype: 'combo',
-                    fieldLabel: 'Skills',
+                    xtype: 'slate-skillsfield',
                     emptyText: 'Competency code or statement&hellip;'
                 },
                 {
-                    xtype: 'fieldcontainer',
-                    fieldLabel: 'Attachments',
-                    items: [
-                        {
-                            xtype: 'textfield',
-                            emptyText: 'Enter URL',
-                            width: '100%'
-                        },
-                        {
-                            xtype: 'slate-attachmentslist',
-                            margin: '0 0 8',
-                            data: [
-                                {
-                                    kind: 'doc',
-                                    title: 'Document Name'
-                                },
-                                {
-                                    kind: 'folder',
-                                    title: 'Shared Collection Name'
-                                }
-                            ]
-                        }
-                    ]
+                    xtype: 'slate-tasks-attachmentsfield',
+                    readOnly: true
                 },
                 {
                     fieldLabel: 'Instructions',
-                    value: 'Instructions that the teacher has left to students. May vary in length due to project complexity. Instructions that the teacher has left to students. May vary in length due to project complexity.'
+                    name: 'Instructions'
                 }
             ]
         }
