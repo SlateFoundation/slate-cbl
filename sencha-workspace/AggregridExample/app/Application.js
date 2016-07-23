@@ -65,7 +65,7 @@ Ext.define('AggregridExample.Application', {
                 this.logInfo('%s->cellclick: row %s, column %s', aggregrid.getId(), rowId, columnId);
             },
             beforeexpand: function(aggregrid, rowId, el, ev, controller) {
-                var pauseTime = Math.floor(Math.random() * 3000);
+                var pauseTime = Math.floor(Math.random() * 500);
 
                 this.logInfo('%s->beforexpand: row %s, pausing for %oms', aggregrid.getId(), rowId, pauseTime);
 
