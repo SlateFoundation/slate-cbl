@@ -41,15 +41,75 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                 },
                                 items: [
                                     { xtype: 'component', cls: 'slate-menu-header', html: 'Status' },
-                                    { text: 'Past Due Tasks' },
-                                    { text: 'Revision Tasks' },
-                                    { text: 'On-Time Tasks' },
+                                    {
+                                        text: 'Due Tasks',
+                                        filterGroup: 'Status',
+                                        filterFn: function(rec) {
+                                            return rec.get('TaskStatus') === 'assigned';
+                                        }
+                                    },
+                                    {
+                                        text: 'Revision Tasks',
+                                        filterGroup: 'Status',
+                                        filterFn: function(rec) {
+                                            return rec.get('TaskStatus') === 're-assigned';
+                                        }
+                                    },
+                                    {
+                                        text: 'Submitted Tasks',
+                                        filterGroup: 'Status',
+                                        filterFn: function(rec) {
+                                            return rec.get('TaskStatus') === 'submitted' || rec.get('TaskStatus') === 're-submitted';
+                                        }
+                                    },
+                                    {
+                                        text: 'Completed Tasks',
+                                        filterGroup: 'Status',
+                                        filterFn: function(rec) {
+                                            return rec.get('TaskStatus') === 'complete';
+                                        }
+                                    },
                                     { xtype: 'component', cls: 'slate-menu-header', html: 'Timeline' },
-                                    { text: 'Past Due' },
-                                    { text: 'Due Today' },
-                                    { text: 'Due This Week' },
-                                    { text: 'Due Next Week' },
-                                    { text: 'Due in Future' },
+                                    {
+                                        text: 'Past Due',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return rec.get('DueDate') >= now;
+                                        }
+                                    },
+                                    {
+                                        text: 'Due Today',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return rec.get('DueDate').toDateString() === now.toDateString();
+                                        }
+                                    },
+                                    {
+                                        text: 'Due Today',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return rec.get('DueDate').toDateString() === now.toDateString();
+                                        }
+                                    },
+                                    {
+                                        text: 'Due This Week',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return Ext.Date.getWeekOfYear(rec.get('DueDate')) === Ext.Date.getWeekOfYear(now);
+                                        }
+                                    },
+                                    {
+                                        text: 'Due Next Week',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return Ext.Date.getWeekOfYear(rec.get('DueDate')) === Ext.Date.getWeekOfYear(now)+1;
+                                        }
+                                    },
                                     { xtype: 'menuseparator' },
                                     {
                                         xtype: 'container',
