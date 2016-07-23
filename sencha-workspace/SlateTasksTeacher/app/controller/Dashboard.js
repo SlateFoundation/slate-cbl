@@ -519,10 +519,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             selectedStudents = [], student;
 
         if (studentId) {
-            // if ((student = me.getStudentsStore().getById(studentId))) {q
-            //     selectedStudents.push(student);
-            // }
-
             //load student task data
             Slate.API.request({
                 url: '/cbl/student-tasks',
