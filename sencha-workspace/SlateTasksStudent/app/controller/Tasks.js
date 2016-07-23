@@ -20,6 +20,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         },
         submitButton: {
             click: 'onSubmitButtonClick'
+        },
+        'button#filter menucheckitem': {
+            checkchange: 'onFilterItemCheckChange'
         }
     },
 
@@ -55,6 +58,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
             xtype: 'slate-taskdetails'
         },
+        filterMenu: 'button#filter menu',
         taskForm: 'slate-taskdetails slate-modalform',
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
@@ -122,6 +126,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         Ext.Msg.alert('currently not implemented');
     },
 
+    onFilterItemCheckChange: function(item) {
+        var me = this,
+            menu = me.getFilterMenu();
+
+        console.log(menu.items);
+    },
 
     // custom controller methods
     formatTaskData: function(recs) {
