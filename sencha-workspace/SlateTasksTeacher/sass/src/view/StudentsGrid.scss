@@ -60,13 +60,13 @@
         overflow: visible;
         padding: 0;
         vertical-align: bottom;
-    
+
         .#{$g}-header-clip {
             height: 100%;
             overflow: hidden;
             width: 300%;
         }
-    
+
         .#{$g}-header-link {
             background-color: $slate-studentsgrid-colheader-bg-color;
             border-bottom: 1px solid #ccc;
@@ -89,7 +89,7 @@
                 text-decoration: none;
             }
         }
-    
+
         &:first-child a {
             border-top: 1px solid #ccc;
         }
@@ -157,8 +157,10 @@
 }
 
 .#{$g}-rowheader {
-    &::before {
+    &.expandable::before {
         content: '\f0da'; // fa-caret-right
+    }
+    &::before {
         display: inline-block;
         float: left;
         font-family: 'FontAwesome';

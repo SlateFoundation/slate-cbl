@@ -6,6 +6,10 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
 
     xtype: 'slate-tasks-attachmentsfield',
 
+    config: {
+        readOnly: false
+    },
+
     fieldLabel: 'Attachments',
     combineErrors: false,
     items: [{
@@ -21,8 +25,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
     },
     {
         xtype: 'slate-attachmentslist',
-        margin: '0 0 8',
-
+        margin: '0 0 8'
     },
     {
         xtype: 'button',
@@ -40,6 +43,29 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         text: 'Attachment',
         disabled: true
     }],
+
+    updateReadOnly: function(readOnly) {
+        if (!this.rendered) {
+            return this.on('render', function() {
+                return this.updateReadOnly(readOnly);
+            });
+        }
+
+        var me = this,
+            field = me.down('textfield'),
+            buttons = me.query('button'),
+            list = me.down('slate-attachmentslist'),
+            action = readOnly === undefined || !!readOnly;
+
+        Ext.each(buttons, function(button) {
+            button[action ? 'hide' : 'show']();
+        });
+
+        list.setEditable(!action);
+        list.refreshView();
+
+        field[action ? 'hide' : 'show']();
+    },
 
     addAttachment: function(url) {
         var me = this,

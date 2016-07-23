@@ -6,13 +6,25 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     xtype: 'slate-tasks-teacher-dashboard',
     requires:[
         'SlateTasksTeacher.view.StudentsGrid',
-        'SlateTasksTeacher.view.GridLegend'
+        'SlateTasksTeacher.view.StudentsTaskGrid',
+        'SlateTasksTeacher.view.GridLegend',
+        'SlateTasksTeacher.view.DashboardToolbar'
     ],
 
 
     config: {
+        courseSection: null,
+
         taskGrid: true,
         gridLegend: true
+    },
+
+    items: [{
+        xtype: 'slate-tasks-teacher-dashboardtoolbar'
+    }],
+
+    updateCourseSection: function(courseSection) {
+        this.fireEvent('coursesectionselect', courseSection);
     },
 
     applyTaskGrid: function(taskGrid, oldTaskGrid) {

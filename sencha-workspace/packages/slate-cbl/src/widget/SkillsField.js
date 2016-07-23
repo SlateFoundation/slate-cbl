@@ -10,6 +10,9 @@ Ext.define('Slate.cbl.widget.SkillsField', {
     componentCls: 'slate-skillsfield',
 
     fieldLabel: 'Skills',
+    config: {
+        readOnly: false
+    },
 
     items: [
         {
@@ -17,10 +20,24 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             xtype: 'combo',
             name: 'SkillIDs',
             store: 'Skills',
+            autoLoadOnValue: true,
             queryParam: 'q',
             displayField: 'Code_Descriptor',
             valueField: 'ID',
             emptyText: 'Competency code or statement\u2026', // &hellip;
+            multiSelect: true,
+            onValueCollectionEndUpdate: function() {
+                //workaround for showing values
+                var me = this,
+                    collection = me.valueCollection.getRange();
+
+                if (collection.length) {
+                    Ext.each(collection, function(r) {
+                        me.fireEvent('beforeselect', me, r);
+                    });
+                    me.setValue(null);
+                }
+            },
             listeners: {
                 beforeselect: function(combo, record) {
                     var dataview = combo.next('dataview'),
@@ -28,6 +45,23 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                     store.add(record);
                     return false;
                 }
+            },
+            listConfig: {
+                tpl: [
+                    '<ul>',
+                        '<tpl for=".">',
+                            '<tpl if="xindex == 1 || this.getGroupStr(parent[xindex - 2]) != this.getGroupStr(values)">',
+                                '<li class="x-combo-list-group"><b>{[this.getGroupStr(values)]}</b></li>',
+                            '</tpl>',
+                            '<li role="option" class="x-boundlist-item" style="padding-left: 12px">{Code_Descriptor}</li>',
+                        '</tpl>',
+                    '</ul>',
+                    {
+                        getGroupStr: function (values) {
+                            return values.CompetencyDescriptor;
+                        }
+                    }
+                ]
             }
         },
         {
@@ -38,6 +72,7 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                 model: 'Slate.cbl.model.Skill'
             },
             autoEl: 'ul',
+            enableEditing: true,
             itemSelector: '.slate-skillsfield-item',
             tpl: [
                 '<tpl for=".">',
@@ -45,7 +80,9 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                         '<div class="slate-skillsfield-token">',
                             '<strong class="slate-skillsfield-item-code">{Code}</strong>',
                             '<span class="slate-skillsfield-item-title" title="{Descriptor}">{Descriptor}</span>',
-                            '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>',
+                            '<tpl if="this.owner.enableEditing">',
+                                '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>',
+                            '</tpl>',
                         '</div>',
                     '</li>',
                 '</tpl>'
@@ -60,6 +97,24 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             }
         }
     ],
+
+    updateReadOnly: function(readOnly) {
+        if (!this.rendered) {
+            return this.on('render', function() {
+                return this.updateReadOnly(readOnly);
+            });
+        }
+
+        var me = this,
+            field = me.down('combo'),
+            view = me.down('dataview'),
+            action = readOnly === undefined || !!readOnly;
+
+        view.enableEditing = !action;
+        view.refreshView();
+
+        field[action ? 'hide' : 'show']();
+    },
 
     getSkills: function(returnRecords, idsOnly) {
         var me = this,
