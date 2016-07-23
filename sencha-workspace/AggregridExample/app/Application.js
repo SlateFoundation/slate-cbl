@@ -137,7 +137,7 @@ Ext.define('AggregridExample.Application', {
             absence = store.getAt(i);
             date = absence.get('date');
             year = date.getFullYear();
-            month = date.getMonth() + 1 ;
+            month = Ext.Date.parse(year+Ext.String.leftPad(Ext.Date.getWeekOfYear(date), 2, '0'), 'YW').getMonth() + 1;
             studentId = absence.get('student_id');
 
             yearMonths = yearMonthStudentAbsences[year] || (yearMonthStudentAbsences[year] = {});
