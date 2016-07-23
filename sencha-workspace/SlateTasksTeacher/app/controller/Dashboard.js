@@ -27,6 +27,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             render: 'onAssigneeComboRender'
         },
 
+        'slate-tasks-teacher-taskrater button[action=unassign]': {
+            click: 'onUnassignStudentTaskClick'
+        },
         'slate-tasks-teacher-taskrater button[action=edit]': {
             click: 'onEditStudentTaskClick'
         },
@@ -326,6 +329,36 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         me.onEditStudentTask(null, studentTask);
     },
 
+    onUnassignStudentTaskClick: function() {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = taskRater.getStudentTask();
+
+        Ext.Msg.confirm('Are you sure?', 'Do you want to unassign this student task? This can not be undone.', function(ans) {
+            if (ans == 'yes') {
+                me.unAssignStudentTask(studentTask);
+            }
+        });
+
+    },
+
+    unAssignStudentTask: function(studentTask) {
+        var me = this;
+
+        Slate.API.request({
+            url: '/cbl/student-tasks/'+studentTask.ID+'/delete',
+            method: 'POST',
+            callback: function(opts, success, response) {
+                if (success) {
+                    Ext.toast('Student task unassigned.');
+                    me.getTaskRater().close();
+                    me.reloadTasks();
+
+                }
+            }
+        });
+    },
+
     rateStudentTask: function(studentTask) {
         var me = this,
             taskRater = me.getTaskRater(),
@@ -466,6 +499,15 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             });
         }
 
+    },
+
+    reloadTasks: function() {
+        var me = this,
+            store = me.getStudentTasksStore();
+
+        store.reload(function() {
+            me.populateTasksGrid();
+        });
     },
 
     populateTasksGrid: function() {
