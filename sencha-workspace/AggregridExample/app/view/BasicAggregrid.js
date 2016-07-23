@@ -15,13 +15,8 @@ Ext.define('AggregridExample.view.BasicAggregrid', {
         ],
         rowMapper: function(dataRecord, rowsStore) {
             var date = dataRecord.get('date'),
-                year = date.getFullYear(),
+                year = parseInt(Ext.Date.format(date, 'o'), 0),
                 week = Ext.Date.getWeekOfYear(date);
-
-            // week 53 in January should be considered in the previous year
-            if (week == 53 && date.getMonth() == 0) {
-                year--;
-            }
 
             return rowsStore.getAt(rowsStore.findBy(function(rowRecord) {
                 return rowRecord.get('year') == year && rowRecord.get('week') == week;
