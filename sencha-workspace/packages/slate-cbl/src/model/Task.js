@@ -115,7 +115,6 @@ Ext.define('Slate.cbl.model.Task', {
             persist: true,
             calculate: function(data) {
                 if (!Ext.isEmpty(data.Skills)) {
-                    console.log(data.Skills, 'skills');
                     return Ext.Array.map(data.Skills, function(skill) {
                         return skill.ID;
                     });
