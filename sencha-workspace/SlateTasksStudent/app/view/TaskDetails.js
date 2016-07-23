@@ -7,6 +7,8 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         'Slate.cbl.widget.RatingView'
     ],
 
+    modal: true,
+
     title: 'Task',
 
     dockedItems: [{
