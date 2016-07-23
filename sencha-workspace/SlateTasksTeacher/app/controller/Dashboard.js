@@ -27,6 +27,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             render: 'onAssigneeComboRender'
         },
 
+        'slate-tasks-teacher-taskrater button[action=accept]': {
+            click: 'onAcceptTaskClick'
+        },
         'slate-tasks-teacher-taskrater button[action=reassign]': {
             click: 'onAssignRevisionClick'
         },
@@ -204,11 +207,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
     },
 
-    onSaveTaskClick: function(taskEditor) {
-        if (taskEditor.getStudentTask()) {
-            return this.saveStudentTask();
+    onSaveTaskClick: function() {
+        var me = this,
+            taskEditor = me.getTaskEditor(),
+            studentTask = taskEditor.getStudentTask();
+        if (studentTask) {
+            studentTask = Ext.create('Slate.cbl.model.StudentTask', studentTask);
+            me.getTaskEditorForm().updateRecord(studentTask);
+
+            return me.saveStudentTask(studentTask, function() {
+                taskEditor.close();
+                Ext.toast('Task saved.');
+                me.reloadTasks();
+            });
         } else {
-            return this.saveTask();
+            return me.saveTask();
         }
     },
 
@@ -368,6 +381,19 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         me.assignStudentTaskRevision(btn.dateSelected);
     },
 
+    onAcceptTaskClick: function() {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = Ext.create('Slate.cbl.model.StudentTask', taskRater.getStudentTask());
+
+        studentTask.set('TaskStatus', 'completed');
+
+        me.saveStudentTask(studentTask, function() {
+            taskRater.close();
+            me.reloadTasks();
+        });
+    },
+
     assignStudentTaskRevision: function(date) {
         var me = this,
             taskRater = me.getTaskRater(),
@@ -441,20 +467,11 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
     },
 
-    saveStudentTask: function() {
-        var me = this,
-            form = me.getTaskEditorForm(),
-            taskEditor = me.getTaskEditor(),
-            task = taskEditor.getTask(),
-            studentTask = taskEditor.getStudentTask(),
-            record = Ext.create('Slate.cbl.model.StudentTask', studentTask);
-
-        form.updateRecord(record);
-
-        record.save({
+    saveStudentTask: function(studentTask, callback, scope) {
+        studentTask.save({
             success: function(rec) {
-                taskEditor.close();
                 Ext.toast('Student Task successfully saved!');
+                Ext.callback(callback, scope);
             }
         });
     },
