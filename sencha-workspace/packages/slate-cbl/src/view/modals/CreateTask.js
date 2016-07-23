@@ -66,7 +66,11 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             items: [
                 {
                     xtype: 'checkboxfield',
-                    boxLabel: 'Add task to database'
+                    name: 'Status',
+                    itemId: 'status',
+                    uncheckedValue: 'private',
+                    inputValue: 'shared',
+                    boxLabel: 'Share with other teachers'
                 },
                 {
                     xtype: 'button',

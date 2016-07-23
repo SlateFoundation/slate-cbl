@@ -12,12 +12,15 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
         var me = this,
             form = me.down('slate-modalform'),
             skillsField = form.down('slate-skillsfield'),
-            attachmentsField = form.down('slate-tasks-attachmentsfield');
+            attachmentsField = form.down('slate-tasks-attachmentsfield'),
+            statusField = me.down('#status');
 
         form.reset();
+        statusField.setValue(task.get('Status') ? task.get('Status') : 'shared');
         form.loadRecord(task);
         skillsField.setSkills(task.get('Skills'));
         attachmentsField.setAttachments(task.get('Attachments'));
+
 
         me.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
         me.down('button[action=save]').setText(task.phantom ? 'Create' : 'Save');
