@@ -81,6 +81,13 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             allowNull: true
         },
         {
+            name: 'Submitted',
+            type: 'date',
+            mapping: 'Submitted',
+            dateFormat: 'timestamp',
+            allowNull: true
+        },
+        {
             name: 'Instructions',
             type: 'string',
             mapping: 'Task.Instructions',
