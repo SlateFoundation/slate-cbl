@@ -37,7 +37,7 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
 
         subRowsStore: 'TimePeriods',
         subDataStore: 'Absences',
-        subRowMapper: function(subRowRecord, rowsStore) {
+        parentRowMapper: function(subRowRecord, rowsStore) {
             var year = subRowRecord.get('year'),
                 date = Ext.Date.parse(year+Ext.String.leftPad(subRowRecord.get('week'), 2, '0'), 'YW'),
                 month = date.getMonth() + 1,
