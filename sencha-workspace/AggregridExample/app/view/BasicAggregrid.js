@@ -1,6 +1,6 @@
-Ext.define('AggregridExample.view.MyAggregrid', {
+Ext.define('AggregridExample.view.BasicAggregrid', {
     extend: 'Jarvus.aggregrid.Aggregrid',
-    xtype: 'app-myaggregrid',
+    xtype: 'app-basicaggregrid',
 
     config: {
         columnsStore: 'Students',
@@ -15,19 +15,22 @@ Ext.define('AggregridExample.view.MyAggregrid', {
         ],
         rowMapper: function(dataRecord, rowsStore) {
             var date = dataRecord.get('date'),
-                year = date.getFullYear(),
+                year = parseInt(Ext.Date.format(date, 'o'), 0),
                 week = Ext.Date.getWeekOfYear(date);
-
-            // week 53 in January should be considered in the previous year
-            if (week == 53 && date.getMonth() == 0) {
-                year--;
-            }
 
             return rowsStore.getAt(rowsStore.findBy(function(rowRecord) {
                 return rowRecord.get('year') == year && rowRecord.get('week') == week;
             }));
         },
 
-        dataStore: 'Absences'
+        dataStore: 'Absences',
+
+        cellRenderer: function(group, cellEl) {
+            var absences = group.records.length;
+
+            cellEl.toggleCls('attendance-perfect', absences == 0);
+            cellEl.toggleCls('attendance-ok', absences == 1);
+            cellEl.toggleCls('attendance-bad', absences >= 2);
+        }
     }
 });

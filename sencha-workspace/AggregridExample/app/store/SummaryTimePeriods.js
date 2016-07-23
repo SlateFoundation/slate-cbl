@@ -1,9 +1,9 @@
-Ext.define('AggregridExample.store.TimePeriods', {
+Ext.define('AggregridExample.store.SummaryTimePeriods', {
     extend: 'Ext.data.Store',
 
 
     config: {
-        fields: ['id', 'week', 'year']
+        fields: ['id', 'month', 'year', 'title']
     },
 
     applyData: function(data) {
@@ -12,11 +12,12 @@ Ext.define('AggregridExample.store.TimePeriods', {
         if (!data) {
             data = [];
 
-            for (; i < 52; i++) {
+            for (; i < 12; i++) {
                 data.push({
                     id: i + 1,
-                    week: i + 1,
-                    year: 2016
+                    month: i + 1,
+                    year: 2016,
+                    title: Ext.Date.monthNames[i] + ' 2016'
                 });
             }
         }

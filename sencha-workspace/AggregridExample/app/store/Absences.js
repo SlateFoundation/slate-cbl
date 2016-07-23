@@ -3,25 +3,5 @@ Ext.define('AggregridExample.store.Absences', {
 
     config: {
         fields: ['id', 'student_id', 'date']
-    },
-
-    applyData: function(data) {
-        var randomRecords = [],
-            amount = Math.floor(Math.random() * 500),
-            i = 0;
-
-        if (!data) {
-            for (i; i < amount; i++) {
-                randomRecords.push({
-                    id: i + 1,
-                    student_id: Math.floor(Math.random() * 20) + 1,
-                    date: new Date(2016, Math.floor(Math.random() * 12), Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60))
-                });
-            }
-
-            data = randomRecords;
-        }
-
-        return this.callParent([data]);
     }
 });
