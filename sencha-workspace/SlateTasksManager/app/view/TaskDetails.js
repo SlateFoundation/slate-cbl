@@ -5,6 +5,7 @@ Ext.define('SlateTasksManager.view.TaskDetails', {
     ],
 
     config: {
+        task: null
     },
 
     title: 'Task Details',
@@ -18,16 +19,26 @@ Ext.define('SlateTasksManager.view.TaskDetails', {
         padding: '8 16'
     },
 
-    html: [
-        '<h4>Google Docs:</h4>',
-        '<ul class="slate-tasks-manager-details-doclist">',
-            '<li><span class="title">Document Name</span></li>',
-            '<li><span class="title">Document Name</span></li>',
-        '</ul>',
+    tpl: [
+        '<tpl for=".">',
+            '<h4>Attachments</h4>',
+            '<ul class="slate-tasks-manager-details-doclist">',
+                '<tpl for="Attachments">',
+                    '<li><span class="title"><a href="{URL}">{[this.getDisplayValue(values)]}</a></span></li>',
+                '</tpl>',
+            '</ul>',
+            '<hr>',
+            '<h4>Instructions:</h4>',
+            '<p>{Instructions}</p>',
+        '</tpl>',
+        {
+            getDisplayValue: function(values) {
+                return values.Title || values.URL;
+            }
+        }
+    ],
 
-        '<hr>',
-
-        '<h4>Instructions:</h4>',
-        '<p>These are the instructions a teacher wrote about a task. The quick brown fox jumps over the lazy dog. Grumpy wizards make a toxic brew for the jovial queen.</p>'
-    ]
+    updateTask: function(task) {
+        this.update(task.getData());
+    }
 });
