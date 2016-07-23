@@ -80,12 +80,17 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                         '<div class="slate-skillsfield-token">',
                             '<strong class="slate-skillsfield-item-code">{Code}</strong>',
                             '<span class="slate-skillsfield-item-title" title="{Descriptor}">{Descriptor}</span>',
-                            '<tpl if="this.owner.enableEditing">',
-                                '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>',
-                            '</tpl>',
+                            '{[this.showSettings()]}',
                         '</div>',
                     '</li>',
-                '</tpl>'
+                '</tpl>',
+                {
+                    showSettings: function() {
+                        var settingStr = ['<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>'].join('');
+
+                        return this.owner.up('slate-skillsfield').getReadOnly() ? '' : settingsStr;
+                    }
+                }
             ],
             listeners: {
                 itemclick: function(view, record, item, idx, event) {
@@ -107,12 +112,10 @@ Ext.define('Slate.cbl.widget.SkillsField', {
 
         var me = this,
             field = me.down('combo'),
-            view = me.down('dataview'),
+            view = me.down('#skills-list'),
             action = readOnly === undefined || !!readOnly;
 
-        view.enableEditing = !action;
         view.refreshView();
-
         field[action ? 'hide' : 'show']();
     },
 
