@@ -49,6 +49,15 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
         },
         subRowHeaderTpl: [
             'Week #{week}'
-        ]
+        ],
+        subRowMapper: function(dataRecord, subRowsStore) {
+            var date = dataRecord.get('date'),
+                year = parseInt(Ext.Date.format(date, 'o'), 0),
+                week = Ext.Date.getWeekOfYear(date);
+
+            return subRowsStore.getAt(subRowsStore.findBy(function(rowRecord) {
+                return rowRecord.get('year') == year && rowRecord.get('week') == week;
+            }));
+        }
     }
 });
