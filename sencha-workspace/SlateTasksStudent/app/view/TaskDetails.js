@@ -98,6 +98,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             },{
                 xtype: 'button',
                 itemId: 'add-attachment',
+                disabled: true,
                 text: 'Attachment'
             }]
         }]
