@@ -66,12 +66,12 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             }]
         },
         {
-            xtype: 'slate-ratingview'
-        },
-        {
             fieldLabel: 'Submitted Date',
             name: 'Submitted',
             renderer: Ext.util.Format.dateRenderer('m/d/y')
+        },
+        {
+            xtype: 'slate-ratingview'
         },
         {
             xtype: 'component',
@@ -83,6 +83,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
                     '<tpl for="comments">',
                         '<div class="slate-task-comment-date">{Created:date("M d, Y")}</div>',
                         '<div class="slate-task-comment-text">{Message}</div>',
+                        '<hr>',
                     '</tpl>',
                 '</ul>'
             ]
