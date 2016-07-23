@@ -87,14 +87,6 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                         }
                                     },
                                     {
-                                        text: 'Due Today',
-                                        filterGroup: 'Timeline',
-                                        filterFn: function(rec) {
-                                            var now = new Date();
-                                            return rec.get('DueDate').toDateString() === now.toDateString();
-                                        }
-                                    },
-                                    {
                                         text: 'Due This Week',
                                         filterGroup: 'Timeline',
                                         filterFn: function(rec) {
