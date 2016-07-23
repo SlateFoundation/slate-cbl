@@ -1,4 +1,4 @@
-Ext.define('SlateTasksTeacher.store.StudentTasks', {
+Ext.define('SlateTasksTeacher.store.Tasks', {
     extend: 'Ext.data.Store',
 
     model: 'Slate.cbl.model.Task',

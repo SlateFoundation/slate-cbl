@@ -27,6 +27,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             render: 'onAssigneeComboRender'
         },
 
+        'slate-tasks-teacher-taskrater button[action=reassign]': {
+            click: 'onAssignRevisionClick'
+        },
         'slate-tasks-teacher-taskrater button[action=unassign]': {
             click: 'onUnassignStudentTaskClick'
         },
@@ -59,8 +62,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     ],
 
     stores: [
-        'StudentTasks',
+        'Tasks',
         'Students',
+        'StudentTasks@Slate.cbl.store',
         'Skills@Slate.cbl.store'
     ],
 
@@ -112,7 +116,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             // taskGrid = me.getTaskGrid(),
             // studentsStore = taskGrid.getStudentsStore(),
             studentsStore = me.getStudentsStore(),
-            studentTasksStore = me.getStudentTasksStore(),
+            studentTasksStore = me.getTasksStore(),
             courseSection = courseSectionsStore.getById(sectionId);
 
         //select section
@@ -135,7 +139,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
         studentTasksStore.getProxy().setUrl('/sections/' + sectionId + '/tasks');
         studentTasksStore.load({
-            callback: me.onStudentTasksStoreLoad,
+            callback: me.onTasksStoreLoad,
             scope: me
         });
     },
@@ -159,7 +163,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         this.populateTasksGrid();
     },
 
-    onStudentTasksStoreLoad: function() {
+    onTasksStoreLoad: function() {
         this.populateTasksGrid();
     },
 
@@ -167,10 +171,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var me = this,
             courseSection = me.getDashboardCt().getCourseSection();
 
-        return me.editTask(Ext.create('Slate.cbl.model.Task', {
-            ContextClass: courseSection.get('Class'),
-            ContextID: courseSection.getId()
-        }));
+        me.getTaskEditor().close();
+        return me.editTask(Ext.create('Slate.cbl.model.Task'));
     },
 
     onEditTaskClick: function() {
@@ -202,15 +204,19 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
     },
 
-    onSaveTaskClick: function() {
-        return this.saveTask();
+    onSaveTaskClick: function(taskEditor) {
+        if (taskEditor.getStudentTask()) {
+            return this.saveStudentTask();
+        } else {
+            return this.saveTask();
+        }
     },
 
     onEditStudentTask: function(taskGrid, studentTask) {
         var me = this,
             task;
 
-        me.getStudentTasksStore().findBy(function(t) {
+        me.getTasksStore().findBy(function(t) {
             if (t.getId() == studentTask.TaskID) {
                 return task = t;
             }
@@ -235,7 +241,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             taskId = target.getAttribute('data-task-id'),
             parentTaskId = target.getAttribute('data-parent-task-id'),
             studentTaskId = target.getAttribute('data-id'),
-            tasksStore = me.getStudentTasksStore(),
+            tasksStore = me.getTasksStore(),
             taskRecord = tasksStore.getAt(tasksStore.findBy(function (r) {
                 return r.getId() == taskId;
             })),
@@ -342,6 +348,43 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     },
 
+    onAssignRevisionClick: function(btn) {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            coords = btn.getXY();
+
+        if (!btn.dateSelected) {
+            return Ext.widget({
+                xtype: 'datepicker',
+                floating: true,
+                handler: function(picker, date) {
+                    picker.destroy();
+                    btn.dateSelected = date;
+                    return btn.setText('Re-Assign revision due on '+Ext.Date.format(date, 'm/d/y'));
+                }
+            }).showAt(coords[0], coords[1]);
+        }
+
+        me.assignStudentTaskRevision(btn.dateSelected);
+    },
+
+    assignStudentTaskRevision: function(date) {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = Ext.create('Slate.cbl.model.StudentTask', taskRater.getStudentTask());
+
+        studentTask.set('DueDate', date.getTime()/1000);
+        studentTask.set('TaskStatus', 're-assigned');
+        studentTask.save({
+            callback: function(record) {
+                me.reloadTasks(function() {
+                    taskRater.close();
+                    me.rateStudentTask(studentTask.getData());
+                });
+            }
+        });
+    },
+
     unAssignStudentTask: function(studentTask) {
         var me = this;
 
@@ -364,7 +407,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             taskRater = me.getTaskRater(),
             task;
 
-        me.getStudentTasksStore().findBy(function(t) {
+        me.getTasksStore().findBy(function(t) {
             if (t.getId() == studentTask.TaskID) {
                 return task = t;
             }
@@ -463,6 +506,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
 
         taskEditor.setTask(taskRecord);
+        taskEditor.setStudentTask(null);
         taskEditor.show();
     },
 
@@ -475,7 +519,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             selectedStudents = [], student;
 
         if (studentId) {
-            // if ((student = me.getStudentsStore().getById(studentId))) {
+            // if ((student = me.getStudentsStore().getById(studentId))) {q
             //     selectedStudents.push(student);
             // }
 
@@ -501,19 +545,22 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     },
 
-    reloadTasks: function() {
+    reloadTasks: function(callback, scope) {
         var me = this,
-            store = me.getStudentTasksStore();
+            store = me.getTasksStore();
 
-        store.reload(function() {
-            me.populateTasksGrid();
+        store.reload({
+            callback: function() {
+                me.populateTasksGrid();
+                Ext.callback(callback, scope);
+            }
         });
     },
 
     populateTasksGrid: function() {
         var me = this,
             studentsStore = me.getStudentsStore(),
-            tasksStore = me.getStudentTasksStore(),
+            tasksStore = me.getTasksStore(),
             taskGrid = me.getTaskGrid();
 
         if (!studentsStore.isLoaded() || !tasksStore.isLoaded()) {
