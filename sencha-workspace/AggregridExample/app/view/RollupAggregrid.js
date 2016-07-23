@@ -33,6 +33,22 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
             cellEl.toggleCls('attendance-perfect', absences == 0);
             cellEl.toggleCls('attendance-ok', absences > 0 && absences < 4);
             cellEl.toggleCls('attendance-bad', absences >= 4);
-        }
+        },
+
+        subRowsStore: 'TimePeriods',
+        subDataStore: 'Absences',
+        subRowMapper: function(subRowRecord, rowsStore) {
+            var year = subRowRecord.get('year'),
+                date = Ext.Date.parse(year+Ext.String.leftPad(subRowRecord.get('week'), 2, '0'), 'YW'),
+                month = date.getMonth() + 1,
+                parentIndex = rowsStore.findBy(function(summaryRecord) {
+                    return summaryRecord.get('year') == year && summaryRecord.get('month') == month;
+                });
+
+            return parentIndex >= 0 ? rowsStore.getAt(parentIndex) : null;
+        },
+        subRowHeaderTpl: [
+            'Week #{week}'
+        ]
     }
 });
