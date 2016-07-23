@@ -1,7 +1,6 @@
 /**
- * The main application class. An instance of this class is created by app.js when it
- * calls Ext.application(). This is the ideal place to handle application launch and
- * initialization details.
+ * TODO:
+ * - [ ] Add a rollup example that uses the same data store for main and subrows
  */
 /* eslint no-console: "off" */
 Ext.define('AggregridExample.Application', {
@@ -69,8 +68,8 @@ Ext.define('AggregridExample.Application', {
 
                 this.logInfo('%s->beforexpand: row %s, pausing for %oms', aggregrid.getId(), rowId, pauseTime);
 
-                controller.pause();
-                Ext.defer(controller.resume, pauseTime, controller);
+                // controller.pause();
+                // Ext.defer(controller.resume, pauseTime, controller);
             },
             expand: function(aggregrid, rowId) {
                 this.logInfo('%s->expand: row %s', aggregrid.getId(), rowId);
