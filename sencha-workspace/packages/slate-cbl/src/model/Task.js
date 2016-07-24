@@ -2,7 +2,9 @@ Ext.define('Slate.cbl.model.Task', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records',
-        'Ext.data.identifier.Negative'
+        'Ext.data.identifier.Negative',
+        'Ext.data.validator.Length',
+        'Ext.data.validator.Presence'
     ],
 
     idProperty: 'ID',
