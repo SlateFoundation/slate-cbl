@@ -121,7 +121,8 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             }
         },
         {
-            name: 'Competencies'
+            name: 'Competencies',
+            persist: false
         },
         {
             name: 'filtered',
