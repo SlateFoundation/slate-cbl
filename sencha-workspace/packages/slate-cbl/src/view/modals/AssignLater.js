@@ -80,7 +80,9 @@ Ext.define('Slate.cbl.view.modals.AssignLater', {
                 },
                 {
                     fieldLabel: 'Instructions',
-                    name: 'Instructions'
+                    name: 'Instructions',
+                    grow: true,
+                    growMin: 200
                 }
             ]
         }
