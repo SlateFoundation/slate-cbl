@@ -146,7 +146,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
 
     proxy: {
         type: 'slate-records',
-        url: 'cbl/student-tasks',
+        url: '/cbl/student-tasks',
         include: [
             'Task',
             'Student',
