@@ -23,6 +23,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         },
         'button#filter menucheckitem': {
             checkchange: 'onFilterItemCheckChange'
+        },
+        'button#filter button#view-all': {
+            click: 'onFilterViewAllClick'
         }
     },
 
@@ -144,6 +147,27 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         me.getTaskTree().update({tasks: me.formatTaskData(store.getRange())});
 
+    },
+
+    onFilterViewAllClick: function() {
+        var me = this,
+            menu = me.getFilterMenu(),
+            checkedFilters = menu.query('menucheckitem[checked]'),
+            checkedFiltersLength = checkedFilters.length,
+            store = this.getStudentTasksStore(),
+            recs = store.getRange(),
+            recLength = recs.length,
+            i = 0;
+
+        for (; i < checkedFiltersLength; i++) {
+            checkedFilters[i].setChecked(false, true);
+        }
+
+        for (i = 0; i < recLength; i++) {
+            recs[i].set('filtered', false);
+        }
+
+        me.getTaskTree().update({tasks: me.formatTaskData(store.getRange())});
     },
 
     /**

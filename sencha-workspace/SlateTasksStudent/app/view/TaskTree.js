@@ -113,6 +113,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                         items: [
                                             {
                                                 xtype: 'button',
+                                                itemId: 'view-all',
                                                 text: 'View All'
                                             }
                                         ]
