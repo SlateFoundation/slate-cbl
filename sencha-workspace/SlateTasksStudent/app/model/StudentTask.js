@@ -126,6 +126,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         {
             name: 'filtered',
             type: 'boolean',
+            persist: false,
             defaultValue: false
         }
     ],
@@ -133,6 +134,10 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
     hasMany: [{
         model: 'Slate.cbl.model.tasks.Attachment',
         name: 'Attachments',
+        associationKey: 'Attachments'
+    },{
+        model: 'Slate.cbl.model.tasks.Attachment',
+        name: 'TaskAttachments',
         associationKey: 'Task.Attachments'
     },{
         model: 'Slate.cbl.model.tasks.Comment',
@@ -151,6 +156,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             'Task',
             'Student',
             'Comments',
+            'Attachments',
             'Task.Attachments',
             'Task.ParentTask',
             'Task.Skills.Competency'
