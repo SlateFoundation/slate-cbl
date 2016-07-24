@@ -170,24 +170,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         me.getTaskTree().update({tasks: me.formatTaskData(store.getRange())});
     },
 
-    /**
-     * Passes a record through a group of filters.
-     * @param {Ext.data.Model} rec- The record to be tested.
-     * @param {Array} filterGroup - An array of objects with a filter function.
-     * @returns {boolean} filtered - true if this rec should be filtered
-     */
-    filterRecord: function(rec, filterGroup) {
-        var filterGroupLength = filterGroup.length,
-            filtered = filterGroupLength === 0 ? false : true,  // if no filters, return false
-            i = 0;
-
-        for (; i < filterGroupLength; i++) {
-            filtered = filtered && filterGroup[i].filterFn(rec);
-        }
-
-        return filtered;
-    },
-
 
     // custom controller methods
     formatTaskData: function(recs) {
@@ -311,6 +293,24 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
 
         return {comments: comments};
+    },
+
+    /**
+     * Passes a record through a group of filters.
+     * @param {Ext.data.Model} rec- The record to be tested.
+     * @param {Array} filterGroup - An array of objects with a filter function.
+     * @returns {boolean} filtered - true if this rec should be filtered
+     */
+    filterRecord: function(rec, filterGroup) {
+        var filterGroupLength = filterGroup.length,
+            filtered = filterGroupLength === 0 ? false : true,  // if no filters, return false
+            i = 0;
+
+        for (; i < filterGroupLength; i++) {
+            filtered = filtered && filterGroup[i].filterFn(rec);
+        }
+
+        return filtered;
     }
 
 });
