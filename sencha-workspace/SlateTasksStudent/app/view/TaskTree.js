@@ -45,28 +45,28 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                         text: 'Due Tasks',
                                         filterGroup: 'Status',
                                         filterFn: function(rec) {
-                                            return rec.get('TaskStatus') === 'assigned';
+                                            return rec.get('TaskStatus') !== 'assigned';
                                         }
                                     },
                                     {
                                         text: 'Revision Tasks',
                                         filterGroup: 'Status',
                                         filterFn: function(rec) {
-                                            return rec.get('TaskStatus') === 're-assigned';
+                                            return rec.get('TaskStatus') !== 're-assigned';
                                         }
                                     },
                                     {
                                         text: 'Submitted Tasks',
                                         filterGroup: 'Status',
                                         filterFn: function(rec) {
-                                            return rec.get('TaskStatus') === 'submitted' || rec.get('TaskStatus') === 're-submitted';
+                                            return !(rec.get('TaskStatus') === 'submitted' || rec.get('TaskStatus') === 're-submitted');
                                         }
                                     },
                                     {
                                         text: 'Completed Tasks',
                                         filterGroup: 'Status',
                                         filterFn: function(rec) {
-                                            return rec.get('TaskStatus') === 'complete';
+                                            return rec.get('TaskStatus') !== 'completed';
                                         }
                                     },
                                     { xtype: 'component', cls: 'slate-menu-header', html: 'Timeline' },
@@ -83,7 +83,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                         filterGroup: 'Timeline',
                                         filterFn: function(rec) {
                                             var now = new Date();
-                                            return rec.get('DueDate').toDateString() === now.toDateString();
+                                            return rec.get('DueDate').toDateString() !== now.toDateString();
                                         }
                                     },
                                     {
@@ -91,7 +91,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                         filterGroup: 'Timeline',
                                         filterFn: function(rec) {
                                             var now = new Date();
-                                            return Ext.Date.getWeekOfYear(rec.get('DueDate')) === Ext.Date.getWeekOfYear(now);
+                                            return Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now);
                                         }
                                     },
                                     {
@@ -99,7 +99,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                         filterGroup: 'Timeline',
                                         filterFn: function(rec) {
                                             var now = new Date();
-                                            return Ext.Date.getWeekOfYear(rec.get('DueDate')) === Ext.Date.getWeekOfYear(now)+1;
+                                            return Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now)+1;
                                         }
                                     },
                                     { xtype: 'menuseparator' },
