@@ -1,7 +1,8 @@
 Ext.define('SlateTasksManager.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
-        'Slate.API'
+        'Slate.API',
+        'Ext.window.Toast'
     ],
 
     views: [
@@ -163,9 +164,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         record.save({
             success: function(rec) {
                 me.getTaskEditor().close();
-                if (wasPhantom) {
-                    me.getTasksStore().loadRecords([rec], {addRecords: true});
-                }
+                me.getTasksStore().reload();
                 Ext.toast('Task succesfully saved!');
             }
         });
@@ -197,8 +196,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             taskCopy = taskRecord.copy(null);
 
         taskCopy.set('Title', taskCopy.get('Title') + ' Clone');
-        //reset handle to prevent validation error
+        //reset server controlled fields
+        taskCopy.set('Created', null);
+        taskCopy.set('CreatorID', null);
+        taskCopy.set('ModifierID', null);
+        taskCopy.set('Modified', null);
         taskCopy.set('Handle', null);
+
         me.editTask(taskCopy);
     }
 });
