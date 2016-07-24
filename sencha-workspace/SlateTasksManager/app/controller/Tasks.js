@@ -1,7 +1,8 @@
 Ext.define('SlateTasksManager.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
-        'Slate.API'
+        'Slate.API',
+        'Ext.window.Toast'
     ],
 
     views: [
