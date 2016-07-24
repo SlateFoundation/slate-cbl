@@ -48,7 +48,7 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
         }
 
         if (studentTask.ExpirationDate) {
-            expirationdateField.setValue(Ext.Dahe.format(new Date(studentTask.DueDate * 1000), 'm/d/Y'));
+            expirationdateField.setValue(Ext.Date.format(new Date(studentTask.ExpirationDate * 1000), 'm/d/Y'));
         }
     },
 
