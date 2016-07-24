@@ -82,7 +82,8 @@ Ext.define('Slate.cbl.model.Task', {
         },
         {
             name: 'ExperienceType',
-            type: 'string'
+            type: 'string',
+            defaultValue: 'Studio'
         },
 
         'Creator',
