@@ -126,34 +126,73 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         Ext.Msg.alert('currently not implemented');
     },
 
-    onFilterItemCheckChange: function(item) {
+    onFilterItemCheckChange: function() {
         var me = this,
-            menu = me.getFilterMenu();
+            menu = me.getFilterMenu(),
+            statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
+            timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
+            store = this.getStudentTasksStore(),
+            recs = store.getRange(),
+            recLength = recs.length,
+            i = 0,
+            rec;
 
-        console.log(menu.items);
+        for (; i < recLength; i++) {
+            rec = recs[i];
+            rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
+        }
+
+        me.getTaskTree().update({tasks: me.formatTaskData(store.getRange())});
+
     },
+
+    /**
+     * Passes a record through a group of filters.
+     * @param {Ext.data.Model} rec- The record to be tested.
+     * @param {Array} filterGroup - An array of objects with a filter function.
+     * @returns {boolean} filtered - true if this rec should be filtered
+     */
+    filterRecord: function(rec, filterGroup) {
+        var filterGroupLength = filterGroup.length,
+            filtered = filterGroupLength === 0 ? false : true,  // if no filters, return false
+            i = 0;
+
+        for (; i < filterGroupLength; i++) {
+            filtered = filtered && filterGroup[i].filterFn(rec);
+        }
+
+        return filtered;
+    },
+
 
     // custom controller methods
     formatTaskData: function(recs) {
         var me = this,
-            tasks = me.getParentTasks(recs),
-            tasksLength = tasks.length,
+            parentRecs = me.getParentRecs(recs),
+            parentRecsLength = parentRecs.length,
+            parentRec,
+            tasks = [],
             task,
             subTasks,
             i = 0;
 
-        for (; i<tasksLength; i++) {
-            task = tasks[i];
+        for (; i<parentRecsLength; i++) {
+            parentRec = parentRecs[i];
+            task = parentRec.getData();
             subTasks = me.getSubTasks(recs, task.TaskID);
             if (subTasks.length > 0) {
                 task.subtasks = subTasks;
+                parentRec.set('filtered',false); // do not filter parent tasks that have unfiltered subtasks
+            }
+            if (!parentRec.get('filtered')) {
+                tasks.push(task);
             }
         }
 
         return tasks;
     },
 
-    getParentTasks: function(recs) {
+    getParentRecs: function(recs) {
         var recsLength = recs.length,
             parentRecs = [],
             i = 0,
@@ -162,7 +201,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         for (; i<recsLength; i++) {
             rec = recs[i];
             if (rec.get('ParentTaskID') === null) {
-                parentRecs.push(rec.getData());
+                parentRecs.push(rec);
             }
         }
 
@@ -177,7 +216,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         for (; i<recsLength; i++) {
             rec = recs[i];
-            if (rec.get('ParentTaskID') === parentId) {
+            if (rec.get('ParentTaskID') === parentId && !rec.get('filtered')) {
                 rec.set('ParentTaskTitle',rec.get('Task').ParentTask.Title);
                 subTasks.push(rec.getData());
             }
