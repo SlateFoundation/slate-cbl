@@ -122,6 +122,11 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         },
         {
             name: 'Competencies'
+        },
+        {
+            name: 'filtered',
+            type: 'boolean',
+            defaultValue: false
         }
     ],
 
