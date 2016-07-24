@@ -215,8 +215,10 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             target.up('.slate-tasktree-item').toggleCls('is-expanded');
         } else {
             parentEl = target.up('.slate-tasktree-item');
-            recordId = parentEl.dom.getAttribute('recordId');
-            this.fireEvent('itemclick',recordId);
+            if (parentEl) {
+                recordId = parentEl.dom.getAttribute('recordId');
+                this.fireEvent('itemclick',recordId);
+            }
         }
     }
 });
