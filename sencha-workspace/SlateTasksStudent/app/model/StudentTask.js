@@ -2,7 +2,10 @@
 Ext.define('SlateTasksStudent.model.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records'
+        'Slate.proxy.Records',
+        'Slate.cbl.model.tasks.Attachment',
+        'Slate.cbl.model.tasks.Comment',
+        'Slate.cbl.model.Skill'
     ],
 
     // model config
@@ -78,6 +81,13 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             allowNull: true
         },
         {
+            name: 'Submitted',
+            type: 'date',
+            mapping: 'Submitted',
+            dateFormat: 'timestamp',
+            allowNull: true
+        },
+        {
             name: 'Instructions',
             type: 'string',
             mapping: 'Task.Instructions',
@@ -109,8 +119,30 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             convert: function(v,r) {
                 return r.get('FirstName') + ' ' + r.get('LastName');
             }
+        },
+        {
+            name: 'Competencies'
+        },
+        {
+            name: 'filtered',
+            type: 'boolean',
+            defaultValue: false
         }
     ],
+
+    hasMany: [{
+        model: 'Slate.cbl.model.tasks.Attachment',
+        name: 'Attachments',
+        associationKey: 'Task.Attachments'
+    },{
+        model: 'Slate.cbl.model.tasks.Comment',
+        name: 'Comments',
+        associationKey: 'Comments'
+    },{
+        model: 'Slate.cbl.model.Skill',
+        name: 'Skills',
+        associationKey: 'Task.Skills'
+    }],
 
     proxy: {
         type: 'slate-records',
@@ -118,8 +150,10 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         include: [
             'Task',
             'Student',
+            'Comments',
+            'Task.Attachments',
             'Task.ParentTask',
-            'Task.Skills.Competencies'
+            'Task.Skills.Competency'
         ]
     }
 

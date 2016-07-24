@@ -4,24 +4,134 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     requires:[
     ],
 
-    config: {
-        statusStrings: {
-            due: 'Due',
-            late: 'Past Due',
-            revision: 'Revision Due'
-        }
-    },
-
     title: 'Current Tasks',
     showTools: true,
 
     componentCls: 'slate-tasktree',
 
+    items: [
+        {
+            xtype: 'container',
+            componentCls: 'slate-simplepanel-header',
+            layout: 'hbox',
+            items: [
+                {
+                    flex: 1,
+                    xtype: 'component',
+                    cls: 'slate-simplepanel-title',
+                    html: '',
+                    itemId: 'title'
+                },
+                {
+                    // TODO make this configurable
+                    xtype: 'container',
+                    layout: 'hbox',
+                    itemId: 'tools',
+                    items: [
+                        {
+                            xtype: 'button',
+                            ui: 'light',
+                            text: 'Filter',
+                            itemId: 'filter',
+                            menu: {
+                                plain: true,
+                                showSeparator: false,
+                                defaults: {
+                                    xtype: 'menucheckitem'
+                                },
+                                items: [
+                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Status' },
+                                    {
+                                        text: 'Due Tasks',
+                                        filterGroup: 'Status',
+                                        filterFn: function(rec) {
+                                            return rec.get('TaskStatus') !== 'assigned';
+                                        }
+                                    },
+                                    {
+                                        text: 'Revision Tasks',
+                                        filterGroup: 'Status',
+                                        filterFn: function(rec) {
+                                            return rec.get('TaskStatus') !== 're-assigned';
+                                        }
+                                    },
+                                    {
+                                        text: 'Submitted Tasks',
+                                        filterGroup: 'Status',
+                                        filterFn: function(rec) {
+                                            return !(rec.get('TaskStatus') === 'submitted' || rec.get('TaskStatus') === 're-submitted');
+                                        }
+                                    },
+                                    {
+                                        text: 'Completed Tasks',
+                                        filterGroup: 'Status',
+                                        filterFn: function(rec) {
+                                            return rec.get('TaskStatus') !== 'completed';
+                                        }
+                                    },
+                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Timeline' },
+                                    {
+                                        text: 'Past Due',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return rec.get('DueDate') >= now;
+                                        }
+                                    },
+                                    {
+                                        text: 'Due Today',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return rec.get('DueDate').toDateString() !== now.toDateString();
+                                        }
+                                    },
+                                    {
+                                        text: 'Due This Week',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now);
+                                        }
+                                    },
+                                    {
+                                        text: 'Due Next Week',
+                                        filterGroup: 'Timeline',
+                                        filterFn: function(rec) {
+                                            var now = new Date();
+                                            return Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now)+1;
+                                        }
+                                    },
+                                    { xtype: 'menuseparator' },
+                                    {
+                                        xtype: 'container',
+                                        padding: 8,
+                                        layout: {
+                                            type: 'hbox',
+                                            pack: 'center'
+                                        },
+                                        items: [
+                                            {
+                                                xtype: 'button',
+                                                itemId: 'view-all',
+                                                text: 'View All'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+
     tpl: [
         '<ul class="slate-tasktree-list">',
 
             '<tpl for="tasks">',
-                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{TaskStatus}" recordId="{ID}">',
+                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.DueDate) ]}" recordId="{ID}">',
 
                     '<div class="flex-ct">',
                         '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -39,7 +149,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                         '<ul class="slate-tasktree-sublist">',
 
                             '<tpl for="subtasks">',
-                                '<li class="slate-tasktree-item slate-tasktree-status-{TaskStatus}" recordId="{ID}">',
+                                '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values.DueDate,values.TaskStatus) ]}" recordId="{ID}">',
 
                                     '<div class="flex-ct">',
                                         '<div class="slate-tasktree-nub"></div>',
@@ -62,16 +172,30 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             '</tpl>',
 
         '</ul>',
-
         {
-            getStatusString: function(key) {
+            getStatusString: function(taskStatus) {
                 var statusStrings = {
-                    due: 'Due',
-                    late: 'Past Due',
-                    revision: 'Revision Due'
+                    'assigned': 'Due',
+                    're-assigned': 'Revision',
+                    'submitted': 'Submitted',
+                    're-submitted': 'Resubmitted',
+                    'completed': 'Completed'
                 };
 
-                return statusStrings[key] || '';
+                return statusStrings[taskStatus] || '';
+            },
+            getDueStatusCls: function(due, taskStatus) {
+                var now = new Date();
+
+                if (due > now) {
+                    if (taskStatus === 'completed') {
+                        return 'completed';
+                    } else {
+                        return 'due';
+                    }
+                } else {
+                    return 'late';
+                }
             }
         }
     ],
@@ -92,8 +216,10 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             target.up('.slate-tasktree-item').toggleCls('is-expanded');
         } else {
             parentEl = target.up('.slate-tasktree-item');
-            recordId = parentEl.dom.getAttribute('recordId');
-            this.fireEvent('itemclick',recordId);
+            if (parentEl) {
+                recordId = parentEl.dom.getAttribute('recordId');
+                this.fireEvent('itemclick',recordId);
+            }
         }
     }
 });

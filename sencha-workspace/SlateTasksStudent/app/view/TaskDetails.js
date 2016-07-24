@@ -7,6 +7,8 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         'Slate.cbl.widget.RatingView'
     ],
 
+    modal: true,
+
     title: 'Task',
 
     dockedItems: [{
@@ -20,6 +22,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
                 xtype: 'tbfill'
             },{
                 xtype: 'button',
+                itemId: 'submit',
                 text: 'Submit',
                 scale: 'large'
             }]
@@ -61,41 +64,45 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             fieldLabel: 'Attachments',
             items: [{
                 xtype: 'slate-attachmentslist',
-                editable: false,
-                data: [{
-                    kind: 'doc',
-                    title: 'Document Name'
-                },{
-                    kind: 'folder',
-                    title: 'Folder Name'
-                }]
+                editable: false
             }]
+        },
+        {
+            fieldLabel: 'Submitted Date',
+            name: 'Submitted',
+            renderer: Ext.util.Format.dateRenderer('m/d/y')
         },
         {
             xtype: 'slate-ratingview'
         },
         {
-            fieldLabel: 'Submitted Date',
-            name: 'SubmittedDate',
-            renderer: Ext.util.Format.dateRenderer('m/d/y')
-        },
-        {
             xtype: 'component',
-            data: {
-                comments: [
-                    { CreationDate: Date(), Text: 'This is a teacher comment'},
-                    { CreationDate: Date(), Text: 'This is another teacher comment'}
-                ]
-            },
+            itemId: 'comments',
             //TODO: I didn't find a modal example for this comment list, so I made the CSS classnames up.
             tpl: [
+                '<tpl if="comments"><div class="slate-task-comment-label">Teacher Comments:</div></tpl>',
                 '<ul class="slate-task-comments">',
                     '<tpl for="comments">',
-                        '<div class="slate-task-comment-date">{CreationDate:date("M d, Y")}</div>',
-                        '<div class="slate-task-comment-text">{Text}</div>',
+                        '<div class="slate-task-comment-date">{Created:date("M d, Y")}</div>',
+                        '<div class="slate-task-comment-text">{Message}</div>',
+                        '<hr>',
                     '</tpl>',
                 '</ul>'
             ]
+        },
+        {
+            xtype: 'fieldcontainer',
+            fieldLabel: 'Attachments',
+            items: [{
+                xtype: 'button',
+                itemId: 'add-link',
+                text: 'Add Link'
+            },{
+                xtype: 'button',
+                itemId: 'add-attachment',
+                disabled: true,
+                text: 'Attachment'
+            }]
         }]
     }]
 });
