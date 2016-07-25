@@ -117,10 +117,17 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     itemId: 'comments-list',
                     tpl: [
                         '<tpl if="values && values.length">',
-                            '<h1>Comments:</h1>',
-                            '<tpl for=".">',
-                                '{[Ext.Date.format(new Date(values.Created * 1000), "m/d h:ia")]}: {Message}<br>',
-                            '</tpl>',
+                            '<div class="slate-task-comments-ct">',
+                                '<h4 class="slate-task-comments-heading">Comments</h4>',
+                                '<ul class="slate-task-comments">',
+                                    '<tpl for=".">',
+                                        '<li class="slate-task-comment">',
+                                            '<div class="slate-task-comment-date">{[Ext.Date.format(new Date(values.Created * 1000), "M d, Y")]}</div>',
+                                            '<div class="slate-task-comment-text">{Message}</div>',
+                                        '</li>',
+                                    '</tpl>',
+                                '</ul>',
+                            '</div>',
                         '</tpl>'
                     ]
                 },

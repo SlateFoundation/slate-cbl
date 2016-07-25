@@ -1,0 +1,28 @@
+.slate-task-comments-ct {
+    margin: 1em 0 1em .5em;
+}
+
+.slate-task-comments-heading {
+    font-size: 1em;
+    margin: 0;
+}
+
+.slate-task-comments {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slate-task-comment {
+    padding: .75em 0;
+
+    + .slate-task-comment {
+        border-top: 1px solid $border-color;
+    }
+}
+
+.slate-task-comment-date {
+    color: $muted-color;
+    font-size: .875em;
+    text-transform: uppercase;
+}
