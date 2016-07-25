@@ -19,6 +19,20 @@ Ext.define('AggregridExample.view.Main', {
 
                 xtype: 'app-basicaggregrid'
             }
+        ],
+        bbar: [
+            {
+                text: 'Add 100 absences',
+                action: 'add-absences'
+            },
+            {
+                text: 'Remove 50 absences',
+                action: 'remove-absences'
+            },
+            {
+                text: 'Add row',
+                action: 'add-row'
+            }
         ]
     }
 });
