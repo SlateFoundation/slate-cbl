@@ -31,6 +31,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             render: 'onAssigneeComboRender'
         },
 
+        'slate-tasks-teacher-taskeditor slate-tasks-titlefield[clonable]' : {
+            select: 'onClonableTitleFieldSelect'
+        },
         'slate-tasks-teacher-taskassigner button[action=assign]': {
             click: 'onAssignTaskClick'
         },
@@ -119,8 +122,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskGrid: 'slate-tasks-teacher-dashboard slate-studentsgrid',
         courseSelector: 'slate-tasks-teacher-dashboardtoolbar combo',
         commentField: 'slate-tasks-teacher-taskrater textareafield'
-        // ,
-        // commentsList: 'slate-tasks-teacher-taskrater #comments-list'
     },
 
 
@@ -467,6 +468,31 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
         });
 
+    },
+
+    onClonableTitleFieldSelect: function(combo) {
+        var me = this,
+            record = combo.getSelectedRecord(),
+            title = "New Task",
+            message = "Do you want to clone this task?" + '<br><strong>' + record.get('Title') + '</strong>';
+
+        Ext.Msg.confirm(title, message, function(btnId) {
+            if (btnId === 'yes') {
+                me.cloneTask(record);
+            }
+        });
+    },
+
+    cloneTask: function(taskRecord) {
+        var me = this,
+            taskEditor = me.getTaskEditor(),
+            taskCopy = taskRecord.copy(null);
+
+        taskCopy.set({
+            Title: taskCopy.get('Title') + ' Clone'
+        });
+
+        me.editTask(taskCopy);
     },
 
     assignStudentTaskRevision: function(date) {
