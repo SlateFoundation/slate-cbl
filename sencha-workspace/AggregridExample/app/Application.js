@@ -92,6 +92,9 @@ Ext.define('AggregridExample.Application', {
 
         'button[action=add-absences]': {
             click: 'onAddAbsencesClick'
+        },
+        'button[action=remove-absences]': {
+            click: 'onRemoveAbsencesClick'
         }
     },
 
@@ -176,6 +179,20 @@ Ext.define('AggregridExample.Application', {
 
     onAddAbsencesClick: function() {
         this.getAbsencesStore().add(this.generateAbsences(100));
+    },
+
+    onRemoveAbsencesClick: function() {
+        var store = this.getAbsencesStore(),
+            count = store.getCount(),
+            records = [],
+            removeCount = Math.min(50, count),
+            i = 0;
+
+        for (; i < removeCount; i++) {
+            records.push(store.getAt(Math.floor(Math.random() * count)));
+        }
+
+        store.remove(Ext.Array.unique(records));
     },
 
     logInfo: function() {
