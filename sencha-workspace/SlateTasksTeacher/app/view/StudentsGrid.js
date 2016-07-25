@@ -145,7 +145,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         '</div>',
         {
             showDueDate: function(values) {
-                var date = '';
+                var date = '&nbsp;';
 
                 if (values.TaskStatus == 'completed') {
                     date = '<i class="fa fa-lg fa-check-circle-o"></i>';
