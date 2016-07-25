@@ -532,7 +532,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 include: 'Student,SkillRatings,Comments'
             },
             callback: function(opts, success, response) {
-                // debugger;
                 taskRater.setTask(task);
                 taskRater.setStudentTask(response.data.data);
 
@@ -545,7 +544,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var me = this,
             commentField = me.getCommentField();
 
-        if (commentField.getValue()) {
+        if (commentField && commentField.getValue()) {
             studentTask.set('Comment', commentField.getValue());
         }
 
