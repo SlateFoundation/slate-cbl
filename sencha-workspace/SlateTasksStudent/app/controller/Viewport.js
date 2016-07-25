@@ -70,7 +70,6 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
     },
 
     onTaskTreeResize: function () {
-        console.log('resize');
         this.maskDemoElements();
     },
 
