@@ -80,6 +80,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         me.formatCompetencies(store);
         tree.update({tasks: tasks});
+        tree.afterTasksLoad();
     },
 
     onTaskTreeItemClick: function(id) {

@@ -216,16 +216,33 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         }
     },
 
+    afterTasksLoad: function() {
+        var tree = this,
+            sublists = tree.el.select('.slate-tasktree-sublist');
+
+        sublists.each(function(sublist) {
+            sublist.set({
+                'data-natural-height': sublist.getHeight(),
+                style: {
+                    height: 0
+                }
+            });
+        });
+    },
+
     onTreeClick: function(ev, t) {
         var target = Ext.get(t),
-            parentEl,recordId;
+            treeItem = target.up('.slate-tasktree-item'),
+            sublist = treeItem.down('.slate-tasktree-sublist'),
+            recordId;
 
-        if (target.is('.slate-tasktree-nub.is-clickable')) {
-            target.up('.slate-tasktree-item').toggleCls('is-expanded');
+        if (target.is('.slate-tasktree-nub.is-clickable') && treeItem && sublist) {
+            var newHeight = treeItem.hasCls('is-expanded') ? 0 : sublist.getAttribute('data-natural-height');
+            sublist.setHeight(newHeight);
+            treeItem.toggleCls('is-expanded');
         } else {
-            parentEl = target.up('.slate-tasktree-item');
-            if (parentEl) {
-                recordId = parentEl.dom.getAttribute('recordId');
+            if (treeItem) {
+                recordId = treeItem.dom.getAttribute('recordId');
                 this.fireEvent('itemclick',recordId);
             }
         }
