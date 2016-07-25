@@ -80,6 +80,10 @@ Ext.define('AggregridExample.Application', {
             collapse: function(aggregrid, rowId) {
                 this.logInfo('%s->collapse: row %s', aggregrid.getId(), rowId);
             }
+        },
+
+        'button[action=add-absences]': {
+            click: 'onAddAbsencesClick'
         }
     },
 
@@ -92,22 +96,10 @@ Ext.define('AggregridExample.Application', {
     },
 
     launch: function() {
-        var me = this,
-            amount = Math.floor(Math.random() * 500),
-            i = 0,
-            absences = [];
+        var me = this;
 
         // generate random absences
-        for (; i < amount; i++) {
-            absences.push({
-                id: i + 1,
-                student_id: Math.floor(Math.random() * 20) + 1,
-                date: new Date(2016, Math.floor(Math.random() * 12), Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60))
-            });
-        }
-
-        me.getAbsencesStore().loadData(absences);
-
+        me.getAbsencesStore().loadData(me.generateAbsences(Math.floor(Math.random() * 500)));
 
         // export global references for testing/debugging, only because this is an example app
         window.mainView = me.getMainView();
@@ -170,6 +162,10 @@ Ext.define('AggregridExample.Application', {
         this.getSummaryAbsencesStore().loadData(summaryData);
     },
 
+    onAddAbsencesClick: function() {
+        this.getAbsencesStore().add(this.generateAbsences(100));
+    },
+
     logInfo: function() {
         if (!window.console) {
             return;
@@ -181,5 +177,22 @@ Ext.define('AggregridExample.Application', {
         Ext.Array.insert(args, 1, 'color: #999');
 
         console.info.apply(console, args);
+    },
+
+    generateAbsences: function(amount) {
+        var firstId = this.getAbsencesStore().getCount() + 1,
+            i = 0,
+            absences = [];
+
+        // generate random absences
+        for (; i < amount; i++) {
+            absences.push({
+                id: i + firstId,
+                student_id: Math.floor(Math.random() * 20) + 1,
+                date: new Date(2016, Math.floor(Math.random() * 12), Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60))
+            });
+        }
+
+        return absences;
     }
 });
