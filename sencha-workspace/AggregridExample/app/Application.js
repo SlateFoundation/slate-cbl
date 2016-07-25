@@ -1,5 +1,6 @@
 /**
  * TODO:
+ * - [ ] Batch update summary store when absences are added or removed, verify update handler for rollup grid
  * - [ ] Add a rollup example that uses the same data store for main and subrows
  */
 /* eslint no-console: "off" */
