@@ -130,6 +130,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 Ext.toast('Task successfully submitted!');
                 me.getStudentTasksStore().load();
                 me.getTaskDetails().close();
+            },
+            failure: function() {
+                Ext.toast('Task could not be submitted.');
             }
         });
     },
