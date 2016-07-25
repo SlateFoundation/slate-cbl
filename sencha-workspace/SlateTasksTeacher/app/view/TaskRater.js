@@ -27,12 +27,14 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
             ratingsView = me.down('slate-ratingview'),
             skillRatingIds = [],
             task = me.getTask(),
-            groupedSkills = task.getSkillsGroupedByCompetency();
+            groupedSkills = task.getSkillsGroupedByCompetency(),
+            commentsList = me.down('#comments-list');
 
 
         form.down('[name=StudentFullName]').setValue(studentTask.Student.FirstName + ' ' + studentTask.Student.LastName);
         form.down('[name=DueDate]').setValue(studentTask.DueDate);
         form.down('[name=Submitted]').setValue(studentTask.Submitted);
+        commentsList.update(studentTask.Comments);
 
         for(var i = 0; i < studentTask.SkillRatings.length; i++) {
             skillRatingIds.push(studentTask.SkillRatings[i].SkillID);

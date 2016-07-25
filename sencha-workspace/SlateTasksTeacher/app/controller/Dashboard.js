@@ -4,6 +4,9 @@
  */
 Ext.define('SlateTasksTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
+    requires: [
+        'Ext.window.Toast'
+    ],
 
 
     // entry points
@@ -114,7 +117,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
         assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
         taskGrid: 'slate-tasks-teacher-dashboard slate-studentsgrid',
-        courseSelector: 'slate-tasks-teacher-dashboardtoolbar combo'
+        courseSelector: 'slate-tasks-teacher-dashboardtoolbar combo',
+        commentField: 'slate-tasks-teacher-taskrater textareafield'
+        // ,
+        // commentsList: 'slate-tasks-teacher-taskrater #comments-list'
     },
 
 
@@ -470,13 +476,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         studentTask.set('DueDate', date.getTime()/1000);
         studentTask.set('TaskStatus', 're-assigned');
-        studentTask.save({
-            callback: function(record) {
-                me.reloadTasks(function() {
-                    taskRater.close();
-                    me.rateStudentTask(studentTask.getData());
-                });
-            }
+
+        me.saveStudentTask(studentTask, function(record) {
+            me.reloadTasks(function() {
+                taskRater.close();
+                me.rateStudentTask(studentTask.getData());
+            });
         });
     },
 
@@ -524,7 +529,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             url: '/cbl/student-tasks/'+studentTask.ID,
             method: 'GET',
             params: {
-                include: 'Student,SkillRatings'
+                include: 'Student,SkillRatings,Comments'
             },
             callback: function(opts, success, response) {
                 // debugger;
@@ -537,6 +542,13 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     saveStudentTask: function(studentTask, callback, scope) {
+        var me = this,
+            commentField = me.getCommentField();
+
+        if (commentField.getValue()) {
+            studentTask.set('Comment', commentField.getValue());
+        }
+
         studentTask.save({
             success: function(rec) {
                 Ext.toast('Student Task successfully saved!');
