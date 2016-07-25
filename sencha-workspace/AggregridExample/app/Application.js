@@ -33,21 +33,27 @@ Ext.define('AggregridExample.Application', {
             // lifecycle events
             beforerefresh: function(aggregrid) {
                 this.logInfo('%s->beforerefresh', aggregrid.getId());
+                console.time('Refreshing grid');
             },
             refresh: function(aggregrid) {
                 this.logInfo('%s->refresh', aggregrid.getId());
+                console.timeEnd('Refreshing grid');
             },
             beforeaggregate: function(aggregrid) {
                 this.logInfo('%s->beforeaggregate', aggregrid.getId());
+                console.time('Aggregating groups');
             },
             aggregate: function(aggregrid) {
                 this.logInfo('%s->aggregate', aggregrid.getId());
+                console.timeEnd('Aggregating groups');
             },
             beforerendercells: function(aggregrid) {
                 this.logInfo('%s->beforerendercells', aggregrid.getId());
+                console.time('Rendering cells');
             },
             rendercells: function(aggregrid) {
                 this.logInfo('%s->rendercells', aggregrid.getId());
+                console.timeEnd('Rendering cells');
             },
             aggregatechange: function(aggregrid, action, recordMetadata) {
                 this.logInfo('%s->aggregatechange: %s record %s in group %o at %sx%s', aggregrid.getId(), action, recordMetadata.record.getId(), recordMetadata.group, recordMetadata.row.getId(), recordMetadata.column.getId());
@@ -70,9 +76,11 @@ Ext.define('AggregridExample.Application', {
 
                 // controller.pause();
                 // Ext.defer(controller.resume, pauseTime, controller);
+                console.time('Expanding row '+rowId);
             },
             expand: function(aggregrid, rowId) {
                 this.logInfo('%s->expand: row %s', aggregrid.getId(), rowId);
+                console.timeEnd('Expanding row '+rowId);
             },
             beforecollapse: function(aggregrid, rowId) {
                 this.logInfo('%s->beforecollapse: row %s', aggregrid.getId(), rowId);
@@ -96,6 +104,8 @@ Ext.define('AggregridExample.Application', {
     },
 
     launch: function() {
+        console.time('Launching application');
+
         var me = this;
 
         // generate random absences
@@ -105,6 +115,8 @@ Ext.define('AggregridExample.Application', {
         window.mainView = me.getMainView();
         window.basicAggregrid = window.mainView.down('app-basicaggregrid');
         window.rollupAggregrid = window.mainView.down('app-rollupaggregrid');
+
+        console.timeEnd('Launching application');
     },
 
     onAppUpdate: function () {
