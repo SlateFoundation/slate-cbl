@@ -63,6 +63,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         comments: 'slate-modalform #comments',
         attachmentsField: 'slate-modalform slate-tasks-attachmentsfield',
         submitButton: 'slate-taskdetails button#submit'
+
+
     },
 
 
@@ -121,11 +123,13 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         console.log(record);
 
+        record.set('TaskStatus', 'submitted');
+        record.set('Submitted', new Date().getTime());  //TODO: set this value server side
         record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
 
         record.save({
-            success: function(rec) {
-                Ext.toast('Task succesfully saved!');
+            success: function() {
+                Ext.toast('Task succesfully submitted!');
             }
         });
     },
