@@ -103,7 +103,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         me.getComments().setData(me.formatCommentData(rec.Comments().getRange()));
 
-        me.getAttachmentsField().setAttachments(rec.Attachments());
+        me.getAttachmentsField().setAttachments(rec.Attachments().getRange());
 
         details.show();
     },
