@@ -119,7 +119,7 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                         '<tpl if="values && values.length">',
                             '<h1>Comments:</h1>',
                             '<tpl for=".">',
-                                '{[Ext.Date.format(new Date(values.Created * 1000), "m/d h:ia")]}: {Message}',
+                                '{[Ext.Date.format(new Date(values.Created * 1000), "m/d h:ia")]}: {Message}<br>',
                             '</tpl>',
                         '</tpl>'
                     ]
