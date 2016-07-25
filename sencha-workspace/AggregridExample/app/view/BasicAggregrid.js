@@ -25,21 +25,22 @@ Ext.define('AggregridExample.view.BasicAggregrid', {
 
         dataStore: 'Absences',
 
-        cellRenderer: function(group, cellEl) {
-            var absences = group.records.length,
-                renderedAbsences = group.renderedAbsences;
+        cellRenderer: function(group, cellEl, rendered) {
+            var absences = group.records.length;
 
-            if (absences != renderedAbsences) {
+            if (rendered) {
+                cellEl.dom.textContent = absences;
+            }
+
+            if (absences != rendered.absences) {
                 cellEl.toggleCls('attendance-perfect', absences == 0);
                 cellEl.toggleCls('attendance-ok', absences == 1);
                 cellEl.toggleCls('attendance-bad', absences >= 2);
-
-                if (typeof renderedAbsences === 'number') {
-                    cellEl.dom.textContent = String(absences);
-                }
             }
 
-            group.renderedAbsences = absences;
+            return {
+                absences: absences
+            };
         }
     }
 });
