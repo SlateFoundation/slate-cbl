@@ -59,5 +59,10 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
         this.getRecentActivity().render('slate-recentactivity');
         this.getTaskHistory().render('slate-taskhistory');
         this.getOverallProgress().render('slate-overallprogress');
+
+        this.getTodoList().setLoading('');
+        this.getRecentActivity().setLoading('');
+        this.getTaskHistory().setLoading('');
+        this.getOverallProgress().setLoading('');
     }
 });
