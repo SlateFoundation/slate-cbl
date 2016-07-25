@@ -12,12 +12,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         ratingView: {
             afterrender: 'onRatingViewAfterRender'
         },
-        addLinkButton: {
-            click: 'onAddLinkButtonClick'
-        },
-        addAttachmentButton: {
-            click: 'onAddAttachmentButtonClick'
-        },
         submitButton: {
             click: 'onSubmitButtonClick'
         },
@@ -65,10 +59,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         taskForm: 'slate-taskdetails slate-modalform',
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
-        attachmentsList: 'slate-modalform slate-attachmentslist',
+        taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
         comments: 'slate-modalform #comments',
-        addLinkButton: 'slate-taskdetails #add-link',
-        addAttachmentButton: 'slate-taskdetails #add-attachment',
+        attachmentsField: 'slate-modalform slate-tasks-attachmentsfield',
         submitButton: 'slate-taskdetails button#submit'
     },
 
@@ -106,9 +99,11 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
 
-        me.getAttachmentsList().getStore().setData(rec.Attachments().getRange());
+        me.getTaskAttachmentsList().getStore().setData(rec.TaskAttachments().getRange());
 
         me.getComments().setData(me.formatCommentData(rec.Comments().getRange()));
+
+        me.getAttachmentsField().setAttachments(rec.Attachments());
 
         details.show();
     },
@@ -117,16 +112,22 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         this.hideRatingViewElements(view);
     },
 
-    onAddLinkButtonClick: function() {
-        Ext.Msg.alert('currently not implemented');
-    },
-
-    onAddAttachmentButtonClick: function() {
-        Ext.Msg.alert('currently not implemented');
-    },
-
     onSubmitButtonClick: function() {
-        Ext.Msg.alert('currently not implemented');
+        var me = this,
+            form = me.getTaskForm(),
+            attachmentsField = me.getAttachmentsField();
+
+        record = form.getRecord();
+
+        console.log(record);
+
+        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
+
+        record.save({
+            success: function(rec) {
+                Ext.toast('Task succesfully saved!');
+            }
+        });
     },
 
     onFilterItemCheckChange: function() {

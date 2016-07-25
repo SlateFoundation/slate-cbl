@@ -3,6 +3,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
     xtype: 'slate-taskdetails',
     requires: [
         'Slate.cbl.view.AttachmentsList',
+        'Slate.cbl.widget.AttachmentsField',
         'Slate.cbl.view.modals.ModalForm',
         'Slate.cbl.widget.RatingView'
     ],
@@ -64,6 +65,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             fieldLabel: 'Attachments',
             items: [{
                 xtype: 'slate-attachmentslist',
+                itemId: 'task-attachments',
                 editable: false
             }]
         },
@@ -91,18 +93,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             ]
         },
         {
-            xtype: 'fieldcontainer',
-            fieldLabel: 'Attachments',
-            items: [{
-                xtype: 'button',
-                itemId: 'add-link',
-                text: 'Add Link'
-            },{
-                xtype: 'button',
-                itemId: 'add-attachment',
-                disabled: true,
-                text: 'Attachment'
-            }]
+            xtype: 'slate-tasks-attachmentsfield'
         }]
     }]
 });
