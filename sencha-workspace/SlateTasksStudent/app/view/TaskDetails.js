@@ -57,20 +57,20 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             renderer: Ext.util.Format.dateRenderer('m/d/y')
         },
         {
+            fieldLabel: 'Submitted Date',
+            name: 'SubmittedDate',
+            renderer: Ext.util.Format.dateRenderer('m/d/y')
+        },
+        {
+            xtype: 'slate-ratingview'
+        },
+        {
             xtype: 'fieldcontainer',
             fieldLabel: 'Attachments',
             items: [{
                 xtype: 'slate-attachmentslist',
                 editable: false
             }]
-        },
-        {
-            xtype: 'slate-ratingview'
-        },
-        {
-            fieldLabel: 'Submitted Date',
-            name: 'SubmittedDate',
-            renderer: Ext.util.Format.dateRenderer('m/d/y')
         },
         {
             xtype: 'component',
