@@ -4,6 +4,13 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
         'Slate.API'
     ],
 
+    // entry points
+    control: {
+        'slate-tasktree': {
+            resize: 'onTaskTreeResize'
+        }
+    },
+
 
     config: {
     },
@@ -59,5 +66,22 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
         this.getRecentActivity().render('slate-recentactivity');
         this.getTaskHistory().render('slate-taskhistory');
         this.getOverallProgress().render('slate-overallprogress');
+
+    },
+
+    onTaskTreeResize: function () {
+        this.maskDemoElements();
+    },
+
+    maskDemoElements: function () {
+        this.getTodoList().setLoading(false);
+        this.getRecentActivity().setLoading(false);
+        this.getTaskHistory().setLoading(false);
+        this.getOverallProgress().setLoading(false);
+
+        this.getTodoList().setLoading('');
+        this.getRecentActivity().setLoading('');
+        this.getTaskHistory().setLoading('');
+        this.getOverallProgress().setLoading('');
     }
 });
