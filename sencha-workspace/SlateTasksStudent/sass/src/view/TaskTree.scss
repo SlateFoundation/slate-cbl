@@ -94,6 +94,7 @@
     align-items: center;
     background-color: white;
     border-radius: 0 0 .25em 0;
+    cursor: pointer;
     display: flex;
     line-height: (4/3);
     padding: .5em .625em;
@@ -101,6 +102,11 @@
 
     .has-subtasks.is-expanded & {
         border-radius: 0;
+    }
+
+    &:hover,
+    &:focus {
+        background-color: mix($base-color, white, 10%);
     }
 }
 
