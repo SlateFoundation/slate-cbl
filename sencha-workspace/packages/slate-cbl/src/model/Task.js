@@ -23,28 +23,33 @@ Ext.define('Slate.cbl.model.Task', {
             name: 'Created',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'CreatorID',
             type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'RevisionID',
             type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'Modified',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'ModifierID',
             type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'Title',
@@ -52,7 +57,8 @@ Ext.define('Slate.cbl.model.Task', {
         },
         {
             name: 'Handle',
-            type: 'string'
+            type: 'string',
+            persist: false
         },
         {
             name: 'ParentTaskID',
@@ -85,9 +91,18 @@ Ext.define('Slate.cbl.model.Task', {
             type: 'string'
         },
 
-        'Creator',
-        'Attachments',
-        'ParentTask',
+        {
+            name: 'Creator',
+            persist: false
+        },
+        {
+            name: 'Attachments',
+            persist: true
+        },
+        {
+            name: 'ParentTask',
+            persist: false
+        },
         {
             name: 'Skills',
             persist: false
@@ -115,7 +130,6 @@ Ext.define('Slate.cbl.model.Task', {
             persist: true,
             calculate: function(data) {
                 if (!Ext.isEmpty(data.Skills)) {
-                    console.log(data.Skills, 'skills');
                     return Ext.Array.map(data.Skills, function(skill) {
                         return skill.ID;
                     });
