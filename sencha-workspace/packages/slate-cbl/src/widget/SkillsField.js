@@ -86,9 +86,7 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                 '</tpl>',
                 {
                     showSettings: function() {
-                        var settingStr = ['<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>'].join('');
-
-                        return this.owner.up('slate-skillsfield').getReadOnly() ? '' : settingsStr;
+                        return this.owner.up('slate-skillsfield').getReadOnly() ? '' : '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>';
                     }
                 }
             ],
