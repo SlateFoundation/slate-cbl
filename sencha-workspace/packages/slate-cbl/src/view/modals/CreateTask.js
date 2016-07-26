@@ -118,7 +118,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     }
                 },
                 {
-                    xtype: 'slate-skillsfield',
+                    xtype: 'slate-skillsfield'
                 },
                 {
                     xtype: 'slate-tasks-attachmentsfield'

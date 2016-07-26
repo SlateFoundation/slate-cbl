@@ -17,12 +17,12 @@ Ext.define('Slate.cbl.view.modals.ModalForm', {
                         '<li>Jane Doe</li>',
                     '</ul>',
                 '</div>',
-            '</div>',
+            '</div>'
         ],
         combineErrors: true,
         labelAlign: 'right',
         labelPad: 16,
         labelWidth: 144,
         msgTarget: 'under'
-    },
+    }
 });

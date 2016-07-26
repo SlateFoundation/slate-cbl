@@ -31,7 +31,8 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                             xtype: 'tbfill'
                         },
                         {
-                            text: 'Accept Task'
+                            text: 'Accept Task',
+                            ui: 'normal'
                         }
                     ]
                 },
