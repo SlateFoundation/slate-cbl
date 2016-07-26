@@ -30,7 +30,7 @@ Ext.define('AggregridExample.view.BasicAggregrid', {
                 attendanceCls = 'perfect';
 
             if (rendered) {
-                cellEl.dom.textContent = absences;
+                group.tplNode.nodeValue = absences;
             }
 
             if (absences != rendered.absences) {
