@@ -288,7 +288,7 @@ Ext.define('AggregridExample.Application', {
     },
 
     generateAbsences: function(amount) {
-        var firstId = this.getAbsencesStore().getCount() + 1,
+        var firstId = (this.getAbsencesStore().max('id') || 0) + 1,
             i = 0,
             absences = [];
 
