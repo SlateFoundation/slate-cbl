@@ -96,6 +96,9 @@ Ext.define('AggregridExample.Application', {
         },
         'button[action=remove-absences]': {
             click: 'onRemoveAbsencesClick'
+        },
+        'button[action=shuffle-absences]': {
+            click: 'onShuffleAbsencesClick'
         }
     },
 
@@ -196,6 +199,22 @@ Ext.define('AggregridExample.Application', {
         store.remove(Ext.Array.unique(records));
     },
 
+    onShuffleAbsencesClick: function() {
+        var store = this.getAbsencesStore(),
+            count = store.getCount(),
+            records = [],
+            removeCount = Math.min(20, count),
+            i = 0;
+
+        store.beginUpdate();
+
+        for (; i < removeCount; i++) {
+            store.getAt(Math.floor(Math.random() * count)).set('date', this.generateAbsenceDate());
+        }
+
+        store.endUpdate();
+    },
+
     logInfo: function() {
         if (!window.console) {
             return;
@@ -219,10 +238,14 @@ Ext.define('AggregridExample.Application', {
             absences.push({
                 id: i + firstId,
                 student_id: Math.floor(Math.random() * 20) + 1,
-                date: new Date(2016, Math.floor(Math.random() * 12), Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60))
+                date: this.generateAbsenceDate()
             });
         }
 
         return absences;
+    },
+
+    generateAbsenceDate: function() {
+        return new Date(2016, Math.floor(Math.random() * 12), Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
     }
 });

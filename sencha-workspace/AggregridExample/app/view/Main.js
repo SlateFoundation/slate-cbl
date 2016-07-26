@@ -30,6 +30,10 @@ Ext.define('AggregridExample.view.Main', {
                 action: 'remove-absences'
             },
             {
+                text: 'Shuffle 20 absences',
+                action: 'shuffle-absences'
+            },
+            {
                 text: 'Add row',
                 action: 'add-row'
             }
