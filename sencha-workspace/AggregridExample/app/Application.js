@@ -107,7 +107,8 @@ Ext.define('AggregridExample.Application', {
             '#Absences': {
                 refresh: 'onAbsencesRefresh',
                 add: 'onAbsencesAdd',
-                update: 'onAbsencesUpdate'
+                update: 'onAbsencesUpdate',
+                remove: 'onAbsencesRemove'
             }
         }
     },
@@ -239,6 +240,27 @@ Ext.define('AggregridExample.Application', {
         summaryStore.endUpdate();
 
         absence.commit();
+    },
+
+    onAbsencesRemove: function(store, absences) {
+        var me = this,
+            summaryStore = me.getSummaryAbsencesStore(),
+            count = absences.length,
+            i = 0, absence,
+            date, summaryRecord;
+
+        summaryStore.beginUpdate();
+
+        for (; i < count; i++) {
+            absence = absences[i];
+            date = absence.get('date');
+
+            summaryRecord = me.getOrCreateSummaryRecord(absence.get('student_id'), date.getFullYear(), me.getWeekStartingMonth(date));
+
+            summaryRecord.set('absences', summaryRecord.get('absences') - 1, { dirty: false });
+        }
+
+        summaryStore.endUpdate();
     },
 
     onAddAbsencesClick: function() {
