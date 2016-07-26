@@ -31,7 +31,7 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
         cellRenderer: function(group, cellEl, rendered) {
             var records = group.records,
                 absences = records.length && records[0].record.get('absences') || 0,
-                attendanceCls = 'perfect';
+                attendanceCls = rendered.attendanceCls;
 
             if (rendered) {
                 group.tplNode.nodeValue = absences || '—';
@@ -42,13 +42,17 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
                     attendanceCls = 'bad';
                 } else if (absences > 0) {
                     attendanceCls = 'ok';
+                } else {
+                    attendanceCls = 'perfect';
                 }
 
-                if (rendered) {
-                    cellEl.removeCls('attendance-'+rendered.attendanceCls);
-                }
+                if (!rendered || attendanceCls != rendered.attendanceCls) {
+                    if (rendered) {
+                        cellEl.removeCls('attendance-'+rendered.attendanceCls);
+                    }
 
-                cellEl.addCls('attendance-'+attendanceCls);
+                    cellEl.addCls('attendance-'+attendanceCls);
+                }
             }
 
             return {

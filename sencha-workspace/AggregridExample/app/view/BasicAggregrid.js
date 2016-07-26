@@ -27,7 +27,7 @@ Ext.define('AggregridExample.view.BasicAggregrid', {
 
         cellRenderer: function(group, cellEl, rendered) {
             var absences = group.records.length,
-                attendanceCls = 'perfect';
+                attendanceCls = rendered.attendanceCls;
 
             if (rendered) {
                 group.tplNode.nodeValue = absences;
@@ -38,13 +38,17 @@ Ext.define('AggregridExample.view.BasicAggregrid', {
                     attendanceCls = 'bad';
                 } else if (absences == 1) {
                     attendanceCls = 'ok';
+                } else {
+                    attendanceCls = 'perfect';
                 }
 
-                if (rendered) {
-                    cellEl.removeCls('attendance-'+rendered.attendanceCls);
-                }
+                if (!rendered || attendanceCls != rendered.attendanceCls) {
+                    if (rendered) {
+                        cellEl.removeCls('attendance-'+rendered.attendanceCls);
+                    }
 
-                cellEl.addCls('attendance-'+attendanceCls);
+                    cellEl.addCls('attendance-'+attendanceCls);
+                }
             }
 
             return {
