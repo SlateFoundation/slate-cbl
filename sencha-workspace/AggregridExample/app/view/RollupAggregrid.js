@@ -34,7 +34,7 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
                 attendanceCls = 'perfect';
 
             if (rendered) {
-                group.tplNode.nodeValue = absences;
+                group.tplNode.nodeValue = absences || '—';
             }
 
             if (absences != rendered.absences) {
