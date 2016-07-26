@@ -24,15 +24,37 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
         cellTpl: [
             '<tpl if="records.length">',
                 '{[values.records[0].record.get("absences")]}',
+            '<tpl else>',
+                '&mdash;',
             '</tpl>'
         ],
-        cellRenderer: function(group, cellEl) {
+        cellRenderer: function(group, cellEl, rendered) {
             var records = group.records,
-                absences = records.length && records[0].record.get('absences') || 0;
+                absences = records.length && records[0].record.get('absences') || 0,
+                attendanceCls = 'perfect';
 
-            cellEl.toggleCls('attendance-perfect', absences == 0);
-            cellEl.toggleCls('attendance-ok', absences > 0 && absences < 4);
-            cellEl.toggleCls('attendance-bad', absences >= 4);
+            if (rendered) {
+                group.tplNode.nodeValue = absences;
+            }
+
+            if (absences != rendered.absences) {
+                if (absences >= 4) {
+                    attendanceCls = 'bad';
+                } else if (absences > 0) {
+                    attendanceCls = 'ok';
+                }
+
+                if (rendered) {
+                    cellEl.removeCls('attendance-'+rendered.attendanceCls);
+                }
+
+                cellEl.addCls('attendance-'+attendanceCls);
+            }
+
+            return {
+                absences: absences,
+                attendanceCls: attendanceCls
+            };
         },
 
         subRowsStore: 'TimePeriods',
