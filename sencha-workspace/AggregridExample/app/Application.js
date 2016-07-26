@@ -105,7 +105,8 @@ Ext.define('AggregridExample.Application', {
     listen: {
         store: {
             '#Absences': {
-                datachanged: 'onAbsencesDataChanged'
+                refresh: 'onAbsencesRefresh',
+                add: 'onAbsencesAdd'
             }
         }
     },
@@ -136,7 +137,7 @@ Ext.define('AggregridExample.Application', {
         );
     },
 
-    onAbsencesDataChanged: function(store) {
+    onAbsencesRefresh: function(store) {
         var count = store.getCount(),
             yearMonthStudentAbsences = {},
             summaryData = [],
@@ -148,7 +149,7 @@ Ext.define('AggregridExample.Application', {
             absence = store.getAt(i);
             date = absence.get('date');
             year = date.getFullYear();
-            month = Ext.Date.parse(year+Ext.String.leftPad(Ext.Date.getWeekOfYear(date), 2, '0'), 'YW').getMonth() + 1;
+            month = this.getWeekStartingMonth(date);
             studentId = absence.get('student_id');
 
             yearMonths = yearMonthStudentAbsences[year] || (yearMonthStudentAbsences[year] = {});
@@ -179,6 +180,42 @@ Ext.define('AggregridExample.Application', {
         }
 
         this.getSummaryAbsencesStore().loadData(summaryData);
+    },
+
+    onAbsencesAdd: function(store, absences) {
+        var summaryStore = this.getSummaryAbsencesStore(),
+            count = absences.length,
+            i = 0, absence,
+            date, year, month, studentId, summaryRecord;
+
+        summaryStore.beginUpdate();
+
+        for (; i < count; i++) {
+            absence = absences[i];
+            date = absence.get('date');
+            year = date.getFullYear();
+            month = this.getWeekStartingMonth(date);
+            studentId = absence.get('student_id');
+
+            summaryRecord = summaryStore.getAt(summaryStore.findBy(function(summaryRecord) {
+                return summaryRecord.get('year') == year
+                       && summaryRecord.get('month') == month
+                       && summaryRecord.get('student_id') == studentId;
+            }));
+
+            if (!summaryRecord) {
+                summaryRecord = summaryStore.add({
+                    year: year,
+                    month: month,
+                    student_id: studentId,
+                    absences: 0
+                })[0];
+            }
+
+            summaryRecord.set('absences', summaryRecord.get('absences') + 1);
+        }
+
+        summaryStore.endUpdate();
     },
 
     onAddAbsencesClick: function() {
@@ -247,5 +284,9 @@ Ext.define('AggregridExample.Application', {
 
     generateAbsenceDate: function() {
         return new Date(2016, Math.floor(Math.random() * 12), Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
+    },
+
+    getWeekStartingMonth: function(date) {
+        return Ext.Date.parse(date.getFullYear()+Ext.String.leftPad(Ext.Date.getWeekOfYear(date), 2, '0'), 'YW').getMonth() + 1;
     }
 });
