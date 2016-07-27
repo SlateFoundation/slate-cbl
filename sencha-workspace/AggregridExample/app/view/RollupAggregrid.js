@@ -86,7 +86,7 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
             }));
         },
         subCellRenderer: function(group, cellEl) {
-            var absences = group.records.length;
+            var absences = group.records && group.records.length || 0;
 
             cellEl.toggleCls('attendance-perfect', absences == 0);
             cellEl.toggleCls('attendance-ok', absences == 1);
