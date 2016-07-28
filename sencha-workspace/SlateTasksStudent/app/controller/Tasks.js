@@ -64,6 +64,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
         comments: 'slate-modalform #comments',
         attachmentsField: 'slate-modalform slate-tasks-attachmentsfield',
+        attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
+        addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
+        addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
         submitButton: 'slate-taskdetails button#submit'
     },
 
@@ -87,7 +90,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             rec = me.getStudentTasksStore().getById(id),
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
-            ratingView = me.getRatingView();
+            ratingView = me.getRatingView(),
+            readonly = (rec.get('TaskStatus') === 'completed');
 
         form.getForm().loadRecord(rec);
 
@@ -106,6 +110,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         me.getComments().setData(me.formatCommentData(rec.Comments().getRange()));
 
         me.getAttachmentsField().setAttachments(rec.Attachments().getRange());
+
+        me.getAttachmentsTextField().setDisabled(readonly);
+        me.getAddLinkButton().setDisabled(readonly);
+        //me.getAddAttachmentButton().setDisabled(readonly);  //TODO: uncomment when attachments implemented
+
+        me.getSubmitButton().setDisabled(readonly);
 
         details.show();
     },
