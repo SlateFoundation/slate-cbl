@@ -85,12 +85,37 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
                 return rowRecord.get('year') == year && rowRecord.get('week') == week;
             }));
         },
-        subCellRenderer: function(group, cellEl) {
-            var absences = group.records && group.records.length || 0;
+        subCellRenderer: function(group, cellEl, rendered) {
+            var records = group.records,
+                absences = records && records.length || 0,
+                attendanceCls = rendered.attendanceCls;
 
-            cellEl.toggleCls('attendance-perfect', absences == 0);
-            cellEl.toggleCls('attendance-ok', absences == 1);
-            cellEl.toggleCls('attendance-bad', absences >= 2);
+            if (rendered) {
+                group.tplNode.nodeValue = absences;
+            }
+
+            if (absences != rendered.absences) {
+                if (absences >= 2) {
+                    attendanceCls = 'bad';
+                } else if (absences == 1) {
+                    attendanceCls = 'ok';
+                } else {
+                    attendanceCls = 'perfect';
+                }
+
+                if (!rendered || attendanceCls != rendered.attendanceCls) {
+                    if (rendered) {
+                        cellEl.removeCls('attendance-'+rendered.attendanceCls);
+                    }
+
+                    cellEl.addCls('attendance-'+attendanceCls);
+                }
+            }
+
+            return {
+                absences: absences,
+                attendanceCls: attendanceCls
+            };
         }
     }
 });
