@@ -45,7 +45,6 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
     addAttachment: function(url) {
         var me = this,
             field = me.down('textfield'),
-            list = me.down('slate-attachmentslist'),
             value = url || field.getValue();
 
         if (value && field.validate()) {
