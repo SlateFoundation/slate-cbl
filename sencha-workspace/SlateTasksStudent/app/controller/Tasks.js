@@ -121,8 +121,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         record = form.getRecord();
 
-        record.set('TaskStatus', 'submitted');
-        record.set('Submitted', new Date().getTime());  //TODO: set this value server side
         record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
 
         record.save({
