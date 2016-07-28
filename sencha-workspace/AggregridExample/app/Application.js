@@ -99,6 +99,9 @@ Ext.define('AggregridExample.Application', {
         },
         'button[action=shuffle-absences]': {
             click: 'onShuffleAbsencesClick'
+        },
+        'button[action=add-month]': {
+            click: 'onAddMonthClick'
         }
     },
 
@@ -294,6 +297,43 @@ Ext.define('AggregridExample.Application', {
         }
 
         store.endUpdate();
+    },
+
+    onAddMonthClick: function() {
+        var me = this,
+            summaryTimePeriodsStore = me.getSummaryTimePeriodsStore(),
+            summaryTimePeriodsCount = summaryTimePeriodsStore.getCount(),
+            timePeriodsStore = me.getTimePeriodsStore(),
+            timePeriodsCount = timePeriodsStore.getCount(),
+            date = new Date(2016, summaryTimePeriodsCount),
+            monthIndex = date.getMonth(),
+            month = monthIndex + 1,
+            year = date.getFullYear(),
+            weeksData = [];
+
+        // TODO: test that it doesn't matter which order rows/subrows get added in
+        summaryTimePeriodsStore.add({
+            id: summaryTimePeriodsCount + 1,
+            month: month,
+            year: year,
+            title: Ext.Date.monthNames[monthIndex] + ' ' + year
+        });
+
+        if (me.getWeekStartingMonth(date) != month) {
+            date.setDate(date.getDate() + 7);
+        }
+
+        while (me.getWeekStartingMonth(date) == month) {
+            weeksData.push({
+                id: timePeriodsCount + weeksData.length + 1,
+                week: Ext.Date.getWeekOfYear(date),
+                year: parseInt(Ext.Date.format(date, 'o'), 10)
+            });
+
+            date.setDate(date.getDate() + 7);
+        }
+
+        timePeriodsStore.add(weeksData);
     },
 
     logInfo: function() {

@@ -34,8 +34,8 @@ Ext.define('AggregridExample.view.Main', {
                 action: 'shuffle-absences'
             },
             {
-                text: 'Add row',
-                action: 'add-row'
+                text: 'Add month',
+                action: 'add-month'
             }
         ]
     }
