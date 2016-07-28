@@ -21,7 +21,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
     },
     {
         xtype: 'slate-attachmentslist',
-        margin: '0 0 8',
+        margin: '0 0 8'
 
     },
     {
@@ -38,6 +38,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
     {
         xtype: 'button',
         text: 'Attachment',
+        action: 'addattachment',
         disabled: true
     }],
 
