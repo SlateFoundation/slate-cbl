@@ -95,7 +95,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         form.getForm().loadRecord(rec);
 
-
         ratingView.setData({
             ratings: [ 7, 8, 9, 10, 11, 12, 'M' ],
             competencies: rec.get('Competencies')
@@ -275,7 +274,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             // Assign skills to their competency
             for (j=0; j<skillsLength; j++) {
                 skill = skills[j];
-                competencies[skill.get('CompetencyID')].Skills.push(Ext.apply({level: 9, rating: 10},skill.getData()));
+                competencies[skill.get('CompetencyID')].Skills.push(skill.getData());
             }
 
             rec.set('Competencies',Ext.Object.getValues(competencies));
