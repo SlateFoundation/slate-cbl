@@ -65,6 +65,12 @@ Ext.define('Slate.cbl.model.Skill', {
             defaultValue: 2
         },
         {
+            name: 'SkillRating',
+            type: 'string',
+            defaultValue: 'N/A',
+            persist: false
+        },
+        {
             name: 'Code_Descriptor',
             depends: ['Code', 'Descriptor'],
             persist: false,
