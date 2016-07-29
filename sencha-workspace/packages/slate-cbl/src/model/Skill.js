@@ -14,54 +14,54 @@ Ext.define('Slate.cbl.model.Skill', {
 
     fields: [
         {
-            name: "ID",
-            type: "int",
+            name: 'ID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "Class",
-            type: "string",
-            defaultValue: "Slate\\CBL\\Skill"
+            name: 'Class',
+            type: 'string',
+            defaultValue: 'Slate\\CBL\\Skill'
         },
         {
-            name: "Created",
-            type: "date",
-            dateFormat: "timestamp",
+            name: 'Created',
+            type: 'date',
+            dateFormat: 'timestamp',
             allowNull: true
         },
         {
-            name: "CreatorID",
-            type: "int",
+            name: 'CreatorID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "RevisionID",
-            type: "int",
+            name: 'RevisionID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "CompetencyID",
-            type: "int"
+            name: 'CompetencyID',
+            type: 'int'
         },
         {
-            name: "CompetencyLevel",
-            type: "int"
+            name: 'CompetencyLevel',
+            type: 'int'
         },
         {
-            name: "Code",
-            type: "string"
+            name: 'Code',
+            type: 'string'
         },
         {
-            name: "Descriptor",
-            type: "string"
+            name: 'Descriptor',
+            type: 'string'
         },
         {
-            name: "Statement",
-            type: "string"
+            name: 'Statement',
+            type: 'string'
         },
         {
-            name: "DemonstrationsRequired",
-            type: "int",
+            name: 'DemonstrationsRequired',
+            type: 'int',
             defaultValue: 2
         },
         {
