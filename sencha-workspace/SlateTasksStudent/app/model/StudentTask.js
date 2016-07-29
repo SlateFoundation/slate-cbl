@@ -125,6 +125,10 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             persist: false
         },
         {
+            name: 'SkillRatings',
+            type: 'auto'
+        },
+        {
             name: 'filtered',
             type: 'boolean',
             persist: false,
@@ -158,9 +162,11 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             'Student',
             'Comments',
             'Attachments',
+            'SkillRatings',
             'Task.Attachments',
             'Task.ParentTask',
-            'Task.Skills.Competency'
+            'Task.Skills.Competency',
+            'Task.Skills.CompetencyLevel'
         ]
     }
 
