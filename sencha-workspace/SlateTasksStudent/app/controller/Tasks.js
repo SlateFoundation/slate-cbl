@@ -100,7 +100,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             competencies: rec.get('Competencies')
         });
 
-        me.hideRatingViewElements(ratingView);
+        me.hideRatingViewElements(ratingView); //TODO this widget should probably have a read-only flag
 
         me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
 
