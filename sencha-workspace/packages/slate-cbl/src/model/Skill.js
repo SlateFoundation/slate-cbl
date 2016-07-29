@@ -44,6 +44,10 @@ Ext.define('Slate.cbl.model.Skill', {
             type: "int"
         },
         {
+            name: "CompetencyLevel",
+            type: "int"
+        },
+        {
             name: "Code",
             type: "string"
         },
