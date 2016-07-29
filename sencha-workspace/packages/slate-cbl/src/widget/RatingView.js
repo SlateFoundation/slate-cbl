@@ -15,13 +15,13 @@ Ext.define('Slate.cbl.widget.RatingView', {
                     {
                         Code: 'ELA.2.HS.1',
                         Descriptor: 'Cite evidence',
-                        level: 9,
-                        rating: 10
+                        CompetencyLevel: 9,
+                        SkillRating: 10
                     },
                     {
                         Code: 'ELA.2.HS.3',
                         Descriptor: 'Analyze developments',
-                        level: 11
+                        CompetencyLevel: 11
                     }
                 ]
             },
@@ -32,8 +32,8 @@ Ext.define('Slate.cbl.widget.RatingView', {
                     {
                         Code: 'ELA.3.HS.2',
                         Descriptor: 'Use evidence to develop claims and counterclaims',
-                        level: 9,
-                        rating: 8
+                        CompetencyLevel: 9,
+                        SkillRating: 8
                     }
                 ]
             }
@@ -49,19 +49,19 @@ Ext.define('Slate.cbl.widget.RatingView', {
                     '<h4 class="slate-ratingview-competency-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h4>',
                     '<ul class="slate-ratingview-skills">',
                         '<tpl for="Skills">',
-                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{level}">',
+                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{CompetencyLevel}">',
                                 '<header class="slate-ratingview-skill-header">',
                                     '<button class="slate-ratingview-remove"><i class="fa fa-times-circle"></i></button>',
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.rating == null">is-selected</tpl>" data-rating="null">',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.SkillRating == null">is-selected</tpl>" data-rating="null">',
                                         '<div class="slate-ratingview-rating-bubble" tabindex="0">',
                                             '<span class="slate-ratingview-rating-label">N/A</span>',
                                         '</div>',
                                     '</li>',
                                     '<tpl for="this.ratings">', // access template-scoped variable declared at top
-                                        '<li class="slate-ratingview-rating <tpl if="values == parent.rating">is-selected</tpl>" data-rating="{.}">',
+                                        '<li class="slate-ratingview-rating <tpl if="values == parent.SkillRating">is-selected</tpl>" data-rating="{.}">',
                                             '<div class="slate-ratingview-rating-bubble" tabindex="0">',
                                                 '<span class="slate-ratingview-rating-label">{.}</span>',
                                             '</div>',
