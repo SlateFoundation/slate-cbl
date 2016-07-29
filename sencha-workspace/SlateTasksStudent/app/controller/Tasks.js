@@ -256,11 +256,24 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             skill,
             skills,
             skillsLength,
+            ratings,
+            skillRating,
+            skillRatings,
+            skillRatingsLength,
             competencies = {},
             i = 0, j;
 
         for (; i<recsLength; i++) {
             rec = recs[i];
+
+            // put skill ratings in an object map indexed by skill ID
+            ratings = {},
+            skillRatings = rec.get('SkillRatings');
+            skillRatingsLength = skillRatings.length;
+            for (j=0; j<skillRatingsLength; j++) {
+                skillRating = skillRatings[j];
+                ratings[skillRating.SkillID] = skillRating.Score;
+            }
 
             skills = rec.Skills().getRange();
             skillsLength = skills.length;
@@ -274,6 +287,11 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             // Assign skills to their competency
             for (j=0; j<skillsLength; j++) {
                 skill = skills[j];
+
+                // Add score
+                if (ratings[skill.get('ID')]) {
+                    skill.set('SkillRating', ratings[skill.get('ID')]);
+                }
                 competencies[skill.get('CompetencyID')].Skills.push(skill.getData());
             }
 
