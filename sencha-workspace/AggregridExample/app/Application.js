@@ -94,6 +94,9 @@ Ext.define('AggregridExample.Application', {
         'button[action=add-absences]': {
             click: 'onAddAbsencesClick'
         },
+        'button[action=add-future-absences]': {
+            click: 'onAddFutureAbsencesClick'
+        },
         'button[action=remove-absences]': {
             click: 'onRemoveAbsencesClick'
         },
@@ -270,6 +273,14 @@ Ext.define('AggregridExample.Application', {
         this.getAbsencesStore().add(this.generateAbsences(100));
     },
 
+    onAddFutureAbsencesClick: function() {
+        var me = this,
+            timePeriodsStore = me.getTimePeriodsStore(),
+            minDate = timePeriodsStore.max('endDate');
+
+        me.getAbsencesStore().add(me.generateAbsences(100, minDate, Ext.Date.add(minDate, Ext.Date.YEAR, 1)));
+    },
+
     onRemoveAbsencesClick: function() {
         var store = this.getAbsencesStore(),
             count = store.getCount(),
@@ -349,14 +360,15 @@ Ext.define('AggregridExample.Application', {
         console.info.apply(console, args);
     },
 
-    generateAbsences: function(amount) {
+    generateAbsences: function(amount, minDate, maxDate) {
         var me = this,
             firstId = (me.getAbsencesStore().max('id') || 0) + 1,
             timePeriodsStore = me.getTimePeriodsStore(),
-            minDate = timePeriodsStore.min('startDate'),
-            maxDate = timePeriodsStore.max('endDate'),
             i = 0,
             absences = [];
+
+        minDate = minDate || timePeriodsStore.min('startDate');
+        maxDate = maxDate || timePeriodsStore.max('endDate');
 
         // generate random absences
         for (; i < amount; i++) {

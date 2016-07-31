@@ -26,6 +26,10 @@ Ext.define('AggregridExample.view.Main', {
                 action: 'add-absences'
             },
             {
+                text: 'Add 100 future absences',
+                action: 'add-future-absences'
+            },
+            {
                 text: 'Remove ~50 absences',
                 action: 'remove-absences'
             },
