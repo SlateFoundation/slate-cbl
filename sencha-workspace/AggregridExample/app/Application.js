@@ -1,7 +1,8 @@
 /**
  * TODO:
- * - [ ] Batch update summary store when absences are added or removed, verify update handler for rollup grid
- * - [ ] Add a rollup example that uses the same data store for main and subrows
+ * - [X] Batch update summary store when absences are added or removed, verify update handler for rollup grid
+ * - [X] Add a rollup example that uses the same data store for main and subrows
+ * - [X] Use full date range for shuffle
  */
 /* eslint no-console: "off" */
 Ext.define('AggregridExample.Application', {
@@ -296,7 +297,11 @@ Ext.define('AggregridExample.Application', {
     },
 
     onShuffleAbsencesClick: function() {
-        var store = this.getAbsencesStore(),
+        var me = this,
+            store = me.getAbsencesStore(),
+            timePeriodsStore = me.getTimePeriodsStore(),
+            minDate = timePeriodsStore.min('startDate'),
+            maxDate = timePeriodsStore.max('endDate'),
             count = store.getCount(),
             removeCount = Math.min(20, count),
             i = 0;
@@ -304,7 +309,7 @@ Ext.define('AggregridExample.Application', {
         store.beginUpdate();
 
         for (; i < removeCount; i++) {
-            store.getAt(Math.floor(Math.random() * count)).set('date', this.generateAbsenceDate());
+            store.getAt(Math.floor(Math.random() * count)).set('date', me.generateRandomDate(minDate, maxDate));
         }
 
         store.endUpdate();
