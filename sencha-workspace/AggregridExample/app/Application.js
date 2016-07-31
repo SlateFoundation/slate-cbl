@@ -350,7 +350,11 @@ Ext.define('AggregridExample.Application', {
     },
 
     generateAbsences: function(amount) {
-        var firstId = (this.getAbsencesStore().max('id') || 0) + 1,
+        var me = this,
+            firstId = (me.getAbsencesStore().max('id') || 0) + 1,
+            timePeriodsStore = me.getTimePeriodsStore(),
+            minDate = timePeriodsStore.min('startDate'),
+            maxDate = timePeriodsStore.max('endDate'),
             i = 0,
             absences = [];
 
@@ -359,15 +363,15 @@ Ext.define('AggregridExample.Application', {
             absences.push({
                 id: i + firstId,
                 student_id: Math.floor(Math.random() * 20) + 1,
-                date: this.generateAbsenceDate()
+                date: me.generateRandomDate(minDate, maxDate)
             });
         }
 
         return absences;
     },
 
-    generateAbsenceDate: function() {
-        return new Date(2016, Math.floor(Math.random() * 12), Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
+    generateRandomDate: function(minDate, maxDate) {
+        return new Date(Ext.Number.randomInt(minDate.getTime(), maxDate.getTime()));
     },
 
     getWeekStartingMonth: function(date) {
