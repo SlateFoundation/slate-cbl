@@ -40,6 +40,10 @@ Ext.define('AggregridExample.view.Main', {
             {
                 text: 'Add month',
                 action: 'add-month'
+            },
+            {
+                text: 'Remove month',
+                action: 'remove-month'
             }
         ]
     }

@@ -106,6 +106,9 @@ Ext.define('AggregridExample.Application', {
         },
         'button[action=add-month]': {
             click: 'onAddMonthClick'
+        },
+        'button[action=remove-month]': {
+            click: 'onRemoveMonthClick'
         }
     },
 
@@ -350,6 +353,12 @@ Ext.define('AggregridExample.Application', {
         }
 
         timePeriodsStore.add(weeksData);
+    },
+
+    onRemoveMonthClick: function() {
+        var store = this.getSummaryTimePeriodsStore();
+
+        store.remove(store.last());
     },
 
     logInfo: function() {
