@@ -24,15 +24,41 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
         cellTpl: [
             '<tpl if="records.length">',
                 '{[values.records[0].record.get("absences")]}',
+            '<tpl else>',
+                '&mdash;',
             '</tpl>'
         ],
-        cellRenderer: function(group, cellEl) {
+        cellRenderer: function(group, cellEl, rendered) {
             var records = group.records,
-                absences = records.length && records[0].record.get('absences') || 0;
+                absences = records.length && records[0].record.get('absences') || 0,
+                attendanceCls = rendered.attendanceCls;
 
-            cellEl.toggleCls('attendance-perfect', absences == 0);
-            cellEl.toggleCls('attendance-ok', absences > 0 && absences < 4);
-            cellEl.toggleCls('attendance-bad', absences >= 4);
+            if (rendered) {
+                group.tplNode.nodeValue = absences || '—';
+            }
+
+            if (absences != rendered.absences) {
+                if (absences >= 4) {
+                    attendanceCls = 'bad';
+                } else if (absences > 0) {
+                    attendanceCls = 'ok';
+                } else {
+                    attendanceCls = 'perfect';
+                }
+
+                if (!rendered || attendanceCls != rendered.attendanceCls) {
+                    if (rendered) {
+                        cellEl.removeCls('attendance-'+rendered.attendanceCls);
+                    }
+
+                    cellEl.addCls('attendance-'+attendanceCls);
+                }
+            }
+
+            return {
+                absences: absences,
+                attendanceCls: attendanceCls
+            };
         },
 
         subRowsStore: 'TimePeriods',
@@ -59,12 +85,37 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
                 return rowRecord.get('year') == year && rowRecord.get('week') == week;
             }));
         },
-        subCellRenderer: function(group, cellEl) {
-            var absences = group.records.length;
+        subCellRenderer: function(group, cellEl, rendered) {
+            var records = group.records,
+                absences = records && records.length || 0,
+                attendanceCls = rendered.attendanceCls;
 
-            cellEl.toggleCls('attendance-perfect', absences == 0);
-            cellEl.toggleCls('attendance-ok', absences == 1);
-            cellEl.toggleCls('attendance-bad', absences >= 2);
+            if (rendered) {
+                group.tplNode.nodeValue = absences;
+            }
+
+            if (absences != rendered.absences) {
+                if (absences >= 2) {
+                    attendanceCls = 'bad';
+                } else if (absences == 1) {
+                    attendanceCls = 'ok';
+                } else {
+                    attendanceCls = 'perfect';
+                }
+
+                if (!rendered || attendanceCls != rendered.attendanceCls) {
+                    if (rendered) {
+                        cellEl.removeCls('attendance-'+rendered.attendanceCls);
+                    }
+
+                    cellEl.addCls('attendance-'+attendanceCls);
+                }
+            }
+
+            return {
+                absences: absences,
+                attendanceCls: attendanceCls
+            };
         }
     }
 });
