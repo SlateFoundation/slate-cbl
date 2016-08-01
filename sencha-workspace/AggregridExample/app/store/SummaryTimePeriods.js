@@ -3,7 +3,26 @@ Ext.define('AggregridExample.store.SummaryTimePeriods', {
 
 
     config: {
-        fields: ['id', 'month', 'year', 'title']
+        fields: [
+            'id',
+            'month',
+            'year',
+            'title',
+            {
+                name: 'startDate',
+                depends: ['month', 'year'],
+                convert: function(v, r) {
+                    return new Date(r.get('year'), r.get('month') - 1);
+                }
+            },
+            {
+                name: 'endDate',
+                depends: ['month', 'year'],
+                convert: function(v, r) {
+                    return new Date(r.get('year'), r.get('month'), 0, 0, 0, -1);
+                }
+            }
+        ]
     },
 
     applyData: function(data) {
