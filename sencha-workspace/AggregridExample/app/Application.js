@@ -356,9 +356,17 @@ Ext.define('AggregridExample.Application', {
     },
 
     onRemoveMonthClick: function() {
-        var store = this.getSummaryTimePeriodsStore();
+        var summaryTimePeriodsStore = this.getSummaryTimePeriodsStore(),
+            timePeriodsStore = this.getTimePeriodsStore(),
+            lastMonth = summaryTimePeriodsStore.last(),
+            lastMonthStartDate = lastMonth.get('startDate'),
+            lastMonthEndDate = lastMonth.get('endDate');
 
-        store.remove(store.last());
+        summaryTimePeriodsStore.remove(lastMonth);
+
+        timePeriodsStore.remove(timePeriodsStore.queryBy(function(r) {
+            return r.get('startDate') >= lastMonthStartDate && r.get('startDate') <= lastMonthEndDate;
+        }).getRange());
     },
 
     logInfo: function() {
