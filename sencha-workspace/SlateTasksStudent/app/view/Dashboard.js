@@ -28,18 +28,8 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
             style: 'margin-right: 32px',
             flex: 1
         },{
-            xtype: 'container',
             flex: 1,
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
-            },
-            items: [{
-                xtype: 'slate-todolist',
-                style: 'margin-bottom: 32px'
-            },{
-                xtype: 'slatetasksstudent-recentactivity'
-            }]
+            xtype: 'slate-todolist'
         }]
     },{
         xtype: 'slate-taskhistory',
