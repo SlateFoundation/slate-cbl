@@ -8,7 +8,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
 
     layout: {
         type: 'vbox',
-        align: 'left'
+        align: 'stretch'
     },
 
     items: [{
@@ -20,6 +20,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
             cls: 'slate-course-selector',
 
             fieldLabel: 'Course Section',
+            labelWidth: 120,
 
             store: {xclass: 'SlateTasksStudent.store.CourseSections'},
 
@@ -31,6 +32,11 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
         },
         {
             xtype: 'tbfill'
+        },{
+            xtype: 'button',
+            iconCls: 'x-fa fa-clock-o',
+            enableToggle: true,
+            action: 'show-recent'
         }]
     }]
 
