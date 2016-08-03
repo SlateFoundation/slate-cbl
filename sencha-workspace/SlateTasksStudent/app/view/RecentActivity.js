@@ -8,6 +8,7 @@ Ext.define('SlateTasksStudent.view.RecentActivity', {
 
     componentCls: 'slate-recentactivity',
 
+    closable: false,
     closeAction: 'hide',
 
     data: [
