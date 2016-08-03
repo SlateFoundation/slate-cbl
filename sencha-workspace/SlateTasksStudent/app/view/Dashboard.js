@@ -12,7 +12,6 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
         align: 'stretch'
     },
 
-    minHeight: 400,
     style: 'padding: 0 32px 0 0', // prevents right side elements being cut off
 
     items: [{
