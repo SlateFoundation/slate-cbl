@@ -21,7 +21,6 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
         'TaskTree',
         'TodoList',
         'RecentActivity',
-        'Slate.cbl.view.student.OverallProgress',
         'Slate.cbl.view.student.TaskHistory'
     ],
 
@@ -49,12 +48,6 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
             autoCreate: true,
 
             xtype: 'slate-taskhistory'
-        },
-        overallProgress: {
-            selector: 'slate-overallprogress',
-            autoCreate: true,
-
-            xtype: 'slate-cbl-student-overallprogress'
         }
     },
 
@@ -65,7 +58,6 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
         this.getTodoList().render('slate-todolist');
         this.getRecentActivity().render('slate-recentactivity');
         this.getTaskHistory().render('slate-taskhistory');
-        this.getOverallProgress().render('slate-overallprogress');
 
     },
 
@@ -77,11 +69,9 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
         this.getTodoList().setLoading(false);
         this.getRecentActivity().setLoading(false);
         this.getTaskHistory().setLoading(false);
-        this.getOverallProgress().setLoading(false);
 
         this.getTodoList().setLoading('');
         this.getRecentActivity().setLoading('');
         this.getTaskHistory().setLoading('');
-        this.getOverallProgress().setLoading('');
     }
 });
