@@ -28,6 +28,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     listen: {
         store: {
             '#StudentTasks': {
+                beforeload: 'onStudentTasksStoreBeforeLoad',
                 load: 'onStudentTasksStoreLoad'
             }
         }
@@ -51,6 +52,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
             xtype: 'slatetasksstudent-tasktree'
         },
+        taskTreeContainer: '#tasktree-container',
         taskDetails: {
             selector: 'slate-taskdetails',
             autoCreate: true,
@@ -76,13 +78,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         this.getStudentTasksStore().load();
     },
 
-    onStudentTasksStoreLoad: function(store) {
-        var me = this,
-            tree = me.getTaskTree(),
-            tasks = me.formatTaskData(store.getRange());
+    onStudentTasksStoreBeforeLoad: function() {
+        this.getTaskTree().mask('Loading Tasks');
+    },
 
-        me.formatCompetencies(store);
-        tree.update({tasks: tasks});
+    onStudentTasksStoreLoad: function(store) {
+        this.displayTaskData(store.getRange(), true);
     },
 
     onTaskTreeItemClick: function(id) {
@@ -160,7 +161,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
         }
 
-        me.getTaskTree().update({tasks: me.formatTaskData(store.getRange())});
+        me.displayTaskData(store.getRange());
 
     },
 
@@ -182,11 +183,35 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             recs[i].set('filtered', false);
         }
 
-        me.getTaskTree().update({tasks: me.formatTaskData(store.getRange())});
+        me.displayTaskData(store.getRange());
     },
 
 
     // custom controller methods
+    displayTaskData: function(recs, formatCurrenciesFlag) {
+        var me = this,
+            taskTree = me.getTaskTree();
+
+        taskTree.update({}); // clear so mask text will be in a reasonable position
+        me.getTaskTree().mask('Formatting task data');
+        Ext.defer(me.showTaskData, 100, me, [recs, formatCurrenciesFlag]);
+    },
+
+    showTaskData: function(recs, formatCurrenciesFlag) {
+        var me = this,
+            formatCurrencies = !!formatCurrenciesFlag,
+            tree = me.getTaskTree(),
+            tasks;
+
+        if (formatCurrencies) {
+            me.formatCompetencies(recs);
+        }
+
+        tasks = me.formatTaskData(recs);
+        tree.update({tasks: tasks});
+        tree.unmask();
+    },
+
     formatTaskData: function(recs) {
         var me = this,
             parentRecs = me.getParentRecs(recs),
@@ -250,9 +275,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
      * Group skills by Competency for each task.
      * Task Object has Skills, Skills have a Competency, but we wish to group skills by Competency
      */
-    formatCompetencies: function(store) {
-        var recs = store.getRange(),
-            recsLength = recs.length,
+    formatCompetencies: function(recs) {
+        var recsLength = recs.length,
             skill,
             skills,
             skillsLength,

@@ -12,6 +12,7 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
         align: 'stretch'
     },
 
+    minHeight: 400,
     style: 'padding: 0 32px 0 0', // prevents right side elements being cut off
 
     items: [{
@@ -25,11 +26,12 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
         },
         items: [{
             xtype: 'slatetasksstudent-tasktree',
+            minHeight: 200,  // need a minimum height for load mask
             style: 'margin-right: 32px',
             flex: 1
         },{
-            flex: 1,
-            xtype: 'slate-todolist'
+            xtype: 'slate-todolist',
+            flex: 1
         }]
     },{
         xtype: 'slate-taskhistory',
