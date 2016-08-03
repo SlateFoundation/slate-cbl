@@ -18,6 +18,7 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
 
     // controller configuration
     views: [
+        'AppHeader',
         'TaskTree',
         'TodoList',
         'RecentActivity',
@@ -25,6 +26,12 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
     ],
 
     refs: {
+        appHeader: {
+            selector: 'slatetasksstudent-appheader',
+            autoCreate: true,
+
+            xtype: 'slatetasksstudent-appheader'
+        },
         taskTree: {
             selector: 'slate-tasktree',
             autoCreate: true,
@@ -54,6 +61,7 @@ Ext.define('SlateTasksStudent.controller.Viewport', {
 
     // controller templates method overrides
     onLaunch: function () {
+        this.getAppHeader().render('slate-appheader');
         this.getTaskTree().render('slate-tasktree');
         this.getTodoList().render('slate-todolist');
         this.getRecentActivity().render('slate-recentactivity');
