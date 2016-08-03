@@ -1,4 +1,4 @@
-Ext.define('SlateTasksStudent.controller.Viewport', {
+Ext.define('SlateTasksStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
         'Slate.API'
