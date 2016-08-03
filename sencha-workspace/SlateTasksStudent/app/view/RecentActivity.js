@@ -1,5 +1,5 @@
 Ext.define('SlateTasksStudent.view.RecentActivity', {
-    extend: 'Slate.cbl.widget.SimplePanel',
+    extend: 'Ext.window.Window',
     xtype: 'slatetasksstudent-recentactivity',
     requires:[
     ],
@@ -7,6 +7,8 @@ Ext.define('SlateTasksStudent.view.RecentActivity', {
     title: 'Recent Activity',
 
     componentCls: 'slate-recentactivity',
+
+    closeAction: 'hide',
 
     data: [
         {
