@@ -52,7 +52,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
             xtype: 'slatetasksstudent-tasktree'
         },
-        taskTreeContainer: '#tasktree-container',
         taskDetails: {
             selector: 'slate-taskdetails',
             autoCreate: true,
