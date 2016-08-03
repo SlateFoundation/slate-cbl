@@ -6,6 +6,9 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // entry points
     control: {
+        'slatetasksstudent-appheader button[action="show-recent"]': {
+            click: 'onShowRecentClick'
+        },
         'slatetasksstudent-tasktree': {
             resize: 'onTaskTreeResize'
         }
@@ -68,17 +71,29 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     },
 
+
+    // event handlers
+    onShowRecentClick: function(button) {
+        var win = this.getRecentActivity();
+
+        if (button.pressed) {
+            win.showBy(button, 'tr-bl');
+        } else {
+            win.hide();
+        }
+    },
+
     onTaskTreeResize: function () {
         this.maskDemoElements();
     },
 
+
+    // custom controller methods
     maskDemoElements: function () {
         this.getTodoList().setLoading(false);
-        this.getRecentActivity().setLoading(false);
         this.getTaskHistory().setLoading(false);
 
         this.getTodoList().setLoading('');
-        this.getRecentActivity().setLoading('');
         this.getTaskHistory().setLoading('');
     }
 });
