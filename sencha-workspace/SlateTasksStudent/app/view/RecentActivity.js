@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.RecentActivity', {
     extend: 'Slate.cbl.widget.SimplePanel',
-    xtype: 'slate-recentactivity',
+    xtype: 'slatetasksstudent-recentactivity',
     requires:[
     ],
 

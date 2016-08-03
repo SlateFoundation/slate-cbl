@@ -7,7 +7,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // entry points
     control: {
-        'slate-tasktree': {
+        'slatetasksstudent-tasktree': {
             render: 'onTaskTreeRender',
             itemclick: 'onTaskTreeItemClick'
         },
@@ -46,10 +46,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     refs: {
         taskTree: {
-            selector: 'slate-tasktree',
+            selector: 'slatetasksstudent-tasktree',
             autoCreate: true,
 
-            xtype: 'slate-tasktree'
+            xtype: 'slatetasksstudent-tasktree'
         },
         taskDetails: {
             selector: 'slate-taskdetails',

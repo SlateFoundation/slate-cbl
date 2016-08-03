@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.TaskTree', {
     extend: 'Slate.cbl.widget.SimplePanel',
-    xtype: 'slate-tasktree',
+    xtype: 'slatetasksstudent-tasktree',
     requires:[
     ],
 
