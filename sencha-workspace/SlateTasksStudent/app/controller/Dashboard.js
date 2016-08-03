@@ -6,18 +6,15 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // entry points
     control: {
-        'slate-tasktree': {
+        'slatetasksstudent-tasktree': {
             resize: 'onTaskTreeResize'
         }
     },
 
 
-    config: {
-    },
-
-
     // controller configuration
     views: [
+        'Dashboard',
         'AppHeader',
         'TaskTree',
         'TodoList',
@@ -26,6 +23,12 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     ],
 
     refs: {
+        dashboard: {
+            selector: 'slatetasksstudent-dashboard',
+            autoCreate: true,
+
+            xtype: 'slatetasksstudent-dashboard'
+        },
         appHeader: {
             selector: 'slatetasksstudent-appheader',
             autoCreate: true,
@@ -45,10 +48,10 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             xtype: 'slate-todolist'
         },
         recentActivity: {
-            selector: 'slate-recentactivity',
+            selector: 'slatetasksstudent-recentactivity',
             autoCreate: true,
 
-            xtype: 'slate-recentactivity'
+            xtype: 'slatetasksstudent-recentactivity'
         },
         taskHistory: {
             selector: 'slate-taskhistory',
@@ -61,11 +64,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // controller templates method overrides
     onLaunch: function () {
-        this.getAppHeader().render('slate-appheader');
-        this.getTaskTree().render('slate-tasktree');
-        this.getTodoList().render('slate-todolist');
-        this.getRecentActivity().render('slate-recentactivity');
-        this.getTaskHistory().render('slate-taskhistory');
+        this.getDashboard().render('slateapp-viewport');
 
     },
 
