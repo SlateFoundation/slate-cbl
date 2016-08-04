@@ -13,6 +13,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         },
         dashboardCt: {
             coursesectionselect: 'onDashboardSectionChange'
+        },
+        tasksGrid: {
+            cellclick: 'onTasksGridCellClick'
+        },
+        assignmentsComboField: {
+            render: 'onAssigneeComboRender'
         }
     },
 
@@ -26,12 +32,13 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     // controller configuration
     views: [
-        'Dashboard'
+        'Dashboard',
+        'TaskEditor'
     ],
     stores: [
         'CourseSections',
         'Students',
-        'StudentTasks@Slate.cbl.store',
+        'StudentTasks',
         'Tasks'
     ],
     refs: {
@@ -47,6 +54,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
             xtype: 'slate-studentsgrid'
         },
+        taskRater: {
+            selector: 'slate-tasks-teacher-taskrater',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskrater'
+        },
+        taskEditor: {
+            selector: 'slate-tasks-teacher-taskeditor',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskeditor'
+        },
+        taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
+        assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
+
         courseSelector: 'slate-tasks-teacher-appheader combo'
     },
 
@@ -86,7 +108,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         if (!(me.getDashboardCt().getCourseSection()) || me.getDashboardCt().getCourseSection().getId() != sectionCode) {
             me.getDashboardCt().setCourseSection(courseSection);
         }
-        courseSelector.setValue(sectionCode);
+        courseSelector.setValue(courseSectionsStore.findRecord('Code', sectionCode));
 
         //update store urls
         studentsStore.setCourseSection(sectionCode).load();
@@ -96,5 +118,77 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     onStudentsStoreLoad: function() {
         console.log('onstudentstoreload', arguments);
+    },
+
+    onAssigneeComboRender: function(combo) {
+        var me = this,
+            comboStore = combo.getStore(),
+            studentsStore = me.getStudentsStore();
+
+        comboStore.removeAll();
+        comboStore.add(studentsStore.getRange());
+        combo.setValueOnData();
+        console.log('students updated');
+    },
+
+    onTasksGridCellClick: function(grid, taskId, studentId, cellEl, evt) {
+        var me = this,
+            dataStore = grid.getDataStore(),
+            studentTask = dataStore.getAt(dataStore.findBy(function(r) {
+                return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
+            })),
+            date = new Date(), isLate;
+
+        if (studentTask) {
+            switch (studentTask.get('TaskStatus')) {
+                case 'assigned':
+                case 're-assigned':
+                    return me.editStudentTask(studentTask);
+                case 'submitted':
+                case 're-submitted':
+                    return me.rateStudentTask(studentTask);
+            }
+        } else {
+            return me.assignStudentTask(taskId, studentId);
+        }
+    },
+
+    editStudentTask: function(studentTask) {
+        var me = this,
+            grid = me.getTasksGrid(),
+            taskEditor = me.getTaskEditor(),
+            form = me.getTaskEditorForm(),
+            task = grid.getRowsStore().getById(studentTask.get('TaskID'));
+
+        if (!task || !studentTask) { //is this likely?
+            return Ext.Msg.error('Error', 'Unable to find task. Please refresh the page and try again.'); // is this optimal?
+        }
+
+        taskEditor.setTask(task);
+        taskEditor.setStudentTask(studentTask);
+        taskEditor.show();
+
+    },
+
+    rateStudentTask: function(studentTask) {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            task = me.getTasksStore().getById(studentTask.get('TaskID'));
+
+        //handle failure
+        if (!task) {
+            // how can this fail?
+            Ext.Msg.alert('Task not found. Please refresh.');
+            return;
+        }
+
+        taskRater.setTask(task);
+        taskRater.setStudentTask(studentTask);
+
+        taskRater.show();
+    },
+
+    assignStudentTask: function(studentTask) {
+
     }
 });

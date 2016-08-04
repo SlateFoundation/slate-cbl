@@ -6,6 +6,9 @@ Ext.define('Slate.cbl.widget.SkillsField', {
         'Ext.view.View'
     ],
     xtype: 'slate-skillsfield',
+    config: {
+        readOnly: false
+    },
 
     componentCls: 'slate-skillsfield',
 
@@ -16,7 +19,10 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             width: '100%',
             xtype: 'combo',
             name: 'SkillIDs',
-            store: 'Skills',
+            store: {
+                model: 'Slate.cbl.model.Skill',
+                autoLoad: true
+            },
             queryParam: 'q',
             displayField: 'Code_Descriptor',
             valueField: 'ID',
@@ -60,6 +66,22 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             }
         }
     ],
+
+    updateReadOnly: function(readOnly) {
+        if (!this.rendered) {
+            return this.on('render', function() {
+                return this.updateReadOnly(readOnly);
+            });
+        }
+
+        var me = this,
+            field = me.down('combo'),
+            view = me.down('#skills-list'),
+            action = readOnly === undefined || !!readOnly;
+
+        view.refreshView();
+        field[action ? 'hide' : 'show']();
+    },
 
     getSkills: function(returnRecords, idsOnly) {
         var me = this,

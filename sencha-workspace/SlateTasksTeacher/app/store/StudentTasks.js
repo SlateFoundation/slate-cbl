@@ -9,6 +9,12 @@ Ext.define('SlateTasksTeacher.store.StudentTasks', {
     remoteSort: true,
     pageSize: 0,
 
+    proxy: {
+        type: 'slate-records',
+        url: '/cbl/student-tasks',
+        include: 'Student,SkillRatings'
+    },
+
     config: {
         courseSection: null
     },

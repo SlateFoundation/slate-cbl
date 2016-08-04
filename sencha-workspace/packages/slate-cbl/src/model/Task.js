@@ -148,5 +148,27 @@ Ext.define('Slate.cbl.model.Task', {
         field: 'Skills',
         min: 1,
         minOnlyMessage: 'You must select at least one skill'
-    }]
+    }],
+
+     getSkillsGroupedByCompetency: function() {
+        var comps = [], compIds = [],
+            skills = this.get('Skills');
+
+        Ext.each(skills, function(skill) {
+            var compIdx;
+            if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
+                compIdx = compIds.length;
+                comps[compIdx] = {
+                    Code: skill.CompetencyCode,
+                    Descriptor: skill.CompetencyDescriptor,
+                    skills: []
+                };
+                compIds.push(skill.CompetencyCode);
+            }
+
+            comps[compIdx].skills.push(skill);
+        });
+
+        return comps;
+    }
 });
