@@ -12,7 +12,7 @@ Ext.define('SlateTasksTeacher.store.StudentTasks', {
     proxy: {
         type: 'slate-records',
         url: '/cbl/student-tasks',
-        include: 'Student,SkillRatings'
+        include: 'Student,TaskSkills'
     },
 
     config: {

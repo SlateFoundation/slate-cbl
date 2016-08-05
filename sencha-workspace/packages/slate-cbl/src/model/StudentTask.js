@@ -69,6 +69,12 @@ Ext.define('Slate.cbl.model.StudentTask', {
             allowNull: true
         },
         {
+            name: "Submitted",
+            type: "date",
+            dateFormat: "timestamp",
+            allowNull: true
+        },
+        {
             name: "ExpirationDate",
             type: "date",
             dateFormat: "timestamp",
@@ -84,5 +90,27 @@ Ext.define('Slate.cbl.model.StudentTask', {
     proxy: {
         type: 'slate-records',
         url: '/cbl/student-tasks'
+    },
+
+    getTaskSkillsGroupedByCompetency: function() {
+        var comps = [], compIds = [],
+            skills = this.get('TaskSkills');
+
+        Ext.each(skills, function(skill) {
+            var compIdx;
+            if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
+                compIdx = compIds.length;
+                comps[compIdx] = {
+                    Code: skill.CompetencyCode,
+                    Descriptor: skill.CompetencyDescriptor,
+                    skills: []
+                };
+                compIds.push(skill.CompetencyCode);
+            }
+
+            comps[compIdx].skills.push(skill);
+        });
+
+        return comps;
     }
 });

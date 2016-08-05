@@ -51,10 +51,17 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                         '<div class="slate-skillsfield-token">',
                             '<strong class="slate-skillsfield-item-code">{Code}</strong>',
                             '<span class="slate-skillsfield-item-title" title="{Descriptor}">{Descriptor}</span>',
-                            '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>',
+                            '{[this.showSettings()]}',
                         '</div>',
                     '</li>',
-                '</tpl>'
+                '</tpl>',
+                {
+                    showSettings: function() {
+                        var settingStr = ['<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>'].join('');
+
+                        return this.owner.up('slate-skillsfield').getReadOnly() ? '' : settingsStr;
+                    }
+                }
             ],
             listeners: {
                 itemclick: function(view, record, item, idx, event) {

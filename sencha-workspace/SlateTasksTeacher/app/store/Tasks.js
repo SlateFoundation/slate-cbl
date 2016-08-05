@@ -3,7 +3,14 @@ Ext.define('SlateTasksTeacher.store.Tasks',{
 
     proxy: {
         type: 'slate-records',
-        url: '/cbl/tasks'
+        url: '/cbl/tasks',
+        include: [
+            '*.ParentTaskTitle',
+            '*.StudentTasks.SkillRatings',
+            'Skills.CompetencyCode',
+            'Skills.CompetencyDescriptor',
+            '*.Attachments'
+        ]
     },
     pageSize: 0,
     autoLoad: false,

@@ -30,25 +30,13 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
             ratingsView = me.down('slate-ratingview'),
             skillRatingIds = [],
             task = me.getTask(),
-            groupedSkills = task.getSkillsGroupedByCompetency();
+            groupedSkills = studentTask.getTaskSkillsGroupedByCompetency();
 
 
         form.down('[name=StudentFullName]').setValue(studentTask.get('Student').FirstName + ' ' + studentTask.get('Student').LastName);
         form.down('[name=DueDate]').setValue(studentTask.get('DueDate'));
         form.down('[name=Submitted]').setValue(studentTask.get('Submitted'));
 
-        for(var i = 0; i < studentTask.get('SkillRatings').length; i++) {
-            skillRatingIds.push(studentTask.get('SkillRatings')[i].SkillID);
-        }
-        //set skill ratings
-        Ext.each(groupedSkills, function(competency) {
-            Ext.each(competency.skills, function(skill) {
-                if (skillRatingIds.indexOf(skill.ID) > -1) {
-                    skill.rating = studentTask.get('SkillRatings')[skillRatingIds.indexOf(skill.ID)].Score;
-                    skill.level = 11;
-                }
-            });
-        });
         ratingsView.setData({
             ratings: [7, 8, 9, 10, 11, 12, 'M'],
             competencies: groupedSkills

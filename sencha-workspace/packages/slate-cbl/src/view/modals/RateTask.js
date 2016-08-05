@@ -89,12 +89,18 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     name: 'ExperienceType'
                 },
                 {
+                    xtype: 'datefield',
                     fieldLabel: 'Due Date',
-                    name: 'DueDate'
+                    name: 'DueDate',
+                    readOnly: true,
+                    format: 'm/d/Y'
                 },
                 {
+                    xtype: 'datefield',
                     fieldLabel: 'Expiration Date',
-                    name: 'ExpirationDate'
+                    name: 'ExpirationDate',
+                    readOnly: true,
+                    format: 'm/d/Y'
                 },
                 {
                     xtype: 'slate-tasks-attachmentsfield',
@@ -109,8 +115,11 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     xtype: 'slate-ratingview'
                 },
                 {
+                    xtype: 'datefield',
                     fieldLabel: 'Submitted Date',
-                    name: 'Submitted'
+                    name: 'Submitted',
+                    readOnly: true,
+                    format: 'm/d/Y'
                 },
                 {
                     xtype: 'textareafield',
