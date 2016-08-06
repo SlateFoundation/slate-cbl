@@ -54,35 +54,22 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         },
 
 
-        cellRenderer: function(group, cellEl, rendered) {
-            var me = this,
-                statusClasses = me.statusClasses,
-                time = new Date().getTime(),
-                isLate, cellCls;
+        // cellRenderer: ,
 
-            if (group.records && group.records.length && (record = group.records[0].record)) {
-                isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(record.get('TaskStatus')) > -1 && record.get('DueDate') < time;
-                cellCls = isLate ? statusClasses.late[record.get('TaskStatus')] : statusClasses[record.get('TaskStatus')];
-                cellEl.dom.className = 'jarvus-aggregrid-cell slate-studentsgrid-cell '+cellCls;
-            }
+        // subCellRenderer: function(group, cellEl, rendered) {
+        //     var me = this,
+        //         statusClasses = me.statusClasses,
+        //         time = new Date().getTime(),
+        //         isLate, cellCls;
 
-            me.cellTpl.overwrite(cellEl, group);
-        },
+        //     if (group.records && group.records.length && (record = group.records[0].record)) {
+        //         isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(record.get('TaskStatus')) > -1 && record.get('DueDate') < time;
+        //         cellCls = isLate ? statusClasses.late[record.get('TaskStatus')] : statusClasses[record.get('TaskStatus')];
+        //         cellEl.dom.className = 'jarvus-aggregrid-cell slate-studentsgrid-cell '+cellCls;
+        //     }
 
-        subCellRenderer: function(group, cellEl, rendered) {
-            var me = this,
-                statusClasses = me.statusClasses,
-                time = new Date().getTime(),
-                isLate, cellCls;
-
-            if (group.records && group.records.length && (record = group.records[0].record)) {
-                isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(record.get('TaskStatus')) > -1 && record.get('DueDate') < time;
-                cellCls = isLate ? statusClasses.late[record.get('TaskStatus')] : statusClasses[record.get('TaskStatus')];
-                cellEl.dom.className = 'jarvus-aggregrid-cell slate-studentsgrid-cell '+cellCls;
-            }
-
-            me.subCellTpl.overwrite(cellEl, group);
-        },
+        //     me.subCellTpl.overwrite(cellEl, group);
+        // },
 
         //templates
         cellTpl: [
@@ -234,5 +221,32 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                 '</tbody>',
             '</table>'
         ]
+    },
+
+    initComponent: function() {
+        var me = this;
+
+        me.callParent(arguments);
+        me.setConfig({
+            cellRenderer: me.cellRenderFn,
+            subCellRenderer: me.cellRenderFn
+        });
+    },
+
+    cellRenderFn: function(group, cellEl, rendered) {
+        var me = this,
+            statusClasses = me.statusClasses,
+            time = new Date().getTime(),
+            isLate,
+            cellClasses = ['jarvus-aggregrid-cell', 'slate-studentsgrid-cell'];
+
+        if (group.records && group.records.length && (record = group.records[0].record)) {
+            isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(record.get('TaskStatus')) > -1 && record.get('DueDate') < time;
+
+            cellClasses.push(isLate ? statusClasses.late[record.get('TaskStatus')] : statusClasses[record.get('TaskStatus')]);
+        }
+
+        cellEl.dom.className = cellClasses.join(' ');
+        me.cellTpl.overwrite(cellEl, group);
     }
 });
