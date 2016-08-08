@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.TodoList', {
     extend: 'Slate.cbl.widget.SimplePanel',
-    xtype: 'slate-todolist',
+    xtype: 'slatetasksstudent-todolist',
     requires:[
     ],
 
