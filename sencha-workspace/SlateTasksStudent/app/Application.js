@@ -13,7 +13,8 @@ Ext.define('SlateTasksStudent.Application', {
 
     controllers: [
         'Dashboard',
-        'Tasks'
+        'Tasks',
+        'Todos'
     ],
 
     onAppUpdate: function () {
