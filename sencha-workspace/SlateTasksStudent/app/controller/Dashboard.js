@@ -20,7 +20,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         'Dashboard',
         'AppHeader',
         'TaskTree',
-        'TodoList',
         'RecentActivity',
         'Slate.cbl.view.student.TaskHistory'
     ],
@@ -43,12 +42,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             autoCreate: true,
 
             xtype: 'slate-tasktree'
-        },
-        todoList: {
-            selector: 'slate-todolist',
-            autoCreate: true,
-
-            xtype: 'slate-todolist'
         },
         recentActivity: {
             selector: 'slatetasksstudent-recentactivity',
@@ -90,10 +83,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // custom controller methods
     maskDemoElements: function () {
-        this.getTodoList().setLoading(false);
         this.getTaskHistory().setLoading(false);
 
-        this.getTodoList().setLoading('');
         this.getTaskHistory().setLoading('');
     }
 });
