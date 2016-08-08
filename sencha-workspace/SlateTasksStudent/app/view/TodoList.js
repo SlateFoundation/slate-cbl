@@ -18,19 +18,16 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             items: [
                 {
                     title: 'Apply for scholarship by January 6th: https://scienceleadership.org/scholarship',
-                    category: 'Mythbusters',
                     date: 'Jan 6, 2016',
                     status: 'late'
                 },
                 {
                     title: 'Email Mrs. Johnson about science hw',
-                    category: 'Entrepeneurship',
                     date: 'May 31, 2016',
                     status: 'due'
                 },
                 {
                     title: 'Research internships and apply',
-                    category: 'Narrative Writing Workshop',
                     date: 'July 1, 2018'
                 }
             ]
@@ -50,19 +47,16 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             items: [
                 {
                     title: 'Apply for scholarship by January 6th: https://scienceleadership.org/scholarship',
-                    category: 'Mythbusters',
                     date: 'Jan 6, 2016',
                     completed: true
                 },
                 {
                     title: 'Email Mrs. Johnson about science hw',
-                    category: 'Entrepeneurship',
                     date: 'May 31, 2016',
                     completed: true
                 },
                 {
                     title: 'Research internships and apply',
-                    category: 'Narrative Writing Workshop',
                     date: 'July 1, 2018',
                     completed: true
                 }
@@ -91,7 +85,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                             '<input id="todo-item-{#}" class="slate-todolist-item-checkbox" type="checkbox" <tpl if="completed">checked</tpl>>',
                             '<div class="slate-todolist-item-text">',
                                 '<label for="todo-item-{#}" class="slate-todolist-item-title">{title}</label>',
-                                '<div class="slate-todolist-item-category">{category}</div>',
                             '</div>',
                             '<div class="slate-todolist-item-date">{date:date("M j, Y")}</div>',
                         '</li>',
