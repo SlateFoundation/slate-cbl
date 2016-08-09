@@ -11,6 +11,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     title: 'To-Do List – Personal',
 
+/*
     data: [
         {
             title: 'Active Items',
@@ -63,12 +64,15 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             ]
         }
     ],
+*/
 
     tpl: [
-        '<tpl for=".">',
+    '<tpl for=".">',
+        '<div class="slate-simplepanel-header">To-Do List - {section}</div>',
+        '<tpl for="todos">',
             '<section class="slate-todolist-itemgroup">',
                 '<header class="slate-todolist-itemgroup-header">',
-                    '<h4 class="slate-todolist-itemgroup-title">{title}</h4>',
+                    '<h4 class="slate-todolist-itemgroup-title">{Title}</h4>',
                     '<tpl if="buttons">',
                         '<ul class="slate-todolist-itemgroup-actions">',
                         '<tpl for="buttons">',
@@ -100,6 +104,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                     '</tpl>',
                 '</ul>',
             '</section>',
-        '</tpl>'
+        '</tpl>',
+    '</tpl>'
     ]
 });
