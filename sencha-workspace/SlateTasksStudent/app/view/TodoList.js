@@ -11,6 +11,19 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     title: 'To-Do List – Personal',
 
+    listeners: {
+        click: {
+            element: 'el',
+            delegate: '.slate-todolist-item-checkbox',
+            fn: 'onCheckboxClick'
+        },
+        keypress: {
+            element: 'el',
+            delegate: 'input.slate-todolist-item-title',
+            fn: 'onTextFieldKeypress'
+        }
+    },
+
     tpl: [
     '<tpl for=".">',
         '<div class="slate-simplepanel-header">To-Do List - {section}</div>',
@@ -54,25 +67,14 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     '</tpl>'
     ],
 
-    listeners: {
-        scope: 'this',
-        afterrender: function() {
-            this.mon(this.el, 'click', this.checkboxClick, this, { delegate: '.slate-todolist-item-checkbox' });
-            this.mon(this.el, 'keypress', this.checkboxKeypress, this, { delegate: 'input.slate-todolist-item-title' });
-        }
-    },
-
-    checkboxClick: function(evt, el) {
+    onCheckboxClick: function(evt, el) {
         this.fireEvent('checkclick', this, el.getAttribute('parentId'), el.getAttribute('recordId'),el.checked);
     },
 
-    checkboxKeypress: function(evt, el) {
+    onTextFieldKeypress: function(evt, el) {
         if (evt.getKey() == evt.ENTER) {
             this.fireEvent('enterkeypress', this, el.getAttribute('parentId'));
         }
-    },
-
-    dateTriggerClick: function(evt, el) {
-        this.fireEvent('datetriggerclick', this, el, el.getAttribute('parentId'));
     }
+
 });
