@@ -13,7 +13,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             render: 'onTodosListRender',
             checkclick: 'onTodosListCheckClick',
             enterkeypress: 'onTodosListEnterKeyPress'
-//            datetriggerclick: 'onTodosListDateTriggerClick'
         }
     },
 
@@ -54,7 +53,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         var me = this;
 
         me.getTodoList().update(me.formatTodoLists(store.getRange()));
-        me.addDateFields();
     },
 
     onTodosListCheckClick: function(cmp, parentId, recordId, checked) {
@@ -98,13 +96,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         }
     },
 
-/*
-    onTodosListDateTriggerClick: function(cmp, el, parentId) {
-        var datefield = Ext.create('Ext.form.field.Date',{});
-
-        datefield.render(el);
-    },
-*/
 
     // custom controller methods
     formatTodoLists: function(recs) {
@@ -166,15 +157,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         }
 
         return {todos: todos};
-    },
-
-    addDateFields: function() {
-
-        var els = Ext.dom.Query.select('i.slate-todolist-date-trigger');
-        Ext.each(els, function(el) {
-            Ext.create('Ext.form.field.Date',{itemId: 'datefield-'+el.getAttribute('parentId')}).render(el);
-        });
-
     }
 
 });
