@@ -7,7 +7,7 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
     xtype: 'slate-tasks-teacher-appheader',
 
     layout: {
-        type: 'vbox',
+        type: 'hbox',
         align: 'left'
     },
 
@@ -17,37 +17,34 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
         itemId: 'title',
         html: 'Teacher Task Manager'
     },{
-        xtype: 'container',
-        layout: 'hbox',
-        items: [{
-            xtype: 'combo',
-            itemId: 'sectionSelect',
-            cls: 'slate-course-selector',
+        xtype: 'combo',
+        itemId: 'sectionSelect',
+        cls: 'slate-course-selector',
 
-            fieldLabel: 'Course Section',
+        fieldLabel: 'Course Section',
 
-            store: 'CourseSections',
+        store: 'CourseSections',
 
-            displayField: 'Title',
-            valueField: 'ID',
+        displayField: 'Title',
+        valueField: 'ID',
 
-            forceSelection: true,
-            editable: false
-        },
-        {
-            xtype: 'tbfill'
-        },
-        {
-            cls: 'primary',
-            iconCls: 'x-fa fa-plus',
-            action: 'create'
-        },{
-            iconCls: 'x-fa fa-pencil',
-            action: 'edit'
-        },{
-            iconCls: 'x-fa fa-trash-o',
-            action: 'delete'
-        }]
+        forceSelection: true,
+        editable: false
+    },
+    {
+        xtype: 'tbfill'
+    },
+    {
+        cls: 'primary',
+        iconCls: 'x-fa fa-plus',
+        action: 'create'
+    },{
+        iconCls: 'x-fa fa-pencil',
+        action: 'edit',
+        hidden: true //todo: remove?
+    },{
+        iconCls: 'x-fa fa-trash-o',
+        action: 'delete',
+        hidden: true //todo: remove?
     }]
-
 });
