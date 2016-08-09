@@ -28,7 +28,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     '<tpl for=".">',
         '<div class="slate-simplepanel-header">To-Do List - {section}</div>',
         '<tpl for="todos">',
-            '<tpl exec="values.parent = parent;"></tpl>',
+            '<tpl exec="values.parent = parent;"></tpl>', // access to parent when 2 deep
             '<section class="slate-todolist-itemgroup">',
                 '<header class="slate-todolist-itemgroup-header">',
                     '<h4 class="slate-todolist-itemgroup-title">{Title}</h4>',
@@ -44,7 +44,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 '<ul class="slate-todolist-list">',
                     '<tpl for="items">',
                         '<li class="slate-todolist-item <tpl if="status">slate-todolist-status-{status}</tpl>">',
-                            '<input id="todo-item-{ID}" class="slate-todolist-item-checkbox" parentId="{parent.parent.ID}" recordId="{ID}" type="checkbox" <tpl if="Completed">checked</tpl>>',
+                            '<input id="todo-item-{ID}" class="slate-todolist-item-checkbox" data-parent-id="{parent.parent.ID}" data-id="{ID}" type="checkbox" <tpl if="Completed">checked</tpl>>',
                             '<div class="slate-todolist-item-text">',
                                 '<label for="todo-item-{ID}" class="slate-todolist-item-title">{Description}</label>',
                             '</div>',
@@ -55,9 +55,11 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                         '<li class="slate-todolist-item slate-todolist-blank-item slate-todolist-blank-item-{parent.ID}">',
                             '<input id="todo-item-new-{parent.ID}" class="slate-todolist-item-checkbox" type="checkbox" disabled>',
                             '<div class="slate-todolist-item-text">',
-                                '<input id="todo-item-new-text-{parent.ID}" class="slate-todolist-item-title" placeholder="New task&hellip;" parentId="{parent.ID}">',
+                                '<input id="todo-item-new-text-{parent.ID}" class="slate-todolist-item-title" placeholder="New task&hellip;" data-parent-id="{parent.ID}">',
                             '</div>',
-                            '<div class="slate-todolist-item-date"><i class="fa fa-2x fa-calendar slate-todolist-date-trigger"></i></button></div>',
+                            '<div class="slate-todolist-item-date">',
+                                '<input id="todo-item-new-date-{parent.ID}" type="date" data-parent-id="{parent.ID}">',
+                            '</div>',
                         '</li>',
                     '</tpl>',
                 '</ul>',
@@ -67,12 +69,12 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     ],
 
     onCheckboxClick: function(evt, el) {
-        this.fireEvent('checkclick', this, el.getAttribute('parentId'), el.getAttribute('recordId'),el.checked);
+        this.fireEvent('checkclick', this, el.getAttribute('data-parent-id'), el.getAttribute('data-id'),el.checked);
     },
 
     onTextFieldKeypress: function(evt, el) {
         if (evt.getKey() == evt.ENTER) {
-            this.fireEvent('enterkeypress', this, el.getAttribute('parentId'));
+            this.fireEvent('enterkeypress', this, el.getAttribute('data-parent-id'));
         }
     }
 
