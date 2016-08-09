@@ -45,11 +45,11 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
 
             // override fields
             if (studentTask.get('DueDate')) {
-                duedateField.setValue(Ext.Date.format(new Date(studentTask.get('DueDate') * 1000), 'm/d/Y'));
+                duedateField.setValue(studentTask.get('DueDate'), 'm/d/Y');
             }
 
             if (studentTask.get('ExpirationDate')) {
-                expirationdateField.setValue(Ext.Dahe.format(new Date(studentTask.get('DueDate') * 1000), 'm/d/Y'));
+                expirationdateField.setValue(studentTask.get('DueDate'), 'm/d/Y');
             }
         }
     },
