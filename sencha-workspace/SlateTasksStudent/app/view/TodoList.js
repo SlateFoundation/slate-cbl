@@ -19,8 +19,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         },
         keypress: {
             element: 'el',
-            delegate: 'input.slate-todolist-item-title',
+            delegate: 'input.slate-todolist-new-item-text',
             fn: 'onTextFieldKeypress'
+        },
+        change: {
+            element: 'el',
+            delegate: 'input.slate-todolist-new-item-date',
+            fn: 'onDateChange'
         }
     },
 
@@ -55,10 +60,10 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                         '<li class="slate-todolist-item slate-todolist-blank-item slate-todolist-blank-item-{parent.ID}">',
                             '<input id="todo-item-new-{parent.ID}" class="slate-todolist-item-checkbox" type="checkbox" disabled>',
                             '<div class="slate-todolist-item-text">',
-                                '<input id="todo-item-new-text-{parent.ID}" class="slate-todolist-item-title" placeholder="New task&hellip;" data-parent-id="{parent.ID}">',
+                                '<input id="todo-item-new-text-{parent.ID}" class="slate-todolist-new-item-text" placeholder="New to-do&hellip;" data-parent-id="{parent.ID}">',
                             '</div>',
                             '<div class="slate-todolist-item-date">',
-                                '<input id="todo-item-new-date-{parent.ID}" type="date" data-parent-id="{parent.ID}">',
+                                '<input id="todo-item-new-date-{parent.ID}" class="slate-todolist-new-item-date" type="date" data-parent-id="{parent.ID}">',
                             '</div>',
                         '</li>',
                     '</tpl>',
@@ -76,6 +81,9 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         if (evt.getKey() == evt.ENTER) {
             this.fireEvent('enterkeypress', this, el.getAttribute('data-parent-id'));
         }
-    }
+    },
 
+    onDateChange: function(evt, el) {
+        this.fireEvent('datechange', this, el.getAttribute('data-parent-id'));
+    }
 });
