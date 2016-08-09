@@ -29,7 +29,7 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
             style: 'margin-right: 32px',
             flex: 1
         },{
-            xtype: 'slate-todolist',
+            xtype: 'slatetasksstudent-todolist',
             flex: 1
         }]
     },{
