@@ -12,7 +12,8 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         'slatetasksstudent-todolist': {
             render: 'onTodosListRender',
             checkclick: 'onTodosListCheckClick',
-            enterkeypress: 'onTodosListEnterKeyPress'
+            enterkeypress: 'onTodosListEnterKeyPress',
+            datechange: 'onTodosListDateChange'
         }
     },
 
@@ -71,31 +72,12 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     },
 
     onTodosListEnterKeyPress: function(cmp, parentId) {
-        var me = this,
-            textfield = Ext.dom.Query.select('input#todo-item-new-text-'+parentId)[0],
-            datefield = Ext.ComponentQuery.query('#datefield-'+parentId)[0],
-            studentId = me.getTodosStore().getById(parentId).get('PersonID'),
-            sectionId = me.getTodosStore().getById(parentId).get('Section').ID,
-            rec;
-
-        if (textfield.value && datefield.getValue()) {
-            rec = Ext.create('SlateTasksStudent.model.Todo', {
-                SectionID: sectionId,
-                StudentID: studentId,
-                Description: textfield.value,
-                DueDate: datefield.getValue()
-            });
-            rec.save({
-                success: function() {
-                    me.getTodosStore().load();
-                },
-                failure: function() {
-                    Ext.toast('Todo could not be created.');
-                }
-            });
-        }
+        this.insertNewTodo(parentId);
     },
 
+    onTodosListDateChange: function(cmp, parentId) {
+        this.insertNewTodo(parentId);
+    },
 
     // custom controller methods
     formatTodoLists: function(recs) {
@@ -157,6 +139,32 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         }
 
         return {todos: todos};
+    },
+
+    insertNewTodo: function(parentId) {
+        var textfield = Ext.dom.Query.select('input#todo-item-new-text-'+parentId)[0],
+            datefield = Ext.dom.Query.select('input#todo-item-new-date-'+parentId)[0],
+            dueDate = new Date(datefield.value.replace(/-/g, '\/')).getTime() / 1000,
+            store = this.getTodosStore(),
+            parentRec = store.getById(parentId),
+            rec;
+
+        if (textfield.value && datefield.value) {
+            rec = Ext.create('SlateTasksStudent.model.Todo', {
+                SectionID: parentRec.get('Section').ID,
+                StudentID: parentRec.get('PersonID'),
+                Description: textfield.value,
+                DueDate: dueDate
+            });
+            rec.save({
+                success: function() {
+                    store.load();
+                },
+                failure: function() {
+                    Ext.toast('Todo could not be created.');
+                }
+            });
+        }
     }
 
 });
