@@ -11,61 +11,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     title: 'To-Do List – Personal',
 
-/*
-    data: [
-        {
-            title: 'Active Items',
-            canAdd: true,
-            items: [
-                {
-                    title: 'Apply for scholarship by January 6th: https://scienceleadership.org/scholarship',
-                    date: 'Jan 6, 2016',
-                    status: 'late'
-                },
-                {
-                    title: 'Email Mrs. Johnson about science hw',
-                    date: 'May 31, 2016',
-                    status: 'due'
-                },
-                {
-                    title: 'Research internships and apply',
-                    date: 'July 1, 2018'
-                }
-            ]
-        },
-        {
-            title: 'Completed Items',
-            buttons: [
-                {
-                    icon: 'times',
-                    text: 'Clear All'
-                },
-                {
-                    icon: 'caret-up',
-                    text: 'Hide'
-                }
-            ],
-            items: [
-                {
-                    title: 'Apply for scholarship by January 6th: https://scienceleadership.org/scholarship',
-                    date: 'Jan 6, 2016',
-                    completed: true
-                },
-                {
-                    title: 'Email Mrs. Johnson about science hw',
-                    date: 'May 31, 2016',
-                    completed: true
-                },
-                {
-                    title: 'Research internships and apply',
-                    date: 'July 1, 2018',
-                    completed: true
-                }
-            ]
-        }
-    ],
-*/
-
     tpl: [
     '<tpl for=".">',
         '<div class="slate-simplepanel-header">To-Do List - {section}</div>',
