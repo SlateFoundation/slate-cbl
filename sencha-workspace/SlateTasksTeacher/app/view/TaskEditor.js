@@ -1,3 +1,4 @@
+/* global Slate*/
 Ext.define('SlateTasksTeacher.view.TaskEditor', {
     extend: 'Slate.cbl.view.modals.CreateTask',
     xtype: 'slate-tasks-teacher-taskeditor',
@@ -7,8 +8,7 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
         studentTask: null
     },
 
-    updateStudentTask: function(studentTask, oldStudentTask) {
-        //TODO: override task data with student data
+    updateStudentTask: function(studentTask) {
         var me = this,
             assignmentsfield = me.down('slate-tasks-assignmentsfield'),
             assignmentsfieldCheckbox = assignmentsfield.down('checkboxfield'),
@@ -22,42 +22,45 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
             instructionsField = me.down('#instructions'),
             taskPrivacyField = me.down('#status');
 
-        //move to controller?
-        if (assignmentsfieldCheckbox) {
-            assignmentsfieldCheckbox.destroy();
-        }
+        if (studentTask) {
+            // move to controller?
+            if (assignmentsfieldCheckbox) {
+                assignmentsfieldCheckbox.destroy();
+            }
 
-        me.insert(0, assignmentsfield);
+            me.insert(0, assignmentsfield);
 
-        //hide & disable fields
-        assignmentsfield.down('combo').setReadOnly(true);
-        titleField.setReadOnly(true);
-        parentTaskField.setReadOnly(true);
-        experienceField.setReadOnly(true);
-        instructionsField.setReadOnly(true);
-        skillsField.setReadOnly(true);
-        attachmentsfield.setReadOnly(true);
+            // hide & disable fields
+            assignmentsfield.down('combo').setReadOnly(true);
+            titleField.setReadOnly(true);
+            parentTaskField.setReadOnly(true);
+            experienceField.setReadOnly(true);
+            instructionsField.setReadOnly(true);
+            skillsField.setReadOnly(true);
+            attachmentsfield.setReadOnly(true);
 
-        taskPrivacyField.setDisabled(true);
+            taskPrivacyField.setDisabled(true);
 
-        assignmentsfield.down('combo').setValue(studentTask.get('StudentID'));
+            assignmentsfield.down('combo').setValue(studentTask.get('StudentID'));
 
-        //override fields
-        if (studentTask.DueDate) {
-            duedateField.setValue(Ext.Date.format(new Date(studentTask.get('DueDate') * 1000), 'm/d/Y'));
-        }
+            // override fields
+            if (studentTask.get('DueDate')) {
+                duedateField.setValue(Ext.Date.format(new Date(studentTask.get('DueDate') * 1000), 'm/d/Y'));
+            }
 
-        if (studentTask.ExpirationDate) {
-            expirationdateField.setValue(Ext.Dahe.format(new Date(studentTask.get('DueDate') * 1000), 'm/d/Y'));
+            if (studentTask.get('ExpirationDate')) {
+                expirationdateField.setValue(Ext.Dahe.format(new Date(studentTask.get('DueDate') * 1000), 'm/d/Y'));
+            }
         }
     },
 
-    updateTask: function(task, oldTask) {
+    updateTask: function(task) {
         var me = this,
             form = me.down('slate-modalform'),
             skillsField = form.down('slate-skillsfield'),
             attachmentsField = form.down('slate-tasks-attachmentsfield'),
-            taskPrivacyField = me.down('#status'), taskStatus;
+            taskPrivacyField = me.down('#status'), taskStatus,
+            parentTaskField, parentTaskStore;
 
         form.reset();
         form.loadRecord(task);
@@ -70,7 +73,7 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
         if (task.get('ParentTaskID')) {
             parentTaskField = form.down('slate-tasks-titlefield[name=ParentTaskID]');
             parentTaskStore = parentTaskField.getStore();
-            //load parent task if store does not contain the record
+            // load parent task if store does not contain the record
             if (!parentTaskStore.getById(task.get('ParentTaskID'))) {
                 parentTaskStore.load({
                     url: Slate.API.buildUrl('/cbl/tasks/'+task.get('ParentTaskID')),
@@ -78,20 +81,17 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
                         summary: true
                     },
                     addRecords: true,
-                    callback: function (records) {
+                    callback: function () {
                         parentTaskField.setValue(task.get('ParentTaskID'));
                     }
                 });
             }
         }
 
-        switch (task.get('Status')) {
-            case 'shared':
-                taskStatus = 'shared';
-                break;
-            case 'private':
-                taskStatus = false;
-                break;
+        if (task.get('Status') === 'shared') {
+            taskStatus = 'shared';
+        } else if (task.get('Status') === 'private') {
+            taskStatus = false;
         }
 
         taskPrivacyField.setValue(taskStatus);
