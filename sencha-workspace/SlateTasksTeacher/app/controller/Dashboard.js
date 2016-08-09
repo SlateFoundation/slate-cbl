@@ -1,3 +1,4 @@
+/* global Slate */
 /**
  * TODO:
  * - move rendering responsibilities to the view?
@@ -35,7 +36,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'slate-tasks-teacher-taskrater button[action=edit]': {
             click: 'onEditStudentTaskClick'
         },
-        'slate-tasks-teacher-taskrater slate-ratingview' : {
+        'slate-tasks-teacher-taskrater slate-ratingview': {
             rateskill: 'onRateSkillClick'
         },
         'slate-tasks-teacher-taskassigner button[action=assign]': {
@@ -43,6 +44,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         },
         'slate-tasks-teacher-taskeditor button[action=save]': {
             click: 'onSaveTaskClick'
+        },
+        'slate-tasks-teacher-appheader button[action=create]': {
+            click: 'onCreateTaskClick'
         }
     },
 
@@ -99,6 +103,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             xtype: 'slate-tasks-teacher-taskeditor'
         },
         taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
+        skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
+        attachmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield',
+        assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
         assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
 
         courseSelector: 'slate-tasks-teacher-appheader combo'
@@ -112,6 +119,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     // event handlers
     onCourseSectionSelect: function(combo, record) {
         var me = this;
+
         me.getDashboardCt().setCourseSection(record);
     },
 
@@ -133,7 +141,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     onAssignRevisionClick: function(btn) {
         var me = this,
-            taskRater = me.getTaskRater(),
             coords = btn.getXY();
 
         if (!btn.dateSelected) {
@@ -148,7 +155,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             }).showAt(coords[0], coords[1]);
         }
 
-        me.assignStudentTaskRevision(btn.dateSelected);
+        return me.assignStudentTaskRevision(btn.dateSelected);
     },
 
     onUnassignStudentTaskClick: function() {
@@ -157,17 +164,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             studentTask = taskRater.getStudentTask();
 
         Ext.Msg.confirm('Are you sure?', 'Do you want to unassign this student task? This can not be undone.', function(ans) {
-            if (ans == 'yes') {
+            if (ans === 'yes') {
                 me.unAssignStudentTask(studentTask);
             }
         });
 
     },
 
-    onEditStudentTaskClick: function(btn) {
+    onEditStudentTaskClick: function() {
         var me = this,
             taskRater = me.getTaskRater(),
-            task = taskRater.getTask(),
             studentTask = taskRater.getStudentTask();
 
         taskRater.close();
@@ -175,7 +181,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     onStudentsStoreLoad: function() {
-        console.log('onstudentstoreload', arguments);
+        window.console.log('onstudentstoreload', arguments);
     },
 
     onAssigneeComboRender: function(combo) {
@@ -186,29 +192,25 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         comboStore.removeAll();
         comboStore.add(studentsStore.getRange());
         combo.setValueOnData();
-        console.log('students updated');
+        // console.log('students updated');
     },
 
-    onTasksGridCellClick: function(grid, taskId, studentId, cellEl, evt) {
+    onTasksGridCellClick: function(grid, taskId, studentId) {
         var me = this,
             dataStore = grid.getDataStore(),
             studentTask = dataStore.getAt(dataStore.findBy(function(r) {
                 return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
-            })),
-            date = new Date(), isLate;
+            }));
 
         if (studentTask) {
-            switch (studentTask.get('TaskStatus')) {
-                case 'assigned':
-                case 're-assigned':
-                    return me.editStudentTask(studentTask);
-                case 'submitted':
-                case 're-submitted':
-                    return me.rateStudentTask(studentTask);
+            if (studentTask.get('TaskStatus') === 'assigned' || studentTask.get('TaskStatus') === 're-assigned') {
+                return me.editStudentTask(studentTask);
+            } else if (studentTask.get('TaskStatus') === 'submitted' || studentTask.get('TaskStatus') === 're-submitted') {
+                return me.rateStudentTask(studentTask);
             }
-        } else {
-            return me.assignStudentTask(taskId, studentId);
         }
+
+        return me.assignStudentTask(taskId, studentId);
     },
 
     onRateSkillClick: function(ratingView, ratingObject) {
@@ -223,7 +225,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 SkillID: ratingObject.SkillID,
                 Score: ratingObject.rating
             },
-            callback: function(opts, success, response) {
+            callback: function(opts, success) {
                 if (!success) {
                     Ext.toast('Error. Please try again.');
                 }
@@ -258,6 +260,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var me = this,
             taskEditor = me.getTaskEditor(),
             studentTask = taskEditor.getStudentTask();
+
         if (studentTask) {
             me.getTaskEditorForm().updateRecord(studentTask);
 
@@ -265,9 +268,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 taskEditor.close();
                 Ext.toast('Student task successfully updated.');
             });
-        } else {
-            // return me.saveTask();
         }
+
+        return me.saveTask();
+    },
+
+    onCreateTaskClick: function() {
+        var me = this;
+
+        me.getTaskEditor().close();
+        return me.editTask(Ext.create('Slate.cbl.model.Task'));
     },
 
     //
@@ -280,21 +290,22 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             studentTasksStore = me.getStudentTasksStore(),
             courseSection = courseSectionsStore.findRecord('Code', sectionCode);
 
-        //select section
+        // select section
         if (!courseSection && courseSectionsStore.isLoaded()) {
-            console.log('Course Section not found.');
+            Ext.Msg.alert('Error', 'Course Section not found.');
             return;
         } else if (!courseSectionsStore.isLoaded()) {
-            return courseSectionsStore.load(function() {
+            courseSectionsStore.load(function() {
                 me.viewCourseSection(sectionCode);
             });
+            return;
         }
-        if (!(me.getDashboardCt().getCourseSection()) || me.getDashboardCt().getCourseSection().getId() != sectionCode) {
+        if (!me.getDashboardCt().getCourseSection() || me.getDashboardCt().getCourseSection().getId() != sectionCode) {
             me.getDashboardCt().setCourseSection(courseSection);
         }
         courseSelector.setValue(courseSectionsStore.findRecord('Code', sectionCode));
 
-        //update store urls
+        // update store urls
         studentsStore.setCourseSection(sectionCode).load();
         tasksStore.setCourseSection(sectionCode).load();
         studentTasksStore.setCourseSection(sectionCode).load();
@@ -308,7 +319,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         studentTask.set('DueDate', date.getTime()/1000);
         studentTask.set('TaskStatus', 're-assigned');
         studentTask.save({
-            callback: function(record) {
+            callback: function() {
                 taskRater.close();
                 Ext.toast('Student task successfully updated.');
                 me.rateStudentTask(studentTask);
@@ -320,7 +331,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var me = this;
 
         studentTask.erase({
-            callback: function(opts, success, response) {
+            callback: function(opts, success) {
                 if (success) {
                     Ext.toast('Student task unassigned.');
                     me.getTaskRater().close();
@@ -337,21 +348,68 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
     },
 
+    saveTask: function() {
+        var me = this,
+            form = me.getTaskEditorForm(),
+            skillsField = me.getSkillsField(),
+            attachmentsField = me.getAttachmentsField(),
+            assignmentsField = me.getAssignmentsField(),
+            courseSection = me.getCourseSelector().getSelection(),
+            record = form.updateRecord().getRecord(),
+            errors;
+
+        record.set('Skills', skillsField.getSkills(false)); // returnRecords
+        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
+        record.set('Assignees', assignmentsField.getAssignees(false)); // returnRecords
+        record.set('CourseSectionID', courseSection.getId());
+
+        errors = record.validate();
+
+        if (errors.length) {
+            Ext.each(errors.items, function(item) {
+                var itemField = form.down('[name='+item.field +']');
+
+                if (itemField) {
+                    itemField.markInvalid(item.message);
+                }
+            });
+            return;
+        }
+        record.save({
+            success: function() {
+                me.getTaskEditor().close();
+                Ext.toast('Task succesfully saved!');
+            }
+        });
+    },
+
     editStudentTask: function(studentTask) {
         var me = this,
             grid = me.getTasksGrid(),
             taskEditor = me.getTaskEditor(),
-            form = me.getTaskEditorForm(),
             task = grid.getRowsStore().getById(studentTask.get('TaskID'));
 
-        if (!task || !studentTask) { //is this likely?
-            return Ext.Msg.error('Error', 'Unable to find task. Please refresh the page and try again.'); // is this optimal?
+        if (!task || !studentTask) { // is this likely?
+            Ext.Msg.error('Error', 'Unable to find task. Please refresh the page and try again.'); // is this optimal?
+            return;
         }
 
         taskEditor.setTask(task);
         taskEditor.setStudentTask(studentTask);
         taskEditor.show();
+    },
 
+    editTask: function(taskRecord) {
+        var me = this,
+            taskEditor = me.getTaskEditor();
+
+        if (!taskRecord) {
+            taskRecord = Ext.create('Slate.cbl.model.Task');
+        }
+
+        taskEditor.setTask(taskRecord);
+        taskEditor.setStudentTask(null);
+        taskEditor.show();
     },
 
     rateStudentTask: function(studentTask) {
@@ -359,7 +417,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             taskRater = me.getTaskRater(),
             task = me.getTasksStore().getById(studentTask.get('TaskID'));
 
-        //handle failure
+        // handle failure
         if (!task) {
             // how can this fail?
             Ext.Msg.alert('Task not found. Please refresh.');
@@ -379,7 +437,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             task = me.getTasksStore().getById(taskId);
 
         if (!task) {
-            //handle failure / how can this fail?
+            // handle failure / how can this fail?
             Ext.Msg.alert('Task not found. Please refresh.');
             return;
         }
