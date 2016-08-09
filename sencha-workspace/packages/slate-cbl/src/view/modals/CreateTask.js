@@ -97,6 +97,8 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     emptyText: '(Optional)',
                     name: 'ParentTaskID',
                     valueField: 'ID',
+                    displayField: 'Title',
+                    queryMode: 'local',
                     store: {
                         type: 'chained',
                         source: 'Tasks',
