@@ -4,7 +4,7 @@
 Ext.define('SlateTasksTeacher.view.StudentsGrid', {
     extend: 'Jarvus.aggregrid.RollupAggregrid',
     xtype: 'slate-studentsgrid',
-    requires:[
+    requires: [
 
     ],
 
@@ -36,42 +36,24 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         statusClasses: {
             unassigned: 'slate-task-status-notassigned',
 
-            assigned: "slate-task-status-due",
-            "re-assigned": 'slate-task-status-revision',
+            assigned: 'slate-task-status-due',
+            're-assigned': 'slate-task-status-revision',
 
-            submitted : 'slate-task-status-due slate-task-status-needsrated',
-            "re-submitted" : 'slate-task-status-revision slate-task-status-needsrated',
+            submitted: 'slate-task-status-due slate-task-status-needsrated',
+            're-submitted': 'slate-task-status-revision slate-task-status-needsrated',
 
             late: {
                 submitted: 'slate-task-status-late slate-task-status-needsrated',
-                "re-submitted": 'slate-task-status-late slate-task-status-needsrated',
+                're-submitted': 'slate-task-status-late slate-task-status-needsrated',
 
-                assigned: "slate-task-status-late",
-                "re-assigned": 'slate-task-status-late'
+                assigned: 'slate-task-status-late',
+                're-assigned': 'slate-task-status-late'
             },
 
             completed: 'slate-task-status-completed'
         },
 
-
-        // cellRenderer: ,
-
-        // subCellRenderer: function(group, cellEl, rendered) {
-        //     var me = this,
-        //         statusClasses = me.statusClasses,
-        //         time = new Date().getTime(),
-        //         isLate, cellCls;
-
-        //     if (group.records && group.records.length && (record = group.records[0].record)) {
-        //         isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(record.get('TaskStatus')) > -1 && record.get('DueDate') < time;
-        //         cellCls = isLate ? statusClasses.late[record.get('TaskStatus')] : statusClasses[record.get('TaskStatus')];
-        //         cellEl.dom.className = 'jarvus-aggregrid-cell slate-studentsgrid-cell '+cellCls;
-        //     }
-
-        //     me.subCellTpl.overwrite(cellEl, group);
-        // },
-
-        //templates
+        // templates
         cellTpl: [
             '<tpl if="values.records && values.records[0]">',
                 '{[this.getDisplayValue(values.records[0].record)]}',
@@ -80,7 +62,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                 getDisplayValue: function(studentTask) {
                     var html = '';
 
-                    if (studentTask.get('TaskStatus') == 'completed') {
+                    if (studentTask.get('TaskStatus') === 'completed') {
                         html = '<i class="fa fa-lg fa-check-circle-o"></i>';
                     } else if (studentTask.get('DueDate')) {
                         html = Ext.Date.format(studentTask.get('DueDate'), 'm/d');
@@ -99,7 +81,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                 getDisplayValue: function(studentTask) {
                     var html = '';
 
-                    if (studentTask.get('TaskStatus') == 'completed') {
+                    if (studentTask.get('TaskStatus') === 'completed') {
                         html = '<i class="fa fa-lg fa-check-circle-o"></i>';
                     } else if (studentTask.get('DueDate')) {
                         html = Ext.Date.format(studentTask.get('DueDate'), 'm/d');
@@ -233,12 +215,12 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         });
     },
 
-    cellRenderFn: function(group, cellEl, rendered) {
+    cellRenderFn: function(group, cellEl) {
         var me = this,
             statusClasses = me.statusClasses,
             time = new Date().getTime(),
-            isLate,
-            cellClasses = ['jarvus-aggregrid-cell', 'slate-studentsgrid-cell'];
+            cellClasses = ['jarvus-aggregrid-cell', 'slate-studentsgrid-cell'],
+            isLate, record;
 
         if (group.records && group.records.length && (record = group.records[0].record)) {
             isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(record.get('TaskStatus')) > -1 && record.get('DueDate') < time;
