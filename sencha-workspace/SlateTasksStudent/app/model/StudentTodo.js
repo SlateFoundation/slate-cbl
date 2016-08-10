@@ -27,6 +27,10 @@ Ext.define('SlateTasksStudent.model.StudentTodo', {
         {
             name: 'Title',
             type: 'string'
+        },
+        {
+            name: 'TodoCount',
+            type: 'int'
         }
     ],
 

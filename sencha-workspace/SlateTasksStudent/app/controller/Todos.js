@@ -99,6 +99,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
             Ext.apply(todos, {
                 section: rec.get('Title'),
+                todoCount: rec.get('TodoCount'),
                 ID: rec.get('ID')
             });
 
