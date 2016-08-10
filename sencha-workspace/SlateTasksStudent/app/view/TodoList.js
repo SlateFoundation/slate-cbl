@@ -1,5 +1,6 @@
 Ext.define('SlateTasksStudent.view.TodoList', {
-    extend: 'Slate.cbl.widget.SimplePanel',
+    //extend: 'Slate.cbl.widget.SimplePanel',
+    extend: 'Ext.Container',
     xtype: 'slatetasksstudent-todolist',
     requires:[
     ],
@@ -8,6 +9,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         sectionVisibility: {}
     },
 
+    baseCls: 'slate-simplepanel',
     componentCls: 'slate-todolist',
 
     listeners: {
