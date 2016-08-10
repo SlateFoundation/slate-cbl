@@ -7,7 +7,8 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     config: {
         menu: null,
-        menuRatings: [1,2,3,4,5,6,7]
+        menuRatings: [1,2,3,4,5,6,7],
+        readOnly: false
     },
     //todo: add ratings as config.
     tpl: [
@@ -59,7 +60,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         var me = this,
             target = Ext.get(t);
 
-        if (target.is('.slate-ratingview-rating') || target.is('.slate-ratingview-remove')) {
+        if (!me.getReadOnly() && (target.is('.slate-ratingview-rating') || target.is('.slate-ratingview-remove'))) {
             return me.selectRating(target);
         }
 
@@ -114,23 +115,24 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 text: 'N/A',
                 value: null
             }];
-
-        if (!menu && menuRatings.length) {
-            Ext.each(menuRatings, function(mr) {
-                items.push({
-                    text: mr,
-                    value: mr
+        if (!me.getReadOnly()) {
+            if (!menu && menuRatings.length) {
+                Ext.each(menuRatings, function(mr) {
+                    items.push({
+                        text: mr,
+                        value: mr
+                    });
                 });
-            });
-            me.setMenu(menu = Ext.create('Ext.menu.Menu', {
-                items: items
-            }));
-            menu.on('click', me.onMenuRatingClick, me);
-        }
+                me.setMenu(menu = Ext.create('Ext.menu.Menu', {
+                    items: items
+                }));
+                menu.on('click', me.onMenuRatingClick, me);
+            }
 
-        if (menu) {
-            menu.ratingEl = ratingEl;
-            menu.showAt(xy);
+            if (menu) {
+                menu.ratingEl = ratingEl;
+                menu.showAt(xy);
+            }
         }
     },
 

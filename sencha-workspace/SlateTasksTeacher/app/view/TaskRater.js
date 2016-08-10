@@ -3,7 +3,7 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
 
     xtype: 'slate-tasks-teacher-taskrater',
     config: {
-        task: null
+        readOnly: null
     },
 
     updateTask: function(task, oldTask) {
@@ -41,5 +41,19 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
             ratings: [7, 8, 9, 10, 11, 12, 'M'],
             competencies: groupedSkills
         });
+    },
+
+    updateReadOnly: function(readOnly) {
+        var me = this,
+            toolbarBtns = me.query('container[dock=bottom] button'),
+            commentField = me.down('textareafield'),
+            ratingView = me.down('slate-ratingview');
+
+        ratingView.setReadOnly(readOnly);
+        commentField.setReadOnly(readOnly);
+        Ext.each(toolbarBtns, function(btn) {
+            btn.setDisabled(readOnly);
+        });
+        // debugger;
     }
 });

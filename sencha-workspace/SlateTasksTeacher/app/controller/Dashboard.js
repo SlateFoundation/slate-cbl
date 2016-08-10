@@ -207,6 +207,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 return me.editStudentTask(studentTask);
             } else if (studentTask.get('TaskStatus') === 'submitted' || studentTask.get('TaskStatus') === 're-submitted') {
                 return me.rateStudentTask(studentTask);
+            } else if (studentTask.get('TaskStatus') === 'completed') {
+                return me.rateStudentTask(studentTask, true);
             }
         }
 
@@ -412,7 +414,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskEditor.show();
     },
 
-    rateStudentTask: function(studentTask) {
+    rateStudentTask: function(studentTask, readOnly) {
         var me = this,
             taskRater = me.getTaskRater(),
             task = me.getTasksStore().getById(studentTask.get('TaskID'));
@@ -426,6 +428,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         taskRater.setTask(task);
         taskRater.setStudentTask(studentTask);
+        taskRater.setReadOnly(readOnly);
 
         taskRater.show();
     },
