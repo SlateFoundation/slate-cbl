@@ -10,8 +10,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     componentCls: 'slate-todolist',
 
-    title: 'To-Do List – Personal',
-
     listeners: {
         click: {
             element: 'el',

@@ -89,18 +89,16 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             todoSections = [],
             i = 0,
             rec,
-            section,
             todos;
 
 
         for (;i<recsLength; i++) {
             rec = recs[i];
-            section = rec.get('Section');
 
             todos = me.formatTodos(rec.Todos().getRange());
 
             Ext.apply(todos, {
-                section: section.Title,
+                section: rec.get('Title'),
                 ID: rec.get('ID')
             });
 
@@ -154,7 +152,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
         if (textfield.value && datefield.value) {
             rec = Ext.create('SlateTasksStudent.model.Todo', {
-                SectionID: parentRec.get('Section').ID,
+                SectionID: parentRec.get('SectionID'),
                 StudentID: parentRec.get('PersonID'),
                 Description: textfield.value,
                 DueDate: dueDate

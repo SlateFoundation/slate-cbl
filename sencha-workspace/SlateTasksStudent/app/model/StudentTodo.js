@@ -16,30 +16,17 @@ Ext.define('SlateTasksStudent.model.StudentTodo', {
             allowNull: true
         },
         {
-            name: 'Class',
-            type: 'string',
-            defaultValue: '\\Slate\\Courses\\SectionParticipant'
-        },
-        {
-            name: 'Created',
-            type: 'date',
-            dateFormat: 'timestamp',
-            allowNull: true
-        },
-        {
-            name: 'CreatorID',
+            name: 'SectionID',
             type: 'int',
             allowNull: true
         },
         {
             name: 'StudentID',
-            reference: 'Student',
             type: 'int'
         },
         {
-            name: 'SectionID',
-            reference: 'Section',
-            type: 'int'
+            name: 'Title',
+            type: 'string'
         }
     ],
 
@@ -51,12 +38,7 @@ Ext.define('SlateTasksStudent.model.StudentTodo', {
 
     proxy: {
         type: 'slate-records',
-        url: '/cbl/todos',
-        include: [
-            'Person',
-            'Section',
-            'Todos'
-        ]
+        url: '/cbl/todos'
     }
 
 });
