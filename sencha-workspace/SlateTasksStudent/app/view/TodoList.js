@@ -92,17 +92,19 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             sectionId = el.getAttribute('data-id'),
             section = me.getEl().getById('slate-todolist-section-content-'+sectionId);
 
-        if (section.isVisible()) {
-            section.setVisibilityMode(Ext.dom.Element.OFFSETS).slideOut('t', {
-                duration: 200
-            });
-            me.recordVisibilityState(sectionId, false);
-        } else {
-            section.show();
-            section.setVisibilityMode(Ext.dom.Element.OFFSETS).slideIn('t', {
-                duration: 200
-            });
-            me.recordVisibilityState(sectionId, true);
+        if (section) {
+            if (section.isVisible()) {
+                section.setVisibilityMode(Ext.dom.Element.OFFSETS).slideOut('t', {
+                    duration: 200
+                });
+                me.recordVisibilityState(sectionId, false);
+            } else {
+                section.show();
+                section.setVisibilityMode(Ext.dom.Element.OFFSETS).slideIn('t', {
+                    duration: 200
+                });
+                me.recordVisibilityState(sectionId, true);
+            }
         }
     },
 
