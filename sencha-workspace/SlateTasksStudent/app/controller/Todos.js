@@ -51,9 +51,11 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     },
 
     onTodosStoreLoad: function(store) {
-        var me = this;
+        var me = this,
+            todoList = me.getTodoList();
 
-        me.getTodoList().update(me.formatTodoLists(store.getRange()));
+        todoList.update(me.formatTodoLists(store.getRange()));
+        todoList.restoreVisibilityState();
     },
 
     onTodosListCheckClick: function(cmp, parentId, recordId, checked) {
@@ -78,6 +80,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     onTodosListDateChange: function(cmp, parentId) {
         this.insertNewTodo(parentId);
     },
+
 
     // custom controller methods
     formatTodoLists: function(recs) {
