@@ -3,7 +3,8 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.form.field.Date',
-        'Ext.window.Toast'
+        'Ext.window.Toast',
+        'Slate.API'
     ],
 
 
@@ -12,6 +13,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         'slatetasksstudent-todolist': {
             render: 'onTodosListRender',
             checkclick: 'onTodosListCheckClick',
+            clearcompleted: 'onTodosListClearCompletedClick',
             enterkeypress: 'onTodosListEnterKeyPress',
             datechange: 'onTodosListDateChange'
         }
@@ -69,6 +71,17 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             },
             failure: function() {
                 Ext.toast('Todo could not be updated.');
+            }
+        });
+    },
+
+    onTodosListClearCompletedClick: function(cmp, sectionId) {
+        console.log('controller -> button section#'+sectionId);
+        console.log(Slate.API.getHost());
+        Ext.Ajax.request({
+            url: 'http://'+Slate.API.getHost()+'/cbl/todos/clear-section',
+            params: {
+                sectionId: sectionId
             }
         });
     },
@@ -136,6 +149,10 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         if (completeTodos.length > 0) {
             todos.push({
                 Title: 'Completed Items',
+                buttons: [{
+                    icon: 'times',
+                    text: 'Clear All'
+                }],
                 items: completeTodos
             });
         }

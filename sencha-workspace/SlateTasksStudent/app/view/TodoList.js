@@ -15,7 +15,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     listeners: {
         click: {
             element: 'el',
-            delegate: '.slate-todolist-item-checkbox,div.slate-simplepanel-header',
+            delegate: '.slate-todolist-item-checkbox,div.slate-simplepanel-header,button.slate-todolist-button-clear',
             fn: 'onElClick'
         },
         keypress: {
@@ -43,7 +43,9 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                         '<ul class="slate-todolist-itemgroup-actions">',
                         '<tpl for="buttons">',
                             '<li class="slate-todolist-itemgroup-action">',
-                                '<button><tpl if="icon"><i class="fa fa-{icon}"></i>&nbsp;</tpl>{text}</button>',
+                                '<button class="slate-todolist-button-clear" data-parent-id="{parent.parent.ID}">',
+                                    '<tpl if="icon"><i class="fa fa-{icon}"></i>&nbsp;</tpl>{text}',
+                                '</button>',
                             '</li>',
                         '</tpl>',
                     '</tpl>',
@@ -84,6 +86,9 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         }
         else if (ev.getTarget('div.slate-simplepanel-header')) {
             me.onSectionTitleClick(el);
+        }
+        else if (ev.getTarget('button.slate-todolist-button-clear')) {
+            me.fireEvent('clearcompleted', this, el.getAttribute('data-parent-id'));
         }
     },
 
