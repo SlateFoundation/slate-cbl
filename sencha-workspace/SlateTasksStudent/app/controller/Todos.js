@@ -171,7 +171,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         if (textfield.value && datefield.value) {
             rec = Ext.create('SlateTasksStudent.model.Todo', {
                 SectionID: parentRec.get('SectionID'),
-                StudentID: parentRec.get('PersonID'),
+                StudentID: parentRec.get('StudentID'),
                 Description: textfield.value,
                 DueDate: dueDate
             });
