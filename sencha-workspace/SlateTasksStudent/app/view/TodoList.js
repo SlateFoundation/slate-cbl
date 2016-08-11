@@ -52,7 +52,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 '</header>',
                 '<ul class="slate-todolist-list">',
                     '<tpl for="items">',
-                        '<li class="slate-todolist-item <tpl if="status">slate-todolist-status-{status}</tpl>">',
+                        '<li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}">',
                             '<input id="todo-item-{ID}" class="slate-todolist-item-checkbox" data-parent-id="{parent.parent.ID}" data-id="{ID}" type="checkbox" <tpl if="Completed">checked</tpl>>',
                             '<div class="slate-todolist-item-text">',
                                 '<label for="todo-item-{ID}" class="slate-todolist-item-title">{Description}</label>',
@@ -75,8 +75,18 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             '</section>',
         '</tpl>',
         '</div>',
-    '</tpl>'
-    ],
+    '</tpl>',
+    {
+        getStatusCls: function(due) {
+            var now = new Date();
+
+            if (due > now) {
+                return 'due';
+            } else {
+                return 'late';
+            }
+        }
+    }],
 
     onElClick: function(ev, el) {
         var me = this;
