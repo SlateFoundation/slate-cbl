@@ -151,7 +151,12 @@ Ext.define('SlateTasksStudent.controller.Todos', {
                 Title: 'Completed Items',
                 buttons: [{
                     icon: 'times',
+                    action: 'clear',
                     text: 'Clear All'
+                },{
+                    icon: 'caret-up',
+                    action: 'hide',
+                    text: 'Hide'
                 }],
                 items: completeTodos
             });
