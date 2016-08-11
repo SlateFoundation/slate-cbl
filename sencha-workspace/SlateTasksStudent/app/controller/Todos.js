@@ -76,8 +76,8 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     },
 
     onTodosListClearCompletedClick: function(cmp, sectionId) {
-        console.log('controller -> button section#'+sectionId);
-        console.log(Slate.API.getHost());
+        //console.log('controller -> button section#'+sectionId);
+        //console.log(Slate.API.getHost());
         Ext.Ajax.request({
             url: 'http://'+Slate.API.getHost()+'/cbl/todos/clear-section',
             params: {
