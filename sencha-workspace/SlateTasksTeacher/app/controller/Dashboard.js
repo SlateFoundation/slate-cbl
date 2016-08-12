@@ -200,14 +200,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             dataStore = grid.getDataStore(),
             studentTask = dataStore.getAt(dataStore.findBy(function(r) {
                 return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
-            }));
+            })),
+            taskStatus;
 
         if (studentTask) {
-            if (studentTask.get('TaskStatus') === 'assigned' || studentTask.get('TaskStatus') === 're-assigned') {
+            taskStatus = studentTask.get('TaskStatus');
+            if (taskStatus === 'assigned') {
                 return me.editStudentTask(studentTask);
-            } else if (studentTask.get('TaskStatus') === 'submitted' || studentTask.get('TaskStatus') === 're-submitted') {
+            } else if (taskStatus === 'submitted' || taskStatus === 're-submitted' || taskStatus === 're-assigned') {
                 return me.rateStudentTask(studentTask);
-            } else if (studentTask.get('TaskStatus') === 'completed') {
+            } else if (taskStatus === 'completed') {
                 return me.rateStudentTask(studentTask, true);
             }
         }
