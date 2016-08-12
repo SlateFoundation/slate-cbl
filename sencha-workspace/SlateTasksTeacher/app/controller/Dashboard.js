@@ -141,10 +141,13 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     onAssignRevisionClick: function(btn) {
         var me = this,
-            coords = btn.getXY();
+            coords = btn.getXY(),
+            datepicker;
 
-        if (!btn.dateSelected) {
-            return Ext.widget({
+        if (btn.dateSelected) {
+            me.assignStudentTaskRevision(btn.dateSelected);
+        } else {
+            datepicker = Ext.widget({
                 xtype: 'datepicker',
                 floating: true,
                 handler: function(picker, date) {
@@ -152,10 +155,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     btn.dateSelected = date;
                     return btn.setText('Re-Assign revision due on '+Ext.Date.format(date, 'm/d/y'));
                 }
-            }).showAt(coords[0], coords[1]);
+            });
+            datepicker.show().showAt(coords[0], coords[1] - datepicker.getHeight()); // subtract datepicker height from y coord to show above button.
         }
-
-        return me.assignStudentTaskRevision(btn.dateSelected);
     },
 
     onUnassignStudentTaskClick: function() {
