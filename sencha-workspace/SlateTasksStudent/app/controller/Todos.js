@@ -76,12 +76,18 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     },
 
     onTodosListClearCompletedClick: function(cmp, sectionId) {
-        //console.log('controller -> button section#'+sectionId);
-        //console.log(Slate.API.getHost());
-        Ext.Ajax.request({
-            url: 'http://'+Slate.API.getHost()+'/cbl/todos/clear-section',
+        var me = this;
+
+        Slate.API.request({
+            url: '/cbl/todos/clear-section',
             params: {
                 sectionId: sectionId
+            },
+            success: function() {
+                me.getTodosStore().load();
+            },
+            failure: function() {
+                Ext.toast('Todos could not be cleared.');
             }
         });
     },
@@ -112,6 +118,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
             Ext.apply(todos, {
                 section: rec.get('Title'),
+                sectionId: rec.get('SectionID'),
                 todoCount: rec.get('TodoCount'),
                 ID: rec.get('ID')
             });

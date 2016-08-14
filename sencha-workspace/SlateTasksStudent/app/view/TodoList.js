@@ -48,7 +48,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                         '<ul class="slate-todolist-itemgroup-actions">',
                         '<tpl for="buttons">',
                             '<li class="slate-todolist-itemgroup-action">',
-                                '<button class="slate-todolist-button-{action}" data-parent-id="{parent.parent.ID}">',
+                                '<button class="slate-todolist-button-{action}" data-parent-id="{parent.parent.sectionId}">',
                                     '<tpl if="icon"><i class="fa fa-{icon}"></i>&nbsp;</tpl>{text}',
                                 '</button>',
                             '</li>',
@@ -160,7 +160,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
         Ext.Array.each(itemGroups, function(item) {
             element = Ext.get(item);
-            //console.log(element.getId()+': ' + element.isVisible());
         });
 
     },
