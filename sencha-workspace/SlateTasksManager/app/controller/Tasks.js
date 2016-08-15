@@ -140,6 +140,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             attachmentsField = me.getAttachmentsField(),
             statusField = me.getTaskStatusField(),
             record = form.getRecord(),
+            gridSelection = me.getTasksManager().getSelection()[0],
             errors;
 
         form.updateRecord(record);
@@ -163,9 +164,16 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         }
 
         record.save({
-            success: function() {
+            success: function(rec) {
                 me.getTaskEditor().close();
-                me.getTasksStore().reload();
+                me.getTasksStore().reload({
+                    callback: function() {
+                        // update task details window if record is updated.
+                        if (gridSelection && gridSelection.getId() === rec.getId()) {
+                            me.getTaskDetails().updateTask(rec);
+                        }
+                    }
+                });
                 Ext.toast('Task succesfully saved!');
             }
         });
