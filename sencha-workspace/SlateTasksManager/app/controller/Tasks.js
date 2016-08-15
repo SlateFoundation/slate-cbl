@@ -53,7 +53,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slatetasksmanager-task-editor button[action=save]': {
             click: 'onSaveTaskClick'
         },
-        'slatetasksmanager-task-editor slate-tasks-titlefield[clonable]' : {
+        'slatetasksmanager-task-editor slate-tasks-titlefield[clonable]': {
             select: 'onClonableTitleFieldSelect'
         },
         tasksManager: {
@@ -86,17 +86,18 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             selection = taskManager.getSelection()[0],
             title, message;
 
-        if (selection) {
-            title = 'Delete Task';
-            message = 'Are you sure you want to delete this task?' + '<br><strong>' + selection.get('Title') + '</strong>';
-            return Ext.Msg.confirm(title, message, function(response){
-                if (response === 'yes') {
-                    return me.deleteTask(selection);
-                }
-            });
-        } else {
-            return Ext.Msg.alert('Delete Task', 'Nothing selected. Please select a task to delete.');
+        if (!selection) {
+            Ext.Msg.alert('Delete Task', 'Nothing selected. Please select a task to delete.');
+            return;
         }
+
+        title = 'Delete Task';
+        message = 'Are you sure you want to delete this task? <br><strong>' + selection.get('Title') + '</strong>';
+        Ext.Msg.confirm(title, message, function(response) {
+            if (response === 'yes') {
+                me.deleteTask(selection);
+            }
+        });
     },
 
     onSaveTaskClick: function() {
@@ -106,8 +107,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     onClonableTitleFieldSelect: function(combo) {
         var me = this,
             record = combo.getSelectedRecord(),
-            title = "New Task",
-            message = "Do you want to clone this task?" + '<br><strong>' + record.get('Title') + '</strong>';
+            title = 'New Task',
+            message = 'Do you want to clone this task?<br><strong>' + record.get('Title') + '</strong>';
 
         Ext.Msg.confirm(title, message, function(btnId) {
             if (btnId === 'yes') {
@@ -139,13 +140,12 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             attachmentsField = me.getAttachmentsField(),
             statusField = me.getTaskStatusField(),
             record = form.getRecord(),
-            wasPhantom = record.phantom,
             errors;
 
         form.updateRecord(record);
 
         record.set('Status', statusField.getSubmitValue());
-        //set skills
+        // set skills
         record.set('Skills', skillsField.getSkills(false)); // returnRecords
         record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
 
@@ -154,6 +154,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         if (errors.length) {
             Ext.each(errors.items, function(item) {
                 var itemField = form.down('[name='+item.field +']');
+
                 if (itemField) {
                     itemField.markInvalid(item.message);
                 }
@@ -162,7 +163,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         }
 
         record.save({
-            success: function(rec) {
+            success: function() {
                 me.getTaskEditor().close();
                 me.getTasksStore().reload();
                 Ext.toast('Task succesfully saved!');
@@ -172,8 +173,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     editTask: function(taskRecord) {
         var me = this,
-            taskEditor = me.getTaskEditor(),
-            form = me.getTaskEditorForm();
+            taskEditor = me.getTaskEditor();
 
         if (!taskRecord) {
             taskRecord = Ext.create('Slate.cbl.model.Task');
@@ -192,11 +192,10 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     cloneTask: function(taskRecord) {
         var me = this,
-            taskEditor = me.getTaskEditor(),
             taskCopy = taskRecord.copy(null);
 
         taskCopy.set('Title', taskCopy.get('Title') + ' Clone');
-        //reset server controlled fields
+        // reset server controlled fields
         taskCopy.set('Created', null);
         taskCopy.set('CreatorID', null);
         taskCopy.set('ModifierID', null);
