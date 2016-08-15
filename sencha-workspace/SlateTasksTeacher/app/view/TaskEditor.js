@@ -15,8 +15,8 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
             titleField = me.down('slate-tasks-titlefield'),
             parentTaskField = titleField.next('slate-tasks-titlefield'),
             experienceField = me.down('#experience-type'),
-            duedateField = me.down('#due-date'),
-            expirationdateField = me.down('#expiration-date'),
+            duedateField = me.down('#duedate'),
+            expirationdateField = me.down('#expirationdate'),
             skillsField = me.down('slate-skillsfield'),
             attachmentsfield = me.down('slate-tasks-attachmentsfield'),
             instructionsField = me.down('#instructions'),
@@ -44,12 +44,12 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
             assignmentsfield.down('combo').setValue(studentTask.get('StudentID'));
 
             // override fields
-            if (studentTask.get('DueDate')) {
+            if (duedateField && studentTask.get('DueDate')) {
                 duedateField.setValue(studentTask.get('DueDate'), 'm/d/Y');
             }
 
-            if (studentTask.get('ExpirationDate')) {
-                expirationdateField.setValue(studentTask.get('DueDate'), 'm/d/Y');
+            if (expirationdateField && studentTask.get('ExpirationDate')) {
+                expirationdateField.setValue(studentTask.get('ExpirationDate'), 'm/d/Y');
             }
         }
     },
