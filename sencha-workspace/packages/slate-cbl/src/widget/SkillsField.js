@@ -25,10 +25,12 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                 beforeselect: function(combo, record) {
                     var dataview = combo.next('dataview'),
                         store = dataview.getStore();
+
                     store.add(record);
                     return false;
                 }
-            }
+            },
+            selectOnTab: false
         },
         {
             xtype: 'dataview',
