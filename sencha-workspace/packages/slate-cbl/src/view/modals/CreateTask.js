@@ -141,7 +141,8 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     itemId: 'instructions',
                     name: 'Instructions',
                     fieldLabel: 'Instructions',
-                    grow: true
+                    grow: true,
+                    growMin: 200
                 }
             ]
         }
