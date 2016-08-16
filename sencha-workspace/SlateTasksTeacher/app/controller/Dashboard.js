@@ -18,7 +18,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             coursesectionselect: 'onDashboardSectionChange'
         },
         tasksGrid: {
-            cellclick: 'onTasksGridCellClick'
+            cellclick: 'onTasksGridCellClick',
+            subcellclick: 'onTasksGridCellClick'
         },
         assignmentsComboField: {
             render: 'onAssigneeComboRender'
