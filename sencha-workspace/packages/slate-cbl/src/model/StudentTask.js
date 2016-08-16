@@ -13,77 +13,77 @@ Ext.define('Slate.cbl.model.StudentTask', {
 
     fields: [
         {
-            name: "ID",
-            type: "int",
+            name: 'ID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "Class",
-            type: "string",
-            defaultValue: "Slate\\CBL\\Tasks\\StudentTask"
+            name: 'Class',
+            type: 'string',
+            defaultValue: 'Slate\\CBL\\Tasks\\StudentTask'
         },
         {
-            name: "Created",
-            type: "date",
-            dateFormat: "timestamp",
+            name: 'Created',
+            type: 'date',
+            dateFormat: 'timestamp',
             allowNull: true
         },
         {
-            name: "CreatorID",
-            type: "int",
+            name: 'CreatorID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "RevisionID",
-            type: "int",
+            name: 'RevisionID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "Modified",
-            type: "date",
-            dateFormat: "timestamp",
+            name: 'Modified',
+            type: 'date',
+            dateFormat: 'timestamp',
             allowNull: true
         },
         {
-            name: "ModifierID",
-            type: "int",
+            name: 'ModifierID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "TaskID",
-            type: "int"
+            name: 'TaskID',
+            type: 'int'
         },
         {
-            name: "StudentID",
-            type: "int"
+            name: 'StudentID',
+            type: 'int'
         },
         {
-            name: "ExperienceType",
-            type: "string",
+            name: 'ExperienceType',
+            type: 'string',
             allowNull: true
         },
         {
-            name: "DueDate",
-            type: "date",
-            dateFormat: "timestamp",
+            name: 'DueDate',
+            type: 'date',
+            dateFormat: 'timestamp',
             allowNull: true
         },
         {
-            name: "Submitted",
-            type: "date",
-            dateFormat: "timestamp",
+            name: 'Submitted',
+            type: 'date',
+            dateFormat: 'timestamp',
             allowNull: true
         },
         {
-            name: "ExpirationDate",
-            type: "date",
-            dateFormat: "timestamp",
+            name: 'ExpirationDate',
+            type: 'date',
+            dateFormat: 'timestamp',
             allowNull: true
         },
         {
-            name: "TaskStatus",
-            type: "string",
-            defaultValue: "assigned"
+            name: 'TaskStatus',
+            type: 'string',
+            defaultValue: 'assigned'
         }
     ],
 
@@ -98,6 +98,7 @@ Ext.define('Slate.cbl.model.StudentTask', {
 
         Ext.each(skills, function(skill) {
             var compIdx;
+
             if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
                 compIdx = compIds.length;
                 comps[compIdx] = {
