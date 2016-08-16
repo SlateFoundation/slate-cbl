@@ -5,7 +5,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
     extend: 'Jarvus.aggregrid.RollupAggregrid',
     xtype: 'slate-studentsgrid',
     requires: [
-
+        'Ext.data.ChainedStore'
     ],
 
     config: {
