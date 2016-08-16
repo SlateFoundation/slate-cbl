@@ -231,7 +231,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             studentTask = taskRater.getStudentTask();
 
         Slate.API.request({
-            url: '/cbl/student-tasks/'+studentTask.getId()+'/rate',
+            url: studentTask.toUrl() + '/rate',
             method: 'POST',
             params: {
                 SkillID: ratingObject.SkillID,

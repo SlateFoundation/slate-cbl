@@ -92,6 +92,13 @@ Ext.define('Slate.cbl.model.StudentTask', {
         url: '/cbl/student-tasks'
     },
 
+    toUrl: function() {
+        var me = this,
+            root = me.getProxy().getUrl();
+
+        return root + '/' + me.getId();
+    },
+
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
             skills = this.get('TaskSkills');
