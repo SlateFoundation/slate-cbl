@@ -1,7 +1,12 @@
-/* global Slate */
+/* jslint browser: true, undef: true, laxcomma:true *//* global Ext*/
 /**
- * TODO:
- * - move rendering responsibilities to the view?
+ * The Dashboard controller manages the main functionality of the SlateTasksTeacher application where teachers can
+ * browse, search, create, edit, and assign tasks.
+ *
+ * ## Responsibilities
+ * - Handle section/:sectionId route
+ * - Handle CRUD operations for tasks/student tasks
+ * - Filter StudentsGrid tasks/students by selected section
  */
 Ext.define('SlateTasksTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
@@ -10,7 +15,76 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'Ext.window.MessageBox'
     ],
 
+
+    // dependencies
+    views: [
+        'Dashboard',
+        'TaskEditor',
+        'TaskRater',
+        'TaskAssigner'
+    ],
+    stores: [
+        'CourseSections',
+        'Students',
+        'StudentTasks',
+        'Tasks'
+    ],
+    models: [
+        'Task@Slate.cbl.model',
+        'StudentTask@Slate.cbl.model'
+    ],
+
+
+    refs: {
+        dashboardCt: {
+            selector: 'slate-tasks-teacher-dashboard',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-dashboard'
+        },
+        tasksGrid: {
+            selector: 'slate-studentsgrid',
+            autoCreate: true,
+
+            xtype: 'slate-studentsgrid'
+        },
+        taskAssigner: {
+            selector: 'slate-tasks-teacher-taskassigner',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskassigner'
+        },
+        taskRater: {
+            selector: 'slate-tasks-teacher-taskrater',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskrater'
+        },
+        taskEditor: {
+            selector: 'slate-tasks-teacher-taskeditor',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskeditor'
+        },
+        taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
+        skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
+        attachmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield',
+        assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
+        assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
+
+        courseSelector: 'slate-tasks-teacher-appheader combo'
+    },
+
+
+
     // entry points
+    routes: {
+        'section/:sectionId': {
+            sectionId: '([a-zA-Z0-9])+',
+            action: 'showCourseSection'
+        }
+    },
+
     control: {
         courseSelector: {
             select: 'onCourseSectionSelect'
@@ -52,247 +126,13 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
     },
 
-    routes: {
-        'section/:sectionId': {
-            sectionId: '([a-zA-Z0-9])+',
-            action: 'showCourseSection'
-        }
-    },
-
-
-    // controller configuration
-    views: [
-        'Dashboard',
-        'TaskEditor',
-        'TaskRater',
-        'TaskAssigner'
-    ],
-    stores: [
-        'CourseSections',
-        'Students',
-        'StudentTasks',
-        'Tasks'
-    ],
-    refs: {
-        dashboardCt: {
-            selector: 'slate-tasks-teacher-dashboard',
-            autoCreate: true,
-
-            xtype: 'slate-tasks-teacher-dashboard'
-        },
-        tasksGrid: {
-            selector: 'slate-studentsgrid',
-            autoCreate: true,
-
-            xtype: 'slate-studentsgrid'
-        },
-        taskAssigner: {
-            selector: 'slate-tasks-teacher-taskassigner',
-            autoCreate: true,
-
-            xtype: 'slate-tasks-teacher-taskassigner'
-        },
-        taskRater: {
-            selector: 'slate-tasks-teacher-taskrater',
-            autoCreate: true,
-
-            xtype: 'slate-tasks-teacher-taskrater'
-        },
-        taskEditor: {
-            selector: 'slate-tasks-teacher-taskeditor',
-            autoCreate: true,
-
-            xtype: 'slate-tasks-teacher-taskeditor'
-        },
-        taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
-        skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
-        attachmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield',
-        assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
-        assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
-
-        courseSelector: 'slate-tasks-teacher-appheader combo'
-    },
 
     // controller templates method overrides
     onLaunch: function () {
         this.getDashboardCt().render('slateapp-viewport');
     },
 
-    // event handlers
-    onCourseSectionSelect: function(combo, record) {
-        var me = this;
-
-        me.getDashboardCt().setCourseSection(record);
-    },
-
-    onDashboardSectionChange: function(record) {
-        this.redirectTo('section/'+record.get('Code'));
-    },
-
-    onAcceptTaskClick: function() {
-        var me = this,
-            taskRater = me.getTaskRater(),
-            studentTask = taskRater.getStudentTask();
-
-        studentTask.set('TaskStatus', 'completed');
-
-        me.saveStudentTask(studentTask, function() {
-            taskRater.close();
-        });
-    },
-
-    onAssignRevisionClick: function(btn) {
-        var me = this,
-            coords = btn.getXY(),
-            datepicker;
-
-        if (btn.dateSelected) {
-            me.assignStudentTaskRevision(btn.dateSelected);
-        } else {
-            datepicker = Ext.widget({
-                xtype: 'datepicker',
-                floating: true,
-                handler: function(picker, date) {
-                    picker.destroy();
-                    btn.dateSelected = date;
-                    return btn.setText('Re-Assign revision due on '+Ext.Date.format(date, 'm/d/y'));
-                }
-            });
-            datepicker.show().showAt(coords[0], coords[1] - datepicker.getHeight()); // subtract datepicker height from y coord to show above button.
-        }
-    },
-
-    onUnassignStudentTaskClick: function() {
-        var me = this,
-            taskRater = me.getTaskRater(),
-            studentTask = taskRater.getStudentTask();
-
-        Ext.Msg.confirm('Are you sure?', 'Do you want to unassign this student task? This can not be undone.', function(ans) {
-            if (ans === 'yes') {
-                me.unAssignStudentTask(studentTask);
-            }
-        });
-
-    },
-
-    onEditStudentTaskClick: function() {
-        var me = this,
-            taskRater = me.getTaskRater(),
-            studentTask = taskRater.getStudentTask();
-
-        taskRater.close();
-        me.editStudentTask(studentTask);
-    },
-
-    onStudentsStoreLoad: function() {
-        window.console.log('onstudentstoreload', arguments);
-    },
-
-    onAssigneeComboRender: function(combo) {
-        var me = this,
-            comboStore = combo.getStore(),
-            studentsStore = me.getStudentsStore();
-
-        comboStore.removeAll();
-        comboStore.add(studentsStore.getRange());
-        combo.setValueOnData();
-    },
-
-    onTasksGridCellClick: function(grid, taskId, studentId) {
-        var me = this,
-            dataStore = grid.getDataStore(),
-            studentTask = dataStore.getAt(dataStore.findBy(function(r) {
-                return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
-            })),
-            taskStatus;
-
-        if (studentTask) {
-            taskStatus = studentTask.get('TaskStatus');
-
-            if (taskStatus === 'assigned') {
-                return me.editStudentTask(studentTask);
-            }
-
-            if (taskStatus === 'submitted' || taskStatus === 're-submitted' || taskStatus === 're-assigned') {
-                return me.rateStudentTask(studentTask);
-            }
-
-            if (taskStatus === 'completed') {
-                return me.rateStudentTask(studentTask, true);
-            }
-        }
-
-        return me.assignStudentTask(taskId, studentId);
-    },
-
-    onRateSkillClick: function(ratingView, ratingObject) {
-        var me = this,
-            taskRater = me.getTaskRater(),
-            studentTask = taskRater.getStudentTask();
-
-        Slate.API.request({
-            url: studentTask.toUrl() + '/rate',
-            method: 'POST',
-            params: {
-                SkillID: ratingObject.SkillID,
-                Score: ratingObject.rating
-            },
-            callback: function(opts, success) {
-                if (!success) {
-                    Ext.toast('Error. Please try again.');
-                }
-            }
-        });
-    },
-
-    onAssignTaskClick: function() {
-        var me = this,
-            taskAssigner = me.getTaskAssigner(),
-            taskAssignerValues = taskAssigner.down('slate-modalform').getValues(),
-            task = taskAssigner.getTask(),
-            student = taskAssigner.getStudent(),
-            studentTask = Ext.create('Slate.cbl.model.StudentTask', {
-                TaskID: task.getId(),
-                StudentID: student.getId(),
-                DueDate: taskAssignerValues.DueDate,
-                ExpirationDate: taskAssignerValues.ExpirationDate,
-                ExperienceType: taskAssignerValues.ExperienceType,
-                CourseSectionID: me.getCourseSelector().getSelection().getId()
-            });
-
-        me.saveStudentTask(studentTask, function(rec) {
-            taskAssigner.close();
-            me.getTasksGrid().getDataStore().add(rec);
-            Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
-        });
-
-    },
-
-    onSaveTaskClick: function() {
-        var me = this,
-            taskEditor = me.getTaskEditor(),
-            studentTask = taskEditor.getStudentTask();
-
-        if (studentTask) {
-            me.getTaskEditorForm().updateRecord(studentTask);
-
-            return me.saveStudentTask(studentTask, function() {
-                taskEditor.close();
-                Ext.toast('Student task successfully updated.');
-            });
-        }
-
-        return me.saveTask();
-    },
-
-    onCreateTaskClick: function() {
-        var me = this;
-
-        me.getTaskEditor().close();
-        return me.editTask(Ext.create('Slate.cbl.model.Task'));
-    },
-
-    //
+    // route handlers
     showCourseSection: function(sectionCode) {
         var me = this,
             courseSelector = me.getCourseSelector(),
@@ -323,7 +163,179 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         studentTasksStore.setCourseSection(sectionCode).load();
     },
 
-    assignStudentTaskRevision: function(date) {
+    // event handlers
+    onCourseSectionSelect: function(combo, record) {
+        var me = this;
+
+        me.getDashboardCt().setCourseSection(record);
+    },
+
+    onDashboardSectionChange: function(record) {
+        this.redirectTo('section/'+record.get('Code'));
+    },
+
+    onTasksGridCellClick: function(grid, taskId, studentId) {
+        var me = this,
+            dataStore = grid.getDataStore(),
+            studentTask = dataStore.getAt(dataStore.findBy(function(r) {
+                return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
+            })),
+            taskStatus;
+
+        if (studentTask) {
+            taskStatus = studentTask.get('TaskStatus');
+
+            if (taskStatus === 'assigned') {
+                return me.doEditStudentTask(studentTask);
+            }
+
+            if (taskStatus === 'submitted' || taskStatus === 're-submitted' || taskStatus === 're-assigned') {
+                return me.doRateStudentTask(studentTask);
+            }
+
+            if (taskStatus === 'completed') {
+                return me.doRateStudentTask(studentTask, true);
+            }
+        }
+
+        return me.doAssignStudentTask(taskId, studentId);
+    },
+
+    onAssigneeComboRender: function(combo) {
+        var me = this,
+            comboStore = combo.getStore(),
+            studentsStore = me.getStudentsStore();
+
+        comboStore.removeAll();
+        comboStore.add(studentsStore.getRange());
+        combo.setValueOnData();
+    },
+
+    onAcceptTaskClick: function() {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = taskRater.getStudentTask();
+
+        studentTask.set('TaskStatus', 'completed');
+
+        me.doSaveStudentTask(studentTask, function() {
+            taskRater.close();
+        });
+    },
+
+    onAssignRevisionClick: function(btn) {
+        var me = this,
+            coords = btn.getXY(),
+            datepicker;
+
+        if (btn.dateSelected) {
+            me.doAssignStudentTaskRevision(btn.dateSelected);
+        } else {
+            datepicker = Ext.widget({
+                xtype: 'datepicker',
+                floating: true,
+                handler: function(picker, date) {
+                    picker.destroy();
+                    btn.dateSelected = date;
+                    return btn.setText('Re-Assign revision due on '+Ext.Date.format(date, 'm/d/y'));
+                }
+            });
+            datepicker.show().showAt(coords[0], coords[1] - datepicker.getHeight()); // subtract datepicker height from y coord to show above button.
+        }
+    },
+
+    onUnassignStudentTaskClick: function() {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = taskRater.getStudentTask();
+
+        Ext.Msg.confirm('Are you sure?', 'Do you want to unassign this student task? This can not be undone.', function(ans) {
+            if (ans === 'yes') {
+                me.doUnAssignStudentTask(studentTask);
+            }
+        });
+
+    },
+
+    onEditStudentTaskClick: function() {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = taskRater.getStudentTask();
+
+        taskRater.close();
+        me.doEditStudentTask(studentTask);
+    },
+
+    onRateSkillClick: function(ratingView, ratingObject) {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            studentTask = taskRater.getStudentTask();
+
+        Slate.API.request({
+            url: studentTask.toUrl() + '/rate',
+            method: 'POST',
+            params: {
+                SkillID: ratingObject.SkillID,
+                Score: ratingObject.rating
+            },
+            callback: function(opts, success) {
+                if (!success) {
+                    Ext.toast('Error. Please try again.');
+                }
+            }
+        });
+    },
+
+    onAssignTaskClick: function() {
+        var me = this,
+            taskAssigner = me.getTaskAssigner(),
+            taskAssignerValues = taskAssigner.down('slate-modalform').getValues(),
+            task = taskAssigner.getTask(),
+            student = taskAssigner.getStudent(),
+            studentTask = me.getStudentTaskModel().create({
+                TaskID: task.getId(),
+                StudentID: student.getId(),
+                DueDate: taskAssignerValues.DueDate,
+                ExpirationDate: taskAssignerValues.ExpirationDate,
+                ExperienceType: taskAssignerValues.ExperienceType,
+                CourseSectionID: me.getCourseSelector().getSelection().getId()
+            });
+
+        me.doSaveStudentTask(studentTask, function(rec) {
+            taskAssigner.close();
+            me.getTasksGrid().getDataStore().add(rec);
+            Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
+        });
+
+    },
+
+    onSaveTaskClick: function() {
+        var me = this,
+            taskEditor = me.getTaskEditor(),
+            studentTask = taskEditor.getStudentTask();
+
+        if (studentTask) {
+            me.getTaskEditorForm().updateRecord(studentTask);
+
+            return me.doSaveStudentTask(studentTask, function() {
+                taskEditor.close();
+                Ext.toast('Student task successfully updated.');
+            });
+        }
+
+        return me.doSaveTask();
+    },
+
+    onCreateTaskClick: function() {
+        var me = this;
+
+        me.getTaskEditor().close();
+        return me.doEditTask(me.getTaskModel().create());
+    },
+
+
+    // custom methods
+    doAssignStudentTaskRevision: function(date) {
         var me = this,
             taskRater = me.getTaskRater(),
             studentTask = taskRater.getStudentTask();
@@ -334,12 +346,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             callback: function() {
                 taskRater.close();
                 Ext.toast('Student task successfully updated.');
-                me.rateStudentTask(studentTask);
+                me.doRateStudentTask(studentTask);
             }
         });
     },
 
-    unAssignStudentTask: function(studentTask) {
+    doUnAssignStudentTask: function(studentTask) {
         var me = this;
 
         studentTask.erase({
@@ -352,7 +364,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
     },
 
-    saveStudentTask: function(studentTask, callback, scope) {
+    doSaveStudentTask: function(studentTask, callback, scope) {
         studentTask.save({
             success: function(rec) {
                 Ext.callback(callback, scope, [rec]);
@@ -360,7 +372,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
     },
 
-    saveTask: function() {
+    doSaveTask: function() {
         var me = this,
             form = me.getTaskEditorForm(),
             skillsField = me.getSkillsField(),
@@ -395,7 +407,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
     },
 
-    editStudentTask: function(studentTask) {
+    doEditStudentTask: function(studentTask) {
         var me = this,
             grid = me.getTasksGrid(),
             taskEditor = me.getTaskEditor(),
@@ -411,12 +423,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskEditor.show();
     },
 
-    editTask: function(taskRecord) {
+    doEditTask: function(taskRecord) {
         var me = this,
             taskEditor = me.getTaskEditor();
 
         if (!taskRecord) {
-            taskRecord = Ext.create('Slate.cbl.model.Task');
+            taskRecord = me.getTaskModel().create();
         }
 
         taskEditor.setTask(taskRecord);
@@ -424,7 +436,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskEditor.show();
     },
 
-    rateStudentTask: function(studentTask, readOnly) {
+    doRateStudentTask: function(studentTask, readOnly) {
         var me = this,
             taskRater = me.getTaskRater(),
             task = me.getTasksStore().getById(studentTask.get('TaskID'));
@@ -443,7 +455,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskRater.show();
     },
 
-    assignStudentTask: function(taskId, studentId) {
+    doAssignStudentTask: function(taskId, studentId) {
         var me = this,
             taskAssigner = me.getTaskAssigner(),
             student = me.getStudentsStore().getById(studentId),
