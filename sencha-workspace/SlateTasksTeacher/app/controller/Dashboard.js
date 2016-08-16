@@ -54,7 +54,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     routes: {
         'section/:sectionId': {
             sectionId: '([a-zA-Z0-9])+',
-            action: 'viewCourseSection'
+            action: 'showCourseSection'
         }
     },
 
@@ -288,7 +288,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     //
-    viewCourseSection: function(sectionCode) {
+    showCourseSection: function(sectionCode) {
         var me = this,
             courseSelector = me.getCourseSelector(),
             courseSectionsStore = courseSelector.getStore(),
@@ -303,7 +303,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             return;
         } else if (!courseSectionsStore.isLoaded()) {
             courseSectionsStore.load(function() {
-                me.viewCourseSection(sectionCode);
+                me.showCourseSection(sectionCode);
             });
             return;
         }
