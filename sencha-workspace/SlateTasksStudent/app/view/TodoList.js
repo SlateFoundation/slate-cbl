@@ -1,5 +1,4 @@
 Ext.define('SlateTasksStudent.view.TodoList', {
-    //extend: 'Slate.cbl.widget.SimplePanel',
     extend: 'Ext.Container',
     xtype: 'slatetasksstudent-todolist',
     requires:[
@@ -9,7 +8,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         sectionVisibility: {}
     },
 
-    baseCls: 'slate-simplepanel',
+    //baseCls: 'slate-simplepanel',
     componentCls: 'slate-todolist',
 
     listeners: {
@@ -38,7 +37,9 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     tpl: [
     '<tpl for=".">',
         '<div class="slate-simplepanel-header" data-id="{ID}">To-Do List - {section}</div>',
-        '<div id="slate-todolist-section-content-{ID}">',
+        //TODO: replace inline styles with a class
+        '<div id="slate-todolist-section-content-{ID}" ',
+             'style="margin-bottom: 20px; border-radius: 0 0 0.25em 0.25em; box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.166); overflow: hidden;">',
         '<tpl for="todos">' ,
             '<tpl exec="values.parent = parent;"></tpl>', // access to parent when 2 deep
             '<section class="slate-todolist-itemgroup">',
