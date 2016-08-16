@@ -117,13 +117,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
         if (section) {
             if (section.isVisible()) {
-                section.setVisibilityMode(Ext.dom.Element.OFFSETS).slideOut('t', {
+                section.setVisibilityMode(Ext.dom.Element.DISPLAY);
+                section.slideOut('t', {
                     duration: 200
                 });
                 me.recordVisibilityState(section.getAttribute('id'), false);
             } else {
-                section.show();
-                section.setVisibilityMode(Ext.dom.Element.OFFSETS).slideIn('t', {
+                section.slideIn('t', {
                     duration: 200
                 });
                 me.recordVisibilityState(section.getAttribute('id'), true);
