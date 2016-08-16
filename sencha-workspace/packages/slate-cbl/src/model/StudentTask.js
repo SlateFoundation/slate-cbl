@@ -101,10 +101,12 @@ Ext.define('Slate.cbl.model.StudentTask', {
 
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
-            skills = this.get('TaskSkills');
+            skills = this.get('TaskSkills'),
+            compIdx, skill,
+            i = 0;
 
-        Ext.each(skills, function(skill) {
-            var compIdx;
+        for (; i < skills.length; i++) {
+            skill = skills[i];
 
             if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
                 compIdx = compIds.length;
@@ -117,7 +119,7 @@ Ext.define('Slate.cbl.model.StudentTask', {
             }
 
             comps[compIdx].skills.push(skill);
-        });
+        }
 
         return comps;
     }
