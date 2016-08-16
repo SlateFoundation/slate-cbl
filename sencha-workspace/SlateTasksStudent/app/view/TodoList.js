@@ -56,7 +56,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                         '</tpl>',
                     '</tpl>',
                 '</header>',
-                '<ul id="slate-todolist-itemgroup-{parent.ID}-{#}" class="slate-todolist-list" data-parent-id="{parent.ID}">',
+                '<ul id="slate-todolist-itemgroup-{parent.sectionId}-{#}" class="slate-todolist-list" data-parent-id="{parent.ID}">',
                     '<tpl for="items">',
                         '<li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}">',
                             '<input id="todo-item-{ID}" class="slate-todolist-item-checkbox" data-parent-id="{parent.parent.ID}" data-id="{ID}" type="checkbox" <tpl if="Completed">checked</tpl>>',
@@ -140,13 +140,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
         if (itemGroup) {
             if (itemGroup.isVisible()) {
-                itemGroup.setVisibilityMode(Ext.dom.Element.OFFSETS).slideOut('t', {
+                itemGroup.setVisibilityMode(Ext.dom.Element.DISPLAY);
+                itemGroup.slideOut('t', {
                     duration: 200
                 });
                 me.recordVisibilityState(itemGroup.getAttribute('id'), false);
             } else {
-                itemGroup.show();
-                itemGroup.setVisibilityMode(Ext.dom.Element.OFFSETS).slideIn('t', {
+                itemGroup.slideIn('t', {
                     duration: 200
                 });
                 me.recordVisibilityState(itemGroup.getAttribute('id'), true);
