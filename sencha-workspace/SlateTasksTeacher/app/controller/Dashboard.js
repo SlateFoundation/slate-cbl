@@ -196,7 +196,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         comboStore.removeAll();
         comboStore.add(studentsStore.getRange());
         combo.setValueOnData();
-        // console.log('students updated');
     },
 
     onTasksGridCellClick: function(grid, taskId, studentId) {
@@ -209,11 +208,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         if (studentTask) {
             taskStatus = studentTask.get('TaskStatus');
+
             if (taskStatus === 'assigned') {
                 return me.editStudentTask(studentTask);
-            } else if (taskStatus === 'submitted' || taskStatus === 're-submitted' || taskStatus === 're-assigned') {
+            }
+
+            if (taskStatus === 'submitted' || taskStatus === 're-submitted' || taskStatus === 're-assigned') {
                 return me.rateStudentTask(studentTask);
-            } else if (taskStatus === 'completed') {
+            }
+
+            if (taskStatus === 'completed') {
                 return me.rateStudentTask(studentTask, true);
             }
         }
