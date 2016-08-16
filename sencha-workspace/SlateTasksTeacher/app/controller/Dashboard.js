@@ -6,7 +6,8 @@
 Ext.define('SlateTasksTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
-        'Ext.window.Toast'
+        'Ext.window.Toast',
+        'Ext.window.MessageBox'
     ],
 
     // entry points
