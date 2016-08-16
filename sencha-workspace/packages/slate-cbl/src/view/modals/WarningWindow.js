@@ -28,9 +28,9 @@ Ext.define('Slate.cbl.view.modals.WarningWindow', {
                 'Jessie Cunningham',
                 'John Fazio',
                 'Christian Kunkel',
-                'Alexandra Wiest',
+                'Alexandra Wiest'
             ]
-        },
+        }
     },
 
     items: [
