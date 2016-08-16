@@ -170,7 +170,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         me.getDashboardCt().setCourseSection(record);
     },
 
-    onDashboardSectionChange: function(record) {
+    onDashboardSectionChange: function(dashboardView, record) {
         this.redirectTo('section/'+record.get('Code'));
     },
 

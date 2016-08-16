@@ -29,7 +29,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     },
 
     updateCourseSection: function(courseSection) {
-        this.fireEvent('coursesectionselect', courseSection);
+        this.fireEvent('coursesectionselect', this, courseSection);
     },
 
     initComponent: function() {
