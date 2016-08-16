@@ -1,14 +1,15 @@
 Ext.define('SlateTasksTeacher.store.Students',{
     extend: 'Slate.cbl.store.Students',
     requires: [
-        'Emergence.ext.proxy.Records'
+        'Slate.proxy.Records'
     ],
-    proxy: {
-        type: 'slate-records'
-    },
 
     config: {
         courseSection: null
+    },
+
+    proxy: {
+        type: 'slate-records'
     },
 
     updateCourseSection: function(courseSection) {

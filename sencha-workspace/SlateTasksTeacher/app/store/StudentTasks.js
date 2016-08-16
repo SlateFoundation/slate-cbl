@@ -1,7 +1,7 @@
 Ext.define('SlateTasksTeacher.store.StudentTasks', {
     extend: 'Ext.data.Store',
     requires: [
-        'Slate.cbl.model.StudentTask'
+        'Slate.proxy.Records'
     ],
 
     model: 'Slate.cbl.model.StudentTask',
