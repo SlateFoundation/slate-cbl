@@ -11,7 +11,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     // entry points
     control: {
         'slatetasksstudent-todolist': {
-            render: 'onTodosListRender',
+            afterrender: 'onTodosListAfterRender',
             checkclick: 'onTodosListCheckClick',
             clearcompleted: 'onTodosListClearCompletedClick',
             enterkeypress: 'onTodosListEnterKeyPress',
@@ -48,8 +48,12 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
 
     // event handlers
-    onTodosListRender: function() {
-        this.getTodosStore().load();
+    onTodosListAfterRender: function() {
+        var store = this.getTodosStore();
+
+        if (!store.isLoaded() && !store.isLoading()) {
+            store.load();
+        }
     },
 
     onTodosStoreLoad: function(store) {
