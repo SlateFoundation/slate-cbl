@@ -1,16 +1,18 @@
 Ext.define('Slate.cbl.widget.RatingView', {
     extend: 'Ext.Component',
     xtype: 'slate-ratingview',
-    requires: [],
+    requires: [
+        'Ext.menu.Menu'
+    ],
 
     componentCls: 'slate-ratingview',
 
     config: {
         menu: null,
-        menuRatings: [1,2,3,4,5,6,7],
+        menuRatings: [1, 2, 3, 4, 5, 6, 7],
         readOnly: false
     },
-    //todo: add ratings as config.
+    // todo: add ratings as config.
     tpl: [
         '{% this.ratings = values.ratings %}',
 
@@ -61,15 +63,13 @@ Ext.define('Slate.cbl.widget.RatingView', {
             target = Ext.get(t);
 
         if (!me.getReadOnly() && (target.is('.slate-ratingview-rating') || target.is('.slate-ratingview-remove'))) {
-            return me.selectRating(target);
+            me.selectRating(target);
         }
-
     },
 
     selectRating: function(target, showMenu) {
         var me = this,
             skillEl = target.parent('.slate-ratingview-skill'),
-            skillUl = skillEl.parent('ul'),
 
             rating = target.getAttribute('data-rating'),
             competency = skillEl.getAttribute('data-competency'),
@@ -78,7 +78,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
             ratingEls = skillEl.select('.slate-ratingview-rating'),
             naRating = skillEl.down('.slate-ratingview-rating-null');
 
-        //deselect other ratings
+        // deselect other ratings
         ratingEls.removeCls('is-selected');
 
         if (!rating || target == naRating) {
@@ -115,6 +115,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 text: 'N/A',
                 value: null
             }];
+
         if (!me.getReadOnly()) {
             if (!menu && menuRatings.length) {
                 Ext.each(menuRatings, function(mr) {
