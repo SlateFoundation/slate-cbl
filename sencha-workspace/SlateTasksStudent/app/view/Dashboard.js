@@ -1,4 +1,3 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 /**
  * The application's top level container, to be manually rendered to a
  * specific pre-painted container in the design
