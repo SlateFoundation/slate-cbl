@@ -1,14 +1,14 @@
 Ext.define('SlateTasksStudent.view.TodoList', {
     extend: 'Ext.Container',
     xtype: 'slatetasksstudent-todolist',
-    requires:[
+    requires: [
     ],
 
     config: {
         sectionVisibility: {}
     },
 
-    //baseCls: 'slate-simplepanel',
+    // baseCls: 'slate-simplepanel',
     componentCls: 'slate-todolist',
 
     listeners: {
@@ -38,10 +38,10 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     '<tpl for=".">',
         '<div style="margin-bottom: 20px;">',
         '<div class="slate-simplepanel-header" data-id="{ID}">To-Do List - {section}</div>',
-        //TODO: replace inline styles with a class
+        // TODO: replace inline styles with a class
         '<div id="slate-todolist-section-content-{ID}" ',
              'style="border-radius: 0 0 0.25em 0.25em; box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.166); overflow: hidden;">',
-        '<tpl for="todos">' ,
+        '<tpl for="todos">',
             '<tpl exec="values.parent = parent;"></tpl>', // access to parent when 2 deep
             '<section class="slate-todolist-itemgroup">',
                 '<header class="slate-todolist-itemgroup-header">',
@@ -86,13 +86,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     '</tpl>',
     {
         getStatusCls: function(due) {
-            var now = new Date();
+            var now = new Date(),
+                statusText = 'due';
 
-            if (due > now) {
-                return 'due';
-            } else {
-                return 'late';
+            if (due < now) {
+                statusText = 'late';
             }
+            return statusText;
         }
     }],
 
@@ -100,15 +100,12 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         var me = this;
 
         if (ev.getTarget('.slate-todolist-item-checkbox')) {
-            me.fireEvent('checkclick', this, el.getAttribute('data-parent-id'), el.getAttribute('data-id'),el.checked);
-        }
-        else if (ev.getTarget('div.slate-simplepanel-header')) {
+            me.fireEvent('checkclick', this, el.getAttribute('data-parent-id'), el.getAttribute('data-id'), el.checked);
+        } else if (ev.getTarget('div.slate-simplepanel-header')) {
             me.onSectionTitleClick(el);
-        }
-        else if (ev.getTarget('button.slate-todolist-button-clear')) {
+        } else if (ev.getTarget('button.slate-todolist-button-clear')) {
             me.fireEvent('clearcompleted', this, el.getAttribute('data-parent-id'));
-        }
-        else if (ev.getTarget('button.slate-todolist-button-hide')) {
+        } else if (ev.getTarget('button.slate-todolist-button-hide')) {
             me.onHideButtonClick(el);
         }
     },
@@ -158,17 +155,20 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     },
 
     syncItemGroupToggleButtons: function() {
+
+    /*
         var itemGroups = Ext.dom.Query.select('ul.slate-todolist-list'),
             element;
 
         Ext.Array.each(itemGroups, function(item) {
             element = Ext.get(item);
         });
+    */
 
     },
 
     onTextFieldKeypress: function(evt, el) {
-        if (evt.getKey() == evt.ENTER) {
+        if (evt.getKey() === evt.ENTER) {
             this.fireEvent('enterkeypress', this, el.getAttribute('data-parent-id'));
         }
     },
