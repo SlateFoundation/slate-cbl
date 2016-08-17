@@ -1,4 +1,3 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('SlateTasksStudent.controller.Todos', {
     extend: 'Ext.app.Controller',
     requires: [
