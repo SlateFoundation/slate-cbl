@@ -1,5 +1,5 @@
 Ext.define('SlateTasksStudent.view.TodoList', {
-    extend: 'Ext.Container',
+    extend: 'Ext.Component',
     xtype: 'slatetasksstudent-todolist',
     requires: [
     ],
@@ -7,6 +7,8 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     config: {
         sectionVisibility: {}
     },
+
+    title: 'hey hey hey',
 
     // baseCls: 'slate-simplepanel',
     componentCls: 'slate-todolist',
@@ -100,11 +102,11 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         var me = this;
 
         if (ev.getTarget('.slate-todolist-item-checkbox')) {
-            me.fireEvent('checkclick', this, el.getAttribute('data-parent-id'), el.getAttribute('data-id'), el.checked);
+            me.fireEvent('checkclick', me, el.getAttribute('data-parent-id'), el.getAttribute('data-id'), el.checked);
         } else if (ev.getTarget('div.slate-simplepanel-header')) {
             me.onSectionTitleClick(el);
         } else if (ev.getTarget('button.slate-todolist-button-clear')) {
-            me.fireEvent('clearcompleted', this, el.getAttribute('data-parent-id'));
+            me.fireEvent('clearcompleted', me, el.getAttribute('data-parent-id'));
         } else if (ev.getTarget('button.slate-todolist-button-hide')) {
             me.onHideButtonClick(el);
         }
@@ -185,7 +187,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     restoreVisibilityState: function() {
         var me = this,
-            sectionVisibility = this.getSectionVisibility(),
+            sectionVisibility = me.getSectionVisibility(),
             sectionId, section;
 
         for (sectionId in sectionVisibility) {
