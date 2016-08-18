@@ -1,4 +1,4 @@
-/* jslint browser: true, undef: true, laxcomma:true *//* global Ext*/
+/* jslint browser: true, undef: true, laxcomma:true *//* global Ext, Slate*/
 /**
  * The Dashboard controller manages the main functionality of the SlateTasksTeacher application where teachers can
  * browse, search, create, edit, and assign tasks.
@@ -179,23 +179,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             dataStore = grid.getDataStore(),
             studentTask = dataStore.getAt(dataStore.findBy(function(r) {
                 return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
-            })),
-            taskStatus;
+            }));
 
         if (studentTask) {
-            taskStatus = studentTask.get('TaskStatus');
-
-            if (taskStatus === 'assigned') {
-                return me.doEditStudentTask(studentTask);
-            }
-
-            if (taskStatus === 'submitted' || taskStatus === 're-submitted' || taskStatus === 're-assigned') {
-                return me.doRateStudentTask(studentTask);
-            }
-
-            if (taskStatus === 'completed') {
-                return me.doRateStudentTask(studentTask, true);
-            }
+            return me.doRateStudentTask(studentTask, studentTask.get('TaskStatus') === 'completed'); // studentTask, readOnly
         }
 
         return me.doAssignStudentTask(taskId, studentId);
@@ -329,7 +316,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onCreateTaskClick: function() {
         var me = this;
 
-        // todo - allow multiple windows
         me.getTaskEditor().close();
         return me.doEditTask();
     },
