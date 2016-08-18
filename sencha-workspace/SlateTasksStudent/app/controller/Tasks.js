@@ -206,7 +206,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     showTaskData: function(recs, formatCurrenciesFlag) {
         var me = this,
-            formatCurrencies = !!formatCurrenciesFlag, // eslint-disable-line no-implicit-coercion
+            formatCurrencies = Boolean(formatCurrenciesFlag),
             tree = me.getTaskTree(),
             tasks;
 
