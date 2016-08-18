@@ -181,8 +181,8 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     },
 
     insertNewTodo: function(parentId) {
-        var textfield = Ext.dom.Query.select('input#todo-item-new-text-'+parentId)[0],
-            datefield = Ext.dom.Query.select('input#todo-item-new-date-'+parentId)[0],
+        var textfield = Ext.dom.Query.select('input.slate-todolist-new-item-text[data-parent-id="'+parentId)[0],
+            datefield = Ext.dom.Query.select('input.slate-todolist-new-item-date[data-parent-id="'+parentId)[0],
             dueDate = new Date(datefield.value.replace(/-/g, '/')).getTime() / 1000,
             store = this.getTodosStore(),
             parentRec = store.getById(parentId),

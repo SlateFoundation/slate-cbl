@@ -41,7 +41,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '<div style="margin-bottom: 20px;">',
         '<div class="slate-simplepanel-header" data-id="{ID}">To-Do List - {section}</div>',
         // TODO: replace inline styles with a class
-        '<div id="slate-todolist-section-content-{ID}" ',
+        '<div class="slate-todolist-section-content" data-id="{ID}" ',
              'style="border-radius: 0 0 0.25em 0.25em; box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.166); overflow: hidden;">',
         '<tpl for="todos">',
             '<tpl exec="values.parent = parent;"></tpl>', // access to parent when 2 deep
@@ -59,24 +59,24 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                         '</tpl>',
                     '</tpl>',
                 '</header>',
-                '<ul id="slate-todolist-itemgroup-{parent.sectionId}-{#}" class="slate-todolist-list" data-parent-id="{parent.ID}">',
+                '<ul class="slate-todolist-list" data-id="{parent.sectionId}-{#}" data-parent-id="{parent.ID}">',
                     '<tpl for="items">',
                         '<li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}">',
-                            '<input id="todo-item-{ID}" class="slate-todolist-item-checkbox" data-parent-id="{parent.parent.ID}" data-id="{ID}" type="checkbox" <tpl if="Completed">checked</tpl>>',
+                            '<input class="slate-todolist-item-checkbox" data-parent-id="{parent.parent.ID}" data-id="{ID}" type="checkbox" <tpl if="Completed">checked</tpl>>',
                             '<div class="slate-todolist-item-text">',
-                                '<label for="todo-item-{ID}" class="slate-todolist-item-title">{Description}</label>',
+                                '<label for="todo-item" class="slate-todolist-item-title">{Description}</label>',
                             '</div>',
                             '<div class="slate-todolist-item-date">{DueDate:date("M j, Y")}</div>',
                         '</li>',
                     '</tpl>',
                     '<tpl if="canAdd">',
                         '<li class="slate-todolist-item slate-todolist-blank-item slate-todolist-blank-item-{parent.ID}">',
-                            '<input id="todo-item-new-{parent.ID}" class="slate-todolist-item-checkbox" type="checkbox" disabled>',
+                            '<input class="slate-todolist-item-checkbox" type="checkbox" disabled>',
                             '<div class="slate-todolist-item-text">',
-                                '<input id="todo-item-new-text-{parent.ID}" class="slate-todolist-new-item-text" placeholder="New to-do&hellip;" data-parent-id="{parent.ID}">',
+                                '<input class="slate-todolist-new-item-text" placeholder="New to-do&hellip;" data-parent-id="{parent.ID}">',
                             '</div>',
                             '<div class="slate-todolist-item-date">',
-                                '<input id="todo-item-new-date-{parent.ID}" class="slate-todolist-new-item-date" type="date" data-parent-id="{parent.ID}">',
+                                '<input class="slate-todolist-new-item-date" type="date" data-parent-id="{parent.ID}">',
                             '</div>',
                         '</li>',
                     '</tpl>',
@@ -115,7 +115,8 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     onSectionTitleClick: function(el) {
         var me = this,
             sectionId = el.getAttribute('data-id'),
-            section = me.getEl().getById('slate-todolist-section-content-'+sectionId);
+            sectionSelector = '.slate-todolist-section-content[data-id="'+sectionId+'"]',
+            section = me.getEl().down(sectionSelector);
 
         if (section) {
             if (section.isVisible()) {
@@ -123,12 +124,12 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 section.slideOut('t', {
                     duration: 200
                 });
-                me.recordVisibilityState(section.getAttribute('id'), false);
+                me.recordVisibilityState(sectionSelector, false);
             } else {
                 section.slideIn('t', {
                     duration: 200
                 });
-                me.recordVisibilityState(section.getAttribute('id'), true);
+                me.recordVisibilityState(sectionSelector, true);
             }
         }
     },
@@ -137,7 +138,8 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         var me = this,
             sectionId = el.getAttribute('data-parent-id'),
             itemGroupId = sectionId + '-2',
-            itemGroup = me.getEl().getById('slate-todolist-itemgroup-'+itemGroupId);
+            itemGroupSelector = '.slate-todolist-list[data-id="'+itemGroupId+'"]',
+            itemGroup = me.getEl().down(itemGroupSelector);
 
         if (itemGroup) {
             if (itemGroup.isVisible()) {
@@ -145,12 +147,12 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 itemGroup.slideOut('t', {
                     duration: 200
                 });
-                me.recordVisibilityState(itemGroup.getAttribute('id'), false);
+                me.recordVisibilityState(itemGroupSelector, false);
             } else {
                 itemGroup.slideIn('t', {
                     duration: 200
                 });
-                me.recordVisibilityState(itemGroup.getAttribute('id'), true);
+                me.recordVisibilityState(itemGroupSelector, true);
             }
         }
         me.syncItemGroupToggleButtons();
@@ -188,13 +190,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     restoreVisibilityState: function() {
         var me = this,
             sectionVisibility = me.getSectionVisibility(),
-            sectionId, section;
+            sectionSelector, section;
 
-        for (sectionId in sectionVisibility) {
-            if (sectionVisibility.hasOwnProperty(sectionId)) {
-                section = me.getEl().getById(sectionId);
+        for (sectionSelector in sectionVisibility) {
+            if (sectionVisibility.hasOwnProperty(sectionSelector)) {
+                section = me.getEl().down(sectionSelector);
                 if (section) {
-                    section.setVisibilityMode(Ext.dom.Element.OFFSETS).setVisible(sectionVisibility[sectionId]);
+                    section.setVisibilityMode(Ext.dom.Element.DISPLAY).setVisible(sectionVisibility[sectionSelector]);
                 }
             }
         }
