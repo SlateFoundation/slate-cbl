@@ -24,6 +24,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             },
             {
                 xtype: 'button',
+                itemId: 'submit',
                 text: 'Submit',
             }]
         }]
