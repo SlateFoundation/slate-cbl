@@ -19,9 +19,9 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             fn: 'onElClick',
             delegate: [
                 '.slate-todolist-item-checkbox',
-                'div.slate-simplepanel-header',
-                'button.slate-todolist-button-clear',
-                'button.slate-todolist-button-hide'
+                '.slate-simplepanel-header',
+                '.slate-todolist-button-clear',
+                '.slate-todolist-button-hide'
             ].join()
         },
         keypress: {
@@ -104,11 +104,11 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
         if (ev.getTarget('.slate-todolist-item-checkbox')) {
             me.fireEvent('checkclick', me, el.getAttribute('data-parent-id'), el.getAttribute('data-id'), el.checked);
-        } else if (ev.getTarget('div.slate-simplepanel-header')) {
+        } else if (ev.getTarget('.slate-simplepanel-header')) {
             me.onSectionTitleClick(el);
-        } else if (ev.getTarget('button.slate-todolist-button-clear')) {
+        } else if (ev.getTarget('.slate-todolist-button-clear')) {
             me.fireEvent('clearcompleted', me, el.getAttribute('data-parent-id'));
-        } else if (ev.getTarget('button.slate-todolist-button-hide')) {
+        } else if (ev.getTarget('.slate-todolist-button-hide')) {
             me.onHideButtonClick(el);
         }
     },
