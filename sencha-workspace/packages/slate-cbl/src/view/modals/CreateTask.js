@@ -23,7 +23,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         me.callParent(arguments);
         form = me.down('slate-modalform');
 
-        //check if this form allows assigning
+        // check if this form allows assigning
         if (me.getEnableAssignments()) {
             form.insert(3, {
                 xtype: 'datefield',
@@ -35,12 +35,13 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 name: 'ExpirationDate',
                 fieldLabel: 'Expiration Date'
             });
-            form.insert(5, {xtype: 'slate-tasks-assignmentsfield'});
+            form.insert(5, { xtype: 'slate-tasks-assignmentsfield' });
         }
     },
 
     afterRender: function() {
         var me = this;
+
         me.callParent();
 
         // me.down('#experience-type').addCls('has-warning');
@@ -106,7 +107,6 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     displayField: 'name',
                     valueField: 'name',
                     allowBlank: true,
-                    forceSelection: true,
                     queryParam: 'q',
                     store: {
                         fields: ['name'],
