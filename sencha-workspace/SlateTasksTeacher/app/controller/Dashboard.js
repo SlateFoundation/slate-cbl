@@ -329,8 +329,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onCreateTaskClick: function() {
         var me = this;
 
+        // todo - allow multiple windows
         me.getTaskEditor().close();
-        return me.doEditTask(me.getTaskModel().create());
+        return me.doEditTask();
     },
 
 
@@ -380,6 +381,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             assignmentsField = me.getAssignmentsField(),
             courseSection = me.getCourseSelector().getSelection(),
             record = form.updateRecord().getRecord(),
+            wasPhantom = record.phantom,
             errors;
 
         record.set('Skills', skillsField.getSkills(false)); // returnRecords
@@ -400,8 +402,13 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             return;
         }
         record.save({
-            success: function() {
+            success: function(rec) {
                 me.getTaskEditor().close();
+                if (wasPhantom) {
+                    me.getTasksStore().add(rec);
+                    // reload studenttasks, as new records may exist
+                    me.getStudentTasksStore().reload();
+                }
                 Ext.toast('Task succesfully saved!');
             }
         });
