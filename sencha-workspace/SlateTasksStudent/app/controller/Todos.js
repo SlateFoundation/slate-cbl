@@ -65,9 +65,10 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     onTodosListCheckClick: function(cmp, parentId, recordId, checked) {
         var me = this,
-            rec = me.getTodosStore().getById(parentId).Todos().getById(recordId);
+            todosStore = me.getTodosStore().getById(parentId).Todos(), // eslint-disable-line new-cap
+            rec = todosStore.getById(recordId);
 
-        rec.set('Completed',checked);
+        rec.set('Completed', checked);
         rec.save({
             success: function() {
                 me.getTodosStore().load();
@@ -81,7 +82,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     onTodosListClearCompletedClick: function(cmp, sectionId) {
         var me = this;
 
-        Slate.API.request({
+        Slate.API.request({     // eslint-disable-line no-undef
             url: '/cbl/todos/clear-section',
             params: {
                 sectionId: sectionId
@@ -117,7 +118,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         for (;i<recsLength; i++) {
             rec = recs[i];
 
-            todos = me.formatTodos(rec.Todos().getRange());
+            todos = me.formatTodos(rec.Todos().getRange()); // eslint-disable-line new-cap
 
             Ext.apply(todos, {
                 section: rec.get('Title'),
@@ -163,7 +164,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
                     icon: 'times',
                     action: 'clear',
                     text: 'Clear All'
-                },{
+                }, {
                     icon: 'caret-up',
                     action: 'hide',
                     text: 'Hide'
@@ -172,13 +173,13 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             });
         }
 
-        return {todos: todos};
+        return { todos: todos };
     },
 
     insertNewTodo: function(parentId) {
         var textfield = Ext.dom.Query.select('input#todo-item-new-text-'+parentId)[0],
             datefield = Ext.dom.Query.select('input#todo-item-new-date-'+parentId)[0],
-            dueDate = new Date(datefield.value.replace(/-/g, '\/')).getTime() / 1000,
+            dueDate = new Date(datefield.value.replace(/-/g, '/')).getTime() / 1000,
             store = this.getTodosStore(),
             parentRec = store.getById(parentId),
             rec;
