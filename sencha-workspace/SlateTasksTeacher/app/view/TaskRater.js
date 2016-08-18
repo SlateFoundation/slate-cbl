@@ -6,7 +6,7 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
         readOnly: null
     },
 
-    updateTask: function(task, oldTask) {
+    updateTask: function(task) {
         var me = this,
             form = me.down('slate-modalform'),
             attachmentsField = me.down('slate-tasks-attachmentsfield'),
@@ -24,12 +24,10 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
         skillsField.setReadOnly(true);
     },
 
-    updateStudentTask: function(studentTask, oldStudentTask) {
+    updateStudentTask: function(studentTask) {
         var me = this,
             form = me.down('slate-modalform'),
             ratingsView = me.down('slate-ratingview'),
-            skillRatingIds = [],
-            task = me.getTask(),
             groupedSkills = studentTask.getTaskSkillsGroupedByCompetency();
 
 
@@ -46,14 +44,17 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
     updateReadOnly: function(readOnly) {
         var me = this,
             toolbarBtns = me.query('container[dock=bottom] button'),
+            attachmentsField = me.down('slate-tasks-attachmentsfield'),
             commentField = me.down('textareafield'),
-            ratingView = me.down('slate-ratingview');
+            ratingView = me.down('slate-ratingview'),
+            i = 0;
 
         ratingView.setReadOnly(readOnly);
         commentField.setReadOnly(readOnly);
-        Ext.each(toolbarBtns, function(btn) {
-            btn.setDisabled(readOnly);
-        });
-        // debugger;
+        attachmentsField.setReadOnly(readOnly);
+
+        for (; i < toolbarBtns.length; i++) {
+            toolbarBtns[i].setDisabled(readOnly);
+        }
     }
 });
