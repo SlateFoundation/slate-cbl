@@ -11,6 +11,9 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         },
         'slatetasksstudent-tasktree': {
             resize: 'onTaskTreeResize'
+        },
+        'combo#section-selector': {
+            select: 'onSectionSelectorSelect'
         }
     },
 
@@ -38,10 +41,16 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             xtype: 'slatetasksstudent-appheader'
         },
         taskTree: {
-            selector: 'slate-tasktree',
+            selector: 'slatetasksstudent-tasktree',
             autoCreate: true,
 
-            xtype: 'slate-tasktree'
+            xtype: 'slatetasksstudent-tasktree'
+        },
+        todoList: {
+            selector: 'slatetasksstudent-todolist',
+            autoCreate: true,
+
+            xtype: 'slatetasksstudent-todolist'
         },
         recentActivity: {
             selector: 'slatetasksstudent-recentactivity',
@@ -80,6 +89,13 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.maskDemoElements();
     },
 
+    onSectionSelectorSelect: function(combo, rec) {
+        var me = this,
+            courseSection = rec.get('Code');
+
+        me.getTodoList().setCourseSection(courseSection);
+        me.getTaskTree().setCourseSection(courseSection);
+    },
 
     // custom controller methods
     maskDemoElements: function () {
