@@ -44,14 +44,14 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
     updateReadOnly: function(readOnly) {
         var me = this,
             toolbarBtns = me.query('container[dock=bottom] button'),
-            attachmentsField = me.down('slate-tasks-attachmentsfield'),
+            // attachmentsField = me.down('slate-tasks-attachmentsfield'),
             commentField = me.down('textareafield'),
             ratingView = me.down('slate-ratingview'),
             i = 0;
 
         ratingView.setReadOnly(readOnly);
         commentField.setReadOnly(readOnly);
-        attachmentsField.setReadOnly(readOnly);
+        // attachmentsField.setReadOnly(readOnly); // todo: implement studenttask specific attachments
 
         for (; i < toolbarBtns.length; i++) {
             toolbarBtns[i].setDisabled(readOnly);
