@@ -4,6 +4,10 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     requires:[
     ],
 
+    config: {
+        courseSection: null
+    },
+
     title: 'Current Tasks',
     showTools: true,
 
@@ -229,5 +233,11 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 this.fireEvent('itemclick',recordId);
             }
         }
+    },
+
+    updateCourseSection: function(val) {
+        var me = this;
+
+        me.fireEvent('coursesectionchange', me, val);
     }
 });

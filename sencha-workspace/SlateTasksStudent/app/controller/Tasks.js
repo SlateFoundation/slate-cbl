@@ -8,7 +8,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     control: {
         'slatetasksstudent-tasktree': {
             render: 'onTaskTreeRender',
-            itemclick: 'onTaskTreeItemClick'
+            itemclick: 'onTaskTreeItemClick',
+            coursesectionchange: 'onTaskTreeCourseSectionChange'
         },
         ratingView: {
             afterrender: 'onRatingViewAfterRender'
@@ -184,6 +185,13 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         me.displayTaskData(store.getRange());
     },
 
+    onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
+        this.getStudentTasksStore().load({
+            params: {
+                'course_section': courseSectionId
+            }
+        });
+    },
 
     // custom controller methods
     displayTaskData: function(recs, formatCurrenciesFlag) {
