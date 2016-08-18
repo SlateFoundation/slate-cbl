@@ -1,8 +1,6 @@
 Ext.define('SlateTasksStudent.view.TaskTree', {
     extend: 'Slate.cbl.widget.SimplePanel',
     xtype: 'slatetasksstudent-tasktree',
-    requires:[
-    ],
 
     config: {
         courseSection: null
@@ -44,7 +42,11 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                     xtype: 'menucheckitem'
                                 },
                                 items: [
-                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Status' },
+                                    {
+                                        xtype: 'component',
+                                        cls: 'slate-menu-header',
+                                        html: 'Status'
+                                    },
                                     {
                                         text: 'Due Tasks',
                                         filterGroup: 'Status',
@@ -73,7 +75,11 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                             return rec.get('TaskStatus') !== 'completed';
                                         }
                                     },
-                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Timeline' },
+                                    {
+                                        xtype: 'component',
+                                        cls: 'slate-menu-header',
+                                        html: 'Timeline'
+                                    },
                                     {
                                         text: 'Past Due',
                                         filterGroup: 'Timeline',
@@ -81,7 +87,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                             var now = new Date(),
                                                 due = rec.get('DueDate');
 
-                                            return !due || (rec.get('DueDate') >= now);
+                                            return !due || rec.get('DueDate') >= now;
                                         }
                                     },
                                     {
@@ -91,7 +97,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                             var now = new Date(),
                                                 due = rec.get('DueDate');
 
-                                            return !due || (due.toDateString() !== now.toDateString());
+                                            return !due || due.toDateString() !== now.toDateString();
                                         }
                                     },
                                     {
@@ -101,7 +107,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                             var now = new Date(),
                                                 due = rec.get('DueDate');
 
-                                            return !due || (Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now));
+                                            return !due || Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now);
                                         }
                                     },
                                     {
@@ -111,7 +117,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                             var now = new Date(),
                                                 due = rec.get('DueDate');
 
-                                            return !due || (Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now)+1);
+                                            return !due || Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now)+1;
                                         }
                                     },
                                     { xtype: 'menuseparator' },
@@ -197,17 +203,18 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 return statusStrings[taskStatus] || '';
             },
             getDueStatusCls: function(due, taskStatus) {
-                var now = new Date();
+                var now = new Date(),
+                    statusCls = 'due';
 
-                if (due > now) {
-                    if (taskStatus === 'completed') {
-                        return 'completed';
-                    } else {
-                        return 'due';
-                    }
+                if (due < now) {
+                    statusCls = 'late';
+                } else if (taskStatus === 'completed') {
+                    return 'completed';
                 } else {
-                    return 'late';
+                    return 'due';
                 }
+
+                return statusCls;
             }
         }
     ],
@@ -222,7 +229,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
     onTreeClick: function(ev, t) {
         var target = Ext.get(t),
-            parentEl,recordId;
+            parentEl, recordId;
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
             target.up('.slate-tasktree-item').toggleCls('is-expanded');
@@ -230,7 +237,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             parentEl = target.up('.slate-tasktree-item');
             if (parentEl) {
                 recordId = parentEl.dom.getAttribute('recordId');
-                this.fireEvent('itemclick',recordId);
+                this.fireEvent('itemclick', recordId);
             }
         }
     },
