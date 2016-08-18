@@ -22,7 +22,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
             fieldLabel: 'Course Section',
             labelWidth: 120,
 
-            store: {xclass: 'SlateTasksStudent.store.CourseSections'},
+            store: { xclass: 'SlateTasksStudent.store.CourseSections' },
 
             displayField: 'Title',
             valueField: 'ID',
@@ -32,7 +32,8 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
         },
         {
             xtype: 'tbfill'
-        },{
+        },
+        {
             xtype: 'button',
             iconCls: 'x-fa fa-clock-o',
             enableToggle: true,
