@@ -32,6 +32,10 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         'TodoList'
     ],
 
+    models: [
+        'Todo'
+    ],
+
     stores: [
         'Todos'
     ],
@@ -185,7 +189,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             rec;
 
         if (textfield.value && datefield.value) {
-            rec = Ext.create('SlateTasksStudent.model.Todo', {
+            rec = this.getTodoModel().create({
                 SectionID: parentRec.get('SectionID'),
                 StudentID: parentRec.get('StudentID'),
                 Description: textfield.value,
