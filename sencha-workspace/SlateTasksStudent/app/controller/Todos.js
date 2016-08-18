@@ -14,7 +14,8 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             checkclick: 'onTodosListCheckClick',
             clearcompleted: 'onTodosListClearCompletedClick',
             enterkeypress: 'onTodosListEnterKeyPress',
-            datechange: 'onTodosListDateChange'
+            datechange: 'onTodosListDateChange',
+            coursesectionchange: 'onTodosListCourseSectionChange'
         }
     },
 
@@ -106,6 +107,14 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     onTodosListDateChange: function(cmp, parentId) {
         this.insertNewTodo(parentId);
+    },
+
+    onTodosListCourseSectionChange: function(todoList, courseSectionId) {
+        this.getTodosStore().load({
+            params: {
+                'course_section': courseSectionId
+            }
+        });
     },
 
 

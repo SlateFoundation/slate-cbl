@@ -5,10 +5,9 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     ],
 
     config: {
+        courseSection: null,
         sectionVisibility: {}
     },
-
-    title: 'hey hey hey',
 
     // baseCls: 'slate-simplepanel',
     componentCls: 'slate-todolist',
@@ -34,6 +33,12 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             fn: 'onDateChange',
             delegate: 'input.slate-todolist-new-item-date'
         }
+    },
+
+    updateCourseSection: function(val) {
+        var me = this;
+
+        me.fireEvent('coursesectionchange', me, val);
     },
 
     tpl: [
