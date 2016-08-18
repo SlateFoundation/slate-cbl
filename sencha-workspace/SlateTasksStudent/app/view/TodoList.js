@@ -94,12 +94,12 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         {
             getStatusCls: function(due) {
                 var now = new Date(),
-                    statusText = 'due';
+                    statusCls = 'due';
 
                 if (due < now) {
-                    statusText = 'late';
+                    statusCls = 'late';
                 }
-                return statusText;
+                return statusCls;
             }
         }
     ],
