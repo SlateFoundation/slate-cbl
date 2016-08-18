@@ -8,8 +8,7 @@
         "SlateDemonstrationsTeacher",
         "SlateTasksManager",
         "SlateTasksStudent",
-        "SlateTasksTeacher",
-        "SlateModals"
+        "SlateTasksTeacher"
     ],
 
     /**
