@@ -148,7 +148,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                             '<div class="slate-tasktree-text">',
                                 '<div class="slate-tasktree-title">{Title}</div>',
                                 '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                '<div class="slate-tasktree-date">{DueDate:date("M d, Y")}</div>',
+                                '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
                             '</div>',
                         '</div>',
                     '</div>',
@@ -191,6 +191,15 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 };
 
                 return statusStrings[taskStatus] || '';
+            },
+            getStatusDate: function(task) {
+                var taskStatus = task.TaskStatus;
+
+                if (taskStatus === 'submitted' || taskStatus === 're-submitted') {
+                    return Ext.Date.dateFormat(task.Submitted,"M d, Y");
+                } else {
+                    return Ext.Date.dateFormat(task.DueDate,"M d, Y");
+                }
             },
             getDueStatusCls: function(due, taskStatus) {
                 var now = new Date();
