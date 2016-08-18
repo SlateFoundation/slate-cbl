@@ -50,7 +50,7 @@
                 font-weight: normal;
                 text-shadow: none;
             }
-            
+
             &.cbl-grid-demo-missed {
                 background-color: #C8C8C8;
             }
@@ -100,7 +100,7 @@
 }
 
 .is-average-low {
-    background-image: image-url('cbl/halted-progress.png');
+    background-image: url('slate-cbl/images/halted-progress.png');
 }
 
 .cbl-progress-bar {
