@@ -39,7 +39,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     // controller configuration
     views: [
         'TaskTree',
-        'TaskDetails'
+        'TaskDetails',
+        'TaskFilters'
     ],
 
     stores: [
