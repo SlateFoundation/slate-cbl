@@ -1,9 +1,46 @@
 Ext.define('SlateTasksTeacher.view.TaskRater', {
     extend: 'Slate.cbl.view.modals.RateTask',
+    requires: [
+        'Ext.form.FieldContainer'
+    ],
 
     xtype: 'slate-tasks-teacher-taskrater',
     config: {
         readOnly: null
+    },
+
+    initComponent: function() {
+        var me = this;
+
+        me.items[0].items.push({
+            xtype: 'fieldcontainer',
+            fieldLabel: 'Re-Assign Task',
+            layout: 'hbox',
+            items: [{
+                xtype: 'datefield',
+                name: 'RevisionDate',
+                flex: 7,
+                listeners: {
+                    change: function() {
+                        // enable reassign button if date is set & valid
+                        this.next('button').setDisabled(!(this.getValue() && this.isValid()));
+                    }
+                }
+            }, {
+                xtype: 'button',
+                text: 'ReAssign',
+                disabled: true,
+                flex: 3,
+                handler: function() {
+                    var dateField = this.prev('datefield');
+
+                    // fire reassign event
+                    me.fireEvent('reassign', me, dateField, dateField.getValue());
+                }
+            }]
+        });
+
+        me.callParent(arguments);
     },
 
     updateTask: function(task) {

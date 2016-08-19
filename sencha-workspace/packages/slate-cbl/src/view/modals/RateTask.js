@@ -53,13 +53,6 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                         {
                             text: 'Unassign Task',
                             action: 'unassign'
-                        },
-                        {
-                            xtype: 'tbfill'
-                        },
-                        {
-                            text: 'Assign Revision',
-                            action: 'reassign'
                         }
                     ]
                 }

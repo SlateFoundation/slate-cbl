@@ -76,7 +76,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
 
-
     // entry points
     routes: {
         'section/:sectionId': {
@@ -95,6 +94,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         tasksGrid: {
             cellclick: 'onTasksGridCellClick',
             subcellclick: 'onTasksGridCellClick'
+        },
+        taskRater: {
+            reassign: 'onReAssignStudentTaskClick'
         },
         assignmentsComboField: {
             render: 'onAssigneeComboRender'
@@ -186,6 +188,22 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
 
         return me.doAssignStudentTask(taskId, studentId);
+    },
+
+    onReAssignStudentTaskClick: function(taskRater, dateField, date) {
+        var studentTask = taskRater.getStudentTask();
+
+        studentTask.set({
+            DueDate: date,
+            TaskStatus: 're-assigned'
+        });
+
+        studentTask.save({
+            success: function(rec) {
+                taskRater.updateStudentTask(rec);
+                dateField.setValue('');
+            }
+        });
     },
 
     onAssigneeComboRender: function(combo) {
