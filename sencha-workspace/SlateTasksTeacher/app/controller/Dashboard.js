@@ -94,7 +94,11 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         },
         tasksGrid: {
             cellclick: 'onTasksGridCellClick',
-            subcellclick: 'onTasksGridCellClick'
+            subcellclick: 'onTasksGridCellClick',
+            rowheaderclick: 'onTasksGridRowHeaderClick',
+            subrowheaderclick: 'onTasksGridRowHeaderClick',
+            beforeexpand: 'onBeforeRowHeaderToggle',
+            beforecollapse: 'onBeforeRowHeaderToggle'
         },
         assignmentsComboField: {
             render: 'onAssigneeComboRender'
@@ -186,6 +190,26 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
 
         return me.doAssignStudentTask(taskId, studentId);
+    },
+
+    onTasksGridRowHeaderClick: function(grid, rowId, el, ev) {
+        var me = this,
+            task;
+
+        if (ev.getTarget('.jarvus-aggregrid-rowheader .edit-row')) {
+            task = me.getTasksStore().getById(rowId);
+
+            me.doEditTask(task);
+            return;
+        }
+
+        return null;
+    },
+
+    onBeforeRowHeaderToggle: function(grid, rowId, el, ev) {
+        if (ev.getTarget('.jarvus-aggregrid-rowheader .edit-row')) {
+            return false;
+        }
     },
 
     onAssigneeComboRender: function(combo) {
