@@ -62,7 +62,7 @@ Ext.define('Slate.cbl.widget.CommentsField', {
 
     updateRecord: function(record) {
         var me = this,
-            list = me.down('component');
+            list = me.down('#comments-list');
 
         list.update(record.get('Comments'));
     },
@@ -80,6 +80,6 @@ Ext.define('Slate.cbl.widget.CommentsField', {
 
         field = me.down('textareafield');
 
-        field.setReadOnly(readOnly);
+        field[readOnly?'hide':'show']();
     }
 })
