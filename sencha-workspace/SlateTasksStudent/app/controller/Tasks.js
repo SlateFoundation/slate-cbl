@@ -11,9 +11,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             render: 'onTaskTreeRender',
             itemclick: 'onTaskTreeItemClick'
         },
-        ratingView: {
-            afterrender: 'onRatingViewAfterRender'
-        },
         submitButton: {
             click: 'onSubmitButtonClick'
         },
@@ -64,10 +61,11 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         ratingView: 'slate-modalform slate-ratingview',
         taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
         commentsField: 'slate-commentsfield',
-        attachmentsField: 'slate-modalform slate-tasks-attachmentsfield',
-        attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
-        addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
-        addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
+        teacherAttachmentsField: 'slate-tasks-attachmentsfield#teacher-attachments',
+        studentAttachmentsField: 'slate-tasks-attachmentsfield#student-attachments',
+        // attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
+        // addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
+        // addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
         submitButton: 'slate-taskdetails button#submit'
     },
 
@@ -91,9 +89,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
             ratingView = me.getRatingView(),
-            attachmentsField = me.getAttachmentsField(),
+            teacherAttachmentsField = me.getTeacherAttachmentsField(),
+            studentAttachmentsField = me.getStudentAttachmentsField(),
             commentsField = me.getCommentsField(),
-            readonly = (rec.get('TaskStatus') === 'completed');
+            readonly = rec.get('TaskStatus') === 'completed';
 
         form.getForm().loadRecord(rec);
 
@@ -103,35 +102,24 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
 
         me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
-
-        me.getAttachmentsField().setAttachments(rec.get('Task').Attachments);
-
+        teacherAttachmentsField.setAttachments(rec.get('Task').Attachments);
+        teacherAttachmentsField.setReadOnly(true);
         commentsField.setRecord(rec);
         commentsField.setReadOnly(true);
 
-
-        attachmentsField.setAttachments(rec.Attachments().getRange());
-        attachmentsField.setReadOnly(readonly);
-
-        // me.getAttachmentsTextField().setDisabled(readonly);
-        // me.getAddLinkButton().setDisabled(readonly);
-        // me.getAddAttachmentButton().setDisabled(readonly);  //TODO: uncomment when attachments implemented
+        studentAttachmentsField.setAttachments(rec.Attachments().getRange());
+        studentAttachmentsField.setReadOnly(readonly);
 
         me.getSubmitButton().setDisabled(readonly);
 
         details.show();
     },
 
-    onRatingViewAfterRender: function(view) {
-        // this.hideRatingViewElements(view);
-    },
-
     onSubmitButtonClick: function() {
         var me = this,
             form = me.getTaskForm(),
-            attachmentsField = me.getAttachmentsField();
-
-        record = form.getRecord();
+            attachmentsField = me.getStudentAttachmentsField(),
+            record = form.getRecord();
 
         record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
 
@@ -152,7 +140,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             menu = me.getFilterMenu(),
             statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
             timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
-            store = this.getStudentTasksStore(),
+            store = me.getStudentTasksStore(),
             recs = store.getRange(),
             recLength = recs.length,
             i = 0,
@@ -190,27 +178,13 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     // custom controller methods
-    displayTaskData: function(recs, formatCurrenciesFlag) {
+    displayTaskData: function(recs) {
         var me = this,
-            taskTree = me.getTaskTree();
-
-        taskTree.update({}); // clear so mask text will be in a reasonable position
-        me.getTaskTree().mask('Formatting task data');
-        Ext.defer(me.showTaskData, 100, me, [recs, formatCurrenciesFlag]);
-    },
-
-    showTaskData: function(recs, formatCurrenciesFlag) {
-        var me = this,
-            formatCurrencies = !!formatCurrenciesFlag,
             tree = me.getTaskTree(),
             tasks;
 
-        // if (formatCurrencies) {
-        //     me.formatCompetencies(recs);
-        // }
-
         tasks = me.formatTaskData(recs);
-        tree.update({tasks: tasks});
+        tree.update({ tasks: tasks });
         tree.unmask();
     },
 
@@ -228,9 +202,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             parentRec = parentRecs[i];
             task = parentRec.getData();
             subTasks = me.getSubTasks(recs, task.TaskID);
+
             if (subTasks.length > 0) {
                 task.subtasks = subTasks;
-                parentRec.set('filtered',false); // do not filter parent tasks that have unfiltered subtasks
+                parentRec.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
             }
             if (!parentRec.get('filtered')) {
                 tasks.push(task);
@@ -265,93 +240,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         for (; i<recsLength; i++) {
             rec = recs[i];
             if (rec.get('ParentTaskID') === parentId && !rec.get('filtered')) {
-                rec.set('ParentTaskTitle',rec.get('Task').ParentTask.Title);
+                rec.set('ParentTaskTitle', rec.get('Task').ParentTask.Title);
                 subTasks.push(rec.getData());
             }
         }
 
         return subTasks;
-    },
-
-    /*
-     * Group skills by Competency for each task.
-     * Task Object has Skills, Skills have a Competency, but we wish to group skills by Competency
-     */
-    formatCompetencies: function(recs) {
-        var recsLength = recs.length,
-            skill,
-            skills,
-            skillsLength,
-            ratings,
-            skillRating,
-            skillRatings,
-            skillRatingsLength,
-            competencies = {},
-            i = 0, j;
-
-        for (; i<recsLength; i++) {
-            rec = recs[i];
-
-            // put skill ratings in an object map indexed by skill ID
-            ratings = {},
-            skillRatings = rec.get('SkillRatings');
-            skillRatingsLength = skillRatings.length;
-            for (j=0; j<skillRatingsLength; j++) {
-                skillRating = skillRatings[j];
-                ratings[skillRating.SkillID] = skillRating.Score;
-            }
-
-            skills = rec.Skills().getRange();
-            skillsLength = skills.length;
-
-            // Index competencies by ID, filtering out duplicates
-            for (j=0; j<skillsLength; j++) {
-                skill = skills[j];
-                competencies[skill.get('CompetencyID')] = Ext.apply({Skills:[]}, skill.get('Competency'));
-            }
-
-            // Assign skills to their competency
-            for (j=0; j<skillsLength; j++) {
-                skill = skills[j];
-
-                // Add score
-                if (ratings[skill.get('ID')]) {
-                    skill.set('SkillRating', ratings[skill.get('ID')]);
-                }
-                competencies[skill.get('CompetencyID')].Skills.push(skill.getData());
-            }
-
-            rec.set('Competencies',Ext.Object.getValues(competencies));
-        }
-    },
-
-
-    /* TODO: hiding elements that don't need to be in student view, but maybe we should do a
-     * custom component instead
-     */
-    hideRatingViewElements: function(view) {
-        var viewEl = view.getEl();
-
-        if (viewEl) {
-            Ext.each(viewEl.query('button.slate-ratingview-remove',false), function(el) {
-                el.hide();
-            });
-            Ext.each(viewEl.query('li.slate-ratingview-rating-null',false), function(el) {
-                el.hide();
-            });
-        }
-    },
-
-    formatCommentData: function(recs) {
-        var recsLength = recs.length,
-            comments = [],
-            i = 0;
-
-        for (; i<recsLength; i++) {
-            comments.push(recs[i].getData());
-        }
-
-        return {comments: comments};
     },
 
     /**
@@ -362,7 +256,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
      */
     filterRecord: function(rec, filterGroup) {
         var filterGroupLength = filterGroup.length,
-            filtered = filterGroupLength === 0 ? false : true,  // if no filters, return false
+            filtered = filterGroupLength !== 0,  // if no filters, return false
             i = 0;
 
         for (; i < filterGroupLength; i++) {
