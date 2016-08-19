@@ -124,12 +124,8 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         {
             name: 'FullName',
             depends: ['FirstName', 'LastName'],
-<<<<<<< HEAD
-            convert: function(v, r) {
-=======
             persist: false,
-            convert: function(v,r) {
->>>>>>> 38c91cb... WIP: Fix ratings view
+            convert: function(v, r) {
                 return r.get('FirstName') + ' ' + r.get('LastName');
             }
         },
