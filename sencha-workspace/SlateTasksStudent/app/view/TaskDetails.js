@@ -5,7 +5,9 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         'Slate.cbl.view.AttachmentsList',
         'Slate.cbl.widget.AttachmentsField',
         'Slate.cbl.view.modals.ModalForm',
-        'Slate.cbl.widget.RatingView'
+        'Slate.cbl.widget.CommentsField',
+        'Slate.cbl.widget.RatingView',
+        'Ext.util.Format'
     ],
 
     modal: true,
@@ -21,8 +23,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             layout: 'hbox',
             items: [{
                 xtype: 'tbfill'
-            },
-            {
+            }, {
                 xtype: 'button',
                 itemId: 'submit',
                 text: 'Submit',
@@ -48,7 +49,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         },
         {
             fieldLabel: 'Type of Experience',
-            value: 'Workshop'
+            name: 'TaskExperienceType'
         },
         {
             fieldLabel: 'Due Date',
@@ -61,13 +62,9 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             renderer: Ext.util.Format.dateRenderer('m/d/y')
         },
         {
-            xtype: 'fieldcontainer',
-            fieldLabel: 'Attachments',
-            items: [{
-                xtype: 'slate-attachmentslist',
-                itemId: 'task-attachments',
-                editable: false
-            }]
+            xtype: 'slate-tasks-attachmentsfield',
+            itemId: 'teacher-attachments',
+            readOnly: true
         },
         {
             fieldLabel: 'Submitted Date',
@@ -75,25 +72,16 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             renderer: Ext.util.Format.dateRenderer('m/d/y')
         },
         {
-            xtype: 'slate-ratingview'
+            xtype: 'slate-ratingview',
+            readOnly: true
         },
         {
-            xtype: 'component',
-            itemId: 'comments',
-            // TODO: I didn't find a modal example for this comment list, so I made the CSS classnames up.
-            tpl: [
-                '<tpl if="comments"><div class="slate-task-comment-label">Teacher Comments:</div></tpl>',
-                '<ul class="slate-task-comments">',
-                    '<tpl for="comments">',
-                        '<div class="slate-task-comment-date">{Created:date("M d, Y")}</div>',
-                        '<div class="slate-task-comment-text">{Message}</div>',
-                        '<hr>',
-                    '</tpl>',
-                '</ul>'
-            ]
+            xtype: 'slate-commentsfield',
+            fieldLabel: 'Teacher Comments'
         },
         {
-            xtype: 'slate-tasks-attachmentsfield'
+            xtype: 'slate-tasks-attachmentsfield',
+            itemId: 'student-attachments',
         }]
     }]
 });

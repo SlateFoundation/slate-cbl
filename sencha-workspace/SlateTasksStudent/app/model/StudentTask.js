@@ -25,12 +25,14 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             name: 'Created',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'CreatorID',
             type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'TaskID',
@@ -45,25 +47,28 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             name: 'TaskClass',
             type: 'string',
             mapping: 'Task.Class',
-            defaultValue: '\\Slate\\CBL\\Tasks\\Task'
+            defaultValue: '\\Slate\\CBL\\Tasks\\ExperienceTask'
         },
         {
             name: 'TaskCreated',
             type: 'date',
             mapping: 'Task.Created',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'Title',
             type: 'string',
             mapping: 'Task.Title',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'Status',
             mapping: 'Task.Status',
-            type: 'string'
+            type: 'string',
+            persist: false
         },
         {
             name: 'DueDate',
@@ -96,25 +101,30 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             name: 'ParentTaskID',
             type: 'int',
             mapping: 'Task.ParentTaskID',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'ParentTaskTitle',
-            type: 'string'
+            type: 'string',
+            persist: false
         },
         {
             name: 'FirstName',
             mapping: 'Student.FirstName',
-            type: 'string'
+            type: 'string',
+            persist: false
         },
         {
             name: 'LastName',
             mapping: 'Student.LastName',
-            type: 'string'
+            type: 'string',
+            persist: false
         },
         {
             name: 'FullName',
             depends: ['FirstName', 'LastName'],
+            persist: false,
             convert: function(v, r) {
                 return r.get('FirstName') + ' ' + r.get('LastName');
             }
@@ -125,13 +135,17 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         },
         {
             name: 'SkillRatings',
-            type: 'auto'
+            type: 'auto',
+            persist: false
         },
         {
             name: 'filtered',
             type: 'boolean',
             persist: false,
             defaultValue: false
+        }, {
+            name: 'Comments',
+            persist: false
         }
     ],
 
@@ -146,11 +160,6 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         associationKey: 'Task.Attachments'
     },
     {
-        model: 'Slate.cbl.model.tasks.Comment',
-        name: 'Comments',
-        associationKey: 'Comments'
-    },
-    {
         model: 'Slate.cbl.model.Skill',
         name: 'Skills',
         associationKey: 'Task.Skills'
@@ -160,16 +169,42 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         type: 'slate-records',
         url: '/cbl/student-tasks',
         include: [
-            'Task',
+            // 'Task',
             'Student',
             'Comments',
             'Attachments',
-            'SkillRatings',
+            // 'SkillRatings',
+            'TaskSkills',
             'Task.Attachments',
             'Task.ParentTask',
-            'Task.Skills.Competency',
-            'Task.Skills.CompetencyLevel'
+            // 'Task.Skills.Competency',
+            // 'Task.Skills.CompetencyLevel'
         ]
+    },
+
+    getTaskSkillsGroupedByCompetency: function() {
+        var comps = [], compIds = [],
+            skills = this.get('TaskSkills'),
+            compIdx, skill,
+            i = 0;
+
+        for (; i < skills.length; i++) {
+            skill = skills[i];
+
+            if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
+                compIdx = compIds.length;
+                comps[compIdx] = {
+                    Code: skill.CompetencyCode,
+                    Descriptor: skill.CompetencyDescriptor,
+                    skills: []
+                };
+                compIds.push(skill.CompetencyCode);
+            }
+
+            comps[compIdx].skills.push(skill);
+        }
+
+        return comps;
     }
 
 });
