@@ -145,10 +145,11 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
         form.updateRecord(record);
 
-        record.set('Status', statusField.getSubmitValue());
-        // set skills
-        record.set('Skills', skillsField.getSkills(false)); // returnRecords
-        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
+        record.set({
+            Status: statusField.getSubmitValue(),
+            Skills: skillsField.getSkills(false), // returnRecords
+            Attachments: attachmentsField.getAttachments(false) // returnRecords
+        });
 
         errors = record.validate();
 
@@ -202,13 +203,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         var me = this,
             taskCopy = taskRecord.copy(null);
 
-        taskCopy.set('Title', taskCopy.get('Title') + ' Clone');
-        // reset server controlled fields
-        taskCopy.set('Created', null);
-        taskCopy.set('CreatorID', null);
-        taskCopy.set('ModifierID', null);
-        taskCopy.set('Modified', null);
-        taskCopy.set('Handle', null);
+        taskCopy.set({
+            Title: taskCopy.get('Title') + ' Clone'
+        });
 
         me.editTask(taskCopy);
     }
