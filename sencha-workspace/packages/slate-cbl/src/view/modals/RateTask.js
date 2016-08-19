@@ -4,7 +4,8 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
     requires: [
         'Slate.cbl.view.AttachmentsList',
         'Slate.cbl.view.modals.ModalForm',
-        'Slate.cbl.widget.RatingView'
+        'Slate.cbl.widget.RatingView',
+        'Slate.cbl.widget.ReAssignmentField'
     ],
 
     title: 'Rate Task',
@@ -118,6 +119,9 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     xtype: 'textareafield',
                     fieldLabel: 'Comments',
                     name: 'Comment'
+                },
+                {
+                    xtype: 'slate-tasks-reassignfield'
                 }
             ]
         }
