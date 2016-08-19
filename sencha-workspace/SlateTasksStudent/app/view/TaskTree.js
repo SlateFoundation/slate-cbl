@@ -137,6 +137,14 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         }
     },
 
+    // config handlers
+    updateCourseSection: function(val) {
+        var me = this;
+
+        me.fireEvent('coursesectionchange', me, val);
+    },
+
+    // event handlers
     onTreeClick: function(ev, t) {
         var target = Ext.get(t),
             parentEl, recordId;
@@ -150,11 +158,6 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 this.fireEvent('itemclick', recordId);
             }
         }
-    },
-
-    updateCourseSection: function(val) {
-        var me = this;
-
-        me.fireEvent('coursesectionchange', me, val);
     }
+
 });
