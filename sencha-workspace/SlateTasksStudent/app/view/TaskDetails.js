@@ -6,7 +6,8 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         'Slate.cbl.widget.AttachmentsField',
         'Slate.cbl.view.modals.ModalForm',
         'Slate.cbl.widget.CommentsField',
-        'Slate.cbl.widget.RatingView'
+        'Slate.cbl.widget.RatingView',
+        'Ext.util.Format'
     ],
 
     modal: true,
@@ -62,6 +63,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         },
         {
             xtype: 'slate-tasks-attachmentsfield',
+            itemId: 'teacher-attachments',
             readOnly: true
         },
         {
@@ -78,7 +80,8 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             fieldLabel: 'Teacher Comments'
         },
         {
-            xtype: 'slate-tasks-attachmentsfield'
+            xtype: 'slate-tasks-attachmentsfield',
+            itemId: 'student-attachments',
         }]
     }]
 });
