@@ -22,6 +22,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     listen: {
         store: {
             '#Todos': {
+                beforeload: 'onTodosStoreBeforeLoad',
                 load: 'onTodosStoreLoad'
             }
         }
@@ -58,6 +59,18 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         if (!store.isLoaded() && !store.isLoading()) {
             store.load();
         }
+    },
+
+    onTodosStoreBeforeLoad: function(store) {
+        var courseSection = this.getTodoList().getCourseSection(),
+            params = {};
+
+        if (courseSection) {
+            params = {
+                'course_section': courseSection
+            };
+        }
+        store.getProxy().extraParams = params;
     },
 
     onTodosStoreLoad: function(store) {
@@ -109,18 +122,8 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         this.insertNewTodo(parentId);
     },
 
-    onTodosListCourseSectionChange: function(todoList, courseSectionId) {
-        var params = {};
-
-        if (courseSectionId) {
-            params = {
-                'course_section': courseSectionId
-            }
-        }
-
-        this.getTodosStore().load({
-            params: params
-        });
+    onTodosListCourseSectionChange: function() {
+        this.getTodosStore().load();
     },
 
 
