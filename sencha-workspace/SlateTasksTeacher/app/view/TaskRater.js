@@ -1,8 +1,5 @@
 Ext.define('SlateTasksTeacher.view.TaskRater', {
     extend: 'Slate.cbl.view.modals.RateTask',
-    requires: [
-        'Ext.form.FieldContainer'
-    ],
 
     xtype: 'slate-tasks-teacher-taskrater',
     config: {
