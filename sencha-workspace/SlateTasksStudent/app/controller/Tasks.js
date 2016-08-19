@@ -65,7 +65,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
         taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
-        comments: 'slate-modalform #comments',
+        commentsField: 'slate-commentsfield',
         attachmentsField: 'slate-modalform slate-tasks-attachmentsfield',
         attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
         addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
@@ -93,28 +93,31 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
             ratingView = me.getRatingView(),
+            attachmentsField = me.getAttachmentsField(),
+            commentsField = me.getCommentsField(),
             readonly = rec.get('TaskStatus') === 'completed';
 
         form.getForm().loadRecord(rec);
 
         ratingView.setData({
             ratings: [7, 8, 9, 10, 11, 12, 'M'],
-            competencies: rec.get('Competencies')
+            competencies: rec.getTaskSkillsGroupedByCompetency()
         });
-
-        me.hideRatingViewElements(ratingView); // TODO this widget should probably have a read-only flag
 
         me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
 
-        me.getTaskAttachmentsList().getStore().setData(rec.TaskAttachments().getRange());
+        me.getAttachmentsField().setAttachments(rec.get('Task').Attachments);
 
-        me.getComments().setData(me.formatCommentData(rec.Comments().getRange()));
+        commentsField.setRecord(rec);
+        commentsField.setReadOnly(true);
 
-        me.getAttachmentsField().setAttachments(rec.Attachments().getRange());
 
-        me.getAttachmentsTextField().setDisabled(readonly);
-        me.getAddLinkButton().setDisabled(readonly);
-        // me.getAddAttachmentButton().setDisabled(readonly);  // TODO: uncomment when attachments implemented
+        attachmentsField.setAttachments(rec.Attachments().getRange());
+        attachmentsField.setReadOnly(readonly);
+
+        // me.getAttachmentsTextField().setDisabled(readonly);
+        // me.getAddLinkButton().setDisabled(readonly);
+        // me.getAddAttachmentButton().setDisabled(readonly);  //TODO: uncomment when attachments implemented
 
         me.getSubmitButton().setDisabled(readonly);
 
@@ -122,7 +125,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     onRatingViewAfterRender: function(view) {
-        this.hideRatingViewElements(view);
+        // this.hideRatingViewElements(view);
     },
 
     onSubmitButtonClick: function() {
@@ -216,9 +219,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             tree = me.getTaskTree(),
             tasks;
 
-        if (formatCurrencies) {
-            me.formatCompetencies(recs);
-        }
+        // if (formatCurrencies) {
+        //     me.formatCompetencies(recs);
+        // }
 
         tasks = me.formatTaskData(recs);
         tree.update({ tasks: tasks });

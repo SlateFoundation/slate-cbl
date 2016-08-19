@@ -15,6 +15,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
     // todo: add ratings as config.
     tpl: [
         '{% this.ratings = values.ratings %}',
+        '{% this.readOnly = values.readOnly %}',
 
         '<ul class="slate-ratingview-competencies">',
             '<tpl for="competencies">',
@@ -24,15 +25,19 @@ Ext.define('Slate.cbl.widget.RatingView', {
                         '<tpl for="skills">',
                             '<li class="slate-ratingview-skill slate-ratingview-skill-level-{CompetencyLevel}" data-competency="{[parent.Code]}" data-skill="{Code}">',
                                 '<header class="slate-ratingview-skill-header">',
-                                    '<button class="slate-ratingview-remove"><i class="fa fa-times-circle"></i></button>',
+                                    '<tpl if="!this.readOnly">', // hide when in readOnly mode
+                                        '<button class="slate-ratingview-remove"><i class="fa fa-times-circle"></i></button>',
+                                    '</tpl>',
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.Rating < this.ratings[0] || values.Rating == null || values.Rating == &quot;N/A&quot;">is-selected</tpl>" data-rating="{[values.Rating < this.ratings[0] ? values.Rating : "N/A"]}">',
-                                        '<div class="slate-ratingview-rating-bubble" tabindex="0">',
-                                            '<span class="slate-ratingview-rating-label">{[values.Rating && values.Rating <  this.ratings[0] ? values.Rating : "N/A"]}</span>',
-                                        '</div>',
-                                    '</li>',
+                                    '<tpl if="!this.readOnly && values.Rating < this.ratings[0]">', // hide when in readOnly mode
+                                        '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.Rating < this.ratings[0] || values.Rating == null || values.Rating == &quot;N/A&quot;">is-selected</tpl>" data-rating="{[values.Rating < this.ratings[0] ? values.Rating : "N/A"]}">',
+                                            '<div class="slate-ratingview-rating-bubble" tabindex="0">',
+                                                '<span class="slate-ratingview-rating-label">{[values.Rating && values.Rating <  this.ratings[0] ? values.Rating : "N/A"]}</span>',
+                                            '</div>',
+                                        '</li>',
+                                    '</tpl>',
                                     '<tpl for="this.ratings">', // access template-scoped variable declared at top
                                         '<li class="slate-ratingview-rating <tpl if="values == parent.Rating">is-selected</tpl>" data-rating="{.}">',
                                             '<div class="slate-ratingview-rating-bubble" tabindex="0">',
@@ -56,6 +61,20 @@ Ext.define('Slate.cbl.widget.RatingView', {
             element: 'el',
             delegate: ['.slate-ratingview-rating', '.slate-ratingview-remove']
         }
+    },
+
+    applyData: function(data) {
+        var dataObj = data || {};
+
+        dataObj.readOnly = this.getReadOnly();
+
+        return dataObj;
+    },
+
+    updateReadOnly: function() {
+        var me = this;
+
+        me.setData(me.getData());
     },
 
     onScaleClick: function(ev, t) {
