@@ -31,7 +31,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     ],
     models: [
         'Task@Slate.cbl.model',
-        'StudentTask@Slate.cbl.model'
+        'StudentTask@Slate.cbl.model',
+        'Comment@Slate.cbl.model.tasks'
     ],
 
 
@@ -68,6 +69,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         },
         taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
         skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
+        commentsField: 'slate-tasks-teacher-taskrater slate-commentsfield',
         attachmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield',
         assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
         assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
@@ -98,6 +100,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         },
         assignmentsComboField: {
             render: 'onAssigneeComboRender'
+        },
+        commentsField: {
+            publish: 'onCommentsFieldPublish'
         },
 
         'slate-tasks-teacher-taskrater button[action=accept]': {
@@ -196,6 +201,28 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         comboStore.removeAll();
         comboStore.add(studentsStore.getRange());
         combo.setValueOnData();
+    },
+
+    onCommentsFieldPublish: function(fieldContainer, field) {
+        var me = this,
+            record = fieldContainer.getRecord(),
+            comment,
+            originalComments = record.get('Comments') || [];
+
+        comment = me.getCommentModel().create({
+            Message: field.getValue(),
+            ContextID: record.getId(),
+            ContextClass: record.get('Class')
+        });
+
+        comment.save({
+            success: function(rec) {
+                originalComments.push(rec.getData({ serialize: true }));
+                record.set('Comments', originalComments);
+                fieldContainer.updateRecord(record);
+                field.setValue('');
+            }
+        });
     },
 
     onAcceptTaskClick: function() {
