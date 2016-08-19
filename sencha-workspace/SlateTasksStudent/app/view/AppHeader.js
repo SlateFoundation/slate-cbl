@@ -28,6 +28,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
             valueField: 'ID',
 
             forceSelection: true,
+            queryMode: 'local',
             editable: false
         },
         {
