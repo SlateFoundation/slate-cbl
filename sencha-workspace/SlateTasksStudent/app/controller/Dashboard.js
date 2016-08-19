@@ -13,7 +13,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             resize: 'onTaskTreeResize'
         },
         'combo#section-selector': {
-            select: 'onSectionSelectorSelect'
+            select: 'onSectionSelectorSelect',
+            afterrender: 'onSectionSelectorAfterRender'
         }
     },
 
@@ -95,6 +96,18 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
         me.getTodoList().setCourseSection(courseSection);
         me.getTaskTree().setCourseSection(courseSection);
+    },
+
+    onSectionSelectorAfterRender: function(combo) {
+        combo.getStore().on('load', function(store) {
+            store.insert(0, {
+                ID: 0,
+                Code: null,
+                Title: 'All'
+            })
+            combo.select(0);
+        });
+        combo.getStore().load();
     },
 
     // custom controller methods
