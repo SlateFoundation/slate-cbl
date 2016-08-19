@@ -110,10 +110,16 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     },
 
     onTodosListCourseSectionChange: function(todoList, courseSectionId) {
-        this.getTodosStore().load({
-            params: {
+        var params = {};
+
+        if (courseSectionId) {
+            params = {
                 'course_section': courseSectionId
             }
+        }
+
+        this.getTodosStore().load({
+            params: params
         });
     },
 

@@ -187,10 +187,16 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
-        this.getStudentTasksStore().load({
-            params: {
+        var params = {};
+
+        if (courseSectionId) {
+            params = {
                 'course_section': courseSectionId
             }
+        }
+
+        this.getStudentTasksStore().load({
+            params: params
         });
     },
 
