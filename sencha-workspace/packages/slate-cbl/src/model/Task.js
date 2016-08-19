@@ -25,14 +25,16 @@ Ext.define('Slate.cbl.model.Task', {
             name: 'Created',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'CreatorID',
             type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
-        {
+        { // remove field?
             name: 'RevisionID',
             type: 'int',
             allowNull: true
@@ -41,12 +43,14 @@ Ext.define('Slate.cbl.model.Task', {
             name: 'Modified',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'ModifierID',
             type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'Title',
@@ -54,7 +58,8 @@ Ext.define('Slate.cbl.model.Task', {
         },
         {
             name: 'Handle',
-            type: 'string'
+            type: 'string',
+            persist: false
         },
         {
             name: 'ParentTaskID',
@@ -87,10 +92,15 @@ Ext.define('Slate.cbl.model.Task', {
             type: 'string',
             defaultValue: 'Studio'
         },
-
-        'Creator',
+        {
+            name: 'Creator',
+            persist: false
+        },
         'Attachments',
-        'ParentTask',
+        {
+            name: 'ParentTask',
+            persist: false
+        },
         {
             name: 'Skills',
             persist: false
