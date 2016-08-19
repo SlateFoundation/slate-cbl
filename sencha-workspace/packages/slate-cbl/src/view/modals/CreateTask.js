@@ -27,11 +27,13 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         if (me.getEnableAssignments()) {
             form.insert(3, {
                 xtype: 'datefield',
+                itemId: 'duedate',
                 name: 'DueDate',
                 fieldLabel: 'Due Date'
             });
             form.insert(4, {
                 xtype: 'datefield',
+                itemId: 'expirationdate',
                 name: 'ExpirationDate',
                 fieldLabel: 'Expiration Date'
             });
@@ -98,7 +100,17 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     emptyText: '(Optional)',
                     name: 'ParentTaskID',
                     valueField: 'ID',
-                    store: 'ParentTasks'
+                    displayField: 'Title',
+                    queryMode: 'local',
+                    store: {
+                        type: 'chained',
+                        source: 'Tasks',
+                        filters: [{
+                            filterFn: function(task) {
+                                return !task.get('ParentTaskID');
+                            }
+                        }]
+                    }
                 },
                 {
                     itemId: 'experience-type',
@@ -125,9 +137,11 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                 },
                 {
                     xtype: 'textareafield',
+                    itemId: 'instructions',
                     name: 'Instructions',
                     fieldLabel: 'Instructions',
-                    grow: true
+                    grow: true,
+                    growMin: 200
                 }
             ]
         }

@@ -6,6 +6,9 @@ Ext.define('Slate.cbl.widget.SkillsField', {
         'Ext.view.View'
     ],
     xtype: 'slate-skillsfield',
+    config: {
+        readOnly: false
+    },
 
     componentCls: 'slate-skillsfield',
 
@@ -16,7 +19,10 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             width: '100%',
             xtype: 'combo',
             name: 'SkillIDs',
-            store: 'Skills',
+            store: {
+                model: 'Slate.cbl.model.Skill',
+                autoLoad: true
+            },
             queryParam: 'q',
             displayField: 'Code_Descriptor',
             valueField: 'ID',
@@ -47,11 +53,20 @@ Ext.define('Slate.cbl.widget.SkillsField', {
                         '<div class="slate-skillsfield-token">',
                             '<strong class="slate-skillsfield-item-code">{Code}</strong>',
                             '<span class="slate-skillsfield-item-title" title="{Descriptor}">{Descriptor}</span>',
-                            '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>',
+                            '<tpl if="isEditable">',
+                                '<i tabindex="0" class="slate-skillsfield-item-remove fa fa-times-circle"></i>',
+                            '</tpl>',
                         '</div>',
                     '</li>',
                 '</tpl>'
             ],
+            prepareData: function(data, recordIndex, record) {
+                var recordData = record.getData();
+
+                recordData.isEditable = !this.up('slate-skillsfield').getReadOnly();
+
+                return recordData;
+            },
             listeners: {
                 itemclick: function(view, record, item, idx, event) {
 
@@ -62,6 +77,25 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             }
         }
     ],
+
+    updateReadOnly: function(readOnly) {
+        var me = this,
+            field, view;
+
+        if (!me.rendered) {
+            me.on('render', function() {
+                return me.updateReadOnly(readOnly);
+            });
+            return;
+        }
+
+        field = me.down('combo');
+        view = me.down('#skills-list');
+        readOnly = Boolean(readOnly);
+
+        view.refreshView();
+        field[readOnly ? 'hide' : 'show']();
+    },
 
     getSkills: function(returnRecords, idsOnly) {
         var me = this,

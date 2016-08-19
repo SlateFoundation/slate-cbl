@@ -6,6 +6,10 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
 
     xtype: 'slate-tasks-attachmentsfield',
 
+    config: {
+        readOnly: false
+    },
+
     fieldLabel: 'Attachments',
     combineErrors: false,
     items: [{
@@ -40,6 +44,35 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         action: 'addattachment',
         disabled: true
     }],
+
+    updateReadOnly: function(readOnly) {
+        var me = this,
+            field, buttons, list,
+            i = 0;
+
+        readOnly = Boolean(readOnly);
+
+        if (!me.rendered) {
+            me.on('render', function() {
+                return me.updateReadOnly(readOnly);
+            }, me, { single: true });
+            return;
+        }
+
+        field = me.down('textfield');
+        buttons = me.query('button');
+        list = me.down('slate-attachmentslist');
+
+        for (; i < buttons.length; i++) {
+            buttons[i][readOnly ? 'hide' : 'show']();
+        }
+
+        list.setEditable(!readOnly);
+        list.refreshView();
+
+        field[readOnly ? 'hide' : 'show']();
+
+    },
 
     addAttachment: function(url) {
         var me = this,

@@ -60,13 +60,13 @@
         overflow: visible;
         padding: 0;
         vertical-align: bottom;
-    
+
         .#{$g}-header-clip {
             height: 100%;
             overflow: hidden;
             width: 300%;
         }
-    
+
         .#{$g}-header-link {
             background-color: $slate-studentsgrid-colheader-bg-color;
             border-bottom: 1px solid #ccc;
@@ -89,7 +89,7 @@
                 text-decoration: none;
             }
         }
-    
+
         &:first-child a {
             border-top: 1px solid #ccc;
         }
@@ -206,4 +206,16 @@
 
 .#{$g}-data-table {
     border-right: 1px solid;
+}
+
+.#{$g}-cell {
+    &.slate-task-status-notassigned { background-color: $slate-task-color-notassigned; }
+    &.slate-task-status-due         { background-color: $slate-task-color-due; }
+    &.slate-task-status-completed   { background-color: $slate-task-color-completed; }
+    &.slate-task-status-revision    { background-color: $slate-task-color-revision; }
+    &.slate-task-status-late        { background-color: $slate-task-color-late; }
+
+    &.slate-task-status-needsrated {
+        background-image: $slate-task-pattern-needsrated;
+    }
 }
