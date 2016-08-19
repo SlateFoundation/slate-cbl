@@ -30,5 +30,6 @@ Ext.define('Slate.cbl.widget.TaskTitleField', {
     ],
     displayTpl: [
         '<tpl for=".">{Title}</tpl>'
-    ]
+    ],
+    selectOnTab: false
 });
