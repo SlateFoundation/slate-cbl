@@ -11,6 +11,10 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         },
         'slatetasksstudent-tasktree': {
             resize: 'onTaskTreeResize'
+        },
+        'combo#section-selector': {
+            select: 'onSectionSelectorSelect',
+            afterrender: 'onSectionSelectorAfterRender'
         }
     },
 
@@ -38,10 +42,16 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             xtype: 'slatetasksstudent-appheader'
         },
         taskTree: {
-            selector: 'slate-tasktree',
+            selector: 'slatetasksstudent-tasktree',
             autoCreate: true,
 
-            xtype: 'slate-tasktree'
+            xtype: 'slatetasksstudent-tasktree'
+        },
+        todoList: {
+            selector: 'slatetasksstudent-todolist',
+            autoCreate: true,
+
+            xtype: 'slatetasksstudent-todolist'
         },
         recentActivity: {
             selector: 'slatetasksstudent-recentactivity',
@@ -80,6 +90,25 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.maskDemoElements();
     },
 
+    onSectionSelectorSelect: function(combo, rec) {
+        var me = this,
+            courseSection = rec.get('Code');
+
+        me.getTodoList().setCourseSection(courseSection);
+        me.getTaskTree().setCourseSection(courseSection);
+    },
+
+    onSectionSelectorAfterRender: function(combo) {
+        combo.getStore().on('load', function(store) {
+            store.insert(0, {
+                ID: 0,
+                Code: null,
+                Title: 'All'
+            })
+            combo.select(0);
+        });
+        combo.getStore().load();
+    },
 
     // custom controller methods
     maskDemoElements: function () {

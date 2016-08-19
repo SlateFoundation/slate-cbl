@@ -1,4 +1,3 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('SlateTasksStudent.model.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
@@ -116,7 +115,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         {
             name: 'FullName',
             depends: ['FirstName', 'LastName'],
-            convert: function(v,r) {
+            convert: function(v, r) {
                 return r.get('FirstName') + ' ' + r.get('LastName');
             }
         },
@@ -140,15 +139,18 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         model: 'Slate.cbl.model.tasks.Attachment',
         name: 'Attachments',
         associationKey: 'Attachments'
-    },{
+    },
+    {
         model: 'Slate.cbl.model.tasks.Attachment',
         name: 'TaskAttachments',
         associationKey: 'Task.Attachments'
-    },{
+    },
+    {
         model: 'Slate.cbl.model.tasks.Comment',
         name: 'Comments',
         associationKey: 'Comments'
-    },{
+    },
+    {
         model: 'Slate.cbl.model.Skill',
         name: 'Skills',
         associationKey: 'Task.Skills'

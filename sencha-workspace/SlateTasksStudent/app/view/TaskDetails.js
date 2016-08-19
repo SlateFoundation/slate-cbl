@@ -21,11 +21,11 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             layout: 'hbox',
             items: [{
                 xtype: 'tbfill'
-            },{
+            },
+            {
                 xtype: 'button',
                 itemId: 'submit',
                 text: 'Submit',
-                scale: 'large'
             }]
         }]
     }],
@@ -80,7 +80,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         {
             xtype: 'component',
             itemId: 'comments',
-            //TODO: I didn't find a modal example for this comment list, so I made the CSS classnames up.
+            // TODO: I didn't find a modal example for this comment list, so I made the CSS classnames up.
             tpl: [
                 '<tpl if="comments"><div class="slate-task-comment-label">Teacher Comments:</div></tpl>',
                 '<ul class="slate-task-comments">',

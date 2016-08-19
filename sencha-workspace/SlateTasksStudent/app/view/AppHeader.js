@@ -16,23 +16,25 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
         layout: 'hbox',
         items: [{
             xtype: 'combo',
-            itemId: 'sectionSelect',
+            itemId: 'section-selector',
             cls: 'slate-course-selector',
 
             fieldLabel: 'Course Section',
             labelWidth: 120,
 
-            store: {xclass: 'SlateTasksStudent.store.CourseSections'},
+            store: { xclass: 'SlateTasksStudent.store.CourseSections' },
 
             displayField: 'Title',
             valueField: 'ID',
 
             forceSelection: true,
+            queryMode: 'local',
             editable: false
         },
         {
             xtype: 'tbfill'
-        },{
+        },
+        {
             xtype: 'button',
             iconCls: 'x-fa fa-clock-o',
             enableToggle: true,
