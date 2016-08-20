@@ -431,10 +431,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             wasPhantom = record.phantom,
             errors;
 
-        record.set('Skills', skillsField.getSkills(false)); // returnRecords
-        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
-        record.set('Assignees', assignmentsField.getAssignees(false)); // returnRecords
-        record.set('CourseSectionID', courseSection.getId());
+        record.set({
+            Skills: skillsField.getSkills(false), // returnRecords
+            Attachments: attachmentsField.getAttachments(false), // returnRecords
+            Assignees: assignmentsField.getAssignees(false), // returnRecords
+            CourseSectionID: courseSection.getId()
+        });
 
         errors = record.validate();
 
@@ -456,6 +458,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     // reload studenttasks, as new records may exist
                     me.getStudentTasksStore().reload();
                 }
+
+                // buffer reload tasks store as related objects i.e. attachments may have saved after
+                // todo: find a better way?
+                // Ext.Function.createBuffered(me.getTasksStore().reload, 500, me);
                 Ext.toast('Task succesfully saved!');
             }
         });
@@ -528,10 +534,23 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     doCloneTask: function(taskRecord) {
         var me = this,
-            taskCopy = taskRecord.copy(null);
+            taskCopy = taskRecord.copy(null),
+            copiedAttachments = taskCopy.get('Attachments'),
+            attachments = [],
+            i = 0;
+
+
+        for (; i < copiedAttachments.length; i++) {
+            attachments.push(Ext.apply(copiedAttachments[i], {
+                ID: null,
+                ContextID: null,
+                ContextClass: null
+            }));
+        }
 
         taskCopy.set({
-            Title: taskCopy.get('Title') + ' Clone'
+            Title: taskCopy.get('Title') + ' Clone',
+            Attachments: attachments
         });
 
         me.doEditTask(taskCopy);
