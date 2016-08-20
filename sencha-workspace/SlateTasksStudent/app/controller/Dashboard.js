@@ -133,7 +133,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
                 Code: null,
                 Title: 'All'
             })
-            combo.select(0);
         });
         combo.getStore().load();
     },
