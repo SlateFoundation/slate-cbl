@@ -169,7 +169,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         }
 
         if (sectionCode === 'all') {
-            sectionCode = null;
+            sectionCode = 0;
             sectionSelectorCombo.setValue(0);
         } else {
             sectionSelectorCombo.setValue(rec);
