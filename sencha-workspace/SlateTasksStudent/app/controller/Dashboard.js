@@ -156,15 +156,15 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             sectionSelectorCombo = me.getSectionSelectorCombo(),
             rec = courseSectionsStore.findRecord('Code', sectionCode);
 
-        if (!rec && sectionCode !== 'all') {
-            Ext.Msg.alert('Error', 'Course Section not found.');
-            return;
-        }
-
         if (!courseSectionsStore.isLoaded()) {
             courseSectionsStore.load(function() {
                 me.showCourseSection(sectionCode);
             });
+            return;
+        }
+
+        if (!rec && sectionCode !== 'all') {
+            Ext.Msg.alert('Error', 'Course Section not found.');
             return;
         }
 
