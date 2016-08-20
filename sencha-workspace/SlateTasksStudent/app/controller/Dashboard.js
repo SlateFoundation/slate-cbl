@@ -1,25 +1,15 @@
+/**
+ * The Dashboard controller manages the components of the student dashboard and
+ * handles routing by course section.
+ */
 Ext.define('SlateTasksStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
         'Slate.API'
     ],
 
-    // entry points
-    control: {
-        'slatetasksstudent-appheader button[action="show-recent"]': {
-            click: 'onShowRecentClick'
-        },
-        'slatetasksstudent-tasktree': {
-            resize: 'onTaskTreeResize'
-        },
-        'combo#section-selector': {
-            select: 'onSectionSelectorSelect',
-            afterrender: 'onSectionSelectorAfterRender'
-        }
-    },
 
-
-    // controller configuration
+    // dependencies
     views: [
         'Dashboard',
         'AppHeader',
@@ -68,6 +58,21 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
 
+    // entry points
+    control: {
+        'slatetasksstudent-appheader button[action="show-recent"]': {
+            click: 'onShowRecentClick'
+        },
+        'slatetasksstudent-tasktree': {
+            resize: 'onTaskTreeResize'
+        },
+        'combo#section-selector': {
+            select: 'onSectionSelectorSelect',
+            afterrender: 'onSectionSelectorAfterRender'
+        }
+    },
+
+
     // controller templates method overrides
     onLaunch: function () {
         this.getDashboard().render('slateapp-viewport');
@@ -109,6 +114,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         });
         combo.getStore().load();
     },
+
 
     // custom controller methods
     maskDemoElements: function () {
