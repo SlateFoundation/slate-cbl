@@ -23,9 +23,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     ],
 
     refs: {
-        sectionSelectorCombo: {
-            selector: 'combobox#section-selector',
-        },
         dashboard: {
             selector: 'slatetasksstudent-dashboard',
             autoCreate: true,
@@ -37,6 +34,9 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             autoCreate: true,
 
             xtype: 'slatetasksstudent-appheader'
+        },
+        sectionSelectorCombo: {
+            selector: 'combobox#section-selector',
         },
         taskTree: {
             selector: 'slatetasksstudent-tasktree',
