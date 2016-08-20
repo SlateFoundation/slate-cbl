@@ -18,10 +18,10 @@ Ext.define('Slate.cbl.store.DemonstrationSkills', {
         });
 
         if (Ext.isArray(students)) {
-            options.url = '/cbl/teacher-dashboard/demonstration-skills';
+            options.url = '/cbl/dashboards/demonstrations/teacher/demonstration-skills';
             options.params.students = students.join(',');
         } else {
-            options.url = '/cbl/student-dashboard/demonstration-skills';
+            options.url = '/cbl/dashboards/demonstrations/student/demonstration-skills';
             options.params.student = students;
         }
 

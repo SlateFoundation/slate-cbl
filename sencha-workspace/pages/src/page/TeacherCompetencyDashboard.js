@@ -35,7 +35,7 @@ Ext.define('Site.page.TeacherCompetencyDashboard', {
         me.dashboardView = dashboardView = Ext.create('Slate.cbl.view.teacher.Dashboard', {
             renderTo: teacherDashboardCt,
             progressGrid: {
-                studentDashboardLink: contentAreaCode && '/cbl/student-dashboard?content-area=' + escape(contentAreaCode),
+                studentDashboardLink: contentAreaCode && '/cbl/dashboards/demonstrations/student?content-area=' + escape(contentAreaCode),
                 studentsStore: {
                     xclass: 'Slate.cbl.store.Students',
                     data: siteEnv.cblStudents

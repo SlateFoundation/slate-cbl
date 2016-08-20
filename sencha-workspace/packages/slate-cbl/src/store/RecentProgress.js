@@ -10,7 +10,7 @@ Ext.define('Slate.cbl.store.RecentProgress', {
 
     proxy: {
         type: 'slate-records',
-        url: '/cbl/student-dashboard/recent-progress'
+        url: '/cbl/dashboards/demonstrations/student/recent-progress'
     },
 
     /**

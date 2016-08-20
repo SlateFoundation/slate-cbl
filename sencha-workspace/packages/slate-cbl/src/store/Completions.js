@@ -28,10 +28,10 @@ Ext.define('Slate.cbl.store.Completions', {
         });
 
         if (Ext.isArray(students)) {
-            options.url = '/cbl/teacher-dashboard/completions';
+            options.url = '/cbl/dashboards/demonstrations/teacher/completions';
             options.params.students = students.join(',');
         } else {
-            options.url = '/cbl/student-dashboard/completions';
+            options.url = '/cbl/dashboards/demonstrations/student/completions';
             options.params.student = students;
         }
 
