@@ -82,7 +82,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         },
         'combo#section-selector': {
             select: 'onSectionSelectorSelect',
-            afterrender: 'onSectionSelectorAfterRender'
+            boxready: 'onSectionSelectorBoxReady'
         }
     },
 
@@ -118,7 +118,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.redirectTo(route);
     },
 
-    onSectionSelectorAfterRender: function(combo) {
+    onSectionSelectorBoxReady: function(combo) {
         combo.getStore().on('load', function(store) {
             store.insert(0, {
                 ID: 0,
