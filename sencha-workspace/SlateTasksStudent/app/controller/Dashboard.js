@@ -18,10 +18,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         'Slate.cbl.view.student.TaskHistory'
     ],
 
-    stores: [
-        'CourseSections'
-    ],
-
     refs: {
         dashboard: {
             selector: 'slatetasksstudent-dashboard',
@@ -152,8 +148,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     showCourseSection: function(sectionCode) {
         var me = this,
-            courseSectionsStore = me.getCourseSectionsStore(),
             sectionSelectorCombo = me.getSectionSelectorCombo(),
+            courseSectionsStore = sectionSelectorCombo.getStore(),
             rec = courseSectionsStore.findRecord('Code', sectionCode);
 
         if (!courseSectionsStore.isLoaded()) {
