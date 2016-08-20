@@ -15,7 +15,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
         xtype: 'container',
         layout: 'hbox',
         items: [{
-            xtype: 'combo',
+            xtype: 'combobox',
             itemId: 'section-selector',
             cls: 'slate-course-selector',
 
