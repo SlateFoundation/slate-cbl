@@ -59,6 +59,13 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
 
     // entry points
+    routes: {
+        'section/:sectionCode': {
+            sectionId: '([a-zA-Z0-9])+',
+            action: 'showCourseSection'
+        }
+    },
+
     control: {
         'slatetasksstudent-appheader button[action="show-recent"]': {
             click: 'onShowRecentClick'
@@ -76,7 +83,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     // controller templates method overrides
     onLaunch: function () {
         this.getDashboard().render('slateapp-viewport');
-
     },
 
 
@@ -121,5 +127,12 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.getTaskHistory().setLoading(false);
 
         this.getTaskHistory().setLoading('');
+    },
+
+    showCourseSection: function(sectionCode) {
+        var me = this;
+
+        me.getTodoList().setCourseSection(sectionCode);
+        me.getTaskTree().setCourseSection(sectionCode);
     }
 });
