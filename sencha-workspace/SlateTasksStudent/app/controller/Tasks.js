@@ -53,7 +53,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     // entry points
     control: {
         'slatetasksstudent-tasktree': {
-            boxready: 'onTaskTreeBoxReady',
             itemclick: 'onTaskTreeItemClick',
             coursesectionchange: 'onTaskTreeCourseSectionChange'
         },
@@ -79,14 +78,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     // event handlers
-    onTaskTreeBoxReady: function() {
-        var store = this.getStudentTasksStore();
-
-        if (!store.isLoaded() && !store.isLoading()) {
-            store.load();
-        }
-    },
-
     onStudentTasksStoreBeforeLoad: function() {
         this.getTaskTree().mask('Loading Tasks');
     },

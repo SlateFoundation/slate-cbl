@@ -38,7 +38,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     // entry points
     control: {
         'slatetasksstudent-todolist': {
-            boxready: 'onTodosListBoxReady',
             checkclick: 'onTodosListCheckClick',
             clearcompleted: 'onTodosListClearCompletedClick',
             enterkeypress: 'onTodosListEnterKeyPress',
@@ -58,14 +57,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
 
     // event handlers
-    onTodosListBoxReady: function() {
-        var store = this.getTodosStore();
-
-        if (!store.isLoaded() && !store.isLoading()) {
-            store.load();
-        }
-    },
-
     onTodosStoreBeforeLoad: function(store) {
         var courseSection = this.getTodoList().getCourseSection(),
             params = {};
