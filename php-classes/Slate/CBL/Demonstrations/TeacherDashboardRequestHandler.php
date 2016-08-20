@@ -5,7 +5,14 @@ namespace Slate\CBL\Demonstrations;
 use DB, TableNotFoundException;
 use Sencha_App;
 use Sencha_RequestHandler;
+
 use Slate\People\Student;
+
+use Slate\CBL\ContentArea;
+use Slate\CBL\Competency;
+use Slate\CBL\Skill;
+use Slate\CBL\StudentCompetency;
+
 
 class TeacherDashboardRequestHandler extends \RequestHandler
 {
@@ -33,6 +40,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
 
     public static function handleDashboardRequest()
     {
+        // TODO: remove backend data loading in favor of app making async requests after load
         if (!empty($_GET['content-area'])) {
             if (ctype_digit($_GET['content-area'])) {
                 $ContentArea = ContentArea::getByID($_GET['content-area']);
@@ -51,7 +59,9 @@ class TeacherDashboardRequestHandler extends \RequestHandler
 
         return Sencha_RequestHandler::respond('app/SlateDemonstrationsTeacher/ext', [
             'App' => Sencha_App::getByName('SlateDemonstrationsTeacher'),
-            'mode' => 'production'
+            'mode' => 'production',
+            'ContentArea' => $ContentArea,
+            'students' => $students
         ]);
     }
 

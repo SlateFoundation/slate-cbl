@@ -8,26 +8,82 @@
 {block js-data}
     {$dwoo.parent}
 
-    {literal}
-        <!-- TODO: eliminate need for this test data -->
+    {if $ContentArea && $students}
         <script type="text/javascript">
             var SiteEnvironment = SiteEnvironment || { };
-            SiteEnvironment.user = {"ID":1,"Class":"Emergence\\People\\User","Created":1405633320,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"FirstName":"Chris","LastName":"Alfano","MiddleName":null,"Gender":null,"BirthDate":null,"Location":null,"About":null,"PrimaryPhotoID":null,"PrimaryEmailID":5,"PrimaryPhoneID":null,"PrimaryPostalID":7,"Username":"chris","AccountLevel":"Developer","AssignedPassword":null};
-            SiteEnvironment.cblStudents = [{"ID":26,"FirstName":"Marcos","LastName":"Maclennan","Username":"mmaclennan"},{"ID":15,"FirstName":"Jacalyn","LastName":"Jawad","Username":"jjawad"},{"ID":14,"FirstName":"Williemae","LastName":"Walko","Username":"wwalko"},{"ID":13,"FirstName":"Dania","LastName":"Decoteau","Username":"ddecoteau"},{"ID":12,"FirstName":"Carmelo","LastName":"Crossley","Username":"ccrossley"},{"ID":11,"FirstName":"Rena","LastName":"Riddick","Username":"rriddick"},{"ID":10,"FirstName":"Nada","LastName":"Neher","Username":"nneher"},{"ID":9,"FirstName":"Jimmy","LastName":"Jaquith","Username":"jjaquith"},{"ID":8,"FirstName":"Tomika","LastName":"Truett","Username":"ttruett"},{"ID":16,"FirstName":"Yung","LastName":"Yingst","Username":"yyingst"},{"ID":17,"FirstName":"Nelle","LastName":"Northern","Username":"nnorthern"},{"ID":25,"FirstName":"Mika","LastName":"Minyard","Username":"mminyard"},{"ID":24,"FirstName":"Donella","LastName":"Dunlop","Username":"ddunlop"},{"ID":23,"FirstName":"Alfonso","LastName":"Agudelo","Username":"aagudelo"},{"ID":22,"FirstName":"Berta","LastName":"Bou","Username":"bbou"},{"ID":21,"FirstName":"Valeria","LastName":"Velazco","Username":"vvelazco"},{"ID":20,"FirstName":"Deedra","LastName":"Debose","Username":"ddebose"},{"ID":19,"FirstName":"Melodee","LastName":"Mcadams","Username":"mmcadams"},{"ID":18,"FirstName":"Darcel","LastName":"Dobos","Username":"ddobos"},{"ID":7,"FirstName":"Glennie","LastName":"Gattison","Username":"ggattison"}];
-            SiteEnvironment.cblContentArea = {"ID":1,"Class":"Slate\\CBL\\ContentArea","Created":1412476110,"CreatorID":1,"Code":"ELA","Title":"ELA"};
-            SiteEnvironment.cblCompetencies = [{"ID":1,"Class":"Slate\\CBL\\Competency","Created":1412476110,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"ContentAreaID":1,"Code":"ELA.1","Descriptor":"Reading Literature","Statement":"Read and comprehend appropriately complex literary texts independently and proficiently.","totalDemonstrationsRequired":27,"minimumAverageOffset":-0.5},{"ID":2,"Class":"Slate\\CBL\\Competency","Created":1412476110,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"ContentAreaID":1,"Code":"ELA.2","Descriptor":"Reading Informational Texts","Statement":"Read and comprehend appropriately complex informational texts independently and proficiently.","totalDemonstrationsRequired":30,"minimumAverageOffset":-0.5},{"ID":3,"Class":"Slate\\CBL\\Competency","Created":1412476110,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"ContentAreaID":1,"Code":"ELA.3","Descriptor":"Writing Evidence-based Arguments","Statement":"Write evidence-based arguments to support claims in an analysis of substantive topics or texts using valid reasoning and relevant and sufficient evidence.","totalDemonstrationsRequired":24,"minimumAverageOffset":-0.5},{"ID":4,"Class":"Slate\\CBL\\Competency","Created":1412476110,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"ContentAreaID":1,"Code":"ELA.4","Descriptor":"Writing Informative Texts","Statement":"Write informative\/explanatory texts to examine and convey complex ideas and information clearly and accurately through the effective selection, organization, and analysis of content.","totalDemonstrationsRequired":27,"minimumAverageOffset":-0.5},{"ID":5,"Class":"Slate\\CBL\\Competency","Created":1412476111,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"ContentAreaID":1,"Code":"ELA.5","Descriptor":"Writing Narrative Texts","Statement":"Write narratives to develop real or imagined experiences or events using effective technique, well-chosen details and well-structured event sequences.","totalDemonstrationsRequired":16,"minimumAverageOffset":-0.5},{"ID":6,"Class":"Slate\\CBL\\Competency","Created":1412476111,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"ContentAreaID":1,"Code":"ELA.6","Descriptor":"Collaborative Discussions","Statement":"Initiate and participate in collaborative discussions, listen critically, and respond appropriately as individuals or in a group setting.","totalDemonstrationsRequired":24,"minimumAverageOffset":-0.5},{"ID":7,"Class":"Slate\\CBL\\Competency","Created":1412476111,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"ContentAreaID":1,"Code":"ELA.7","Descriptor":"Giving Presentations","Statement":"Give effective presentations in formal settings, making purposeful decisions about content, language use, and discourse style based on the audience, venue, and topic.","totalDemonstrationsRequired":21,"minimumAverageOffset":-0.5},{"ID":8,"Class":"Slate\\CBL\\Competency","Created":1412476111,"CreatorID":1,"RevisionID":null,"Modified":null,"ModifierID":null,"ContentAreaID":1,"Code":"ELA.8","Descriptor":"Conducting Research","Statement":"Frame and advance an inquiry to investigate topics, build knowledge, and analyze and integrate information.","totalDemonstrationsRequired":14,"minimumAverageOffset":-0.5}];
-    
-            SiteEnvironment.cblExperienceTypeOptions = ["Core Studio","Choice Studio","Workshop","Health and Wellness","PE\/Fitness","Online Courseware","Situated Learning","Work-based Learning","Advisory"];
-            SiteEnvironment.cblContextOptions = ["Journalism","Mythbusters","Personal Finance","Math Workshop","Literacy Workshop","Culinary Arts","Entrepreneurship","Performing Arts","Help Desk"];
-            SiteEnvironment.cblPerformanceTypeOptions = ["Position paper","Lab report","Media presentation","Argumentative essay","Speech"];
+            SiteEnvironment.cblStudents = {JSON::translateObjects($students, true)|json_encode};
+            SiteEnvironment.cblContentArea = {JSON::translateObjects($ContentArea)|json_encode};
+            SiteEnvironment.cblCompetencies = {JSON::translateObjects($ContentArea->Competencies, false, array('totalDemonstrationsRequired', 'minimumAverageOffset'))|json_encode};
+            SiteEnvironment.cblExperienceTypeOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$experienceTypeOptions|json_encode};
+            SiteEnvironment.cblContextOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$contextOptions|json_encode};
+            SiteEnvironment.cblPerformanceTypeOptions = {Slate\CBL\Demonstrations\ExperienceDemonstration::$performanceTypeOptions|json_encode};
         </script>
-    {/literal}
+    {/if}
 {/block}
 
 {block body}
     {$dwoo.parent}
 
+    {load_templates subtemplates/forms.tpl}
+
     <div class="wrapper site">
+        {$allContentAreas = Slate\CBL\ContentArea::getAll()}
+        <header class="page-header">
+            <div class="header-buttons">
+                <button type="button" class="primary" data-action="demonstration-create">Log a Demonstration</button>
+                {if Slate\CBL\CBL::$continuaUrl}
+                    <a class="button primary" href="{Slate\CBL\CBL::$continuaUrl|escape}" target="_blank">View the Continua</a>
+                {/if}
+            </div>
+
+            <form method="GET" class="inline-fields">
+                {capture assign=studentsSelect}
+                    <select class="field-control inline medium" name="students" onchange="this.form.submit()">
+                        <option value="">&ndash;select&ndash;</option>
+                        {if count($.User->CurrentCourseSections)}
+                            <optgroup label="My Sections">
+                                {foreach item=Section from=$.User->CurrentCourseSections}
+                                    <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
+                                {/foreach}
+                            </optgroup>
+                        {else}
+                            {$Term = Slate\Term::getClosest()}
+                            {if $Term}
+                                {$termIds = $Term->getRelatedTermIDs()|implode:','}
+                                <optgroup label="All Sections in {$Term->Title}">
+                                    {foreach item=Section from=Slate\Courses\Section::getAllByWhere("TermID IN ($termIds)")}
+                                        <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
+                                    {/foreach}
+                                </optgroup>
+                            {/if}
+                        {/if}
+                        <optgroup label="All Groups">
+                            {foreach item=Group from=Emergence\People\Groups\Group::getAll(array(order=array(Left=ASC)))}
+                                <option value="group {$Group->Handle|escape}" {refill field=students selected="group $Group->Handle"}>{$Group->getFullPath(' ▸ ')|escape}</option>
+                            {/foreach}
+                        </optgroup>
+                    </select>
+                {/capture}
+                {labeledField html=$studentsSelect type=select label=Students class=auto-width}
+
+                {capture assign=contentAreaSelect}
+                    <select class="field-control inline medium" name="content-area" onchange="this.form.submit()">
+                        <option value="">&ndash;select&ndash;</option>
+                        {foreach item=availableArea from=$allContentAreas}
+                            <option value="{$availableArea->Code}" {refill field=content-area selected=$availableArea->Code}>{$availableArea->Title|escape}</option>
+                        {/foreach}
+                    </select>
+                {/capture}
+                {labeledField html=$contentAreaSelect type=select label="Content Area" class=auto-width}
+            </form>
+        </header>
+
+        {if !$ContentArea || !is_array($students)}
+            <p class="notify">Select a student group and content area above to begin</p>
+        {elseif !count($students)}
+            <p class="notify error">There are currently no students enrolled in the selected group</p>
+        {/if}
+
         <main class="content site" role="main">
             <div id="slateapp-viewport" class="inner">
                 <!-- app renders here -->
