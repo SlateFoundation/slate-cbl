@@ -56,7 +56,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                             '<div class="slate-tasktree-text">',
                                 '<div class="slate-tasktree-title">{Title}</div>',
                                 '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                '<div class="slate-tasktree-date">{DueDate:date("M d, Y")}</div>',
+                                '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
                             '</div>',
                         '</div>',
                     '</div>',
