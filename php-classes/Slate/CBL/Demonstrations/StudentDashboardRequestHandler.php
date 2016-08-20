@@ -1,8 +1,10 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
 
 use DB, TableNotFoundException;
+use Sencha_App;
+use Sencha_RequestHandler;
 use Emergence\People\PeopleRequestHandler;
 use Slate\People\Student;
 
@@ -15,7 +17,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleRequest()
     {
-        $GLOBALS['Session']->requireAccountLevel('Student');
+        $GLOBALS['Session']->requireAuthentication();
 
         switch ($action = static::shiftPath()) {
             case 'recent-progress':
@@ -34,9 +36,9 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleDashboardRequest()
     {
-        return static::respond('student-dashboard', [
-            'Student' => static::_getRequestedStudent(),
-            'ContentArea' => static::_getRequestedContentArea()
+        return Sencha_RequestHandler::respond('app/SlateDemonstrationsStudent/ext', [
+            'App' => Sencha_App::getByName('SlateDemonstrationsStudent'),
+            'mode' => 'production'
         ]);
     }
 
@@ -75,9 +77,9 @@ class StudentDashboardRequestHandler extends \RequestHandler
                   ORDER BY d.Created DESC
                   LIMIT %d',
                 [
-                    Demonstrations\DemonstrationSkill::$tableName,
+                    DemonstrationSkill::$tableName,
                     \Emergence\People\Person::$tableName,
-                    Demonstrations\Demonstration::$tableName,
+                    Demonstration::$tableName,
                     Skill::$tableName,
                     Competency::$tableName,
                     $Student->ID,
@@ -158,8 +160,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
                     AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
                 ,[
                     Skill::$tableName                   // 1
-                    ,Demonstrations\DemonstrationSkill::$tableName     // 2
-                    ,Demonstrations\Demonstration::$tableName          // 3
+                    ,DemonstrationSkill::$tableName     // 2
+                    ,Demonstration::$tableName          // 3
                     ,StudentCompetency::$tableName      // 4
                     ,implode(',', array_map(function($Competency) {
                         return $Competency->ID;

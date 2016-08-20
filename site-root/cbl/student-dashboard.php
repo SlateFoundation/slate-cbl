@@ -1,3 +1,3 @@
 <?php
 
-Slate\CBL\StudentDashboardRequestHandler::handleRequest();
+Site::redirect('/cbl/dashboards/demonstrations/student', $_GET);

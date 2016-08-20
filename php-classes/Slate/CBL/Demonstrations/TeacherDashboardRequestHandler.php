@@ -1,8 +1,10 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Demonstrations;
 
 use DB, TableNotFoundException;
+use Sencha_App;
+use Sencha_RequestHandler;
 use Slate\People\Student;
 
 class TeacherDashboardRequestHandler extends \RequestHandler
@@ -47,9 +49,9 @@ class TeacherDashboardRequestHandler extends \RequestHandler
             }
         }
 
-        return static::respond('teacher-dashboard', [
-            'ContentArea' => $ContentArea,
-            'students' => $students
+        return Sencha_RequestHandler::respond('app/SlateDemonstrationsTeacher/ext', [
+            'App' => Sencha_App::getByName('SlateDemonstrationsTeacher'),
+            'mode' => 'production'
         ]);
     }
 
@@ -117,8 +119,8 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                     AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
                 ,[
                     Skill::$tableName                   // 1
-                    ,Demonstrations\DemonstrationSkill::$tableName     // 2
-                    ,Demonstrations\Demonstration::$tableName          // 3
+                    ,DemonstrationSkill::$tableName     // 2
+                    ,Demonstration::$tableName          // 3
                     ,StudentCompetency::$tableName      // 4
                     ,implode(',', array_map(function($Competency) {
                         return $Competency->ID;
