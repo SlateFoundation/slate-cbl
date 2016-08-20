@@ -1,3 +1,6 @@
+/**
+ * The Todos controller manages the student todo list
+ */
 Ext.define('SlateTasksStudent.controller.Todos', {
     extend: 'Ext.app.Controller',
     requires: [
@@ -5,6 +8,31 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         'Ext.window.Toast',
         'Slate.API'
     ],
+
+
+    // dependencies
+    views: [
+        'TodoList'
+    ],
+
+    models: [
+        'Todo'
+    ],
+
+    stores: [
+        'Todos'
+    ],
+
+
+    // component references
+    refs: {
+        todoList: {
+            selector: 'slatetasksstudent-todolist',
+            autoCreate: true,
+
+            xtype: 'slatetasksstudent-todolist'
+        }
+    },
 
 
     // entry points
@@ -25,29 +53,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
                 beforeload: 'onTodosStoreBeforeLoad',
                 load: 'onTodosStoreLoad'
             }
-        }
-    },
-
-
-    // controller configuration
-    views: [
-        'TodoList'
-    ],
-
-    models: [
-        'Todo'
-    ],
-
-    stores: [
-        'Todos'
-    ],
-
-    refs: {
-        todoList: {
-            selector: 'slatetasksstudent-todolist',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-todolist'
         }
     },
 
