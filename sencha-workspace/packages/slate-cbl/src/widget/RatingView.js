@@ -71,6 +71,21 @@ Ext.define('Slate.cbl.widget.RatingView', {
         return dataObj;
     },
 
+    updateData: function(data, oldData) {
+        var me = this;
+
+        if (!me.rendered) {
+            me.on('render', function() {
+                me.updateData(data, oldData);
+            }, me, { single: true });
+            return;
+        }
+
+        if (data !== oldData) {
+            me.setHtml(me.tpl.apply(data));
+        }
+    },
+
     updateReadOnly: function() {
         var me = this;
 
