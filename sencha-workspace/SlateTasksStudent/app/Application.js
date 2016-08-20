@@ -11,6 +11,8 @@ Ext.define('SlateTasksStudent.Application', {
 
     name: 'SlateTasksStudent',
 
+    defaultToken: 'section/all',
+
     controllers: [
         'Dashboard',
         'Tasks',
