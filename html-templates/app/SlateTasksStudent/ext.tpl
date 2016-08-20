@@ -5,7 +5,14 @@
     {$dwoo.parent}
 {/block}
 
-{block css-loader}
+{block body}
     {$dwoo.parent}
-    {$slateAppFullWidth = false}
+
+    <div class="wrapper site">
+        <main class="content site" role="main">
+            <div id="slateapp-viewport" class="inner">
+                <!-- app renders here -->
+            </div>
+        </main>
+    </div>
 {/block}

@@ -5,11 +5,6 @@
     {$dwoo.parent}
 {/block}
 
-{block css-loader}
-    {$dwoo.parent}
-    {$slateAppFullWidth = false}
-{/block}
-
 {block js-data}
     {$dwoo.parent}
 
@@ -27,4 +22,16 @@
             SiteEnvironment.cblPerformanceTypeOptions = ["Position paper","Lab report","Media presentation","Argumentative essay","Speech"];
         </script>
     {/literal}
+{/block}
+
+{block body}
+    {$dwoo.parent}
+
+    <div class="wrapper site">
+        <main class="content site" role="main">
+            <div id="slateapp-viewport" class="inner">
+                <!-- app renders here -->
+            </div>
+        </main>
+    </div>
 {/block}
