@@ -153,7 +153,13 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     showCourseSection: function(sectionCode) {
         var me = this,
             courseSectionsStore = me.getCourseSectionsStore(),
-            sectionSelectorCombo = me.getSectionSelectorCombo();
+            sectionSelectorCombo = me.getSectionSelectorCombo(),
+            rec = courseSectionsStore.findRecord('Code', sectionCode);
+
+        if (!rec && sectionCode !== 'all') {
+            Ext.Msg.alert('Error', 'Course Section not found.');
+            return;
+        }
 
         if (!courseSectionsStore.isLoaded()) {
             courseSectionsStore.load(function() {
@@ -166,7 +172,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             sectionCode = null;
             sectionSelectorCombo.setValue(0);
         } else {
-            sectionSelectorCombo.setValue(courseSectionsStore.findRecord('Code', sectionCode));
+            sectionSelectorCombo.setValue(rec);
         }
 
         me.getTodoList().setCourseSection(sectionCode);
