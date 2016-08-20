@@ -60,9 +60,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     // controller templates method overrides
     onLaunch: function () {
-        var siteEnv = window.SiteEnvironment || {},
+        var me = this,
+            siteEnv = window.SiteEnvironment || {},
             contentAreaCode = (siteEnv.cblContentArea || {}).Code,
-            dashboardCt = this.getDashboardCt(),
+            dashboardCt = me.getDashboardCt(),
             progressGrid = dashboardCt.getProgressGrid();
 
         // configure dashboard with any available embedded data
@@ -77,6 +78,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         if (siteEnv.cblCompetencies) {
             progressGrid.getCompetenciesStore().loadData(siteEnv.cblCompetencies);
         }
+
+        // handle any external "Log a Demonstartion" buttons
+        Ext.getBody().on('click', function(ev) {
+            ev.stopEvent();
+
+            me.showDemonstrationEditWindow();
+        }, me, { delegate: 'button[data-action="demonstration-create"]' });
 
         // render dashboard
         dashboardCt.render('slateapp-viewport');
