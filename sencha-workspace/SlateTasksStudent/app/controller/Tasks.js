@@ -8,7 +8,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     // entry points
     control: {
         'slatetasksstudent-tasktree': {
-            render: 'onTaskTreeRender',
+            boxready: 'onTaskTreeBoxReady',
             itemclick: 'onTaskTreeItemClick',
             coursesectionchange: 'onTaskTreeCourseSectionChange'
         },
@@ -73,7 +73,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     // event handlers
-    onTaskTreeRender: function() {
+    onTaskTreeBoxReady: function() {
         this.getStudentTasksStore().load();
     },
 
