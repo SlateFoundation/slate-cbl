@@ -74,7 +74,11 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // event handlers
     onTaskTreeBoxReady: function() {
-        this.getStudentTasksStore().load();
+        var store = this.getStudentTasksStore();
+
+        if (!store.isLoaded() && !store.isLoading()) {
+            store.load();
+        }
     },
 
     onStudentTasksStoreBeforeLoad: function() {
