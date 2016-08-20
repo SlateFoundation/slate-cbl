@@ -24,10 +24,11 @@
 {block body}
     {$dwoo.parent}
 
+    {$allContentAreas = Slate\CBL\ContentArea::getAll()}
+
     {load_templates subtemplates/forms.tpl}
 
     <div class="wrapper site">
-        {$allContentAreas = Slate\CBL\ContentArea::getAll()}
         <header class="page-header">
             <div class="header-buttons">
                 <button type="button" class="primary" data-action="demonstration-create">Log a Demonstration</button>

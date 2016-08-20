@@ -6,7 +6,14 @@ use DB, TableNotFoundException;
 use Sencha_App;
 use Sencha_RequestHandler;
 use Emergence\People\PeopleRequestHandler;
+
 use Slate\People\Student;
+
+use Slate\CBL\ContentAreasRequestHandler;
+use Slate\CBL\Competency;
+use Slate\CBL\Skill;
+use Slate\CBL\StudentCompetency;
+
 
 class StudentDashboardRequestHandler extends \RequestHandler
 {
@@ -38,7 +45,9 @@ class StudentDashboardRequestHandler extends \RequestHandler
     {
         return Sencha_RequestHandler::respond('app/SlateDemonstrationsStudent/ext', [
             'App' => Sencha_App::getByName('SlateDemonstrationsStudent'),
-            'mode' => 'production'
+            'mode' => 'production',
+            'Student' => static::_getRequestedStudent(),
+            'ContentArea' => static::_getRequestedContentArea()
         ]);
     }
 
