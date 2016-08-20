@@ -63,7 +63,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     onLaunch: function () {
-        this.getTasksManager().render('slate-tasks-manager');
+        this.getTasksManager().render('slateapp-viewport');
     },
 
     onCreateTaskClick: function() {
