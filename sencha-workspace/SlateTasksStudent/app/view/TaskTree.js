@@ -52,11 +52,11 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                     '<div class="flex-ct">',
                         '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
                         '<div class="slate-tasktree-data">',
-                            '<div class="slate-tasktree-category">{Category}</div>',
+                            '<div class="slate-tasktree-category">{SectionTitle}</div>',
                             '<div class="slate-tasktree-text">',
                                 '<div class="slate-tasktree-title">{Title}</div>',
                                 '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                '<div class="slate-tasktree-date">{DueDate:date("M d, Y")}</div>',
+                                '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
                             '</div>',
                         '</div>',
                     '</div>',

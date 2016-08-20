@@ -40,6 +40,12 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             type: 'int'
         },
         {
+            name: 'SectionTitle',
+            type: 'string',
+            mapping: 'Section.Title',
+            persist: false
+        },
+        {
             name: 'TaskStatus',
             type: 'string'
         },
@@ -73,7 +79,6 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         {
             name: 'DueDate',
             type: 'date',
-            mapping: 'Task.DueDate',
             dateFormat: 'timestamp',
             allowNull: true
         },
@@ -171,6 +176,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         include: [
             // 'Task',
             'Student',
+            'Section',
             'Comments',
             'Attachments',
             // 'SkillRatings',

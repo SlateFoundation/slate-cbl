@@ -105,14 +105,16 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     ],
 
     onElClick: function(ev, el) {
-        var me = this;
+        var me = this,
+            dataId = parseInt(el.getAttribute('data-id'), 10),
+            dataParentId = parseInt(el.getAttribute('data-parent-id'), 10);
 
         if (ev.getTarget('.slate-todolist-item-checkbox')) {
-            me.fireEvent('checkclick', me, el.getAttribute('data-parent-id'), el.getAttribute('data-id'), el.checked);
+            me.fireEvent('checkclick', me, dataParentId, dataId, el.checked);
         } else if (ev.getTarget('.slate-simplepanel-header')) {
             me.onSectionTitleClick(el);
         } else if (ev.getTarget('.slate-todolist-button-clear')) {
-            me.fireEvent('clearcompleted', me, el.getAttribute('data-parent-id'));
+            me.fireEvent('clearcompleted', me, dataParentId);
         } else if (ev.getTarget('.slate-todolist-button-hide')) {
             me.onHideButtonClick(el);
         }
@@ -179,12 +181,12 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     onTextFieldKeypress: function(evt, el) {
         if (evt.getKey() === evt.ENTER) {
-            this.fireEvent('enterkeypress', this, el.getAttribute('data-parent-id'));
+            this.fireEvent('enterkeypress', this, parseInt(el.getAttribute('data-parent-id'), 10));
         }
     },
 
     onDateChange: function(evt, el) {
-        this.fireEvent('datechange', this, el.getAttribute('data-parent-id'));
+        this.fireEvent('datechange', this, parseInt(el.getAttribute('data-parent-id'), 10));
     },
 
     recordVisibilityState: function(sectionID, visible) {

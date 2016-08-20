@@ -1,39 +1,15 @@
 /* eslint new-cap: 0 */
+/**
+ * The Tasks controller manages the student task list and the task details pop-up.
+ */
 Ext.define('SlateTasksStudent.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.window.Toast'
     ],
 
-    // entry points
-    control: {
-        'slatetasksstudent-tasktree': {
-            render: 'onTaskTreeRender',
-            itemclick: 'onTaskTreeItemClick',
-            coursesectionchange: 'onTaskTreeCourseSectionChange'
-        },
-        submitButton: {
-            click: 'onSubmitButtonClick'
-        },
-        'button#filter menucheckitem': {
-            checkchange: 'onFilterItemCheckChange'
-        },
-        'button#filter button#view-all': {
-            click: 'onFilterViewAllClick'
-        }
-    },
 
-    listen: {
-        store: {
-            '#StudentTasks': {
-                beforeload: 'onStudentTasksStoreBeforeLoad',
-                load: 'onStudentTasksStoreLoad'
-            }
-        }
-    },
-
-
-    // controller configuration
+    // dependencies
     views: [
         'TaskTree',
         'TaskDetails',
@@ -44,6 +20,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         'StudentTasks'
     ],
 
+
+    // component references
     refs: {
         taskTree: {
             selector: 'slatetasksstudent-tasktree',
@@ -72,9 +50,41 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
 
+    // entry points
+    control: {
+        'slatetasksstudent-tasktree': {
+            boxready: 'onTaskTreeBoxReady',
+            itemclick: 'onTaskTreeItemClick',
+            coursesectionchange: 'onTaskTreeCourseSectionChange'
+        },
+        submitButton: {
+            click: 'onSubmitButtonClick'
+        },
+        'button#filter menucheckitem': {
+            checkchange: 'onFilterItemCheckChange'
+        },
+        'button#filter button#view-all': {
+            click: 'onFilterViewAllClick'
+        }
+    },
+
+    listen: {
+        store: {
+            '#StudentTasks': {
+                beforeload: 'onStudentTasksStoreBeforeLoad',
+                load: 'onStudentTasksStoreLoad'
+            }
+        }
+    },
+
+
     // event handlers
-    onTaskTreeRender: function() {
-        this.getStudentTasksStore().load();
+    onTaskTreeBoxReady: function() {
+        var store = this.getStudentTasksStore();
+
+        if (!store.isLoaded() && !store.isLoading()) {
+            store.load();
+        }
     },
 
     onStudentTasksStoreBeforeLoad: function() {
@@ -191,6 +201,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             params: params
         });
     },
+
 
     // custom controller methods
     displayTaskData: function(recs) {
