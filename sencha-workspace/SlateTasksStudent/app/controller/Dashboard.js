@@ -73,6 +73,14 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         }
     },
 
+    listen: {
+        controller: {
+            '#': {
+                unmatchedroute: 'onUnmatchedRoute'
+            }
+        }
+    },
+
     control: {
         'slatetasksstudent-appheader button[action="show-recent"]': {
             click: 'onShowRecentClick'
@@ -94,6 +102,10 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
 
     // event handlers
+    onUnmatchedRoute: function() {
+        this.redirectTo('section/all');
+    },
+
     onShowRecentClick: function(button) {
         var win = this.getRecentActivity();
 
