@@ -18,7 +18,14 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         'Slate.cbl.view.student.TaskHistory'
     ],
 
+    stores: [
+        'CourseSections'
+    ],
+
     refs: {
+        sectionSelectorCombo: {
+            selector: 'combobox#section-selector',
+        },
         dashboard: {
             selector: 'slatetasksstudent-dashboard',
             autoCreate: true,
@@ -61,7 +68,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     // entry points
     routes: {
         'section/:sectionCode': {
-            sectionId: '([a-zA-Z0-9])+',
+            sectionCode: '([a-zA-Z0-9])+',
             action: 'showCourseSection'
         }
     },
@@ -102,11 +109,13 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     onSectionSelectorSelect: function(combo, rec) {
-        var me = this,
-            courseSection = rec.get('Code');
+        var sectionCode = rec.get('Code'),
+            route = 'section/all';
 
-        me.getTodoList().setCourseSection(courseSection);
-        me.getTaskTree().setCourseSection(courseSection);
+        if (sectionCode) {
+            route = 'section/'+sectionCode;
+        }
+        this.redirectTo(route);
     },
 
     onSectionSelectorAfterRender: function(combo) {
@@ -130,7 +139,23 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     showCourseSection: function(sectionCode) {
-        var me = this;
+        var me = this,
+            courseSectionsStore = me.getCourseSectionsStore(),
+            sectionSelectorCombo = me.getSectionSelectorCombo();
+
+        if (!courseSectionsStore.isLoaded()) {
+            courseSectionsStore.load(function() {
+                me.showCourseSection(sectionCode);
+            });
+            return;
+        }
+
+        if (sectionCode === 'all') {
+            sectionCode = null;
+            sectionSelectorCombo.setValue(0);
+        } else {
+            sectionSelectorCombo.setValue(courseSectionsStore.findRecord('Code', sectionCode));
+        }
 
         me.getTodoList().setCourseSection(sectionCode);
         me.getTaskTree().setCourseSection(sectionCode);
