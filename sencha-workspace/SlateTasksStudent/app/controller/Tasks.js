@@ -1,9 +1,54 @@
 /* eslint new-cap: 0 */
+/**
+ * The Tasks controller manages the student task list and the task details pop-up.
+ */
 Ext.define('SlateTasksStudent.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.window.Toast'
     ],
+
+
+    // dependencies
+    views: [
+        'TaskTree',
+        'TaskDetails',
+        'TaskFilters'
+    ],
+
+    stores: [
+        'StudentTasks'
+    ],
+
+
+    // component references
+    refs: {
+        taskTree: {
+            selector: 'slatetasksstudent-tasktree',
+            autoCreate: true,
+
+            xtype: 'slatetasksstudent-tasktree'
+        },
+        taskDetails: {
+            selector: 'slate-taskdetails',
+            autoCreate: true,
+
+            xtype: 'slate-taskdetails'
+        },
+        filterMenu: 'button#filter menu',
+        taskForm: 'slate-taskdetails slate-modalform',
+        parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
+        ratingView: 'slate-modalform slate-ratingview',
+        taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
+        commentsField: 'slate-commentsfield',
+        teacherAttachmentsField: 'slate-tasks-attachmentsfield#teacher-attachments',
+        studentAttachmentsField: 'slate-tasks-attachmentsfield#student-attachments',
+        // attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
+        // addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
+        // addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
+        submitButton: 'slate-taskdetails button#submit'
+    },
+
 
     // entry points
     control: {
@@ -30,45 +75,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 load: 'onStudentTasksStoreLoad'
             }
         }
-    },
-
-
-    // controller configuration
-    views: [
-        'TaskTree',
-        'TaskDetails',
-        'TaskFilters'
-    ],
-
-    stores: [
-        'StudentTasks'
-    ],
-
-    refs: {
-        taskTree: {
-            selector: 'slatetasksstudent-tasktree',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-tasktree'
-        },
-        taskDetails: {
-            selector: 'slate-taskdetails',
-            autoCreate: true,
-
-            xtype: 'slate-taskdetails'
-        },
-        filterMenu: 'button#filter menu',
-        taskForm: 'slate-taskdetails slate-modalform',
-        parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
-        ratingView: 'slate-modalform slate-ratingview',
-        taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
-        commentsField: 'slate-commentsfield',
-        teacherAttachmentsField: 'slate-tasks-attachmentsfield#teacher-attachments',
-        studentAttachmentsField: 'slate-tasks-attachmentsfield#student-attachments',
-        // attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
-        // addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
-        // addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
-        submitButton: 'slate-taskdetails button#submit'
     },
 
 
@@ -195,6 +201,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             params: params
         });
     },
+
 
     // custom controller methods
     displayTaskData: function(recs) {
