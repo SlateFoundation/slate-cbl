@@ -58,13 +58,6 @@ class Task extends \VersionedRecord
             'notnull' => true,
             'values' => ['private', 'shared', 'deleted'],
             'default' => 'private'
-        ],
-        'ContextID' => [
-            'type' => 'uint',
-            'default' => null
-        ],
-        'ContextClass' => [
-            'default' => null
         ]
     ];
     
@@ -95,10 +88,13 @@ class Task extends \VersionedRecord
             'linkForeign' => 'SkillID'
         ],
         'Attachments' => [
+            'type' => 'context-children',
+            'class' => AbstractTaskAttachment::class
+        ],
+        'StudentTasks' => [
             'type' => 'one-many',
-            'class' => AbstractTaskAttachment::class,
-            'foreign' => 'TaskID',
-            'local' => 'ID'
+            'class' => StudentTask::class,
+            'foreign' => 'TaskID'
         ]
     ];
 
@@ -108,13 +104,14 @@ class Task extends \VersionedRecord
             'includeInSummary' => true,
             'stringsOnly' => false
         ],
-#        => [
-#            'getter' => 'getSkills'
-#        ],
         'ParentTask',
         'SubTasks',
         'Context',
-        'Attachments'
+        'Attachments',
+        'StudentTasks',
+        'ParentTaskTitle' => [
+            'getter' => 'getParenTaskTitle'    
+        ]
     ];
     
     public static $searchConditions = [];
@@ -152,5 +149,10 @@ class Task extends \VersionedRecord
         ));
 
         return DB::affectedRows() > 0;
+    }
+    
+    public function getParenTaskTitle()
+    {
+        return $this->ParentTask ? $this->ParentTask->Title : null;
     }
 }

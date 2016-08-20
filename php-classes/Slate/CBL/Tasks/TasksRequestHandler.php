@@ -2,19 +2,14 @@
 
 namespace Slate\CBL\Tasks;
 
+use DB;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
 class TasksRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass =  Task::class;
-    public static $browseOrder = ['ID' => 'ASC'];
-    public static $browseConditions = [
-        'Status' => [
-            'operator' => '!=',
-            'value' => 'deleted'
-        ]
-    ];
-    
+    public static $browseOrder = ['Created' => 'DESC'];
+
     public static function handleRecordsRequest($action = false) 
     {
         switch ($action = ($action ?: static::shiftPath())) {
@@ -28,10 +23,35 @@ class TasksRequestHandler extends \RecordsRequestHandler
     
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
     {
-        if (!empty($_REQUEST['excludeSubtasks'])) {
-            $conditions['ParentTaskID'] = null;
+        //handle tasks by section
+        if (isset($_REQUEST['course_section'])) {
+            if (!$Section = \Slate\Courses\Section::getByHandle($_REQUEST['course_section'])) {
+                return static::throwInvalidRequestError('Course section not found.');
+            }
+            
+            //chcek if ID or ParentTaskID is attached to a course section
+            $taskIds = DB::allRecords(
+                'SELECT DISTINCT %4$s.ID, %4$s.ParentTaskID FROM `%1$s` %2$s JOIN `%3$s` %4$s ON (%4$s.ID = %2$s.TaskID) WHERE %2$s.CourseSectionID = %5$u',
+                [
+                    StudentTask::$tableName,
+                    StudentTask::getTableAlias(),
+                    
+                    Task::$tableName,
+                    Task::getTableAlias(),
+                    
+                    $Section->ID
+                ]
+            );
+            
+            $taskIds = array_filter(array_unique(array_merge(array_column($taskIds, 'ID'), array_column($taskIds, 'ParentTaskID'))));
+            
+            $conditions['ID'] = [
+                'values' => $taskIds
+            ];
+        } else { //show all tasks that are either shared, or created by current user.
+            $recordClass = static::$recordClass;
+            $conditions[] = sprintf('(%1$s.Status = "shared" OR %1$s.CreatorID = %2$u)', $recordClass::getTableAlias(), $GLOBALS['Session']->PersonID);
         }
-        
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
     
@@ -52,7 +72,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
             case 'enum':
                 $values = $field['values'];
                 if ($query) {
-                    $conditions = '/^([a-z0-9_-\s]+)?'.$query.'([a-z0-9_-\s]+)?$/i';
+                    $conditions = '/^([a-z0-9_-\s]+)?'.DB::escape($query).'([a-z0-9_-\s]+)?$/i';
                     $values = array_values(array_filter($values, function($v) use ($conditions) {
                         return preg_match($conditions, $v, $matches);
                     }));
@@ -66,12 +86,12 @@ class TasksRequestHandler extends \RecordsRequestHandler
             case 'uint':
                 
                 if ($query) {
-                    $conditions = sprintf('%s LIKE "%%%s%%"', $field['columnName'], \DB::escape($query));
+                    $conditions = sprintf('%s LIKE "%%%s%%"', $field['columnName'], DB::escape($query));
                 } else {
                     $conditions = 1;
                 }
                 
-                $values = \DB::allValues($field['columnName'], 'SELECT %1$s FROM `%2$s` WHERE %3$s GROUP BY %1$s', [$field['columnName'], $recordClass::$tableName, $conditions]);
+                $values = DB::allValues($field['columnName'], 'SELECT %1$s FROM `%2$s` WHERE %3$s GROUP BY %1$s', [$field['columnName'], $recordClass::$tableName, $conditions]);
                 break;
         }
         
@@ -90,6 +110,11 @@ class TasksRequestHandler extends \RecordsRequestHandler
         ]);
 #        \MICS::dump($values, 'values', true);
     }
+    
+    /*
+    *   Responsibilities: 
+    *       - Update relationships for Skills, Attachments, and StudentTasks.
+    */
     
     protected static function onRecordSaved(\ActiveRecord $Record, $data)
     {
@@ -117,7 +142,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
             
             if (!empty($oldSkillIds)) {
 #                \MICS::dump($oldSkillIds)
-                \DB::nonQuery('DELETE FROM `%s` WHERE TaskID = %u AND SkillID IN ("%s")', [
+                DB::nonQuery('DELETE FROM `%s` WHERE TaskID = %u AND SkillID IN ("%s")', [
                     TaskSkill::$tableName,
                     $Record->ID,
                     join('", "', $oldSkillIds)
@@ -148,11 +173,11 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     $Attachment = $attachmentClass::create($attachmentData);
                 }
                 
-                $Attachment->TaskID = $Record->ID;
+                $Attachment->ContextID = $Record->ID;
+                $Attachment->ContextClass = $Record->getRootClass();
                 $Attachment->save();
                 $attachments[] = $Attachment;
                 $attachmentIds[] = $Attachment->ID;
-                
             }
             
 #            \MICS::dump([
@@ -164,14 +189,35 @@ class TasksRequestHandler extends \RecordsRequestHandler
 #            ], 'dump', true);
             
 #            if (!empty($oldAttachmentIds)) {
-            \DB::nonQuery('DELETE FROM `%s` WHERE TaskID = %u AND ID NOT IN ("%s")', [
+            DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
                 AbstractTaskAttachment::$tableName,
+                $Record->getRootClass(),
                 $Record->ID,
                 join('", "', $attachmentIds)
             ]);
 #            }
         }
         $Record->Attachments = $attachments;
-#        \MICS::dump($Record->Attachments, 'record attachments', true);
+    
+        //update student tasks
+        if (isset($data['Assignees'])) {
+            //TODO: implement deleting / updating students tasks?
+            foreach ($data['Assignees'] as $assigneeData) {
+                if (!$studentTask = StudentTask::getByWhere(['StudentID' => $assigneeData, 'TaskID' => $Record->ID])) {
+                    $studentTask = StudentTask::create([
+                        'TaskID' => $Record->ID,
+                        'StudentID' => $assigneeData,
+                        'CourseSectionID' => $data['CourseSectionID']
+                    ]);
+                }
+                $studentTask->setFields([
+                    'DueDate' => $Record->DueDate,
+                    'ExperienceType' => $Record->ExperienceType,
+                    'ExpirationDate' => $Record->ExpirationDate    
+                ]);
+                
+                $studentTask->save(false);
+            }
+        }
     }
 }

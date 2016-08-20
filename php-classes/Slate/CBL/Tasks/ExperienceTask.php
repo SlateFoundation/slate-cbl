@@ -4,11 +4,11 @@ namespace Slate\CBL\Tasks;
 
 class ExperienceTask extends Task
 {
-    public static $experienceTypeOptions = ['Core Studio', 'Choice Studio', 'Workshop', 'Health and Wellness', 'PE/Fitness', 'Online Courseware', 'Situated Learning', 'Work-based Learning', 'Advisory'];
+    public static $experienceTypeOptions = ['Studio', 'Flex Time', 'Internship'];
     
     public static $fields = [
         'ExperienceType' => [
-            'type' => 'enum',
+            'type' => 'string',
             'default' => null
         ]
     ];

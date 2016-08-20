@@ -19,7 +19,8 @@ class AbstractTaskAttachment extends \ActiveRecord
     public static $defaultClass = Link::class;
 
     public static $fields = [
-        'TaskID' => 'uint',
+        'ContextClass',
+        'ContextID' => 'uint',
         'Title' => [
             'type' => 'string',
             'default' => null
@@ -27,9 +28,8 @@ class AbstractTaskAttachment extends \ActiveRecord
     ];
 
     public static $relationships = [
-        'Task' => [
-            'type' => 'one-one',
-            'class' => Task::class
+        'Context' => [
+            'type' => 'context-parent'
         ]
     ];
 }
