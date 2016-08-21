@@ -1,25 +1,15 @@
+/**
+ * The Dashboard controller manages the components of the student dashboard and
+ * handles routing by course section.
+ */
 Ext.define('SlateTasksStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
         'Slate.API'
     ],
 
-    // entry points
-    control: {
-        'slatetasksstudent-appheader button[action="show-recent"]': {
-            click: 'onShowRecentClick'
-        },
-        'slatetasksstudent-tasktree': {
-            resize: 'onTaskTreeResize'
-        },
-        'combo#section-selector': {
-            select: 'onSectionSelectorSelect',
-            afterrender: 'onSectionSelectorAfterRender'
-        }
-    },
 
-
-    // controller configuration
+    // dependencies
     views: [
         'Dashboard',
         'AppHeader',
@@ -28,7 +18,14 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         'Slate.cbl.view.student.TaskHistory'
     ],
 
+    stores: [
+        'CourseSections'
+    ],
+
     refs: {
+        sectionSelectorCombo: {
+            selector: 'combobox#section-selector',
+        },
         dashboard: {
             selector: 'slatetasksstudent-dashboard',
             autoCreate: true,
@@ -68,14 +65,47 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
 
+    // entry points
+    routes: {
+        'section/:sectionCode': {
+            sectionCode: '([a-zA-Z0-9])+',
+            action: 'showCourseSection'
+        }
+    },
+
+    listen: {
+        controller: {
+            '#': {
+                unmatchedroute: 'onUnmatchedRoute'
+            }
+        }
+    },
+
+    control: {
+        'slatetasksstudent-appheader button[action="show-recent"]': {
+            click: 'onShowRecentClick'
+        },
+        'slatetasksstudent-tasktree': {
+            resize: 'onTaskTreeResize'
+        },
+        'combo#section-selector': {
+            select: 'onSectionSelectorSelect',
+            boxready: 'onSectionSelectorBoxReady'
+        }
+    },
+
+
     // controller templates method overrides
     onLaunch: function () {
         this.getDashboard().render('slateapp-viewport');
-
     },
 
 
     // event handlers
+    onUnmatchedRoute: function() {
+        this.redirectTo('section/all');
+    },
+
     onShowRecentClick: function(button) {
         var win = this.getRecentActivity();
 
@@ -91,14 +121,16 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     onSectionSelectorSelect: function(combo, rec) {
-        var me = this,
-            courseSection = rec.get('Code');
+        var sectionCode = rec.get('Code'),
+            route = 'section/all';
 
-        me.getTodoList().setCourseSection(courseSection);
-        me.getTaskTree().setCourseSection(courseSection);
+        if (sectionCode) {
+            route = 'section/'+sectionCode;
+        }
+        this.redirectTo(route);
     },
 
-    onSectionSelectorAfterRender: function(combo) {
+    onSectionSelectorBoxReady: function(combo) {
         combo.getStore().on('load', function(store) {
             store.insert(0, {
                 ID: 0,
@@ -110,10 +142,40 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         combo.getStore().load();
     },
 
+
     // custom controller methods
     maskDemoElements: function () {
         this.getTaskHistory().setLoading(false);
 
         this.getTaskHistory().setLoading('');
+    },
+
+    showCourseSection: function(sectionCode) {
+        var me = this,
+            courseSectionsStore = me.getCourseSectionsStore(),
+            sectionSelectorCombo = me.getSectionSelectorCombo(),
+            rec = courseSectionsStore.findRecord('Code', sectionCode);
+
+        if (!courseSectionsStore.isLoaded()) {
+            courseSectionsStore.load(function() {
+                me.showCourseSection(sectionCode);
+            });
+            return;
+        }
+
+        if (!rec && sectionCode !== 'all') {
+            Ext.Msg.alert('Error', 'Course Section not found.');
+            return;
+        }
+
+        if (sectionCode === 'all') {
+            sectionCode = null;
+            sectionSelectorCombo.setValue(0);
+        } else {
+            sectionSelectorCombo.setValue(rec);
+        }
+
+        me.getTodoList().setCourseSection(sectionCode);
+        me.getTaskTree().setCourseSection(sectionCode);
     }
 });
