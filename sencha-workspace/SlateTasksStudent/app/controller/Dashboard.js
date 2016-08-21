@@ -18,14 +18,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         'Slate.cbl.view.student.TaskHistory'
     ],
 
-    stores: [
-        'CourseSections'
-    ],
-
     refs: {
-        sectionSelectorCombo: {
-            selector: 'combobox#section-selector',
-        },
         dashboard: {
             selector: 'slatetasksstudent-dashboard',
             autoCreate: true,
@@ -37,6 +30,9 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             autoCreate: true,
 
             xtype: 'slatetasksstudent-appheader'
+        },
+        sectionSelectorCombo: {
+            selector: 'combobox#section-selector',
         },
         taskTree: {
             selector: 'slatetasksstudent-tasktree',
@@ -137,7 +133,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
                 Code: null,
                 Title: 'All'
             })
-            combo.select(0);
         });
         combo.getStore().load();
     },
@@ -152,8 +147,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     showCourseSection: function(sectionCode) {
         var me = this,
-            courseSectionsStore = me.getCourseSectionsStore(),
             sectionSelectorCombo = me.getSectionSelectorCombo(),
+            courseSectionsStore = sectionSelectorCombo.getStore(),
             rec = courseSectionsStore.findRecord('Code', sectionCode);
 
         if (!courseSectionsStore.isLoaded()) {
@@ -169,7 +164,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         }
 
         if (sectionCode === 'all') {
-            sectionCode = null;
+            sectionCode = 0;
             sectionSelectorCombo.setValue(0);
         } else {
             sectionSelectorCombo.setValue(rec);
