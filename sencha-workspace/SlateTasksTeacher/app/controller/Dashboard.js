@@ -365,6 +365,14 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         return me.doEditTask();
     },
 
+    onSubCellRepainted: function(row, grid, rowId) {
+        var me = this;
+
+        if (rowId === row.getId()) {
+            grid.syncExpanderHeight(row.getId());
+            grid.un('repaintsubcells', me.onSubCellRepainted, me);
+        }
+    },
 
     // custom methods
     doAssignStudentTaskRevision: function(date) {
@@ -413,12 +421,15 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             courseSection = me.getCourseSelector().getSelection(),
             record = form.updateRecord().getRecord(),
             wasPhantom = record.phantom,
-            errors;
+            tasksGrid = me.getTasksGrid(),
+            errors, row;
 
-        record.set('Skills', skillsField.getSkills(false)); // returnRecords
-        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
-        record.set('Assignees', assignmentsField.getAssignees(false)); // returnRecords
-        record.set('CourseSectionID', courseSection.getId());
+        record.set({
+            Skills: skillsField.getSkills(false), // returnRecords
+            Attachments: attachmentsField.getAttachments(false), // returnRecords
+            Assignees: assignmentsField.getAssignees(false), // returnRecords
+            CourseSectionID: courseSection.getId()
+        });
 
         errors = record.validate();
 
@@ -437,6 +448,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 me.getTaskEditor().close();
                 if (wasPhantom) {
                     me.getTasksStore().add(rec);
+                    // Resize a row when it's children have updated.
+                    if ((row = tasksGrid.rollupRows[rec.getId()]) || (row = tasksGrid.subRowParents[rec.getId()])) {
+                        tasksGrid.on('repaintsubcells', me.onSubCellRepainted, me, { args: [row] });
+                    }
                     // reload studenttasks, as new records may exist
                     me.getStudentTasksStore().reload();
                 }
