@@ -65,6 +65,9 @@ Ext.define('AggregridExample.Application', {
             rowheaderclick: function(aggregrid, rowId) {
                 this.logInfo('%s->rowheaderclick: row %s', aggregrid.getId(), rowId);
             },
+            subrowheaderclick: function(aggregrid, rowId) {
+                this.logInfo('%s->subrowheaderclick: row %s', aggregrid.getId(), rowId);
+            },
             columnheaderclick: function(aggregrid, columnId) {
                 this.logInfo('%s->columnheaderclick: column %s', aggregrid.getId(), columnId);
             },
