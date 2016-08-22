@@ -17,6 +17,10 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'Skills@Slate.cbl.store'
     ],
 
+    models: [
+        'Task@Slate.cbl.model'
+    ],
+
     config: {
         refs: {
             tasksManager: {
@@ -185,7 +189,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             taskEditor = me.getTaskEditor();
 
         if (!taskRecord) {
-            taskRecord = Ext.create('Slate.cbl.model.Task');
+            taskRecord = me.getTaskModel().create();
         }
 
         taskEditor.setTask(taskRecord);
