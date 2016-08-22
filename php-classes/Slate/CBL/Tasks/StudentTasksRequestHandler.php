@@ -59,9 +59,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
             $conditions['CourseSectionID'] = $Section->ID;
         }
 
-        if ($CurrentUser instanceof Student) {
-            $conditions['StudentID'] = $CurrentUser->ID;
-        }
+        $conditions['StudentID'] = $CurrentUser->ID;
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
