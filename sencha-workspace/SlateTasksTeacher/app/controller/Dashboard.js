@@ -453,15 +453,22 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         record.save({
             success: function(rec) {
                 me.getTaskEditor().close();
-                if (wasPhantom) {
-                    me.getTasksStore().add(rec);
-                    // reload studenttasks, as new records may exist
-                    me.getStudentTasksStore().reload();
-                }
-
                 // buffer reload tasks store as related objects i.e. attachments may have saved after
                 // todo: find a better way?
-                // Ext.Function.createBuffered(me.getTasksStore().reload, 500, me);
+                setTimeout(function() {
+                    me.getTaskModel().load(rec.getId(), {
+                        success: function(loadedRecord) {
+                            if (wasPhantom) {
+                                me.getTasksStore().add(loadedRecord);
+                                // reload studenttasks, as new records may exist
+                                me.getStudentTasksStore().reload();
+                            } else {
+                                record.set(loadedRecord.getData());
+                                record.commit();
+                            }
+                        }
+                    });
+                }, 500);
                 Ext.toast('Task succesfully saved!');
             }
         });
