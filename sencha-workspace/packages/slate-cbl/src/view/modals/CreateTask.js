@@ -8,7 +8,8 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
         'Slate.cbl.widget.TaskTitleField',
         'Slate.cbl.widget.SkillsField',
         'Slate.cbl.widget.AssignmentsField',
-        'Slate.cbl.widget.AttachmentsField'
+        'Slate.cbl.widget.AttachmentsField',
+        'Ext.data.ChainedStore'
     ],
 
     title: 'Create Task',
