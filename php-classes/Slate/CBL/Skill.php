@@ -54,8 +54,19 @@ class Skill extends \VersionedRecord
     ];
 
     public static $dynamicFields = [
-        'Competency'
+        'Competency',
+        'CompetencyLevel' => [
+            'getter' => 'getCompetencyLevel'  
+        ],
+        'CompetencyDescriptor' => [
+            'getter' => 'getCompetencyDescriptor'    
+        ],
+        'CompetencyCode' => [
+            'getter' => 'getCompetencyCode'    
+        ]
     ];
+    
+    public static $searchConditions = [];
 
     public function getHandle()
     {
@@ -110,5 +121,25 @@ class Skill extends \VersionedRecord
         if ($wasDemonstrationsRequiredDirty) {
             $this->Competency->getTotalDemonstrationsRequired(true); // true to force refresh of cached value
         }
+    }
+    
+    public function getCompetencyDescriptor()
+    {
+        return $this->Competency ? $this->Competency->Descriptor : null;
+    }
+    
+    public function getCompetencyCode()
+    {
+        return $this->Competency ? $this->Competency->Code : null;
+    }
+    
+    public function getCompetencyLevel()
+    {
+        $level = null;
+        if ($GLOBALS['Session']->PersonID && $this->Competency && $StudentCompetency = StudentCompetency::getByWhere(['StudentID' => $GLOBALS['Session']->PersonID, 'CompetencyID' => $this->Competency->ID])) {
+            $level = $StudentCompetency->Level;
+        }
+        
+        return $level;
     }
 }

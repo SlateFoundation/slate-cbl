@@ -2,7 +2,7 @@
 
 namespace Slate\CBL\Tasks\Attachments;
 
-class Google extends AbstractTaskAttachment
+class GoogleDocument extends AbstractTaskAttachment
 {
     public static $fields = [
         'ExternalID'

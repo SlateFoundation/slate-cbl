@@ -2,11 +2,16 @@
 
 namespace Slate\CBL\Tasks;
 
+use DB;
+use HandleBehavior;
+use Slate\CBL\Skill;
+use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
+
 class Task extends \VersionedRecord
 {
     //VersionedRecord configuration
     public static $historyTable = 'history_cbl_tasks';
-
+    
     // ActiveRecord configuration
     public static $tableName = 'cbl_tasks';
     public static $singularNoun = 'task';
@@ -17,15 +22,18 @@ class Task extends \VersionedRecord
         __CLASS__,
         ExperienceTask::class,
     ];
-
+    
     public static $fields = [
-        'Title',
+        'Title' => [
+            'includeInSummary' => true
+        ],
         'Handle' => [
             'unique' => true
         ],
         'ParentTaskID' => [
             'type' => 'uint',
-            'notnull' => false
+            'notnull' => false,
+            'includeInSummary' => true
         ],
         'DueDate' => [
             'type' => 'timestamp',
@@ -41,22 +49,80 @@ class Task extends \VersionedRecord
         ],
         'Shared' => [
             'type' => 'enum',
+            'notnull' => true,
             'values' => ['course', 'school', 'public'],
             'default' => null
+        ],
+        'Status' => [
+            'type' => 'enum',
+            'notnull' => true,
+            'values' => ['private', 'shared', 'deleted'],
+            'default' => 'private'
         ]
     ];
-
+    
     public static $validators = [
         'Title'
     ];
+    
+    public static $relationships = [        
+        'ParentTask' => [
+            'type' => 'one-one',
+            'class' => __CLASS__,
+            'local' => 'ParentTaskID'
+        ],
+        'SubTasks' => [
+            'type' => 'one-many',
+            'class' => __CLASS__,
+            'local' => 'ID',
+            'foreign' => 'ParentTaskID'
+        ],
+        'Context' => [
+            'type' => 'context-parent'
+        ],
+        'Skills' => [
+            'type' => 'many-many',
+            'class' => Skill::class,
+            'linkClass' => TaskSkill::class,
+            'linkLocal' => 'TaskID',
+            'linkForeign' => 'SkillID'
+        ],
+        'Attachments' => [
+            'type' => 'context-children',
+            'class' => AbstractTaskAttachment::class
+        ],
+        'StudentTasks' => [
+            'type' => 'one-many',
+            'class' => StudentTask::class,
+            'foreign' => 'TaskID'
+        ]
+    ];
 
+    public static $dynamicFields = [
+        'Skills',
+        'Creator' => [
+            'includeInSummary' => true,
+            'stringsOnly' => false
+        ],
+        'ParentTask',
+        'SubTasks',
+        'Context',
+        'Attachments',
+        'StudentTasks',
+        'ParentTaskTitle' => [
+            'getter' => 'getParenTaskTitle'    
+        ]
+    ];
+    
+    public static $searchConditions = [];
+    
     public function save($deep = true)
     {
         HandleBehavior::onSave($this);
-
+        
         return parent::save($deep);
     }
-
+    
     public function validate($deep = true)
     {
         // call parent
@@ -67,5 +133,26 @@ class Task extends \VersionedRecord
 
         // save results
         return $this->finishValidation();
+    }
+    
+    public function destroy()
+    {
+        return static::delete($this->ID);
+    }
+
+    public static function delete($id)
+    {
+        DB::nonQuery('UPDATE `%s` SET Status="deleted" WHERE `%s` = %u', array(
+            static::$tableName
+            ,static::_cn('ID')
+            ,$id
+        ));
+
+        return DB::affectedRows() > 0;
+    }
+    
+    public function getParenTaskTitle()
+    {
+        return $this->ParentTask ? $this->ParentTask->Title : null;
     }
 }
