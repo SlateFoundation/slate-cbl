@@ -146,18 +146,41 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
     // event handlers
     onTreeClick: function(ev, t) {
-        var target = Ext.get(t),
-            parentEl, recordId;
+        var me = this,
+            target = Ext.get(t),
+            treeItem = target.up('.slate-tasktree-item'),
+            sublist = treeItem && treeItem.down('.slate-tasktree-sublist');
 
-        if (target.is('.slate-tasktree-nub.is-clickable')) {
-            target.up('.slate-tasktree-item').toggleCls('is-expanded');
-        } else {
-            parentEl = target.up('.slate-tasktree-item');
-            if (parentEl) {
-                recordId = parentEl.dom.getAttribute('recordId');
-                this.fireEvent('itemclick', recordId);
-            }
+        if (target.is('.slate-tasktree-nub.is-clickable') && sublist) {
+            sublist.setHeight(treeItem.hasCls('is-expanded') ? 0 : sublist.getAttribute('data-natural-height') + 'px');
+            treeItem.toggleCls('is-expanded');
+            Ext.defer(me.updateLayout, 275, me);
+        } else if (target.is('.slate-tasktree-nub')) {
+            ev.stopEvent();
+        } else if (treeItem) {
+            me.fireEvent('itemclick', me, parseInt(treeItem.getAttribute('recordId'), 10));
         }
-    }
+    },
 
+    afterTasksLoad: function() {
+        var me = this,
+            sublists;
+
+        if (!me.rendered) {
+            me.on('render', 'afterTasksLoad', me, { single: true });
+            return;
+        }
+
+        sublists = me.el.select('.slate-tasktree-sublist');
+
+        sublists.each(function(sublist) {
+            sublist.set({
+                'data-natural-height': sublist.getHeight()
+            });
+        });
+
+        sublists.setHeight(0);
+
+        me.updateLayout();
+    }
 });
