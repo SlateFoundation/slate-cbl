@@ -202,6 +202,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         tasks = me.formatTaskData(recs);
         tree.update({ tasks: tasks });
+        tree.afterTasksLoad();
         tree.unmask();
     },
 
