@@ -13,23 +13,21 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
     public static $accountLevelBrowse = 'User';
     //public static $browseOrder = ['TaskID' => 'ASC'];
 
-    /*
-    public static $browseConditions = [
-        'Status' => [
-            'operator' => '!=',
-            'value' => 'deleted'
-        ]
-    ];
-    */
 
+    public static function handleRecordsRequest($action = false)
+    {
+        $CurrentUser = $GLOBALS['Session']->Person;
 
-#    public static function handleRecordsRequest($action = false)
-#    {
-#        switch ($action = $action ?: static::shiftPath()) {
-#            case
-#        }
-#    }
-#
+        switch ($action = $action ?: static::shiftPath()) {
+            case 'assigned':
+                return static::handleBrowseRequest([], [
+                    'StudentID' => $CurrentUser
+                ]);
+            default:
+                return parent::handleRecordsRequest($action);
+        }
+    }
+
 
     public static function handleRecordRequest(\ActiveRecord $Record, $action = false)
     {
@@ -43,24 +41,12 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
     {
-        $CurrentUser = $GLOBALS['Session']->Person;
-
-        //\Debug::dumpVar(get_class ($CurrentUser));
-
-        if (!$CurrentUser instanceof Student && !$CurrentUser->hasAccountLevel('Teacher')) {
-            return static::throwUnauthorizedError('You must be a student to view this information.');
-        }
-
         if (isset($_REQUEST['course_section'])) {
             if (!$Section = \Slate\Courses\Section::getByHandle($_REQUEST['course_section'])) {
                 return static::throwInvalidRequestError('Course section not found.');
             }
 
             $conditions['CourseSectionID'] = $Section->ID;
-        }
-
-        if ($CurrentUser instanceof Student) {
-            $conditions['StudentID'] = $CurrentUser->ID;
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
