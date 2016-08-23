@@ -202,17 +202,15 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                     '</tpl>',
                 '</tbody>',
             '</table>'
-        ]
-    },
+        ],
 
-    initComponent: function() {
-        var me = this;
+        cellRenderer: function() {
+            return this.cellRenderFn.apply(this, arguments);
+        },
 
-        me.callParent(arguments);
-        me.setConfig({
-            cellRenderer: me.cellRenderFn,
-            subCellRenderer: me.cellRenderFn
-        });
+        subCellRenderer: function() {
+            return this.cellRenderFn.apply(this, arguments);
+        }
     },
 
     cellRenderFn: function(group, cellEl) {
