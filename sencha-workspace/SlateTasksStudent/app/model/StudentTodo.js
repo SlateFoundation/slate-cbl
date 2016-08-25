@@ -1,4 +1,3 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('SlateTasksStudent.model.StudentTodo', {
     extend: 'Ext.data.Model',
     requires: [
