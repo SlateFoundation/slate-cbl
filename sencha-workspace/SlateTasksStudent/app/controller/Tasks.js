@@ -16,8 +16,13 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         'TaskFilters'
     ],
 
+    models: [
+        'StudentTask'
+    ],
+
     stores: [
-        'StudentTasks'
+        'StudentTasks',
+        'StudentTasksTree'
     ],
 
 
@@ -72,6 +77,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             '#StudentTasks': {
                 beforeload: 'onStudentTasksStoreBeforeLoad',
                 load: 'onStudentTasksStoreLoad'
+            },
+            '#StudentTasksTree': {
+                load: 'onStudentTasksTreeStoreLoad'
             }
         }
     },
@@ -86,9 +94,23 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         this.displayTaskData(store.getRange(), true);
     },
 
+    onStudentTasksTreeStoreLoad: function(store) {
+        var me = this,
+            tree = me.getTaskTree();
+
+        tree.update(store.getRange());
+    },
+
     onTaskTreeItemClick: function(id) {
         var me = this,
-            rec = me.getStudentTasksStore().getById(id),
+            rec = me.getStudentTaskModel().load({
+/*
+                params: {
+                    ID: id
+                }
+*/
+            }),
+            //rec = me.getStudentTasksStore().getById(id),
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
             ratingView = me.getRatingView(),
@@ -188,7 +210,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             }
         }
 
-        this.getStudentTasksStore().load({
+        this.getStudentTasksTreeStore().load({
             params: params
         });
     },
