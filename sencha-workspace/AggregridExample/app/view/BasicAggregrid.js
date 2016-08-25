@@ -5,13 +5,13 @@ Ext.define('AggregridExample.view.BasicAggregrid', {
     config: {
         columnsStore: 'Students',
         columnHeaderTpl: [
-            '{fullName}'
+            '{data.fullName}'
         ],
         columnMapper: 'student_id',
 
         rowsStore: 'TimePeriods',
         rowHeaderTpl: [
-            'Week #{week}'
+            'Week #{data.week}'
         ],
         rowMapper: function(dataRecord, rowsStore) {
             var date = dataRecord.get('date'),

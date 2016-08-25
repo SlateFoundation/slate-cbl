@@ -5,7 +5,7 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
     config: {
         columnsStore: 'Students',
         columnHeaderTpl: [
-            '{fullName}'
+            '{data.fullName}'
         ],
         columnMapper: 'student_id',
 
@@ -74,7 +74,7 @@ Ext.define('AggregridExample.view.RollupAggregrid', {
             return parentIndex >= 0 ? rowsStore.getAt(parentIndex) : null;
         },
         subRowHeaderTpl: [
-            'Week #{week}'
+            'Week #{data.week}'
         ],
         subRowMapper: function(dataRecord, subRowsStore) {
             var date = dataRecord.get('date'),
