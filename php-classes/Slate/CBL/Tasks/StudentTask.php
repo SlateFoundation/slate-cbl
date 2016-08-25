@@ -98,7 +98,8 @@ class StudentTask extends \VersionedRecord
 
     public static $indexes = [
         'StudentTask' => [
-            'fields' => ['TaskID', 'StudentID']
+            'fields' => ['TaskID', 'StudentID'],
+            'unique' => true
         ]
     ];
 
