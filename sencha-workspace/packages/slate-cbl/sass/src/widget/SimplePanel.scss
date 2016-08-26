@@ -7,7 +7,7 @@
 .slate-simplepanel-header {
     background-color: #999;
     border-radius: .25em .25em 0 0;
-    color: white;
+    color: $panel-header-color;
     padding: .75em 1em;
 }
 
@@ -18,4 +18,11 @@
     line-height: 1;
     padding-top: .125em;
     -webkit-font-smoothing: antialiased;
+
+    small {
+        color: mix($base-color, $panel-header-color, 30%);
+        font-size: .675em;
+        margin-left: .25em;
+        text-transform: uppercase;
+    }
 }
