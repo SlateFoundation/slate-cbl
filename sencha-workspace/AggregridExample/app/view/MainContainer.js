@@ -1,4 +1,4 @@
-Ext.define('AggregridExample.view.Main', {
+Ext.define('AggregridExample.view.MainContainer', {
     extend: 'Ext.tab.Panel',
     xtype: 'app-main',
     requires: [

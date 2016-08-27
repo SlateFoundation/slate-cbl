@@ -16,7 +16,7 @@ Ext.define('AggregridExample.Application', {
     name: 'AggregridExample',
 
     views: [
-        'Main'
+        'MainContainer'
     ],
 
     stores: [
@@ -28,7 +28,7 @@ Ext.define('AggregridExample.Application', {
         'SummaryAbsences'
     ],
 
-    mainView: 'Main',
+    mainView: 'MainContainer',
 
     control: {
         'jarvus-aggregrid': {
