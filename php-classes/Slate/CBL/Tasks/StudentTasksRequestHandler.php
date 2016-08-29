@@ -4,8 +4,10 @@ namespace Slate\CBL\Tasks;
 
 use Slate\People\Student;
 use Slate\CBL\Skill;
-use Emergence\Comments\Comment;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
+use Slate\Courses\SectionsRequestHandler;
+use Emergence\People\PeopleRequestHandler;
+use Emergence\Comments\Comment;
 
 class StudentTasksRequestHandler extends \RecordsRequestHandler
 {
@@ -50,12 +52,16 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
     {
-        if (isset($_REQUEST['course_section'])) {
-            if (!$Section = \Slate\Courses\Section::getByHandle($_REQUEST['course_section'])) {
-                return static::throwInvalidRequestError('Course section not found.');
-            }
+        $student = static::_getRequestedStudent();
+        $courseSection = static::_getRequestedCourseSection();
 
-            $conditions['CourseSectionID'] = $Section->ID;
+        if ($courseSection) {
+            $conditions['CourseSectionID'] = $courseSection->ID;
+        }
+
+        //  check if StudentID was passed through "assigned" route and already has studentID specified
+        if (!array_key_exists('StudentID', $conditions)) {
+            $conditions['StudentID'] = $student->ID;
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
@@ -158,6 +164,33 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         return parent::checkWriteAccess($Record, $suppressLogin);
     }
 
+    protected static function _getRequestedStudent()
+    {
+        if (
+            !empty($_GET['student']) &&
+            $GLOBALS['Session']->hasAccountLevel('Staff')
+        ) {
+            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
+                return static::throwNotFoundError('Student not found');
+            }
+        } else {
+            $Student = $GLOBALS['Session']->Person;
+        }
 
+        return $Student;
+    }
+
+    protected static function _getRequestedCourseSection()
+    {
+        $CourseSection = null;
+
+        if (!empty($_GET['course_section'])) {
+            if (!$CourseSection = SectionsRequestHandler::getRecordByHandle($_GET['course_section'])) {
+                return static::throwNotFoundError('Course Section not found');
+            }
+        }
+
+        return $CourseSection;
+    }
 }
 
