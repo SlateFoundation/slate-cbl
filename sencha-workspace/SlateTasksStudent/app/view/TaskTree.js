@@ -119,7 +119,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
                 dueEndOfDay.setHours(23, 59, 59, 999);
 
-                if (dueEndOfDay < now.getTime()) {
+                if (dueEndOfDay < now) {
                     statusCls = 'late';
                 } else if (taskStatus === 'completed') {
                     return 'completed';
