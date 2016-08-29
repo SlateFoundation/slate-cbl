@@ -6,6 +6,8 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     config: {
         courseSection: null,
+        student: null,
+        readOnly: false,
         sectionVisibility: {}
     },
 

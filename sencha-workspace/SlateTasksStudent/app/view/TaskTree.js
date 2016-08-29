@@ -3,7 +3,9 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     xtype: 'slatetasksstudent-tasktree',
 
     config: {
-        courseSection: null
+        courseSection: null,
+        student: null,
+        readOnly: false
     },
 
     title: 'Current Tasks',
