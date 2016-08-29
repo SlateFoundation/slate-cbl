@@ -58,14 +58,19 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // event handlers
     onTodosStoreBeforeLoad: function(store) {
-        var courseSection = this.getTodoList().getCourseSection(),
+        var todoList = this.getTodoList(),
+            courseSection = todoList.getCourseSection(),
+            student = todoList.getStudent(),
             params = {};
 
         if (courseSection) {
-            params = {
-                'course_section': courseSection
-            };
+            params.course_section = courseSection;  // eslint-disable-line camelcase
         }
+
+        if (student) {
+            params.student = student;
+        }
+
         store.getProxy().extraParams = params;
     },
 
