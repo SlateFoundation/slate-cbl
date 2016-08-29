@@ -93,10 +93,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '</tpl>',
         {
             getStatusCls: function(due) {
-                var now = new Date(),
+                var dueEndOfDay = new Date(due.getTime()),
+                    now = new Date(),
                     statusCls = 'due';
 
-                if (due < now) {
+                dueEndOfDay.setHours(23, 59, 59, 999);
+
+                if (dueEndOfDay < now) {
                     statusCls = 'late';
                 }
                 return statusCls;
