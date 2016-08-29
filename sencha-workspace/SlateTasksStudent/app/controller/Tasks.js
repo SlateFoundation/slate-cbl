@@ -99,6 +99,11 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         form.getForm().loadRecord(rec);
 
+        // TODO: quick fix, but needs a new field or expanded workflow tracking
+        if (rec.get('TaskStatus') === 're-submitted') {
+            form.down('displayfield[name="Submitted"]').setFieldLabel('Resubmitted Date');
+        }
+
         ratingView.setData({
             ratings: [7, 8, 9, 10, 11, 12, 'M'],
             competencies: rec.getTaskSkillsGroupedByCompetency()
