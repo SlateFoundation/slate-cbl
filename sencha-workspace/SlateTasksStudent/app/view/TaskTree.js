@@ -47,7 +47,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '<ul class="slate-tasktree-list">',
 
             '<tpl for="tasks">',
-                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.DueDate) ]}" recordId="{ID}">',
+                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.DueDate, values.TaskStatus) ]}" recordId="{ID}">',
 
                     '<div class="flex-ct">',
                         '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -113,10 +113,13 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
             getDueStatusCls: function(due, taskStatus) {
-                var now = new Date(),
+                var dueEndOfDay = new Date(due.getTime()),
+                    now = new Date(),
                     statusCls = 'due';
 
-                if (due < now) {
+                dueEndOfDay.setHours(23, 59, 59, 999);
+
+                if (dueEndOfDay < now.getTime()) {
                     statusCls = 'late';
                 } else if (taskStatus === 'completed') {
                     return 'completed';
