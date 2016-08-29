@@ -157,6 +157,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             parentEl = target.up('.slate-tasktree-item');
             parentEl.toggleCls('is-expanded');
             me.resizeSubtasksContainer(parentEl);
+            me.resizeParentContainer();
         } else {
             parentEl = target.up('.slate-tasktree-item');
             if (parentEl) {
@@ -191,5 +192,16 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         } else {
             parentTaskEl.down('ul').setHeight(0);
         }
+    },
+
+    resizeParentContainer: function() {
+        var me = this,
+            doc = document.documentElement,
+            currentScroll = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+
+        Ext.Function.defer(function() {
+            me.up('container').updateLayout();
+            window.scrollTo(0, currentScroll);
+        }, 200);
     }
 });
