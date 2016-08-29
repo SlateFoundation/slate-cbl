@@ -146,18 +146,47 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
     // event handlers
     onTreeClick: function(ev, t) {
-        var target = Ext.get(t),
+        var me = this,
+            target = Ext.get(t),
             parentEl, recordId;
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            target.up('.slate-tasktree-item').toggleCls('is-expanded');
+            parentEl = target.up('.slate-tasktree-item');
+            parentEl.toggleCls('is-expanded');
+            me.resizeSubtasksContainer(parentEl);
         } else {
             parentEl = target.up('.slate-tasktree-item');
             if (parentEl) {
                 recordId = parentEl.dom.getAttribute('recordId');
-                this.fireEvent('itemclick', recordId);
+                me.fireEvent('itemclick', recordId);
             }
         }
-    }
+    },
 
+
+    // custom methods
+    /*
+     * TODO: This seems hacky to me.  If the height of the subtasks can't be correctly sized in CSS, I'd prefer handling
+     * subitem expansion with Ext.Dom visibility methods as is currently implemeted in the Todo list.
+     */
+    resizeSubtasksContainer: function(parentTaskEl) {
+        var subtasks,
+            subtasksLength,
+            subtasksHeight = 0,
+            i = 0;
+
+        if (parentTaskEl.hasCls('is-expanded')) {
+            subtasks = parentTaskEl.query('.slate-tasktree-item', false);
+            subtasksLength = subtasks.length;
+
+            for (; i<subtasksLength; i++) {
+                subtasksHeight += subtasks[i].getHeight() + 1;
+            }
+
+            parentTaskEl.down('ul').setHeight(subtasksHeight);
+
+        } else {
+            parentTaskEl.down('ul').setHeight(0);
+        }
+    }
 });
