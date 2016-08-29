@@ -147,15 +147,27 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     showCourseSection: function(sectionCode) {
         var me = this,
+            params = Ext.urlDecode(location.search.substring(1)),
             sectionSelectorCombo = me.getSectionSelectorCombo(),
             courseSectionsStore = sectionSelectorCombo.getStore(),
-            rec = courseSectionsStore.findRecord('Code', sectionCode);
+            rec = courseSectionsStore.findRecord('Code', sectionCode),
+            taskTree = me.getTaskTree(),
+            todoList = me.getTodoList();
 
         if (!courseSectionsStore.isLoaded()) {
             courseSectionsStore.load(function() {
                 me.showCourseSection(sectionCode);
             });
             return;
+        }
+
+        if (params.student) {
+            sectionCode = 'all';
+            taskTree.setStudent(params.student);
+            taskTree.setReadOnly(true);
+            todoList.setStudent(params.student);
+            todoList.setReadOnly(true);
+            sectionSelectorCombo.setDisabled(true);
         }
 
         if (!rec && sectionCode !== 'all') {
@@ -170,7 +182,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             sectionSelectorCombo.setValue(rec);
         }
 
-        me.getTodoList().setCourseSection(sectionCode);
-        me.getTaskTree().setCourseSection(sectionCode);
+        taskTree.setCourseSection(sectionCode);
+        todoList.setCourseSection(sectionCode);
     }
 });
