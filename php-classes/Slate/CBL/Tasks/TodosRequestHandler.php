@@ -5,6 +5,8 @@ namespace Slate\CBL\Tasks;
 use Slate\People\Student;
 use Slate\Courses\Section;
 use Slate\Courses\SectionParticipant;
+use Slate\Courses\SectionsRequestHandler;
+use Emergence\People\PeopleRequestHandler;
 
 class TodosRequestHandler extends \RecordsRequestHandler
 {
@@ -14,13 +16,9 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
     public static function handleRecordsRequest($action = false)
     {
-        $CurrentUser = $GLOBALS['Session']->Person;
-        //\Debug::dumpVar($CurrentUser);
-
-
         switch ($action = ($action ?: static::shiftPath())) {
             case 'clear-section':
-                return static::handleClearRequest($_REQUEST['sectionId'],$GLOBALS['Session']->Person->ID);
+                return static::handleClearRequest($_REQUEST['sectionId']);
 
             default:
                 return parent::handleRecordsRequest($action);
@@ -34,17 +32,18 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
     public static function handleTodoListRequest()
     {
-        $CurrentUser = $GLOBALS['Session']->Person;
+        $student = static::_getRequestedStudent();
+        $courseSection = static::_getRequestedCourseSection();
 
         $todos = [];
 
-        $sectionTodos = static::getSectionTodos(null);
+        $sectionTodos = static::getSectionTodos($student, null);
 
         // Todos with a null SectionID are considered personal Todos
         array_push($todos, [
             'ID' => 0,
             'SectionID' => 0,
-            'StudentID' => $CurrentUser->ID,
+            'StudentID' => $student->ID,
             'Title' => 'Personal',
             'Section' => [],
             'Todos' => $sectionTodos,
@@ -52,15 +51,11 @@ class TodosRequestHandler extends \RecordsRequestHandler
         ]);
 
         $enrolledSectionWhere = [
-            'PersonID' => $CurrentUser->ID
+            'PersonID' => $student->ID
         ];
 
-        if (isset($_REQUEST['course_section'])) {
-            if (!$Section = \Slate\Courses\Section::getByHandle($_REQUEST['course_section'])) {
-                return static::throwInvalidRequestError('Course section not found.');
-            }
-
-            $enrolledSectionWhere['CourseSectionID'] = $Section->ID;
+        if ($courseSection) {
+            $enrolledSectionWhere['CourseSectionID'] = $courseSection->ID;
         }
 
         $enrolledSections = SectionParticipant::getAllByWhere($enrolledSectionWhere);
@@ -68,12 +63,12 @@ class TodosRequestHandler extends \RecordsRequestHandler
         foreach($enrolledSections as $enrolledSection) {
             $section = $enrolledSection-> getDynamicFieldValue('Section');
 
-            $sectionTodos = static::getSectionTodos($enrolledSection->CourseSectionID);
+            $sectionTodos = static::getSectionTodos($student, $enrolledSection->CourseSectionID);
 
             $todo = [
                 'ID' => $enrolledSection->ID,
                 'SectionID' => $section->ID,
-                'StudentID' => $CurrentUser->ID,
+                'StudentID' => $student->ID,
                 'Title' => $section->Title,
                 'Section' => $section,
                 'Todos' => $sectionTodos,
@@ -90,33 +85,25 @@ class TodosRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
-    public static function getSectionTodos($sectionId = null)
+    public static function getSectionTodos($student, $sectionId = null)
     {
-        $CurrentUser = $GLOBALS['Session']->Person;
-
         return Todo::getAllByWhere([
             'SectionID' => $sectionId,
-            'StudentID' => $CurrentUser->ID,
+            'StudentID' => $student->ID,
             'Cleared' => false
         ]);
     }
 
-    public static function handleClearRequest($sectionId,$studentId) {
-        $CurrentUser = $GLOBALS['Session']->Person;
+    public static function handleClearRequest($sectionId) {
+        $student = static::_getRequestedStudent();
 
         if ($sectionId == 0) {
             $sectionId = null;  // using SectionID = 0 for personal todos
         }
 
-        $where = [
-            'SectionID' => $sectionId,
-            'StudentID' => $studentId,
-            'Completed' => 1
-        ];
-
         $todos = Todo::getAllByWhere([
             'SectionID' => $sectionId,
-            'StudentID' => $CurrentUser->ID,
+            'StudentID' => $student->ID,
             'Completed' => 1
         ]);
 
@@ -131,5 +118,33 @@ class TodosRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
+    protected static function _getRequestedStudent()
+    {
+        if (
+            !empty($_GET['student']) &&
+            $GLOBALS['Session']->hasAccountLevel('Staff')
+        ) {
+            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
+                return static::throwNotFoundError('Student not found');
+            }
+        } else {
+            $Student = $GLOBALS['Session']->Person;
+        }
+
+        return $Student;
+    }
+
+    protected static function _getRequestedCourseSection()
+    {
+        $CourseSection = null;
+
+        if (!empty($_GET['course_section'])) {
+            if (!$CourseSection = SectionsRequestHandler::getRecordByHandle($_GET['course_section'])) {
+                return static::throwNotFoundError('Course Section not found');
+            }
+        }
+
+        return $CourseSection;
+    }
 
 }
