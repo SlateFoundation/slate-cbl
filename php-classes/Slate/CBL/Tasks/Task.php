@@ -136,22 +136,22 @@ class Task extends \VersionedRecord
                 'aliasName' => 'ParentTask'
             ],
             'sql' => 'ParentTask.Title LIKE "%%%s%%"'
-        ],
-        'Creator' => [
-            'qualifiers' => ['creatorfullname', 'creator'],
-            'points' => 1,
-            'join' => [
-                'className' => Person::class,
-                'localField' => 'CreatorID',
-                'foreignField' => 'ID'
-            ],
-            'callback' => [__CLASS__, 'getCreatorSearchConditionsSql']
         ]
     ];
 
     public static function __classLoaded()
     {
-        static::$searchConditions['Creator']['join']['aliasName'] = Person::getTableAlias(); // todo: remove when ActiveRecord can set this automatically.
+        static::$searchConditions['Creator'] = [
+            'qualifiers' => ['creatorfullname', 'creator'],
+            'points' => 1,
+            'join' => [
+                'className' => Person::class,
+                'localField' => 'CreatorID',
+                'foreignField' => 'ID',
+                'aliasName' => Person::getTableAlias() // todo: remove when ActiveRecord can set this automatically.
+            ],
+            'callback' => [__CLASS__, 'getCreatorSearchConditionsSql']
+        ];
     }
 
     public function save($deep = true)
