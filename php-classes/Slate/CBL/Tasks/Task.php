@@ -4,6 +4,7 @@ namespace Slate\CBL\Tasks;
 
 use DB;
 use HandleBehavior;
+use Emergence\People\Person;
 use Slate\CBL\Skill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
@@ -11,7 +12,7 @@ class Task extends \VersionedRecord
 {
     //VersionedRecord configuration
     public static $historyTable = 'history_cbl_tasks';
-    
+
     // ActiveRecord configuration
     public static $tableName = 'cbl_tasks';
     public static $singularNoun = 'task';
@@ -22,7 +23,7 @@ class Task extends \VersionedRecord
         __CLASS__,
         ExperienceTask::class,
     ];
-    
+
     public static $fields = [
         'Title' => [
             'includeInSummary' => true
@@ -60,12 +61,12 @@ class Task extends \VersionedRecord
             'default' => 'private'
         ]
     ];
-    
+
     public static $validators = [
         'Title'
     ];
-    
-    public static $relationships = [        
+
+    public static $relationships = [
         'ParentTask' => [
             'type' => 'one-one',
             'class' => __CLASS__,
@@ -110,19 +111,51 @@ class Task extends \VersionedRecord
         'Attachments',
         'StudentTasks',
         'ParentTaskTitle' => [
-            'getter' => 'getParenTaskTitle'    
+            'getter' => 'getParenTaskTitle'
         ]
     ];
-    
-    public static $searchConditions = [];
-    
+
+    public static $searchConditions = [
+        'Title' => [
+            'qualifiers' => ['any', 'title'],
+            'points' => 2,
+            'sql' => 'Title LIKE "%%%s%%"'
+        ],
+        'Created' => [
+            'qualifiers' => ['created'],
+            'points' => 1,
+            'sql' => 'CAST(Created AS Date) = "%s"'
+        ],
+        'ParentTaskTitle' => [
+            'qualifiers' => ['parenttasktitle', 'parenttask'],
+            'points' => 1,
+            'join' => [
+                'className' => __CLASS__,
+                'localField' => 'ParentTaskID',
+                'foreignField' => 'ID',
+                'aliasName' => 'ParentTask'
+            ],
+            'sql' => 'ParentTask.Title LIKE "%%%s%%"'
+        ],
+        'Creator' => [
+            'qualifiers' => ['creatorfullname', 'creator'],
+            'points' => 1,
+            'join' => [
+                'className' => Person::class,
+                'localField' => 'CreatorID',
+                'foreignField' => 'ID'
+            ],
+            'callback' => [__CLASS__, 'getCreatorSearchConditionsSql']
+        ]
+    ];
+
     public function save($deep = true)
     {
         HandleBehavior::onSave($this);
-        
+
         return parent::save($deep);
     }
-    
+
     public function validate($deep = true)
     {
         // call parent
@@ -134,7 +167,7 @@ class Task extends \VersionedRecord
         // save results
         return $this->finishValidation();
     }
-    
+
     public function destroy()
     {
         return static::delete($this->ID);
@@ -150,9 +183,15 @@ class Task extends \VersionedRecord
 
         return DB::affectedRows() > 0;
     }
-    
+
     public function getParenTaskTitle()
     {
         return $this->ParentTask ? $this->ParentTask->Title : null;
+    }
+
+    public static function getCreatorSearchConditionsSql($term, $condition)
+    {
+        $personTableAlias = Person::getTableAlias();
+        return 'CONCAT('.$personTableAlias.'.FirstName, " ", '.$personTableAlias.'.LastName) LIKE "%'.$term.'%"';
     }
 }
