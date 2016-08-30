@@ -149,6 +149,11 @@ class Task extends \VersionedRecord
         ]
     ];
 
+    public static function __classLoaded()
+    {
+        static::$searchConditions['Creator']['join']['aliasName'] = Person::getTableAlias(); // todo: remove when ActiveRecord can set this automatically.
+    }
+
     public function save($deep = true)
     {
         HandleBehavior::onSave($this);
