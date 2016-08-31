@@ -88,6 +88,11 @@ Ext.define('Slate.cbl.model.Task', {
             type: 'string'
         },
         {
+            name: 'Status',
+            type: 'string',
+            defaultValue: 'shared'
+        },
+        {
             name: 'ExperienceType',
             type: 'string',
             defaultValue: 'Studio'
