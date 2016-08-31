@@ -78,7 +78,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         var me = this,
             todoList = me.getTodoList();
 
-        todoList.update(me.formatTodoLists(store.getRange()));
+        todoList.update(me.formatTodoLists(store.getRange(), todoList.getReadOnly()));
         todoList.restoreVisibilityState();
     },
 
@@ -129,7 +129,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
 
     // custom controller methods
-    formatTodoLists: function(recs) {
+    formatTodoLists: function(recs, readOnly) {
         var me = this,
             recsLength = recs.length,
             todoSections = [],
@@ -137,16 +137,16 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             rec,
             todos;
 
-
         for (;i<recsLength; i++) {
             rec = recs[i];
 
-            todos = me.formatTodos(rec.Todos().getRange()); // eslint-disable-line new-cap
+            todos = me.formatTodos(rec.Todos().getRange(), readOnly); // eslint-disable-line new-cap
 
             Ext.apply(todos, {
                 section: rec.get('Title'),
                 sectionId: rec.get('SectionID'),
                 todoCount: rec.get('TodoCount'),
+                readOnly: readOnly,
                 ID: rec.get('ID')
             });
 
@@ -156,12 +156,13 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         return todoSections;
     },
 
-    formatTodos: function(recs) {
+    formatTodos: function(recs, readOnly) {
         var recsLength = recs.length,
             i = 0,
             todos = [],
             completeTodos = [],
             activeTodos = [],
+            buttons = [],
             rec;
 
         for (;i<recsLength; i++) {
@@ -180,18 +181,22 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             items: activeTodos
         });
 
+        if (!readOnly) {
+            buttons = [{
+                icon: 'times',
+                action: 'clear',
+                text: 'Clear All'
+            }, {
+                icon: 'caret-up',
+                action: 'hide',
+                text: 'Hide'
+            }];
+        }
+
         if (completeTodos.length > 0) {
             todos.push({
                 Title: 'Completed Items',
-                buttons: [{
-                    icon: 'times',
-                    action: 'clear',
-                    text: 'Clear All'
-                }, {
-                    icon: 'caret-up',
-                    action: 'hide',
-                    text: 'Hide'
-                }],
+                buttons: buttons,
                 items: completeTodos
             });
         }
