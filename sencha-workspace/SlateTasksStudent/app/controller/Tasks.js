@@ -95,7 +95,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             teacherAttachmentsField = me.getTeacherAttachmentsField(),
             studentAttachmentsField = me.getStudentAttachmentsField(),
             commentsField = me.getCommentsField(),
-            readonly = rec.get('TaskStatus') === 'completed';
+            readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
 
         form.getForm().loadRecord(rec);
 
