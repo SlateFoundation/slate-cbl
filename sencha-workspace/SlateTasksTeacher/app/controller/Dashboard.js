@@ -76,7 +76,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
 
-
     // entry points
     routes: {
         'section/:sectionId': {
@@ -200,16 +199,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             task = me.getTasksStore().getById(rowId);
 
             me.doEditTask(task);
-            return;
         }
 
-        return null;
+        return;
     },
 
     onBeforeRowHeaderToggle: function(grid, rowId, el, ev) {
         if (ev.getTarget('.jarvus-aggregrid-rowheader .edit-row')) {
             return false;
         }
+        return null;
     },
 
     onAssigneeComboRender: function(combo) {
@@ -392,11 +391,13 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             courseSection = me.getCourseSelector().getSelection(),
             record = form.updateRecord().getRecord(),
             wasPhantom = record.phantom,
+            previousAssignees = record.getAssigneeIds(),
+            currentAssignees = assignmentsField.getAssignees(false),
             errors;
 
         record.set('Skills', skillsField.getSkills(false)); // returnRecords
         record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
-        record.set('Assignees', assignmentsField.getAssignees(false)); // returnRecords
+        record.set('Assignees', currentAssignees); // returnRecords
         record.set('CourseSectionID', courseSection.getId());
 
         errors = record.validate();
@@ -410,6 +411,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 }
             });
             return;
+        } else if (previousAssignees.length) {
+            me.doConfirmTaskAssignees(record);
+            return;
         }
         record.save({
             success: function(rec) {
@@ -420,6 +424,48 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     me.getStudentTasksStore().reload();
                 }
                 Ext.toast('Task succesfully saved!');
+            }
+        });
+    },
+
+    doConfirmTaskAssignees: function(task) {
+        var me = this,
+            assigneeIds = task.get('Assignees');
+
+        Slate.API.request({
+            url: task.toUrl() + '/assignees',
+            callback: function(request, success, response) {
+                var assigned = response.data.data,
+                    unassigned = [],
+                    i = 0,
+                    message = 'Completing this action would result in un-assigning these students:';
+
+                for (; i < assigned.length; i++) {
+                    if (assigneeIds.indexOf(parseInt(assigned[i].ID, 10)) === -1) {
+                        unassigned.push(assigned[i]);
+                    }
+                }
+
+                if (unassigned.length) {
+                    i = 0;
+                    for (; i < unassigned.length; i++) {
+                        message += '<br> ' + unassigned[i].FirstName + ' ' + unassigned[i].LastName;
+                    }
+                    message += '<br> Would you like to continue?';
+                    Ext.Msg.confirm('Task Assignments', message, function(ans) {
+                        if (ans === 'yes') {
+                            task.save({
+                                success: function(rec) {
+                                    me.getTaskEditor().close();
+                                    me.getTasksStore().add(rec);
+                                    // reload studenttasks, as new records may exist
+                                    me.getStudentTasksStore().reload();
+                                    Ext.toast('Task succesfully saved!');
+                                }
+                            });
+                        }
+                    });
+                }
             }
         });
     },

@@ -17,7 +17,7 @@ Ext.define('Slate.cbl.widget.AssignmentsField', {
     items: [{
         itemId: 'assigned-to',
         flex: 1,
-        xtype: 'combo', //todo: update to tagfield?
+        xtype: 'combo', // todo: update to tagfield?
         multiSelect: true,
         queryMode: 'local',
         displayField: 'FullName',
@@ -25,7 +25,7 @@ Ext.define('Slate.cbl.widget.AssignmentsField', {
         store: {
             model: 'Slate.cbl.model.Student'
         }
-    },{
+    }, {
         xtype: 'checkboxfield',
         itemId: 'assign-all',
         boxLabel: 'All',
@@ -33,6 +33,7 @@ Ext.define('Slate.cbl.widget.AssignmentsField', {
         listeners: {
             change: function() {
                 var combo = this.prev('combo');
+
                 if (this.getValue()) {
                     combo.select(combo.getStore().getRange());
                     combo.setDisabled(true);
@@ -48,6 +49,7 @@ Ext.define('Slate.cbl.widget.AssignmentsField', {
             combo = me.down('combo'),
             comboStore = combo.getStore(),
             assignees = [];
+
         if (returnRecords === true) {
             assignees = Ext.Array.map(combo.getValue(), function(studentId) {
                 return comboStore.getById(studentId);
@@ -57,5 +59,12 @@ Ext.define('Slate.cbl.widget.AssignmentsField', {
         }
 
         return assignees;
+    },
+
+    setAssignees: function(assignees) {
+        var me = this,
+            combo = me.down('combo');
+
+        combo.setValue(assignees);
     }
 });

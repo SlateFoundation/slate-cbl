@@ -150,6 +150,10 @@ Ext.define('Slate.cbl.model.Task', {
         minOnlyMessage: 'You must select at least one skill'
     }],
 
+    toUrl: function() {
+        return '/cbl/tasks/' + this.getId();
+    },
+
      getSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
             skills = this.get('Skills');
@@ -170,5 +174,17 @@ Ext.define('Slate.cbl.model.Task', {
         });
 
         return comps;
+    },
+
+    getAssigneeIds: function() {
+        var assignees = [],
+            studentTasks = this.get('StudentTasks'),
+            i = 0;
+
+        for (; i < studentTasks.length; i++) {
+            assignees.push(studentTasks[i].StudentID);
+        }
+
+        return assignees;
     }
 });
