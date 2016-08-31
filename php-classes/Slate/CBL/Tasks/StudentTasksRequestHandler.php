@@ -31,9 +31,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         switch ($action = $action ?: static::shiftPath()) {
             case 'assigned':
-                return static::handleBrowseRequest([], [
-                    'StudentID' => $CurrentUser->ID
-                ]);
+                return static::handleAssignedRequest();
             default:
                 return parent::handleRecordsRequest($action);
         }
@@ -50,6 +48,16 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         }
     }
 
+    public static function handleAssignedRequest($options = [], $conditions = [])
+    {
+        $student = static::_getRequestedStudent();
+
+        $conditions['StudentID'] = $student->ID;
+
+        return static::handleBrowseRequest($options, $conditions);
+
+    }
+
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
     {
         $student = static::_getRequestedStudent();
@@ -57,11 +65,6 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         if ($courseSection) {
             $conditions['CourseSectionID'] = $courseSection->ID;
-        }
-
-        //  check if StudentID was passed through "assigned" route and already has studentID specified
-        if (!array_key_exists('StudentID', $conditions)) {
-            $conditions['StudentID'] = $student->ID;
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
