@@ -320,7 +320,15 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 Score: ratingObject.rating
             },
             callback: function(opts, success) {
-                if (!success) {
+                if (success) {
+                    // todo: remove when API can handle
+                    setTimeout(function() {
+                        me.getStudentTasksStore().reload({
+                            id: studentTask.getId(),
+                            addRecords: true
+                        });
+                    }, 500);
+                } else {
                     Ext.toast('Error. Please try again.');
                 }
             }
