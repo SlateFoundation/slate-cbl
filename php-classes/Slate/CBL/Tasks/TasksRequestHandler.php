@@ -4,7 +4,6 @@ namespace Slate\CBL\Tasks;
 
 use DB;
 use ActiveRecord;
-use DB;
 use Emergence\People\Person;
 
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
