@@ -74,7 +74,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
         assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
 
-        courseSelector: 'slate-tasks-teacher-appheader combo'
+        courseSelector: 'slate-tasks-teacher-appheader combo',
+        acceptTaskBtn: 'slate-tasks-teacher-taskrater button[action=accept]'
     },
 
 
@@ -107,7 +108,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             publish: 'onCommentsFieldPublish'
         },
 
-        'slate-tasks-teacher-taskrater button[action=accept]': {
+        acceptTaskBtn: {
             click: 'onAcceptTaskClick'
         },
         'slate-tasks-teacher-taskrater button[action=reassign]': {
@@ -192,7 +193,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             }));
 
         if (studentTask) {
-            return me.doRateStudentTask(studentTask, studentTask.get('TaskStatus') === 'completed'); // studentTask, readOnly
+            return me.doRateStudentTask(studentTask);
         }
 
         return me.doAssignStudentTask(taskId, studentId);
@@ -249,12 +250,17 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onAcceptTaskClick: function() {
         var me = this,
             taskRater = me.getTaskRater(),
-            studentTask = taskRater.getStudentTask();
+            studentTask = taskRater.getStudentTask(),
+            status = studentTask.get('TaskStatus') === 'completed' ? 're-assigned' : 'completed';
 
-        studentTask.set('TaskStatus', 'completed');
+        studentTask.set('TaskStatus', status);
 
-        me.doSaveStudentTask(studentTask, function() {
+        me.doSaveStudentTask(studentTask, function(rec) {
             taskRater.close();
+
+            if (status === 're-assigned') {
+                me.doRateStudentTask(rec);
+            }
         });
     },
 
@@ -503,10 +509,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskEditor.show();
     },
 
-    doRateStudentTask: function(studentTask, readOnly) {
+    doRateStudentTask: function(studentTask) {
         var me = this,
             taskRater = me.getTaskRater(),
-            task = me.getTasksStore().getById(studentTask.get('TaskID'));
+            task = me.getTasksStore().getById(studentTask.get('TaskID')),
+            readOnly = studentTask.get('TaskStatus') === 'completed',
+            acceptTaskBtn;
 
         // handle failure
         if (!task) {
@@ -518,6 +526,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskRater.setTask(task);
         taskRater.setStudentTask(studentTask);
         taskRater.setReadOnly(readOnly);
+
+        if (readOnly) {
+            acceptTaskBtn = me.getAcceptTaskBtn();
+            acceptTaskBtn.setDisabled(false);
+            acceptTaskBtn.setText('UnAccept Task');
+        }
 
         taskRater.show();
     },
