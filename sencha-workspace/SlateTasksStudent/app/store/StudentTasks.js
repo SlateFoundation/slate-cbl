@@ -6,5 +6,19 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
 
     config: {
         pageSize: 0
+    },
+
+    proxy: {
+        type: 'slate-records',
+        url: '/cbl/student-tasks/assigned',
+        include: [
+            'Student',
+            'Section',
+            'Comments',
+            'Attachments',
+            'TaskSkills',
+            'Task.Attachments',
+            'Task.ParentTask'
+        ]
     }
 });

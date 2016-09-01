@@ -172,19 +172,15 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
 
     proxy: {
         type: 'slate-records',
-        url: '/cbl/student-tasks/assigned',
+        url: '/cbl/student-tasks',
         include: [
-            // 'Task',
             'Student',
             'Section',
             'Comments',
             'Attachments',
-            // 'SkillRatings',
             'TaskSkills',
             'Task.Attachments',
-            'Task.ParentTask',
-            // 'Task.Skills.Competency',
-            // 'Task.Skills.CompetencyLevel'
+            'Task.ParentTask'
         ]
     },
 
