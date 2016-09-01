@@ -130,7 +130,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         },
         'slate-tasks-teacher-appheader button[action=create]': {
             click: 'onCreateTaskClick'
-        }
+        },
+        'slate-tasks-teacher-taskeditor slate-tasks-titlefield[clonable]': {
+            select: 'onClonableTitleFieldSelect'
+        },
     },
 
 
@@ -365,6 +368,19 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         return me.doEditTask();
     },
 
+    onClonableTitleFieldSelect: function(combo) {
+        var me = this,
+            record = combo.getSelectedRecord(),
+            title = 'New Task',
+            message = 'Do you want to clone this task?<br><strong>' + record.get('Title') + '</strong>';
+
+        Ext.Msg.confirm(title, message, function(btnId) {
+            if (btnId === 'yes') {
+                me.doCloneTask(record);
+            }
+        });
+    },
+
 
     // custom methods
     doAssignStudentTaskRevision: function(date) {
@@ -415,10 +431,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             wasPhantom = record.phantom,
             errors;
 
-        record.set('Skills', skillsField.getSkills(false)); // returnRecords
-        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
-        record.set('Assignees', assignmentsField.getAssignees(false)); // returnRecords
-        record.set('CourseSectionID', courseSection.getId());
+        record.set({
+            Skills: skillsField.getSkills(false), // returnRecords
+            Attachments: attachmentsField.getAttachments(false), // returnRecords
+            Assignees: assignmentsField.getAssignees(false), // returnRecords
+            CourseSectionID: courseSection.getId()
+        });
 
         errors = record.validate();
 
@@ -435,11 +453,22 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         record.save({
             success: function(rec) {
                 me.getTaskEditor().close();
-                if (wasPhantom) {
-                    me.getTasksStore().add(rec);
-                    // reload studenttasks, as new records may exist
-                    me.getStudentTasksStore().reload();
-                }
+                // buffer reload tasks store as related objects i.e. attachments may have saved after
+                // todo: find a better way?
+                setTimeout(function() {
+                    me.getTaskModel().load(rec.getId(), {
+                        success: function(loadedRecord) {
+                            if (wasPhantom) {
+                                me.getTasksStore().add(loadedRecord);
+                                // reload studenttasks, as new records may exist
+                                me.getStudentTasksStore().reload();
+                            } else {
+                                record.set(loadedRecord.getData());
+                                record.commit();
+                            }
+                        }
+                    });
+                }, 500);
                 Ext.toast('Task succesfully saved!');
             }
         });
@@ -508,5 +537,29 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         taskAssigner.setStudent(student);
         taskAssigner.setTask(task);
         taskAssigner.show();
+    },
+
+    doCloneTask: function(taskRecord) {
+        var me = this,
+            taskCopy = taskRecord.copy(null),
+            copiedAttachments = taskCopy.get('Attachments'),
+            attachments = [],
+            i = 0;
+
+
+        for (; i < copiedAttachments.length; i++) {
+            attachments.push(Ext.apply(copiedAttachments[i], {
+                ID: null,
+                ContextID: null,
+                ContextClass: null
+            }));
+        }
+
+        taskCopy.set({
+            Title: taskCopy.get('Title') + ' Clone',
+            Attachments: attachments
+        });
+
+        me.doEditTask(taskCopy);
     }
 });
