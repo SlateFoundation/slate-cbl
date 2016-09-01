@@ -199,7 +199,7 @@ Ext.define('Slate.cbl.model.Task', {
 
     getAssigneeIds: function() {
         var assignees = [],
-            studentTasks = this.get('StudentTasks'),
+            studentTasks = this.get('StudentTasks') || [],
             i = 0;
 
         for (; i < studentTasks.length; i++) {
