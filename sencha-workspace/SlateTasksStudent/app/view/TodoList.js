@@ -6,6 +6,8 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     config: {
         courseSection: null,
+        student: null,
+        readOnly: false,
         sectionVisibility: {}
     },
 
@@ -65,16 +67,17 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                             '</tpl>',
                         '</header>',
                         '<ul class="slate-todolist-list" data-id="{parent.sectionId}-{#}" data-parent-id="{parent.ID}">',
+                            '<tpl exec="values.readOnly = parent.readOnly;"></tpl>', // access to readonly in items loop
                             '<tpl for="items">',
                                 '<li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}">',
-                                    '<input class="slate-todolist-item-checkbox" data-parent-id="{parent.parent.ID}" data-id="{ID}" type="checkbox" <tpl if="Completed">checked</tpl>>',
+                                    '<input class="slate-todolist-item-checkbox" data-parent-id="{parent.parent.ID}" data-id="{ID}" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
                                     '<div class="slate-todolist-item-text">',
                                         '<label for="todo-item" class="slate-todolist-item-title">{Description}</label>',
                                     '</div>',
                                     '<div class="slate-todolist-item-date">{DueDate:date("M j, Y")}</div>',
                                 '</li>',
                             '</tpl>',
-                            '<tpl if="canAdd">',
+                            '<tpl if="!parent.readOnly">',
                                 '<li class="slate-todolist-item slate-todolist-blank-item slate-todolist-blank-item-{parent.ID}">',
                                     '<input class="slate-todolist-item-checkbox" type="checkbox" disabled>',
                                     '<div class="slate-todolist-item-text">',
@@ -93,10 +96,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '</tpl>',
         {
             getStatusCls: function(due) {
-                var now = new Date(),
+                var dueEndOfDay = new Date(due.getTime()),
+                    now = new Date(),
                     statusCls = 'due';
 
-                if (due < now) {
+                dueEndOfDay.setHours(23, 59, 59, 999);
+
+                if (dueEndOfDay < now) {
                     statusCls = 'late';
                 }
                 return statusCls;

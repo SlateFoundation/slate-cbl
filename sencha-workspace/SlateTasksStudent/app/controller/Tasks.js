@@ -95,9 +95,14 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             teacherAttachmentsField = me.getTeacherAttachmentsField(),
             studentAttachmentsField = me.getStudentAttachmentsField(),
             commentsField = me.getCommentsField(),
-            readonly = rec.get('TaskStatus') === 'completed';
+            readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
 
         form.getForm().loadRecord(rec);
+
+        // TODO: quick fix, but needs a new field or expanded workflow tracking
+        if (rec.get('TaskStatus') === 're-submitted') {
+            form.down('displayfield[name="Submitted"]').setFieldLabel('Resubmitted Date');
+        }
 
         ratingView.setData({
             ratings: [7, 8, 9, 10, 11, 12, 'M'],
@@ -180,12 +185,15 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
-        var params = {};
+        var student = taskTree.getStudent(),
+            params = {};
 
         if (courseSectionId) {
-            params = {
-                'course_section': courseSectionId
-            }
+            params.course_section = courseSectionId;  // eslint-disable-line camelcase
+        }
+
+        if (student) {
+            params.student = student;
         }
 
         this.getStudentTasksStore().load({

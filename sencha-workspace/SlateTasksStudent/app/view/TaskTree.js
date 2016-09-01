@@ -3,7 +3,9 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     xtype: 'slatetasksstudent-tasktree',
 
     config: {
-        courseSection: null
+        courseSection: null,
+        student: null,
+        readOnly: false
     },
 
     title: 'Current Tasks',
@@ -47,7 +49,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '<ul class="slate-tasktree-list">',
 
             '<tpl for="tasks">',
-                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.DueDate) ]}" recordId="{ID}">',
+                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.DueDate, values.TaskStatus) ]}" recordId="{ID}">',
 
                     '<div class="flex-ct">',
                         '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -113,10 +115,13 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
             getDueStatusCls: function(due, taskStatus) {
-                var now = new Date(),
+                var dueEndOfDay = new Date(due.getTime()),
+                    now = new Date(),
                     statusCls = 'due';
 
-                if (due < now) {
+                dueEndOfDay.setHours(23, 59, 59, 999);
+
+                if (dueEndOfDay < now) {
                     statusCls = 'late';
                 } else if (taskStatus === 'completed') {
                     return 'completed';
@@ -146,18 +151,59 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
     // event handlers
     onTreeClick: function(ev, t) {
-        var target = Ext.get(t),
+        var me = this,
+            target = Ext.get(t),
             parentEl, recordId;
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            target.up('.slate-tasktree-item').toggleCls('is-expanded');
+            parentEl = target.up('.slate-tasktree-item');
+            parentEl.toggleCls('is-expanded');
+            me.resizeSubtasksContainer(parentEl);
+            me.resizeParentContainer();
         } else {
             parentEl = target.up('.slate-tasktree-item');
             if (parentEl) {
                 recordId = parentEl.dom.getAttribute('recordId');
-                this.fireEvent('itemclick', recordId);
+                me.fireEvent('itemclick', recordId);
             }
         }
-    }
+    },
 
+
+    // custom methods
+    /*
+     * TODO: This seems hacky to me.  If the height of the subtasks can't be correctly sized in CSS, I'd prefer handling
+     * subitem expansion with Ext.Dom visibility methods as is currently implemeted in the Todo list.
+     */
+    resizeSubtasksContainer: function(parentTaskEl) {
+        var subtasks,
+            subtasksLength,
+            subtasksHeight = 0,
+            i = 0;
+
+        if (parentTaskEl.hasCls('is-expanded')) {
+            subtasks = parentTaskEl.query('.slate-tasktree-item', false);
+            subtasksLength = subtasks.length;
+
+            for (; i<subtasksLength; i++) {
+                subtasksHeight += subtasks[i].getHeight() + 1;
+            }
+
+            parentTaskEl.down('ul').setHeight(subtasksHeight);
+
+        } else {
+            parentTaskEl.down('ul').setHeight(0);
+        }
+    },
+
+    resizeParentContainer: function() {
+        var me = this,
+            doc = document.documentElement,
+            currentScroll = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+
+        Ext.Function.defer(function() {
+            me.up('container').updateLayout();
+            window.scrollTo(0, currentScroll);
+        }, 200);
+    }
 });

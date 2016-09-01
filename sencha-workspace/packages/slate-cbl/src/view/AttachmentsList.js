@@ -23,12 +23,34 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
             '<li class="slate-attachmentslist-item <tpl if="kind">slate-attachment-{kind}</tpl>">',
                 '<span class="slate-attachment-title"><a href="{URL}" target=_blank>{title}</a></span>',
                 '<tpl if="isEditable">',
-                    '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
+                    '<tpl if="this.isGoogleDoc(values.URL)">',
+                        '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
+                    '</tpl>',
                     '<button class="plain" action="remove"><i class="fa fa-times-circle"></i></button>',
                 '</tpl>',
             '</li>',
-        '</tpl>'
-    ],
+        '</tpl>',
+    {
+        isGoogleDoc: function (url) {
+            var googleDocUrls = [
+                    'docs.google.com',
+                    'sheets.google.com',
+                    'slides.google.com',
+                    'drawings.google.com',
+                    'script.google.com'
+                ],
+                googleDocUrlsLength = googleDocUrls.length,
+                i = 0;
+
+            for (; i<googleDocUrlsLength; i++) {
+                if (url.indexOf(googleDocUrls[i]) > -1) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }],
 
     prepareData: function(data, recordIndex, record) {
         var me = this,

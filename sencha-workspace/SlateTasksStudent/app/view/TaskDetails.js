@@ -44,6 +44,10 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             name: 'Title'
         },
         {
+            fieldLabel: 'Instructions',
+            name: 'Instructions'
+        },
+        {
             fieldLabel: 'Subtask of',
             name: 'ParentTaskTitle'
         },

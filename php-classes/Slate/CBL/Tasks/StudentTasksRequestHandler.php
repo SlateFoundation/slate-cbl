@@ -4,8 +4,10 @@ namespace Slate\CBL\Tasks;
 
 use Slate\People\Student;
 use Slate\CBL\Skill;
-use Emergence\Comments\Comment;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
+use Slate\Courses\SectionsRequestHandler;
+use Emergence\People\PeopleRequestHandler;
+use Emergence\Comments\Comment;
 
 class StudentTasksRequestHandler extends \RecordsRequestHandler
 {
@@ -23,13 +25,18 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
     */
 
 
-#    public static function handleRecordsRequest($action = false)
-#    {
-#        switch ($action = $action ?: static::shiftPath()) {
-#            case
-#        }
-#    }
-#
+    public static function handleRecordsRequest($action = false)
+    {
+        $CurrentUser = $GLOBALS['Session']->Person;
+
+        switch ($action = $action ?: static::shiftPath()) {
+            case 'assigned':
+                return static::handleAssignedRequest();
+            default:
+                return parent::handleRecordsRequest($action);
+        }
+    }
+
 
     public static function handleRecordRequest(\ActiveRecord $Record, $action = false)
     {
@@ -41,26 +48,23 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         }
     }
 
+    public static function handleAssignedRequest($options = [], $conditions = [])
+    {
+        $student = static::_getRequestedStudent();
+
+        $conditions['StudentID'] = $student->ID;
+
+        return static::handleBrowseRequest($options, $conditions);
+
+    }
+
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
     {
-        $CurrentUser = $GLOBALS['Session']->Person;
+        $student = static::_getRequestedStudent();
+        $courseSection = static::_getRequestedCourseSection();
 
-        //\Debug::dumpVar(get_class ($CurrentUser));
-
-        if (!$CurrentUser instanceof Student && !$CurrentUser->hasAccountLevel('Teacher')) {
-            return static::throwUnauthorizedError('You must be a student to view this information.');
-        }
-
-        if (isset($_REQUEST['course_section'])) {
-            if (!$Section = \Slate\Courses\Section::getByHandle($_REQUEST['course_section'])) {
-                return static::throwInvalidRequestError('Course section not found.');
-            }
-
-            $conditions['CourseSectionID'] = $Section->ID;
-        }
-
-        if ($CurrentUser instanceof Student) {
-            $conditions['StudentID'] = $CurrentUser->ID;
+        if ($courseSection) {
+            $conditions['CourseSectionID'] = $courseSection->ID;
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
@@ -163,5 +167,33 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         return parent::checkWriteAccess($Record, $suppressLogin);
     }
 
+    protected static function _getRequestedStudent()
+    {
+        if (
+            !empty($_GET['student']) &&
+            $GLOBALS['Session']->hasAccountLevel('Staff')
+        ) {
+            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
+                return static::throwNotFoundError('Student not found');
+            }
+        } else {
+            $Student = $GLOBALS['Session']->Person;
+        }
 
+        return $Student;
+    }
+
+    protected static function _getRequestedCourseSection()
+    {
+        $CourseSection = null;
+
+        if (!empty($_GET['course_section'])) {
+            if (!$CourseSection = SectionsRequestHandler::getRecordByHandle($_GET['course_section'])) {
+                return static::throwNotFoundError('Course Section not found');
+            }
+        }
+
+        return $CourseSection;
+    }
 }
+
