@@ -322,6 +322,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onSaveTaskClick: function() {
         var me = this,
             taskEditor = me.getTaskEditor(),
+            task = taskEditor.getTask(),
             studentTask = taskEditor.getStudentTask();
 
         if (studentTask) {
@@ -333,7 +334,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             });
         }
 
+        if (task.getAssigneeIds().length) {
+            return me.doConfirmTaskAssignees(task);
+        }
+
         return me.doSaveTask();
+
     },
 
     onCreateTaskClick: function() {
@@ -382,7 +388,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
     },
 
-    doSaveTask: function() {
+    doSaveTask: function(forceReload) {
         var me = this,
             form = me.getTaskEditorForm(),
             skillsField = me.getSkillsField(),
@@ -391,7 +397,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             courseSection = me.getCourseSelector().getSelection(),
             record = form.updateRecord().getRecord(),
             wasPhantom = record.phantom,
-            previousAssignees = record.getAssigneeIds(),
             currentAssignees = assignmentsField.getAssignees(false),
             errors;
 
@@ -411,17 +416,22 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 }
             });
             return;
-        } else if (previousAssignees.length) {
-            me.doConfirmTaskAssignees(record);
-            return;
         }
+
         record.save({
             success: function(rec) {
                 me.getTaskEditor().close();
                 if (wasPhantom) {
                     me.getTasksStore().add(rec);
-                    // reload studenttasks, as new records may exist
-                    me.getStudentTasksStore().reload();
+                }
+                // reload studenttasks, as new records may exist
+                if (forceReload === true || wasPhantom) {
+                    setTimeout(function() {
+                        me.getStudentTasksStore().reload();
+                        // reload record to ensure relationships are included.
+                        // todo: remove this when API removes the need
+                        rec.load();
+                    }, 500);
                 }
                 Ext.toast('Task succesfully saved!');
             }
@@ -430,7 +440,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     doConfirmTaskAssignees: function(task) {
         var me = this,
-            assigneeIds = task.get('Assignees');
+            assigneeIds = me.getAssignmentsField().getAssignees(false);
 
         Slate.API.request({
             url: task.toUrl() + '/assignees',
@@ -454,18 +464,13 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     message += '<br> Would you like to continue?';
                     Ext.Msg.confirm('Task Assignments', message, function(ans) {
                         if (ans === 'yes') {
-                            task.save({
-                                success: function(rec) {
-                                    me.getTaskEditor().close();
-                                    me.getTasksStore().add(rec);
-                                    // reload studenttasks, as new records may exist
-                                    me.getStudentTasksStore().reload();
-                                    Ext.toast('Task succesfully saved!');
-                                }
-                            });
+                            me.doSaveTask(true);
                         }
                     });
+                    return;
                 }
+
+                me.doSaveTask(true);
             }
         });
     },
