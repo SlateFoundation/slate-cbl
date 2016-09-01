@@ -96,7 +96,11 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         },
         tasksGrid: {
             cellclick: 'onTasksGridCellClick',
-            subcellclick: 'onTasksGridCellClick'
+            subcellclick: 'onTasksGridCellClick',
+            rowheaderclick: 'onTasksGridRowHeaderClick',
+            subrowheaderclick: 'onTasksGridRowHeaderClick',
+            beforeexpand: 'onBeforeRowHeaderToggle',
+            beforecollapse: 'onBeforeRowHeaderToggle'
         },
         taskRater: {
             reassign: 'onReAssignStudentTaskClick'
@@ -213,6 +217,26 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 dateField.setValue('');
             }
         });
+    },
+
+    onTasksGridRowHeaderClick: function(grid, rowId, el, ev) {
+        var me = this,
+            task;
+
+        if (ev.getTarget('.jarvus-aggregrid-rowheader .edit-row')) {
+            task = me.getTasksStore().getById(rowId);
+
+            me.doEditTask(task);
+        }
+
+        return;
+    },
+
+    onBeforeRowHeaderToggle: function(grid, rowId, el, ev) {
+        if (ev.getTarget('.jarvus-aggregrid-rowheader .edit-row')) {
+            return false;
+        }
+        return null;
     },
 
     onAssigneeComboRender: function(combo) {
@@ -361,6 +385,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onSaveTaskClick: function() {
         var me = this,
             taskEditor = me.getTaskEditor(),
+            task = taskEditor.getTask(),
             studentTask = taskEditor.getStudentTask();
 
         if (studentTask) {
@@ -372,7 +397,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             });
         }
 
+        if (task.getAssigneeIds().length) {
+            return me.doConfirmTaskAssignees(task);
+        }
+
         return me.doSaveTask();
+
     },
 
     onCreateTaskClick: function() {
@@ -434,7 +464,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
     },
 
-    doSaveTask: function() {
+    doSaveTask: function(forceReload) {
         var me = this,
             form = me.getTaskEditorForm(),
             skillsField = me.getSkillsField(),
@@ -443,12 +473,13 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             courseSection = me.getCourseSelector().getSelection(),
             record = form.updateRecord().getRecord(),
             wasPhantom = record.phantom,
+            currentAssignees = assignmentsField.getAssignees(false),
             errors;
 
         record.set({
             Skills: skillsField.getSkills(false), // returnRecords
             Attachments: attachmentsField.getAttachments(false), // returnRecords
-            Assignees: assignmentsField.getAssignees(false), // returnRecords
+            Assignees: currentAssignees, // returnRecords
             CourseSectionID: courseSection.getId()
         });
 
@@ -464,26 +495,61 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             });
             return;
         }
+
         record.save({
             success: function(rec) {
                 me.getTaskEditor().close();
-                // buffer reload tasks store as related objects i.e. attachments may have saved after
-                // todo: find a better way?
-                setTimeout(function() {
-                    me.getTaskModel().load(rec.getId(), {
-                        success: function(loadedRecord) {
-                            if (wasPhantom) {
-                                me.getTasksStore().add(loadedRecord);
-                                // reload studenttasks, as new records may exist
-                                me.getStudentTasksStore().reload();
-                            } else {
-                                record.set(loadedRecord.getData());
-                                record.commit();
-                            }
+
+                if (wasPhantom) {
+                    me.getTasksStore().add(rec);
+                }
+                // reload studenttasks, as new records may exist
+                if (forceReload === true || wasPhantom) {
+                    setTimeout(function() {
+                        me.getStudentTasksStore().reload();
+                        // reload record to ensure relationships are included.
+                        // todo: remove this when API removes the need
+                        rec.load();
+                    }, 500);
+                }
+                Ext.toast('Task succesfully saved!');
+            }
+        });
+    },
+
+    doConfirmTaskAssignees: function(task) {
+        var me = this,
+            assigneeIds = me.getAssignmentsField().getAssignees(false);
+
+        Slate.API.request({
+            url: task.toUrl() + '/assignees',
+            callback: function(request, success, response) {
+                var assigned = response.data.data,
+                    unassigned = [],
+                    i = 0,
+                    message = 'Completing this action would result in un-assigning these students:';
+
+                for (; i < assigned.length; i++) {
+                    if (assigneeIds.indexOf(parseInt(assigned[i].ID, 10)) === -1) {
+                        unassigned.push(assigned[i]);
+                    }
+                }
+
+                if (unassigned.length) {
+                    i = 0;
+                    for (; i < unassigned.length; i++) {
+                        message += '<br> ' + unassigned[i].FirstName + ' ' + unassigned[i].LastName;
+                    }
+                    message += '<br> Would you like to continue?';
+                    Ext.Msg.confirm('Task Assignments', message, function(ans) {
+                        if (ans === 'yes') {
+                            me.doSaveTask(true);
                         }
                     });
-                }, 500);
-                Ext.toast('Task succesfully saved!');
+                    return;
+                }
+
+                me.doSaveTask(true);
             }
         });
     },

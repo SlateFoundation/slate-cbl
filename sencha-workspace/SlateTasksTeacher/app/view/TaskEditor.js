@@ -59,40 +59,45 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
             form = me.down('slate-modalform'),
             skillsField = form.down('slate-skillsfield'),
             attachmentsField = form.down('slate-tasks-attachmentsfield'),
+            assignmentsField = me.down('slate-tasks-assignmentsfield'),
             taskPrivacyField = me.down('#status'), taskStatus,
             parentTaskField, parentTaskStore;
 
         form.reset();
-        form.loadRecord(task);
-        skillsField.setSkills(task.get('Skills'));
-        attachmentsField.setAttachments(task.get('Attachments'));
+        if (task) {
+            form.loadRecord(task);
+            skillsField.setSkills(task.get('Skills'));
+            attachmentsField.setAttachments(task.get('Attachments'));
+            assignmentsField.setAssignees(task.getAssigneeIds());
 
-        me.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
-        me.down('button[action=save]').setText(task.phantom ? 'Create' : 'Save');
+            me.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
+            me.down('button[action=save]').setText(task.phantom ? 'Create' : 'Save');
 
-        if (task.get('ParentTaskID')) {
-            parentTaskField = form.down('slate-tasks-titlefield[name=ParentTaskID]');
-            parentTaskStore = parentTaskField.getStore();
-            // load parent task if store does not contain the record
-            if (!parentTaskStore.getById(task.get('ParentTaskID'))) {
-                parentTaskStore.load({
-                    url: Slate.API.buildUrl('/cbl/tasks/'+task.get('ParentTaskID')),
-                    params: {
-                        summary: true
-                    },
-                    addRecords: true,
-                    callback: function () {
-                        parentTaskField.setValue(task.get('ParentTaskID'));
-                    }
-                });
+            if (task.get('ParentTaskID')) {
+                parentTaskField = form.down('slate-tasks-titlefield[name=ParentTaskID]');
+                parentTaskStore = parentTaskField.getStore();
+                // load parent task if store does not contain the record
+                if (!parentTaskStore.getById(task.get('ParentTaskID'))) {
+                    parentTaskStore.load({
+                        url: Slate.API.buildUrl('/cbl/tasks/'+task.get('ParentTaskID')),
+                        params: {
+                            summary: true
+                        },
+                        addRecords: true,
+                        callback: function () {
+                            parentTaskField.setValue(task.get('ParentTaskID'));
+                        }
+                    });
+                }
+            }
+
+            if (task.get('Status') === 'shared') {
+                taskStatus = 'shared';
+            } else if (task.get('Status') === 'private') {
+                taskStatus = false;
             }
         }
 
-        if (task.get('Status') === 'shared') {
-            taskStatus = 'shared';
-        } else if (task.get('Status') === 'private') {
-            taskStatus = false;
-        }
 
         taskPrivacyField.setValue(taskStatus);
     }

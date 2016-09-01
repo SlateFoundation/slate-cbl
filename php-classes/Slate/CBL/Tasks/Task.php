@@ -96,6 +96,13 @@ class Task extends \VersionedRecord
             'type' => 'one-many',
             'class' => StudentTask::class,
             'foreign' => 'TaskID'
+        ],
+        'Assignees' => [
+            'type' => 'many-many',
+            'class' => Person::class,
+            'linkClass' => StudentTask::class,
+            'linkLocal' => 'TaskID',
+            'linkForeign' => 'StudentID'
         ]
     ];
 
@@ -112,7 +119,8 @@ class Task extends \VersionedRecord
         'StudentTasks',
         'ParentTaskTitle' => [
             'getter' => 'getParenTaskTitle'
-        ]
+        ],
+        'Assignees'
     ];
 
     public static $searchConditions = [

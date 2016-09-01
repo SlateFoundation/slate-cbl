@@ -137,7 +137,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
         headerRowsTpl: [
             '<tpl for=".">',
-                '<tr class="jarvus-aggregrid-row <tpl if="expandable">is-expandable</tpl>" data-row-id="{ID}">',
+                '<tr class="jarvus-aggregrid-row <tpl if="expandable && SubTasks.length">is-expandable</tpl>" data-row-id="{ID}">',
                     '<th class="jarvus-aggregrid-rowheader">',
                         '<div class="jarvus-aggregrid-header-text">',
                             '{% values.rowHeaderTpl.applyOut(values, out) %}',
@@ -202,6 +202,13 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
                     '</tpl>',
                 '</tbody>',
             '</table>'
+        ],
+        subRowHeaderTpl: null,
+        rowHeaderTpl: [
+            '<tpl for=".">',
+                '{Title}',
+                '<button class="button plain edit-row" style="opacity: 1; visibility: hidden;">edit</button>',
+            '</tpl>'
         ]
     },
 
@@ -213,6 +220,39 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
             cellRenderer: me.cellRenderFn,
             subCellRenderer: me.cellRenderFn
         });
+
+        me.on({
+            scope: me,
+            mouseover: me.onMouseOver,
+            mouseout: me.onMouseOut,
+            element: 'el',
+            delegate: '.jarvus-aggregrid-rowheader'
+        });
+
+    },
+
+    onMouseOver: function(ev, target) {
+        var me = this,
+            containerEl = me.el,
+            btn;
+
+        if (target = ev.getTarget('.jarvus-aggregrid-rowheader', containerEl, true) && (btn = Ext.fly(target).down('.edit-row'))) { // eslint-disable-line no-cond-assign
+            return btn.show(true);
+        }
+
+        return null;
+    },
+
+    onMouseOut: function (ev, target) {
+        var me = this,
+            containerEl = me.el,
+            rowHeader;
+
+        if (rowHeader = ev.getTarget('.jarvus-aggregrid-rowheader', containerEl, true)) { // eslint-disable-line no-cond-assign
+            return Ext.fly(target).down('button').hide();
+        }
+
+        return null;
     },
 
     cellRenderFn: function(group, cellEl) {
