@@ -134,7 +134,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         record.save({
             success: function() {
                 Ext.toast('Task successfully submitted!');
-                me.getStudentTasksStore().load();
+                me.getStudentTasksStore().reload();
                 me.getTaskDetails().close();
             },
             failure: function() {
