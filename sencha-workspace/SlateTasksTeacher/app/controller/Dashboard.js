@@ -252,8 +252,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         studentTask.set('TaskStatus', status);
 
-        me.doSaveStudentTask(studentTask, function() {
+        me.doSaveStudentTask(studentTask, function(rec) {
             taskRater.close();
+
+            if (status === 're-assigned') {
+                me.doRateStudentTask(rec);
+            }
         });
     },
 
