@@ -13,17 +13,6 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass =  StudentTask::class;
     public static $accountLevelBrowse = 'User';
-    //public static $browseOrder = ['TaskID' => 'ASC'];
-
-    /*
-    public static $browseConditions = [
-        'Status' => [
-            'operator' => '!=',
-            'value' => 'deleted'
-        ]
-    ];
-    */
-
 
     public static function handleRecordsRequest($action = false)
     {
