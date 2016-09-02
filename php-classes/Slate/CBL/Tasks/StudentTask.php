@@ -11,12 +11,12 @@ use Slate\CBL\StudentCompetency;
 class StudentTask extends \VersionedRecord
 {
     public static $historyTable = 'history_cbl_student_tasks';
-    
+
     public static $tableName = 'cbl_student_tasks';
 
     public static $singularNoun = 'student task';
     public static $pluralNoun = 'student tasks';
-    
+
     public static $collectionRoute = '/cbl/student-tasks';
 
     public static $fields = [
@@ -36,7 +36,7 @@ class StudentTask extends \VersionedRecord
         'ExpirationDate' => [
             'type' => 'timestamp',
             'default' => null
-        ],       
+        ],
         'TaskStatus' => [
             'type' => 'enum',
             'notnull' => true,
@@ -79,8 +79,8 @@ class StudentTask extends \VersionedRecord
             'type' => 'context-children',
             'class' => Attachments\AbstractTaskAttachment::class
         ]
-    ];    
-    
+    ];
+
     public static $dynamicFields = array(
         'Task',
         'Student',
@@ -94,7 +94,7 @@ class StudentTask extends \VersionedRecord
         'TaskSkills' => [
             'getter' => 'getTaskSkills'
         ]
-    );    
+    );
 
     public static $indexes = [
         'StudentTask' => [
@@ -111,7 +111,7 @@ class StudentTask extends \VersionedRecord
             'validator' => 'require-relationship'
         ]
     ];
-    
+
     public static $searchConditions = [
         'Task' => [
             'qualifiers' => ['task', 'task_id', 'taskid'],
@@ -124,29 +124,32 @@ class StudentTask extends \VersionedRecord
             'sql' => 'StudentID = %u'
         ]
     ];
-    
+
     public function getStudentName()
     {
         return $this->Student->FullName;
     }
-    
+
     public function getTaskSkills()
     {
+        // todo: use a UI-centric api endpoint insntead of dynamic fields
         $taskSkills = [];
-        foreach ($this->Task->Skills as $skill) {
-            $studentCompetency = $skill->Competency ? StudentCompetency::getByWhere(['StudentID' => $this->StudentID, 'CompetencyID' => $skill->Competency->ID]) : null;
-            $skillRating = StudentTaskSkillRating::getByWhere(['StudentTaskID' => $this->ID, 'SkillID' => $skill->ID]);
-            $taskSkills[] = array_merge($skill->getData(), [
-                'CompetencyLevel' => $studentCompetency ? $studentCompetency->Level : null,
-                'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
-                'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-                'Rating' => $skillRating ? $skillRating->Score : null
-            ]);
+        if ($this->Task && $this->Task->Skills) {
+            foreach ($this->Task->Skills as $skill) {
+                $studentCompetency = $skill->Competency ? StudentCompetency::getByWhere(['StudentID' => $this->StudentID, 'CompetencyID' => $skill->Competency->ID]) : null;
+                $skillRating = StudentTaskSkillRating::getByWhere(['StudentTaskID' => $this->ID, 'SkillID' => $skill->ID]);
+                $taskSkills[] = array_merge($skill->getData(), [
+                    'CompetencyLevel' => $studentCompetency ? $studentCompetency->Level : null,
+                    'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
+                    'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
+                    'Rating' => $skillRating ? $skillRating->Score : null
+                ]);
+            }
         }
-        
+
         return $taskSkills;
     }
-    
+
     public function save($deep = true)
     {
         if ($GLOBALS['Session']->Person instanceof Student) {
@@ -156,7 +159,7 @@ class StudentTask extends \VersionedRecord
                 $this->TaskStatus = 'submitted';
             }
             $this->Submitted = date('Y-m-d G:i:s');
-        }  
+        }
         parent::save(deep);
-    }     
+    }
 }
