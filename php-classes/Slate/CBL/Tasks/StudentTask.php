@@ -24,7 +24,7 @@ class StudentTask extends \VersionedRecord
         'StudentID' => 'uint',
         'CourseSectionID' => [
             'type' => 'uint',
-            'defualt' => null
+            'default' => null
         ],
         'ExperienceType' => [
             'default' => null
