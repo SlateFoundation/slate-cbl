@@ -1,4 +1,4 @@
-/* eslint new-cap: 0 */
+/* global Slate *//* eslint new-cap: 0 */
 /**
  * The Tasks controller manages the student task list and the task details pop-up.
  */
@@ -129,9 +129,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             attachmentsField = me.getStudentAttachmentsField(),
             record = form.getRecord();
 
-        record.set('Attachments', attachmentsField.getAttachments(false)); // returnRecords
-
-        record.save({
+        Slate.API.request({
+            url: Slate.API.buildUrl('/cbl/student-tasks/submit'),
+            jsonData: {
+                ID: record.get('ID'),
+                Attachments: attachmentsField.getAttachments(false)
+            },
             success: function() {
                 Ext.toast('Task successfully submitted!');
                 me.getStudentTasksStore().reload();
