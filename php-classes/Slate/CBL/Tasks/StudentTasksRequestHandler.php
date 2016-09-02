@@ -16,11 +16,11 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
     public static function handleRecordsRequest($action = false)
     {
-        $CurrentUser = $GLOBALS['Session']->Person;
-
         switch ($action = $action ?: static::shiftPath()) {
             case 'assigned':
                 return static::handleAssignedRequest();
+            case 'submit':
+                return static::handleStudentTaskSubmissionRequest();
             default:
                 return parent::handleRecordsRequest($action);
         }
@@ -93,6 +93,87 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
+    public static function handleStudentTaskSubmissionRequest()
+    {
+        $_REQUEST = \JSON::getRequestData();
+
+        if ($_REQUEST) {
+            $student_task = static::getRecordByHandle($_REQUEST['ID']);
+
+        }
+
+        if ($student_task->TaskStatus === 're-assigned') {
+            $student_task->TaskStatus = 're-submitted';
+        } else {
+            $student_task->TaskStatus = 'submitted';
+        }
+        $student_task->Submitted = date('Y-m-d G:i:s');
+
+        static::setStudentTaskAttachments($student_task, $_REQUEST);
+
+        $student_task->save();
+
+        return static::respond('studenttask/submit', [
+            'data' => $student_task,
+            'success' => true,
+        ]);
+    }
+
+    public static function setStudentTaskAttachments(StudentTask $Record, $data)
+    {
+        if (isset($data['Attachments'])) {
+            $originalAttachments = $Record->Attachments;
+            $originalAttachmentIds = array_map(function($s) {
+                return $s->ID;
+            }, $originalAttachments);
+
+            $failed = [];
+            $attachmentIds = [];
+            $attachments = [];
+            $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
+
+            foreach ($data['Attachments'] as $attachmentData) {
+                $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
+                if ($attachmentData['ID'] >= 1) {
+                    if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
+                        $failed[] = $attachmentData;
+                        continue;
+                    }
+                } else {
+                    $Attachment = $attachmentClass::create($attachmentData);
+                }
+
+                $Attachment->ContextID = $Record->ID;
+                $Attachment->ContextClass = $Record->getRootClass();
+                $Attachment->save();
+                $attachments[] = $Attachment;
+                $attachmentIds[] = $Attachment->ID;
+            }
+
+ /*
+            $query = sprintf('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")',
+                 AbstractTaskAttachment::$tableName,
+                $Record->getRootClass(),
+                $Record->ID,
+                join('", "', $attachmentIds)
+            );
+
+            \Debug::dumpVar($query);
+*/
+
+            \DB::nonQuery('DELETEy FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
+                AbstractTaskAttachment::$tableName,
+                $Record->getRootClass(),
+                $Record->ID,
+                join('", "', $attachmentIds)
+            ]);
+
+        }
+
+        $Record->Attachments = $attachments;
+
+    }
+
     public static function onRecordSaved(\ActiveRecord $Record, $data)
     {
 
@@ -105,6 +186,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         }
 
         //update attachments
+        /*
         if (isset($data['Attachments'])) {
             $originalAttachments = $Record->Attachments;
             $originalAttachmentIds = array_map(function($s) {
@@ -144,7 +226,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         }
         $Record->Attachments = $attachments;
-
+        */
     }
 
     public static function checkWriteAccess(\ActiveRecord $Record, $suppressLogin = false)
