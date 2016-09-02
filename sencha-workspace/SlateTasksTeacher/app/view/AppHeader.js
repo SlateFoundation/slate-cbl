@@ -18,6 +18,7 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
         cls: 'slate-course-selector',
 
         fieldLabel: 'Course Section',
+        labelWidth: 120,
 
         store: 'CourseSections',
 
