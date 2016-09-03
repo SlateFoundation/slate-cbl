@@ -117,6 +117,19 @@
 .#{$g}-ct {
     @include display-box;
     @include box-orient(horizontal);
+
+    // work around bottom border disappearing
+    position: relative;
+
+    &::before {
+        background-color: $grid-border-color;
+        bottom: 0;
+        content: ' ';
+        height: 1px;
+        left: 0;
+        position: absolute;
+        width: 100%;
+    }
 }
 
 .#{$g}-scroll-ct {
