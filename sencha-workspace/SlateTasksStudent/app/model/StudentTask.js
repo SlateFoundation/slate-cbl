@@ -165,6 +165,11 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         associationKey: 'Task.Attachments'
     },
     {
+        model: 'Slate.cbl.model.tasks.StudentTaskSubmission',
+        name: 'Submissions',
+        associationKey: 'Submissions'
+    },
+    {
         model: 'Slate.cbl.model.Skill',
         name: 'Skills',
         associationKey: 'Task.Skills'
@@ -178,6 +183,7 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             'Section',
             'Comments',
             'Attachments',
+            'Submissions',
             'TaskSkills',
             'Task.Attachments',
             'Task.ParentTask'
