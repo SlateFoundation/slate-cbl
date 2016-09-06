@@ -44,26 +44,31 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 return static::throwInvalidRequestError('Course section not found.');
             }
 
-            // chcek if ID or ParentTaskID is attached to a course section
+            try {
+                // check if ID or ParentTaskID is attached to a course section
+                $taskIds = DB::allRecords(
+                    'SELECT DISTINCT %4$s.ID, %4$s.ParentTaskID FROM `%1$s` %2$s JOIN `%3$s` %4$s ON (%4$s.ID = %2$s.TaskID) WHERE %2$s.CourseSectionID = %5$u',
+                    [
+                        StudentTask::$tableName,
+                        StudentTask::getTableAlias(),
 
-            $taskIds = DB::allRecords(
-                'SELECT DISTINCT %4$s.ID, %4$s.ParentTaskID FROM `%1$s` %2$s JOIN `%3$s` %4$s ON (%4$s.ID = %2$s.TaskID) WHERE %2$s.CourseSectionID = %5$u',
-                [
-                    StudentTask::$tableName,
-                    StudentTask::getTableAlias(),
+                        Task::$tableName,
+                        Task::getTableAlias(),
 
-                    Task::$tableName,
-                    Task::getTableAlias(),
+                        $Section->ID
+                    ]
+                );
 
-                    $Section->ID
-                ]
-            );
+                $taskIds = array_filter(array_unique(array_merge(array_column($taskIds, 'ID'), array_column($taskIds, 'ParentTaskID'))));
 
-            $taskIds = array_filter(array_unique(array_merge(array_column($taskIds, 'ID'), array_column($taskIds, 'ParentTaskID'))));
-
-            $conditions['ID'] = [
-                'values' => $taskIds
-            ];
+                $conditions['ID'] = [
+                    'values' => $taskIds
+                ];
+            } catch (\TableNotFoundException $e) {
+                $conditions['ID'] = [
+                    'values' => []
+                ];
+            }
         } else { // show all tasks that are either shared, or created by current user.
             $recordClass = static::$recordClass;
             $conditions[] = sprintf('(%1$s.Status = "shared" OR %1$s.CreatorID = %2$u)', $recordClass::getTableAlias(), $GLOBALS['Session']->PersonID);
@@ -106,8 +111,11 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 } else {
                     $conditions = 1;
                 }
-
-                $values = DB::allValues($field['columnName'], 'SELECT %1$s FROM `%2$s` WHERE %3$s GROUP BY %1$s', [$field['columnName'], $recordClass::$tableName, $conditions]);
+                try {
+                    $values = DB::allValues($field['columnName'], 'SELECT %1$s FROM `%2$s` WHERE %3$s GROUP BY %1$s', [$field['columnName'], $recordClass::$tableName, $conditions]);
+                } catch (\TableNotFoundException $e) {
+                    $values = [];
+                }
                 break;
         }
 
