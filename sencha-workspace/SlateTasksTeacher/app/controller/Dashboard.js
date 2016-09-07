@@ -281,6 +281,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         me.doSaveStudentTask(studentTask, function(rec) {
             taskRater.close();
+            me.getStudentTasksStore().load({
+                id: studentTask.getId(),
+                addRecords: true
+            });
 
             if (status === 're-assigned') {
                 me.doRateStudentTask(rec);
@@ -343,15 +347,15 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 SkillID: ratingObject.SkillID,
                 Score: ratingObject.rating
             },
-            callback: function(opts, success) {
+            callback: function(opts, success, response) {
+                // var record = response.data.record;
+
                 if (success) {
-                    // todo: remove when API can handle
-                    setTimeout(function() {
-                        me.getStudentTasksStore().reload({
-                            id: studentTask.getId(),
-                            addRecords: true
-                        });
-                    }, 500);
+                    me.getStudentTasksStore().load({
+                        id: studentTask.getId(),
+                        addRecords: true
+                    });
+                    // studentTask.set(record);
                 } else {
                     Ext.toast('Error. Please try again.');
                 }
@@ -367,16 +371,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             student = taskAssigner.getStudent(),
             studentTask = me.getStudentTaskModel().create({
                 TaskID: task.getId(),
+                Task: task.getData(),
                 StudentID: student.getId(),
+                Student: student.getData(),
                 DueDate: taskAssignerValues.DueDate,
                 ExpirationDate: taskAssignerValues.ExpirationDate,
                 ExperienceType: taskAssignerValues.ExperienceType,
                 CourseSectionID: me.getCourseSelector().getSelection().getId()
             });
 
-        me.doSaveStudentTask(studentTask, function(rec) {
+        me.doSaveStudentTask(studentTask, function() {
             taskAssigner.close();
-            me.getTasksGrid().getDataStore().add(rec);
+            me.getStudentTasksStore().load({
+                id: studentTask.getId(),
+                addRecords: true
+            });
             Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
         });
 
