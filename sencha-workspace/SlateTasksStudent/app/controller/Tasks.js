@@ -95,13 +95,17 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             teacherAttachmentsField = me.getTeacherAttachmentsField(),
             studentAttachmentsField = me.getStudentAttachmentsField(),
             commentsField = me.getCommentsField(),
+            submissions = rec.get('Submissions'),
             readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
 
         form.getForm().loadRecord(rec);
 
-        // TODO: quick fix, but needs a new field or expanded workflow tracking
-        if (rec.get('TaskStatus') === 're-submitted') {
-            form.down('displayfield[name="Submitted"]').setFieldLabel('Resubmitted Date');
+        if (submissions && submissions.length && submissions.length > 0) {
+            form.down('displayfield[name="Submitted"]').hide();
+            form.down('displayfield[name="Submissions"]').show();
+        } else {
+            form.down('displayfield[name="Submitted"]').show();
+            form.down('displayfield[name="Submissions"]').hide();
         }
 
         ratingView.setData({
