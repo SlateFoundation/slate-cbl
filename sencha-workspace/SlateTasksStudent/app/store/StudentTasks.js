@@ -16,6 +16,7 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
             'Section',
             'Comments',
             'Attachments',
+            'Submissions',
             'TaskSkills',
             'Task.Attachments',
             'Task.ParentTask'
