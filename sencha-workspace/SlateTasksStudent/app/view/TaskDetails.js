@@ -76,6 +76,22 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
             renderer: Ext.util.Format.dateRenderer('m/d/y')
         },
         {
+            fieldLabel: 'Submissions',
+            name: 'Submissions',
+            renderer: function(val) {
+                var submissionsLength = val.length,
+                    submissionsText = '',
+                    submissionDate,
+                    i = 0;
+
+                for (; i<submissionsLength; i++) {
+                    submissionDate = Ext.Date.format(new Date(val[i].Created * 1000), 'm/d/y');
+                    submissionsText += '<div>' + submissionDate + '</div>';
+                }
+                return submissionsText;
+            }
+        },
+        {
             xtype: 'slate-ratingview',
             readOnly: true
         },
