@@ -6,7 +6,12 @@ class SkillsRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass = Skill::class;
     public static $accountLevelBrowse = false;
-    public static $browseOrder = 'LENGTH(Code), Code';
+
+    public static function __classLoaded()
+    {
+        $recordClass = static::$recordClass;
+        static::$browseOrder = sprintf('LENGTH(%1$s.Code), %1$s.Code', $recordClass::getTableAlias());
+    }
 
     public static function handleBrowseRequest($options = array(), $conditions = array(), $responseID = null, $responseData = array())
     {
