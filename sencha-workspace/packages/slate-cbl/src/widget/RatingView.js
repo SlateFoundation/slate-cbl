@@ -31,15 +31,11 @@ Ext.define('Slate.cbl.widget.RatingView', {
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    // TODO: remove this when passes Q&A (removed readOnly check because students should see this too)
-                                    // '<tpl if="!this.readOnly && values.Rating < this.ratings[0]">', // hide when in readOnly mode
-                                    '<tpl if="values.Rating < this.ratings[0]">', // hide when in readOnly mode
-                                        '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.Rating < this.ratings[0] || values.Rating == null || values.Rating == &quot;N/A&quot;">is-selected</tpl>" data-rating="{[values.Rating < this.ratings[0] ? values.Rating : "N/A"]}">',
-                                            '<div class="slate-ratingview-rating-bubble" tabindex="0">',
-                                                '<span class="slate-ratingview-rating-label">{[values.Rating && values.Rating <  this.ratings[0] ? values.Rating : "N/A"]}</span>',
-                                            '</div>',
-                                        '</li>',
-                                    '</tpl>',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.Rating < this.ratings[0] || values.Rating == null || values.Rating == &quot;N/A&quot;">is-selected</tpl>" data-rating="{[values.Rating < this.ratings[0] ? values.Rating : "N/A"]}">',
+                                        '<div class="slate-ratingview-rating-bubble" tabindex="0">',
+                                            '<span class="slate-ratingview-rating-label">{[values.Rating && values.Rating <  this.ratings[0] ? values.Rating : "N/A"]}</span>',
+                                        '</div>',
+                                    '</li>',
                                     '<tpl for="this.ratings">', // access template-scoped variable declared at top
                                         '<li class="slate-ratingview-rating <tpl if="values == parent.Rating">is-selected</tpl>" data-rating="{.}">',
                                             '<div class="slate-ratingview-rating-bubble" tabindex="0">',
