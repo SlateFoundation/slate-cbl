@@ -100,7 +100,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             rowheaderclick: 'onTasksGridRowHeaderClick',
             subrowheaderclick: 'onTasksGridRowHeaderClick',
             beforeexpand: 'onBeforeRowHeaderToggle',
-            beforecollapse: 'onBeforeRowHeaderToggle'
+            beforecollapse: 'onBeforeRowHeaderToggle',
+            columnheaderclick: 'onTasksGridColumnHeaderClick'
         },
         taskRater: {
             reassign: 'onReAssignStudentTaskClick'
@@ -230,6 +231,19 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
 
         return;
+    },
+
+    onTasksGridColumnHeaderClick: function(grid, columnId, el, ev) {
+        var me = this,
+            courseSection,
+            student;
+
+        if (ev.getTarget('.jarvus-aggregrid-colheader')) {
+            student = me.getStudentsStore().getById(columnId);
+            courseSection = me.getDashboardCt().getCourseSection();
+
+            window.open(Slate.API.buildUrl('/cbl/dashboards/tasks/student')+'?student='+student.get('Username')+'&course_section='+courseSection.get('Code'), '_blank');
+        }
     },
 
     onBeforeRowHeaderToggle: function(grid, rowId, el, ev) {
