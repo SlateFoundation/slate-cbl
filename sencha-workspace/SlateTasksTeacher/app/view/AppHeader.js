@@ -7,11 +7,6 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
     ],
     xtype: 'slate-tasks-teacher-appheader',
 
-    layout: {
-        type: 'hbox',
-        align: 'left'
-    },
-
     items: [{
         xtype: 'component',
         cls: 'slate-appheader-title',
@@ -23,6 +18,7 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
         cls: 'slate-course-selector',
 
         fieldLabel: 'Course Section',
+        labelWidth: 120,
 
         store: 'CourseSections',
 
