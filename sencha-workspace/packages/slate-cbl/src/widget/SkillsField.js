@@ -27,6 +27,8 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             displayField: 'Code_Descriptor',
             valueField: 'ID',
             emptyText: 'Competency code or statement\u2026', // &hellip;
+            hideTrigger: true,
+            minChars: 2,
             listeners: {
                 beforeselect: function(combo, record) {
                     var dataview = combo.next('dataview'),
