@@ -6,6 +6,7 @@ class SkillsRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass = Skill::class;
     public static $accountLevelBrowse = false;
+    public static $browseOrder = false;
 
     public static function __classLoaded()
     {
