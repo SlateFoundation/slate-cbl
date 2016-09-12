@@ -404,8 +404,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         if (studentTask) {
             me.getTaskEditorForm().updateRecord(studentTask);
-
+            studentTask.set('SkillIDs', me.getSkillsField().getSkills(false, true)); // returnRecords, idsOnly
             return me.doSaveStudentTask(studentTask, function() {
+                me.getStudentTasksStore().load({
+                    id: studentTask.getId(),
+                    addRecords: true
+                });
                 taskEditor.close();
                 Ext.toast('Student task successfully updated.');
             });
