@@ -136,6 +136,11 @@ class Task extends \VersionedRecord
                 'aliasName' => 'ParentTask'
             ],
             'sql' => 'ParentTask.Title LIKE "%%%s%%"'
+        ],
+        'Skills' => [
+            'qualifiers' => ['skills', 'skill'],
+            'points' => 1,
+            'callback' => [__CLASS__, 'getSkillsSearchConditionSql']
         ]
     ];
 
@@ -198,5 +203,39 @@ class Task extends \VersionedRecord
     {
         $personTableAlias = Person::getTableAlias();
         return 'CONCAT('.$personTableAlias.'.FirstName, " ", '.$personTableAlias.'.LastName) LIKE "%'.$term.'%"';
+    }
+
+    public static function getSkillsSearchConditionSql($term, $condition)
+    {
+        $skills = DB::allValues(
+            'ID',
+
+            'SELECT * FROM `%s` %s '.
+            'WHERE Code LIKE "%%%s%%" OR Descriptor LIKE "%%%s%%" '.
+            'ORDER BY %s',
+
+            [
+                Skill::$tableName,
+                Skill::getTableAlias(),
+                $term,
+                $term,
+                \Slate\CBL\SkillsRequestHandler::$browseOrder
+            ]
+        );
+
+        $matchedTaskIds = DB::allValues(
+            'TaskID',
+
+            'SELECT TaskID FROM `%s` %s '.
+            'WHERE SkillID IN ("%s")',
+
+            [
+                TaskSkill::$tableName,
+                TaskSkill::getTableAlias(),
+                join('", "', $skills)
+            ]
+        );
+
+        return sprintf('ID IN ("%s")', join('", "', $matchedTaskIds));
     }
 }
