@@ -29,13 +29,15 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
             form = me.down('slate-modalform'),
             ratingsView = me.down('slate-ratingview'),
             commentsField = form.down('slate-commentsfield'),
+            submissionsCmp = form.down('slate-tasks-submissions'),
             groupedSkills = studentTask.getTaskSkillsGroupedByCompetency();
 
 
         form.down('[name=StudentFullName]').setValue(studentTask.get('Student').FirstName + ' ' + studentTask.get('Student').LastName);
         form.down('[name=DueDate]').setValue(studentTask.get('DueDate'));
-        form.down('[name=Submitted]').setValue(studentTask.get('Submitted'));
+
         commentsField.setRecord(studentTask);
+        submissionsCmp.setData(studentTask.get('Submissions'));
         ratingsView.setData({
             ratings: [7, 8, 9, 10, 11, 12, 'M'],
             competencies: groupedSkills
