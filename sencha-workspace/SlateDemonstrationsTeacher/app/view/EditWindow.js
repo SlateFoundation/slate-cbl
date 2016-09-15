@@ -249,8 +249,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                         reference: 'loadNextStudentCheck',
 
                         xtype: 'checkboxfield',
-                        boxLabel: 'Continue with next student',
-                        checked: true
+                        boxLabel: 'Continue with next student'
                     }
                 ]
             }
