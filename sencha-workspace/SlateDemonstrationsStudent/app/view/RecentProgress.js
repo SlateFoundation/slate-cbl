@@ -40,7 +40,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
             '<thead>',
                 '<tr>',
                     '<th class="col-header scoring-domain-col">Scoring Domain</th>',
-                    '<th class="col-header level-col">Level</th>',
+                    '<th class="col-header level-col">Rating</th>',
                 '</tr>',
             '</thead>',
         '</tpl>',

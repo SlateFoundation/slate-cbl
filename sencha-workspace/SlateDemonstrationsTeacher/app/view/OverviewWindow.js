@@ -20,6 +20,8 @@ Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
         competenciesStore: null
     },
 
+    title: 'Skill Overview',
+
     dockedItems: [
         {
             dock: 'top',
@@ -99,7 +101,7 @@ Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
                 {
                     xtype: 'button',
                     action: 'demonstration-create',
-                    text: 'Log a Demonstration'
+                    text: 'Submit Evidence'
                 }
             ]
         }

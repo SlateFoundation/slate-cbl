@@ -35,7 +35,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
         defaultCompetency: null
     },
 
-    title: 'Log a demonstration',
+    title: 'Submit Evidence',
     width: 600,
     constrainHeader: true,
 
@@ -100,7 +100,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
             {
                 xtype: 'combobox',
                 name: 'Context',
-                fieldLabel: 'Context',
+                fieldLabel: 'Name of Experience',
 
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblContextOptions) || []
             },
