@@ -55,7 +55,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
         autoScroll: true,
         bodyPadding: 16,
         defaults: {
-            anchor: '75%',
+            anchor: '100%',
             allowBlank: false,
             msgTarget: 'side',
             selectOnFocus: true,
@@ -64,6 +64,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
         },
         items: [
             {
+                anchor: '75%',
                 reference: 'studentCombo',
 
                 xtype: 'combobox',
@@ -82,6 +83,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                 autoSelect: true
             },
             {
+                anchor: '50%',
                 xtype: 'datefield',
                 name: 'Demonstrated',
                 fieldLabel: 'Demonstrated',
@@ -112,8 +114,6 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblPerformanceTypeOptions) || []
             },
             {
-                anchor: '-59',
-
                 xtype: 'textfield',
                 name: 'ArtifactURL',
                 fieldLabel: 'Artifact (URL)',

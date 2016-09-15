@@ -45,7 +45,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
 
             xtype: 'component',
             autoEl: 'p',
-            padding: '16 32 0'
+            padding: '5 50 0'
         },
         {
             reference: 'demonstrationsTable',

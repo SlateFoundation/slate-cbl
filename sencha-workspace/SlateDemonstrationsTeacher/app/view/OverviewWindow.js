@@ -26,64 +26,62 @@ Ext.define('SlateDemonstrationsTeacher.view.OverviewWindow', {
         {
             dock: 'top',
 
-            xtype: 'toolbar',
+            xtype: 'form',
+            bodyPadding: '0 7',
+            defaults: {
+                anchor: '100%',
+                xtype: 'combobox',
+                queryMode: 'local',
+                forceSelection: true,
+                displayField: 'Descriptor',
+                valueField: 'ID'
+            },
             items: [
-                'Competency:',
                 {
-                    reference: 'competencyCombo',
-                    flex: 1,
-
-                    xtype: 'combobox',
-
-                    store: {
-                        type: 'chained'
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
+                    defaults: {
+                        flex: 1,
+                        margin: '10 10 0',
+                        xtype: 'combobox',
+                        labelAlign: 'top',
+                        queryMode: 'local',
+                        forceSelection: true,
+                        displayField: 'Descriptor',
+                        valueField: 'ID'
                     },
-                    queryMode: 'local',
-                    displayField: 'Descriptor',
-                    valueField: 'ID',
+                    items: [
+                        {
+                            reference: 'competencyCombo',
+                            fieldLabel: 'Competency',
 
-                    forceSelection: true
+                            store: {
+                                type: 'chained'
+                            }
+                        },
+                        {
+                            reference: 'skillCombo',
+                            fieldLabel: 'Skill',
+
+                            store: {
+                                type: 'chained',
+                                source: 'cbl-skills'
+                            },
+
+                            disabled: true
+                        }
+                    ]
                 },
-                'Standard:',
                 {
-                    reference: 'skillCombo',
-                    flex: 1,
-
-                    xtype: 'combobox',
-                    disabled: true,
-
-                    store: {
-                        type: 'chained',
-                        source: 'cbl-skills'
-                    },
-                    queryMode: 'local',
-                    displayField: 'Descriptor',
-                    valueField: 'ID',
-
-                    forceSelection: true
-                }
-            ]
-        },
-        {
-            dock: 'top',
-
-            xtype: 'toolbar',
-            items: [
-                {
-                    flex: 1,
-
+                    margin: 10,
                     reference: 'studentCombo',
-                    xtype: 'combobox',
-                    emptyText: 'Start typing student\'s name',
+                    emptyText: 'Start typing student’s name',
 
                     store: {
                         type: 'chained'
                     },
-                    queryMode: 'local',
                     displayField: 'FullName',
-                    valueField: 'ID',
 
-                    forceSelection: true,
                     autoSelect: true
                 }
             ]
