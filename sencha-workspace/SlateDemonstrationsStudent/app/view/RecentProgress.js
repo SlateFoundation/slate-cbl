@@ -55,7 +55,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
                         '</div>',
                     '</td>',
                     '<td class="level-col">',
-                        '<div class="cbl-level-colored cbl-level-{demonstratedLevel}">',
+                        '<div class="cbl-level-colored cbl-level-{demonstratedLevel}">', // TODO color with target level, not demo. level
                            '<tpl if="demonstratedLevel != 0">{demonstratedLevel}<tpl else>M</tpl>',
                        '</div>',
                     '</td>',
