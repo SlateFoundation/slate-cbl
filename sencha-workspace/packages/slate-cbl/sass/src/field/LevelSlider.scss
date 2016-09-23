@@ -28,7 +28,7 @@
     .x-slider-horz .x-slider-end {
         @include background(linear-gradient(left, transparent 50%, $cbl-level-13-color 50% ));
     }
-    
+
     .x-slider-inner {
         @include background-image(linear-gradient(left,
                     transparent percentage(1/12),
@@ -48,7 +48,7 @@
         height: 10px;
         margin: 10px 0;
     }
-    
+
     .x-slider-thumb {
         background: white;
         border: 1px solid transparent;
@@ -57,7 +57,10 @@
         cursor: pointer;
         cursor: ew-resize;
         cursor: col-resize;
+        height: 28px;
+        margin-left: -16px;
         margin-top: -9px;
+        width: 28px;
     }
 
     .thumb-parked:hover {
@@ -65,14 +68,14 @@
         cursor: pointer;
         cursor: context-menu;
     }
-    
+
     .value {
         color: $color;
         display: block;
         font-weight: bold;
         line-height: 25px;
         text-align: center;
-        
+
         > small {
             font-size: 9px;
             letter-spacing: .5px;
