@@ -85,7 +85,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         },
         {
             xtype: 'slate-tasks-attachmentsfield',
-            itemId: 'student-attachments',
+            itemId: 'student-attachments'
         }]
     }]
 });

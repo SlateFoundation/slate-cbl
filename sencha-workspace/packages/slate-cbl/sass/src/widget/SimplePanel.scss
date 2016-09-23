@@ -9,6 +9,10 @@
     border-radius: .25em .25em 0 0;
     color: $panel-header-color;
     padding: .75em 1em;
+
+    .x-btn {
+        border: none;
+    }
 }
 
 .slate-simplepanel-title {
