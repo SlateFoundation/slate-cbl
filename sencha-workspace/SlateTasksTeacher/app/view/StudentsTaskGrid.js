@@ -155,7 +155,7 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                 {
                     cls: 'due',
                     needsRated: true,
-                    title: 'Needs Rated'
+                    title: 'Needs Rating'
                 },
                 {
                     cls: 'completed',
@@ -168,7 +168,7 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                 {
                     cls: 'revision-assigned',
                     needsRated: true,
-                    title: 'Revision, Needs Rated'
+                    title: 'Revision, Needs Rating'
                 },
                 {
                     cls: 'past-due',
@@ -177,7 +177,7 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                 {
                     cls: 'past-due',
                     needsRated: true,
-                    title: 'Late, Needs Rated'
+                    title: 'Late, Needs Rating'
                 }
             ]
         },
