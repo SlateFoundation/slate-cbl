@@ -18,7 +18,6 @@ Ext.define('Slate.cbl.widget.SkillsField', {
         {
             width: '100%',
             xtype: 'combo',
-            name: 'SkillIDs',
             store: {
                 model: 'Slate.cbl.model.Skill',
                 autoLoad: true
