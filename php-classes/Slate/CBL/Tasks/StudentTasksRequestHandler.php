@@ -2,6 +2,7 @@
 
 namespace Slate\CBL\Tasks;
 
+use DB;
 use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
@@ -81,8 +82,6 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
                 $skillRating->Score = $rating;
                 $skillRating->save(false);
             }
-
-
         }
 
         return static::respond('studenttask/ratings', [
@@ -112,6 +111,10 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         static::setStudentTaskAttachments($student_task, $_REQUEST);
 
         $student_task->save();
+
+        $student_task_submission = new StudentTaskSubmission();
+        $student_task_submission->StudentTaskID = $student_task->ID;
+        $student_task_submission->save();
 
         return static::respond('studenttask/submit', [
             'data' => $student_task,
@@ -150,20 +153,9 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
                 $attachmentIds[] = $Attachment->ID;
             }
 
- /*
-            $query = sprintf('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")',
-                 AbstractTaskAttachment::$tableName,
-                $Record->getRootClass(),
-                $Record->ID,
-                join('", "', $attachmentIds)
-            );
-
-            \Debug::dumpVar($query);
-*/
-
-            \DB::nonQuery('DELETEy FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
+            \DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
                 AbstractTaskAttachment::$tableName,
-                $Record->getRootClass(),
+                \DB::escape($Record->getRootClass()),
                 $Record->ID,
                 join('", "', $attachmentIds)
             ]);
@@ -185,48 +177,34 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
             ], true);
         }
 
-        //update attachments
-        /*
-        if (isset($data['Attachments'])) {
-            $originalAttachments = $Record->Attachments;
-            $originalAttachmentIds = array_map(function($s) {
+         //update skills
+        if (isset($data['SkillIDs'])) {
+            $originalSkills = $Record->Skills;
+            $originalSkillIds = array_map(function($s) {
                 return $s->ID;
-            }, $originalAttachments);
+            }, $originalSkills);
 
-            $failed = [];
-            $attachmentIds = [];
-            $attachments = [];
-            $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
+            $oldSkillIds = array_diff($originalSkillIds, $data['SkillIDs']);
+            $newSkillIds = array_diff($data['SkillIDs'], $originalSkillIds);
 
-            foreach ($data['Attachments'] as $attachmentData) {
-                $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
-                if ($attachmentData['ID'] >= 1) {
-                    if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
-                        $failed[] = $attachmentData;
-                        continue;
-                    }
-                } else {
-                    $Attachment = $attachmentClass::create($attachmentData);
+            foreach ($newSkillIds as $newSkill) {
+                if (!$taskSkill = TaskSkill::getByWhere(['TaskID' => $Record->Task->ID, 'SkillID' => $newSkill])) { // check if skill is attached to related task first
+                    StudentTaskSkill::create([
+                        'StudentTaskID' => $Record->ID,
+                        'SkillID' => $newSkill
+                    ], true);
                 }
-
-                $Attachment->ContextID = $Record->ID;
-                $Attachment->ContextClass = $Record->getRootClass();
-                $Attachment->save();
-                $attachments[] = $Attachment;
-                $attachmentIds[] = $Attachment->ID;
             }
 
+            if (!empty($oldSkillIds)) {
 
-            \DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
-                AbstractTaskAttachment::$tableName,
-                $Record->getRootClass(),
-                $Record->ID,
-                join('", "', $attachmentIds)
-            ]);
-
+                DB::nonQuery('DELETE FROM `%s` WHERE StudentTaskID = %u AND SkillID IN ("%s")', [
+                    StudentTaskSkill::$tableName,
+                    $Record->ID,
+                    join('", "', $oldSkillIds)
+                ]);
+            }
         }
-        $Record->Attachments = $attachments;
-        */
     }
 
     public static function checkWriteAccess(\ActiveRecord $Record, $suppressLogin = false)
