@@ -45,7 +45,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
 
             xtype: 'component',
             autoEl: 'p',
-            padding: '16 32 0'
+            padding: '5 50 0'
         },
         {
             reference: 'demonstrationsTable',
@@ -58,9 +58,9 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                         '<tr class="skill-grid-header-row">',
                             '<th class="skill-grid-header skill-grid-demo-index">&nbsp;</th>',
                             '<th class="skill-grid-header skill-grid-demo-date">Date</th>',
-                            '<th class="skill-grid-header skill-grid-demo-level">Level</th>',
-                            '<th class="skill-grid-header skill-grid-demo-experience">Experience</th>',
-                            '<th class="skill-grid-header skill-grid-demo-context">Context</th>',
+                            '<th class="skill-grid-header skill-grid-demo-level">Rating</th>',
+                            '<th class="skill-grid-header skill-grid-demo-experience">Experience Type</th>',
+                            '<th class="skill-grid-header skill-grid-demo-context">Experience Name</th>',
                             '<th class="skill-grid-header skill-grid-demo-task">Performance&nbsp;Task</th>',
                         '</tr>',
                     '</thead>',
@@ -70,7 +70,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                             '<tr class="skill-grid-demo-row" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstrated:date}</td>',
-                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{DemonstratedLevel}"><tpl if="DemonstratedLevel==0">M<tpl else>{DemonstratedLevel}</tpl></div></td>',
+                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{TargetLevel}"><tpl if="DemonstratedLevel==0">M<tpl else>{DemonstratedLevel}</tpl></div></td>',
                                 '<tpl if="Override">',
                                     '<td colspan="3" class="skill-grid-demo-data skill-grid-override">Override</td>',
                                 '<tpl else>',

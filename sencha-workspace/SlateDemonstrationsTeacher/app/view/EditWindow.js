@@ -35,7 +35,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
         defaultCompetency: null
     },
 
-    title: 'Log a demonstration',
+    title: 'Submit Evidence',
     width: 600,
     constrainHeader: true,
 
@@ -55,7 +55,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
         autoScroll: true,
         bodyPadding: 16,
         defaults: {
-            anchor: '75%',
+            anchor: '100%',
             allowBlank: false,
             msgTarget: 'side',
             selectOnFocus: true,
@@ -64,6 +64,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
         },
         items: [
             {
+                anchor: '75%',
                 reference: 'studentCombo',
 
                 xtype: 'combobox',
@@ -82,6 +83,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                 autoSelect: true
             },
             {
+                anchor: '50%',
                 xtype: 'datefield',
                 name: 'Demonstrated',
                 fieldLabel: 'Demonstrated',
@@ -100,7 +102,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
             {
                 xtype: 'combobox',
                 name: 'Context',
-                fieldLabel: 'Context',
+                fieldLabel: 'Name of Experience',
 
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblContextOptions) || []
             },
@@ -112,8 +114,6 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblPerformanceTypeOptions) || []
             },
             {
-                anchor: '-59',
-
                 xtype: 'textfield',
                 name: 'ArtifactURL',
                 fieldLabel: 'Artifact (URL)',
@@ -249,8 +249,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                         reference: 'loadNextStudentCheck',
 
                         xtype: 'checkboxfield',
-                        boxLabel: 'Continue with next student',
-                        checked: true
+                        boxLabel: 'Continue with next student'
                     }
                 ]
             }
