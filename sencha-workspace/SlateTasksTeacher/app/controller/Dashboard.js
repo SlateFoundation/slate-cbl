@@ -100,7 +100,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             rowheaderclick: 'onTasksGridRowHeaderClick',
             subrowheaderclick: 'onTasksGridRowHeaderClick',
             beforeexpand: 'onBeforeRowHeaderToggle',
-            beforecollapse: 'onBeforeRowHeaderToggle'
+            beforecollapse: 'onBeforeRowHeaderToggle',
+            columnheaderclick: 'onTasksGridColumnHeaderClick'
         },
         taskRater: {
             reassign: 'onReAssignStudentTaskClick'
@@ -232,6 +233,19 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         return;
     },
 
+    onTasksGridColumnHeaderClick: function(grid, columnId, el, ev) {
+        var me = this,
+            courseSection,
+            student;
+
+        if (ev.getTarget('.jarvus-aggregrid-colheader')) {
+            student = me.getStudentsStore().getById(columnId);
+            courseSection = me.getDashboardCt().getCourseSection();
+
+            window.open(Slate.API.buildUrl('/cbl/dashboards/tasks/student')+'?student='+student.get('Username')+'&course_section='+courseSection.get('Code'), '_blank');
+        }
+    },
+
     onBeforeRowHeaderToggle: function(grid, rowId, el, ev) {
         if (ev.getTarget('.jarvus-aggregrid-rowheader .edit-row')) {
             return false;
@@ -281,6 +295,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         me.doSaveStudentTask(studentTask, function(rec) {
             taskRater.close();
+            me.getStudentTasksStore().load({
+                id: studentTask.getId(),
+                addRecords: true
+            });
 
             if (status === 're-assigned') {
                 me.doRateStudentTask(rec);
@@ -343,15 +361,15 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 SkillID: ratingObject.SkillID,
                 Score: ratingObject.rating
             },
-            callback: function(opts, success) {
+            callback: function(opts, success, response) {
+                // var record = response.data.record;
+
                 if (success) {
-                    // todo: remove when API can handle
-                    setTimeout(function() {
-                        me.getStudentTasksStore().reload({
-                            id: studentTask.getId(),
-                            addRecords: true
-                        });
-                    }, 500);
+                    me.getStudentTasksStore().load({
+                        id: studentTask.getId(),
+                        addRecords: true
+                    });
+                    // studentTask.set(record);
                 } else {
                     Ext.toast('Error. Please try again.');
                 }
@@ -367,16 +385,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             student = taskAssigner.getStudent(),
             studentTask = me.getStudentTaskModel().create({
                 TaskID: task.getId(),
+                Task: task.getData(),
                 StudentID: student.getId(),
+                Student: student.getData(),
                 DueDate: taskAssignerValues.DueDate,
                 ExpirationDate: taskAssignerValues.ExpirationDate,
                 ExperienceType: taskAssignerValues.ExperienceType,
                 CourseSectionID: me.getCourseSelector().getSelection().getId()
             });
 
-        me.doSaveStudentTask(studentTask, function(rec) {
+        me.doSaveStudentTask(studentTask, function() {
             taskAssigner.close();
-            me.getTasksGrid().getDataStore().add(rec);
+            me.getStudentTasksStore().load({
+                id: studentTask.getId(),
+                addRecords: true
+            });
             Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
         });
 
@@ -390,8 +413,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         if (studentTask) {
             me.getTaskEditorForm().updateRecord(studentTask);
-
+            studentTask.set('SkillIDs', me.getSkillsField().getSkills(false, true)); // returnRecords, idsOnly
             return me.doSaveStudentTask(studentTask, function() {
+                me.getStudentTasksStore().load({
+                    id: studentTask.getId(),
+                    addRecords: true
+                });
                 taskEditor.close();
                 Ext.toast('Student task successfully updated.');
             });

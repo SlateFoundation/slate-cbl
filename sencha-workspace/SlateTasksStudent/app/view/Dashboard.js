@@ -6,33 +6,44 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
     extend: 'Ext.container.Container',
     xtype: 'slatetasksstudent-dashboard',
 
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
-
-    style: 'padding: 0 32px 0 0', // prevents right side elements being cut off
-
-    items: [{
-        xtype: 'slatetasksstudent-appheader',
-        style: 'margin-bottom: 16px'
-    }, {
-        xtype: 'container',
-        layout: {
-            type: 'hbox',
-            align: 'stretch'
+    items: [
+        {
+            xtype: 'slatetasksstudent-appheader',
+            style: {
+                border: 'none',
+                padding: '1em 7.5%'
+            }
         },
-        items: [{
-            xtype: 'slatetasksstudent-tasktree',
-            minHeight: 200,  // need a minimum height for load mask
-            style: 'margin-right: 32px',
-            flex: 1
-        }, {
-            xtype: 'slatetasksstudent-todolist',
-            flex: 1
-        }]
-    }, {
-        xtype: 'slate-taskhistory',
-        style: 'margin-top: 32px'
-    }]
+        {
+            // like .site > .inner
+            xtype: 'container',
+            style: {
+                padding: '2em 7.5%'
+            },
+            items: [
+                {
+                    xtype: 'container',
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
+                    items: [
+                        {
+                            xtype: 'slatetasksstudent-tasktree',
+                            minHeight: 200,  // need a minimum height for load mask
+                            margin: '0 32 0 0',
+                            flex: 1
+                        }, {
+                            xtype: 'slatetasksstudent-todolist',
+                            flex: 1
+                        }
+                    ]
+                },
+                {
+                    xtype: 'slate-taskhistory',
+                    margin: '32 0 0'
+                }
+            ]
+        }
+    ]
 });

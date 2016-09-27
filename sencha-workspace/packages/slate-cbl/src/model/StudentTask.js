@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext*/
+/* jslint browser: true, undef: true *//* global Ext*/
 Ext.define('Slate.cbl.model.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
@@ -101,7 +101,7 @@ Ext.define('Slate.cbl.model.StudentTask', {
 
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
-            skills = this.get('TaskSkills'),
+            skills = this.get('TaskSkills') || [],
             compIdx, skill,
             i = 0;
 

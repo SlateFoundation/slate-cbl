@@ -164,6 +164,35 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         $Record->Attachments = $attachments;
 
+        // update skills
+        if (isset($data['SkillIDs'])) {
+            $originalSkills = $Record->Skills;
+            $originalSkillIds = array_map(function($s) {
+                return $s->ID;
+            }, $originalSkills);
+
+            $oldSkillIds = array_diff($originalSkillIds, $data['SkillIDs']);
+            $newSkillIds = array_diff($data['SkillIDs'], $originalSkillIds);
+
+            foreach ($newSkillIds as $newSkill) {
+                if (!$taskSkill = TaskSkill::getByWhere(['TaskID' => $Record->Task->ID, 'SkillID' => $newSkill])) { // check if skill is attached to related task first
+                    StudentTaskSkill::create([
+                        'StudentTaskID' => $Record->ID,
+                        'SkillID' => $newSkill
+                    ], true);
+                }
+            }
+
+            if (!empty($oldSkillIds)) {
+
+                DB::nonQuery('DELETE FROM `%s` WHERE StudentTaskID = %u AND SkillID IN ("%s")', [
+                    StudentTaskSkill::$tableName,
+                    $Record->ID,
+                    join('", "', $oldSkillIds)
+                ]);
+            }
+        }
+
     }
 
     public static function onRecordSaved(\ActiveRecord $Record, $data)

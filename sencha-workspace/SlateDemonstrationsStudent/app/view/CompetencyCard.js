@@ -43,7 +43,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         '<div class="panel-body">',
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
                 '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width:{percentComplete:defaultValue(0)}%"></div>',
-                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">L{level}</div>',
+                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{[ values.level - 8]}</div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete}%</div>',
                 '<div id="{id}-meterAverageEl" data-ref="meterAverageEl" class="cbl-progress-average" title="Average">{demonstrationsAverage:number(values.$comp.getAverageFormat())}</div>',
             '</div>',
@@ -89,9 +89,9 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                         '<li ',
                             'class="',
                                 'cbl-skill-demo',
-                                '<tpl if="values.DemonstratedLevel==0">cbl-skill-demo-uncounted</tpl>',
-                                '<tpl if="this.standardOverridden">cbl-skill-demo-overridden</tpl>',
-                                '<tpl if="Override">cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}</tpl>',
+                                '<tpl if="values.DemonstratedLevel==0"> cbl-skill-demo-uncounted</tpl>',
+                                '<tpl if="this.standardOverridden"> cbl-skill-demo-overridden</tpl>',
+                                '<tpl if="Override"> cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}</tpl>',
                             '"',
                             '<tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>',
                         '>',
@@ -260,6 +260,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
     getSkillsData: function() {
         var me = this,
+            completion = me.getCompletion(),
             skills = me.loadedSkills,
             skillsLen = skills.getCount(), skillIndex = 0, skill,
             demoSkillsStore = me.getDemonstrationSkillsStore(),
@@ -284,7 +285,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         // sort and pad demonstrations arrays
         for (skillIndex in skillsData) {
             skillData = skillsData[skillIndex];
-            demonstrationsRequired = skillData.skill.DemonstrationsRequired;
+            demonstrationsRequired = skills.getByKey(skillIndex).getTotalDemonstrationsRequired(completion.get('currentLevel'));
 
             skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
             Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);

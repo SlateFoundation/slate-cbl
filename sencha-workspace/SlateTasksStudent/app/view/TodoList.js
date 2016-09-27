@@ -46,7 +46,9 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     tpl: [
         '<tpl for=".">',
             '<div style="margin-bottom: 20px;">',
-                '<div class="slate-simplepanel-header" data-id="{ID}">To-Do List - {section}</div>',
+                '<div class="slate-simplepanel-header" data-id="{ID}">',
+                    '<div class="slate-simplepanel-title">To-Do List <small>{section}</small></div>',
+                '</div>',
                 // TODO: replace inline styles with a class
                 '<div class="slate-todolist-section-content" data-id="{ID}" ',
                      'style="border-radius: 0 0 0.25em 0.25em; box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.166); overflow: hidden;">',

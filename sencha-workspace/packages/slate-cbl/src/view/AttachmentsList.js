@@ -12,6 +12,8 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
     autoEl: 'ul',
     componentCls: 'slate-attachmentslist',
 
+    emptyText: '<span class="muted">No attachments</span>',
+
     itemSelector: '.slate-attachmentslist-item',
 
     store: {

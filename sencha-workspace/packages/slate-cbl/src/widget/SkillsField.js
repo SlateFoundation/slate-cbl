@@ -18,7 +18,6 @@ Ext.define('Slate.cbl.widget.SkillsField', {
         {
             width: '100%',
             xtype: 'combo',
-            name: 'SkillIDs',
             store: {
                 model: 'Slate.cbl.model.Skill',
                 autoLoad: true
@@ -27,12 +26,13 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             displayField: 'Code_Descriptor',
             valueField: 'ID',
             emptyText: 'Competency code or statement\u2026', // &hellip;
+            hideTrigger: true,
+            minChars: 2,
             listeners: {
                 beforeselect: function(combo, record) {
-                    var dataview = combo.next('dataview'),
-                        store = dataview.getStore();
+                    var field = combo.up('slate-skillsfield');
 
-                    store.add(record);
+                    field.setSkills(record, true, true); // append, editable
                     return false;
                 }
             },
@@ -62,8 +62,6 @@ Ext.define('Slate.cbl.widget.SkillsField', {
             ],
             prepareData: function(data, recordIndex, record) {
                 var recordData = record.getData();
-
-                recordData.isEditable = !this.up('slate-skillsfield').getReadOnly();
 
                 return recordData;
             },
@@ -113,13 +111,31 @@ Ext.define('Slate.cbl.widget.SkillsField', {
         return skillsStore.getRange();
     },
 
-    setSkills: function(skills, append) {
+    setSkills: function(skills, append, editable) {
         var me = this,
             skillsList = me.down('#skills-list'),
-            skillsStore = skillsList.getStore();
+            skillsStore = skillsList.getStore(),
+            i = 0,
+            setEditable = function(r, e) {
+                if (r && r.isInstance) {
+                    r.set('isEditable', Boolean(e));
+                } else if (r) {
+                    r.isEditable = Boolean(e);
+                }
+            };
 
         if (append !== true) {
             skillsStore.removeAll();
+        }
+
+        if (skills && typeof skills == 'object') {
+            if (Ext.isArray(skills)) {
+                for (; i < skills.length; i++) {
+                    setEditable(skills[i], editable);
+                }
+            } else {
+                setEditable(skills, editable);
+            }
         }
         skillsStore.add(skills);
     }

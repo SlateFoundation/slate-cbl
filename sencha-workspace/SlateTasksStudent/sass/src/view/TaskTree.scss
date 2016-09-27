@@ -38,7 +38,7 @@
     }
 
     + .slate-tasktree-item {
-        margin-top: 1em;
+        margin-top: .75em;
     }
 
     @include slate-tasktree-item-status('notassigned',  $slate-task-color-notassigned);
@@ -88,19 +88,29 @@
     margin-bottom: -.75em;
     padding: .625em .875em 0;
     text-transform: uppercase;
+
+    &:empty {
+        display: none;
+    }
 }
 
 .slate-tasktree-text {
     align-items: center;
     background-color: white;
-    border-radius: 0 0 .25em 0;
+    border-radius: 0 .25em .25em 0;
+    cursor: pointer;
     display: flex;
     line-height: (4/3);
     padding: .5em .625em;
     transition: border-radius 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeOutCirc
 
-    .has-subtasks.is-expanded & {
-        border-radius: 0;
+    .is-expanded & {
+        border-radius: 0 .25em 0 0;
+    }
+
+    &:hover,
+    &:focus {
+        background-color: mix($base-color, white, 10%);
     }
 }
 

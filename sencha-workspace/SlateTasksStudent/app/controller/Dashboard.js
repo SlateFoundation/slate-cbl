@@ -134,7 +134,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
                 Title: 'All'
             })
         });
-        combo.getStore().load();
     },
 
 
@@ -152,21 +151,34 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             courseSectionsStore = sectionSelectorCombo.getStore(),
             rec = courseSectionsStore.findRecord('Code', sectionCode),
             taskTree = me.getTaskTree(),
-            todoList = me.getTodoList();
+            todoList = me.getTodoList(),
+            user = params.student ? params.student : 'current';
+
+        // correct route if it does not match requested course_section parameter
+        if (params.course_section && params.course_section !== sectionCode) {
+            this.redirectTo('section/'+params.course_section);
+            return;
+        }
 
         if (!courseSectionsStore.isLoaded()) {
-            courseSectionsStore.load(function() {
-                me.showCourseSection(sectionCode);
+            courseSectionsStore.load({
+                params: {
+                    enrolled_user: user // eslint-disable-line camelcase
+                },
+                callback: function() {
+                    me.showCourseSection(sectionCode);
+                }
             });
             return;
         }
 
         if (params.student) {
-            sectionCode = 'all';
             taskTree.setStudent(params.student);
             taskTree.setReadOnly(true);
+
             todoList.setStudent(params.student);
             todoList.setReadOnly(true);
+
             sectionSelectorCombo.setDisabled(true);
         }
 
