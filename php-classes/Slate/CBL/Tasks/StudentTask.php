@@ -78,6 +78,12 @@ class StudentTask extends \VersionedRecord
         'Attachments' => [
             'type' => 'context-children',
             'class' => Attachments\AbstractTaskAttachment::class
+        ],
+        'Submissions' => [
+            'type' => 'one-many',
+            'class' => StudentTaskSubmission::class,
+            'foreign' => 'StudentTaskID',
+            'local' => 'ID'
         ]
     ];
 
@@ -98,7 +104,8 @@ class StudentTask extends \VersionedRecord
 
     public static $indexes = [
         'StudentTask' => [
-            'fields' => ['TaskID', 'StudentID']
+            'fields' => ['TaskID', 'StudentID'],
+            'unique' => true
         ]
     ];
 

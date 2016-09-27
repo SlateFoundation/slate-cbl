@@ -6,7 +6,8 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
         'Slate.cbl.view.modals.ModalForm',
         'Slate.cbl.widget.RatingView',
         'Slate.cbl.widget.CommentsField',
-        'Slate.cbl.widget.ReAssignmentField'
+        'Slate.cbl.widget.ReAssignmentField',
+        'Slate.cbl.widget.SubmissionsField'
     ],
 
     title: 'Rate Task',
@@ -110,11 +111,7 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     xtype: 'slate-ratingview'
                 },
                 {
-                    xtype: 'datefield',
-                    fieldLabel: 'Submitted Date',
-                    name: 'Submitted',
-                    readOnly: true,
-                    format: 'm/d/Y'
+                    xtype: 'slate-tasks-submissions'
                 },
                 {
                     xtype: 'slate-commentsfield'
