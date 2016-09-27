@@ -103,6 +103,12 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     readOnly: true
                 },
                 {
+                    xtype: 'slate-tasks-attachmentsfield',
+                    itemId: 'student-attachments',
+                    fieldLabel: 'Student Attachments',
+                    readOnly: true
+                },
+                {
                     xtype: 'slate-skillsfield',
                     fieldLabel: 'Skills'
                 },

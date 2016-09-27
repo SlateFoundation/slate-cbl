@@ -36,6 +36,7 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
         form.down('[name=StudentFullName]').setValue(studentTask.get('Student').FirstName + ' ' + studentTask.get('Student').LastName);
         form.down('[name=DueDate]').setValue(studentTask.get('DueDate'));
         form.down('[name=Submitted]').setValue(studentTask.get('Submitted'));
+        form.down('#student-attachments').setAttachments(studentTask.get('Attachments'));
         commentsField.setRecord(studentTask);
         skillsField.setSkills(studentTask.get('Skills'), true, false); // appendSkills, editable
         ratingsView.setData({
