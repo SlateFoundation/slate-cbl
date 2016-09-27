@@ -102,6 +102,7 @@ class StudentTask extends \VersionedRecord
         'SkillRatings',
         'Comments',
         'Attachments',
+        'Submissions',
         'StudentName' => [
             'getter' => 'getStudentName'
         ],
