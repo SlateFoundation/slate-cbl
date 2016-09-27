@@ -7,6 +7,7 @@ use Emergence\Comments\Comment;
 use Slate\People\Student;
 use Slate\Courses\Section;
 use Slate\CBL\StudentCompetency;
+use Slate\CBL\Skill;
 
 class StudentTask extends \VersionedRecord
 {
@@ -78,6 +79,13 @@ class StudentTask extends \VersionedRecord
         'Attachments' => [
             'type' => 'context-children',
             'class' => Attachments\AbstractTaskAttachment::class
+        ],
+        'Skills' => [
+            'type' => 'many-many',
+            'class' => Skill::class,
+            'linkClass' => StudentTaskSkill::class,
+            'linkLocal' => 'StudentTaskID',
+            'linkForeign' => 'SkillID'
         ]
     ];
 
@@ -93,7 +101,8 @@ class StudentTask extends \VersionedRecord
         ],
         'TaskSkills' => [
             'getter' => 'getTaskSkills'
-        ]
+        ],
+        'Skills'
     );
 
     public static $indexes = [
