@@ -94,7 +94,6 @@ class StudentTask extends \VersionedRecord
         'SkillRatings',
         'Comments',
         'Attachments',
-        'Submissions',
         'StudentName' => [
             'getter' => 'getStudentName'
         ],
@@ -140,16 +139,19 @@ class StudentTask extends \VersionedRecord
 
     public function getTaskSkills()
     {
+        // todo: use a UI-centric api endpoint insntead of dynamic fields
         $taskSkills = [];
-        foreach ($this->Task->Skills as $skill) {
-            $studentCompetency = $skill->Competency ? StudentCompetency::getByWhere(['StudentID' => $this->StudentID, 'CompetencyID' => $skill->Competency->ID]) : null;
-            $skillRating = StudentTaskSkillRating::getByWhere(['StudentTaskID' => $this->ID, 'SkillID' => $skill->ID]);
-            $taskSkills[] = array_merge($skill->getData(), [
-                'CompetencyLevel' => $studentCompetency ? $studentCompetency->Level : null,
-                'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
-                'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-                'Rating' => $skillRating ? $skillRating->Score : null
-            ]);
+        if ($this->Task && $this->Task->Skills) {
+            foreach ($this->Task->Skills as $skill) {
+                $studentCompetency = $skill->Competency ? StudentCompetency::getByWhere(['StudentID' => $this->StudentID, 'CompetencyID' => $skill->Competency->ID]) : null;
+                $skillRating = StudentTaskSkillRating::getByWhere(['StudentTaskID' => $this->ID, 'SkillID' => $skill->ID]);
+                $taskSkills[] = array_merge($skill->getData(), [
+                    'CompetencyLevel' => $studentCompetency ? $studentCompetency->Level : null,
+                    'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
+                    'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
+                    'Rating' => $skillRating ? $skillRating->Score : null
+                ]);
+            }
         }
 
         return $taskSkills;
@@ -168,4 +170,3 @@ class StudentTask extends \VersionedRecord
         parent::save(deep);
     }
 }
-
