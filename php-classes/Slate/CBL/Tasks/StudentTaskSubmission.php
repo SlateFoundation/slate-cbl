@@ -2,8 +2,6 @@
 
 namespace Slate\CBL\Tasks;
 
-use Slate\CBL\StudentTask;
-
 class StudentTaskSubmission extends \VersionedRecord
 {
     public static $tableName = 'cbl_student_task_submissions';
