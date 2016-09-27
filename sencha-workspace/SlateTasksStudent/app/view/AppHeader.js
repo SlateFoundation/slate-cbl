@@ -13,7 +13,10 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
 
     items: [{
         xtype: 'container',
-        layout: 'hbox',
+        layout: {
+            type: 'hbox',
+            align: 'center'
+        },
         items: [{
             xtype: 'combobox',
             itemId: 'section-selector',

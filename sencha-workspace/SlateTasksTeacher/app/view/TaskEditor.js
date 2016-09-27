@@ -36,8 +36,9 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
             parentTaskField.setReadOnly(true);
             experienceField.setReadOnly(true);
             instructionsField.setReadOnly(true);
-            skillsField.setReadOnly(true);
             attachmentsfield.setReadOnly(true);
+
+            skillsField.setSkills(studentTask.get('Skills') || [], true, true); // append, editable
 
             taskPrivacyField.setDisabled(true);
 
@@ -66,7 +67,7 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
         form.reset();
         if (task) {
             form.loadRecord(task);
-            skillsField.setSkills(task.get('Skills'));
+            skillsField.setSkills(task.get('Skills'), false, false); // append, editable
             attachmentsField.setAttachments(task.get('Attachments'));
             assignmentsField.setAssignees(task.getAssigneeIds());
 

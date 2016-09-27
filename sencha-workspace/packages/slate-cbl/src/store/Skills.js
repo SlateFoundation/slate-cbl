@@ -6,7 +6,10 @@ Ext.define('Slate.cbl.store.Skills', {
     ],
 
     model: 'Slate.cbl.model.Skill',
-    pageSize: 0,
+    config: {
+        pageSize: 0,
+        asynchronousLoad: false
+    },
 
     constructor: function(config) {
         console.log('constructing', this.$className, config);
@@ -17,7 +20,7 @@ Ext.define('Slate.cbl.store.Skills', {
 
         this.loadedCompetencies = {};
     },
-    
+
     getAllByCompetency: function(competency, callback, scope) {
         var me = this,
             loadedCompetencies = this.loadedCompetencies;

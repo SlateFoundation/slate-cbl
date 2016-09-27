@@ -3,5 +3,10 @@ Ext.define('Slate.cbl.view.AppHeader', {
     xtype: 'slate-appheader',
     componentCls: 'slate-appheader',
 
-    dock: 'top'
+    dock: 'top',
+
+    layout: {
+        type: 'hbox',
+        align: 'center'
+    }
 });

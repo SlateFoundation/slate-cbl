@@ -31,15 +31,11 @@ Ext.define('Slate.cbl.widget.RatingView', {
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    // TODO: remove this when passes Q&A (removed readOnly check because students should see this too)
-                                    // '<tpl if="!this.readOnly && values.Rating < this.ratings[0]">', // hide when in readOnly mode
-                                    '<tpl if="values.Rating < this.ratings[0]">', // hide when in readOnly mode
-                                        '<li class="slate-ratingview-rating slate-ratingview-rating-null <tpl if="values.Rating < this.ratings[0] || values.Rating == null || values.Rating == &quot;N/A&quot;">is-selected</tpl>" data-rating="{[values.Rating < this.ratings[0] ? values.Rating : "N/A"]}">',
-                                            '<div class="slate-ratingview-rating-bubble" tabindex="0">',
-                                                '<span class="slate-ratingview-rating-label">{[values.Rating && values.Rating <  this.ratings[0] ? values.Rating : "N/A"]}</span>',
-                                            '</div>',
-                                        '</li>',
-                                    '</tpl>',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu <tpl if="values.Rating == null || values.Rating == &quot;N/A&quot;">slate-ratingview-rating-null</tpl> <tpl if="values.Rating < this.ratings[0] || values.Rating == null || values.Rating == &quot;N/A&quot;">is-selected</tpl>" data-rating="{[values.Rating < this.ratings[0] ? values.Rating : "N/A"]}">',
+                                        '<div class="slate-ratingview-rating-bubble" tabindex="0">',
+                                            '<span class="slate-ratingview-rating-label">{[values.Rating && values.Rating <  this.ratings[0] ? values.Rating : "N/A"]}</span>',
+                                        '</div>',
+                                    '</li>',
                                     '<tpl for="this.ratings">', // access template-scoped variable declared at top
                                         '<li class="slate-ratingview-rating <tpl if="values == parent.Rating">is-selected</tpl>" data-rating="{.}">',
                                             '<div class="slate-ratingview-rating-bubble" tabindex="0">',
@@ -96,10 +92,20 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     onScaleClick: function(ev, t) {
         var me = this,
-            target = Ext.get(t);
+            target = Ext.get(t),
+            isRatingEl = target.is('.slate-ratingview-rating'),
+            isRemoveEl = target.is('.slate-ratingview-remove'),
+            naRatingEl;
 
-        if (!me.getReadOnly() && (target.is('.slate-ratingview-rating') || target.is('.slate-ratingview-remove'))) {
-            me.selectRating(target);
+
+        if (!me.getReadOnly()) {
+            if (isRemoveEl) {
+                naRatingEl = target.parent('.slate-ratingview-skill').down('.slate-ratingview-rating-menu');
+                me.updateRatingEl(naRatingEl, 'N/A');
+                me.selectRating(naRatingEl, false);
+            } else if (isRatingEl) {
+                me.selectRating(target);
+            }
         }
     },
 
@@ -107,26 +113,27 @@ Ext.define('Slate.cbl.widget.RatingView', {
         var me = this,
             skillEl = target.parent('.slate-ratingview-skill'),
 
-            rating = target.getAttribute('data-rating'),
+            rating = target.getAttribute('data-rating') || 'N/A',
             competency = skillEl.getAttribute('data-competency'),
             skill = skillEl.getAttribute('data-skill'),
 
             ratingEls = skillEl.select('.slate-ratingview-rating'),
-            naRating = skillEl.down('.slate-ratingview-rating-null');
+            naRating = skillEl.down('.slate-ratingview-rating-menu');
 
         // deselect other ratings
         ratingEls.removeCls('is-selected');
 
-        if (!rating || target == naRating) {
-            naRating.addCls('is-selected');
-            if (target == naRating && showMenu !== false) {
-                me.showMenu(target, target.getXY());
-            } else {
-                me.updateRatingEl(naRating, null);
-            }
-        } else {
-            target.addCls('is-selected');
+        if (target == naRating && showMenu !== false) {
+            return me.showMenu(target, target.getXY());
         }
+
+        if (rating == 'N/A') {
+            naRating.addCls('slate-ratingview-rating-null');
+        } else {
+            naRating.removeCls('slate-ratingview-rating-null');
+        }
+
+        target.addCls('is-selected');
 
         return me.fireEvent('rateskill', me, {
             rating: rating,
@@ -176,8 +183,8 @@ Ext.define('Slate.cbl.widget.RatingView', {
     onMenuRatingClick: function(menu, menuRating) {
         var me = this;
 
+        me.updateRatingEl(menu.ratingEl, menuRating.getValue());
         me.selectRating(menu.ratingEl, false);
-        me.updateRatingEl(menu.ratingEl, menuRating.value);
         menu.hide();
     }
 });

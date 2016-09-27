@@ -28,7 +28,7 @@ Ext.define('SlateTasksTeacher.view.GridLegend', {
         },
         {
             cls: 'due',
-            title: 'Needs Rated',
+            title: 'Needs Rating',
             flags: [
                 'needsrated'
             ]
@@ -43,7 +43,7 @@ Ext.define('SlateTasksTeacher.view.GridLegend', {
         },
         {
             cls: 'revision',
-            title: 'Revision, Needs Rated',
+            title: 'Revision, Needs Rating',
             flags: [
                 'needsrated'
             ]
@@ -54,7 +54,7 @@ Ext.define('SlateTasksTeacher.view.GridLegend', {
         },
         {
             cls: 'late',
-            title: 'Late, Needs Rated',
+            title: 'Late, Needs Rating',
             flags: [
                 'needsrated'
             ]

@@ -6,8 +6,8 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
     ],
 
     config: {
-    	studentId: null,
-    	contentAreaId: null,
+        studentId: null,
+        contentAreaId: null,
 
         loadStatus: 'unloaded',
 
@@ -32,7 +32,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
         '</div>'
     ],
     childEls: [
-    	'tableEl'
+        'tableEl'
     ],
 
     progressTpl: [
@@ -40,7 +40,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
             '<thead>',
                 '<tr>',
                     '<th class="col-header scoring-domain-col">Scoring Domain</th>',
-                    '<th class="col-header level-col">Level</th>',
+                    '<th class="col-header level-col">Rating</th>',
                 '</tr>',
             '</thead>',
         '</tpl>',
@@ -55,7 +55,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
                         '</div>',
                     '</td>',
                     '<td class="level-col">',
-                        '<div class="cbl-level-colored cbl-level-{demonstratedLevel}">',
+                        '<div class="cbl-level-colored cbl-level-{demonstratedLevel}">', // TODO color with target level, not demo. level
                            '<tpl if="demonstratedLevel != 0">{demonstratedLevel}<tpl else>M</tpl>',
                        '</div>',
                     '</td>',
@@ -94,36 +94,36 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
 
     // template methods
     onRender: function() {
-    	var me = this;
+        var me = this;
 
-    	me.callParent(arguments);
+        me.callParent(arguments);
 
-    	me.loadProgress();
+        me.loadProgress();
     },
 
 
     // public methods
     loadProgress: function() {
-    	var me = this,
-    		studentId = me.getStudentId(),
-    		contentAreaId = me.getContentAreaId();
+        var me = this,
+            studentId = me.getStudentId(),
+            contentAreaId = me.getContentAreaId();
 
-    	if (!studentId || !contentAreaId) {
-    		throw 'Unable to load progress without studentId and contentAreaId set';
-    	}
+        if (!studentId || !contentAreaId) {
+            throw 'Unable to load progress without studentId and contentAreaId set';
+        }
 
-    	me.setLoadStatus('loading');
+        me.setLoadStatus('loading');
 
         me.getRecentProgressStore().loadByStudentAndContentArea(studentId, contentAreaId);
     },
 
     refreshProgress: function() {
-    	var me = this;
+        var me = this;
 
         me.getTpl('progressTpl').overwrite(me.tableEl, {
             progress: Ext.pluck(me.getRecentProgressStore().getRange(), 'data')
         });
 
-    	me.setLoadStatus('loaded');
+        me.setLoadStatus('loaded');
     }
 });

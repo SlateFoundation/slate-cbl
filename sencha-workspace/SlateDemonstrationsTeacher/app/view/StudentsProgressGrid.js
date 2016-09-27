@@ -123,13 +123,11 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             '</div>',
         '</div>',
         '<div class="cbl-grid-legend">',
-            '<span class="cbl-grid-legend-label">Legend:&ensp;</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-8">8</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-9">9</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-10">10</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-11">11</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-12">12</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-13">13</span>',
+            '<span class="cbl-grid-legend-label">Portfolios:&ensp;</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-9">Y1</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-10">Y2</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-11">Y3</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-12">Y4</span>',
         '</div>'
     ],
 
@@ -409,7 +407,9 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                 skillsCount = skillsCollection.getCount(), skillIndex, skill,
 
-                skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl;
+                skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl,
+
+                studentCompletion, demonstrationsRequired;
 
             // build new skills render tree and update root skill index
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
@@ -425,10 +425,12 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     student = studentsStore.getAt(studentIndex);
+                    studentCompletion = competencyRenderData.studentsById[student.getId()].completion;
+
                     studentRenderData = {
                         student: student.data,
-                        completion: competencyRenderData.studentsById[student.getId()].completion,
-                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.get('DemonstrationsRequired'), true)
+                        completion: studentCompletion,
+                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.getTotalDemonstrationsRequired(studentCompletion ? studentCompletion.currentLevel : null), true)
                     };
 
                     studentsRenderData.push(studentRenderData);
@@ -788,7 +790,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                     competencyStudentData.outgoingLevel = renderedLevel;
                 }
 
-                competencyStudentData.progressLevelEl.update('L'+level);
+                competencyStudentData.progressLevelEl.update('Y' + level - 8);
 
                 competencyStudentData.renderedLevel = level;
             }
