@@ -258,6 +258,7 @@ END_OF_SQL
 
     public function getCurrentLevelForStudent(Student $Student)
     {
+        try {
         $level = \DB::oneValue(
             'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
             [
@@ -265,6 +266,9 @@ END_OF_SQL
                 $this->ID
             ]
         );
+        } catch (TableNotFoundException $e) {
+            $level = null;
+        }
 
         return $level ? intval($level) : null;
     }
