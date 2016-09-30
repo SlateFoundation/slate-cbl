@@ -21,25 +21,9 @@ class Skill extends \VersionedRecord
         ]
         ,'Descriptor'
         ,'Statement' => 'clob'
-        ,'FirstLevelDemonstrationsRequired' => [
-            'type' => 'uint',
-            'notnull' => false,
-            'default' => 2
-        ]
-        ,'SecondLevelDemonstrationsRequired' => [
-            'type' => 'uint',
-            'notnull' => false,
-            'default' => 2
-        ]
-        ,'ThirdLevelDemonstrationsRequired' => [
-            'type' => 'uint',
-            'notnull' => false,
-            'default' => 2
-        ]
-        ,'FourthLevelDemonstrationsRequired' => [
-            'type' => 'uint',
-            'notnull' => false,
-            'default' => 2
+        ,'DemonstrationsRequired' => [
+            'type' => 'uint'
+            ,'default' => 2
         ]
     ];
 
@@ -61,6 +45,11 @@ class Skill extends \VersionedRecord
         ]
         ,'Descriptor' => [
             'errorMessage' => 'A descriptor is required'
+        ]
+        ,'DemonstrationsRequired' => [
+            'validator' => 'number'
+            ,'min' => 1
+            ,'errorMessage' => 'DemonstrationsRequired must be an integer greater than 0'
         ]
     ];
 
