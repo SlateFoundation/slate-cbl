@@ -9,6 +9,8 @@ use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 use Slate\Courses\SectionsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
 use Emergence\Comments\Comment;
+use Slate\CBL\Demonstrations\Demonstration;
+use Slate\CBL\Demonstrations\DemonstrationSkill;
 
 class StudentTasksRequestHandler extends \RecordsRequestHandler
 {
@@ -65,22 +67,40 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         $requestData = $_REQUEST;
         $rating = $requestData['Score'];
         $skillId = $requestData['SkillID'];
+
         $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            if (!$rating) {
+                return static::throwInvalidRequestError('You must supply a rating.');
+            }
+
+            if (!$Demonstration = $Record->Demonstration) {
+                $Demonstration = Demonstration::create([
+                    'StudentID' => $Record->StudentID
+                ], true);
+
+                $Record->DemonstrationID = $Demonstration->ID;
+                $Record->save(false);
+            }
 
             if (!isset($skillId) || !$Skill = Skill::getByHandle($skillId)) {
                 $error = sprintf('Skill %s not found.', $skillId);
             } else {
+                $competencyLevel = $Skill->Competency->getCurrentLevelForStudent($Record->Student);
 
-                if (!$skillRating = StudentTaskSkillRating::getByWhere(['StudentTaskID' => $Record->ID, 'SkillID' => $Skill->ID])) {
-                    $skillRating = StudentTaskSkillRating::create([
+                if (!$demoSkill = DemonstrationSkill::getByWhere(['DemonstrationID' => $Demonstration->ID, 'SkillID' => $Skill->ID, 'TargetLevel' => $competencyLevel])) {
+                    $demoSkill = DemonstrationSkill::create([
+                        'DemonstrationID' => $Demonstration->ID,
                         'StudentTaskID' => $Record->ID,
-                        'SkillID' => $Skill->ID
+                        'SkillID' => $Skill->ID,
+                        'TargetLevel' => $competencyLevel
                     ]);
                 }
 
-                $skillRating->Score = $rating;
-                $skillRating->save(false);
+                $demoSkill->DemonstratedLevel = $rating;
+                $demoSkill->save(false);
             }
         }
 

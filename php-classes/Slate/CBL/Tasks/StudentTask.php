@@ -8,6 +8,7 @@ use Slate\People\Student;
 use Slate\Courses\Section;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Skill;
+use Slate\CBL\Demonstrations\Demonstration;
 
 class StudentTask extends \VersionedRecord
 {
@@ -46,6 +47,10 @@ class StudentTask extends \VersionedRecord
         ],
         'Submitted' => [
             'type' => 'timestamp',
+            'default' => null
+        ],
+        'DemonstrationID' => [
+            'type' => 'uint',
             'default' => null
         ]
     ];
@@ -92,6 +97,10 @@ class StudentTask extends \VersionedRecord
             'linkClass' => StudentTaskSkill::class,
             'linkLocal' => 'StudentTaskID',
             'linkForeign' => 'SkillID'
+        ],
+        'Demonstration' => [
+            'type' => 'one-one',
+            'class' => Demonstration::class
         ]
     ];
 
@@ -151,15 +160,22 @@ class StudentTask extends \VersionedRecord
     {
         // todo: use a UI-centric api endpoint insntead of dynamic fields
         $taskSkills = [];
+        $demoSkillsIds = [];
+
+        foreach ($this->Demonstration ? $this->Demonstration->Skills : [] as $demoSkill) {
+            $demoSkillIds[$demoSkill->SkillID] = $demoSkill;
+        }
+
         if ($this->Task && $this->Task->Skills) {
             foreach ($this->Task->Skills as $skill) {
                 $studentCompetency = $skill->Competency ? StudentCompetency::getByWhere(['StudentID' => $this->StudentID, 'CompetencyID' => $skill->Competency->ID]) : null;
-                $skillRating = StudentTaskSkillRating::getByWhere(['StudentTaskID' => $this->ID, 'SkillID' => $skill->ID]);
+                $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
+
                 $taskSkills[] = array_merge($skill->getData(), [
                     'CompetencyLevel' => $studentCompetency ? $studentCompetency->Level : null,
                     'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
                     'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-                    'Rating' => $skillRating ? $skillRating->Score : null
+                    'Rating' => $demoSkillRating
                 ]);
             }
         }
