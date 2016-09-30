@@ -169,12 +169,14 @@ class Competency extends \VersionedRecord
 #            return $completion;
 #        }
 
-        try {
-            $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
-            DB::nonQuery('SET @num := 0, @skill := ""');
+        $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
 
-            $completion = DB::oneRecord(
-                <<<'END_OF_SQL'
+        if ($currentLevel) {
+            try {
+                DB::nonQuery('SET @num := 0, @skill := ""');
+
+                $completion = DB::oneRecord(
+                    <<<'END_OF_SQL'
 SELECT SUM(demonstrationsLogged) AS demonstrationsLogged,
        SUM(demonstrationsComplete) AS demonstrationsComplete,
        SUM(demonstrationsAverage * demonstrationsLogged) / SUM(demonstrationsLogged) AS demonstrationsAverage
@@ -207,36 +209,37 @@ SELECT SUM(demonstrationsLogged) AS demonstrationsLogged,
         GROUP BY SkillID
        ) SkillCompletion
 END_OF_SQL
-                ,[
-                    Demonstrations\DemonstrationSkill::$tableName,
-                    Demonstrations\Demonstration::$tableName,
-                    $Student->ID,
-                    implode(',', $this->getSkillIds()),
-                    $currentLevel,
-                    Skill::$tableName
-                ]
-            );
+                    ,[
+                        Demonstrations\DemonstrationSkill::$tableName,
+                        Demonstrations\Demonstration::$tableName,
+                        $Student->ID,
+                        implode(',', $this->getSkillIds()),
+                        $currentLevel,
+                        Skill::$tableName
+                    ]
+                );
 
-            // cast strings to floats
-            $completion = [
-                'currentLevel' => $currentLevel,
-                'demonstrationsLogged' => intval($completion['demonstrationsLogged']),
-                'demonstrationsComplete' => intval($completion['demonstrationsComplete']),
-                'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
-            ];
-        } catch (TableNotFoundException $e) {
-            $completion = [
-                'demonstrationsLogged' => 0,
-                'demonstrationsComplete' => 0,
-                'demonstrationsAverage' => null,
-                'currentLevel' => null
-            ];
+                // cast strings to floats
+                return [
+                    'currentLevel' => $currentLevel,
+                    'demonstrationsLogged' => intval($completion['demonstrationsLogged']),
+                    'demonstrationsComplete' => intval($completion['demonstrationsComplete']),
+                    'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
+                ];
+            } catch (TableNotFoundException $e) {
+                // return empty completion below
+            }
         }
 
         // store in cache (will require cache-refreshers in relevant save methods)
 #        Cache::store($cacheKey, $completion);
 
-        return $completion;
+        return [
+            'demonstrationsLogged' => 0,
+            'demonstrationsComplete' => 0,
+            'demonstrationsAverage' => null,
+            'currentLevel' => $currentLevel
+        ];
     }
 
     public static function getAllByListIdentifier($identifier)
@@ -259,13 +262,13 @@ END_OF_SQL
     public function getCurrentLevelForStudent(Student $Student)
     {
         try {
-        $level = \DB::oneValue(
-            'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
-            [
-                $Student->ID,
-                $this->ID
-            ]
-        );
+            $level = \DB::oneValue(
+                'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
+                [
+                    $Student->ID,
+                    $this->ID
+                ]
+            );
         } catch (TableNotFoundException $e) {
             $level = null;
         }
