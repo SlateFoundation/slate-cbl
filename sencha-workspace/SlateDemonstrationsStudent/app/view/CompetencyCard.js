@@ -260,7 +260,6 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
     getSkillsData: function() {
         var me = this,
-            completion = me.getCompletion(),
             skills = me.loadedSkills,
             skillsLen = skills.getCount(), skillIndex = 0, skill,
             demoSkillsStore = me.getDemonstrationSkillsStore(),
@@ -285,7 +284,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         // sort and pad demonstrations arrays
         for (skillIndex in skillsData) {
             skillData = skillsData[skillIndex];
-            demonstrationsRequired = skills.getByKey(skillIndex).getTotalDemonstrationsRequired(completion.get('currentLevel'));
+            demonstrationsRequired = skillData.skill.DemonstrationsRequired;
 
             skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
             Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);

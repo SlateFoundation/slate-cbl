@@ -80,20 +80,6 @@ Ext.define('Slate.cbl.model.Skill', {
         }
     ],
 
-    getTotalDemonstrationsRequired: function(userLevel) {
-        var me = this;
-
-        if (userLevel === 10) {
-            return me.get('SecondLevelDemonstrationsRequired');
-        } else if (userLevel === 11) {
-            return me.get('ThirdLevelDemonstrationsRequired');
-        } else if (userLevel === 12) {
-            return me.get('FourthLevelDemonstrationsRequired');
-        }
-
-        return me.get('FirstLevelDemonstrationsRequired');
-    },
-
     proxy: {
         type: 'slate-records',
         url: '/cbl/skills'

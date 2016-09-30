@@ -407,9 +407,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                 skillsCount = skillsCollection.getCount(), skillIndex, skill,
 
-                skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl,
-
-                studentCompletion, demonstrationsRequired;
+                skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl;
 
             // build new skills render tree and update root skill index
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
@@ -425,12 +423,10 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     student = studentsStore.getAt(studentIndex);
-                    studentCompletion = competencyRenderData.studentsById[student.getId()].completion;
-
                     studentRenderData = {
                         student: student.data,
-                        completion: studentCompletion,
-                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.getTotalDemonstrationsRequired(studentCompletion ? studentCompletion.currentLevel : null), true)
+                        completion: competencyRenderData.studentsById[student.getId()].completion,
+                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.get('DemonstrationsRequired'), true)
                     };
 
                     studentsRenderData.push(studentRenderData);
