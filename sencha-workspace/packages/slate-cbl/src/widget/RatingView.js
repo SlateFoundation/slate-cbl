@@ -15,6 +15,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
     // todo: add ratings as config.
     tpl: [
         '{% this.ratings = values.ratings %}',
+        '{% this.menuRatings = values.menuRatings %}',
         '{% this.readOnly = values.readOnly %}',
 
         '<ul class="slate-ratingview-competencies">',
@@ -31,15 +32,15 @@ Ext.define('Slate.cbl.widget.RatingView', {
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu <tpl if="values.Rating == null || values.Rating == &quot;N/A&quot;">slate-ratingview-rating-null</tpl> <tpl if="values.Rating < this.ratings[0] || values.Rating == null || values.Rating == &quot;N/A&quot;">is-selected</tpl>" data-rating="{[values.Rating < this.ratings[0] ? values.Rating : "N/A"]}">',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu slate-ratingview-rating-null{[this.getMenuRatingElCls(values.Rating, this)]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this)]}">',
                                         '<div class="slate-ratingview-rating-bubble" tabindex="0">',
-                                            '<span class="slate-ratingview-rating-label">{[values.Rating && values.Rating <  this.ratings[0] ? values.Rating : "N/A"]}</span>',
+                                            '<span class="slate-ratingview-rating-label">{[this.getMenuRatingElLabel(values.Rating, this)]}</span>',
                                         '</div>',
                                     '</li>',
                                     '<tpl for="this.ratings">', // access template-scoped variable declared at top
-                                        '<li class="slate-ratingview-rating <tpl if="values == parent.Rating">is-selected</tpl>" data-rating="{.}">',
+                                        '<li class="slate-ratingview-rating <tpl if="values == parent.Rating || values === &quot;M&quot; && parent.Rating === 0">is-selected</tpl>" data-rating="{.}">',
                                             '<div class="slate-ratingview-rating-bubble" tabindex="0">',
-                                                '<span class="slate-ratingview-rating-label">{.}</span>',
+                                                '<span class="slate-ratingview-rating-label">{[this.getRatingElLabel(values)]}</span>',
                                             '</div>',
                                         '</li>',
                                     '</tpl>',
@@ -49,7 +50,43 @@ Ext.define('Slate.cbl.widget.RatingView', {
                     '</ul>',
                 '</li>',
             '</tpl>',
-        '</ul>'
+        '</ul>',
+
+        {
+            getRatingElLabel: function(rating) {
+                if (rating === 0) {
+                    return 'M';
+                }
+
+                return rating;
+            },
+
+            getMenuRatingElCls: function(rating, scope) {
+                var cls = '';
+
+                if (rating === null || scope.menuRatings.indexOf(rating) > -1) {
+                    cls += ' is-selected';
+                }
+
+                return cls;
+            },
+
+            getMenuElRatingValue: function(rating, scope) {
+                if (rating && scope.menuRatings.indexOf(rating) > -1) {
+                    return rating;
+                }
+
+                return 'N/A';
+            },
+
+            getMenuRatingElLabel: function(rating, scope) {
+                if (scope.menuRatings.indexOf(rating) > -1) {
+                    return rating;
+                }
+
+                return 'N/A';
+            }
+        }
     ],
 
     listeners: {
@@ -65,6 +102,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         var dataObj = data || {};
 
         dataObj.readOnly = this.getReadOnly();
+        dataObj.menuRatings = this.getMenuRatings();
 
         return dataObj;
     },
@@ -120,12 +158,13 @@ Ext.define('Slate.cbl.widget.RatingView', {
             ratingEls = skillEl.select('.slate-ratingview-rating'),
             naRating = skillEl.down('.slate-ratingview-rating-menu');
 
-        // deselect other ratings
-        ratingEls.removeCls('is-selected');
 
         if (target == naRating && showMenu !== false) {
             return me.showMenu(target, target.getXY());
         }
+
+        // deselect other ratings
+        ratingEls.removeCls('is-selected');
 
         if (rating == 'N/A') {
             naRating.addCls('slate-ratingview-rating-null');
@@ -182,7 +221,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     onMenuRatingClick: function(menu, menuRating) {
         var me = this;
-
+        console.log('onMenuRatingClick');
         me.updateRatingEl(menu.ratingEl, menuRating.getValue());
         me.selectRating(menu.ratingEl, false);
         menu.hide();
