@@ -183,6 +183,22 @@ class StudentTask extends \VersionedRecord
         return $taskSkills;
     }
 
+    public static function getDemonstration($autoCreate = true)
+    {
+        $demonstration = $this->Demonstration;
+
+        if (!$demonstration && $autoCreate === true) {
+            $demonstration = Demonstration::create([
+                'StudentID' => $this->StudentID
+            ], true);
+
+            $Record->DemonstrationID = $Demonstration->ID;
+            $Record->save(false);
+        }
+
+        return $demonstration;
+    }
+
     public function save($deep = true)
     {
         if ($GLOBALS['Session']->Person instanceof Student) {

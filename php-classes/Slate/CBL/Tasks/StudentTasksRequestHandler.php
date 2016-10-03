@@ -64,26 +64,20 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
     public static function handleRateSkillRequest(StudentTask $Record)
     {
+
         $requestData = $_REQUEST;
-        $rating = $requestData['Score'];
         $skillId = $requestData['SkillID'];
+        $rating = $requestData['Score'];
 
         $error = null;
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-            if (!$rating) {
-                return static::throwInvalidRequestError('You must supply a rating.');
+            if (!$rating || $rating == 'N/A') {
+                return static::handleSkillRatingRemovalRequest($Record, $skillId);
             }
 
-            if (!$Demonstration = $Record->Demonstration) {
-                $Demonstration = Demonstration::create([
-                    'StudentID' => $Record->StudentID
-                ], true);
-
-                $Record->DemonstrationID = $Demonstration->ID;
-                $Record->save(false);
-            }
+            $Demonstration = $Record->getDemonstration();
 
             if (!isset($skillId) || !$Skill = Skill::getByHandle($skillId)) {
                 $error = sprintf('Skill %s not found.', $skillId);
@@ -110,6 +104,31 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
             'success' => empty($error),
             'error' => $error
         ]);
+    }
+
+    public static function handleSkillRatingRemovalRequest(StudentTask $Record, $skillId)
+    {
+        $destroyed = false;
+
+        if (
+            $Record->Demonstration &&
+            $skill = Skill::getByID($skillId) &&
+            $competencyLevel = $skill->Competency->getCurrentLevelForStudent($Record->Student) &&
+            $demonstrationSkill = DemonstrationSkill::getByWhere([
+                'DemonstrationID' => $Record->Demonstration,
+                'SkillID' => $skillId,
+                'StudentTaskID' => $Record->ID,
+                'TargetLevel' => $competencyLevel
+            ])
+        ) {
+            $destroyed = $demonstrationSkill->destroy();
+        }
+
+        return static::respond('studenttask/ratings', [
+            'success' => $destroyed,
+            'record' => $Record
+        ]);
+
     }
 
     public static function handleStudentTaskSubmissionRequest()
