@@ -158,11 +158,11 @@ class StudentTask extends \VersionedRecord
 
     public function getTaskSkills()
     {
-        // todo: use a UI-centric api endpoint insntead of dynamic fields
+        // todo: use a UI-centric api endpoint instead of dynamic fields
         $taskSkills = [];
-        $demoSkillsIds = [];
-
-        foreach ($this->Demonstration ? $this->Demonstration->Skills : [] as $demoSkill) {
+        $demoSkillIds = [];
+        $demoSkills = $this->Demonstration ? $this->Demonstration->Skills : [];
+        foreach ($demoSkills as $demoSkill) {
             $demoSkillIds[$demoSkill->SkillID] = $demoSkill;
         }
 
@@ -183,20 +183,18 @@ class StudentTask extends \VersionedRecord
         return $taskSkills;
     }
 
-    public static function getDemonstration($autoCreate = true)
+    public function getDemonstration($autoCreate = true)
     {
-        $demonstration = $this->Demonstration;
-
-        if (!$demonstration && $autoCreate === true) {
+        if (!$demonstration = $this->Demonstration && $autoCreate === true) {
             $demonstration = Demonstration::create([
                 'StudentID' => $this->StudentID
             ], true);
 
-            $Record->DemonstrationID = $Demonstration->ID;
-            $Record->save(false);
+            $this->DemonstrationID = $demonstration->ID;
+            $this->save(false);
         }
 
-        return $demonstration;
+        return $this->Demonstration;
     }
 
     public function save($deep = true)
