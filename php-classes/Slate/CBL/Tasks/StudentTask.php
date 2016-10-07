@@ -75,12 +75,6 @@ class StudentTask extends \VersionedRecord
             'type' => 'context-children',
             'class' => Comment::class
         ],
-        'SkillRatings' => [
-            'type' => 'one-many',
-            'class' => StudentTaskSkillRating::class,
-            'foreign' => 'StudentTaskID',
-            'local' => 'ID'
-        ],
         'Attachments' => [
             'type' => 'context-children',
             'class' => Attachments\AbstractTaskAttachment::class
