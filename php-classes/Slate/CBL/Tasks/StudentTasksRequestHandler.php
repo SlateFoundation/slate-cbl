@@ -9,6 +9,8 @@ use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 use Slate\Courses\SectionsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
 use Emergence\Comments\Comment;
+use Slate\CBL\Demonstrations\Demonstration;
+use Slate\CBL\Demonstrations\DemonstrationSkill;
 
 class StudentTasksRequestHandler extends \RecordsRequestHandler
 {
@@ -62,34 +64,73 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
     public static function handleRateSkillRequest(StudentTask $Record)
     {
+
         $requestData = $_REQUEST;
-        $rating = $requestData['Score'];
         $skillId = $requestData['SkillID'];
+        $rating = $requestData['Score'];
+
         $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            if (!$rating || $rating == 'N/A') {
+                return static::handleSkillRatingRemoval($Record, $skillId);
+            } else if ($rating == 'M') {
+                $rating = 0;
+            }
+
+            $Demonstration = $Record->getDemonstration();
 
             if (!isset($skillId) || !$Skill = Skill::getByHandle($skillId)) {
                 $error = sprintf('Skill %s not found.', $skillId);
             } else {
+                $competencyLevel = $Skill->Competency->getCurrentLevelForStudent($Record->Student);
 
-                if (!$skillRating = StudentTaskSkillRating::getByWhere(['StudentTaskID' => $Record->ID, 'SkillID' => $Skill->ID])) {
-                    $skillRating = StudentTaskSkillRating::create([
-                        'StudentTaskID' => $Record->ID,
-                        'SkillID' => $Skill->ID
+                if (!$demoSkill = DemonstrationSkill::getByWhere(['DemonstrationID' => $Demonstration->ID, 'SkillID' => $Skill->ID, 'TargetLevel' => $competencyLevel])) {
+                    $demoSkill = DemonstrationSkill::create([
+                        'DemonstrationID' => $Demonstration->ID,
+                        'SkillID' => $Skill->ID,
+                        'TargetLevel' => $competencyLevel
                     ]);
                 }
 
-                $skillRating->Score = $rating;
-                $skillRating->save(false);
+                $demoSkill->DemonstratedLevel = $rating;
+                $demoSkill->save(false);
             }
         }
 
         return static::respond('studenttask/ratings', [
-            'data' => $skillRating,
+            'data' => $demoSkill,
             'record' => $Record,
             'success' => empty($error),
             'error' => $error
         ]);
+    }
+
+    public static function handleSkillRatingRemoval(StudentTask $Record, $skillId)
+    {
+        $destroyed = false;
+
+        if (
+            ($demonstration = $Record->Demonstration) &&
+            ($skill = Skill::getByHandle($skillId)) &&
+            ($competencyLevel = $skill->Competency->getCurrentLevelForStudent($Record->Student)) &&
+            ($demonstrationSkill = DemonstrationSkill::getByWhere([
+                'DemonstrationID' => $Record->DemonstrationID,
+                'SkillID' => $skill->ID,
+                'TargetLevel' => $competencyLevel
+            ]))
+        ) {
+            $destroyed = $demonstrationSkill->destroy();
+        } else {
+            return static::throwInvalidRequestError('Unable to rate skill. Please try again or contact an administrator.');
+        }
+
+        return static::respond('studenttask/ratings', [
+            'success' => $destroyed,
+            'record' => $Record
+        ]);
+
     }
 
     public static function handleStudentTaskSubmissionRequest()
