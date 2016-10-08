@@ -17,7 +17,7 @@ $studentTasksTable = StudentTask::$tableName;
 // add column
 if (!static::columnExists($studentTasksTable, 'DemonsrationID')) {
     printf("Adding DemonstrationID column to `$studentTasksTable`");
-    DB::nonQuery('ALTER TABLE `%s` ADD `DemonstrationID` uint NULL DEFAULT NULL', $studentTasksTable);
+    DB::nonQuery('ALTER TABLE `%s` ADD COLUMN `DemonstrationID` INT UNSIGNED NULL DEFAULT NULL', $studentTasksTable);
 }
 
 if (!static::tableExists($studentRatingsTable)) {
