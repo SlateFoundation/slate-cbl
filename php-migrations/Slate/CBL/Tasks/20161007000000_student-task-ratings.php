@@ -12,12 +12,13 @@ $studentRatingsHistoryTable = 'history_'.$studentRatingsTable;
 
 $demonstrationsTable = Demonstration::$tableName;
 $studentTasksTable = StudentTask::$tableName;
-
+$studentTasksHistoryTable = 'history_'.$studentTasksTable;
 
 // add column
 if (!static::columnExists($studentTasksTable, 'DemonsrationID')) {
-    printf("Adding DemonstrationID column to `$studentTasksTable`");
+    printf("Adding DemonstrationID column to `$studentTasksTable` and $studentTasksHistoryTable");
     DB::nonQuery('ALTER TABLE `%s` ADD COLUMN `DemonstrationID` INT UNSIGNED NULL DEFAULT NULL', $studentTasksTable);
+    DB::nonQuery('ALTER TABLE `%s` ADD COLUMN `DemonstrationID` INT UNSIGNED NULL DEFAULT NULL', $studentTasksHistoryTable);
 }
 
 if (!static::tableExists($studentRatingsTable)) {
