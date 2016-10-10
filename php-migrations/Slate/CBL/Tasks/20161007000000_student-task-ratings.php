@@ -4,28 +4,33 @@ namespace Slate\CBL\Tasks;
 
 use DB;
 use Slate\CBL\Skill;
-use Slate\CBL\Demonstrations\Demonstration;
+use Slate\CBL\Demonstrations\ExperienceDemonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
 
 $studentRatingsTable = 'cbl_student_task_ratings';
 $studentRatingsHistoryTable = 'history_'.$studentRatingsTable;
 
-$demonstrationsTable = Demonstration::$tableName;
+$demonstrationsTable = ExperienceDemonstration::$tableName;
 $studentTasksTable = StudentTask::$tableName;
 $studentTasksHistoryTable = 'history_'.$studentTasksTable;
 
 // add column
 if (!static::columnExists($studentTasksTable, 'DemonstrationID')) {
-    printf("Adding DemonstrationID column to `$studentTasksTable` and $studentTasksHistoryTable");
+    printf("Adding DemonstrationID column to `$studentTasksTable`");
     DB::nonQuery('ALTER TABLE `%s` ADD COLUMN `DemonstrationID` INT UNSIGNED NULL DEFAULT NULL', $studentTasksTable);
+}
+
+if (!static::columnExists($studentTasksHistoryTable, 'DemonstrationID')) {
+    printf("Adding DemonstrationID column to `$studentTasksHistoryTable`");
     DB::nonQuery('ALTER TABLE `%s` ADD COLUMN `DemonstrationID` INT UNSIGNED NULL DEFAULT NULL', $studentTasksHistoryTable);
 }
+
 
 if (!static::tableExists($studentRatingsTable)) {
     printf("Skipping records migration because table `$studentRatingsTable` does not exist.");
 } else { // migrate old records
     $taskRatings = DB::allRecords(
-        'SELECT StudentTaskID, SkillID, Score '
+        'SELECT StudentTaskID, SkillID, Score, CreatorID '
         .'FROM `%s`',
         [
             $studentRatingsTable
@@ -45,12 +50,26 @@ if (!static::tableExists($studentRatingsTable)) {
             $taskRating['Rating'] = 0;
         }
 
-        $StudentTask = StudentTask::getByID($taskRating['StudentTaskID']);
-        $Demonstration = $StudentTask->getDemonstration(true); // true to auto create demonstration if needed
+        if (!$StudentTask = StudentTask::getByID($taskRating['StudentTaskID'])) {
+            $naRatings++;
+            continue;
+        }
+
+        if (!$Demonstration = $StudentTask->Demonstration) {
+            $Demonstration = ExperienceDemonstration::create([
+                'StudentID' => $StudentTask->StudentID,
+                'Demonstrated' => $StudentTask->Submitted ?: null,
+                'ExperienceType' => $StudentTask->ExperienceType,
+                'PerformanceType' => "Task",
+                'Context' => $StudentTask->Title
+            ], true);
+        }
         $Skill = Skill::getByID($taskRating['SkillID']);
 
         DemonstrationSkill::create([
             'DemonstrationID' => $Demonstration->ID,
+            'Created' => $taskRating['Created'],
+            'CreatorID' => $taskRating['CreatorID'],
             'SkillID' => $taskRating['SkillID'],
             'TargetLevel' => $Skill->Competency->getCurrentLevelForStudent($StudentTask->Student),
             'DemonstratedLevel' => intval($taskRating['Score'])
@@ -64,18 +83,6 @@ if (!static::tableExists($studentRatingsTable)) {
         printf("Records migrated ($migratedRatings) + Records skipped ($naRatings) does not equal the total amount of records found ($totalRatings). Migration has failed.");
         return static::STATUS_FAILED;
     }
-
-    // drop old tables
-    printf("Dropping deprecated tables: `%s` and `%s`", $studentRatingsTable, $studentRatingsHistoryTable);
-    DB::nonQuery(
-        'DROP TABLE `%s`',
-        $studentRatingsTable
-    );
-
-    DB::nonQuery(
-        'DROP TABLE `%s`',
-        $studentRatingsHistoryTable
-    );
 
     return static::STATUS_EXECUTED;
 }
