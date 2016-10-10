@@ -174,6 +174,20 @@ class StudentTask extends \VersionedRecord
             }
         }
 
+        if ($this->Skills) {
+            foreach ($this->Skills as $skill) {
+                $studentCompetency = $skill->Competency ? StudentCompetency::getByWhere(['StudentID' => $this->StudentID, 'CompetencyID' => $skill->Competency->ID]) : null;
+                $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
+
+                $taskSkills[] = array_merge($skill->getData(), [
+                    'CompetencyLevel' => $studentCompetency ? $studentCompetency->Level : null,
+                    'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
+                    'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
+                    'Rating' => $demoSkillRating
+                ]);
+            }
+        }
+
         return $taskSkills;
     }
 
