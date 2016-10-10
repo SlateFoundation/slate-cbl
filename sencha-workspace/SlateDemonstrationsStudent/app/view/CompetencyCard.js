@@ -154,9 +154,9 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     updateCompletion: function(completion) {
         var me = this,
             competency = me.getCompetency(),
-            percentComplete = Math.round(100 * completion.get('demonstrationsComplete') / competency.get('totalDemonstrationsRequired')),
             demonstrationsAverage = completion.get('demonstrationsAverage'),
-            currentLevel = completion.get('currentLevel');
+            currentLevel = completion.get('currentLevel'),
+            percentComplete = Math.round(100 * completion.get('demonstrationsComplete') / competency.getTotalDemonstrationsRequired(currentLevel));
 
         me.setLevel(currentLevel);
         me.setPercentComplete(percentComplete);
@@ -284,11 +284,11 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         // sort and pad demonstrations arrays
         for (skillIndex in skillsData) {
             skillData = skillsData[skillIndex];
-            demonstrationsRequired = skillData.skill.DemonstrationsRequired;
+            demonstrationsRequired = skills.getByKey(skillIndex).getTotalDemonstrationsRequired(me.getLevel());
 
             skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
             Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);
-            skillData.isComplete = skillData.demonstrations.length == demonstrationsRequired && skillData.demonstrations[demonstrationsRequired - 1].DemonstratedLevel;
+            skillData.isComplete = skillData.demonstrations.length == demonstrationsRequired && (skillData.demonstrations.length === 0 || skillData.demonstrations[demonstrationsRequired - 1].DemonstratedLevel);
         }
 
         return skillsData;
