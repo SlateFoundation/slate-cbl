@@ -726,7 +726,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
             count, average, level, renderedLevel,
             countDirty, averageDirty, levelDirty,
-            percentComplete;
+            percentComplete, demonstrationsRequired;
 
         for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
             completion = completions[completionIndex];
@@ -744,9 +744,10 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             countDirty = count != competencyStudentData.renderedCount;
             averageDirty = average != competencyStudentData.renderedAverage;
             levelDirty = level != renderedLevel;
+            demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[completion.get('currentLevel')] || competencyData.competency.totalDemonstrationsRequired.default;
 
             if (countDirty || averageDirty) {
-                percentComplete = 100 * (count || 0) / competencyData.competency.totalDemonstrationsRequired;
+                percentComplete = 100 * (count || 0) / demonstrationsRequired;
                 progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competencyData.competency.minimumAverageOffset));
             }
 

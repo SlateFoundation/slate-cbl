@@ -19,7 +19,7 @@ Ext.define('Slate.cbl.model.Competency', {
         { name: 'Statement', type: 'string'},
 
         // server-provided metadata
-        { name: 'totalDemonstrationsRequired', persist: false, type: 'integer' },
+        { name: 'totalDemonstrationsRequired', persist: false},
         { name: 'minimumAverageOffset', persist: false, type: 'float' }
     ],
 
