@@ -61,7 +61,7 @@ if (!static::tableExists($studentRatingsTable)) {
                 'Demonstrated' => $StudentTask->Submitted ?: null,
                 'ExperienceType' => $StudentTask->ExperienceType,
                 'PerformanceType' => "Task",
-                'Context' => $StudentTask->Title
+                'Context' => $StudentTask->Task->Title
             ], true);
         }
         $Skill = Skill::getByID($taskRating['SkillID']);
