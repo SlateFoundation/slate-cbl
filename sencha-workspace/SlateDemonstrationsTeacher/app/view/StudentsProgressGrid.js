@@ -884,7 +884,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             competenciesLength = competenciesRenderData.length, competencyIndex, competencyRenderData, competencyStudentsById,
 
             skillsRenderData, skillsLength, skillIndex, skillRenderData,
-            skillDemonstrationsRequired,
+            skillDemonstrationsRequired, studentSkillDemonstrationsRequired,
             skillStudentsRenderData, skillStudentsLength, skillStudentIndex, skillStudentRenderData,
             skillDemonstrationBlocks, skillDemonstrationBlocksById, skillDemonstrationsChanged, oldSkillDemonstration, outgoingLevel,
             competencyStudentData,
@@ -993,6 +993,12 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                     skillDemonstrationsChanged = false;
                     outgoingLevel = competencyStudentData.outgoingLevel;
 
+                    if (skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel] !== undefined) {
+                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel];
+                    } else {
+                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired.default;
+                    }
+
                     // apply updated skill demonstrations
                     if (updatedDemonstrationSkills.length) {
                         skillDemonstrationIndex = 0;
@@ -1033,8 +1039,8 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                     // if demonstrations have changed, prepare new blocks array and patch the DOM
                     if (skillDemonstrationsChanged) {
-                        skillDemonstrationBlocks = Slate.cbl.Util.sortDemonstrations(skillDemonstrationBlocks, skillDemonstrationsRequired);
-                        Slate.cbl.Util.padArray(skillDemonstrationBlocks, skillDemonstrationsRequired);
+                        skillDemonstrationBlocks = Slate.cbl.Util.sortDemonstrations(skillDemonstrationBlocks, studentSkillDemonstrationsRequired);
+                        Slate.cbl.Util.padArray(skillDemonstrationBlocks, studentSkillDemonstrationsRequired);
                         skillStudentRenderData.demonstrationBlocks = skillDemonstrationBlocks;
                         skillDemonstrationsOverridden = false;
 
@@ -1042,11 +1048,11 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                         skillDemonstrationBlocksById = skillStudentRenderData.demonstrationBlocksById = {};
 
                         skillDemonstrationBlockEls = skillStudentRenderData.demonstrationBlockEls;
-                        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < skillDemonstrationsRequired; skillDemonstrationIndex++) {
+                        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < studentSkillDemonstrationsRequired; skillDemonstrationIndex++) {
                             skillDemonstration = skillDemonstrationBlocks[skillDemonstrationIndex];
                             skillDemonstrationDemonstratedLevel = skillDemonstration.DemonstratedLevel;
                             skillDemonstrationOverride = skillDemonstration.Override;
-                            skillDemonstrationOverrideSpan = skillDemonstrationOverride ? skillDemonstrationsRequired - skillDemonstrationIndex : undefined;
+                            skillDemonstrationOverrideSpan = skillDemonstrationOverride ? studentSkillDemonstrationsRequired - skillDemonstrationIndex : undefined;
                             skillDemonstrationDemonstrationID = skillDemonstration.DemonstrationID;
 
                             skillDemonstrationBlockEl = skillDemonstrationBlockEls.item(skillDemonstrationIndex);
