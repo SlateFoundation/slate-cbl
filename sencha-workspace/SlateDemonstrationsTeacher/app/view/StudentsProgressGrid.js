@@ -1056,12 +1056,14 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                                 skillDemonstrationBlockEl.renderedOverridden = skillDemonstrationsOverridden;
 
                                 if (skillDemonstrationsOverridden) {
-                                    skillDemonstrationBlockEl.addCls('cbl-grid-demo-overridden');
+                                    skillDemonstrationBlockEl.addCls('cbl-grid-demo-overridden cbl-grid-demo-counted');
+                                    skillDemonstrationBlockEl.update('O');
                                     console.log("%o.addCls('cbl-grid-demo-overridden')", skillDemonstrationBlockEl.dom);
 
                                     continue; // an overridden block doesn't need any further updates because it'll be hidden
                                 } else if (renderedOverridden) {
-                                    skillDemonstrationBlockEl.removeCls('cbl-grid-demo-overridden');
+                                    skillDemonstrationBlockEl.removeCls('cbl-grid-demo-overridden cbl-grid-demo-counted');
+                                    skillDemonstrationBlockEl.update('');
                                     console.log("%o.removeCls('cbl-grid-demo-overridden')", skillDemonstrationBlockEl.dom);
                                 }
                             }
