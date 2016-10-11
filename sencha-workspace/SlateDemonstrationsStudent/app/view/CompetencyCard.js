@@ -286,6 +286,12 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             skillData = skillsData[skillIndex];
             demonstrationsRequired = skills.getByKey(skillIndex).getTotalDemonstrationsRequired(me.getLevel());
 
+            // remove skills that have no requirements
+            if (demonstrationsRequired === 0) {
+                delete skillsData[skillIndex];
+                continue;
+            }
+
             skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
             Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);
             skillData.isComplete = skillData.demonstrations.length == demonstrationsRequired && (skillData.demonstrations.length === 0 || skillData.demonstrations[demonstrationsRequired - 1].DemonstratedLevel);
