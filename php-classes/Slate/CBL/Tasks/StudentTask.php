@@ -8,7 +8,7 @@ use Slate\People\Student;
 use Slate\Courses\Section;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Skill;
-use Slate\CBL\Demonstrations\Demonstration;
+use Slate\CBL\Demonstrations\ExperienceDemonstration;
 
 class StudentTask extends \VersionedRecord
 {
@@ -194,8 +194,11 @@ class StudentTask extends \VersionedRecord
     public function getDemonstration($autoCreate = true)
     {
         if (!$demonstration = $this->Demonstration && $autoCreate === true) {
-            $demonstration = Demonstration::create([
-                'StudentID' => $this->StudentID
+            $demonstration = ExperienceDemonstration::create([
+                'StudentID' => $this->StudentID,
+                'PerformanceType' => $this->Task->Title,
+                'Context' => $this->CourseSection->Title,
+                'ExperienceType' => $this->ExperienceType
             ], true);
 
             $this->DemonstrationID = $demonstration->ID;
