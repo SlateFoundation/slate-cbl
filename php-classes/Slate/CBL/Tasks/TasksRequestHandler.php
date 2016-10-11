@@ -71,7 +71,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
             }
         } else { // show all tasks that are either shared, or created by current user.
             $recordClass = static::$recordClass;
-            $conditions[] = sprintf('(%1$s.Status = "shared" OR %1$s.CreatorID = %2$u)', $recordClass::getTableAlias(), $GLOBALS['Session']->PersonID);
+            $conditions[] = sprintf('(%1$s.Status = "shared" OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u))', $recordClass::getTableAlias(), $GLOBALS['Session']->PersonID);
         }
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
