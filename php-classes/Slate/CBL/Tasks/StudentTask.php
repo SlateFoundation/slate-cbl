@@ -8,6 +8,7 @@ use Slate\People\Student;
 use Slate\Courses\Section;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Skill;
+use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\ExperienceDemonstration;
 
 class StudentTask extends \VersionedRecord
