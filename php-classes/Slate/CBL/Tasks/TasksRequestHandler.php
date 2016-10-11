@@ -226,15 +226,20 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 $attachmentIds[] = $Attachment->ID;
             }
 
-            DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
-                AbstractTaskAttachment::$tableName,
-                $Record->getRootClass(),
-                $Record->ID,
-                join('", "', $attachmentIds)
-            ]);
+            if (!empty($attachments)) {
+                try {
+                    DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
+                        AbstractTaskAttachment::$tableName,
+                        $Record->getRootClass(),
+                        $Record->ID,
+                        join('", "', $attachmentIds)
+                    ]);
+                } catch (\TableNotFoundException $e) {}
+            }
+
+            $Record->Attachments = $attachments;
         }
 
-        $Record->Attachments = $attachments;
 
         // update student tasks
         if (isset($data['Assignees'])) {
