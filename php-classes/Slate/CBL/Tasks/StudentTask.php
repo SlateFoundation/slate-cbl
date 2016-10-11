@@ -197,7 +197,7 @@ class StudentTask extends \VersionedRecord
             $demonstration = ExperienceDemonstration::create([
                 'StudentID' => $this->StudentID,
                 'PerformanceType' => $this->Task->Title,
-                'Context' => $this->CourseSection->Title,
+                'Context' => $this->Section->Title,
                 'ExperienceType' => $this->ExperienceType
             ], true);
 
