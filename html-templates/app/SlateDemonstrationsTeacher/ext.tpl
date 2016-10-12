@@ -33,7 +33,7 @@
             <div class="inner">
                 <header class="page-header">
                     <div class="header-buttons">
-                        <button type="button" class="primary" data-action="demonstration-create">Log a Demonstration</button>
+                        <button type="button" class="primary" data-action="demonstration-create">Submit Evidence</button>
                         {if Slate\CBL\CBL::$continuaUrl}
                             <a class="button primary" href="{Slate\CBL\CBL::$continuaUrl|escape}" target="_blank">View the Continua</a>
                         {/if}
