@@ -188,7 +188,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindowController', {
     },
 
     onStudentSelect: function(studentCombo, student) {
-        this.getView().setTitle('Log a demonstration' + (student.length ? ' for ' + student[0].getDisplayName() : ''));
+        this.getView().setTitle('Submit Evidence' + ((student && student.isModel) ? ' for ' + student.getDisplayName() : ''));
     },
 
     onCompetenciesSearchFieldChange: function(searchField, value) {
