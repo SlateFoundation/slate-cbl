@@ -43,11 +43,11 @@ if (!static::tableExists($studentRatingsTable)) {
 
     // migrate ratings into demonstration skills
     foreach ($taskRatings as $taskRating) {
-        if ($taskRating['Rating'] == 'N/A') {
+        if ($taskRating['Score'] == 'N/A') {
             $naRatings++;
             continue;
-        } else if ($taskRating['Rating'] == 'M') { // convert M (missing) ratings to 0
-            $taskRating['Rating'] = 0;
+        } else if ($taskRating['Score'] == 'M') { // convert M (missing) ratings to 0
+            $taskRating['Score'] = 0;
         }
 
         if (!$StudentTask = StudentTask::getByID($taskRating['StudentTaskID'])) {
