@@ -30,7 +30,7 @@ if (!static::tableExists($studentRatingsTable)) {
     printf("Skipping records migration because table `$studentRatingsTable` does not exist.");
 } else { // migrate old records
     $taskRatings = DB::allRecords(
-        'SELECT StudentTaskID, SkillID, Score, CreatorID '
+        'SELECT StudentTaskID, SkillID, Score, CreatorID, Created '
         .'FROM `%s`',
         [
             $studentRatingsTable
@@ -57,6 +57,8 @@ if (!static::tableExists($studentRatingsTable)) {
 
         if (!$Demonstration = $StudentTask->Demonstration) {
             $Demonstration = ExperienceDemonstration::create([
+                'CreatorID' => $StudentTask->CreatorID,
+                'Created' => $taskRating['Created'],
                 'StudentID' => $StudentTask->StudentID,
                 'Demonstrated' => $StudentTask->Submitted ?: null,
                 'ExperienceType' => $StudentTask->ExperienceType,
