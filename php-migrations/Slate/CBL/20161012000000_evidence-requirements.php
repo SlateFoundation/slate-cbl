@@ -26,6 +26,28 @@ if (!static::tableExists($skillTable)) {
     return static::STATUS_SKIPPED;
 }
 
+if ($historyTableExists = static::tableExists($skillsHistoryTable)) { // workaround for 'zero' dates in history table
+    // allow 0000-00-00 00:00:00 timestamps
+    $sqlMode = DB::oneValue(
+        'SELECT @@SESSION.sql_mode AS session'
+    );
+    // remove NO_ZERO_DATE, NO_ZERO_IN_DATE sql_mode's from session to allow table alterations
+    $tempSqlMode = array_filter(
+        explode(
+            ",",
+            $sqlMode
+        ),
+        function($v) {
+            return !preg_match("/NO_ZERO(_.+)?_DATE/", $v);
+        }
+    );
+
+    DB::nonQuery(
+        'SET SESSION sql_mode = "%s"',
+        $tempSqlMode
+    );
+}
+
 // migration
 if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
     // create new column with temporary name
@@ -103,12 +125,24 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
             }
 
             // remove older column
-            printf("Removing deprecated column $columnName");
+            printf("Removing deprecated column $columnName from `$skillTable`");
             DB::nonQuery(
                 'ALTER TABLE `%s` '
                 .' DROP COLUMN %s',
                 [
                     $skillTable,
+                    $columnName
+                ]
+            );
+        }
+
+        if ($historyTableExists && static::columnExists($skillsHistoryTable, $columnName)) {
+            printf("Removing deprecated column $columnName from `$skillsHistoryTable`");
+            DB::nonQuery(
+                'ALTER TABLE `%s` '
+                .' DROP COLUMN %s`',
+                [
+                    $skillsHistoryTable,
                     $columnName
                 ]
             );
@@ -140,7 +174,7 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
     );
 
     // alter history table original column
-    if (static::tableExists($skillsHistoryTable)) {
+    if ($historyTableExists) {
         printf("Reconfiguring history table column into JSON column");
         DB::nonQuery(
             'ALTER TABLE `%s` '
@@ -151,6 +185,12 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
                 $originalColumnName,
                 $newColumnDefinition
             ]
+        );
+
+        // reset sql mode for session
+        DB::nonQuery(
+            'SET SESSION sql_mode = "%s"',
+            $sqlMode
         );
     }
 
