@@ -9,7 +9,7 @@ $newColumnDefinition = $newColumnType . ' NOT NULL';
 
 $originalColumnName = 'DemonstrationsRequired';
 $tempColumnName = 'DemonstrationsRequiredJSON';
-$skillTable = 'cbl_skills_phl'; // Skill::$tableName;
+$skillTable = Skill::$tableName;
 $skillsHistoryTable = 'history_'.$skillTable;
 
 $deprecatedColumns = [
