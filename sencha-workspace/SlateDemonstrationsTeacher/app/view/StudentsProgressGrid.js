@@ -407,7 +407,8 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                 skillsCount = skillsCollection.getCount(), skillIndex, skill,
 
-                skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl;
+                skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl,
+                studentCompletion, demonstrationsRequired;
 
             // build new skills render tree and update root skill index
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
@@ -423,10 +424,12 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     student = studentsStore.getAt(studentIndex);
+                    studentCompletion = competencyRenderData.studentsById[student.getId()].completion;
+
                     studentRenderData = {
                         student: student.data,
-                        completion: competencyRenderData.studentsById[student.getId()].completion,
-                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.get('DemonstrationsRequired'), true)
+                        completion: studentCompletion,
+                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.getTotalDemonstrationsRequired(studentCompletion ? studentCompletion.currentLevel : null), true)
                     };
 
                     studentsRenderData.push(studentRenderData);
@@ -726,7 +729,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
             count, average, level, renderedLevel,
             countDirty, averageDirty, levelDirty,
-            percentComplete;
+            percentComplete, demonstrationsRequired;
 
         for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
             completion = completions[completionIndex];
@@ -744,9 +747,10 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             countDirty = count != competencyStudentData.renderedCount;
             averageDirty = average != competencyStudentData.renderedAverage;
             levelDirty = level != renderedLevel;
+            demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[completion.get('currentLevel')] || competencyData.competency.totalDemonstrationsRequired.default;
 
             if (countDirty || averageDirty) {
-                percentComplete = 100 * (count || 0) / competencyData.competency.totalDemonstrationsRequired;
+                percentComplete = 100 * (count || 0) / demonstrationsRequired;
                 progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competencyData.competency.minimumAverageOffset));
             }
 
@@ -880,7 +884,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             competenciesLength = competenciesRenderData.length, competencyIndex, competencyRenderData, competencyStudentsById,
 
             skillsRenderData, skillsLength, skillIndex, skillRenderData,
-            skillDemonstrationsRequired,
+            skillDemonstrationsRequired, studentSkillDemonstrationsRequired,
             skillStudentsRenderData, skillStudentsLength, skillStudentIndex, skillStudentRenderData,
             skillDemonstrationBlocks, skillDemonstrationBlocksById, skillDemonstrationsChanged, oldSkillDemonstration, outgoingLevel,
             competencyStudentData,
@@ -989,6 +993,12 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                     skillDemonstrationsChanged = false;
                     outgoingLevel = competencyStudentData.outgoingLevel;
 
+                    if (skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel] !== undefined) {
+                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel];
+                    } else {
+                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired.default;
+                    }
+
                     // apply updated skill demonstrations
                     if (updatedDemonstrationSkills.length) {
                         skillDemonstrationIndex = 0;
@@ -1029,8 +1039,8 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                     // if demonstrations have changed, prepare new blocks array and patch the DOM
                     if (skillDemonstrationsChanged) {
-                        skillDemonstrationBlocks = Slate.cbl.Util.sortDemonstrations(skillDemonstrationBlocks, skillDemonstrationsRequired);
-                        Slate.cbl.Util.padArray(skillDemonstrationBlocks, skillDemonstrationsRequired);
+                        skillDemonstrationBlocks = Slate.cbl.Util.sortDemonstrations(skillDemonstrationBlocks, studentSkillDemonstrationsRequired);
+                        Slate.cbl.Util.padArray(skillDemonstrationBlocks, studentSkillDemonstrationsRequired);
                         skillStudentRenderData.demonstrationBlocks = skillDemonstrationBlocks;
                         skillDemonstrationsOverridden = false;
 
@@ -1038,11 +1048,11 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                         skillDemonstrationBlocksById = skillStudentRenderData.demonstrationBlocksById = {};
 
                         skillDemonstrationBlockEls = skillStudentRenderData.demonstrationBlockEls;
-                        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < skillDemonstrationsRequired; skillDemonstrationIndex++) {
+                        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < studentSkillDemonstrationsRequired; skillDemonstrationIndex++) {
                             skillDemonstration = skillDemonstrationBlocks[skillDemonstrationIndex];
                             skillDemonstrationDemonstratedLevel = skillDemonstration.DemonstratedLevel;
                             skillDemonstrationOverride = skillDemonstration.Override;
-                            skillDemonstrationOverrideSpan = skillDemonstrationOverride ? skillDemonstrationsRequired - skillDemonstrationIndex : undefined;
+                            skillDemonstrationOverrideSpan = skillDemonstrationOverride ? studentSkillDemonstrationsRequired - skillDemonstrationIndex : undefined;
                             skillDemonstrationDemonstrationID = skillDemonstration.DemonstrationID;
 
                             skillDemonstrationBlockEl = skillDemonstrationBlockEls.item(skillDemonstrationIndex);

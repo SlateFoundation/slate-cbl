@@ -60,9 +60,7 @@ Ext.define('Slate.cbl.model.Skill', {
             type: 'string'
         },
         {
-            name: 'DemonstrationsRequired',
-            type: 'int',
-            defaultValue: 2
+            name: 'DemonstrationsRequired'
         },
         {
             name: 'SkillRating',
@@ -79,6 +77,18 @@ Ext.define('Slate.cbl.model.Skill', {
             }
         }
     ],
+
+    getTotalDemonstrationsRequired: function(userLevel) {
+        var me = this,
+            requirements = me.get('DemonstrationsRequired'),
+            total = requirements[userLevel];
+
+        if (total !== undefined) {
+            return total;
+        }
+
+        return requirements.default;
+    },
 
     proxy: {
         type: 'slate-records',
