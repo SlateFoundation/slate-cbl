@@ -21,7 +21,7 @@ if (!static::tableExists($skillTable)) {
 // migration
 if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
     // create new column with temporary name
-    printf("Creating JSON column ($newColumnDefinition) in table `$skillTable` with temporary name.");
+    printf("Creating JSON column ($newColumnDefinition) in table `$skillTable` with temporary name: $tempColumnName.");
     DB::nonQuery('ALTER TABLE `%s` ADD COLUMN `%s` %s', $skillTable, $tempColumnName, $newColumnDefinition);
 
     // set er values in new column
