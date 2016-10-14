@@ -140,7 +140,7 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
             printf("Removing deprecated column $columnName from `$skillsHistoryTable`");
             DB::nonQuery(
                 'ALTER TABLE `%s` '
-                .' DROP COLUMN %s`',
+                .' DROP COLUMN %s',
                 [
                     $skillsHistoryTable,
                     $columnName
