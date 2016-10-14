@@ -11,6 +11,13 @@ $originalColumnName = 'DemonstrationsRequired';
 $tempColumnName = 'DemonstrationsRequiredJSON';
 $skillTable = Skill::$tableName;
 
+$deprecatedColumns = [
+    'FirstLevel' => 9,
+    'SecondLevel' => 10,
+    'ThirdLevel' => 11,
+    'FourthLevel' => 12
+];
+
 $skipped = true;
 
 // skip conditions
@@ -34,7 +41,7 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
     );
 
     // sanity check
-    $failed = DB::oneValue( // confirm
+    $failed = DB::oneValue(
         'SELECT COUNT(*) FROM `%s` '
         .'WHERE DemonstrationsRequired != %s->"$.default"',
         $skillTable,
@@ -43,7 +50,47 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
 
     if ($failed) {
         printf("Failed to confirm new column values.");
-        return static::STATUS_FAILED; // confirm
+        return static::STATUS_FAILED;
+    }
+
+    // check if deprecated level based columns exist
+    foreach ($deprecatedColumns as $levelColumnPrefix => $levelColumnValue) {
+        $columnName = $levelColumnPrefix . 'DemonstrationsRequired';
+
+        if (static::columnExists($skillTable, $columnName)) {
+            DB::nonQuery(
+                'UPDATE `%1$s` '
+                .'SET %2$s = JSON_INSERT(9, %3$s) '
+                .'WHERE DemonstrationsRequired != %3$s',
+                $skillTable,
+                $tempColumnName,
+                $columnName
+            );
+
+            // sanity check
+            $failed = DB::oneValue(
+                'SELECT COUNT(*) FROM `%1$s` '
+                .'WHERE %2$s != IFNULL(JSON_EXTRACT(%4$s, "$.%3$u"), JSON_EXTRACT(%4$s, "default"))',
+                $skillTable,
+                $columnName,
+                $levelColumnValue,
+                $tempColumnName
+            );
+
+            if ($failed) {
+                printf("Failed to confirm new values for Level %u from column: %s", $levelColumnValue, $columnName);
+                return static::STATUS_FAILED;
+            }
+
+            // remove older column
+            printf("Removing deprecated column $columnName");
+            DB::nonQuery(
+                'ALTER TABLE `%s` '
+                .' DROP COLUMN %s',
+                $skillTable,
+                $columnName
+            );
+        }
     }
 
     // remove older column
