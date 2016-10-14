@@ -64,20 +64,23 @@ if (!static::tableExists($studentRatingsTable)) {
                 'ExperienceType' => $StudentTask->ExperienceType,
                 'PerformanceType' => $StudentTask->Task->Title,
                 'Context' => $StudentTask->Section->Title
-            ], true);
+            ]);
+            $Demonstration->save(false);
+
             $StudentTask->DemonstrationID = $Demonstration->ID;
             $StudentTask->save(false);
         }
         $Skill = Skill::getByID($taskRating['SkillID']);
 
-        DemonstrationSkill::create([
+        $DemonstrationSkill = DemonstrationSkill::create([
             'DemonstrationID' => $Demonstration->ID,
             'Created' => $taskRating['Created'],
             'CreatorID' => $taskRating['CreatorID'],
             'SkillID' => $taskRating['SkillID'],
             'TargetLevel' => $Skill->Competency->getCurrentLevelForStudent($StudentTask->Student),
             'DemonstratedLevel' => intval($taskRating['Score'])
-        ], true);
+        ]);
+        $DemonstrationSkill->save(false);
 
         $migratedRatings++;
     }
