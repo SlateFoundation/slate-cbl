@@ -9,7 +9,8 @@ $newColumnDefinition = $newColumnType . ' NOT NULL';
 
 $originalColumnName = 'DemonstrationsRequired';
 $tempColumnName = 'DemonstrationsRequiredJSON';
-$skillTable = Skill::$tableName;
+$skillTable = 'cbl_skills_phl'; // Skill::$tableName;
+$skillsHistoryTable = 'history_'.$skillTable;
 
 $deprecatedColumns = [
     'FirstLevel' => 9,
@@ -28,24 +29,37 @@ if (!static::tableExists($skillTable)) {
 // migration
 if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
     // create new column with temporary name
-    printf("Creating JSON column ($newColumnDefinition) in table `$skillTable` with temporary name: $tempColumnName.");
-    DB::nonQuery('ALTER TABLE `%s` ADD COLUMN `%s` %s', $skillTable, $tempColumnName, $newColumnDefinition);
+    if (!static::columnExists($skillsTable, $tempColumnName)) {
+        printf("Creating JSON column ($newColumnDefinition) in table `$skillTable` with temporary name: $tempColumnName.");
+        DB::nonQuery(
+            'ALTER TABLE `%s` ADD COLUMN `%s` %s',
+            [
+                $skillTable,
+                $tempColumnName,
+                $newColumnDefinition
+            ]
+        );
+    }
 
     // set er values in new column
     printf("Setting default value for new DemonstrationsRequired column");
     DB::nonQuery(
         'UPDATE `%s` '
         .' SET %s = JSON_OBJECT("default", DemonstrationsRequired)',
-        $skillTable,
-        $tempColumnName
+        [
+            $skillTable,
+            $tempColumnName
+        ]
     );
 
     // sanity check
     $failed = DB::oneValue(
         'SELECT COUNT(*) FROM `%s` '
         .'WHERE DemonstrationsRequired != %s->"$.default"',
-        $skillTable,
-        $tempColumnName
+        [
+            $skillTable,
+            $tempColumnName
+        ]
     );
 
     if ($failed) {
@@ -58,23 +72,29 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
         $columnName = $levelColumnPrefix . 'DemonstrationsRequired';
 
         if (static::columnExists($skillTable, $columnName)) {
+            // add level value to column's json object
             DB::nonQuery(
                 'UPDATE `%1$s` '
-                .'SET %2$s = JSON_INSERT(9, %3$s) '
+                .'SET %2$s = JSON_INSERT(%2$s, \'$."%4$u"\', %3$s) '
                 .'WHERE DemonstrationsRequired != %3$s',
-                $skillTable,
-                $tempColumnName,
-                $columnName
+                [
+                    $skillTable,
+                    $tempColumnName,
+                    $columnName,
+                    $levelColumnValue
+                ]
             );
 
             // sanity check
             $failed = DB::oneValue(
                 'SELECT COUNT(*) FROM `%1$s` '
-                .'WHERE %2$s != IFNULL(JSON_EXTRACT(%4$s, "$.%3$u"), JSON_EXTRACT(%4$s, "default"))',
-                $skillTable,
-                $columnName,
-                $levelColumnValue,
-                $tempColumnName
+                .'WHERE %2$s != IFNULL(JSON_EXTRACT(%4$s, \'$."%3$u"\'), JSON_EXTRACT(%4$s, "$.default"))',
+                [
+                    $skillTable,
+                    $columnName,
+                    $levelColumnValue,
+                    $tempColumnName
+                ]
             );
 
             if ($failed) {
@@ -87,8 +107,10 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
             DB::nonQuery(
                 'ALTER TABLE `%s` '
                 .' DROP COLUMN %s',
-                $skillTable,
-                $columnName
+                [
+                    $skillTable,
+                    $columnName
+                ]
             );
         }
     }
@@ -98,8 +120,10 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
     DB::nonQuery(
         'ALTER TABLE `%s` '
         .' DROP COLUMN %s',
-        $skillTable,
-        $originalColumnName
+        [
+            $skillTable,
+            $originalColumnName
+        ]
     );
 
     // rename newer column
@@ -107,11 +131,28 @@ if (static::getColumnType($skillTable, $originalColumnName) != $newColumnType) {
     DB::nonQuery(
         'ALTER TABLE `%s` '
         .' CHANGE %s %s %s',
-        $skillTable,
-        $tempColumnName,
-        $originalColumnName,
-        $newColumnDefinition
+        [
+            $skillTable,
+            $tempColumnName,
+            $originalColumnName,
+            $newColumnDefinition
+        ]
     );
+
+    // alter history table original column
+    if (static::tableExists($skillsHistoryTable)) {
+        printf("Reconfiguring history table column into JSON column");
+        DB::nonQuery(
+            'ALTER TABLE `%s` '
+            .' CHANGE %s %s %s',
+            [
+                $skillsHistoryTable,
+                $originalColumnName,
+                $originalColumnName,
+                $newColumnDefinition
+            ]
+        );
+    }
 
 
     $skipped = false;
