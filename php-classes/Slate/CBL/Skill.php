@@ -21,10 +21,7 @@ class Skill extends \VersionedRecord
         ]
         ,'Descriptor'
         ,'Statement' => 'clob'
-        ,'DemonstrationsRequired' => [
-            'type' => 'uint'
-            ,'default' => 2
-        ]
+        ,'DemonstrationsRequired' => 'json'
     ];
 
     public static $relationships = [
