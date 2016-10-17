@@ -136,29 +136,50 @@ class Competency extends \VersionedRecord
         return $skillIds;
     }
 
-    public function getTotalDemonstrationsRequired($forceRefresh = false)
+    public function getTotalDemonstrationsRequired($level = null, $forceRefresh = false)
     {
         $cacheKey = "cbl-competency/$this->ID/total-demonstrations-required";
+        if ($forceRefresh || false === ($levelTotals = Cache::fetch($cacheKey))) {
+            try {
+                $levelTotals = [];
+                $totals = DB::allValues('DemonstrationsRequired',
+                    'SELECT Skill.DemonstrationsRequired FROM `%s` Skill WHERE Skill.CompetencyID = %u',
+                    [
+                        Skill::$tableName,
+                        $this->ID
+                    ]
+                );
 
-        if (!$forceRefresh && false !== ($total = Cache::fetch($cacheKey))) {
-            return $total;
+                $uniqueLevels = [];
+                foreach ($totals as &$total) {
+                    $total = json_decode($total, true);
+                    $uniqueLevels = array_unique(array_merge($uniqueLevels, array_keys($total)));
+                }
+
+                foreach ($uniqueLevels as $uniqueLevel) {
+
+                    $levelTotals[$uniqueLevel] = 0;
+                    foreach ($totals as $values) {
+                        $levelTotals[$uniqueLevel] += isset($values[$uniqueLevel]) ? $values[$uniqueLevel] : $values['default'];
+                    }
+                }
+
+            } catch (TableNotFoundException $e) {
+                $levelTotals = [];
+            }
         }
 
-        try {
-            $total = intval(DB::oneValue(
-                'SELECT SUM(Skill.DemonstrationsRequired) FROM `%s` Skill WHERE Skill.CompetencyID = %u',
-                [
-                    Skill::$tableName,
-                    $this->ID
-                ]
-            ));
-        } catch (TableNotFoundException $e) {
-            $total = 0;
+        Cache::store($cacheKey, $levelTotals);
+
+        if ($level) {
+            if (array_key_exists($level, $levelTotals)) {
+                return $levelTotals[$level];
+            } else if (array_key_exists('default', $levelTotals)) {
+                return $levelTotals['default'];
+            }
         }
 
-        Cache::store($cacheKey, $total);
-
-        return $total;
+        return $levelTotals;
     }
 
     public function getCompletionForStudent(Student $Student, $level = null)
@@ -169,14 +190,12 @@ class Competency extends \VersionedRecord
 #            return $completion;
 #        }
 
-        $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
+        try {
+            $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
+            DB::nonQuery('SET @num := 0, @skill := ""');
 
-        if ($currentLevel) {
-            try {
-                DB::nonQuery('SET @num := 0, @skill := ""');
-
-                $completion = DB::oneRecord(
-                    <<<'END_OF_SQL'
+            $completion = DB::oneRecord(
+                <<<'END_OF_SQL'
 SELECT SUM(demonstrationsLogged) AS demonstrationsLogged,
        SUM(demonstrationsComplete) AS demonstrationsComplete,
        SUM(demonstrationsAverage * demonstrationsLogged) / SUM(demonstrationsLogged) AS demonstrationsAverage
@@ -204,42 +223,45 @@ SELECT SUM(demonstrationsLogged) AS demonstrationsLogged,
                      ) StudentDemonstrationSkill
                ORDER BY SkillID, DemonstratedLevel DESC
               ) OrderedDemonstrationSkill
-         JOIN `%s` Skill ON Skill.ID = OrderedDemonstrationSkill.SkillID
-        WHERE rowNumber <= DemonstrationsRequired
+         JOIN (
+              SELECT ID,
+                     IFNULL(JSON_EXTRACT(DemonstrationsRequired, CONCAT('$."', %s, '"')), DemonstrationsRequired->'$.default') AS DemonstrationsRequired FROM `%s`
+              ) Skill ON Skill.ID = OrderedDemonstrationSkill.SkillID
+        WHERE rowNumber <= Skill.DemonstrationsRequired
         GROUP BY SkillID
        ) SkillCompletion
 END_OF_SQL
-                    ,[
-                        Demonstrations\DemonstrationSkill::$tableName,
-                        Demonstrations\Demonstration::$tableName,
-                        $Student->ID,
-                        implode(',', $this->getSkillIds()),
-                        $currentLevel,
-                        Skill::$tableName
-                    ]
-                );
+                ,[
+                    Demonstrations\DemonstrationSkill::$tableName,
+                    Demonstrations\Demonstration::$tableName,
+                    $Student->ID,
+                    implode(',', $this->getSkillIds()),
+                    $currentLevel,
+                    $currentLevel,
+                    Skill::$tableName
+                ]
+            );
 
-                // cast strings to floats
-                return [
-                    'currentLevel' => $currentLevel,
-                    'demonstrationsLogged' => intval($completion['demonstrationsLogged']),
-                    'demonstrationsComplete' => intval($completion['demonstrationsComplete']),
-                    'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
-                ];
-            } catch (TableNotFoundException $e) {
-                // return empty completion below
-            }
+            // cast strings to floats
+            $completion = [
+                'currentLevel' => $currentLevel,
+                'demonstrationsLogged' => intval($completion['demonstrationsLogged']),
+                'demonstrationsComplete' => intval($completion['demonstrationsComplete']),
+                'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
+            ];
+        } catch (TableNotFoundException $e) {
+            $completion = [
+                'demonstrationsLogged' => 0,
+                'demonstrationsComplete' => 0,
+                'demonstrationsAverage' => null,
+                'currentLevel' => null
+            ];
         }
 
         // store in cache (will require cache-refreshers in relevant save methods)
 #        Cache::store($cacheKey, $completion);
 
-        return [
-            'demonstrationsLogged' => 0,
-            'demonstrationsComplete' => 0,
-            'demonstrationsAverage' => null,
-            'currentLevel' => $currentLevel
-        ];
+        return $completion;
     }
 
     public static function getAllByListIdentifier($identifier)
@@ -261,17 +283,13 @@ END_OF_SQL
 
     public function getCurrentLevelForStudent(Student $Student)
     {
-        try {
-            $level = \DB::oneValue(
-                'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
-                [
-                    $Student->ID,
-                    $this->ID
-                ]
-            );
-        } catch (TableNotFoundException $e) {
-            $level = null;
-        }
+        $level = \DB::oneValue(
+            'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
+            [
+                $Student->ID,
+                $this->ID
+            ]
+        );
 
         return $level ? intval($level) : null;
     }

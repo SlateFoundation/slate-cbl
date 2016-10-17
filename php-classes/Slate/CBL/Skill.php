@@ -43,11 +43,6 @@ class Skill extends \VersionedRecord
         ,'Descriptor' => [
             'errorMessage' => 'A descriptor is required'
         ]
-        ,'DemonstrationsRequired' => [
-            'validator' => 'number'
-            ,'min' => 1
-            ,'errorMessage' => 'DemonstrationsRequired must be an integer greater than 0'
-        ]
     ];
 
     public static $dynamicFields = [
@@ -143,7 +138,7 @@ class Skill extends \VersionedRecord
         }
 
         if ($wasDemonstrationsRequiredDirty) {
-            $this->Competency->getTotalDemonstrationsRequired(true); // true to force refresh of cached value
+            $this->Competency->getTotalDemonstrationsRequired(null, true); // true to force refresh of cached value
         }
     }
 
