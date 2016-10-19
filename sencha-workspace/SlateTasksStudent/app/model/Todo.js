@@ -17,7 +17,7 @@ Ext.define('SlateTasksStudent.model.Todo', {
         {
             name: 'Class',
             type: 'string',
-            defaultValue: '\\Slate\\CBL\\Tasks\\Todo'
+            defaultValue: 'Slate\\CBL\\Tasks\\Todo'
         },
         {
             name: 'Created',
