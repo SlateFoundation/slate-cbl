@@ -142,15 +142,10 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         }
 
-        if ($student_task->TaskStatus === 're-assigned') {
-            $student_task->TaskStatus = 're-submitted';
-        } else {
-            $student_task->TaskStatus = 'submitted';
-        }
-        $student_task->Submitted = date('Y-m-d G:i:s');
-
         static::setStudentTaskAttachments($student_task, $_REQUEST);
-
+        if (!empty($student_task->Submissions)) {
+            $student_task->TaskStatus = 're-submitted';
+        }
         $student_task->save();
 
         $student_task_submission = new StudentTaskSubmission();

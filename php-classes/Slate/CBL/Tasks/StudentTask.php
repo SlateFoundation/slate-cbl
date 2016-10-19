@@ -208,17 +208,4 @@ class StudentTask extends \VersionedRecord
 
         return $this->Demonstration;
     }
-
-    public function save($deep = true)
-    {
-        if ($GLOBALS['Session']->Person instanceof Student) {
-            if ($this->TaskStatus === 're-assigned') {
-                $this->TaskStatus = 're-submitted';
-            } else {
-                $this->TaskStatus = 'submitted';
-            }
-            $this->Submitted = date('Y-m-d G:i:s');
-        }
-        parent::save(deep);
-    }
 }
