@@ -50,7 +50,6 @@ class Task extends \VersionedRecord
         ],
         'Shared' => [
             'type' => 'enum',
-            'notnull' => true,
             'values' => ['course', 'school', 'public'],
             'default' => null
         ],
