@@ -68,7 +68,8 @@ Ext.define('Slate.cbl.view.modals.AssignLater', {
                     cls: 'is-editable',
                     xtype: 'datefield',
                     fieldLabel: 'Expiration Date',
-                    name: 'ExpirationDate'
+                    name: 'ExpirationDate',
+                    submitFormat: 'timestamp'
                 },
                 {
                     xtype: 'slate-skillsfield',
