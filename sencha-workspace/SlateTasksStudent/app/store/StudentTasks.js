@@ -12,6 +12,7 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
         type: 'slate-records',
         url: '/cbl/student-tasks/assigned',
         include: [
+            'Submitted',
             'Student',
             'Section',
             'Comments',

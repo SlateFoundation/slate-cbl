@@ -46,10 +46,6 @@ class StudentTask extends \VersionedRecord
             'values' => ['assigned', 're-assigned', 'submitted', 're-submitted', 'completed'],
             'default' => 'assigned'
         ],
-        'Submitted' => [
-            'type' => 'timestamp',
-            'default' => null
-        ],
         'DemonstrationID' => [
             'type' => 'uint',
             'default' => null
@@ -113,7 +109,10 @@ class StudentTask extends \VersionedRecord
         'TaskSkills' => [
             'getter' => 'getTaskSkills'
         ],
-        'Skills'
+        'Skills',
+        'Submitted' => [
+            'getter' => 'getSubmissionTimestamp'
+        ]
     );
 
     public static $indexes = [
@@ -207,5 +206,16 @@ class StudentTask extends \VersionedRecord
         }
 
         return $this->Demonstration;
+    }
+
+    public function getSubmissionTimestamp()
+    {
+        $timestamp = null;
+        if (!empty($this->Submissions)) {
+            $submission = end($this->Submissions);
+            $timestamp = $submission->Created;
+        }
+
+        return $timestamp;
     }
 }
