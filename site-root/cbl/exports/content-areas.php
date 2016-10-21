@@ -1,58 +1,4 @@
 <?php
-// TODO: Remove this function for displaying results in an HTML table while in dev
-function build_table($array){
-
-    $style = '
-        <style>
-        table {
-            color: #333;
-            font-family: Helvetica, Arial, sans-serif;
-            border-collapse: collapse;
-            border-spacing: 0;
-        }
-
-        td, th { border: 1px solid #CCC; height: 30px; padding: 0 6px 0 6px;}
-
-        th {
-            background: #F3F3F3;
-            font-weight: bold;
-        }
-
-        td {
-            background: #FAFAFA;
-            text-align: center;
-        }
-        </style>
-    ';
-
-    echo($style);
-
-    // start table
-    $html = '<table>';
-    // header row
-    $html .= '<tr>';
-    foreach($array[0] as $key=>$value){
-            $html .= '<th>' . $value . '</th>';
-        }
-    $html .= '</tr>';
-
-    array_shift($array);
-
-    // data rows
-    foreach( $array as $key=>$value){
-        $html .= '<tr>';
-        foreach($value as $key2=>$value2){
-            $html .= '<td>' . $value2 . '</td>';
-        }
-        $html .= '</tr>';
-    }
-
-    // finish table and return it
-
-    $html .= '</table>';
-    return $html;
-
-}
 
 $GLOBALS['Session']->requireAccountLevel('Staff');
 
@@ -265,6 +211,7 @@ foreach ($students as $student) {
     }
 }
 
-
-echo(build_table($rows));
+$sw = new SpreadsheetWriter();
+$sw->writeRows($rows);
+$sw->close();
 
