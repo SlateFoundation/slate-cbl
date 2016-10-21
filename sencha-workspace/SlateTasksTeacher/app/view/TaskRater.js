@@ -33,9 +33,15 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
             skillsField = me.down('slate-skillsfield'),
             groupedSkills = studentTask.getTaskSkillsGroupedByCompetency();
 
+        if (studentTask.get('DueDate')) {
+            form.down('[name=DueDate]').setValue(studentTask.get('DueDate'));
+        }
+
+        if (studentTask.get('ExpirationDate')) {
+            form.down('[name=ExpirationDate]').setValue(studentTask.get('ExpirationDate'));
+        }
 
         form.down('[name=StudentFullName]').setValue(studentTask.get('Student').FirstName + ' ' + studentTask.get('Student').LastName);
-        form.down('[name=DueDate]').setValue(studentTask.get('DueDate'));
         form.down('#student-attachments').setAttachments(studentTask.get('Attachments'));
         commentsField.setRecord(studentTask);
         submissionsCmp.setData(studentTask.get('Submissions'));
