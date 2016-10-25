@@ -12,6 +12,11 @@ Ext.define('SlateTasksTeacher.store.Students',{
         type: 'slate-records'
     },
 
+    sorters: [{
+        property: 'LastName',
+        direction: 'ASC'
+    }],
+
     updateCourseSection: function(courseSection) {
         var me = this;
 
