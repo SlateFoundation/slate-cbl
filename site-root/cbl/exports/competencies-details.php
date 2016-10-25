@@ -42,10 +42,9 @@ $students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']
 
 foreach ($students as $student) {
 
-    $demonstrations = Slate\CBL\Demonstrations\Demonstration::getAllByField('StudentID',$student->ID);
-    $demonstrationIds = implode(',', array_map(function($demonstration) {
-        return $demonstration->ID;
-    }, $demonstrations));
+    $demonstrationIds = implode(',',
+        \DB::allValues('ID', 'SELECT ID FROM %s WHERE StudentID = %u', [\Slate\CBL\Demonstrations\Demonstration::$tableName, $student->ID])
+    );
 
     // Get Student Competencies and group them by Levels
     $levels = [];
@@ -127,7 +126,7 @@ foreach ($students as $student) {
                     }
                 }
 
-                if ($demonstrationsRequired > 0 && count($demonstrations)>0) {
+                if ($demonstrationsRequired > 0 && strlen($demonstrationIds)>0) {
 
                     // execute query for DemonstrationSkills needed for calculated fields
                     $query = sprintf($demonstrationSkillsQueryString,
