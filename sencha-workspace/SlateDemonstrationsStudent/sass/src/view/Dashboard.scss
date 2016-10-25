@@ -15,8 +15,9 @@
         $level-color-medium: nth($level-colors-medium, ($n - 8));
         $level-color-dark:   nth($level-colors-dark,   ($n - 8));
 
-        &.cbl-level-colored {
+        &.level-color {
             background-color: nth($level-colors, ($n - 8));
+            color: white;
         }
 
         .cbl-progress-meter {
