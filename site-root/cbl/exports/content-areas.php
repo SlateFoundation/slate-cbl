@@ -101,6 +101,8 @@ foreach ($students as $student) {
 
                 $completion = $competency->getCompletionForStudent($student, $competencyLevel);
 
+                $totalER = $totalER + $competency->getTotalDemonstrationsRequired($competencyLevel);
+
                 $performanceLevel = $completion['demonstrationsAverage'];
                 if ($performanceLevel) {
                     $validPerformanceLevels++;
@@ -118,11 +120,18 @@ foreach ($students as $student) {
                     $skillsWithGrowth = 0;
                     $completedOpportunities = 0;
                     $missedOpportunities = 0;
+                    $demonstrationsRequired = 0;
 
-                    // compile total demonstrations required for all skills (ER = evidence requirements)
-                    $totalER = $totalER + $skill->DemonstrationsRequired;
+                    // get demonstrations required for this skill
+                    if (!is_null($skill->DemonstrationsRequired)) {
+                        if (array_key_exists($competencyLevel, $skill->DemonstrationsRequired)) {
+                            $demonstrationsRequired = $skill->DemonstrationsRequired[$competencyLevel];
+                        } else if (array_key_exists('default', $skill->DemonstrationsRequired)){
+                            $demonstrationsRequired = $skill->DemonstrationsRequired['default'];
+                        }
+                    }
 
-                    if (count($demonstrations)>0) {
+                    if ($demonstrationsRequired > 0 && count($demonstrations)>0) {
 
                         // execute query for DemonstrationSkills needed for calculated fields
                         $query = sprintf($demonstrationSkillsQueryString,
