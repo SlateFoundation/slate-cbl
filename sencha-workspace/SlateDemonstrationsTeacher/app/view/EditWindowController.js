@@ -437,7 +437,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindowController', {
             };
 
         if (competenciesTabBar.rendered) {
-            _doScroll();
+            setTimeout(_doScroll, 500);
         } else {
             competenciesTabBar.on('afterrender', _doScroll, me, { single: true });
         }
