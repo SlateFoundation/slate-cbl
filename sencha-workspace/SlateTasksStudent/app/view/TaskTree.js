@@ -58,7 +58,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                             '<div class="slate-tasktree-text">',
                                 '<div class="slate-tasktree-title">{Title}</div>',
                                 '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
+                                '<div class="slate-tasktree-date<tpl if="!values.DueDate">-null</tpl>">{[ this.getStatusDate(values) ]}</div>',
                             '</div>',
                         '</div>',
                     '</div>',
@@ -75,7 +75,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                             '<div class="slate-tasktree-text">',
                                                 '<div class="slate-tasktree-title">{Title}</div>',
                                                 '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                                '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
+                                                '<div class="slate-tasktree-date<tpl if="!values.DueDate">-null</tpl>">{[ this.getStatusDate(values) ]}</div>',
                                             '</div>',
                                         '</div>',
                                     '</div>',
@@ -115,18 +115,18 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
             getDueStatusCls: function(due, taskStatus) {
-                var dueEndOfDay = new Date(due.getTime()),
-                    now = new Date(),
-                    statusCls = 'due';
+                var now = new Date(),
+                    statusCls = 'due',
+                    endOfDueDate;
 
-                dueEndOfDay.setHours(23, 59, 59, 999);
-
-                if (dueEndOfDay < now) {
-                    statusCls = 'late';
-                } else if (taskStatus === 'completed') {
-                    return 'completed';
-                } else {
-                    return 'due';
+                if (due) {
+                    endOfDueDate = new Date(due.getTime());
+                    endOfDueDate.setHours(23, 59, 59, 999);
+                    if (endOfDueDate < now) {
+                        statusCls = 'late';
+                    } else if (taskStatus === 'completed') {
+                        statusCls = 'completed';
+                    }
                 }
 
                 return statusCls;
