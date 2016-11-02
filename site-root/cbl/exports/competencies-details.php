@@ -167,8 +167,8 @@ foreach ($students as $student) {
                         }
 
                         // no credit for logs beyond the number required
-                        if ($completedOpportunities > $skill->DemonstrationsRequired) {
-                            $completedOpportunities = $skill->DemonstrationsRequired;
+                        if ($completedOpportunities > $demonstrationsRequired) {
+                            $completedOpportunities = $demonstrationsRequired;
                         }
 
                     }
