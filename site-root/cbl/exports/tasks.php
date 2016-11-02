@@ -5,7 +5,7 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 \Site::$debug = false;
 set_time_limit(0);
 
-$rows = [];
+$sw = new SpreadsheetWriter();
 
 // build and add headers list
 $headers = [
@@ -21,9 +21,8 @@ $headers = [
     'Skills Codes'
 ];
 
-array_push($rows, $headers);
+$sw->writeRow($headers);
 
-$sw = new SpreadsheetWriter();
 
 // fetch key objects from database
 $students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
@@ -49,7 +48,7 @@ foreach ($studentTasks as $studentTask) {
     $expirationDate = $studentTask->ExpirationDate ? date('m/d/Y', $studentTask->ExpirationDate) : '';
     $submittedDate = $studentTask->Submitted ? date('m/d/Y', $studentTask->Submitted) : '';
 
-    array_push($rows, [
+    $sw->writeRow([
         $studentTask->Student->getFullName(),
         $studentTask->Student->StudentNumber,
         $studentTask->Task->Title,
@@ -63,7 +62,6 @@ foreach ($studentTasks as $studentTask) {
     ]);
 }
 
-$sw->writeRows($rows);
 $sw->close();
 
 
