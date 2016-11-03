@@ -143,7 +143,7 @@ foreach ($students as $student) {
 
                         $nonMissingDemonstrationSkills = [];
                         foreach ($demonstrationSkills as $log) {
-                            if ($log->DemonstratedLevel > 0) {
+                            if ($log->DemonstratedLevel > 0 && !$log->Override) {
                                 array_push($nonMissingDemonstrationSkills,$log);
                             }
                         }
@@ -171,6 +171,13 @@ foreach ($students as $student) {
                             // no credit for logs beyond the number required
                             if ($completedOpportunities > $demonstrationsRequired) {
                                 $completedOpportunities = $demonstrationsRequired;
+                            }
+
+
+                            // if demo is overridden, it is a completed opportunity and not a missed opportunity
+                            if ($demonstrationSkill->Override) {
+                                $completedOpportunities = $demonstrationsRequired;
+                                $missedOpportunities = 0;
                             }
 
                         }
