@@ -190,10 +190,10 @@ class Competency extends \VersionedRecord
 #            return $completion;
 #        }
         $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
-        if ($currentLevel) {
+        if ($currentLevel && !empty($this->Skills)) {
             try {
                 DB::nonQuery('SET @num := 0, @skill := ""');
-    
+
                 $completion = DB::oneRecord(
                     "SELECT ".
                             "SUM(demonstrationsLogged) AS demonstrationsLogged, ".
@@ -227,7 +227,7 @@ class Competency extends \VersionedRecord
                                    "ORDER BY SkillID, DemonstratedLevel DESC ".
                                   ") OrderedDemonstrationSkill ".
                              "JOIN ( ".
-                                    "SELECT ". 
+                                    "SELECT ".
                                             "ID,".
                                             "IFNULL(".
                                                  "JSON_EXTRACT( ".
@@ -249,7 +249,7 @@ class Competency extends \VersionedRecord
                         Skill::$tableName
                     ]
                 );
-    
+
                 // cast strings to floats
                 return [
                     'currentLevel' => $currentLevel,
