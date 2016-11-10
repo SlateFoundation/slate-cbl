@@ -2,8 +2,7 @@
 Ext.define('Slate.cbl.model.Competency', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.cbl.API',
-        'Slate.cbl.proxy.Records',
+        'Slate.proxy.Records',
         'Ext.data.identifier.Negative'
     ],
 
@@ -20,12 +19,24 @@ Ext.define('Slate.cbl.model.Competency', {
         { name: 'Statement', type: 'string'},
 
         // server-provided metadata
-        { name: 'totalDemonstrationsRequired', persist: false, type: 'integer' },
+        { name: 'totalDemonstrationsRequired', persist: false},
         { name: 'minimumAverageOffset', persist: false, type: 'float' }
     ],
 
+    getTotalDemonstrationsRequired: function(userLevel) {
+        var me = this,
+            requirements = me.get('totalDemonstrationsRequired'),
+            total = requirements[userLevel];
+
+        if (total !== undefined) {
+            return total;
+        }
+
+        return requirements.default;
+    },
+
     proxy: {
-        type: 'slate-cbl-records',
+        type: 'slate-records',
         url: '/cbl/competencies',
         include: ['totalDemonstrationsRequired', 'minimumAverageOffset']
     }

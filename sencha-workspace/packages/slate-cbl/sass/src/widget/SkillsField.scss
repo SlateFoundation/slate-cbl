@@ -1,0 +1,54 @@
+.slate-skillsfield-list {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+
+    &:empty {
+        margin-bottom: -8px;
+    }
+}
+
+.slate-skillsfield-item {
+    list-style: none;
+    max-width: 100%;
+}
+
+.slate-skillsfield-token {
+    align-items: center;
+    background-color: #999;
+    border-radius: .25em;
+    box-shadow: 0 .25em .25em -.25em rgba(black, .2);
+    color: white;
+    display: flex;
+    font-size: .9em;
+    margin-bottom: .25em;
+    padding: .125em .5em;
+    white-space: nowrap;
+
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+}
+
+.slate-skillsfield-item-code {
+    margin-right: .5em;
+}
+
+.slate-skillsfield-item-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.slate-skillsfield-item-remove {
+    cursor: pointer;
+    margin-left: 1em;
+    margin-top: .125em;
+    opacity: .6;
+
+    &:hover,
+    &:focus {
+        opacity: 1;
+    }
+}

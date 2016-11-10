@@ -1,0 +1,13 @@
+.jarvus-aggregrid-cell {
+    &.attendance-perfect {
+        background-color: deepskyblue;
+    }
+
+    &.attendance-ok {
+        background-color: lawngreen;
+    }
+
+    &.attendance-bad {
+        background-color: orange;
+    }
+}

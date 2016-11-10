@@ -1,0 +1,179 @@
+@mixin slate-ratingview-skill-level($level, $color) {
+    .slate-ratingview-skill-level-#{$level} {
+        .slate-ratingview-rating {
+            @include background-image(linear-gradient(
+                to bottom,
+                transparent         (50% - $slate-ratingview-progressline-width),
+                rgba($color, .6)    (50% - $slate-ratingview-progressline-width),
+                rgba($color, .6)    (50% + $slate-ratingview-progressline-width),
+                transparent         (50% + $slate-ratingview-progressline-width)
+            ));
+        }
+
+        .slate-ratingview-rating-bubble {
+            border-color: $color;
+
+            &:hover,
+            &:focus {
+                background-color: mix(white, $color, 75%);
+            }
+
+            &:active {
+                background-color: $color;
+                color: white;
+            }
+        }
+
+        .is-selected .slate-ratingview-rating-bubble {
+            background-color: $color;
+            color: white;
+        }
+    }
+}
+
+.slate-ratingview {
+    background-color: white;
+    margin: .75em -2.5em .75em -1em;
+    overflow: hidden;
+    padding: 1em 1.5em;
+}
+
+.slate-ratingview-competencies {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slate-ratingview-competency {
+    margin: 0;
+
+    + .slate-ratingview-competency {
+        margin-top: 1.5em;
+    }
+}
+
+.slate-ratingview-competency-title {
+    font-size: 1em;
+    margin: 0;
+}
+
+.slate-ratingview-skills {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slate-ratingview-skill {
+    + .slate-ratingview-skill {
+        margin-top: 1em;
+    }
+}
+
+.slate-ratingview-skill-header {
+    align-items: flex-start;
+    display: flex;
+    margin: 1em 0;
+}
+
+.slate-ratingview-remove {
+    background: none;
+    border: none;
+    box-shadow: none;
+    color: #999;
+    line-height: 1;
+    margin: -1px .5em 0 0;
+    padding: 0;
+
+    &:hover,
+    &:focus {
+        background: none;
+        color: $color;
+    }
+}
+
+.slate-ratingview-skill-title {
+    font-family: $body-font;
+    font-weight: normal;
+    margin: 0;
+}
+
+.slate-ratingview-ratings {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0 .75em;
+}
+
+.slate-ratingview-rating {
+    @include background-image(linear-gradient(
+        to bottom,
+        transparent     (50% - $slate-ratingview-progressline-width),
+        $neutral-color  (50% - $slate-ratingview-progressline-width),
+        $neutral-color  (50% + $slate-ratingview-progressline-width),
+        transparent     (50% + $slate-ratingview-progressline-width)
+    ));
+
+    flex: 1;
+}
+
+@include slate-ratingview-skill-level(9, $level-9-color);
+@include slate-ratingview-skill-level(10, $level-10-color);
+@include slate-ratingview-skill-level(11, $level-11-color);
+@include slate-ratingview-skill-level(12, $level-12-color);
+
+.slate-ratingview-rating-bubble {
+    align-items: center;
+    background-color: white;
+    border: 1px solid;
+    border-radius: 100%;
+    cursor: pointer;
+    display: flex;
+    height: $slate-ratingview-bubble-size;
+    justify-content: center;
+    margin: auto;
+    width: $slate-ratingview-bubble-size;
+}
+
+.slate-ratingview-rating-label {
+    font-size: .8em;
+}
+
+.slate-ratingview-rating-null {
+    background: none !important;
+    position: relative;
+
+    &::before {
+        color: $danger-color;
+        content: '\f00d'; // fa-times
+        font-family: FontAwesome;
+        font-size: 14px;
+        left: 50%;
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 50%;
+    }
+
+    .slate-ratingview-rating-bubble {
+        background-color: $neutral-color !important;
+        border-color: $neutral-dark-color !important;
+        opacity: 0;
+        position: relative;
+        z-index: 1;
+
+        &:hover,
+        &:focus,
+        &:active {
+            opacity: 1;
+        }
+    }
+
+    &.is-selected .slate-ratingview-rating-bubble {
+        opacity: 1;
+    }
+
+    .slate-ratingview-rating-label {
+        color: $color;
+        font-size: .6em;
+        font-weight: bold;
+    }
+}

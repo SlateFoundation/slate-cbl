@@ -1,0 +1,47 @@
+[
+    {
+        "title": "Ext JS from the Bottom-Up",
+        "items": [
+            {
+                "name": "extjs_why",
+                "url": "guides/extjs/why",
+                "title": "Why Ext JS?"
+            },
+            {
+                "name": "extjs_core",
+                "url": "guides/extjs/core",
+                "title": "The Core"
+            },
+            {
+                "name": "extjs_dom",
+                "url": "guides/extjs/dom",
+                "title": "Manipulating the DOM"
+            },
+            {
+                "name": "extjs_components",
+                "url": "guides/extjs/components",
+                "title": "Components"
+            },
+            {
+                "name": "extjs_containers",
+                "url": "guides/extjs/containers",
+                "title": "Containers & Layouts"
+            },
+            {
+                "name": "extjs_apps",
+                "url": "guides/extjs/apps",
+                "title": "Apps & the MVC pattern"
+            },
+            {
+                "name": "extjs_build",
+                "url": "guides/extjs/build",
+                "title": "Building for Production"
+            },
+            {
+                "name": "extjs_fiddle",
+                "url": "guides/extjs/fiddle",
+                "title": "Sharing Snippets"
+            }
+        ]
+    }
+]

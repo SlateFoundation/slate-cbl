@@ -1,9 +1,9 @@
 /*jslint browser: true ,undef: true *//*global Ext*/
 Ext.define('Slate.cbl.API', {
-    extend: 'Emergence.util.AbstractAPI',
     singleton: true,
     requires: [
-        'Ext.data.Session'
+        'Ext.data.Session',
+        'Slate.API'
     ],
 
 
@@ -12,16 +12,11 @@ Ext.define('Slate.cbl.API', {
         return this.session || (this.session = new Ext.data.Session());
     },
 
-    // TODO: merge upstream to Emergence.util.AbstractAPI
-    recordKeyFn: function(recordData) {
-        return recordData.ID;
-    },
-
     // TODO: move to a model + store
     getRecentProgress: function(studentId, contentAreaCode, callback, scope) {
-        var me = this;
+        var API = Slate.API;
 
-        me.request({
+        API.request({
             url: '/cbl/content-areas/' + contentAreaCode + '/recent-progress',
             method: 'GET',
             params: {
@@ -29,7 +24,7 @@ Ext.define('Slate.cbl.API', {
                 student: studentId
             },
             success: function(response) {
-                me.fireEvent('recentprogressload', response.data.data, studentId, contentAreaCode);
+                API.fireEvent('recentprogressload', response.data.data, studentId, contentAreaCode);
                 Ext.callback(callback, scope, [response.data.data]);
             }
         });

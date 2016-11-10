@@ -1,0 +1,26 @@
+#extjs-welcome .logo {
+    background-image : url(../images/logo.png);
+
+    width            : 250px;
+    height           : 105px;
+}
+
+#extjs-welcome h2 {
+    margin-top : 0;
+}
+
+#extjs-welcome img[src*="welcome"] {
+    width : 100%;
+}
+
+#extjs-welcome section {
+    background   : none;
+    padding-left : 0;
+}
+
+#features {
+}
+
+#features p {
+    margin-bottom : 0.5em;
+}

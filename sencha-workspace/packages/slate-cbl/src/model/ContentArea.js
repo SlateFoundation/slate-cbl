@@ -2,8 +2,7 @@
 Ext.define('Slate.cbl.model.ContentArea', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.cbl.API',
-        'Slate.cbl.proxy.Records',
+        'Slate.proxy.Records',
         'Ext.data.identifier.Negative'
     ],
 
@@ -45,7 +44,7 @@ Ext.define('Slate.cbl.model.ContentArea', {
     ],
 
     proxy: {
-        type: 'slate-cbl-records',
+        type: 'slate-records',
         url: '/cbl/content-areas'
     }
 });

@@ -4,9 +4,6 @@ namespace Slate\CBL;
 
 class Skill extends \VersionedRecord
 {
-    // VersionedRecord configuration
-    public static $historyTable = 'history_cbl_skills';
-
     // ActiveRecord configuration
     public static $tableName = 'cbl_skills';
     public static $singularNoun = 'skill';
@@ -24,10 +21,7 @@ class Skill extends \VersionedRecord
         ]
         ,'Descriptor'
         ,'Statement' => 'clob'
-        ,'DemonstrationsRequired' => [
-            'type' => 'uint'
-            ,'default' => 2
-        ]
+        ,'DemonstrationsRequired' => 'json'
     ];
 
     public static $relationships = [
@@ -49,16 +43,49 @@ class Skill extends \VersionedRecord
         ,'Descriptor' => [
             'errorMessage' => 'A descriptor is required'
         ]
-        ,'DemonstrationsRequired' => [
-            'validator' => 'number'
-            ,'min' => 1
-            ,'errorMessage' => 'DemonstrationsRequired must be an integer greater than 0'
-        ]
     ];
 
     public static $dynamicFields = [
-        'Competency'
+        'Competency',
+        'CompetencyLevel' => [
+            'getter' => 'getCompetencyLevel'
+        ],
+        'CompetencyDescriptor' => [
+            'getter' => 'getCompetencyDescriptor'
+        ],
+        'CompetencyCode' => [
+            'getter' => 'getCompetencyCode'
+        ]
     ];
+
+    public static $searchConditions = [
+        'Code' => [
+            'qualifiers' => ['code', 'any'],
+            'points' => 2,
+            'callback' => [__CLASS__, 'getCodeSql']
+        ],
+
+        'Descriptor' => [
+            'qualifiers' => ['descriptor', 'any'],
+            'points' => 1,
+            'callback' => [__CLASS__, 'getDescriptorSql']
+        ]
+    ];
+
+    public static function __classLoaded()
+    {
+        static::$searchConditions['CompetencyDescriptor'] = [
+            'qualifiers' => ['competency', 'any'],
+            'points' => 1,
+            'join' => [
+                'className' => Competency::class,
+                'localField' => 'CompetencyID',
+                'foreignField' => 'ID',
+                'aliasName' => Competency::getTableAlias() // todo: remove when ActiveRecord class can set this automatically
+            ],
+            'callback' => [__CLASS__, 'getCompetencyDescriptorSql']
+        ];
+    }
 
     public function getHandle()
     {
@@ -111,7 +138,43 @@ class Skill extends \VersionedRecord
         }
 
         if ($wasDemonstrationsRequiredDirty) {
-            $this->Competency->getTotalDemonstrationsRequired(true); // true to force refresh of cached value
+            $this->Competency->getTotalDemonstrationsRequired(null, true); // true to force refresh of cached value
         }
+    }
+
+    public static function getCompetencyDescriptorSql($term, $condition)
+    {
+        $competencyTableAlias = Competency::getTableAlias();
+        return $competencyTableAlias.'.Descriptor LIKE "%'.$term.'%"';
+    }
+
+    public static function getCodeSql($term, $condition)
+    {
+         return static::getTableAlias() . '.Code LIKE "%'.$term.'%"';
+    }
+
+    public static function getDescriptorSql($term, $condition)
+    {
+        return static::getTableAlias() . '.Descriptor LIKE "%'.$term.'%"';
+    }
+
+    public function getCompetencyDescriptor()
+    {
+        return $this->Competency ? $this->Competency->Descriptor : null;
+    }
+
+    public function getCompetencyCode()
+    {
+        return $this->Competency ? $this->Competency->Code : null;
+    }
+
+    public function getCompetencyLevel()
+    {
+        $level = null;
+        if ($GLOBALS['Session']->PersonID && $this->Competency && $StudentCompetency = StudentCompetency::getByWhere(['StudentID' => $GLOBALS['Session']->PersonID, 'CompetencyID' => $this->Competency->ID])) {
+            $level = $StudentCompetency->Level;
+        }
+
+        return $level;
     }
 }

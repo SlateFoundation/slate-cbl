@@ -1,3 +1,14 @@
 .emergence
 /config.json
 /watcher.log
+.DS_Store
+
+/sencha-workspace/build/
+
+/sencha-workspace/Slate*/bootstrap.*
+/sencha-workspace/Slate*/sass/example/bootstrap.*
+
+/sencha-workspace/*Example/bootstrap.*
+/sencha-workspace/*Example/sass/example/bootstrap.*
+
+/sencha-workspace/docs/*/build/

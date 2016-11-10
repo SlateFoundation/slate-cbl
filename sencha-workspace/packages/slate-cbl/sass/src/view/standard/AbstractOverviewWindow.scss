@@ -1,5 +1,3 @@
-$border-color: #999;
-
 .skill-grid {
     border-bottom: 2px solid $border-color;
     margin: 0;
@@ -48,7 +46,7 @@ $border-color: #999;
 
 .skill-grid-demo-level {
     text-align: center;
-    width: 8%
+    width: 9%;
 }
 
 .skill-grid-demo-experience {
@@ -68,12 +66,14 @@ $border-color: #999;
 }
 
 .skill-grid-demo-detail-ct {
-    @include background-image(linear-gradient( rgba(black, 0.075), rgba(black, 0) 1em ));
-    box-shadow: inset 0 1px 0 rgba(black, 0.1);
+    border: 1px solid #ccc;
+    border-width: 1px 0;
+    box-shadow: inset 0 8px 8px -8px rgba(black, .15);
     display: none;
     line-height: $font-size * 1.5;
     overflow: hidden;
-    padding: 0.75em 1.25em;
+    padding: 0.375em 1.6667em;
+    text-align: center;
 
     .skill-grid-demo-detail-row.is-expanded & {
         display: block;
