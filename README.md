@@ -2,6 +2,8 @@ slate-cbl
 =========
 Provides extensions for Slate to implement Competency-Based Learning
 
+See the [slate-cbl-book](https://github.com/SlateFoundation/slate-cbl-book) repository
+for full end-user and contributor documentation.
 
 ## In this repository
 - `sencha-workspace/slate-cbl`: Sencha CMD package containing shared client-side code
