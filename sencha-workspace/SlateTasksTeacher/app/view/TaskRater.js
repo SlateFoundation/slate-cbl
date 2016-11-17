@@ -37,9 +37,7 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
             form.down('[name=DueDate]').setValue(studentTask.get('DueDate'));
         }
 
-        if (studentTask.get('ExpirationDate')) {
-            form.down('[name=ExpirationDate]').setValue(studentTask.get('ExpirationDate'));
-        }
+        form.down('[name=ExpirationDate]').setValue(studentTask.get('ExpirationDate'));
 
         form.down('[name=StudentFullName]').setValue(studentTask.get('Student').FirstName + ' ' + studentTask.get('Student').LastName);
         form.down('#student-attachments').setAttachments(studentTask.get('Attachments'));
