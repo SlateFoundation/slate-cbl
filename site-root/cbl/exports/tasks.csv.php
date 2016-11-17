@@ -37,6 +37,8 @@ foreach ($studentTasks as $studentTask) {
     // Get Skill codes for each studentTask
     $taskSkills = $studentTask->Task->Skills;
     $skillCodes = [];
+    $most_recent_submission = null;
+    $submittedDate = '';
 
     foreach ($taskSkills as $taskSkill) {
         array_push($skillCodes, $taskSkill->Code);
@@ -46,7 +48,13 @@ foreach ($studentTasks as $studentTask) {
     // Screen out null timestamps
     $dueDate = $studentTask->DueDate ? date('m/d/Y', $studentTask->DueDate) : '';
     $expirationDate = $studentTask->ExpirationDate ? date('m/d/Y', $studentTask->ExpirationDate) : '';
-    $submittedDate = $studentTask->Submitted ? date('m/d/Y', $studentTask->Submitted) : '';
+
+    // Get submission date if it exists
+    $submissions = $studentTask->Submissions;
+    foreach ($submissions as $submission) {
+        $most_recent_submission = $submission->Created;
+    }
+    $submittedDate = $most_recent_submission ? date('m/d/Y', $most_recent_submission) : '';
 
     $sw->writeRow([
         $studentTask->Student->getFullName(),
