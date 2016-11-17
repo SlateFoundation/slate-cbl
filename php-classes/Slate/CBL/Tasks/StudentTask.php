@@ -80,7 +80,8 @@ class StudentTask extends \VersionedRecord
             'type' => 'one-many',
             'class' => StudentTaskSubmission::class,
             'foreign' => 'StudentTaskID',
-            'local' => 'ID'
+            'local' => 'ID',
+            'order' => ['Created' => 'ASC']
         ],
         'Skills' => [
             'type' => 'many-many',

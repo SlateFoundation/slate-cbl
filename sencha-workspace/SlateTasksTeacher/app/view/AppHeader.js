@@ -26,7 +26,27 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
         valueField: 'ID',
 
         forceSelection: true,
-        editable: false
+        editable: false,
+
+        tpl: [
+            '{% this.currentTerm = null %}',
+            '<tpl for=".">',
+                '{[this.showTermHeader(values)]}',
+                '<div class="x-boundlist-item">&nbsp;&nbsp;{Title}</div>',
+            '</tpl>',
+            {
+                showTermHeader: function(section) {
+                    var header = '';
+
+                    if (this.currentTerm !== section.TermID) {
+                        header = '<div class="group-header">'+section.Term ? section.Term.Title : 'Term' +'</div>'
+                    }
+
+                    this.currentTerm = section.TermID;
+                    return header;
+                }
+            }
+        ]
     }, {
         xtype: 'tbfill'
     }, {
