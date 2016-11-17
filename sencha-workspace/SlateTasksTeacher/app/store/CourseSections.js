@@ -10,7 +10,8 @@ Ext.define('SlateTasksTeacher.store.CourseSections', {
         include: 'Term',
 
         extraParams: {
-            'enrolled_user': 'current'
+            'enrolled_user': 'current',
+            'sort_current': 1
         }
     }
 });
