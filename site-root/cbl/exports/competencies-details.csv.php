@@ -114,7 +114,6 @@ foreach ($students as $student) {
                 $growth = 0;
                 $skillsWithGrowth = 0;
                 $completedOpportunities = 0;
-                $missedOpportunities = 0;
                 $demonstrationsRequired = 0;
 
                 // get demonstrations required for this skill
@@ -139,7 +138,7 @@ foreach ($students as $student) {
 
                     $nonMissingDemonstrationSkills = [];
                     foreach ($demonstrationSkills as $log) {
-                        if ($log->DemonstratedLevel > 0) {
+                        if ($log->DemonstratedLevel > 0 && !$log->Override) {
                             array_push($nonMissingDemonstrationSkills,$log);
                         }
                     }
@@ -162,13 +161,16 @@ foreach ($students as $student) {
 
                         if ($demonstrationSkill->DemonstratedLevel > 0) {
                             $completedOpportunities += 1;
-                        } else {
-                            $missedOpportunities += 1;
                         }
 
                         // no credit for logs beyond the number required
-                        if ($completedOpportunities > $skill->DemonstrationsRequired) {
-                            $completedOpportunities = $skill->DemonstrationsRequired;
+                        if ($completedOpportunities > $demonstrationsRequired) {
+                            $completedOpportunities = $demonstrationsRequired;
+                        }
+
+                        // if demo is overridden, it is a completed opportunity
+                        if ($demonstrationSkill->Override) {
+                            $completedOpportunities = $demonstrationsRequired;
                         }
 
                     }
@@ -176,7 +178,7 @@ foreach ($students as $student) {
                     $totalGrowth += $growth;
                     $totalSkillsWithGrowth += $skillsWithGrowth;
                     $totalCompletedOpportunities += $completedOpportunities;
-                    $totalMissedOpportunities += $missedOpportunities;
+                    $totalMissedOpportunities += $demonstrationsRequired - $completedOpportunities;
 
                 }
 
@@ -211,6 +213,7 @@ foreach ($students as $student) {
         }
 
     }
+
 }
 
 $sw = new SpreadsheetWriter();

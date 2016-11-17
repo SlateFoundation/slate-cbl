@@ -104,16 +104,18 @@ foreach ($students AS $Student) {
 
             foreach ($ContentArea->Competencies AS $Competency) {
                 $competencyCompletion = $Competency->getCompletionForStudent($Student, $level);
+                $currentLevel = !empty($competencyCompletion['currentLevel']) ? $competencyCompletion['currentLevel'] : 'default'; // use "default" level for calculating er's if user isn't on any level
+                $totalDemonstrationsRequired = intval($Competency->getTotalDemonstrationsRequired($currentLevel, true));
 
                 // Logged
                 $row[] = intval($competencyCompletion['demonstrationsLogged']);
                 // Total
-                $row[] = intval($Competency->getTotalDemonstrationsRequired());
+                $row[] = $totalDemonstrationsRequired;
                 // Average
                 $row[] = intval($competencyCompletion['demonstrationsAverage'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null);
 
                 $demonstrationsCounted += $competencyCompletion['demonstrationsLogged'];
-                $demonstrationsRequired += $Competency->getTotalDemonstrationsRequired();
+                $demonstrationsRequired += $totalDemonstrationsRequired;
 
                 // averages are weighted by number of demonstrations
                 $contentAreaAverageTotal += $competencyCompletion['demonstrationsAverage'] * $competencyCompletion['demonstrationsCount'];
