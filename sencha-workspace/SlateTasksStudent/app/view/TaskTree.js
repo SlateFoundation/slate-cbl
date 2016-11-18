@@ -5,7 +5,26 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     config: {
         courseSection: null,
         student: null,
-        readOnly: false
+        readOnly: false,
+
+        statusClasses: {
+
+            assigned: 'due',
+            're-assigned': 'revision',
+
+            submitted: 'due needsrated',
+            're-submitted': 'revision needsrated',
+
+            late: {
+                submitted: 'late needsrated',
+                're-submitted': 'late needsrated',
+
+                assigned: 'late',
+                're-assigned': 'late'
+            },
+
+            completed: 'completed'
+        },
     },
 
     title: 'Current Tasks',
@@ -47,9 +66,9 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
     tpl: [
         '<ul class="slate-tasktree-list">',
-
+            '{% var statusClasses = values.statusClasses || new Object() %}',
             '<tpl for="tasks">',
-                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.DueDate, values.TaskStatus) ]}" recordId="{ID}">',
+                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values, statusClasses) ]}" recordId="{ID}">',
 
                     '<div class="flex-ct">',
                         '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -67,7 +86,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                         '<ul class="slate-tasktree-sublist">',
 
                             '<tpl for="subtasks">',
-                                '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values.DueDate,values.TaskStatus) ]}" recordId="{ID}">',
+                                '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values) ]}" recordId="{ID}">',
 
                                     '<div class="flex-ct">',
                                         '<div class="slate-tasktree-nub"></div>',
@@ -114,22 +133,35 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
-            getDueStatusCls: function(due, taskStatus) {
-                var now = new Date(),
-                    statusCls = 'due',
-                    endOfDueDate;
+            getDueStatusCls: function(data, statusClasses) {
+                var activeStatuses = [
+                        'assigned',
+                        're-assigned',
+                        'submitted',
+                        're-submitted'
+                    ],
+                    dueDate = data.DueDate,
+                    status = data.TaskStatus,
+                    now, isLate;
 
-                if (due) {
-                    endOfDueDate = new Date(due.getTime());
-                    endOfDueDate.setHours(23, 59, 59, 999);
-                    if (endOfDueDate < now) {
-                        statusCls = 'late';
-                    } else if (taskStatus === 'completed') {
-                        statusCls = 'completed';
-                    }
+                if (dueDate) {
+                    now = new Date();
+                    dueDate = new Date(dueDate * 1000);
+
+                    // task is late after midnight of due date
+                    dueDate.setDate(now.getDate() - 1);
+                    dueDate.setHours(23);
+                    dueDate.setMinutes(59);
+                    dueDate.setSeconds(59);
+
+                    isLate = activeStatuses.indexOf(status) > -1 && (!dueDate || dueDate < now)
                 }
 
-                return statusCls;
+                if (isLate) {
+                    return statusClasses.late[status] || '';
+                }
+
+                return statusClasses[status] || '';
             }
         }
     ],
@@ -147,6 +179,15 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         var me = this;
 
         me.fireEvent('coursesectionchange', me, val);
+    },
+
+    applyData: function(data) {
+        data.statusClasses = this.getStatusClasses();
+        return data;
+    },
+
+    updateData: function(data) {
+        this.update(data);
     },
 
     // event handlers

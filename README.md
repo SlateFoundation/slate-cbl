@@ -2,6 +2,8 @@ slate-cbl
 =========
 Provides extensions for Slate to implement Competency-Based Learning
 
+See the [slate-cbl-book](https://github.com/SlateFoundation/slate-cbl-book) repository
+for full end-user and contributor documentation.
 
 ## In this repository
 - `sencha-workspace/slate-cbl`: Sencha CMD package containing shared client-side code
@@ -28,7 +30,7 @@ Provides extensions for Slate to implement Competency-Based Learning
 
 ## Getting started with client-side UI application development
 1. [Install latest 6.x Sencha CMD](https://www.sencha.com/products/extjs/cmd-download/)
-2. `git clone --recursive -b releases/v2/develop git@github.com:SlateFoundation/slate-cbl.git`
+2. `git clone --recursive -b develop git@github.com:SlateFoundation/slate-cbl.git`
 3. `cd ./slate-cbl`
 4. `./build-all-apps.sh`
 

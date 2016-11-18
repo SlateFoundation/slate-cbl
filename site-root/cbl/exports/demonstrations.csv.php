@@ -33,7 +33,7 @@ $headers = [
     'Name',
     'Type of experience',
     'Context',
-    'Perfromance task',
+    'Performance task',
     'Artifact',
     'Competency',
     'Standard',

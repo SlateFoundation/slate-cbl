@@ -223,25 +223,44 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
     },
 
     cellRenderFn: function(group, cellEl) {
-        var me = this,
-            statusClasses = me.statusClasses,
-            time = new Date(),
+        var activeStatuses = [
+                'assigned',
+                're-assigned',
+                'submitted',
+                're-submitted'
+            ],
             cellClasses = ['jarvus-aggregrid-cell', 'slate-studentsgrid-cell'],
-            isLate, record;
-
-        // task is late when due date is less than previous midnight
-        time.setDate(time.getDate() - 1);
-        time.setHours(23);
-        time.setMinutes(59);
-        time.setSeconds(59);
+            statusClasses = this.statusClasses,
+            record,
+            dueDate, status,
+            now, isLate,
+            cls;
 
         if (group.records && group.records.length && (record = group.records[0].record)) {
-            isLate = ['assigned', 're-assigned', 'submitted', 're-submitted'].indexOf(record.get('TaskStatus')) > -1 && record.get('DueDate') < time;
+            dueDate = record.get('DueDate');
+            status = record.get('TaskStatus');
 
-            cellClasses.push(isLate ? statusClasses.late[record.get('TaskStatus')] : statusClasses[record.get('TaskStatus')]);
+            if (dueDate) {
+                now = new Date();
+                dueDate = new Date(dueDate * 1000);
+
+                // task is late after midnight of due date
+                dueDate.setDate(now.getDate() - 1);
+                dueDate.setHours(23);
+                dueDate.setMinutes(59);
+                dueDate.setSeconds(59);
+
+                isLate = activeStatuses.indexOf(status) > -1 && (!dueDate || dueDate < now)
+            }
+
+            if (isLate) {
+                cellClasses.push(statusClasses.late[status] || '');
+            }
+
+            cellClasses.push(statusClasses[status] || statusClasses.assigned);
         }
 
         cellEl.dom.className = cellClasses.join(' ');
-        me.cellTpl.overwrite(cellEl, group);
+        this.cellTpl.overwrite(cellEl, group);
     }
 });
