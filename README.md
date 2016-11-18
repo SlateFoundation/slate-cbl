@@ -30,7 +30,7 @@ for full end-user and contributor documentation.
 
 ## Getting started with client-side UI application development
 1. [Install latest 6.x Sencha CMD](https://www.sencha.com/products/extjs/cmd-download/)
-2. `git clone --recursive -b releases/v2/develop git@github.com:SlateFoundation/slate-cbl.git`
+2. `git clone --recursive -b develop git@github.com:SlateFoundation/slate-cbl.git`
 3. `cd ./slate-cbl`
 4. `./build-all-apps.sh`
 
