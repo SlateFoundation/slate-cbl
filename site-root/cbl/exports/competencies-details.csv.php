@@ -114,6 +114,7 @@ foreach ($students as $student) {
                 $growth = 0;
                 $skillsWithGrowth = 0;
                 $completedOpportunities = 0;
+                $missedOpportunities = 0;
                 $demonstrationsRequired = 0;
 
                 // get demonstrations required for this skill
@@ -161,6 +162,8 @@ foreach ($students as $student) {
 
                         if ($demonstrationSkill->DemonstratedLevel > 0) {
                             $completedOpportunities += 1;
+                        } else {
+                            $missedOpportunities += 1;
                         }
 
                         // no credit for logs beyond the number required
@@ -168,9 +171,10 @@ foreach ($students as $student) {
                             $completedOpportunities = $demonstrationsRequired;
                         }
 
-                        // if demo is overridden, it is a completed opportunity
+                        // if demo is overridden, it is a completed opportunity and not a missed opportunity
                         if ($demonstrationSkill->Override) {
                             $completedOpportunities = $demonstrationsRequired;
+                            $missedOpportunities = 0;
                         }
 
                     }
@@ -178,7 +182,7 @@ foreach ($students as $student) {
                     $totalGrowth += $growth;
                     $totalSkillsWithGrowth += $skillsWithGrowth;
                     $totalCompletedOpportunities += $completedOpportunities;
-                    $totalMissedOpportunities += $demonstrationsRequired - $completedOpportunities;
+                    $totalMissedOpportunities += min($missedOpportunities, $demonstrationsRequired - $completedOpportunities);
 
                 }
 
