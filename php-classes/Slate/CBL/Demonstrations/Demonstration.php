@@ -25,7 +25,10 @@ class Demonstration extends \VersionedRecord
             'type' => 'uint'
             ,'index' => true
         ]
-        ,'Demonstrated' => 'timestamp'
+        ,'Demonstrated' => [
+            'type' => 'timestamp'
+            ,'default' => null
+        ]
         ,'ArtifactURL' => [
             'notnull' => false
         ]
