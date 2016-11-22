@@ -242,9 +242,10 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
             if (dueDate) {
                 now = new Date();
+                dueDate = new Date(dueDate);
 
                 // task is late after midnight of due date
-                dueDate.setDate(now.getDate() - 1);
+                dueDate.setDate(dueDate.getDate() - 1);
                 dueDate.setHours(23);
                 dueDate.setMinutes(59);
                 dueDate.setSeconds(59);
