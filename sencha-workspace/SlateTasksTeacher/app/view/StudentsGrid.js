@@ -223,18 +223,18 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
     },
 
     cellRenderFn: function(group, cellEl) {
-        var activeStatuses = [
+        var me = this,
+            activeStatuses = [
                 'assigned',
                 're-assigned',
                 'submitted',
                 're-submitted'
             ],
             cellClasses = ['jarvus-aggregrid-cell', 'slate-studentsgrid-cell'],
-            statusClasses = this.statusClasses,
+            statusClasses = me.getStatusClasses(),
             record,
             dueDate, status,
-            now, isLate,
-            cls;
+            now, isLate;
 
         if (group.records && group.records.length && (record = group.records[0].record)) {
             dueDate = record.get('DueDate');
@@ -242,7 +242,6 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
             if (dueDate) {
                 now = new Date();
-                dueDate = new Date(dueDate * 1000);
 
                 // task is late after midnight of due date
                 dueDate.setDate(now.getDate() - 1);
@@ -261,6 +260,6 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         }
 
         cellEl.dom.className = cellClasses.join(' ');
-        this.cellTpl.overwrite(cellEl, group);
+        me.cellTpl.overwrite(cellEl, group);
     }
 });
