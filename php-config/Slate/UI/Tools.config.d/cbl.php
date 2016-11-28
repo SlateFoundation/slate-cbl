@@ -27,4 +27,11 @@ if ($GLOBALS['Session']->hasAccountLevel('Staff')) {
     $cblTools['Task Dashboard'] = '/cbl/dashboards/tasks/student';
 }
 
+if ($GLOBALS['Session']->Person && !empty($GLOBALS['Session']->Person->Wards)) {
+    foreach($GLOBALS['Session']->Person->Wards as $Ward) {
+        $cblTools[$Ward->FirstNamePossessive . ' Competency Dashboard'] = '/cbl/dashboards/demonstrations/student?student='.$Ward->Username;
+        $cblTools[$Ward->FirstNamePossessive . ' Task Dashboard'] = '/cbl/dashboards/tasks/student?student='.$Ward->Username;
+    }
+}
+
 Slate\UI\Tools::$tools['Competency-Based Learning'] = $cblTools;
