@@ -156,7 +156,8 @@ Ext.define('Slate.cbl.model.Task', {
             'Creator',
             'ParentTask',
             'Skills',
-            'Attachments'
+            'Attachments',
+            'StudentTasks'
         ]
     },
 

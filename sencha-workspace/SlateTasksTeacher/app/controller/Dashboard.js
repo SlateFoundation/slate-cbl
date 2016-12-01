@@ -424,7 +424,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             });
         }
 
-        if (task.getAssigneeIds().length) {
+        if (!task.phantom && task.getAssigneeIds().length) {
             return me.doConfirmTaskAssignees(task);
         }
 
