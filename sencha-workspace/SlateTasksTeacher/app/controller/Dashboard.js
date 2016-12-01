@@ -537,7 +537,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                         // reload record to ensure relationships are included.
                         // todo: remove this when API removes the need
                         rec.load();
-                    }, 500);
+                    }, 1000);
                 }
                 Ext.toast('Task succesfully saved!');
             }
