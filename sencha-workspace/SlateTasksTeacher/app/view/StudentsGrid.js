@@ -233,7 +233,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
             cellClasses = ['jarvus-aggregrid-cell', 'slate-studentsgrid-cell'],
             statusClasses = me.getStatusClasses(),
             record,
-            dueDate, status,
+            dueDate, endOfDueDate, status,
             now, isLate;
 
         if (group.records && group.records.length && (record = group.records[0].record)) {
@@ -242,15 +242,14 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
             if (dueDate) {
                 now = new Date();
-                dueDate = new Date(dueDate);
+                endOfDueDate = new Date(dueDate);
 
                 // task is late after midnight of due date
-                dueDate.setDate(dueDate.getDate() - 1);
-                dueDate.setHours(23);
-                dueDate.setMinutes(59);
-                dueDate.setSeconds(59);
+                endOfDueDate.setHours(23);
+                endOfDueDate.setMinutes(59);
+                endOfDueDate.setSeconds(59);
 
-                isLate = activeStatuses.indexOf(status) > -1 && (!dueDate || dueDate < now)
+                isLate = activeStatuses.indexOf(status) > -1 && endOfDueDate < now;
             }
 
             if (isLate) {

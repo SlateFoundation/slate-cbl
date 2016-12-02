@@ -142,25 +142,22 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                     ],
                     dueDate = data.DueDate,
                     status = data.TaskStatus,
-                    now, isLate;
+                    now, endOfDueDate, isLate;
 
                 if (dueDate) {
                     now = new Date();
-                    dueDate = new Date(dueDate * 1000);
-
+                    endOfDueDate = new Date(dueDate);
                     // task is late after midnight of due date
-                    dueDate.setDate(now.getDate() - 1);
-                    dueDate.setHours(23);
-                    dueDate.setMinutes(59);
-                    dueDate.setSeconds(59);
+                    endOfDueDate.setHours(23);
+                    endOfDueDate.setMinutes(59);
+                    endOfDueDate.setSeconds(59);
 
-                    isLate = activeStatuses.indexOf(status) > -1 && (!dueDate || dueDate < now)
+                    isLate = activeStatuses.indexOf(status) > -1 && endOfDueDate < now;
                 }
 
                 if (isLate) {
                     return statusClasses.late[status] || '';
                 }
-
                 return statusClasses[status] || '';
             }
         }
