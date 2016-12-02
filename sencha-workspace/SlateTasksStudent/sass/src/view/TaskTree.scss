@@ -171,8 +171,16 @@
     margin-left: 1em;
 }
 
+.slate-tasktree-nodate {
+    border-radius: .25em;
+}
+
 .slate-tasktree-date {
     background-color: #eee;
     border-radius: 0 .25em .25em 0;
     font-weight: bold;
+
+    &:empty {
+        display: none;
+    }
 }
