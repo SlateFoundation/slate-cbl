@@ -286,11 +286,19 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
     protected static function _getRequestedStudent()
     {
-        if (
-            !empty($_GET['student']) &&
-            $GLOBALS['Session']->hasAccountLevel('Staff')
-        ) {
-            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
+
+        if (!empty($_GET['student'])) {
+            $Student = PeopleRequestHandler::getRecordByHandle($_GET['student']);
+            $userIsStaff = $GLOBALS['Session']->hasAccountLevel('Staff');
+
+            if ($Student && !$userIsStaff) {
+                $GuardianRelationship = \Emergence\People\GuardianRelationship::getByWhere([
+                    'PersonID' => $Student->ID,
+                    'RelatedPersonID' => $GLOBALS['Session']->PersonID
+                ]);
+            }
+
+            if (!$Student || (!$userIsStaff && !$GuardianRelationship)) {
                 return static::throwNotFoundError('Student not found');
             }
         } else {

@@ -7,9 +7,11 @@ Ext.define('SlateTasksStudent.store.CourseSections', {
     proxy: {
         type: 'slate-records',
         url: '/sections',
+        include: 'Term',
 
         extraParams: {
-            enrolled_user: 'current'
+            'enrolled_user': 'current',
+            'sort_current': 1
         }
     }
 });

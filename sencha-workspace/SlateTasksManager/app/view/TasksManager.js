@@ -11,7 +11,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     config: {
     },
 
-    title: 'Task Database',
+    title: 'Task Library',
     header: false,
 
     componentCls: 'slate-tasks-manager',

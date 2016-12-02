@@ -5,7 +5,64 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 \Site::$debug = false;
 set_time_limit(0);
 
-$sw = new SpreadsheetWriter();
+
+// fetch key objects from database
+$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+$studentIds = array_map(function($Student) {
+    return $Student->ID;
+}, $students);
+
+$conditions = [
+    'StudentID' => [
+        'values' => $studentIds
+    ]
+];
+
+$format = 'Y-m-d H:i:s';
+
+$from = $_REQUEST['from'] ? date($format, strtotime($_REQUEST['from'])) : null;
+$to = $_REQUEST['to'] ? date($format, strtotime($_REQUEST['to'])) : null;
+
+if ($from && $to) {
+    $conditions[] = sprintf('Created BETWEEN "%s" AND "%s"', $from, $to);
+} else if ($from) {
+    $conditions[] = sprintf('Created >= "%s"', $from);
+} else if ($to) {
+    $conditions[] = sprintf('Created <= "%s"', $to);
+}
+
+$studentTasks = Slate\CBL\Tasks\StudentTask::getAllByWhere($conditions);
+
+// create result rows
+foreach ($studentTasks as $studentTask) {
+
+    // Get Skill codes for each studentTask
+    $skillCodes = [];
+
+    foreach ($studentTask->AllSkills as $skill) {
+        array_push($skillCodes, $skill->Code);
+    }
+
+    // Screen out null timestamps
+    $dueDate = $studentTask->DueDate ? date('m/d/Y', $studentTask->DueDate) : '';
+    $expirationDate = $studentTask->ExpirationDate ? date('m/d/Y', $studentTask->ExpirationDate) : '';
+
+    $most_recent_submission = $studentTask->getSubmissionTimestamp();
+    $submittedDate = $most_recent_submission ? date('m/d/Y', $most_recent_submission) : '';
+
+    $rows[] = [
+        $studentTask->Student->getFullName(),
+        $studentTask->Student->StudentNumber,
+        $studentTask->Task->Title,
+        $studentTask->Task->Creator->getFullName(),
+        $studentTask->Section->Title,
+        $studentTask->TaskStatus,
+        $dueDate,
+        $expirationDate,
+        $submittedDate,
+        implode(', ',$skillCodes)
+    ];
+}
 
 // build and add headers list
 $headers = [
@@ -21,55 +78,9 @@ $headers = [
     'Skills Codes'
 ];
 
+$sw = new SpreadsheetWriter();
+
 $sw->writeRow($headers);
-
-
-// fetch key objects from database
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
-$studentTasks = Slate\CBL\Tasks\StudentTask::getAllByWhere('StudentID IN ('.implode(',', array_map(function($Student) {
-    return $Student->ID;
-}, $students)).')', ['order' => 'ID']);
-
-
-// create result rows
-foreach ($studentTasks as $studentTask) {
-
-    // Get Skill codes for each studentTask
-    $taskSkills = $studentTask->Task->Skills;
-    $skillCodes = [];
-    $most_recent_submission = null;
-    $submittedDate = '';
-
-    foreach ($taskSkills as $taskSkill) {
-        array_push($skillCodes, $taskSkill->Code);
-
-    }
-
-    // Screen out null timestamps
-    $dueDate = $studentTask->DueDate ? date('m/d/Y', $studentTask->DueDate) : '';
-    $expirationDate = $studentTask->ExpirationDate ? date('m/d/Y', $studentTask->ExpirationDate) : '';
-
-    // Get submission date if it exists
-    $submissions = $studentTask->Submissions;
-    foreach ($submissions as $submission) {
-        $most_recent_submission = $submission->Created;
-    }
-    $submittedDate = $most_recent_submission ? date('m/d/Y', $most_recent_submission) : '';
-
-    $sw->writeRow([
-        $studentTask->Student->getFullName(),
-        $studentTask->Student->StudentNumber,
-        $studentTask->Task->Title,
-        $studentTask->Task->Creator->getFullName(),
-        $studentTask->Section->Title,
-        $studentTask->TaskStatus,
-        $dueDate,
-        $expirationDate,
-        $submittedDate,
-        implode(', ',$skillCodes)
-    ]);
-}
-
+array_map([$sw, 'writeRow'], $rows);
 $sw->close();
-
 

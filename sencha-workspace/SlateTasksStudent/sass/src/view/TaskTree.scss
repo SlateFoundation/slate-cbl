@@ -1,19 +1,23 @@
 @mixin slate-tasktree-item-status($status, $color) {
     &.slate-tasktree-status-#{$status} {
-        .slate-tasktree-nub {
-            background-color: darken($color, 5);
+        > div {
+            .slate-tasktree-nub {
+                background-color: darken($color, 5);
 
-            &.is-clickable:hover {
-                background-color: $color;
+                &.is-clickable:hover {
+                    background-color: $color;
+                }
             }
-        }
 
-        .slate-tasktree-status {
-            background-color: $color;
-        }
+            > .slate-tasktree-data {
+                .slate-tasktree-status {
+                    background-color: $color;
+                }
 
-        .slate-tasktree-date {
-            background-color: lighten($color, 10);
+                .slate-tasktree-date {
+                    background-color: lighten($color, 10);
+                }
+            }
         }
     }
 }
