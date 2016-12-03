@@ -81,6 +81,6 @@ $headers = [
 $sw = new SpreadsheetWriter();
 
 $sw->writeRow($headers);
-array_map([$sw, 'writeRow'], $rows);
+$sw->writeRows($rows);
 $sw->close();
 
