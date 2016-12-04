@@ -55,8 +55,8 @@ foreach ($students as $student) {
         'ID',
         'SELECT ID FROM `%s` WHERE (%s)',
         [
-            \Slate\CBL\Demonstrations\Demonstration::class::$tableName,
-            join(') AND (',\Slate\CBL\Demonstrations\Demonstration::class::mapConditions($demonstrationConditions))
+            \Slate\CBL\Demonstrations\Demonstration::$tableName,
+            join(') AND (',\Slate\CBL\Demonstrations\Demonstration::mapConditions($demonstrationConditions))
         ]
     );
 
