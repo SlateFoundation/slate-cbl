@@ -177,4 +177,15 @@ class Skill extends \VersionedRecord
 
         return $level;
     }
+    
+    public function getDemonstrationsRequiredByLevel($level, $returnDefault = true)
+    {
+        if (isset($this->DemonstrationsRequired[$level])) {
+            return $this->DemonstrationsRequired[$level];
+        } else if ($returnDefault) { // return default value if level is not explicitely set.$_COOKIE
+            return $this->DemonstrationsRequired['default'];
+        }
+        
+        return null;
+    }
 }
