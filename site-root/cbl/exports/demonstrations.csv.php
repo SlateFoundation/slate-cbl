@@ -1,15 +1,21 @@
 <?php
 $GLOBALS['Session']->requireAccountLevel('Staff');
 
+use Emergence\People\Person;
+use Slate\People\Student;
+use Slate\CBL\Skill;
+use Slate\CBL\Demonstrations\Demonstration;
+use Slate\CBL\Demonstrations\DemonstrationSkill;
+
 // This was causing a script timeout (30 seconds), this should help speed it up
 \Site::$debug = false;
 set_time_limit(0);
 
 // fetch key objects from database
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+$students = Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
 $studentIds = array_map(function($s) { return $s->ID; }, $students);
 
-$skills = Slate\CBL\Skill::getAll(['indexField' => 'ID']);
+$skills = Skill::getAll(['indexField' => 'ID']);
 
 $demonstrationConditions = [
     'StudentID' => [
@@ -22,7 +28,6 @@ $format = 'Y-m-d H:i:s';
 $from = $_REQUEST['from'] ? date($format, strtotime($_REQUEST['from'])) : null;
 $to = $_REQUEST['to'] ? date($format, strtotime($_REQUEST['to'])) : null;
 
-$demonstrationConditions = [];
 if ($from && $to) {
     $demonstrationConditions[] = sprintf('Demonstrated BETWEEN "%s" AND "%s"', $from, $to);
 } else if ($from) {
@@ -31,30 +36,56 @@ if ($from && $to) {
     $demonstrationConditions[] = sprintf('Demonstrated <= "%s"', $to);
 }
 
-
-$demonstrations = Slate\CBL\Demonstrations\Demonstration::getAllByWhere(
-    $demonstrationConditions,
+$results = \DB::query(
+    'SELECT %2$s.ID, '.
+            '%2$s.Created AS Created, '.
+            'CONCAT(%4$s.FirstName, " ", %4$s.LastName) AS Creator, '.
+            '%5$s.StudentNumber AS StudentNumber, '.
+            'CONCAT(%5$s.FirstName, " ", %5$s.LastName) AS Student, '.
+            '%2$s.ExperienceType, '.
+            '%2$s.Context, '.
+            '%2$s.PerformanceType, '.
+            '%2$s.ArtifactURL '.
+    ' FROM `%1$s` %2$s '.
+    ' JOIN `%3$s` %4$s '.
+    '   ON %2$s.CreatorID = %4$s.ID '.
+    ' JOIN `%3$s` %5$s '.
+    '   ON %2$s.StudentID = %5$s.ID '.
+    'WHERE (%6$s) '.
+    'ORDER BY %2$s.ID',
     [
-        'order' => 'ID'
+        Demonstration::$tableName,
+        Demonstration::getTableAlias(),
+        
+        Person::$tableName,
+        Person::getTableAlias(),
+        
+        'Student',
+        join(') AND (', Demonstration::mapConditions($demonstrationConditions))
     ]
 );
 
-// one row for each demonstration standard
-foreach ($demonstrations AS $Demonstration) {
-    $demonstrationSkills = $Demonstration->Skills;
+$sw = new SpreadsheetWriter();
+// build and output headers list
+$headers = [
+    'Timestamp',
+    'Submitted by',
+    'ID',
+    'Name',
+    'Type of experience',
+    'Context',
+    'Performance task',
+    'Artifact',
+    'Competency',
+    'Standard',
+    'Rating',
+    'Level',
+    'Mapping'
+];
+$sw->writeRow($headers);
 
-    $row = [
-        date('Y-m-d H:i', $Demonstration->Created),
-        $Demonstration->Creator->FullName,
-        $Demonstration->Student->StudentNumber,
-        $Demonstration->Student->FullName,
-        $Demonstration->ExperienceType,
-        $Demonstration->Context,
-        $Demonstration->PerformanceType,
-        $Demonstration->ArtifactURL
-    ];
-    // Don't rebuild the row for each standard demonstrated, just overwrite the last set of values
-    foreach ($demonstrationSkills AS $DemonstrationSkill) {
+while($row = $results->fetch_assoc()) {
+    foreach (DemonstrationSkill::getAllByWhere(['DemonstrationID' => $row['ID']]) AS $DemonstrationSkill) {
         $skill = $DemonstrationSkill->Skill;
 
         $row['Competency'] = $skill->Competency->Code;
@@ -72,28 +103,8 @@ foreach ($demonstrations AS $Demonstration) {
         $row['Level'] = $DemonstrationSkill->TargetLevel;
         $row['Mapping'] = '';
 
-        $rows[] = $row;
-    }
+        $sw->writeRow($row);
+    }   
 }
 
-// build and output headers list
-$headers = [
-    'Timestamp',
-    'Submitted by',
-    'ID',
-    'Name',
-    'Type of experience',
-    'Context',
-    'Performance task',
-    'Artifact',
-    'Competency',
-    'Standard',
-    'Rating',
-    'Level',
-    'Mapping'
-];
-
-$sw = new SpreadsheetWriter();
-$sw->writeRow($headers);
-$sw->writeRows($rows);
 $sw->close();
