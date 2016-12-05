@@ -146,6 +146,17 @@ class StudentTask extends \VersionedRecord
         ]
     ];
 
+    public function getValue($name)
+    {
+        switch ($name) {
+            case 'AllSkills':
+                return $this->Skills + ($this->Task ? $this->Task->Skills : []);
+
+            default:
+                return parent::getValue($name);
+        }
+    }
+
     public function getStudentName()
     {
         return $this->Student->FullName;
