@@ -174,11 +174,11 @@ class StudentTask extends \VersionedRecord
 
         if ($this->Task && $this->Task->Skills) {
             foreach ($this->Task->Skills as $skill) {
-                $studentCompetency = $skill->Competency ? StudentCompetency::getByWhere(['StudentID' => $this->StudentID, 'CompetencyID' => $skill->Competency->ID]) : null;
+                $currentLevel = $skill->Competency ? $skill->Competency->getCurrentLevelForStudent($this->Student) : null;
                 $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
 
                 $taskSkills[] = array_merge($skill->getData(), [
-                    'CompetencyLevel' => $studentCompetency ? $studentCompetency->Level : null,
+                    'CompetencyLevel' => $currentLevel,
                     'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
                     'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
                     'Rating' => $demoSkillRating
@@ -188,11 +188,11 @@ class StudentTask extends \VersionedRecord
 
         if ($this->Skills) {
             foreach ($this->Skills as $skill) {
-                $studentCompetency = $skill->Competency ? StudentCompetency::getByWhere(['StudentID' => $this->StudentID, 'CompetencyID' => $skill->Competency->ID]) : null;
+                $currentLevel = $skill->Competency ? $skill->Competency->getCurrentLevelForStudent($this->Student) : null;
                 $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
 
                 $taskSkills[] = array_merge($skill->getData(), [
-                    'CompetencyLevel' => $studentCompetency ? $studentCompetency->Level : null,
+                    'CompetencyLevel' => $currentLevel,
                     'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
                     'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
                     'Rating' => $demoSkillRating
