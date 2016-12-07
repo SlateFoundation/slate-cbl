@@ -66,7 +66,7 @@ foreach ($students as $student) {
         '  JOIN `%3$s` %4$s'.
         '    ON %2$s.CompetencyID = %4$s.ID'.
         ' WHERE %2$s.StudentID = %5$u'.
-        ' ORDER BY %4$s.Code ASC',
+        ' ORDER BY %2$s.Level, %4$s.Code ASC',
         [
             \Slate\CBL\StudentCompetency::$tableName,
             \Slate\CBL\StudentCompetency::getTableAlias(),
