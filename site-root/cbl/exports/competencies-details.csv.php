@@ -96,7 +96,7 @@ foreach ($students as $student) {
                 continue;
             }
 
-            $completion = $competency->getCompletionForStudent($student, $level);
+            $completion = $competency->getCompletionForStudent($student, $level, $defaultDemonstrationConditions[0]);
             $totalER = $competency->getTotalDemonstrationsRequired($level);
 
             // get all skills for this competency

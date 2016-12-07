@@ -104,7 +104,7 @@ foreach ($students as $student) {
                     continue;
                 }
 
-                $completion = $competency->getCompletionForStudent($student, $competencyLevel);
+                $completion = $competency->getCompletionForStudent($student, $competencyLevel, $defaultDemonstrationConditions[0]);
 
                 $totalER = $totalER + $competency->getTotalDemonstrationsRequired($competencyLevel);
 
