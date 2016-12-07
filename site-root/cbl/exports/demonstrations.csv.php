@@ -38,7 +38,7 @@ if ($from && $to) {
 
 $results = \DB::query(
     'SELECT %2$s.ID, '.
-            '%2$s.Created AS Created, '.
+            'DATE(%2$s.Demonstrated) AS Demonstrated, '.
             'CONCAT(%4$s.FirstName, " ", %4$s.LastName) AS Creator, '.
             '%5$s.StudentNumber AS StudentNumber, '.
             'CONCAT(%5$s.FirstName, " ", %5$s.LastName) AS Student, '.
