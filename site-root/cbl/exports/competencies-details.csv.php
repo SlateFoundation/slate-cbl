@@ -28,9 +28,7 @@ $headers = [
 array_push($rows, $headers);
 
 // retrieve students
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
-
-
+$students = Slate\People\Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 
 $format = 'Y-m-d H:i:s';
 

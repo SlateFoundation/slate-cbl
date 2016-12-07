@@ -12,7 +12,7 @@ use Slate\CBL\Demonstrations\DemonstrationSkill;
 set_time_limit(0);
 
 // fetch key objects from database
-$students = Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+$students = Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 $studentIds = array_map(function($s) { return $s->ID; }, $students);
 
 $skills = Skill::getAll(['indexField' => 'ID']);

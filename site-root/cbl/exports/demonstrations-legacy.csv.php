@@ -6,7 +6,7 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 
 
 // fetch key objects from database
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+$students = Slate\People\Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 $studentIds = array_map(function($s) { return $s->ID; }, $students);
 
 $skills = Slate\CBL\Skill::getAll(['order' => 'Code']);
