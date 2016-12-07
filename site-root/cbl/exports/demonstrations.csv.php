@@ -80,12 +80,11 @@ $headers = [
     'Standard',
     'Rating',
     'Level',
-    'Mapping'
+#    'Mapping'
 ];
 $sw->writeRow($headers);
 
 while($row = $results->fetch_assoc()) {
-    foreach (DemonstrationSkill::getAllByWhere(['DemonstrationID' => $row['ID']]) AS $DemonstrationSkill) {
     $rowId = $row['ID'];
     unset($row['ID']);
     foreach (DemonstrationSkill::getAllByWhere(['DemonstrationID' => $rowId]) AS $DemonstrationSkill) {
@@ -104,10 +103,10 @@ while($row = $results->fetch_assoc()) {
         }
 
         $row['Level'] = $DemonstrationSkill->TargetLevel;
-        $row['Mapping'] = '';
+#        $row['Mapping'] = '';
 
         $sw->writeRow($row);
-    }   
+    }
 }
 
 $sw->close();
