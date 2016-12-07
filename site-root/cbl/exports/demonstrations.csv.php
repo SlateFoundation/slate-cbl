@@ -86,6 +86,9 @@ $sw->writeRow($headers);
 
 while($row = $results->fetch_assoc()) {
     foreach (DemonstrationSkill::getAllByWhere(['DemonstrationID' => $row['ID']]) AS $DemonstrationSkill) {
+    $rowId = $row['ID'];
+    unset($row['ID']);
+    foreach (DemonstrationSkill::getAllByWhere(['DemonstrationID' => $rowId]) AS $DemonstrationSkill) {
         $skill = $DemonstrationSkill->Skill;
 
         $row['Competency'] = $skill->Competency->Code;
