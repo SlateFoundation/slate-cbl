@@ -46,6 +46,7 @@ foreach ($studentTasks as $studentTask) {
     // Screen out null timestamps
     $dueDate = $studentTask->DueDate ? date('m/d/Y', $studentTask->DueDate) : '';
     $expirationDate = $studentTask->ExpirationDate ? date('m/d/Y', $studentTask->ExpirationDate) : '';
+    $createdDate = $studentTask->Created ? date("m/d/Y", $studentTask->Created) : '';
 
     $most_recent_submission = $studentTask->getSubmissionTimestamp();
     $submittedDate = $most_recent_submission ? date('m/d/Y', $most_recent_submission) : '';
@@ -55,6 +56,7 @@ foreach ($studentTasks as $studentTask) {
         $studentTask->Student->StudentNumber,
         $studentTask->Task->Title,
         $studentTask->Task->Creator->getFullName(),
+        $createdDate,
         $studentTask->Section->Title,
         $studentTask->TaskStatus,
         $dueDate,
@@ -70,6 +72,7 @@ $headers = [
     'ID',
     'Task Name',
     'Teacher Assigned',
+    'Created',
     'Studio Name',
     'Current Status of task',
     'Due date',
