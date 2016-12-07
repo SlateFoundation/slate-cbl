@@ -184,7 +184,7 @@ class Competency extends \VersionedRecord
         return $levelTotals;
     }
 
-    public function getCompletionForStudent(Student $Student, $level = null)
+    public function getCompletionForStudent(Student $Student, $level = null, $demonstrationConditions = '')
     {
 #        $cacheKey = "cbl-competency/$this->ID/student-completion/$Student->ID";
 #
@@ -196,7 +196,7 @@ class Competency extends \VersionedRecord
             try {
                 DB::nonQuery('SET @num := 0, @skill := ""');
 
-                $completion = DB::oneRecord(
+                    $query =
                     "SELECT ".
                             "SUM(demonstrationsLogged) AS demonstrationsLogged, ".
                             "SUM(demonstrationsComplete) AS demonstrationsComplete, ".
@@ -220,11 +220,12 @@ class Competency extends \VersionedRecord
                                                 "DemonstrationSkill.DemonstratedLevel, ".
                                                 "DemonstrationSkill.Override ".
                                            "FROM `%s` DemonstrationSkill ".
-                                           "JOIN (SELECT ID FROM `%s` WHERE StudentID = %u) Demonstration ".
+                                           "JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration ".
                                              "ON Demonstration.ID = DemonstrationSkill.DemonstrationID ".
                                           "WHERE DemonstrationSkill.SkillID IN (%s) ".
                                             "AND DemonstrationSkill.TargetLevel = %u ".
                                             "AND DemonstrationSkill.DemonstratedLevel > 0 ".
+                                            "%s".
                                          ") StudentDemonstrationSkill ".
                                    "ORDER BY SkillID, DemonstratedLevel DESC ".
                                   ") OrderedDemonstrationSkill ".
@@ -240,17 +241,19 @@ class Competency extends \VersionedRecord
                                         "ON Skill.ID = OrderedDemonstrationSkill.SkillID ".
                             "WHERE rowNumber <= Skill.DemonstrationsRequired ".
                             "GROUP BY SkillID".
-                            ") SkillCompletion"
-                    ,[
-                        Demonstrations\DemonstrationSkill::$tableName,
-                        Demonstrations\Demonstration::$tableName,
-                        $Student->ID,
-                        implode(',', $this->getSkillIds()),
-                        $currentLevel,
-                        $currentLevel,
-                        Skill::$tableName
-                    ]
-                );
+                            ") SkillCompletion";
+                $parameters = [
+                    Demonstrations\DemonstrationSkill::$tableName,
+                    Demonstrations\Demonstration::$tableName,
+                    $Student->ID,
+                    implode(',', $this->getSkillIds()),
+                    $currentLevel,
+                    ($demonstrationConditions ? 'AND ' . $demonstrationConditions . ' ' : ''),
+                    $currentLevel,
+                    Skill::$tableName
+                ];
+
+                $completion = DB::oneRecord($query, $parameters);
 
                 // cast strings to floats
                 return [
