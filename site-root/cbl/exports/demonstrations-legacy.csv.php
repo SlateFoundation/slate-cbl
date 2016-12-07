@@ -22,7 +22,6 @@ $format = 'Y-m-d H:i:s';
 $from = $_REQUEST['from'] ? date($format, strtotime($_REQUEST['from'])) : null;
 $to = $_REQUEST['to'] ? date($format, strtotime($_REQUEST['to'])) : null;
 
-$demonstrationConditions = [];
 if ($from && $to) {
     $demonstrationConditions[] = sprintf('Demonstrated BETWEEN "%s" AND "%s"', $from, $to);
 } else if ($from) {
