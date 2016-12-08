@@ -6,7 +6,7 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 
 
 // fetch key objects from database
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+$students = Slate\People\Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 $studentIds = array_map(function($s) { return $s->ID; }, $students);
 
 $skills = Slate\CBL\Skill::getAll(['order' => 'Code']);
@@ -22,7 +22,6 @@ $format = 'Y-m-d H:i:s';
 $from = $_REQUEST['from'] ? date($format, strtotime($_REQUEST['from'])) : null;
 $to = $_REQUEST['to'] ? date($format, strtotime($_REQUEST['to'])) : null;
 
-$demonstrationConditions = [];
 if ($from && $to) {
     $demonstrationConditions[] = sprintf('Demonstrated BETWEEN "%s" AND "%s"', $from, $to);
 } else if ($from) {

@@ -212,10 +212,12 @@ class StudentDashboardRequestHandler extends \RequestHandler
                 ]);
             }
 
-            if (!$Student || (!$userIsStaff && !$GuardianRelationship)) {
+            if (!$Student || ($Student->ID != $GLOBALS['Session']->PersonID && !$userIsStaff && !$GuardianRelationship)) {
                 return static::throwNotFoundError('Student not found');
             }
-        } else {
+        }
+
+        if (!$Student) { // automatically set student to session user
             $Student = $GLOBALS['Session']->Person;
         }
 

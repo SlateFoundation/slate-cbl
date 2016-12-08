@@ -42,7 +42,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     onLaunch: function () {
         var siteEnv = window.SiteEnvironment || {},
             cblStudentId = (siteEnv.cblStudent || {}).ID,
-            cblContentArea = siteEnv.cblContentArea || null,
+            cblContentArea = siteEnv.cblContentArea || {},
             dashboardCt, recentProgressCmp;
 
         // fetch component instances
@@ -55,7 +55,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         }
 
         if (cblContentArea) {
-            recentProgressCmp.setContentAreaId(cblContentArea);
+            recentProgressCmp.setContentAreaId(cblContentArea.ID);
         }
 
         // configure dashboard with any available embedded data

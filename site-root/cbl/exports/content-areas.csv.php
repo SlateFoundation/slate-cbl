@@ -41,7 +41,7 @@ if ($from && $to) {
 }
 
 // retrieve students
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+$students = Slate\People\Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 
 foreach ($students as $student) {
     $demonstrationConditions = array_merge($defaultDemonstrationConditions, [
@@ -104,7 +104,7 @@ foreach ($students as $student) {
                     continue;
                 }
 
-                $completion = $competency->getCompletionForStudent($student, $competencyLevel);
+                $completion = $competency->getCompletionForStudent($student, $competencyLevel, $defaultDemonstrationConditions[0]);
 
                 $totalER = $totalER + $competency->getTotalDemonstrationsRequired($competencyLevel);
 

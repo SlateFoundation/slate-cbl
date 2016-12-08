@@ -28,9 +28,7 @@ $headers = [
 array_push($rows, $headers);
 
 // retrieve students
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
-
-
+$students = Slate\People\Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 
 $format = 'Y-m-d H:i:s';
 
@@ -55,8 +53,8 @@ foreach ($students as $student) {
         'ID',
         'SELECT ID FROM `%s` WHERE (%s)',
         [
-            \Slate\CBL\Demonstrations\Demonstration::class::$tableName,
-            join(') AND (',\Slate\CBL\Demonstrations\Demonstration::class::mapConditions($demonstrationConditions))
+            \Slate\CBL\Demonstrations\Demonstration::$tableName,
+            join(') AND (',\Slate\CBL\Demonstrations\Demonstration::mapConditions($demonstrationConditions))
         ]
     );
 
@@ -66,7 +64,7 @@ foreach ($students as $student) {
         '  JOIN `%3$s` %4$s'.
         '    ON %2$s.CompetencyID = %4$s.ID'.
         ' WHERE %2$s.StudentID = %5$u'.
-        ' ORDER BY %4$s.Code ASC',
+        ' ORDER BY %2$s.Level, %4$s.Code ASC',
         [
             \Slate\CBL\StudentCompetency::$tableName,
             \Slate\CBL\StudentCompetency::getTableAlias(),
@@ -96,7 +94,7 @@ foreach ($students as $student) {
                 continue;
             }
 
-            $completion = $competency->getCompletionForStudent($student, $level);
+            $completion = $competency->getCompletionForStudent($student, $level, $defaultDemonstrationConditions[0]);
             $totalER = $competency->getTotalDemonstrationsRequired($level);
 
             // get all skills for this competency

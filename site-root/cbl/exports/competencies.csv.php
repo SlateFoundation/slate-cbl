@@ -5,7 +5,7 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 
 
 // fetch key objects from database
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+$students = Slate\People\Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 $contentAreas = Slate\CBL\ContentArea::getAll(['order' => 'Code']);
 
 $format = 'Y-m-d H:i:s';
@@ -15,11 +15,11 @@ $to = $_REQUEST['to'] ? date($format, strtotime($_REQUEST['to'])) : null;
 
 $conditions = '';
 if ($from && $to) {
-    $conditions = sprintf('AND %s.Demonstrated BETWEEN "%s" AND "%s"', \Slate\CBL\Demonstrations\Demonstration::getTableAlias(), $from, $to);
+    $conditions = sprintf('Demonstrated BETWEEN "%s" AND "%s"', $from, $to);
 } else if ($from) {
-    $conditions = sprintf('AND %s.Demonstrated >= "%s"', \Slate\CBL\Demonstrations\Demonstration::getTableAlias(), $from);
+    $conditions = sprintf('Demonstrated >= "%s"', $from);
 } else if ($to) {
-    $conditions = sprintf('AND %s.Demonstrated <= "%s"', \Slate\CBL\Demonstrations\Demonstration::getTableAlias(), $to);
+    $conditions = sprintf('Demonstrated <= "%s"', $to);
 }
 
 // collect counts of all missing demonstrations by student+competency
@@ -45,7 +45,7 @@ try {
         .'   JOIN `%5$s` Skill'
         .'    ON Skill.ID = %4$s.SkillID'
         .'   WHERE %2$s.StudentID IN (%6$s)'
-        .$conditions
+        .'   %7$s'
         .'   GROUP BY %2$s.StudentID, %4$s.SkillID'
         .' ) MissingDemonstrationsByStudentSkill'
         .' GROUP BY StudentID, CompetencyID'
@@ -57,7 +57,8 @@ try {
             Slate\CBL\Skill::$tableName,
             implode(',', array_map(function($Student) {
                 return $Student->ID;
-            }, $students))
+            }, $students)),
+            !empty($conditions) ? sprintf(' AND %s.%s', Slate\CBL\Demonstrations\Demonstration::getTableAlias(), $conditions) : $conditions
         ]
     );
 
@@ -95,17 +96,18 @@ foreach ($contentAreas AS $ContentArea) {
 foreach ($students AS $Student) {
     $uniqueLevels = \DB::allValues(
         'DemonstratedLevel',
-        'SELECT DISTINCT(%4$s.DemonstratedLevel) FROM `%1$s` %2$s '.
+        $query = 'SELECT DISTINCT(%4$s.DemonstratedLevel) FROM `%1$s` %2$s '.
         'RIGHT JOIN `%3$s` %4$s ON (%2$s.ID = %4$s.DemonstrationID) '.
         'WHERE %2$s.StudentID=%5$u AND %4$s.DemonstratedLevel != 0 '.
-        $conditions.
+        '%6$s '.
         ' ORDER BY %4$s.DemonstratedLevel ASC',
-        [
+        $parameters = [
             Slate\CBL\Demonstrations\Demonstration::$tableName,
             Slate\CBL\Demonstrations\Demonstration::getTableAlias(),
             Slate\CBL\Demonstrations\DemonstrationSkill::$tableName,
             Slate\CBL\Demonstrations\DemonstrationSkill::getTableAlias(),
-            $Student->ID
+            $Student->ID,
+            !empty($conditions) ? sprintf(' AND %s.%s', Slate\CBL\Demonstrations\Demonstration::getTableAlias(), $conditions) : $conditions
         ]
     );
 
@@ -116,35 +118,40 @@ foreach ($students AS $Student) {
             $level
         ];
         foreach ($contentAreas AS $ContentArea) {
-            $demonstrationsCounted = 0;
-            $demonstrationsRequired = 0;
-            $demonstrationsMissing = 0;
+            $totalDemonstrationsCounted = 0;
+            $totalDemonstrationsRequired = 0;
+            $totalDemonstrationsMissing = 0;
             $contentAreaAverageTotal = 0;
 
             foreach ($ContentArea->Competencies AS $Competency) {
-                $competencyCompletion = $Competency->getCompletionForStudent($Student, $level);
-                $currentLevel = !empty($competencyCompletion['currentLevel']) ? $competencyCompletion['currentLevel'] : 'default'; // use "default" level for calculating er's if user isn't on any level
-                $totalDemonstrationsRequired = intval($Competency->getTotalDemonstrationsRequired($currentLevel, true));
+                $competencyCompletion = $Competency->getCompletionForStudent($Student, $level, $conditions);
+                $demonstrationsRequired = intval($Competency->getTotalDemonstrationsRequired($level, true));
 
                 // Logged
                 $row[] = intval($competencyCompletion['demonstrationsLogged']);
                 // Total
-                $row[] = $totalDemonstrationsRequired;
+                $row[] = $demonstrationsRequired;
                 // Average
-                $row[] = intval($competencyCompletion['demonstrationsAverage'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null);
-
-                $demonstrationsCounted += $competencyCompletion['demonstrationsLogged'];
-                $demonstrationsRequired += $totalDemonstrationsRequired;
+                $row[] = $competencyCompletion['demonstrationsAverage'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null;
+                $totalDemonstrationsCounted += $competencyCompletion['demonstrationsLogged'];
+                $totalDemonstrationsRequired += $demonstrationsRequired;
 
                 // averages are weighted by number of demonstrations
-                $contentAreaAverageTotal += $competencyCompletion['demonstrationsAverage'] * $competencyCompletion['demonstrationsCount'];
+                $contentAreaAverageTotal += $competencyCompletion['demonstrationsAverage'] * $competencyCompletion['demonstrationsLogged'];
 
                 if(isset($missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID])) {
-                    $demonstrationsMissing += $missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID];
+                    $totalDemonstrationsMissing += $missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID];
                 }
-
-                $row[] = intval($demonstrationsCounted ? round($contentAreaAverageTotal / $demonstrationsCounted, 2) : null);
             }
+
+            // Content Area Logged
+            $row[] = $totalDemonstrationsCounted;
+            // Content Area Required
+            $row[] = $totalDemonstrationsRequired;
+            // Content Area Missing
+            $row[] = $totalDemonstrationsMissing;
+            // Content Area Average
+            $row[] = $totalDemonstrationsCounted ? round($contentAreaAverageTotal / $totalDemonstrationsCounted, 2) : 0;
         }
         $rows[] = $row;
     }
