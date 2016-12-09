@@ -2,13 +2,16 @@
 
 namespace Slate\CBL;
 
+use \Slate\CBL\StudentCompetency;
+
 $Student = $_EVENT['Record']->Demonstration->Student;
 $Competency = $_EVENT['Record']->Skill->Competency;
 
 $completion = $Competency->getCompletionForStudent($Student);
 
 if (
-        \Slate\CBL\StudentCompetency::isCurrentLevelComplete($Student, $Competency) &&
+        StudentCompetency::$autoGraduate &&
+        StudentCompetency::isCurrentLevelComplete($Student, $Competency) &&
         $completion['currentLevel'] < $Competency->getMaximumTargetLevel()
    ) {
 
