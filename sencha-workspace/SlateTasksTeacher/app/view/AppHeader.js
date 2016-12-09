@@ -11,7 +11,7 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
         xtype: 'component',
         cls: 'slate-appheader-title',
         itemId: 'title',
-        html: 'Teacher Task Library'
+        html: 'Teacher Task Manager'
     }, {
         xtype: 'combo',
         itemId: 'sectionSelect',

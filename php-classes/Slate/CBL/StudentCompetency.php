@@ -6,6 +6,8 @@ use Slate\People\Student;
 
 class StudentCompetency extends \ActiveRecord
 {
+    public static $autoGraduate = true;
+
     // ActiveRecord configuration
     public static $tableName = 'cbl_student_competencies';
     public static $singularNoun = 'student competency';
