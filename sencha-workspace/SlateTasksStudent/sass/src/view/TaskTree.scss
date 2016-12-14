@@ -1,23 +1,19 @@
 @mixin slate-tasktree-item-status($status, $color) {
     &.slate-tasktree-status-#{$status} {
-        > div {
-            .slate-tasktree-nub {
-                background-color: darken($color, 5);
+        .slate-tasktree-nub {
+            background-color: darken($color, 5);
 
-                &.is-clickable:hover {
-                    background-color: $color;
-                }
+            &.is-clickable:hover {
+                background-color: darken($color, 15);
             }
+        }
 
-            > .slate-tasktree-data {
-                .slate-tasktree-status {
-                    background-color: $color;
-                }
+        .slate-tasktree-status {
+            background-color: $color;
+        }
 
-                .slate-tasktree-date {
-                    background-color: lighten($color, 10);
-                }
-            }
+        .slate-tasktree-date {
+            background-color: lighten($color, 10);
         }
     }
 }
@@ -81,11 +77,17 @@
 }
 
 .slate-tasktree-data {
+    background-color: white;
+    cursor: pointer;
     flex: 1;
+
+    &:hover,
+    &:focus {
+        background-color: mix($base-color, white, 10%);
+    }
 }
 
 .slate-tasktree-category {
-    background-color: white; // #f5f5f5;
     border-radius: 0 .4375em 0 0;
     color: $muted-color;
     font-size: .75em;
@@ -100,9 +102,7 @@
 
 .slate-tasktree-text {
     align-items: center;
-    background-color: white;
     border-radius: 0 .25em .25em 0;
-    cursor: pointer;
     display: flex;
     line-height: (4/3);
     padding: .5em .625em;
@@ -110,11 +110,6 @@
 
     .is-expanded & {
         border-radius: 0 .25em 0 0;
-    }
-
-    &:hover,
-    &:focus {
-        background-color: mix($base-color, white, 10%);
     }
 }
 
@@ -176,8 +171,16 @@
     margin-left: 1em;
 }
 
+.slate-tasktree-nodate {
+    border-radius: .25em;
+}
+
 .slate-tasktree-date {
     background-color: #eee;
     border-radius: 0 .25em .25em 0;
     font-weight: bold;
+
+    &:empty {
+        display: none;
+    }
 }
