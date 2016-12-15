@@ -11,7 +11,7 @@ $today = date('Y-m-d 00:00:00');
 
 $expiredTasks = StudentTask::getAllByWhere([
     'ExpirationDate' => [
-        'values' => $today,
+        'value' => $today,
         'operator' => '<'
     ],
     'DemonstrationID' => null
@@ -30,72 +30,72 @@ $query =
         '('.
             'SELECT '.
                 '"%2$s", '.
-        		'%4$s.DemonstrationID, '.
-        		'%6$s.SkillID, '.
-        		'%10$s.Level, '.
-        		'0 '.
+                '%4$s.DemonstrationID, '.
+                '%6$s.SkillID, '.
+                '%10$s.Level, '.
+                 '0 '.
 
-        	 'FROM `%3$s` %4$s '.
+             'FROM `%3$s` %4$s '.
 
-        	 'JOIN ( '.
-        	  	'SELECT %6$s.SkillID, %6$s.TaskID '.
-        	  	  'FROM `%5$s` %6$s '.
-        	  ') as %6$s '.
-        		'ON %6$s.TaskID = %4$s.TaskID '.
-        	 'JOIN ( '.
-        		  	'SELECT %8$s.ID, %8$s.CompetencyID '.
-        		  	  'FROM `%7$s` %8$s '.
-        		') as %8$s '.
-        		  'ON %8$s.ID = %6$s.SkillID '.
-        	 'JOIN ( '.
-        			'SELECT MAX(%10$s.Level) as Level, %10$s.CompetencyID, %10$s.StudentID '.
-        	  	  	  'FROM `%9$s` %10$s '.
-        	  		 'GROUP BY StudentID, CompetencyID '.
-        	  	') as %10$s '.
-        		  'ON  %10$s.CompetencyID = %8$s.CompetencyID '.
+             'JOIN ( '.
+                  'SELECT %6$s.SkillID, %6$s.TaskID '.
+                    'FROM `%5$s` %6$s '.
+              ') as %6$s '.
+                'ON %6$s.TaskID = %4$s.TaskID '.
+             'JOIN ( '.
+                      'SELECT %8$s.ID, %8$s.CompetencyID '.
+                        'FROM `%7$s` %8$s '.
+                ') as %8$s '.
+                  'ON %8$s.ID = %6$s.SkillID '.
+             'JOIN ( '.
+                    'SELECT MAX(%10$s.Level) as Level, %10$s.CompetencyID, %10$s.StudentID '.
+                          'FROM `%9$s` %10$s '.
+                       'GROUP BY StudentID, CompetencyID '.
+                  ') as %10$s '.
+                  'ON  %10$s.CompetencyID = %8$s.CompetencyID '.
 
-        	'WHERE %4$s.ExpirationDate < DATE(NOW()) '.
-        	  'AND %10$s.StudentID = %4$s.StudentID '.
-        	  'AND %6$s.SkillID NOT IN ( '.
-        			'SELECT %11$s.SkillID '.
-        	   		  'FROM `%1$s` %11$s '.
-        	   		 'WHERE %11$s.DemonstrationID = %4$s.DemonstrationID '.
+            'WHERE %4$s.ExpirationDate < DATE(NOW()) '.
+              'AND %10$s.StudentID = %4$s.StudentID '.
+              'AND %6$s.SkillID NOT IN ( '.
+                    'SELECT %11$s.SkillID '.
+                         'FROM `%1$s` %11$s '.
+                        'WHERE %11$s.DemonstrationID = %4$s.DemonstrationID '.
               ')'.
         ')'.
     ' UNION '.
         '('.
             'SELECT '.
-            	'"%2$s", '.
-        		'%4$s.DemonstrationID, '.
-        		'%13$s.SkillID, '.
-        		'%10$s.Level, '.
-        		'0 '.
+                '"%2$s", '.
+                '%4$s.DemonstrationID, '.
+                '%13$s.SkillID, '.
+                '%10$s.Level, '.
+                '0 '.
 
-        	 'FROM `%3$s` %4$s '.
+             'FROM `%3$s` %4$s '.
 
-        	 'JOIN ( '.
-        	  	'SELECT %13$s.SkillID, %13$s.StudentTaskID '.
-        	  	  'FROM `%12$s` %13$s '.
-        	  ') as %13$s '.
-        		'ON %13$s.StudentTaskID = %4$s.ID '.
-        	 'JOIN ( '.
-        		  	'SELECT %8$s.ID, %8$s.CompetencyID '.
-        		  	  'FROM `%7$s` %8$s '.
-        		') as %8$s '.
-        		  'ON %8$s.ID = %13$s.SkillID '.
-        	 'JOIN ( '.
-        			'SELECT MAX(%10$s.Level) as Level, %10$s.CompetencyID, %10$s.StudentID '.
-        	  	  	  'FROM `%9$s` %10$s '.
-        	  		 'GROUP BY StudentID, CompetencyID '.
-        	  	') as %10$s '.
-        		  'ON  %10$s.CompetencyID = %8$s.CompetencyID '.
+             'JOIN ( '.
+                  'SELECT %13$s.SkillID, %13$s.StudentTaskID '.
+                    'FROM `%12$s` %13$s '.
+              ') as %13$s '.
+                'ON %13$s.StudentTaskID = %4$s.ID '.
+             'JOIN ( '.
+                      'SELECT %8$s.ID, %8$s.CompetencyID '.
+                        'FROM `%7$s` %8$s '.
+                ') as %8$s '.
+                  'ON %8$s.ID = %13$s.SkillID '.
+             'JOIN ( '.
+                    'SELECT MAX(%10$s.Level) as Level, %10$s.CompetencyID, %10$s.StudentID '.
+                          'FROM `%9$s` %10$s '.
+                       'GROUP BY StudentID, CompetencyID '.
+                  ') as %10$s '.
+                  'ON  %10$s.CompetencyID = %8$s.CompetencyID '.
 
-        	'WHERE %4$s.ExpirationDate < DATE(NOW()) '.
-        	  'AND %10$s.StudentID = %4$s.StudentID '.
-        	  'AND %13$s.SkillID NOT IN ( '.
-        			'SELECT %11$s.SkillID '.
-        	   		  'FROM `%1$s` %11$s '.
-        	   		 'WHERE %11$s.DemonstrationID = %4$s.DemonstrationID '.
+            'WHERE %4$s.ExpirationDate < DATE(NOW()) '.
+              'AND %10$s.StudentID = %4$s.StudentID '.
+              'AND %13$s.SkillID NOT IN ( '.
+                    'SELECT %11$s.SkillID '.
+                         'FROM `%1$s` %11$s '.
+                        'WHERE %11$s.DemonstrationID = %4$s.DemonstrationID '.
               ')'.
         ')'.
     ") missingSkills";

@@ -47,7 +47,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
             try {
                 // check if ID or ParentTaskID is attached to a course section
                 $taskIds = DB::allRecords(
-                    'SELECT DISTINCT %4$s.ID, %4$s.ParentTaskID FROM `%1$s` %2$s JOIN `%3$s` %4$s ON (%4$s.ID = %2$s.TaskID) WHERE %2$s.CourseSectionID = %5$u',
+                    'SELECT DISTINCT %4$s.ID, %4$s.ParentTaskID FROM `%1$s` %2$s JOIN `%3$s` %4$s ON (%4$s.ID = %2$s.TaskID) WHERE %2$s.SectionID = %5$u',
                     [
                         StudentTask::$tableName,
                         StudentTask::getTableAlias(),
