@@ -25,7 +25,7 @@ class StudentTask extends \VersionedRecord
     public static $fields = [
         'TaskID' => 'uint',
         'StudentID' => 'uint',
-        'CourseSectionID' => [
+        'SectionID' => [
             'type' => 'uint',
             'default' => null
         ],
