@@ -65,7 +65,6 @@ class StudentTask extends \VersionedRecord
         ],
         'Section' => [
             'type' => 'one-one',
-            'local' => 'CourseSectionID',
             'class' => Section::class
         ],
         'Comments' => [

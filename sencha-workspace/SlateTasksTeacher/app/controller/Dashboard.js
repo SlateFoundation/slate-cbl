@@ -391,7 +391,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 DueDate: taskAssignerValues.DueDate,
                 ExpirationDate: taskAssignerValues.ExpirationDate,
                 ExperienceType: taskAssignerValues.ExperienceType,
-                CourseSectionID: me.getCourseSelector().getSelection().getId()
+                SectionID: me.getCourseSelector().getSelection().getId()
             });
 
         me.doSaveStudentTask(studentTask, function() {
@@ -507,7 +507,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             Skills: skillsField.getSkills(false), // returnRecords
             Attachments: attachmentsField.getAttachments(false), // returnRecords
             Assignees: currentAssignees, // returnRecords
-            CourseSectionID: courseSection.getId()
+            SectionID: courseSection.getId()
         });
 
         errors = record.validate();

@@ -257,7 +257,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     $studentTask = StudentTask::create([
                         'TaskID' => $Record->ID,
                         'StudentID' => $assigneeData,
-                        'CourseSectionID' => $data['CourseSectionID']
+                        'SectionID' => $data['SectionID']
                     ]);
                 }
                 $studentTask->setFields([
