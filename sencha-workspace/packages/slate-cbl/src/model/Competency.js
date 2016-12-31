@@ -32,7 +32,7 @@ Ext.define('Slate.cbl.model.Competency', {
             return total;
         }
 
-        return requirements.default;
+        return requirements['default']; // eslint-disable-dot-notation
     },
 
     proxy: {
