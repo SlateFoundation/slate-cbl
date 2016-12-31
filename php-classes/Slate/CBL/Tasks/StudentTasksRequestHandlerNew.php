@@ -1,13 +1,13 @@
 <?php
 
-namespace Slate\CBL\Tasks\StudentDashboard;
+namespace Slate\CBL\Tasks;
 
 use Slate\CBL\Tasks\StudentTask;
 use Slate\CBL\Tasks\Task;
 use Slate\Courses\Section;
 use Slate\Courses\SectionsRequestHandler;
 
-class TasksRequestHandler extends \RequestHandler
+class StudentTasksRequestHandlerNew extends \RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json'
@@ -20,14 +20,14 @@ class TasksRequestHandler extends \RequestHandler
         switch ($action = static::shiftPath()) {
             case '':
             case false:
-                return static::handleTasksRequest();
+                return static::handleStudentTasksRequest();
             default:
                 return static::throwNotFoundError();
         }
 
     }
 
-    public static function handleTasksRequest()
+    public static function handleStudentTasksRequest()
     {
         $student = static::_getRequestedStudent();
         $courseSection = static::_getRequestedCourseSection();
