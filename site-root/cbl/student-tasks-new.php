@@ -1,3 +1,4 @@
 <?php
 
-\Slate\CBL\Tasks\StudentTasksRequestHandlerNew::handleRequest();
+Slate\CBL\Tasks\StudentTasksRequestHandlerNew::handleRequest();
+
