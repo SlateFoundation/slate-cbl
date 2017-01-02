@@ -78,7 +78,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // event handlers
     onStudentTasksStoreLoad: function(store) {
-        this.displayTaskData(store.getRange(), true);
+        var me = this,
+            tree = me.getTaskTree();
+
+        tree.update(store.getRange());
     },
 
     onTaskTreeItemClick: function(id) {
