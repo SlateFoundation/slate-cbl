@@ -70,7 +70,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     listen: {
         store: {
             '#StudentTasks': {
-                beforeload: 'onStudentTasksStoreBeforeLoad',
                 load: 'onStudentTasksStoreLoad'
             }
         }
@@ -78,10 +77,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     // event handlers
-    onStudentTasksStoreBeforeLoad: function() {
-        this.getTaskTree().mask('Loading Tasks');
-    },
-
     onStudentTasksStoreLoad: function(store) {
         this.displayTaskData(store.getRange(), true);
     },
