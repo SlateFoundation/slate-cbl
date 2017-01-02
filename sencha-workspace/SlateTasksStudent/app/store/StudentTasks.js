@@ -4,23 +4,6 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
 
     model: 'SlateTasksStudent.model.StudentTask',
 
-    config: {
-        pageSize: 0
-    },
+    parentIdProperty: 'ParentID'
 
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/student-tasks/assigned',
-        include: [
-            'Submitted',
-            'Student',
-            'Section',
-            'Comments',
-            'Attachments',
-            'Submissions',
-            'TaskSkills',
-            'Task.Attachments',
-            'Task.ParentTask'
-        ]
-    }
 });
