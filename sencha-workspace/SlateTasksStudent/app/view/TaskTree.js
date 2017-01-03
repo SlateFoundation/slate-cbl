@@ -93,8 +93,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
         /* eslint-enable indent */
         {
-            hasSubtasks: function(values) {
-                return values.childNodes && values.childNodes.length > 0;
+            hasSubtasks: function(rec) {
+                return rec.childNodes && rec.childNodes.length > 0;
             },
             getStatusString: function(values) {
                 var taskStatus = values.data.TaskStatus,
