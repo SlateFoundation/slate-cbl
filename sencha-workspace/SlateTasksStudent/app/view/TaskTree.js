@@ -46,10 +46,9 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     /* eslint-disable indent */
     tpl: [
         '<ul class="slate-tasktree-list">',
-
             '<tpl for=".">',
 
-                '<li class="slate-tasktree-item <tpl if="this.hasSubtasks(values)">has-subtasks</tpl> slate-tasktree-status-{[ this.getStatusCls(values) ]}" data-id="{data.ID}">',
+                '<li class="slate-tasktree-item <tpl if="this.hasSubtasks(values)">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values) ]}" data-id="{data.ID}">',
 
                     '<div class="flex-ct">',
                         '<div class="slate-tasktree-nub <tpl if="this.hasSubtasks(values)">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -67,7 +66,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                         '<ul class="slate-tasktree-sublist">',
 
                             '<tpl for="childNodes">',
-                                '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getStatusCls(values) ]}" data-id="{data.ID}">',
+                                '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values) ]}" data-id="{data.ID}">',
 
                                     '<div class="flex-ct">',
                                         '<div class="slate-tasktree-nub"></div>',
@@ -120,6 +119,54 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
+            getDueStatusCls: function(task) {
+                var activeStatuses = [
+                        'assigned',
+                        're-assigned',
+                        'submitted',
+                        're-submitted'
+                    ],
+                    statusClasses = this.statusClasses,
+                    dueDate = task.data.DueDate,
+                    status = task.data.TaskStatus,
+                    now, endOfDueDate, isLate;
+
+                if (dueDate) {
+                    now = new Date();
+                    endOfDueDate = new Date(dueDate);
+                    // task is late after midnight of due date
+                    endOfDueDate.setHours(23);
+                    endOfDueDate.setMinutes(59);
+                    endOfDueDate.setSeconds(59);
+
+                    isLate = activeStatuses.indexOf(status) > -1 && endOfDueDate < now;
+                }
+
+                if (isLate) {
+                    return statusClasses.late[status] || '';
+                }
+                return statusClasses[status] || '';
+            },
+            statusClasses: {
+
+                'assigned': 'due',
+                're-assigned': 'revision',
+
+                'submitted': 'due needsrated',
+                're-submitted': 'revision needsrated',
+
+                'late': {
+                    'submitted': 'late needsrated',
+                    're-submitted': 'late needsrated',
+
+                    'assigned': 'late',
+                    're-assigned': 'late'
+                },
+
+                'completed': 'completed'
+            }
+
+/*
             getStatusCls: function(values) {
                 var due = values.data.DueDate,
                     taskStatus = values.data.TaskStatus,
@@ -134,6 +181,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
                 return statusCls;
             }
+*/
+
         }
     ],
 
