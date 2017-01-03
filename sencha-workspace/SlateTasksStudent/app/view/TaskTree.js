@@ -145,6 +145,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         }
     },
 
+
     // config handlers
     updateCourseSection: function(val) {
         var me = this;
@@ -152,21 +153,60 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         me.fireEvent('coursesectionchange', me, val);
     },
 
+
     // event handlers
     onTreeClick: function(ev, t) {
-        var target = Ext.get(t),
-            parentEl, recordId;
+        var me = this,
+            target = Ext.get(t),
+            parentEl = target.up('.slate-tasktree-item'),
+            recordId;
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            target.up('.slate-tasktree-item').toggleCls('is-expanded');
-        } else {
-            parentEl = target.up('.slate-tasktree-item');
-            if (parentEl) {
-                console.log(parentEl.dom.getAttribute('data-id'));
-                recordId = parseInt(parentEl.dom.getAttribute('data-id'), 10);
-                this.fireEvent('itemclick', recordId);
-            }
+            parentEl.toggleCls('is-expanded');
+            me.resizeSubtasksContainer(parentEl);
+            me.resizeParentContainer();
+        } else if (parentEl) {
+            // console.log(parentEl.dom.getAttribute('data-id'));
+            recordId = parseInt(parentEl.dom.getAttribute('data-id'), 10);
+            me.fireEvent('itemclick', recordId);
         }
-    }
+    },
 
+
+    // custom methods
+    /*
+     * TODO: This seems hacky to me.  If the height of the subtasks can't be correctly sized in CSS, I'd prefer handling
+     * subitem expansion with Ext.Dom visibility methods as is currently implemeted in the Todo list.
+     */
+    resizeSubtasksContainer: function(parentTaskEl) {
+        var subtasks,
+            subtasksLength,
+            subtasksHeight = 0,
+            i = 0;
+
+        if (parentTaskEl.hasCls('is-expanded')) {
+            subtasks = parentTaskEl.query('.slate-tasktree-item', false);
+            subtasksLength = subtasks.length;
+
+            for (; i<subtasksLength; i++) {
+                subtasksHeight += subtasks[i].getHeight() + 1;
+            }
+
+            parentTaskEl.down('ul').setHeight(subtasksHeight);
+
+        } else {
+            parentTaskEl.down('ul').setHeight(0);
+        }
+    },
+
+    resizeParentContainer: function() {
+        var me = this,
+            doc = document.documentElement,
+            currentScroll = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+
+        Ext.Function.defer(function() {
+            me.up('container').updateLayout();
+            window.scrollTo(0, currentScroll);
+        }, 200);
+    }
 });
