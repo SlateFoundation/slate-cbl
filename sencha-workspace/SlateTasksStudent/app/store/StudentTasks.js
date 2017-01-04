@@ -13,7 +13,7 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
 
     proxy: {
         type: 'slate-records',
-        url: '/cbl/student-tasks-new'
+        url: '/cbl/student-tasks/list'
     }
 
 });

@@ -6,6 +6,7 @@ use DB;
 use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
+use Slate\Courses\Section;
 use Slate\Courses\SectionsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
 use Emergence\Comments\Comment;
@@ -22,6 +23,8 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         switch ($action = $action ?: static::shiftPath()) {
             case 'assigned':
                 return static::handleAssignedRequest();
+            case 'list':
+                return static::handleStudentTasksListRequest();
             case 'submit':
                 return static::handleStudentTaskSubmissionRequest();
             default:
@@ -50,13 +53,90 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
     }
 
-    public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
+    public static function handleStudentTasksListRequest()
     {
         $student = static::_getRequestedStudent();
         $courseSection = static::_getRequestedCourseSection();
 
+        $query = '
+            SELECT Tasks.ID as TaskID,
+                   Tasks.ParentTaskID as ParentID,
+                   Tasks.Title as TaskTitle,
+                   StudentTasks.StudentId as StudentID,
+                   StudentTasks.ID as ID,
+                   StudentTasks.TaskStatus as TaskStatus,
+                   UNIX_TIMESTAMP(StudentTasks.DueDate) as DueDate,
+                   CourseSections.Title as CourseSectionTitle,
+                   CourseSections.Code as CourseSectionCode,
+                   UNIX_TIMESTAMP(Submissions.UltimateSubmission) as SubmittedDate
+            FROM %1$s StudentTasks
+            JOIN %2$s Tasks on Tasks.ID = StudentTasks.TaskID
+            JOIN %3$s CourseSections on CourseSections.ID = StudentTasks.CourseSectionID
+            LEFT JOIN (
+                SELECT StudentTaskID as SubmissionStudentTaskID,
+                       MAX(Created) as UltimateSubmission
+                FROM %4$s
+                GROUP BY SubmissionStudentTaskID
+            ) as Submissions ON (SubmissionStudentTaskID = StudentTasks.ID )
+            WHERE StudentTasks.StudentID = %5$d
+        ';
+
         if ($courseSection) {
-            $conditions['SectionID'] = $courseSection->ID;
+            $query .= ' AND StudentTasks.CourseSectionID = '.$courseSection->ID;
+        } else {
+            $query .= ' AND StudentTasks.CourseSectionID IS NOT NULL';  // return all
+        }
+
+        /* In the student task dashboard, tasks should be organized by status and then sorted by due date.
+         * Status ordering should be Past due, due in the future, no due date completed.
+         * Past due tasks should be organized most overdue to least overdue (chronologically with latest date at the top),
+         * due in the future should be organized by closest to today (chronologically with earliest date at the top)
+         * and completed should be organized by most recently completed at the top (chronologically with most recent submission date at the top).
+         */
+        $query .= ' ORDER BY TaskStatus = "completed",';                            // Completed go last
+        $query .= ' (TaskStatus <> "assigned" AND TaskStatus <> "re-assigned"),';   // assigned statuses go first
+        $query .= ' IF ( (TaskStatus = "assigned" OR TaskStatus = "re-assigned") AND StudentTasks.DueDate IS NULL, 1, 0),'; // DueDate = null goes last
+
+        // Order by DueDate if assigned, Order by Submitted date DESC if not
+        $query .= ' CASE WHEN (TaskStatus = "assigned" OR TaskStatus = "re-assigned")
+                            THEN StudentTasks.DueDate
+                            ELSE NULL
+                    END,
+                    Submissions.UltimateSubmission DESC
+                ';
+
+        try {
+            $tasks = \DB::allRecords($query, [
+                StudentTask::$tableName,            // 1
+                Task::$tableName,                   // 2
+                Section::$tableName,                // 3
+                StudentTaskSubmission::$tableName,  // 4
+                $student->ID                        // 5
+            ]);
+        } catch (TableNotFoundException $e) {
+            $tasks = [];
+        }
+
+        return static::respond('tasks',[
+            'success' => true
+            ,'data' => $tasks
+            ,'total' => count($tasks)
+        ]);
+
+    }
+
+    public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
+    {
+        $student = static::_getRequestedStudent();
+        $courseSection = static::_getRequestedCourseSection();
+        $ID = static::_getRequestedID();
+
+        if ($courseSection) {
+            $conditions['CourseSectionID'] = $courseSection->ID;
+        }
+
+        if ($ID) {
+            $conditions['ID'] = $ID;
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
@@ -320,5 +400,21 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         return $CourseSection;
     }
+
+    protected static function _getRequestedID()
+    {
+        $ID = null;
+
+        if (!empty($_GET['ID'])) {
+            if ($StudentTask = StudentTask::getByID($_GET['ID'])) {
+                $ID = $StudentTask->ID;
+            } else {
+                return static::throwNotFoundError('Student Task was not found');
+            }
+        }
+
+        return $ID;
+    }
 }
+
 
