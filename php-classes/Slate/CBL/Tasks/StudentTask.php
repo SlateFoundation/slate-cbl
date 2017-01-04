@@ -133,11 +133,6 @@ class StudentTask extends \VersionedRecord
     ];
 
     public static $searchConditions = [
-        'ID' => [
-            'qualifiers' => ['id', 'student_task_id'],
-            'points' => 2,
-            'sql' => 'ID = %u'
-        ],
         'Task' => [
             'qualifiers' => ['task', 'task_id', 'taskid'],
             'points' => 2,
