@@ -39,18 +39,18 @@ class StudentTasksRequestHandlerNew extends \RequestHandler
                    Tasks.Title as TaskTitle,
                    StudentTasks.ID as StudentTaskID,
                    StudentTasks.TaskStatus as TaskStatus,
-                   StudentTasks.DueDate,
+                   StudentTasks.DueDate as DueDate,
                    CourseSections.Title as CourseSectionTitle,
                    CourseSections.Code as CourseSectionCode,
-                   Submissions.UltimateSubmission as SubmittedTimestamp
+                   Submissions.UltimateSubmission as SubmittedDate
             FROM %1$s StudentTasks
             JOIN %2$s Tasks on Tasks.ID = StudentTasks.TaskID
             JOIN %3$s CourseSections on CourseSections.ID = StudentTasks.CourseSectionID
             LEFT JOIN (
                 SELECT StudentTaskID as SubmissionStudentTaskID,
-                       Created as UltimateSubmission
+                       MAX(Created) as UltimateSubmission
                 FROM %4$s
-                ORDER BY UltimateSubmission
+                GROUP BY SubmissionStudentTaskID
             ) as Submissions ON (SubmissionStudentTaskID = StudentTasks.ID )
             WHERE StudentTasks.StudentID = %5$d
         ';
@@ -60,6 +60,24 @@ class StudentTasksRequestHandlerNew extends \RequestHandler
         } else {
             $query .= ' AND StudentTasks.CourseSectionID IS NOT NULL';  // return all
         }
+
+        /* In the student task dashboard, tasks should be organized by status and then sorted by due date.
+         * Status ordering should be Past due, due in the future, no due date completed.
+         * Past due tasks should be organized most overdue to least overdue (chronologically with latest date at the top),
+         * due in the future should be organized by closest to today (chronologically with earliest date at the top)
+         * and completed should be organized by most recently completed at the top (chronologically with most recent submission date at the top).
+         */
+        $query .= ' ORDER BY TaskStatus = "completed",';                            // Completed go last
+        $query .= ' (TaskStatus <> "assigned" AND TaskStatus <> "re-assigned"),';   // assigned statuses go first
+        $query .= ' IF ( (TaskStatus = "assigned" OR TaskStatus = "re-assigned") AND StudentTasks.DueDate IS NULL, 1, 0),'; // DueDate = null goes last
+
+        // Order by DueDate if assigned, Order by Submitted date DESC if not
+        $query .= ' CASE WHEN (TaskStatus = "assigned" OR TaskStatus = "re-assigned")
+                            THEN StudentTasks.DueDate
+                            ELSE NULL
+                    END,
+                    SubmittedDate DESC
+                ';
 
         try {
             $tasks = \DB::allRecords($query, [
