@@ -111,7 +111,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 var taskStatus = values.data.TaskStatus,
                     taskDate;
 
-                if (taskStatus === 'submitted' || taskStatus === 're-submitted') {
+                if (taskStatus === 'submitted' || taskStatus === 're-submitted' || taskStatus === 'completed') {
                     taskDate = values.data.Submitted;
                 } else {
                     taskDate = values.data.DueDate;
