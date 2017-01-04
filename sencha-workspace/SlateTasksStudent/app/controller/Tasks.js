@@ -131,43 +131,50 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     onFilterItemCheckChange: function() {
         var me = this,
+            tree = me.getTaskTree(),
             menu = me.getFilterMenu(),
             statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
             timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
             store = me.getStudentTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
-            i = 0,
-            rec;
+            recs, recLength, i = 0, rec;
+
+        store.clearFilter();
+        recs = store.getRange();
+        recLength = recs.length;
 
         for (; i < recLength; i++) {
             rec = recs[i];
             rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
         }
 
-        me.displayTaskData(store.getRange());
+        store.filter('filtered', false);
+
+        tree.update(store.getRange());
 
     },
 
     onFilterViewAllClick: function() {
         var me = this,
+            tree = me.getTaskTree(),
             menu = me.getFilterMenu(),
             checkedFilters = menu.query('menucheckitem[checked]'),
             checkedFiltersLength = checkedFilters.length,
             store = this.getStudentTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
-            i = 0;
+            recs, recLength, i = 0;
 
         for (; i < checkedFiltersLength; i++) {
             checkedFilters[i].setChecked(false, true);
         }
 
+        store.clearFilter();
+        recs = store.getRange();
+        recLength = recs.length;
+
         for (i = 0; i < recLength; i++) {
-            recs[i].set('filtered', false);
+            recs[i].set('filtered', true);
         }
 
-        me.displayTaskData(store.getRange());
+        tree.update(store.getRange());
     },
 
     onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
