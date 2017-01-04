@@ -8,5 +8,11 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
 
     config: {
         pageSize: 0
+    },
+
+    proxy: {
+        type: 'slate-records',
+        url: '/cbl/student-tasks-new'
     }
+
 });
