@@ -45,13 +45,14 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         {
             name: 'DueDate',
             type: 'date',
+            dateFormat: 'c',
             allowNull: true
         },
         {
             name: 'Submitted',
             type: 'date',
-            mapping: 'SubmittedTimestamp',
-            dateFormat: 'timestamp',
+            mapping: 'SubmittedDate',
+            dateFormat: 'c',
             allowNull: true
         },
         {
