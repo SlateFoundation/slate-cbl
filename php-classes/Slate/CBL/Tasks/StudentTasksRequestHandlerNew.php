@@ -3,6 +3,7 @@
 namespace Slate\CBL\Tasks;
 
 use Slate\CBL\Tasks\StudentTask;
+use Slate\CBL\Tasks\StudentTaskSubmission;
 use Slate\CBL\Tasks\Task;
 use Slate\Courses\Section;
 use Slate\Courses\SectionsRequestHandler;
@@ -39,13 +40,19 @@ class StudentTasksRequestHandlerNew extends \RequestHandler
                    StudentTasks.ID as StudentTaskID,
                    StudentTasks.TaskStatus as TaskStatus,
                    StudentTasks.DueDate,
-                   StudentTasks.Submitted as SubmittedTimestamp,
                    CourseSections.Title as CourseSectionTitle,
-                   CourseSections.Code as CourseSectionCode
+                   CourseSections.Code as CourseSectionCode,
+                   Submissions.UltimateSubmission as SubmittedTimestamp
             FROM %1$s StudentTasks
             JOIN %2$s Tasks on Tasks.ID = StudentTasks.TaskID
             JOIN %3$s CourseSections on CourseSections.ID = StudentTasks.CourseSectionID
-            WHERE StudentTasks.StudentID = %4$d
+            LEFT JOIN (
+                SELECT StudentTaskID as SubmissionStudentTaskID,
+                       Created as UltimateSubmission
+                FROM %4$s
+                ORDER BY UltimateSubmission
+            ) as Submissions ON (SubmissionStudentTaskID = StudentTasks.ID )
+            WHERE StudentTasks.StudentID = %5$d
         ';
 
         if ($courseSection) {
@@ -56,10 +63,11 @@ class StudentTasksRequestHandlerNew extends \RequestHandler
 
         try {
             $tasks = \DB::allRecords($query, [
-                StudentTask::$tableName,    // 1
-                Task::$tableName,           // 2
-                Section::$tableName,        // 3
-                $student->ID                // 4
+                StudentTask::$tableName,            // 1
+                Task::$tableName,                   // 2
+                Section::$tableName,                // 3
+                StudentTaskSubmission::$tableName,  // 4
+                $student->ID                        // 5
             ]);
         } catch (TableNotFoundException $e) {
             $tasks = [];
