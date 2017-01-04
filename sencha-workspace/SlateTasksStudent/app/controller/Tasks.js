@@ -16,6 +16,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         'TaskFilters'
     ],
 
+    models: [
+        'StudentTask'
+    ],
+
     stores: [
         'StudentTasks'
     ],
@@ -86,43 +90,20 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     onTaskTreeItemClick: function(id) {
         var me = this,
-            rec = me.getStudentTasksStore().getById(id),
-            details = me.getTaskDetails(),
-            form = me.getTaskForm(),
-            ratingView = me.getRatingView(),
-            teacherAttachmentsField = me.getTeacherAttachmentsField(),
-            studentAttachmentsField = me.getStudentAttachmentsField(),
-            commentsField = me.getCommentsField(),
-            submissions = rec.get('Submissions'),
-            readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
+            rec = new SlateTasksStudent.model.StudentTask({ ID: id });
 
-        form.getForm().loadRecord(rec);
-
-        if (submissions && submissions.length && submissions.length > 0) {
-            form.down('displayfield[name="Submitted"]').hide();
-            form.down('displayfield[name="Submissions"]').show();
-        } else {
-            form.down('displayfield[name="Submitted"]').show();
-            form.down('displayfield[name="Submissions"]').hide();
-        }
-
-        ratingView.setData({
-            ratings: [7, 8, 9, 10, 11, 12, 'M'],
-            competencies: rec.getTaskSkillsGroupedByCompetency()
+        rec.load({
+            params: {
+                ID: id
+            },
+            callback: function(record, op, success) {
+                if (success) {
+                    me.showDetails(record);
+                } else {
+                    Ext.toast('Unable to load task');
+                }
+            }
         });
-
-        me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
-        teacherAttachmentsField.setAttachments(rec.get('Task').Attachments);
-        teacherAttachmentsField.setReadOnly(true);
-        commentsField.setRecord(rec);
-        commentsField.setReadOnly(true);
-
-        studentAttachmentsField.setAttachments(rec.Attachments().getRange());
-        studentAttachmentsField.setReadOnly(readonly);
-
-        me.getSubmitButton().setDisabled(readonly);
-
-        details.show();
     },
 
     onSubmitButtonClick: function() {
@@ -291,6 +272,49 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
 
         return filtered;
+    },
+
+    showDetails: function(rec) {
+        var me = this,
+            details = me.getTaskDetails(),
+            form = me.getTaskForm(),
+            ratingView = me.getRatingView(),
+            teacherAttachmentsField = me.getTeacherAttachmentsField(),
+            studentAttachmentsField = me.getStudentAttachmentsField(),
+            commentsField = me.getCommentsField(),
+            submissions = rec.get('Submissions'),
+            readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
+
+        form.getForm().loadRecord(rec);
+
+        if (submissions && submissions.length && submissions.length > 0) {
+            form.down('displayfield[name="Submitted"]').hide();
+            form.down('displayfield[name="Submissions"]').show();
+        } else {
+            form.down('displayfield[name="Submitted"]').show();
+            form.down('displayfield[name="Submissions"]').hide();
+        }
+
+        ratingView.setData({
+            ratings: [7, 8, 9, 10, 11, 12, 'M'],
+            competencies: rec.getTaskSkillsGroupedByCompetency()
+        });
+
+        me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
+        teacherAttachmentsField.setAttachments(rec.get('Task').Attachments);
+        teacherAttachmentsField.setReadOnly(true);
+        commentsField.setRecord(rec);
+        commentsField.setReadOnly(true);
+
+        studentAttachmentsField.setAttachments(rec.Attachments().getRange());
+        studentAttachmentsField.setReadOnly(readonly);
+
+        me.getSubmitButton().setDisabled(readonly);
+
+        details.show();
+
+
     }
+
 
 });
