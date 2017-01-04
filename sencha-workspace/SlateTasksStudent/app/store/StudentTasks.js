@@ -5,6 +5,7 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
     model: 'SlateTasksStudent.model.StudentTask',
 
     parentIdProperty: 'ParentID',
+    remoteSort: true,
 
     config: {
         pageSize: 0
