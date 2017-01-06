@@ -3,6 +3,7 @@
 namespace Slate\CBL\Tasks;
 
 use DB;
+use Slate\Term;
 use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
@@ -57,6 +58,29 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
     {
         $student = static::_getRequestedStudent();
         $courseSection = static::_getRequestedCourseSection();
+        $courseSectionIds = [];
+
+        if (!$courseSection) {
+            $currentTerm = Term::getCurrent();
+            $sections = [];
+
+            if ($currentTerm) {
+                $sections = Section::getAllByField('TermID', $currentTerm->ID);
+            }
+
+            if ($currentTerm && count($sections) > 0) {
+                $courseSectionIds = array_map(function($s) {
+                    return $s->ID;
+                }, $sections);
+            } else {
+                // If there was no section sent, and there are no sections in the current term, there is no reason to run a query
+                return static::respond('tasks',[
+                    'success' => true
+                    ,'data' => []
+                    ,'total' => 0
+                ]);
+            }
+        }
 
         $query = '
             SELECT Tasks.ID as TaskID,
@@ -84,7 +108,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         if ($courseSection) {
             $query .= ' AND StudentTasks.CourseSectionID = '.$courseSection->ID;
         } else {
-            $query .= ' AND StudentTasks.CourseSectionID IS NOT NULL';  // return all
+            $query .= ' AND StudentTasks.CourseSectionID IN ('.implode(',',$courseSectionIds).')';
         }
 
         /* In the student task dashboard, tasks should be organized by status and then sorted by due date.
