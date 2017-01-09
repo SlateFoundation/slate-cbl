@@ -185,7 +185,7 @@ class StudentTask extends \VersionedRecord
 
         if ($this->Task && $this->Task->Skills) {
             foreach ($this->Task->Skills as $skill) {
-                $currentLevel = $skill->Competency && $this->Student instanceof \Slate\People\Student ? $skill->Competency->getCurrentLevelForStudent($this->Student) : null;
+                $currentLevel = $skill->Competency->getCurrentLevelForStudent($this->Student);
                 $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
 
                 $taskSkills[] = array_merge($skill->getData(), [
@@ -199,7 +199,7 @@ class StudentTask extends \VersionedRecord
 
         if ($this->Skills) {
             foreach ($this->Skills as $skill) {
-                $currentLevel = $skill->Competency && $this->Student instanceof \Slate\People\Student ? $skill->Competency->getCurrentLevelForStudent($this->Student) : null;
+                $currentLevel = $skill->Competency->getCurrentLevelForStudent($this->Student);
                 $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
 
                 $taskSkills[] = array_merge($skill->getData(), [
