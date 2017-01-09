@@ -128,7 +128,7 @@ class StudentTask extends \VersionedRecord
         ],
 
         'Student' => [
-            'validator' => 'require-relationship'
+            'method' => [__CLASS__, 'validateStudent']
         ]
     ];
 
@@ -153,6 +153,18 @@ class StudentTask extends \VersionedRecord
 
             default:
                 return parent::getValue($name);
+        }
+    }
+
+    protected static function validateStudent(\RecordValidator $RecordValidator, StudentTask $StudentTask, $options, $validator)
+    {
+        if (!$RecordValidator->hasErrors('Student')) {
+            $Student = $StudentTask->Student;
+            if (!$Student) {
+                $RecordValidator->addError('Student', 'Tasks must be assigned to a student.');
+            } elseif (!$Student instanceof \Slate\People\Student) {
+                $RecordValidator->addError('Student', 'Tasks can only be assigned to students.');
+            }
         }
     }
 
