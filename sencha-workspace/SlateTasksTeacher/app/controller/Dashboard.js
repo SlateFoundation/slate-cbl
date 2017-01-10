@@ -293,13 +293,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         studentTask.set('TaskStatus', status);
 
-        me.doSaveStudentTask(studentTask, function(rec, success, request) {
-            var response = JSON.parse(request.getResponse().responseText),
-                validationErrors, key,
-                message = [
-                    'Unable to accept task.<br>'
-                ];
-
+        me.doSaveStudentTask(studentTask, function(rec, request, success) {
             if (success) {
                 taskRater.close();
                 me.getStudentTasksStore().load({
@@ -310,19 +304,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 if (status === 're-assigned') {
                     me.doRateStudentTask(rec);
                 }
-            } else {
-                rec.reject();
-                if (response.failed.length) {
-                    validationErrors = response.failed[0].validationErrors;
-                    for (key in validationErrors) {
-                        if (validationErrors.hasOwnProperty(key)) {
-                            message.push(
-                                '<br>' + validationErrors[key] + '<br>'
-                            );
-                        }
-                    }
-                }
-                Ext.Msg.alert('Error', message.join(' '))
             }
         });
     },
@@ -415,11 +396,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 SectionID: me.getCourseSelector().getSelection().getId()
             });
 
-        me.doSaveStudentTask(studentTask, function(rec, success, request) {
-            var response,
-                message = [],
-                validationErrors, key;
-
+        me.doSaveStudentTask(studentTask, function(rec, request, success) {
             if (success) {
                 taskAssigner.close();
                 me.getStudentTasksStore().load({
@@ -427,24 +404,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     addRecords: true
                 });
                 Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
-            } else {
-                response = JSON.parse(request.getResponse().responseText);
-                message.push(
-                    'Failed to assign',
-                    '<b>'+rec.get('Task').Title+'</b>',
-                    'to',
-                    '<b>' + rec.get('Student').FirstName + ' ' + rec.get('Student').LastName + '</b>:',
-                    '<br><br>'
-                );
-                if (response.failed.length) {
-                    validationErrors = response.failed[0].validationErrors;
-                    for (key in validationErrors) {
-                        if (validationErrors.hasOwnProperty(key)) {
-                            message.push(validationErrors[key]+'<br>');
-                        }
-                    }
-                    Ext.Msg.alert('Error', message.join(' '));
-                }
             }
         });
 
@@ -459,12 +418,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         if (studentTask) {
             me.getTaskEditorForm().updateRecord(studentTask);
             studentTask.set('SkillIDs', me.getSkillsField().getSkills(false, true)); // returnRecords, idsOnly
-            return me.doSaveStudentTask(studentTask, function(rec, success, request) {
-                var response = JSON.parse(request.getResponse().responseText),
-                    message = ['Unable to save task.<br>'],
-                    validationErrors, key;
-
-
+            return me.doSaveStudentTask(studentTask, function(rec, request, success) {
                 if (success) {
                     me.getStudentTasksStore().load({
                         id: studentTask.getId(),
@@ -472,19 +426,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     });
                     taskEditor.close();
                     Ext.toast('Student task successfully updated.');
-                } else {
-                    if (response.failed.length) {
-                        validationErrors = response.failed[0].validationErrors;
-                        for (key in validationErrors) {
-                            if (validationErrors.hasOwnProperty(key)) {
-                                message.push(validationErrors[key]+ '<br>');
-                            }
-                        }
-                    } else {
-                        message.push('Please try again or contact an administrator for assistance.');
-                    }
-                    rec.reject();
-                    Ext.Msg.alert('Save failed', message.join(' '));
                 }
             });
         }
@@ -550,11 +491,35 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     doSaveStudentTask: function(studentTask, callback, scope) {
         studentTask.save({
-            success: function(rec, request) {
-                Ext.callback(callback, scope, [rec, true, request]);
-            },
-            failure: function(rec, request) {
-                Ext.callback(callback, scope, [rec, false, request]);
+            callback: function(record, request, success) {
+                var message = [],
+                    response = Ext.decode(request.getResponse().responseText),
+                    validationErrors, key;
+
+                if (!success) {
+                    message.push(
+                        '<p>',
+                        'Unable to save task.',
+                        '</p>'
+                    );
+
+                    if (response.failed && response.failed.length) {
+                        validationErrors = response.failed[0].validationErrors;
+
+                        for (key in validationErrors) {
+                            if (validationErrors.hasOwnProperty(key)) {
+                                message.push(
+                                    '<p>',
+                                    validationErrors[key],
+                                    '</p>'
+                                );
+                            }
+                        }
+                        record.reject();
+                        Ext.Msg.alert('Error', message.join(' '));
+                    }
+                }
+                Ext.callback(callback, scope, arguments);
             }
         });
     },
