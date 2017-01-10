@@ -159,10 +159,9 @@ class StudentTask extends \VersionedRecord
     protected static function validateStudent(\RecordValidator $RecordValidator, StudentTask $StudentTask, $options, $validator)
     {
         if (!$RecordValidator->hasErrors('Student')) {
-            $Student = $StudentTask->Student;
-            if (!$Student) {
+            if (!$StudentTask->Student) {
                 $RecordValidator->addError('Student', 'Tasks must be assigned to a student.');
-            } elseif (!$Student instanceof \Slate\People\Student) {
+            } elseif (!$StudentTask->Student instanceof \Slate\People\Student) {
                 $RecordValidator->addError('Student', 'Tasks can only be assigned to students.');
             }
         }
