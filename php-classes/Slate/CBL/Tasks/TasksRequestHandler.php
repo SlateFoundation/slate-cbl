@@ -248,7 +248,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 return $s->ID;
             }, $originalAssignees);
 
-            $failed = [];
             $assigneeIds = [];
             $assignees = [];
 
