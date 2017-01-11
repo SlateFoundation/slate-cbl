@@ -128,7 +128,7 @@ class StudentTask extends \VersionedRecord
         ],
 
         'Student' => [
-            'method' => [__CLASS__, 'validateStudent']
+            'validator' => [__CLASS__, 'validateStudent']
         ]
     ];
 
