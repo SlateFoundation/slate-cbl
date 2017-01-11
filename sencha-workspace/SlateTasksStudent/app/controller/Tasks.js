@@ -16,6 +16,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         'TaskFilters'
     ],
 
+    models: [
+        'StudentTask'
+    ],
+
     stores: [
         'StudentTasks'
     ],
@@ -70,7 +74,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     listen: {
         store: {
             '#StudentTasks': {
-                beforeload: 'onStudentTasksStoreBeforeLoad',
                 load: 'onStudentTasksStoreLoad'
             }
         }
@@ -78,17 +81,138 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     // event handlers
-    onStudentTasksStoreBeforeLoad: function() {
-        this.getTaskTree().mask('Loading Tasks');
-    },
-
     onStudentTasksStoreLoad: function(store) {
-        this.displayTaskData(store.getRange(), true);
+        var me = this,
+            tree = me.getTaskTree();
+
+        tree.update(store.getRange());
     },
 
     onTaskTreeItemClick: function(id) {
         var me = this,
-            rec = me.getStudentTasksStore().getById(id),
+            rec = new SlateTasksStudent.model.StudentTask({ ID: id });
+
+        rec.load({
+            params: {
+                ID: id
+            },
+            callback: function(record, op, success) {
+                if (success) {
+                    me.showDetails(record);
+                } else {
+                    Ext.toast('Unable to load task');
+                }
+            }
+        });
+    },
+
+    onSubmitButtonClick: function() {
+        var me = this,
+            form = me.getTaskForm(),
+            attachmentsField = me.getStudentAttachmentsField(),
+            record = form.getRecord();
+
+        Slate.API.request({
+            url: Slate.API.buildUrl('/cbl/student-tasks/submit'),
+            jsonData: {
+                ID: record.get('ID'),
+                Attachments: attachmentsField.getAttachments(false)
+            },
+            success: function() {
+                Ext.toast('Task successfully submitted!');
+                me.getStudentTasksStore().reload();
+                me.getTaskDetails().close();
+            },
+            failure: function() {
+                Ext.toast('Task could not be submitted.');
+            }
+        });
+    },
+
+    onFilterItemCheckChange: function() {
+        var me = this,
+            tree = me.getTaskTree(),
+            menu = me.getFilterMenu(),
+            statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
+            timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
+            store = me.getStudentTasksStore(),
+            recs, recLength, i = 0, rec;
+
+        store.clearFilter();
+        recs = store.getRange();
+        recLength = recs.length;
+
+        for (; i < recLength; i++) {
+            rec = recs[i];
+            rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
+        }
+
+        store.filter('filtered', false);
+
+        tree.update(store.getRange());
+
+    },
+
+    onFilterViewAllClick: function() {
+        var me = this,
+            tree = me.getTaskTree(),
+            menu = me.getFilterMenu(),
+            checkedFilters = menu.query('menucheckitem[checked]'),
+            checkedFiltersLength = checkedFilters.length,
+            store = this.getStudentTasksStore(),
+            recs, recLength, i = 0;
+
+        for (; i < checkedFiltersLength; i++) {
+            checkedFilters[i].setChecked(false, true);
+        }
+
+        store.clearFilter();
+        recs = store.getRange();
+        recLength = recs.length;
+
+        for (i = 0; i < recLength; i++) {
+            recs[i].set('filtered', true);
+        }
+
+        tree.update(store.getRange());
+    },
+
+    onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
+        var params = {};
+
+        if (courseSectionId) {
+            params = {
+                'course_section': courseSectionId
+            }
+        }
+
+        this.getStudentTasksStore().load({
+            params: params
+        });
+    },
+
+
+    // custom controller methods
+    /**
+     * Passes a record through a group of filters.
+     * @param {Ext.data.Model} rec- The record to be tested.
+     * @param {Array} filterGroup - An array of objects with a filter function.
+     * @returns {boolean} filtered - true if this rec should be filtered
+     */
+    filterRecord: function(rec, filterGroup) {
+        var filterGroupLength = filterGroup.length,
+            filtered = filterGroupLength !== 0,  // if no filters, return false
+            i = 0;
+
+        for (; i < filterGroupLength; i++) {
+            filtered = filtered && filterGroup[i].filterFn(rec);
+        }
+
+        return filtered;
+    },
+
+    showDetails: function(rec) {
+        var me = this,
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
             ratingView = me.getRatingView(),
@@ -125,177 +249,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         me.getSubmitButton().setDisabled(readonly);
 
         details.show();
-    },
-
-    onSubmitButtonClick: function() {
-        var me = this,
-            form = me.getTaskForm(),
-            attachmentsField = me.getStudentAttachmentsField(),
-            record = form.getRecord();
-
-        Slate.API.request({
-            url: Slate.API.buildUrl('/cbl/student-tasks/submit'),
-            jsonData: {
-                ID: record.get('ID'),
-                Attachments: attachmentsField.getAttachments(false)
-            },
-            success: function() {
-                Ext.toast('Task successfully submitted!');
-                me.getStudentTasksStore().reload();
-                me.getTaskDetails().close();
-            },
-            failure: function() {
-                Ext.toast('Task could not be submitted.');
-            }
-        });
-    },
-
-    onFilterItemCheckChange: function() {
-        var me = this,
-            menu = me.getFilterMenu(),
-            statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
-            timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
-            store = me.getStudentTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
-            i = 0,
-            rec;
-
-        for (; i < recLength; i++) {
-            rec = recs[i];
-            rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
-        }
-
-        me.displayTaskData(store.getRange());
-
-    },
-
-    onFilterViewAllClick: function() {
-        var me = this,
-            menu = me.getFilterMenu(),
-            checkedFilters = menu.query('menucheckitem[checked]'),
-            checkedFiltersLength = checkedFilters.length,
-            store = this.getStudentTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
-            i = 0;
-
-        for (; i < checkedFiltersLength; i++) {
-            checkedFilters[i].setChecked(false, true);
-        }
-
-        for (i = 0; i < recLength; i++) {
-            recs[i].set('filtered', false);
-        }
-
-        me.displayTaskData(store.getRange());
-    },
-
-    onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
-        var student = taskTree.getStudent(),
-            params = {};
-
-        if (courseSectionId) {
-            params.course_section = courseSectionId;  // eslint-disable-line camelcase
-        }
-
-        if (student) {
-            params.student = student;
-        }
-
-        this.getStudentTasksStore().load({
-            params: params
-        });
-    },
 
 
-    // custom controller methods
-    displayTaskData: function(recs) {
-        var me = this,
-            tree = me.getTaskTree(),
-            tasks;
-
-        tasks = me.formatTaskData(recs);
-        tree.setData({ tasks: tasks });
-        tree.unmask();
-    },
-
-    formatTaskData: function(recs) {
-        var me = this,
-            parentRecs = me.getParentRecs(recs),
-            parentRecsLength = parentRecs.length,
-            parentRec,
-            tasks = [],
-            task,
-            subTasks,
-            i = 0;
-
-        for (; i<parentRecsLength; i++) {
-            parentRec = parentRecs[i];
-            task = parentRec.getData();
-            subTasks = me.getSubTasks(recs, task.TaskID);
-
-            if (subTasks.length > 0) {
-                task.subtasks = subTasks;
-                parentRec.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
-            }
-            if (!parentRec.get('filtered')) {
-                tasks.push(task);
-            }
-        }
-
-        return tasks;
-    },
-
-    getParentRecs: function(recs) {
-        var recsLength = recs.length,
-            parentRecs = [],
-            i = 0,
-            rec;
-
-        for (; i<recsLength; i++) {
-            rec = recs[i];
-            if (rec.get('ParentTaskID') === null) {
-                parentRecs.push(rec);
-            }
-        }
-
-        return parentRecs;
-    },
-
-    getSubTasks: function(recs, parentId) {
-        var recsLength = recs.length,
-            i = 0,
-            subTasks = [],
-            rec;
-
-        for (; i<recsLength; i++) {
-            rec = recs[i];
-            if (rec.get('ParentTaskID') === parentId && !rec.get('filtered')) {
-                rec.set('ParentTaskTitle', rec.get('Task').ParentTask.Title);
-                subTasks.push(rec.getData());
-            }
-        }
-
-        return subTasks;
-    },
-
-    /**
-     * Passes a record through a group of filters.
-     * @param {Ext.data.Model} rec- The record to be tested.
-     * @param {Array} filterGroup - An array of objects with a filter function.
-     * @returns {boolean} filtered - true if this rec should be filtered
-     */
-    filterRecord: function(rec, filterGroup) {
-        var filterGroupLength = filterGroup.length,
-            filtered = filterGroupLength !== 0,  // if no filters, return false
-            i = 0;
-
-        for (; i < filterGroupLength; i++) {
-            filtered = filtered && filterGroup[i].filterFn(rec);
-        }
-
-        return filtered;
     }
+
 
 });

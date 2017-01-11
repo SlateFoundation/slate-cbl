@@ -2,24 +2,23 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records',
-        'Slate.cbl.model.tasks.Attachment',
-        'Slate.cbl.model.tasks.Comment',
-        'Slate.cbl.model.Skill'
     ],
 
     // model config
+
     idProperty: 'ID',
+
 
     fields: [
         {
-            name: 'ID',
-            type: 'int',
-            allowNull: true
+            name: 'ID'
+//            type: 'int'
         },
         {
-            name: 'Class',
-            type: 'string',
-            defaultValue: 'Slate\\CBL\\Tasks\\StudentTask'
+            name: 'ParentID',
+            type: 'int',
+            allowNull: true,
+            persist: false
         },
         {
             name: 'Created',
@@ -90,9 +89,8 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             allowNull: true
         },
         {
-            name: 'Submitted',
+            name: 'SubmittedDate',
             type: 'date',
-            mapping: 'Submitted',
             dateFormat: 'timestamp',
             allowNull: true
         },
@@ -112,6 +110,26 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         {
             name: 'ParentTaskTitle',
             type: 'string',
+            persist: false
+        },
+        {
+            name: 'StudentTaskID',
+            type: 'int',
+            allowNull: true,
+            persist: false
+        },
+        {
+            name: 'TaskTitle',
+            type: 'string'
+        },
+        {
+            name: 'TaskStatus',
+            type: 'string'
+        },
+        {
+            name: 'SectionTitle',
+            type: 'string',
+            mapping: 'Section.Title',
             persist: false
         },
         {
@@ -148,7 +166,8 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             type: 'boolean',
             persist: false,
             defaultValue: false
-        }, {
+        },
+        {
             name: 'Comments',
             persist: false
         }
@@ -172,21 +191,24 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
 
     proxy: {
         type: 'slate-records',
-        url: '/cbl/student-tasks',
+        url: '/cbl/student-tasks/assigned',
         include: [
+            'Submitted',
             'Student',
             'Section',
             'Comments',
             'Attachments',
+            'Submissions',
             'TaskSkills',
             'Task.Attachments',
             'Task.ParentTask'
         ]
     },
 
+
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
-            skills = this.get('TaskSkills'),
+            skills = this.get('TaskSkills') || [],
             compIdx, skill,
             i = 0;
 

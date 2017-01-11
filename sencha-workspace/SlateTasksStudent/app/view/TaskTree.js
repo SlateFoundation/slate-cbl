@@ -4,27 +4,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
     config: {
         courseSection: null,
-        student: null,
-        readOnly: false,
-
-        statusClasses: {
-
-            assigned: 'due',
-            're-assigned': 'revision',
-
-            submitted: 'due needsrated',
-            're-submitted': 'revision needsrated',
-
-            late: {
-                submitted: 'late needsrated',
-                're-submitted': 'late needsrated',
-
-                assigned: 'late',
-                're-assigned': 'late'
-            },
-
-            completed: 'completed'
-        },
+        readOnly: false
     },
 
     title: 'Current Tasks',
@@ -64,37 +44,38 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         }
     ],
 
+    /* eslint-disable indent */
     tpl: [
         '<ul class="slate-tasktree-list">',
-            '{% var statusClasses = values.statusClasses || new Object() %}',
-            '<tpl for="tasks">',
-                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values, statusClasses) ]}" recordId="{ID}">',
+            '<tpl for=".">',
+
+                '<li class="slate-tasktree-item <tpl if="this.hasSubtasks(values)">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values) ]}" data-id="{data.ID}">',
 
                     '<div class="flex-ct">',
-                        '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
+                        '<div class="slate-tasktree-nub <tpl if="this.hasSubtasks(values)">is-clickable</tpl>"></div>', // TODO: ARIA it up
                         '<div class="slate-tasktree-data">',
-                            '<div class="slate-tasktree-category">{SectionTitle}</div>',
+                            '<div class="slate-tasktree-category">{data.CourseSectionTitle}</div>',
                             '<div class="slate-tasktree-text">',
-                                '<div class="slate-tasktree-title">{Title}</div>',
-                                '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.TaskStatus) ]}</div>',
+                                '<div class="slate-tasktree-title">{data.TaskTitle}</div>',
+                                '<div class="slate-tasktree-status">{[ this.getStatusString(values) ]}</div>',
                                 '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
                             '</div>',
                         '</div>',
                     '</div>',
 
-                    '<tpl if="subtasks">',
+                    '<tpl if="this.hasSubtasks(values)">',
                         '<ul class="slate-tasktree-sublist">',
 
-                            '<tpl for="subtasks">',
-                                '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values, statusClasses) ]}" recordId="{ID}">',
+                            '<tpl for="childNodes">',
+                                '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values) ]}" data-id="{data.ID}">',
 
                                     '<div class="flex-ct">',
                                         '<div class="slate-tasktree-nub"></div>',
                                         '<div class="slate-tasktree-data">',
                                             '<div class="slate-tasktree-text">',
-                                                '<div class="slate-tasktree-title">{Title}</div>',
-                                                '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                                '<div class="slate-tasktree-date<tpl if="!values.DueDate">-null</tpl>">{[ this.getStatusDate(values) ]}</div>',
+                                                '<div class="slate-tasktree-title">{data.TaskTitle}</div>',
+                                                '<div class="slate-tasktree-status">{[ this.getStatusString(values) ]}</div>',
+                                                '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
                                             '</div>',
                                         '</div>',
                                     '</div>',
@@ -109,39 +90,46 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             '</tpl>',
 
         '</ul>',
+
+        /* eslint-enable indent */
         {
-            getStatusString: function(taskStatus) {
-                var statusStrings = {
-                    'assigned': 'Due',
-                    're-assigned': 'Revision',
-                    'submitted': 'Submitted',
-                    're-submitted': 'Resubmitted',
-                    'completed': 'Completed'
-                };
+            hasSubtasks: function(rec) {
+                return rec.childNodes && rec.childNodes.length > 0;
+            },
+            getStatusString: function(values) {
+                var taskStatus = values.data.TaskStatus,
+                    statusStrings = {
+                        'assigned': 'Due',
+                        're-assigned': 'Revision',
+                        'submitted': 'Submitted',
+                        're-submitted': 'Resubmitted',
+                        'completed': 'Completed'
+                    };
 
                 return statusStrings[taskStatus] || '';
             },
-            getStatusDate: function(taskData) {
-                var taskStatus = taskData.TaskStatus,
+            getStatusDate: function(values) {
+                var taskStatus = values.data.TaskStatus,
                     taskDate;
 
-                if (taskStatus === 'submitted' || taskStatus === 're-submitted') {
-                    taskDate = taskData.Submitted;
+                if (taskStatus === 'submitted' || taskStatus === 're-submitted' || taskStatus === 'completed') {
+                    taskDate = values.data.SubmittedDate;
                 } else {
-                    taskDate = taskData.DueDate;
+                    taskDate = values.data.DueDate;
                 }
 
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
-            getDueStatusCls: function(data, statusClasses) {
+            getDueStatusCls: function(task) {
                 var activeStatuses = [
                         'assigned',
                         're-assigned',
                         'submitted',
                         're-submitted'
                     ],
-                    dueDate = data.DueDate,
-                    status = data.TaskStatus,
+                    statusClasses = this.statusClasses,
+                    dueDate = task.data.DueDate,
+                    status = task.data.TaskStatus,
                     now, endOfDueDate, isLate;
 
                 if (dueDate) {
@@ -159,7 +147,43 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                     return statusClasses.late[status] || '';
                 }
                 return statusClasses[status] || '';
+            },
+            statusClasses: {
+
+                'assigned': 'due',
+                're-assigned': 'revision',
+
+                'submitted': 'due needsrated',
+                're-submitted': 'revision needsrated',
+
+                'late': {
+                    'submitted': 'late needsrated',
+                    're-submitted': 'late needsrated',
+
+                    'assigned': 'late',
+                    're-assigned': 'late'
+                },
+
+                'completed': 'completed'
             }
+
+/*
+            getStatusCls: function(values) {
+                var due = values.data.DueDate,
+                    taskStatus = values.data.TaskStatus,
+                    now = new Date(),
+                    statusCls = 'due';
+
+                if (taskStatus === 'completed') {
+                    statusCls = 'completed';
+                } else if (due < now) {
+                    statusCls = 'late';
+                }
+
+                return statusCls;
+            }
+*/
+
         }
     ],
 
@@ -171,6 +195,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         }
     },
 
+
     // config handlers
     updateCourseSection: function(val) {
         var me = this;
@@ -178,32 +203,22 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         me.fireEvent('coursesectionchange', me, val);
     },
 
-    applyData: function(data) {
-        data.statusClasses = this.getStatusClasses();
-        return data;
-    },
-
-    updateData: function(data) {
-        this.update(data);
-    },
 
     // event handlers
     onTreeClick: function(ev, t) {
         var me = this,
             target = Ext.get(t),
-            parentEl, recordId;
+            parentEl = target.up('.slate-tasktree-item'),
+            recordId;
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            parentEl = target.up('.slate-tasktree-item');
             parentEl.toggleCls('is-expanded');
             me.resizeSubtasksContainer(parentEl);
             me.resizeParentContainer();
-        } else {
-            parentEl = target.up('.slate-tasktree-item');
-            if (parentEl) {
-                recordId = parentEl.dom.getAttribute('recordId');
-                me.fireEvent('itemclick', recordId);
-            }
+        } else if (parentEl) {
+            // console.log(parentEl.dom.getAttribute('data-id'));
+            recordId = parseInt(parentEl.dom.getAttribute('data-id'), 10);
+            me.fireEvent('itemclick', recordId);
         }
     },
 
