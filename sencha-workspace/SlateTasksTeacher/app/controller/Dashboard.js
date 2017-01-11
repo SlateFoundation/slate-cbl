@@ -293,15 +293,17 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         studentTask.set('TaskStatus', status);
 
-        me.doSaveStudentTask(studentTask, function(rec) {
-            taskRater.close();
-            me.getStudentTasksStore().load({
-                id: studentTask.getId(),
-                addRecords: true
-            });
+        me.doSaveStudentTask(studentTask, function(rec, request, success) {
+            if (success) {
+                taskRater.close();
+                me.getStudentTasksStore().load({
+                    id: studentTask.getId(),
+                    addRecords: true
+                });
 
-            if (status === 're-assigned') {
-                me.doRateStudentTask(rec);
+                if (status === 're-assigned') {
+                    me.doRateStudentTask(rec);
+                }
             }
         });
     },
@@ -391,16 +393,18 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 DueDate: taskAssignerValues.DueDate,
                 ExpirationDate: taskAssignerValues.ExpirationDate,
                 ExperienceType: taskAssignerValues.ExperienceType,
-                CourseSectionID: me.getCourseSelector().getSelection().getId()
+                SectionID: me.getCourseSelector().getSelection().getId()
             });
 
-        me.doSaveStudentTask(studentTask, function() {
-            taskAssigner.close();
-            me.getStudentTasksStore().load({
-                id: studentTask.getId(),
-                addRecords: true
-            });
-            Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
+        me.doSaveStudentTask(studentTask, function(rec, request, success) {
+            if (success) {
+                taskAssigner.close();
+                me.getStudentTasksStore().load({
+                    id: studentTask.getId(),
+                    addRecords: true
+                });
+                Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
+            }
         });
 
     },
@@ -414,13 +418,15 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         if (studentTask) {
             me.getTaskEditorForm().updateRecord(studentTask);
             studentTask.set('SkillIDs', me.getSkillsField().getSkills(false, true)); // returnRecords, idsOnly
-            return me.doSaveStudentTask(studentTask, function() {
-                me.getStudentTasksStore().load({
-                    id: studentTask.getId(),
-                    addRecords: true
-                });
-                taskEditor.close();
-                Ext.toast('Student task successfully updated.');
+            return me.doSaveStudentTask(studentTask, function(rec, request, success) {
+                if (success) {
+                    me.getStudentTasksStore().load({
+                        id: studentTask.getId(),
+                        addRecords: true
+                    });
+                    taskEditor.close();
+                    Ext.toast('Student task successfully updated.');
+                }
             });
         }
 
@@ -485,8 +491,35 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     doSaveStudentTask: function(studentTask, callback, scope) {
         studentTask.save({
-            success: function(rec) {
-                Ext.callback(callback, scope, [rec]);
+            callback: function(record, request, success) {
+                var message = [],
+                    response = request.getResponse().data,
+                    validationErrors, key;
+
+                if (!success) {
+                    message.push(
+                        '<p>',
+                        'Unable to save task.',
+                        '</p>'
+                    );
+
+                    if (response.failed && response.failed.length) {
+                        validationErrors = response.failed[0].validationErrors;
+
+                        for (key in validationErrors) {
+                            if (validationErrors.hasOwnProperty(key)) {
+                                message.push(
+                                    '<p>',
+                                    validationErrors[key],
+                                    '</p>'
+                                );
+                            }
+                        }
+                        record.reject();
+                        Ext.Msg.alert('Error', message.join(' '));
+                    }
+                }
+                Ext.callback(callback, scope, arguments);
             }
         });
     },
@@ -507,7 +540,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             Skills: skillsField.getSkills(false), // returnRecords
             Attachments: attachmentsField.getAttachments(false), // returnRecords
             Assignees: currentAssignees, // returnRecords
-            CourseSectionID: courseSection.getId()
+            SectionID: courseSection.getId()
         });
 
         errors = record.validate();

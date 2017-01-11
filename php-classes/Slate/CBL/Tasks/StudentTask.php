@@ -25,7 +25,7 @@ class StudentTask extends \VersionedRecord
     public static $fields = [
         'TaskID' => 'uint',
         'StudentID' => 'uint',
-        'CourseSectionID' => [
+        'SectionID' => [
             'type' => 'uint',
             'default' => null
         ],
@@ -65,7 +65,6 @@ class StudentTask extends \VersionedRecord
         ],
         'Section' => [
             'type' => 'one-one',
-            'local' => 'CourseSectionID',
             'class' => Section::class
         ],
         'Comments' => [
@@ -129,7 +128,7 @@ class StudentTask extends \VersionedRecord
         ],
 
         'Student' => [
-            'validator' => 'require-relationship'
+            'method' => [__CLASS__, 'validateStudent']
         ]
     ];
 
@@ -157,6 +156,17 @@ class StudentTask extends \VersionedRecord
         }
     }
 
+    protected static function validateStudent(\RecordValidator $RecordValidator, StudentTask $StudentTask, $options, $validator)
+    {
+        if (!$RecordValidator->hasErrors('Student')) {
+            if (!$StudentTask->Student) {
+                $RecordValidator->addError('Student', 'Tasks must be assigned to a student.');
+            } elseif (!$StudentTask->Student instanceof \Slate\People\Student) {
+                $RecordValidator->addError('Student', 'Tasks can only be assigned to students.');
+            }
+        }
+    }
+
     public function getStudentName()
     {
         return $this->Student->FullName;
@@ -174,7 +184,7 @@ class StudentTask extends \VersionedRecord
 
         if ($this->Task && $this->Task->Skills) {
             foreach ($this->Task->Skills as $skill) {
-                $currentLevel = $skill->Competency ? $skill->Competency->getCurrentLevelForStudent($this->Student) : null;
+                $currentLevel = $skill->Competency->getCurrentLevelForStudent($this->Student);
                 $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
 
                 $taskSkills[] = array_merge($skill->getData(), [
@@ -188,7 +198,7 @@ class StudentTask extends \VersionedRecord
 
         if ($this->Skills) {
             foreach ($this->Skills as $skill) {
-                $currentLevel = $skill->Competency ? $skill->Competency->getCurrentLevelForStudent($this->Student) : null;
+                $currentLevel = $skill->Competency->getCurrentLevelForStudent($this->Student);
                 $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
 
                 $taskSkills[] = array_merge($skill->getData(), [
