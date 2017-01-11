@@ -265,8 +265,12 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     'ExperienceType' => $Record->ExperienceType,
                     'ExpirationDate' => $Record->ExpirationDate
                 ]);
-
-                $studentTask->save(false);
+                try {
+                    $studentTask->save(false);
+                } catch (\RecordValidationException $e) {
+                    // record failed validation, continue creating others.
+                    continue;
+                }
                 $assigneeIds[] = $studentTask->StudentID;
             }
 
