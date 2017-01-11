@@ -493,7 +493,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         studentTask.save({
             callback: function(record, request, success) {
                 var message = [],
-                    response = Ext.decode(request.getResponse().responseText),
+                    response = request.getResponse().data,
                     validationErrors, key;
 
                 if (!success) {
