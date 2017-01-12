@@ -143,7 +143,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         }
 
         static::setStudentTaskAttachments($student_task, $_REQUEST);
-        if (!empty($student_task->Submissions)) {
+        if (!empty($student_task->Submissions) || $student_task->TaskStatus == 're-assigned') {
             $student_task->TaskStatus = 're-submitted';
         } else {
             $student_task->TaskStatus = 'submitted';
