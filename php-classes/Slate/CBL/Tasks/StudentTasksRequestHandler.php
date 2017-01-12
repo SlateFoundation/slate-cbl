@@ -22,6 +22,8 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         switch ($action = $action ?: static::shiftPath()) {
             case 'assigned':
                 return static::handleAssignedRequest();
+
+            // todo: re-implement endpoint RE: https://jarvus.atlassian.net/browse/CBL-215
             case 'submit':
                 return static::handleStudentTaskSubmissionRequest();
             default:
