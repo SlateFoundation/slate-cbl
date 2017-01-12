@@ -139,7 +139,6 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         if ($_REQUEST) {
             $student_task = static::getRecordByHandle($_REQUEST['ID']);
-
         }
 
         static::setStudentTaskAttachments($student_task, $_REQUEST);
@@ -321,4 +320,3 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         return $CourseSection;
     }
 }
-
