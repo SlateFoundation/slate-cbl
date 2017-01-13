@@ -29,8 +29,15 @@ class DemonstrationSkillsRequestHandler extends \RecordsRequestHandler
                 return static::throwNotFoundError('Student not found');
             }
 
-            if (!$GLOBALS['Session']->hasAccountLevel('Staff') && $Student->ID != $GLOBALS['Session']->PersonID) {
-                return static::throwUnauthorizedError('Only staff may browse others\' records');
+            if (
+                    !$GLOBALS['Session']->hasAccountLevel('Staff') &&
+                    $Student->ID != $GLOBALS['Session']->PersonID &&
+                    !$GuardianRelationship = \Emergence\People\GuardianRelationship::getByWhere([
+                        'PersonID' => $GLOBALS['Session']->PersonID,
+                        'RelatedPersonID' => $Student->ID
+                    ]))
+                {
+                return static::throwUnauthorizedError('Only staff and guardians may browse others\' records');
             }
 
             $demonstrationIds = DB::allValues('ID', 'SELECT ID FROM `%s` WHERE StudentID = %u', [Demonstration::$tableName, $Student->ID]);
