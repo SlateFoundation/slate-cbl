@@ -20,6 +20,7 @@ $headers = [
     'Total ER',
     'Total Opportunities',
     'Completed ER',
+    'Rated',
     'Missed ER'
 ];
 
@@ -91,6 +92,7 @@ foreach ($students as $student) {
             $totalER = 0;
             $totalOpportunities = 0;
             $totalCompletedOpportunities = 0;
+            $totalRatedOpportunities = 0;
             $totalMissedOpportunities = 0;
             $totalGrowth = 0;
             $totalPerformanceLevel = 0;
@@ -124,6 +126,7 @@ foreach ($students as $student) {
                     $growth = 0;
                     $skillsWithGrowth = 0;
                     $completedOpportunities = 0;
+                    $ratedOpportunities = 0;
                     $missedOpportunities = 0;
                     $demonstrationsRequired = 0;
 
@@ -174,6 +177,8 @@ foreach ($students as $student) {
                             if ($demonstrationSkill->Override) {
                                 $completedOpportunities = $demonstrationsRequired;
                                 $missedOpportunities = 0;
+                            } else {
+                                $ratedOpportunities++;
                             }
 
                         }
@@ -182,6 +187,7 @@ foreach ($students as $student) {
                         $totalSkillsWithGrowth += $skillsWithGrowth;
                         $totalCompletedOpportunities += $completedOpportunities;
                         $totalMissedOpportunities += min($missedOpportunities, $demonstrationsRequired - $completedOpportunities);
+                        $totalRatedOpportunities += min($demonstrationsRequired, $ratedOpportunities);
                     }
 
                 }
@@ -213,6 +219,7 @@ foreach ($students as $student) {
                 $totalER,
                 $totalOpportunities,
                 $totalCompletedOpportunities,
+                $totalRatedOpportunities,
                 $totalMissedOpportunities
             ];
 
