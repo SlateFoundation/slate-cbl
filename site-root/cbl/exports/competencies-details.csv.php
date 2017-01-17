@@ -149,7 +149,7 @@ foreach ($students as $student) {
                         if ($demonstrationSkill->Override) {
                             $completedOpportunities = $demonstrationsRequired;
                             $missedOpportunities = 0;
-                        } else {
+                        } elseif ($demonstrationSkill->DemonstratedLevel > 0) {
                             $totalRatedOpportunities++;
                         }
 
