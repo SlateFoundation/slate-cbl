@@ -21,6 +21,7 @@ $headers = [
     'Total ER',
     'Total Opportunities',
     'Completed ER',
+    'Rated',
     'Missed ER'
 ];
 
@@ -45,6 +46,7 @@ if ($from && $to) {
 }
 
 foreach ($students as $student) {
+
     $demonstrationConditions = array_merge($defaultDemonstrationConditions, [
         'StudentID' => $student->ID
     ]);
@@ -57,6 +59,7 @@ foreach ($students as $student) {
             join(') AND (',\Slate\CBL\Demonstrations\Demonstration::mapConditions($demonstrationConditions))
         ]
     );
+
 
     $studentCompetenciesByLevel = \DB::arrayTable(
         'Level',
@@ -74,7 +77,6 @@ foreach ($students as $student) {
         ]
     );
 
-
     foreach ($studentCompetenciesByLevel as $level => $studentCompetencies) {
         foreach ($studentCompetencies as $studentCompetency) {
             // initialize variables for calculated fields
@@ -83,6 +85,7 @@ foreach ($students as $student) {
             $totalER = 0;
             $totalOpportunities = 0;
             $totalCompletedOpportunities = 0;
+            $totalRatedOpportunities = 0;
             $totalMissedOpportunities = 0;
             $competenciesWithGrowth = 0;
 
@@ -123,10 +126,9 @@ foreach ($students as $student) {
                         'order' => 'Created ASC'
                     ]);
 
-
                     $nonMissingDemonstrationSkills = [];
                     foreach ($demonstrationSkills as $demonstrationSkill) {
-                        $totalOpportunities += 1;
+                        $totalOpportunities++;
 
                         if ($demonstrationSkill->DemonstratedLevel > 0 && !$demonstrationSkill->Override) {
                             array_push($nonMissingDemonstrationSkills, $demonstrationSkill);
@@ -135,7 +137,7 @@ foreach ($students as $student) {
                         if ($demonstrationSkill->DemonstratedLevel > 0) {
                             $completedOpportunities += 1;
                         } else {
-                            $missedOpportunities += 1;
+                            $missedOpportunities++;
                         }
 
                         // no credit for logs beyond the number required
@@ -147,6 +149,8 @@ foreach ($students as $student) {
                         if ($demonstrationSkill->Override) {
                             $completedOpportunities = $demonstrationsRequired;
                             $missedOpportunities = 0;
+                        } elseif ($demonstrationSkill->DemonstratedLevel > 0) {
+                            $totalRatedOpportunities++;
                         }
 
                     }
@@ -175,13 +179,14 @@ foreach ($students as $student) {
                 $totalGrowth = $totalGrowth / $totalSkillsWithGrowth;
             }
 
-            $progress = 0;
             if ($totalER > 0) {
                 $progress = 100 * ($totalCompletedOpportunities / $totalER);
+            } else {
+                $progress = 100;
             }
 
             // add date to result
-            array_push($rows, [
+            $row = [
                 $student->ID,
                 $student->getFullName(),
                 $student->StudentNumber,
@@ -193,8 +198,10 @@ foreach ($students as $student) {
                 $totalER,
                 $totalOpportunities,
                 $totalCompletedOpportunities,
+                min($totalRatedOpportunities, $totalER),
                 $totalMissedOpportunities
-            ]);
+            ];
+            array_push($rows, $row);
         }
     }
 }
