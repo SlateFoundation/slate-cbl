@@ -23,7 +23,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
             case 'assigned':
                 return static::handleAssignedRequest();
 
-            // todo: re-implement endpoint RE: https://jarvus.atlassian.net/browse/CBL-215
+            // TODO: re-implement endpoint RE: https://jarvus.atlassian.net/browse/CBL-215
             case 'submit':
                 return static::handleStudentTaskSubmissionRequest();
             default:
