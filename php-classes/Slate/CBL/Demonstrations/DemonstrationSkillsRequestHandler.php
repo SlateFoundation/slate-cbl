@@ -3,6 +3,7 @@
 namespace Slate\CBL\Demonstrations;
 
 use DB;
+use Emergence\People\GuardianRelationship;
 use Emergence\People\PeopleRequestHandler;
 use Slate\CBL\SkillsRequestHandler;
 
