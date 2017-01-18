@@ -33,9 +33,10 @@ class DemonstrationSkillsRequestHandler extends \RecordsRequestHandler
             if (
                     !$GLOBALS['Session']->hasAccountLevel('Staff') &&
                     $Student->ID != $GLOBALS['Session']->PersonID &&
-                    !$GuardianRelationship = \Emergence\People\GuardianRelationship::getByWhere([
-                        'PersonID' => $GLOBALS['Session']->PersonID,
-                        'RelatedPersonID' => $Student->ID
+                    !$GuardianRelationship = GuardianRelationship::getByWhere([
+                        'Class' => GuardianRelatinship::class,
+                        'PersonID' => $Student->ID,
+                        'RelatedPersonID' => $GLOBALS['Session']->PersonID,
                     ]))
                 {
                 return static::throwUnauthorizedError('Only staff and guardians may browse others\' records');
