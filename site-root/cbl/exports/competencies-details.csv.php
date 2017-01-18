@@ -3,7 +3,7 @@
 $GLOBALS['Session']->requireAccountLevel('Staff');
 
 // This was causing a script timeout (30 seconds), this should help speed it up
-\Site::$debug = true;
+\Site::$debug = false;
 set_time_limit(0);
 
 $rows = [];
@@ -46,7 +46,7 @@ if ($from && $to) {
 }
 
 foreach ($students as $student) {
-    
+
     $demonstrationConditions = array_merge($defaultDemonstrationConditions, [
         'StudentID' => $student->ID
     ]);
@@ -59,7 +59,7 @@ foreach ($students as $student) {
             join(') AND (',\Slate\CBL\Demonstrations\Demonstration::mapConditions($demonstrationConditions))
         ]
     );
-    
+
 
     $studentCompetenciesByLevel = \DB::arrayTable(
         'Level',
@@ -99,7 +99,7 @@ foreach ($students as $student) {
 
             $completion = $competency->getCompletionForStudent($student, $level, $defaultDemonstrationConditions[0]);
             $totalER = $competency->getTotalDemonstrationsRequired($level);
-            
+
             // get all skills for this competency
             $skills = $competency->Skills;
             $skillsWithGrowth = 0;
