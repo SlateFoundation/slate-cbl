@@ -29,10 +29,12 @@ if ($GLOBALS['Session']->hasAccountLevel('Staff')) {
 
 if ($GLOBALS['Session']->Person && !empty($GLOBALS['Session']->Person->Wards)) {
     foreach($GLOBALS['Session']->Person->Wards as $Ward) {
-        if ($Ward instanceof \Slate\People\Student && $Ward->AccountLevel != 'Disabled') {
-            $cblTools[$Ward->FirstNamePossessive . ' Competency Dashboard'] = '/cbl/dashboards/demonstrations/student?student='.$Ward->Username;
-            $cblTools[$Ward->FirstNamePossessive . ' Task Dashboard'] = '/cbl/dashboards/tasks/student?student='.$Ward->Username;
+        if (!$Ward instanceof \Slate\People\Student || $Ward->AccountLevel == 'Disabled') {
+            continue;
         }
+
+        $cblTools[$Ward->FirstNamePossessive . ' Competency Dashboard'] = '/cbl/dashboards/demonstrations/student?student='.$Ward->Username;
+        $cblTools[$Ward->FirstNamePossessive . ' Task Dashboard'] = '/cbl/dashboards/tasks/student?student='.$Ward->Username;
     }
 }
 
