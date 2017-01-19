@@ -53,7 +53,7 @@ Ext.define('SlateTasksStudent.view.TaskDetails', {
         },
         {
             fieldLabel: 'Type of Experience',
-            name: 'TaskExperienceType'
+            name: 'ExperienceType'
         },
         {
             fieldLabel: 'Due Date',

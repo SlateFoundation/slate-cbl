@@ -22,6 +22,8 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         switch ($action = $action ?: static::shiftPath()) {
             case 'assigned':
                 return static::handleAssignedRequest();
+
+            // TODO: re-implement endpoint RE: https://jarvus.atlassian.net/browse/CBL-215
             case 'submit':
                 return static::handleStudentTaskSubmissionRequest();
             default:
@@ -138,25 +140,24 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         $_REQUEST = \JSON::getRequestData();
 
         if ($_REQUEST) {
-            $student_task = static::getRecordByHandle($_REQUEST['ID']);
-
+            $StudentTask = static::getRecordByHandle($_REQUEST['ID']);
         }
 
-        static::setStudentTaskAttachments($student_task, $_REQUEST);
-        if (!empty($student_task->Submissions)) {
-            $student_task->TaskStatus = 're-submitted';
+        static::setStudentTaskAttachments($StudentTask, $_REQUEST);
+        if (!empty($StudentTask->Submissions) || $StudentTask->TaskStatus == 're-assigned') {
+            $StudentTask->TaskStatus = 're-submitted';
         } else {
-            $student_task->TaskStatus = 'submitted';
+            $StudentTask->TaskStatus = 'submitted';
         }
 
-        $student_task->save();
+        $StudentTask->save();
 
-        $student_task_submission = new StudentTaskSubmission();
-        $student_task_submission->StudentTaskID = $student_task->ID;
-        $student_task_submission->save();
+        $StudentTaskSubmission = new StudentTaskSubmission();
+        $StudentTaskSubmission->StudentTaskID = $StudentTask->ID;
+        $StudentTaskSubmission->save();
 
         return static::respond('studenttask/submit', [
-            'data' => $student_task,
+            'data' => $StudentTask,
             'success' => true,
         ]);
     }
@@ -321,4 +322,3 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         return $CourseSection;
     }
 }
-

@@ -248,7 +248,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 return $s->ID;
             }, $originalAssignees);
 
-            $failed = [];
             $assigneeIds = [];
             $assignees = [];
 
@@ -266,7 +265,13 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     'ExpirationDate' => $Record->ExpirationDate
                 ]);
 
-                $studentTask->save(false);
+                try {
+                    $studentTask->save(false);
+                } catch (\RecordValidationException $e) {
+                    // record failed validation, continue creating others.
+                    continue;
+                }
+
                 $assigneeIds[] = $studentTask->StudentID;
             }
 

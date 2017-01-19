@@ -13,6 +13,26 @@ if (!static::columnExists(StudentTask::$tableName, 'CourseSectionID')) {
     return static::STATUS_SKIPPED;
 }
 
+// allow 0000-00-00 00:00:00 timestamps
+$sqlMode = DB::oneValue(
+    'SELECT @@SESSION.sql_mode AS session'
+);
+// remove NO_ZERO_DATE, NO_ZERO_IN_DATE sql_mode's from session to allow table alterations
+$tempSqlMode = array_filter(
+    explode(
+        ",",
+        $sqlMode
+    ),
+    function($v) {
+        return !preg_match("/NO_ZERO(_.+)?_DATE/", $v);
+    }
+);
+
+DB::nonQuery(
+    'SET SESSION sql_mode = "%s"',
+    $tempSqlMode
+);
+
 $studentTaskIds = DB::allValues('ID', 'SELECT ID FROM `%s` WHERE CourseSectionID = 0 OR CourseSectionID IS NULL', StudentTask::$tableName);
 
 if (!empty($studentTaskIds)) {
@@ -40,5 +60,8 @@ $dropColumnStatement = 'ALTER TABLE `%s` DROP COLUMN `CourseSectionID`';
 DB::nonQuery($dropColumnStatement, StudentTask::$tableName);
 // (history table)
 DB::nonQuery($dropColumnStatement, 'history_'.StudentTask::$tableName);
+
+// reset sql mode
+DB::nonQuery('SET SESSION sql_mode = "%s"', $sqlMode);
 
 return static::STATUS_EXECUTED;
