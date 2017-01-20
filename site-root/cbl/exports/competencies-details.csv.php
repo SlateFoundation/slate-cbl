@@ -21,7 +21,7 @@ $headers = [
     'Total ER',
     'Total Opportunities',
     'Completed ER',
-    'Rated',
+    'Rated ER',
     'Missed ER'
 ];
 
