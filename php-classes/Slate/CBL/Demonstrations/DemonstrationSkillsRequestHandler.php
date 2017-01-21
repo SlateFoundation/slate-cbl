@@ -34,7 +34,7 @@ class DemonstrationSkillsRequestHandler extends \RecordsRequestHandler
                 !$GLOBALS['Session']->hasAccountLevel('Staff') &&
                 $Student->ID != $GLOBALS['Session']->PersonID &&
                 !$GuardianRelationship = GuardianRelationship::getByWhere([
-                    'Class' => GuardianRelatinship::class,
+                    'Class' => GuardianRelationship::class,
                     'PersonID' => $Student->ID,
                     'RelatedPersonID' => $GLOBALS['Session']->PersonID,
                 ])
