@@ -7,6 +7,10 @@ use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
 
+if (!StudentTask::$rateExpiredMissing) {
+    return false;
+}
+
 $today = date('Y-m-d 00:00:00');
 
 $expiredTasks = StudentTask::getAllByWhere([
