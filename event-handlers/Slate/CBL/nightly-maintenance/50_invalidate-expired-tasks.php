@@ -21,6 +21,9 @@ $expiredTasks = StudentTask::getAllByWhere([
 // create a demo for expired tasks without one
 foreach ($expiredTasks as $expiredTask) {
     $expiredTask->getDemonstration();
+    // set demonstration creator to task assigner
+    $expiredTask->Demonstration->CreatorID = $expiredTask->CreatorID;
+    $expiredTask->save(false);
 }
 
 // insert 'Missing' ratings for unrated skills associated with expired tasks
