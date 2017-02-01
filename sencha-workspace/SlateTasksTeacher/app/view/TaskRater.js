@@ -27,11 +27,9 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
     updateStudentTask: function(studentTask) {
         var me = this,
             form = me.down('slate-modalform'),
-            ratingsView = me.down('slate-ratingview'),
             commentsField = form.down('slate-commentsfield'),
             submissionsCmp = form.down('slate-tasks-submissions'),
-            skillsField = me.down('slate-skillsfield'),
-            groupedSkills = studentTask.getTaskSkillsGroupedByCompetency();
+            skillsField = me.down('slate-skillsfield');
 
         if (studentTask.get('DueDate')) {
             form.down('[name=DueDate]').setValue(studentTask.get('DueDate'));
@@ -44,10 +42,24 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
         commentsField.setRecord(studentTask);
         submissionsCmp.setData(studentTask.get('Submissions'));
         skillsField.setSkills(studentTask.get('Skills'), true, false); // appendSkills, editable
-        ratingsView.setData({
-            ratings: [7, 8, 9, 10, 11, 12, 'M'],
-            competencies: groupedSkills
-        });
+    },
+
+    updateDemonstration: function(demonstration) {
+        var me = this,
+            ratingView = me.down('slate-ratingview'),
+            saveRatingsBtn = me.down('#save-ratings-btn'),
+            resetRatingsBtn = me.down('#reset-ratings-btn');
+
+        if (demonstration) {
+            // load skills into rating view
+            ratingView.setConfig({
+                defaultRatings: demonstration.get('Skills'),
+                demonstrationSkills: demonstration.get('Skills')
+            });
+
+            resetRatingsBtn.show();
+            saveRatingsBtn.show();
+        }
     },
 
     updateReadOnly: function(readOnly) {

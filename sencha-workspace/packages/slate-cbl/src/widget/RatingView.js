@@ -9,8 +9,15 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     config: {
         menu: null,
-        menuRatings: [1, 2, 3, 4, 5, 6],
-        readOnly: false
+        menuRatingOptions: [1, 2, 3, 4, 5, 6],
+        ratingOptions: [7, 8, 9, 10, 11, 12, {text: 'M', value: 0}],
+
+        readOnly: false,
+
+        skills: null,
+        groupedSkills: null,
+        demonstrationSkills: null,
+        defaultRatings: null
     },
     // todo: add ratings as config.
     tpl: [
@@ -24,7 +31,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                     '<h4 class="slate-ratingview-competency-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h4>',
                     '<ul class="slate-ratingview-skills">',
                         '<tpl for="skills">',
-                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{CompetencyLevel}" data-competency="{[parent.Code]}" data-skill="{Code}">',
+                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{currentLevel}" data-competency="{[parent.Code]}" data-skill="{Code}" data-skill-id="{ID}">',
                                 '<header class="slate-ratingview-skill-header">',
                                     '<tpl if="!this.readOnly">', // hide when in readOnly mode
                                         '<button class="slate-ratingview-remove"><i class="fa fa-times-circle"></i></button>',
@@ -32,13 +39,13 @@ Ext.define('Slate.cbl.widget.RatingView', {
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu slate-ratingview-rating-null{[this.getMenuRatingElCls(values.Rating, this)]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this)]}">',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu slate-ratingview-rating-null{[this.getMenuRatingElCls(values.Rating, this, values)]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this)]}">',
                                         '<div class="slate-ratingview-rating-bubble" tabindex="0">',
                                             '<span class="slate-ratingview-rating-label">{[this.getMenuRatingElLabel(values.Rating, this)]}</span>',
                                         '</div>',
                                     '</li>',
                                     '<tpl for="this.ratings">', // access template-scoped variable declared at top
-                                        '<li class="slate-ratingview-rating <tpl if="values == parent.Rating || values === &quot;M&quot; && parent.Rating === 0">is-selected</tpl>" data-rating="{.}">',
+                                        '<li class="slate-ratingview-rating{[this.getRatingElCls(values, parent.Rating)]}" data-rating="{[this.getRatingLevel(values)]}">',
                                             '<div class="slate-ratingview-rating-bubble" tabindex="0">',
                                                 '<span class="slate-ratingview-rating-label">{[this.getRatingElLabel(values)]}</span>',
                                             '</div>',
@@ -53,12 +60,32 @@ Ext.define('Slate.cbl.widget.RatingView', {
         '</ul>',
 
         {
-            getRatingElLabel: function(rating) {
-                if (rating === 0) {
-                    return 'M';
+            getRatingElLabel: function(ratingLevel) {
+                if (Ext.isObject(ratingLevel)) {
+                    return ratingLevel.text;
                 }
 
-                return rating;
+                return ratingLevel;
+            },
+
+            getRatingElCls: function(ratingLevel, skillRating) {
+                var cls = '';
+
+                if (Ext.isObject(ratingLevel) && ratingLevel.value == skillRating) {
+                    cls += ' is-selected';
+                } else if (ratingLevel == skillRating) {
+                    cls += ' is-selected';
+                }
+
+                return cls;
+            },
+
+            getRatingLevel: function(ratingLevel) {
+                if (Ext.isObject(ratingLevel)) {
+                    return ratingLevel.value;
+                }
+
+                return ratingLevel;
             },
 
             getMenuRatingElCls: function(rating, scope) {
@@ -67,7 +94,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 if (rating === null || scope.menuRatings.indexOf(rating) > -1) {
                     cls += ' is-selected';
                 }
-
+                console.log(arguments);
                 return cls;
             },
 
@@ -102,7 +129,8 @@ Ext.define('Slate.cbl.widget.RatingView', {
         var dataObj = data || {};
 
         dataObj.readOnly = this.getReadOnly();
-        dataObj.menuRatings = this.getMenuRatings();
+        dataObj.menuRatings = this.getMenuRatingOptions();
+        dataObj.ratings = this.getRatingOptions();
 
         return dataObj;
     },
@@ -120,6 +148,93 @@ Ext.define('Slate.cbl.widget.RatingView', {
         if (data !== oldData) {
             me.setHtml(me.tpl.apply(data));
         }
+    },
+
+    applyGroupedSkills: function(skills) {
+        var i = 0,
+            competencyCodes = [],
+            groupedSkills = [],
+
+            demonstrationSkills = this.getDemonstrationSkills(),
+            demonstrationSkill,
+
+            skill, skillIdx;
+
+        if (!skills || !Ext.isArray(skills)) {
+            return groupedSkills;
+        }
+
+        for (; i < skills.length; i++) {
+            skill = skills[i];
+            skillIdx = competencyCodes.indexOf(skill.Competency.Code);
+            demonstrationSkill = demonstrationSkills[skill.ID];
+
+            if (demonstrationSkill) {
+                skill.Rating = isNaN(demonstrationSkill.DemonstratedLevel) ? demonstrationSkill.DemonstratedLevel : parseInt(demonstrationSkill.DemonstratedLevel, 10);
+            } else {
+                skill.Rating = null;
+            }
+
+            if (skillIdx === -1) {
+                competencyCodes.push(skill.Competency.Code);
+                groupedSkills.push({
+                    Code: skill.Competency.Code,
+                    Descriptor: skill.Competency.Descriptor,
+                    skills: [
+                        skill
+                    ]
+                });
+            } else {
+                groupedSkills[skillIdx].skills.push(skill);
+            }
+        }
+
+        return groupedSkills;
+    },
+
+    updateGroupedSkills: function(groupedSkills) { // verify update only gets called when value is changed.
+        this.setData({
+            competencies: groupedSkills
+        });
+    },
+
+    updateSkills: function(skills) {
+        this.setGroupedSkills(skills);
+    },
+
+    applyDemonstrationSkills: function(demonstrationSkills) {
+        var me = this,
+            i = 0,
+            indexedDemonstrationSkills = {};
+
+        for (; i < demonstrationSkills.length; i++) {
+            indexedDemonstrationSkills[demonstrationSkills[i].SkillID] = demonstrationSkills[i];
+        }
+
+        return indexedDemonstrationSkills;
+    },
+
+    updateDemonstrationSkills: function() {
+        var me = this;
+
+        if (me.getSkills()) {
+            me.updateSkills(me.getSkills());
+        }
+    },
+
+    applyDefaultRatings: function(demonstrationSkills) {
+        return this.extractRatings(demonstrationSkills);
+    },
+
+    extractRatings: function(demonstrationSkills) {
+        var i = 0,
+            ratings = {};
+
+        for (; i < demonstrationSkills.length; i++) {
+            ratings[demonstrationSkills[i].SkillID] = demonstrationSkills[i].DemonstratedLevel;
+        }
+
+        return ratings;
     },
 
     updateReadOnly: function() {
@@ -153,7 +268,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
             rating = target.getAttribute('data-rating') || 'N/A',
             competency = skillEl.getAttribute('data-competency'),
-            skill = skillEl.getAttribute('data-skill'),
+            skillId = skillEl.getAttribute('data-skill-id'),
 
             ratingEls = skillEl.select('.slate-ratingview-rating'),
             naRating = skillEl.down('.slate-ratingview-rating-menu');
@@ -176,7 +291,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
         return me.fireEvent('rateskill', me, {
             rating: rating,
-            SkillID: skill,
+            SkillID: skillId,
             CompetencyID: competency
         });
     },
@@ -191,7 +306,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
     showMenu: function(ratingEl, xy) {
         var me = this,
             menu = me.getMenu(),
-            menuRatings = me.getMenuRatings(),
+            menuRatings = me.getMenuRatingOptions(),
             items = [{
                 text: 'N/A',
                 value: null
@@ -202,7 +317,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 Ext.each(menuRatings, function(mr) {
                     items.push({
                         text: mr,
-                        value: mr
+                        value: isNaN(mr) ? mr : parseInt(mr, 10)
                     });
                 });
                 me.setMenu(menu = Ext.create('Ext.menu.Menu', {
@@ -221,7 +336,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     onMenuRatingClick: function(menu, menuRating) {
         var me = this;
-        console.log('onMenuRatingClick');
+
         me.updateRatingEl(menu.ratingEl, menuRating.getValue());
         me.selectRating(menu.ratingEl, false);
         menu.hide();

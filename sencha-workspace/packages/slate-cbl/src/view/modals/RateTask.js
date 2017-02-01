@@ -14,7 +14,8 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
 
     config: {
         task: null,
-        studentTask: null
+        studentTask: null,
+        demonstration: null
     },
 
     dockedItems: [
@@ -63,7 +64,7 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
         }
     ],
 
-   items: [
+    items: [
         {
             xtype: 'slate-modalform',
             defaultType: 'displayfield',
@@ -115,6 +116,31 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                 },
                 {
                     xtype: 'slate-ratingview'
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    defaults: {
+                        flex: 1
+                    },
+                    layout: 'hbox',
+                    items: [{
+                        xtype: 'button',
+                        itemId: 'reset-ratings-btn',
+                        action: 'resetratings',
+                        text: 'Reset',
+                        hidden: true,
+                        disabled: true
+                    }, {
+                        xtype: 'tbspacer',
+                        flex: 4
+                    }, {
+                        xtype: 'button',
+                        itemId: 'save-ratings-btn',
+                        action: 'saveratings',
+                        text: 'Save',
+                        hidden: true,
+                        disabled: true
+                    }]
                 },
                 {
                     xtype: 'slate-tasks-submissions'
