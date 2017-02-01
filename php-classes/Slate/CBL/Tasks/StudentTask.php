@@ -151,7 +151,7 @@ class StudentTask extends \VersionedRecord
     {
         switch ($name) {
             case 'AllSkills':
-                return $this->Skills + ($this->Task ? $this->Task->Skills : []);
+                return array_merge($this->Skills, ($this->Task ? $this->Task->Skills : []));
 
             default:
                 return parent::getValue($name);
