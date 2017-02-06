@@ -2,6 +2,10 @@
 
 namespace Slate\CBL\Tasks;
 
+use Slate\CBL\Competency;
+use Slate\CBL\Skill;
+use Slate\CBL\Demonstrations\DemonstrationSkill;
+
 class TeacherDashboardRequestHandler extends \RequestHandler
 {
     public static $userResponseModes = [
@@ -20,10 +24,8 @@ class TeacherDashboardRequestHandler extends \RequestHandler
             
             case 'skill-completions':
                 return static::handleSkillCompletionsRequest();
-#            case 'completions':
-#                return static::handleCompletionsRequest();
-#            case 'demonstration-skills':
-#                return static::handleDemonstrationSkillsRequest();
+            case 'confirm-promotion':
+                return static::handlePromotionConfirmationRequest();
             default:
                 return static::throwNotFoundError();
         }
@@ -56,30 +58,124 @@ class TeacherDashboardRequestHandler extends \RequestHandler
         }
         
         foreach ($StudentTask->AllSkills as $Skill) {
-            $completions[] = array_merge($Skill->getDetails(['Competency']), [
-                'StudentID' => $StudentTask->StudentID,
-                'currentLevel' => array_key_exists($Skill->ID, $indexedDemonstrationSkills) ? $indexedDemonstrationSkills[$Skill->ID]->TargetLevel : $Skill->Competency->getCurrentLevelForStudent($StudentTask->Student)
-            ]);
+            $completions[] = array_merge(
+                $Skill->getDetails(['Competency']),
+                [
+                    'StudentID' => $StudentTask->StudentID,
+                    'currentLevel' => array_key_exists($Skill->ID, $indexedDemonstrationSkills) ? $indexedDemonstrationSkills[$Skill->ID]->TargetLevel : $Skill->Competency->getCurrentLevelForStudent($StudentTask->Student)
+                ]
+            );
         }
 
-#        foreach ($StudentTask->AllSkills as $Skill) {
-#            if (!array_key_exists($Skill->Competency->Code, $groupedSkills)) {
-#                $groupedSkills[$Skill->Competency->Code] = [
-#                    'skills' => [],
-#                    'Code' => $Skill->Competency->Code,
-#                    'Descriptor' => $Skill->Competency->Descriptor,
-#                    'CompetencyLevel' => $Skill->Competency->getCurrentLevelForStudent($StudentTask->Student)
-#                ];
-#            }
-#            
-#            $skillData = $Skill->getDetails([]);
-#            $skillData['CompetencyLevel'] = !empty($demoSkillIds[$Skill->ID]) ? $demoSkillIds[$Skill->ID]->TargetLevel : $groupedSkills[$Skill->Competency->Code]['CompetencyLevel'];
-#            
-#            $groupedSkills[$Skill->Competency->Code]['skills'][] = $skillData;
-#        }
-        
         return static::respond('studenttask-ratings', [
             'skills' => $completions
+        ]);
+    }
+    
+    public static function handlePromotionConfirmationRequest()
+    {
+        $_REQUEST = \JSON::getRequestData();
+
+        if (!$studentTaskId = $_REQUEST['studentTaskId']) {
+            return static::throwInvalidRequestError('studentTaskId must be supplied.');
+        } else if (!$StudentTask = StudentTask::getByID($studentTaskId)) {
+            return static::throwNotFoundError('Student task was not found.');
+        }
+        
+        if (empty($_REQUEST['Skills'])) {
+            return static::throwInvalidRequestError('Skills must be provided.');
+        }
+        
+        $groupedSkills = [];
+        $competenciesToPromote = [];
+        
+        foreach ($_REQUEST['Skills'] as $demoSkill) {
+            // group by competency first
+            $demoSkill['Skill'] = $Skill = Skill::getByID($demoSkill['SkillID']);
+            if (!isset($groupedSkills[$demoSkill['SkillID']])) {
+                $groupedSkills[$Skill->CompetencyID] = [];
+            }
+
+            $groupedSkills[$Skill->CompetencyID][] = $demoSkill;
+        }
+
+        foreach ($groupedSkills as $compId => &$skills) {
+            if (!$Competency = Competency::getByID($compId)) {
+                continue;
+            }
+            
+            $competencyCompletion = $Competency->getCompletionForStudent($StudentTask->Student);
+            $currentLevel = $Competency->getCurrentLevelForStudent($StudentTask->Student);
+            $demonstrationsRequired = $Competency->getTotalDemonstrationsRequired($currentLevel);
+
+            if ($demonstrationsRequired - $competencyCompletion['demonstrationsComplete'] > count($skills)) { // not enough skill demonstrations logged for this competency
+                unset($groupedSkills[$compId]);
+                continue;
+            }
+            
+            foreach ($skills as $index => $skill) {
+                $skillCompletion = $skill['Skill']->getCompletionForStudent($StudentTask->Student);
+                $demonstrationsRequired = $skillCompletion['demonstrationsRequired'];
+                $phantom = isset($skill['ID']);
+                
+                if ($demonstrationsRequired - $skillCompletion['demonstrationsComplete'] > 1) { // not enough skill demonstrations logged
+                    unset($groupedSkills[$compId]);
+                    break;
+                }
+                
+                if (!empty($skill['ID']) || $skill['DemonstrationID']) {
+                    $DemonstrationSkill = $skill['ID'] ? DemonstrationSkill::getByID($skill['ID']) : DemonstrationSkill::getByWhere([
+                        'TargetLevel' => $skill['TargetLevel'],
+                        'DemonstrationID' => $skill['DemonstrationID'],
+                        'SkillID' => $skill['SkillID']
+                    ]);
+                }
+                
+                $countedLogs = DemonstrationSkill::getAllByWhere([
+                    'SkillID' => $skill['SkillID'],
+                    'TargetLevel' => $currentLevel
+                ], [
+                    'limit' => $skillCompletion['demonstrationsLogged'],
+                    'order' => [
+                        'DemonstratedLevel' => 'DESC'    
+                    ]
+                ]);
+
+                $countedLogsSum = 0;
+                $totalLogs = 0;
+                foreach ($countedLogs as $log) {
+                    $totalLogs++;
+                    if ($DemonstrationSkill && $log->ID == $DemonstrationSkill->ID) {
+                        $countedLogsSum += intval($skill['DemonstratedLevel']);
+                    } else {
+                        $countedLogsSum += intval($log->DemonstratedLevel);
+                    }
+                }
+                
+                if (!$DemonstrationSkill)  {
+                    $countedLogsSum += intval($skill['DemonstratedLevel']);
+                    $totalLogs++;
+                }
+
+                $logAvg = $countedLogsSum / ($totalLogs);
+                if ($logAvg < $currentLevel + $Competency->getMinimumAverageOffset()) { // avg not high enough
+                    unset($skills[$index]);
+                    continue;
+                }
+            }
+            
+            if (empty($skills)) {
+                unset($groupedSkills[$compId]);
+            }
+        }
+        
+        return static::respond('competency-promotions', [
+            'data' => Competency::getAllByWhere([
+                'ID' => [
+                    'values' => array_keys($groupedSkills),
+                    'operator' => 'IN'
+                ]    
+            ])
         ]);
     }
 }
