@@ -143,6 +143,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'slate-tasks-teacher-taskeditor slate-tasks-titlefield[clonable]': {
             select: 'onClonableTitleFieldSelect'
         },
+        saveSkillsBtn: {
+            click: 'onSaveRatingsClick'
+        },
         resetSkillsBtn: {
             click: 'onResetSkillRatingsClick'
         }
@@ -378,26 +381,18 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onRateSkillClick: function(ratingView, ratingObject) {
         var me = this,
             demonstration = me.getTaskRater().getDemonstration(),
-            DemonstrationSkillModel = me.getDemonstrationSkillModel(),
             indexedDemonstrationSkills = ratingView.getDemonstrationSkills(),
-            saveSkillsBtn = me.getSaveSkillsBtn(),
-            resetSkillsBtn = me.getResetSkillsBtn(),
-            demonstrationSkills = [],
-            skills = ratingView.getSkills(), skill,
-            key, i = 0,
-            defaultRatings = ratingView.getDefaultRatings(),
-            ratingsDirty = false;
-
-        // for (key in indexedDemonstrationSkills) {
-        //     if (!indexedDemonstrationSkills.hasOwnProperty(key)) {
-        //         continue;
-        //     }
-        //     demonstrationSkills.push(indexedDemonstrationSkills[key]);
-        // }
+            skills = ratingView.getSkills(),
+            skill, i = 0;
 
         if (indexedDemonstrationSkills.hasOwnProperty(ratingObject.SkillID)) {
-            indexedDemonstrationSkills[ratingObject.SkillID].DemonstratedLevel = ratingObject.rating; // isNaN(ratingObject.rating) ? 0 : ratingObject.rating;
-        } else {
+            // remove rating, if exists
+            if (ratingObject.rating === null) {
+                delete indexedDemonstrationSkills[ratingObject.SkillID];
+            } else {
+                indexedDemonstrationSkills[ratingObject.SkillID].DemonstratedLevel = ratingObject.rating; // isNaN(ratingObject.rating) ? 0 : ratingObject.rating;
+            }
+        } else if (ratingObject.rating !== null) {
             for (; i < skills.length; i++) {
                 if (skills[i].ID == ratingObject.SkillID) {
                     skill = skills[i];
@@ -405,35 +400,89 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 }
             }
 
-            indexedDemonstrationSkills[skill.ID] = new DemonstrationSkillModel({
+            indexedDemonstrationSkills[skill.ID] = {
                 SkillID: ratingObject.SkillID,
                 DemonstratedLevel: ratingObject.rating,
                 TargetLevel: skill.currentLevel
-            });
+            };
+
+            if (!demonstration.phantom) {
+                indexedDemonstrationSkills[skill.ID]['DemonstrationID'] = demonstration.getId();
+            }
         }
 
         ratingView.setDemonstrationSkills(Object.values(indexedDemonstrationSkills));
-
         me.toggleRatingViewButtons();
+    },
 
-        // Slate.API.request({
-        //     url: url,
-        //     method: 'POST',
-        //     params: demonstrationData,
-        //     callback: function(opts, success, response) {
-        //         // var record = response.data.record;
+    onSaveRatingsClick: function() {
+        return this.doSaveRatings();
+    },
 
-        //         if (success) {
-        //             me.getStudentTasksStore().load({
-        //                 id: studentTask.getId(),
-        //                 addRecords: true
-        //             });
-        //             // studentTask.set(record);
-        //         } else {
-        //             Ext.toast('Error. Please try again.');
-        //         }
-        //     }
-        // });
+    doSaveRatings: function() {
+        var me = this,
+            taskRater = me.getTaskRater(),
+            ratingView = me.getRatingView(),
+            saveSkillsBtn = me.getSaveSkillsBtn(),
+            resetSkillsBtn = me.getResetSkillsBtn(),
+            demonstration = taskRater.getDemonstration(),
+            demonstrationSkills = ratingView.getDemonstrationSkills(),
+            i = 0,
+            _onDemonstrationSave, _onDemonstrationSaveFailure;
+
+        _onDemonstrationSave = function(savedDemonstration) {
+            taskRater.updateDemonstration(savedDemonstration);
+            me.toggleRatingViewButtons();
+            ratingView.setLoading(false);
+        };
+
+        _onDemonstrationSaveFailure = function() {
+            me.toggleRatingViewButtons();
+        };
+
+        demonstration.set('Skills', Object.values(demonstrationSkills));
+
+        saveSkillsBtn.disable();
+        resetSkillsBtn.disable();
+        ratingView.setLoading({
+            msg: 'Saving Ratings&hellip;'
+        });
+
+        // check if ratings will promote any competency levels
+        Slate.API.request({
+            url: '/cbl/dashboards/tasks/teacher/confirm-promotion',
+            jsonData: {
+                studentTaskId: taskRater.getStudentTask().getId(),
+                'Skills': Object.values(demonstrationSkills)
+            },
+            callback: function(operation, success, request) {
+                var promotableCompetencies = '';
+
+                if (request.data.data.length) {
+                    for (i = 0; i < request.data.data.length; i++) {
+                        promotableCompetencies += '<strong>' + request.data.data[i].Code + '</strong>: ' + request.data.data[i].Descriptor + '<br>';
+                    }
+                    Ext.Msg.confirm('Warning', 'Student would be promoted for the following competencies: <br>' + promotableCompetencies, function(ans) {
+                        if (ans === 'yes') {
+                            demonstration.save({
+                                success: _onDemonstrationSave,
+                                failure: _onDemonstrationSaveFailure
+                            });
+                        } else {
+                            ratingView.setLoading(false);
+                            me.toggleRatingViewButtons();
+                        }
+                    });
+                    return;
+                }
+
+                demonstration.save({
+                    success: _onDemonstrationSave,
+                    failure: _onDemonstrationSaveFailure
+                });
+            }
+        });
+
     },
 
     onAssignTaskClick: function() {
