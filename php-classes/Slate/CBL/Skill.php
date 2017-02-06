@@ -191,76 +191,90 @@ class Skill extends \VersionedRecord
         return null;
     }
     
-    public function getCompletionForStudent(Student $Student)
+    public function getCompletionForStudent(Student $Student, $level = null)
     {
         
-        $currentLevel = $this->Competency->getCurrentLevelForStudent($Student);
+        $currentLevel = $level ?: $this->Competency->getCurrentLevelForStudent($Student);
         \DB::nonQuery('SET @num := 0, @skill := ""');
 
-        $completion = \DB::oneRecord(
-            'SELECT '.
-                    ' SUM(demonstrationsAverage * demonstrationsLogged) / SUM(demonstrationsLogged) AS demonstrationsAverage, '.
-                    ' SUM(demonstrationsComplete) AS demonstrationsComplete, '.
-                    ' SUM(demonstrationsLogged) AS demonstrationsLogged'.
-                    
+        try {
             
-            ' FROM ( '.
-                    ' SELECT '.
-                             'AVG(IF(Override, NULL, DemonstratedLevel)) AS demonstrationsAverage, '.
-                             "LEAST(DemonstrationsRequired, SUM(IF(Override, DemonstrationsRequired, 1))) AS demonstrationsComplete, ".
-                             ' COUNT(IF(Override, NULL, DemonstratedLevel)) AS demonstrationsLogged '.
-                       "FROM (  ".
-                                "SELECT ".
-                                        "StudentDemonstrationSkill.TargetLevel, ".
-                                        "StudentDemonstrationSkill.DemonstratedLevel, ".
-                                        "StudentDemonstrationSkill.Override, ".
-                                        "@num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber, ".
-                                        "@skill := StudentDemonstrationSkill.SkillID AS SkillID ".
-                                 "FROM ( ".
-                                     "SELECT ".
-                                            "DemonstrationSkill.TargetLevel, ".
-                                            "DemonstrationSkill.SkillID, ".
-                                            "DemonstrationSkill.DemonstratedLevel, ".
-                                            "DemonstrationSkill.Override ".
-                                       "FROM `%s` DemonstrationSkill ".
-                                       "JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = $Student->ID) Demonstration ".
-                                         "ON Demonstration.ID = DemonstrationSkill.DemonstrationID ".
-                                      "WHERE DemonstrationSkill.SkillID = $this->ID ".
-                                        "AND DemonstrationSkill.TargetLevel = $currentLevel ".
-                                        "AND DemonstrationSkill.DemonstratedLevel > 0 ".
-#                                        "%s".
-                                     ") StudentDemonstrationSkill ".
-                               "ORDER BY SkillID, DemonstratedLevel DESC ".
-                             ") OrderedDemonstrationSkill ".
-                        "JOIN ( ".
-                                "SELECT ".
-                                        "ID, ".
-                                        "IFNULL(".
-                                             "JSON_EXTRACT( ".
-                                                 "DemonstrationsRequired, CONCAT('$.\"', %s, '\"') ".
-                                             "),".
-                                             "DemonstrationsRequired->'$.default'".
-                                        ") AS DemonstrationsRequired ".
-                                  "FROM `%s` ".
-                              ") Skill ".
-                          "ON Skill.ID = OrderedDemonstrationSkill.SkillID ".
-                       "WHERE rowNumber <= Skill.DemonstrationsRequired ".
-                       "GROUP BY SkillID".
-            ") SkillCompletion"
-        ,
-        [
-            \Slate\CBL\Demonstrations\DemonstrationSkill::$tableName,
-            \Slate\CBL\Demonstrations\Demonstration::$tableName,
-            $currentLevel,
-            \Slate\CBL\Skill::$tableName
-        ]);
+            $completion = \DB::oneRecord(
+                'SELECT '.
+                        ' SUM(demonstrationsAverage * demonstrationsLogged) / SUM(demonstrationsLogged) AS demonstrationsAverage, '.
+                        ' SUM(demonstrationsComplete) AS demonstrationsComplete, '.
+                        ' SUM(demonstrationsLogged) AS demonstrationsLogged'.
+                        
+                
+                ' FROM ( '.
+                        ' SELECT '.
+                                 'AVG(IF(Override, NULL, DemonstratedLevel)) AS demonstrationsAverage, '.
+                                 "LEAST(DemonstrationsRequired, SUM(IF(Override, DemonstrationsRequired, 1))) AS demonstrationsComplete, ".
+                                 ' COUNT(IF(Override, NULL, DemonstratedLevel)) AS demonstrationsLogged '.
+                           "FROM (  ".
+                                    "SELECT ".
+                                            "StudentDemonstrationSkill.TargetLevel, ".
+                                            "StudentDemonstrationSkill.DemonstratedLevel, ".
+                                            "StudentDemonstrationSkill.Override, ".
+                                            "@num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber, ".
+                                            "@skill := StudentDemonstrationSkill.SkillID AS SkillID ".
+                                     "FROM ( ".
+                                         "SELECT ".
+                                                "DemonstrationSkill.TargetLevel, ".
+                                                "DemonstrationSkill.SkillID, ".
+                                                "DemonstrationSkill.DemonstratedLevel, ".
+                                                "DemonstrationSkill.Override ".
+                                           "FROM `%s` DemonstrationSkill ".
+                                           "JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = $Student->ID) Demonstration ".
+                                             "ON Demonstration.ID = DemonstrationSkill.DemonstrationID ".
+                                          "WHERE DemonstrationSkill.SkillID = $this->ID ".
+                                            "AND DemonstrationSkill.TargetLevel = $currentLevel ".
+                                            "AND DemonstrationSkill.DemonstratedLevel > 0 ".
+    #                                        "%s".
+                                         ") StudentDemonstrationSkill ".
+                                   "ORDER BY SkillID, DemonstratedLevel DESC ".
+                                 ") OrderedDemonstrationSkill ".
+                            "JOIN ( ".
+                                    "SELECT ".
+                                            "ID, ".
+                                            "IFNULL(".
+                                                 "JSON_EXTRACT( ".
+                                                     "DemonstrationsRequired, CONCAT('$.\"', %s, '\"') ".
+                                                 "),".
+                                                 "DemonstrationsRequired->'$.default'".
+                                            ") AS DemonstrationsRequired ".
+                                      "FROM `%s` ".
+                                  ") Skill ".
+                              "ON Skill.ID = OrderedDemonstrationSkill.SkillID ".
+                           "WHERE rowNumber <= Skill.DemonstrationsRequired ".
+                           "GROUP BY SkillID".
+                ") SkillCompletion"
+            ,
+            [
+                \Slate\CBL\Demonstrations\DemonstrationSkill::$tableName,
+                \Slate\CBL\Demonstrations\Demonstration::$tableName,
+                $currentLevel,
+                \Slate\CBL\Skill::$tableName
+            ]);
+            
+            $completion['level'] = $currentLevel;
+            $completion['demonstrationsRequired'] = $this->getDemonstrationsRequiredByLevel($currentLevel);
+
+            $completion['demonstrationsLogged'] = intval($completion['demonstrationsLogged']);
+            $completion['demonstrationsComplete'] = intval($completion['demonstrationsLogged']);
+            $completion['demonstrationsAverage'] = $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage']);
+
+        } catch (\TableNotFoundException $e) {
+            $completion = [
+                'level' => $currentLevel,
+                'currentLevel' => $this->Competency->getCurrentLevelForStudent($Student) ,
+                'demonstrationsLogged' => 0,
+                'demonstrationsComplete' => 0,
+                'demonstrationsAverage' => floatval(0),
+                'demonstrationsRequired' => intval($this->getDemonstrationsRequiredByLevel($currentLevel))
+            ];
+        }
         
-        \MICS::dump($completion, $this->Code .' completion data', true);
-        
-        return [
-            'demonstrationsLogged' => 0,
-            'demonstrationsRequired' => $this->getDemonstrationsRequiredByLevel(),
-            'average' => $average
-        ];
+        return $completion;
     }
 }
