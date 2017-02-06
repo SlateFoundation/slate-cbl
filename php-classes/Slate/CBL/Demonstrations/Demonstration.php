@@ -5,6 +5,7 @@ namespace Slate\CBL\Demonstrations;
 use Slate\People\Student;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
+use Slate\CBL\Tasks\StudentTask;
 
 class Demonstration extends \VersionedRecord
 {
@@ -92,7 +93,15 @@ class Demonstration extends \VersionedRecord
     public function getCompetencyCompletions()
     {
         // use cached $this->Skills array to include skills that may have been destroyed in this session
-        if (count($this->Skills)) {
+        if ($StudentTask = StudentTask::getByWhere(['DemonstrationID' => $this->ID])) {
+            $templateSkills = array_map(function($Skill) {
+                return $Skill->ID;
+            }, $StudentTask->AllSkills);
+        } else {
+            $templateSkills = [];
+        }
+
+        if (count($this->Skills) || count($templateSkills)) {
             $competencies = Competency::getAllByQuery(
                 'SELECT DISTINCT Competency.*'
                 .' FROM `%s` Skill'
@@ -101,9 +110,9 @@ class Demonstration extends \VersionedRecord
                 [
                     Skill::$tableName,
                     Competency::$tableName,
-                    implode(',', array_map(function($DemonstrationSkill) {
+                    implode(',', array_merge(array_map(function($DemonstrationSkill) {
                         return $DemonstrationSkill->SkillID;
-                    }, $this->Skills))
+                    }, $this->Skills), $templateSkills))
                 ]
             );
         } else {
@@ -120,4 +129,32 @@ class Demonstration extends \VersionedRecord
         
         return $completions;
     }
+    
+    /**
+     * Returns current completion state of all skills affected by this demonstration
+     */
+    public function getSkillCompletions()
+    {
+        if (count($this->Skills)) {
+            $skills = Skill::getAllByWhere([
+                'ID' => [
+                    'operator' => 'IN',
+                    'values' => array_map(function($DemonstrationSkill) {
+                        return $DemonstrationSkill->SkillID;
+                    })
+                ]    
+            ]);
+         } else {
+             $skills = [];
+         }
+         
+        $completions = [];
+        foreach ($skills as $skill) {
+            $completions[] = array_merge($skill->getCompletionForStudent($this->Student), [
+                'StudentID' => $this->StudentID
+            ]);
+        }
+        
+        return $completions;
+     }
 }
