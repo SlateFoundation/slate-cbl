@@ -33,8 +33,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'Task@Slate.cbl.model',
         'StudentTask@Slate.cbl.model',
         'Comment@Slate.cbl.model.tasks',
-        'Demonstration@Slate.cbl.model',
-        'DemonstrationSkill@Slate.cbl.model'
+        'Demonstration@Slate.cbl.model'
     ],
 
 

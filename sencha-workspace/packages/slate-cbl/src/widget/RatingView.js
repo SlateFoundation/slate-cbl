@@ -19,7 +19,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         demonstrationSkills: null,
         defaultRatings: null
     },
-    // todo: add ratings as config.
+
     tpl: [
         '{% this.ratings = values.ratings %}',
         '{% this.menuRatings = values.menuRatings %}',
@@ -94,7 +94,6 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 if (rating === null || scope.menuRatings.indexOf(rating) > -1) {
                     cls += ' is-selected';
                 }
-                console.log(arguments);
                 return cls;
             },
 
@@ -203,8 +202,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
     },
 
     applyDemonstrationSkills: function(demonstrationSkills) {
-        var me = this,
-            i = 0,
+        var i = 0,
             indexedDemonstrationSkills = {};
 
         for (; i < demonstrationSkills.length; i++) {
