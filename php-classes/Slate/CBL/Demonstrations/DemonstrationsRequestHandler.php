@@ -116,14 +116,9 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                         ,'Override' => !empty($skill['Override'])
                     ], true);
                 } elseif ($existingSkills[$skill['SkillID']]['DemonstratedLevel'] != $skill['DemonstratedLevel']) {
-                    DB::nonQuery(
-                        'UPDATE `%s` SET DemonstratedLevel = "%s" WHERE ID = %u'
-                        ,[
-                            DemonstrationSkill::$tableName
-                            ,DB::escape($skill['DemonstratedLevel'])
-                            ,$existingSkills[$skill['SkillID']]['ID']
-                        ]
-                    );
+                    $DemoSkill = DemonstrationSkill::getByID($existingSkills[$skill['SkillID']]['ID']);
+                    $DemoSkill->DemonstratedLevel = $skill['DemonstratedLevel'];
+                    $DemoSkill->save(false);
                 }
             }
 
