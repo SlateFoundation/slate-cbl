@@ -214,8 +214,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         studentTask.save({
             success: function(rec) {
-                taskRater.updateStudentTask(rec);
-                dateField.setValue('');
+                taskRater.close();
+                Ext.toast('Student task successfully reassigned.');
             }
         });
     },
