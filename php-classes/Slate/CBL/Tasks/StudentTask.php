@@ -13,6 +13,8 @@ use Slate\CBL\Demonstrations\ExperienceDemonstration;
 
 class StudentTask extends \VersionedRecord
 {
+    public static $rateExpiredMissing = false;
+
     public static $historyTable = 'history_cbl_student_tasks';
 
     public static $tableName = 'cbl_student_tasks';
