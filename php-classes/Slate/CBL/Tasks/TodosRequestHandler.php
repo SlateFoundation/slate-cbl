@@ -62,11 +62,11 @@ class TodosRequestHandler extends \RecordsRequestHandler
             $enrolledSections = SectionParticipant::getAllByWhere($enrolledSectionWhere);
         } else {
             // return all todos from sections in the current term
-            $currentTerm = Term::getCurrent();
+            $currentTermIDs = Term::getCurrent()->getConcurrentTermIDs();
 
-            $sections = Section::getAllByField('TermID', $currentTerm->ID);
+            $sections = Section::getAllByWhere(['TermID' => ['values' => $currentTermIDs]]);
 
-            if ($currentTerm) {
+            if (count($currentTermIDs) > 0) {
 
                 $sectionIds = array_map(function($s) {
                     return $s->ID;
