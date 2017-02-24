@@ -97,8 +97,12 @@ foreach ($students as $student) {
             $totalGrowth = 0;
             $totalPerformanceLevel = 0;
             $validPerformanceLevels = 0;
+            $totalCompetencyGrowth = 0;
+            $totalCompetenciesWithGrowth = 0;
 
             foreach ($studentCompetencies as $studentCompetency) {
+                $totalGrowth = 0;
+                $totalSkillsWithGrowth = 0;
                 $competency = $studentCompetency->Competency;
 
                 // no foreign key enforcemnt, client is manually deleting competency records, skip this studentCompetency if no associated competency
@@ -142,17 +146,6 @@ foreach ($students as $student) {
                             'order' => 'Created ASC'
                         ]);
 
-                        // must have at least 2 non-zero logs to be counted for growth
-                        if (count($nonMissingDemonstrationSkills) >=2) {
-                            $skillsWithGrowth ++;
-
-                            // Our query is ordered by date so we can use first and last record. (breaking these out into vars for code clarity)
-                            $earliestLogLevel = $nonMissingDemonstrationSkills[0]->DemonstratedLevel;
-                            $latestLogLevel = $nonMissingDemonstrationSkills[count($nonMissingDemonstrationSkills)-1]->DemonstratedLevel;
-
-                            // growth is the difference between the first and last log.
-                            $growth = $growth + ($latestLogLevel - $earliestLogLevel);
-                        }
 
                         $nonMissingDemonstrationSkills = [];
                         foreach ($demonstrationSkills as $demonstrationSkill) {
@@ -182,6 +175,19 @@ foreach ($students as $student) {
                             }
                         }
 
+                        // must have at least 2 non-zero logs to be counted for growth
+                        if (count($nonMissingDemonstrationSkills) >= 2) {
+                            $skillsWithGrowth++;
+
+                            // Our query is ordered by date so we can use first and last record. (breaking these out into vars for code clarity)
+                            $earliestLogLevel = $nonMissingDemonstrationSkills[0]->DemonstratedLevel;
+                            $latestLogLevel = $nonMissingDemonstrationSkills[count($nonMissingDemonstrationSkills)-1]->DemonstratedLevel;
+
+                            // growth is the difference between the first and last log.
+                            $growth = $growth + ($latestLogLevel - $earliestLogLevel);
+
+                        }
+
                         $totalGrowth += $growth;
                         $totalSkillsWithGrowth += $skillsWithGrowth;
                         $totalCompletedOpportunities += $completedOpportunities;
@@ -191,14 +197,22 @@ foreach ($students as $student) {
 
                 }
 
+                if ($totalSkillsWithGrowth > 0) {
+                    $totalCompetencyGrowth += $totalGrowth / $totalSkillsWithGrowth;
+                }
+
+                if ($totalGrowth && $totalSkillsWithGrowth> 0) {
+                    $totalCompetenciesWithGrowth++;
+                }
+
             }
 
             if ($validPerformanceLevels > 0) {
                 $totalPerformanceLevel = $totalPerformanceLevel / $validPerformanceLevels;
             }
 
-            if ($totalSkillsWithGrowth > 0) {
-                $totalGrowth = $totalGrowth / $totalSkillsWithGrowth;
+            if ($totalCompetencyGrowth > 0 && $totalCompetenciesWithGrowth > 0) {
+                $totalGrowth = $totalCompetencyGrowth / $totalCompetenciesWithGrowth;
             }
 
             $progress = 0;
@@ -231,4 +245,3 @@ foreach ($students as $student) {
 $sw = new SpreadsheetWriter();
 $sw->writeRows($rows);
 $sw->close();
-
