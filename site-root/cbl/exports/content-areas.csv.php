@@ -201,7 +201,7 @@ foreach ($students as $student) {
                     $totalCompetencyGrowth += $totalGrowth / $totalSkillsWithGrowth;
                 }
 
-                if ($totalGrowth && $totalSkillsWithGrowth> 0) {
+                if ($totalSkillsWithGrowth> 0) {
                     $totalCompetenciesWithGrowth++;
                 }
 
