@@ -173,7 +173,6 @@ foreach ($students as $student) {
                             } elseif ($demonstrationSkill->DemonstratedLevel > 0 && $ratedOpportunities < $demonstrationsRequired) {
                                 $ratedOpportunities++;
                             }
-<<<<<<< HEAD
                         }
 
                         // must have at least 2 non-zero logs to be counted for growth
@@ -187,8 +186,6 @@ foreach ($students as $student) {
                             // growth is the difference between the first and last log.
                             $growth = $growth + ($latestLogLevel - $earliestLogLevel);
 
-=======
->>>>>>> 7ea0d96405d5fcc6c3efcf0894de82287b80afea
                         }
 
                         $totalGrowth += $growth;
