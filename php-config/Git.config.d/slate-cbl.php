@@ -2,8 +2,8 @@
 
 Git::$repositories['slate-cbl'] = [
     'remote' => 'https://github.com/SlateFoundation/slate-cbl.git',
-    'originBranch' => 'releases/v2/develop',
-    'workingBranch' => 'releases/v2/develop',
+    'originBranch' => 'releases/v2',
+    'workingBranch' => 'releases/v2',
     'localOnly' => true,
     'trees' => [
         'event-handlers/Slate/CBL',
@@ -14,7 +14,6 @@ Git::$repositories['slate-cbl'] = [
         'html-templates/app/SlateTasksTeacher',
         'html-templates/cbl',
         'php-classes/Slate/CBL',
-        'php-classes/Slate/Courses/SectionsRequestHandler.php',
         'php-config/Git.config.d/slate-cbl.php',
         'php-config/Slate/UI/Tools.config.d/cbl.php',
         'php-migrations/Slate/CBL',
