@@ -211,8 +211,10 @@ foreach ($students as $student) {
                 $totalPerformanceLevel = $totalPerformanceLevel / $validPerformanceLevels;
             }
 
-            if ($totalCompetencyGrowth > 0 && $totalCompetenciesWithGrowth > 0) {
+            if ($totalCompetenciesWithGrowth > 0) {
                 $totalGrowth = $totalCompetencyGrowth / $totalCompetenciesWithGrowth;
+            } else {
+                $totalGrowth = 0; // can't be calculated, zero it so we don't get growth from last row
             }
 
             $progress = 0;
