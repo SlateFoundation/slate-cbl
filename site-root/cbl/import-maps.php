@@ -30,7 +30,7 @@ while ($mapsRow = $mapsCsv->getNextRow()) {
             \Debug::dumpVar($lastCompetency, false, 'creating competency');
         } elseif ($row['Type'] == 'Standard') {
             // handle numeric er values
-            if (is_numeric($row['ER'])) {
+            if (ctype_digit($row['ER'])) {
                 $demonstrationRequirements = [
                     'default' => $row['ER']
                 ];
@@ -39,7 +39,7 @@ while ($mapsRow = $mapsCsv->getNextRow()) {
                 foreach ($splitERs as $er) {
                     list($lvl, $total) = explode(':', $er);
 
-                    if (($lvl != 'default' && !is_numeric($lvl)) || !is_numeric($total)) {
+                    if (($lvl != 'default' && !ctype_digit($lvl)) || !ctype_digit($total)) {
                         continue;
                     }
 
