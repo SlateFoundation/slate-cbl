@@ -40,7 +40,7 @@ while ($mapsRow = $mapsCsv->getNextRow()) {
                     list($lvl, $total) = explode(':', $er);
 
                     if (($lvl != 'default' && !ctype_digit($lvl)) || !ctype_digit($total)) {
-                        continue;
+                        throw new Exception('Unable to parse evidence requirements for Skill: '.$row['Code']);
                     }
 
                     $demonstrationRequirements[$lvl] = $total;
