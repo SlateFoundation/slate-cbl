@@ -46,6 +46,10 @@ while ($mapsRow = $mapsCsv->getNextRow()) {
 
                     $demonstrationRequirements[$lvl] = $total;
                 }
+
+                if (!isset($demonstrationRequirements['default'])) {
+                    $demonstrationRequirements['default'] = 0;
+                }
             }
 
             \Debug::dumpVar(Slate\CBL\Skill::create([
