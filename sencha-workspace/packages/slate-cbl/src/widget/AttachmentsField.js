@@ -34,7 +34,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         action: 'addlink',
         listeners: {
             click: function() {
-                this.up('slate-tasks-attachmentsfield').addAttachment();
+                this.up('slate-tasks-attachmentsfield').addLinkAttachment();
             }
         }
     },
@@ -73,7 +73,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
 
     },
 
-    addAttachment: function(url) {
+    addLinkAttachment: function(url) {
         var me = this,
             field = me.down('textfield'),
             value = url || field.getValue();
