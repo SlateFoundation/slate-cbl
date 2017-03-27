@@ -42,7 +42,6 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         xtype: 'button',
         text: 'Attachment',
         action: 'addattachment',
-        disabled: true
     }],
 
     updateReadOnly: function(readOnly) {
