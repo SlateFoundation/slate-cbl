@@ -42,6 +42,11 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         xtype: 'button',
         text: 'Attachment',
         action: 'addattachment',
+        listeners: {
+            click: function() {
+                return this.fireEvent('addgoogleattachment', this);
+            }
+        }
     }],
 
     updateReadOnly: function(readOnly) {
