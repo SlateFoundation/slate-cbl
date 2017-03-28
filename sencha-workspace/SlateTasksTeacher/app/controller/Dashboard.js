@@ -140,6 +140,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'slate-tasks-teacher-taskeditor slate-tasks-titlefield[clonable]': {
             select: 'onClonableTitleFieldSelect'
         },
+        'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield': {
+            addgoogleattachment: 'onAddGoogleAttachmentClick'
+        }
     },
 
 
@@ -458,8 +461,68 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         });
     },
 
+    onAddGoogleAttachmentClick: function() {
+        var me = this,
+            token = Ext.util.Cookies.get('googleAppsToken');
+
+        // check for google token in cookies
+
+        gapi.load('auth:picker:client', {
+            callback: function() {
+                me.doGoogleAuthentication();
+            }
+        });
+    },
+
+    onGoogleAuthentication: function(authResult) {
+        var me = this,
+            googleAppsDomain = SiteEnvironment && SiteEnvironment.googleAppsDomain || location.host,
+            googleAppsEmailRegex = new RegExp('^.+\@'+googleAppsDomain+'$'),
+            tokenExpiration;
+
+        console.info('handleAuthResult(%o)', authResult);
+        if (!authResult || authResult.error) {
+            Ext.Msg.alert('Error', 'Unable to authenticate user. Please try again or contact an administrator.');
+            return;
+        }
+
+        // confirm authentication is within google apps domain
+        gapi.client.request({
+            path: '/drive/v3/about',
+            params: {
+                fields: 'user'
+            }
+        }).then(function(response) {
+            console.info('loaded user', response.result);
+
+            if (!response.result || !response.result.user || !response.result.user.emailAddress.match(googleAppsEmailRegex)) {
+                Ext.Msg.alert('Error', 'Account must be under the '+ googleAppsDomain + ' domain.');
+                return false;
+            }
+
+            tokenExpiration = new Date(authResult.expires_at);
+            Ext.util.Cookies.set('googleAppsToken', authResult.access_token, tokenExpiration);
+
+        });
+    },
 
     // custom methods
+    doGoogleAuthentication: function() {
+        var me = this,
+            scope = ['https://www.googleapis.com/auth/drive'],
+            developerKey = SiteEnvironment && SiteEnvironment.googleAppsDeveloperKey,
+            clientId = SiteEnvironment && SiteEnvironment.googleAppsClientId;
+
+        // TODO: handle cases where needed variables are not set
+
+        gapi.auth.authorize({
+            'client_id': clientId,
+            'scope': scope,
+            'immediate': false
+        }, function(authResult) {
+            me.onGoogleAuthentication(authResult);
+        });
+    },
     doAssignStudentTaskRevision: function(date) {
         var me = this,
             taskRater = me.getTaskRater(),
