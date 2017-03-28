@@ -44,7 +44,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         action: 'addattachment',
         listeners: {
             click: function() {
-                return this.fireEvent('addgoogleattachment', this);
+                return this.up('slate-tasks-attachmentsfield').fireEvent('addgoogleattachment', this);
             }
         }
     }],
