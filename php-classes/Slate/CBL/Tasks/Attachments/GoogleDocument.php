@@ -2,14 +2,19 @@
 
 namespace Slate\CBL\Tasks\Attachments;
 
-class GoogleDocument extends AbstractTaskAttachment
+class GoogleDocument extends Link
 {
     public static $fields = [
-        'ExternalID'
+        'FileID' => 'uint',
+        'RevisionID'
     ];
 
     public static $validators = [
-        'ExternalID' => [
+        'File' => [
+            'validator' => 'require-relationship',
+            'required' => true
+        ],
+        'RevisionID' => [
             'validator' => 'string',
             'required' => true
         ]
