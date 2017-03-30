@@ -487,13 +487,36 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var me = this,
             googleAppsDomain = SiteEnvironment && SiteEnvironment.googleAppsDomain || location.host,
             googleAppsEmailRegex = new RegExp('^.+\@'+googleAppsDomain+'$'),
-            tokenExpiration;
+            tokenExpiration,
+            _verifyUserIsWithinDomain, _userIsNotWithinDomain;
 
         console.info('handleAuthResult(%o)', authResult);
+
         if (!authResult || authResult.error) {
             Ext.Msg.alert('Error', 'Unable to authenticate user. Please try again or contact an administrator.');
             return;
         }
+
+        _userIsNotWithinDomain = function(errorMessage) {
+            Ext.Msg.alert('Error', errorMessage);
+            return;
+        };
+
+        _verifyUserIsWithinDomain = function(response) {
+            console.info('loaded user', response.result);
+
+            if (!response.result || !response.result.user || !response.result.user.emailAddress.match(googleAppsEmailRegex)) {
+                return _userIsNotWithinDomain('Account must be under the correct domain. ' + googleAppsDomain);
+                // return false;
+            }
+
+            tokenExpiration = new Date(authResult.expires_at * 1000);
+
+            Ext.util.Cookies.set('googleAppsToken', authResult.access_token, tokenExpiration, '/');
+            Ext.util.Cookies.set('googleAppsPermissionId', response.result.user.permissionId, tokenExpiration, '/');
+
+            me.doOpenFilePicker(authResult.access_token);
+        };
 
         // confirm authentication is within google apps domain
         gapi.client.request({
@@ -501,21 +524,174 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             params: {
                 fields: 'user'
             }
-        }).then(function(response) {
-            console.info('loaded user', response.result);
+        }).
+        then(_verifyUserIsWithinDomain);
+    },
 
-            if (!response.result || !response.result.user || !response.result.user.emailAddress.match(googleAppsEmailRegex)) {
-                Ext.Msg.alert('Error', 'Account must be under the '+ googleAppsDomain + ' domain.');
-                return false;
-            }
+    onPickerSelect: function(data) {
+        console.info('pickerCallback(%o)', data);
+        var me = this,
+            taskEditor = me.getTaskEditor(),
 
-            tokenExpiration = new Date(authResult.expires_at);
-            Ext.util.Cookies.set('googleAppsToken', authResult.access_token, tokenExpiration);
+            googleAppsDomain = SiteEnvironment && SiteEnvironment.googleAppsDomain,
+            userPermissionId = Ext.util.Cookies.get('googleAppsPermissionId', '/'),
+            googleAppsToken = Ext.util.Cookies.get('googleAppsToken', '/'),
 
-        });
+            showTaskEditor = [
+                google.picker.Action.CANCEL,
+                google.picker.Action.PICKED
+            ].indexOf(data[google.picker.Response.ACTION]) > -1,
+            filePicked = data[google.picker.Response.ACTION] == google.picker.Action.PICKED,
+
+            doc = filePicked && data[google.picker.Response.DOCUMENTS][0],
+
+            _getGoogleFileOwner = Ext.bind(me.getGoogleFileOwner, me),
+            _getGoogleFileOwnerEmail = function(response) {
+                return me.getGoogleFileOwnerEmail(response, doc);
+            },
+            _doVerifyGoogleFileOwner = function(response) {
+                return me.doVerifyGoogleFileOwner(response, doc);
+            };
+
+        if (showTaskEditor) {
+            taskEditor.show(true);
+        }
+
+        if (filePicked) {
+            gapi.client.request({
+                path: '/drive/v3/files/'+doc[google.picker.Document.ID]+'/permissions',
+                method: 'GET',
+                params: {
+                    'access_token': googleAppsToken
+                }
+            }).
+            then(_getGoogleFileOwner).
+            then(_getGoogleFileOwnerEmail).
+            then(_doVerifyGoogleFileOwner);
+
+            // TODO: confirm if isShared means that the document is shared with user
+            // if (doc.isShared) {
+            //     Ext.Msg.confirm('File Shared', 'You are not the owner of this file.<br>Would you like to create a copy?', function(answer) {
+            //         if (answer == 'yes') {
+            //             // create copy of file
+            //             me.doCloneGoogleFile(doc);
+            //         }
+            //     });
+            //     return;
+            // }
+
+            // me.doAddGoogleFile(doc);
+        }
     },
 
     // custom methods
+    getGoogleFileOwner: function(response) {
+        var permissions = response.result.permissions,
+            ownerPermission = permissions[0],
+            i = 0;
+
+        while (ownerPermission.role != 'owner' && permissions.length > i) {
+            i++;
+            ownerPermission = response.results.permissions[i];
+        }
+
+        if (!ownerPermission.role == 'owner') {
+            // reject('Unable to find document owner. Please try again or contact an administrator.');
+            // Ext.Msg.alert('Error', 'Unable to find document owner. Please try again or contact an administrator.');
+            // return;
+        }
+
+        return ownerPermission;
+    },
+
+    getGoogleFileOwnerEmail: function(permission, doc) {
+
+        return gapi.client.request({
+            path: '/drive/v3/files/'+doc[google.picker.Document.ID]+'/permissions/'+permission.id,
+            method: 'GET',
+            params: {
+                'access_token': Ext.util.Cookies.get('googleAppsToken', '/'),
+                fields: 'id,emailAddress'
+            }
+        });
+    },
+
+    doVerifyGoogleFileOwner: function(response, doc) {
+        var me = this,
+            ownerEmail = response.result.emailAddress,
+            googleAppsDomain = SiteEnvironment && SiteEnvironment.googleAppsDomain;
+
+        console.log(response, ownerEmail, doc);
+        if (!ownerEmail.match(new RegExp('^.+\@'+googleAppsDomain+'$'))) {
+            Ext.Msg.confirm('Error', 'Owner of document is not within domain: ' + googleAppsDomain + '<br>Would you like to clone this document?', function(answer) {
+                if (answer == 'yes') {
+                    return me.doCloneGoogleFile(doc, ownerEmail);
+                }
+            });
+            return;
+        }
+
+        me.doAddGoogleFile(doc, ownerEmail);
+    },
+
+    doCloneGoogleFile: function(file) {
+        var me = this,
+            googleAppsToken = Ext.util.Cookies.get('googleAppsToken', '/'),
+            _addClonedDocument = function(response) {
+                if (response.error) {
+                    Ext.Msg.alert('Error', 'Failed to clone file. Please try again later, or contact an administrator.');
+                    return;
+                }
+
+                me.doAddGoogleFile({
+                    url: response.result.webViewLink,
+                    name: response.result.name,
+                    id: response.result.id
+                });
+            };
+
+        gapi.client.request({
+            path: '/drive/v3/files/' + file[google.picker.Document.ID] + '/copy',
+            method: 'POST',
+            params: {
+                'access_token': googleAppsToken,
+                fields: 'id,name,webViewLink'
+            },
+            body: {
+                'resource': { 'title': file[google.picker.Document.NAME] }
+            }
+        }).
+        then(_addClonedDocument);
+    },
+
+    doAddGoogleFile: function(file, ownerEmail) {
+        var me = this,
+            attachmentsField = me.getAttachmentsField(),
+            fileId = file[google.picker.Document.ID];
+
+        gapi.client.request({
+            path: '/drive/v3/files/'+fileId+'/revisions/head',
+            method: 'GET',
+            params: {
+                'access_token': Ext.util.Cookies.get('googleAppsToken', '/')
+            }
+        }).then(function(latestRevision) {
+            if (latestRevision.error) {
+                Ext.Msg.alert('Error', 'Unable to lookup details about google document. Please try again, or contact an administrator.');
+                return;
+            }
+
+            attachmentsField.setAttachments({
+                Class: 'Slate\\CBL\\Tasks\\Attachments\\GoogleDocument',
+                URL: file[google.picker.Document.URL],
+                Title: file[google.picker.Document.NAME],
+                ExternalID: fileId,
+                RevisionID: latestRevision.ID,
+                OwnerEmail: ownerEmail
+            }, true);
+        });
+    },
+
     doGoogleAuthentication: function() {
         var me = this,
             scope = ['https://www.googleapis.com/auth/drive'],
@@ -532,6 +708,25 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             me.onGoogleAuthentication(authResult);
         });
     },
+
+    doOpenFilePicker: function() {
+        var me = this,
+            taskEditor = me.getTaskEditor(),
+
+            accessToken = Ext.util.Cookies.get('googleAppsToken', '/'),
+            developerKey = SiteEnvironment && SiteEnvironment.googleAppsDeveloperKey,
+
+            picker = new google.picker.PickerBuilder().
+            addView(google.picker.ViewId.DOCS).
+            setOAuthToken(accessToken).
+            setDeveloperKey(developerKey).
+            setCallback(Ext.bind(me.onPickerSelect, me)).
+            build();
+
+        picker.setVisible(true);
+        taskEditor.hide(true);
+    },
+
     doAssignStudentTaskRevision: function(date) {
         var me = this,
             taskRater = me.getTaskRater(),
