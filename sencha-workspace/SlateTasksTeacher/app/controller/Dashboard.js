@@ -463,16 +463,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     onAddGoogleAttachmentClick: function() {
         var me = this,
-            token = Ext.util.Cookies.get('googleAppsToken');
+            taskEditor = me.getTaskEditor(),
+            token = Ext.util.Cookies.get('googleAppsToken', '/');
 
         if (!taskEditor.getTask().phantom) {
             Ext.Msg.alert('Error', 'Unable to add attachments while editing&hellip; Please create a new task.');
             return;
         }
         // check for google token in cookies
-
         gapi.load('auth:picker:client', {
             callback: function() {
+                // TODO: check if token is any good
+                if (token) {
+                    return me.doOpenFilePicker(token);
+                }
+
                 me.doGoogleAuthentication();
             }
         });
