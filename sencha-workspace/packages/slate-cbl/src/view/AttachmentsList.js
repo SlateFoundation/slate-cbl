@@ -76,34 +76,50 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
 
         me.el.on('click', function(ev, t) {
             var btn = ev.getTarget('button'),
-                action, record;
+                action, record, recordSettings;
 
             if (btn) {
                 action = btn.getAttribute('action');
             }
 
+            record = me.getRecord(Ext.fly(event.target).parent(me.getItemSelector()));
+
             switch (action) {
                 case 'settings':
+                    recordSettings = record.get('settings');
                     Ext.create('Ext.menu.Menu', {
                         defaults: {
-                            xtype: 'menucheckitem'
+                            xtype: 'menucheckitem',
+                            record: record,
+                            handler: function(item, evt) {
+                                var settings = {};
+
+                                settings[item.name] = item.checked;
+
+                                item.record.set('settings', Ext.apply(item.record.get('settings'), settings));
+                            }
                         },
                         items: [
                             {
                                 text: 'View Only',
-                                checked: true
+                                name: 'viewOnly',
+                                checked: Boolean(recordSettings.viewOnly)
                             },
                             {
-                                text: 'Duplicate'
+                                text: 'Duplicate',
+                                name: 'duplicate',
+                                checked: Boolean(recordSettings.duplicate)
                             },
                             {
-                                text: 'Collaborate'
+                                text: 'Collaborate',
+                                name: 'collaborate',
+                                checked: Boolean(recordSettings.collaborate)
                             }
                         ]
                     }).showAt(Ext.fly(btn).getXY());
                     break;
                 case 'remove':
-                    record = me.getRecord(Ext.fly(event.target).parent(me.getItemSelector()));
+
                     me.getStore().remove(record);
                     break;
             }
