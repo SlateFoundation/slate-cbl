@@ -465,6 +465,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var me = this,
             token = Ext.util.Cookies.get('googleAppsToken');
 
+        if (!taskEditor.getTask().phantom) {
+            Ext.Msg.alert('Error', 'Unable to add attachments while editing&hellip; Please create a new task.');
+            return;
+        }
         // check for google token in cookies
 
         gapi.load('auth:picker:client', {
