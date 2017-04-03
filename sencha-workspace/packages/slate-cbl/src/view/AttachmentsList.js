@@ -76,7 +76,7 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
 
         me.el.on('click', function(ev, t) {
             var btn = ev.getTarget('button'),
-                action, record, recordSettings;
+                action, record;
 
             if (btn) {
                 action = btn.getAttribute('action');
@@ -86,36 +86,35 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
 
             switch (action) {
                 case 'settings':
-                    recordSettings = record.get('settings');
+
                     Ext.create('Ext.menu.Menu', {
                         defaults: {
-                            xtype: 'menucheckitem',
+                            xtype: 'radiogroup',
                             record: record,
-                            handler: function(item, evt) {
-                                var settings = {};
-
-                                settings[item.name] = item.checked;
-
-                                item.record.set('settings', Ext.apply(item.record.get('settings'), settings));
+                            name: 'Share',
+                            columns: 1,
+                            vertical: true,
+                            handler: function(item) {
+                                item.record.set(item.name, item.inputValue);
                             }
                         },
-                        items: [
-                            {
-                                text: 'View Only',
-                                name: 'viewOnly',
-                                checked: Boolean(recordSettings.viewOnly)
+                        items: [{
+                            items: [{
+                                boxLabel: 'View Only',
+                                inputValue: 'view-only',
+                                checked: Boolean(record.get('Share') == 'view-only')
                             },
                             {
-                                text: 'Duplicate',
-                                name: 'duplicate',
-                                checked: Boolean(recordSettings.duplicate)
+                                boxLabel: 'Duplicate',
+                                inputValue: 'duplicate',
+                                checked: Boolean(record.get('Share') == 'duplicate')
                             },
                             {
-                                text: 'Collaborate',
-                                name: 'collaborate',
-                                checked: Boolean(recordSettings.collaborate)
-                            }
-                        ]
+                                boxLabel: 'Collaborate',
+                                inputValue: 'collaborate',
+                                checked: Boolean(record.get('Share') == 'collaborate')
+                            }]
+                        }]
                     }).showAt(Ext.fly(btn).getXY());
                     break;
                 case 'remove':
@@ -123,6 +122,6 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                     me.getStore().remove(record);
                     break;
             }
-        }, null, { delegate: 'button'});
+        }, null, { delegate: 'button' });
     }
 });
