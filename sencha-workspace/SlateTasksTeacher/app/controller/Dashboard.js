@@ -21,7 +21,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'Dashboard',
         'TaskEditor',
         'TaskRater',
-        'TaskAssigner'
+        'TaskAssigner',
+        'tasks.AttachmentConfirmation'
     ],
     stores: [
         'CourseSections',
@@ -66,6 +67,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             autoCreate: true,
 
             xtype: 'slate-tasks-teacher-taskeditor'
+        },
+        attachmentConfirmationWindow: {
+            selector: 'slate-tasks-attachmentconfirmation',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-attachmentconfirmation'
         },
         taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
         skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
@@ -675,8 +682,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             params: {
                 'access_token': Ext.util.Cookies.get('googleAppsToken', '/')
             }
-        }).then(function(latestRevision) {
-            if (latestRevision.error) {
+        }).then(function(response) {
+            var latestRevision = response.result;
+
+            if (response.error) {
                 Ext.Msg.alert('Error', 'Unable to lookup details about google document. Please try again, or contact an administrator.');
                 return;
             }
@@ -801,7 +810,11 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             record = form.updateRecord().getRecord(),
             wasPhantom = record.phantom,
             currentAssignees = assignmentsField.getAssignees(false),
-            errors;
+            errors,
+            showDocumentSharingWarning = false,
+            attachment, i = 0,
+            confirmationWindow = me.getAttachmentConfirmationWindow(),
+            _saveRecord;
 
         record.set({
             Skills: skillsField.getSkills(false), // returnRecords
@@ -823,25 +836,57 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             return;
         }
 
-        record.save({
-            success: function(rec) {
-                me.getTaskEditor().close();
+        if (record.phantom && !Ext.util.Cookies.get('skipGoogleDocumentSharingConfirmation', '/')) {
+            for (; i < record.get('Attachments').length; i++) {
+                attachment = record.get('Attachments')[i];
 
-                if (wasPhantom) {
-                    me.getTasksStore().add(rec);
+                if (attachment.Class == 'Slate\\CBL\\Tasks\\Attachments\\GoogleDocument') {
+                    showDocumentSharingWarning = true;
+                    continue;
                 }
-                // reload studenttasks, as new records may exist
-                if (forceReload === true || wasPhantom) {
-                    setTimeout(function() {
-                        me.getStudentTasksStore().reload();
-                        // reload record to ensure relationships are included.
-                        // todo: remove this when API removes the need
-                        rec.load();
-                    }, 1000);
-                }
-                Ext.toast('Task succesfully saved!');
             }
-        });
+        }
+
+        _saveRecord = function() {
+            record.save({
+                success: function(rec) {
+                    me.getTaskEditor().close();
+
+                    if (wasPhantom) {
+                        me.getTasksStore().add(rec);
+                    }
+                    // reload studenttasks, as new records may exist
+                    if (forceReload === true || wasPhantom) {
+                        setTimeout(function() {
+                            me.getStudentTasksStore().reload();
+                            // reload record to ensure relationships are included.
+                            // todo: remove this when API removes the need
+                            rec.load();
+                        }, 1000);
+                    }
+                    Ext.toast('Task succesfully saved!');
+                }
+            });
+        };
+
+        if (showDocumentSharingWarning === true) {
+            confirmationWindow.show({
+                message: 'Publishing this task will share the attached Google Documents with all assignees and course instructors. You <strong>must not<strong> delete or trash this document after publishing this task.',
+                buttons: Ext.MessageBox.YESNO,
+                callback: function(answer) {
+                    if (answer == 'yes') {
+                        _saveRecord();
+
+                        if (confirmationWindow.down('checkboxfield').isChecked()) {
+                            Ext.util.Cookies.set('skipGoogleDocumentSharingConfirmation', '/');
+                        }
+                    }
+                }
+            });
+            return;
+        }
+
+        _saveRecord();
     },
 
     doConfirmTaskAssignees: function(task) {
