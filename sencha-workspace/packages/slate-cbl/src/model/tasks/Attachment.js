@@ -58,12 +58,12 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
             allowNull: true
         },
         {
-            name: 'OwnerEmail',
+            name: 'Share',
             type: 'string',
-            allowNull: true
+            defaultValue: 'view-only'
         },
         {
-            name: 'settings',
+            name: 'File',
             defaultValue: {}
         },
         {
