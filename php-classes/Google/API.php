@@ -148,7 +148,6 @@ class API
         ]);
 
         if (empty($response['access_token'])) {
-            \Debug::dumpVar($response, false, 'api response');
             throw new \Exception('access_token missing from auth response');
         }
 
