@@ -24,4 +24,11 @@ class GoogleDocument extends Link
             'required' => true
         ]
     ];
+
+    public static $relationships = [
+        'File' => [
+            'type' => 'one-one',
+            'class' => \Google\File::class
+        ]
+    ];
 }
