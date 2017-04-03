@@ -694,9 +694,11 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 Class: 'Slate\\CBL\\Tasks\\Attachments\\GoogleDocument',
                 URL: file[google.picker.Document.URL],
                 Title: file[google.picker.Document.NAME],
-                ExternalID: fileId,
-                RevisionID: latestRevision.ID,
-                OwnerEmail: ownerEmail
+                RevisionID: latestRevision.id,
+                File: {
+                    ExternalIdentifier: fileId,
+                    OwnerEmail: ownerEmail
+                }
             }, true);
         });
     },
