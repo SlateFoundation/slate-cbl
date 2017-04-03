@@ -6,7 +6,12 @@ class GoogleDocument extends Link
 {
     public static $fields = [
         'FileID' => 'uint',
-        'RevisionID'
+        'RevisionID',
+        'Share' => [
+            'type' => 'enum',
+            'values' => ['duplicate', 'view-only', 'collaborate'],
+            'default' => 'view-only'
+        ]
     ];
 
     public static $validators = [
