@@ -28,7 +28,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
     public static $relationships = [
         'File' => [
             'type' => 'one-one',
-            'class' => \Google\File::class
+            'class' => \Google\DriveFile::class
         ]
     ];
 }

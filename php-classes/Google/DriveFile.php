@@ -2,7 +2,7 @@
 
 namespace Google;
 
-class File extends \ActiveRecord
+class DriveFile extends \ActiveRecord
 {
     public static $tableName = 'google_files';
 
