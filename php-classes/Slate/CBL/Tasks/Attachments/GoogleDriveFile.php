@@ -7,7 +7,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
     public static $fields = [
         'FileID' => 'uint',
         'RevisionID',
-        'Share' => [
+        'ShareMethod' => [
             'type' => 'enum',
             'values' => ['duplicate', 'view-only', 'collaborate'],
             'default' => 'view-only'

@@ -58,7 +58,7 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
             allowNull: true
         },
         {
-            name: 'Share',
+            name: 'ShareMethod',
             type: 'string',
             defaultValue: 'view-only'
         },

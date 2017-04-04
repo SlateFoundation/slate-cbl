@@ -102,17 +102,17 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                             items: [{
                                 boxLabel: 'View Only',
                                 inputValue: 'view-only',
-                                checked: Boolean(record.get('Share') == 'view-only')
+                                checked: record.get('ShareMethod') === 'view-only'
                             },
                             {
                                 boxLabel: 'Duplicate',
                                 inputValue: 'duplicate',
-                                checked: Boolean(record.get('Share') == 'duplicate')
+                                checked: record.get('ShareMethod') === 'duplicate'
                             },
                             {
                                 boxLabel: 'Collaborate',
                                 inputValue: 'collaborate',
-                                checked: Boolean(record.get('Share') == 'collaborate')
+                                checked: record.get('Share') === 'collaborate'
                             }]
                         }]
                     }).showAt(Ext.fly(btn).getXY());
