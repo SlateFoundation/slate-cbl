@@ -2,7 +2,7 @@
 
 namespace Slate\CBL\Tasks\Attachments;
 
-class GoogleDriveFile extends Link
+class GoogleDriveFile extends AbstractTaskAttachment
 {
     public static $fields = [
         'FileID' => 'uint',
