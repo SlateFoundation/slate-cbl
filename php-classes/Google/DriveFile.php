@@ -12,7 +12,9 @@ class DriveFile extends \ActiveRecord
     public $details;
 
     public static $fields = [
-        'ExternalIdentifier',
+        'DriveID' => [
+            'unique' => true
+        ],
         'OwnerEmail',
         'Title',
         'Type',
