@@ -22,7 +22,7 @@ class DriveFile extends \ActiveRecord
             'values' => ['normal', 'trashed', 'deleted'],
             'default' => 'normal'
         ],
-        'ParentDocumentIdentifier' => [
+        'ParentDriveID' => [
             'default' => null
         ]
     ];
