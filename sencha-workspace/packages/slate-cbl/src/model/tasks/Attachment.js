@@ -43,16 +43,6 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
             allowNull: true
         },
         {
-            name: 'ExternalID',
-            type: 'string',
-            allowNull: true
-        },
-        {
-            name: 'RevisionID',
-            type: 'string',
-            allowNull: true
-        },
-        {
             name: 'URL',
             type: 'string',
             allowNull: true
