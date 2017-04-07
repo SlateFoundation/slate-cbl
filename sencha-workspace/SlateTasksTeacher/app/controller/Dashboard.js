@@ -696,7 +696,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 Title: file[google.picker.Document.NAME],
                 RevisionID: latestRevision.id,
                 File: {
-                    ExternalIdentifier: fileId,
+                    DriveID: fileId,
                     OwnerEmail: ownerEmail
                 }
             }, true);
