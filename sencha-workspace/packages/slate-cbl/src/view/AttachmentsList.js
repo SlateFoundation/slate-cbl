@@ -88,17 +88,19 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                 case 'settings':
 
                     Ext.create('Ext.menu.Menu', {
-                        defaults: {
+                        items: [{
                             xtype: 'radiogroup',
-                            record: record,
-                            name: 'Share',
                             columns: 1,
                             vertical: true,
-                            handler: function(item) {
-                                item.record.set(item.name, item.inputValue);
-                            }
-                        },
-                        items: [{
+                            defaults: {
+                                name: 'ShareMethod',
+                                record: record,
+                                handler: function(item, checked) {
+                                    if (checked) {
+                                        item.record.set(item.getName(), item.inputValue);
+                                    }
+                                }
+                            },
                             items: [{
                                 boxLabel: 'View Only',
                                 inputValue: 'view-only',
@@ -112,7 +114,7 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                             {
                                 boxLabel: 'Collaborate',
                                 inputValue: 'collaborate',
-                                checked: record.get('Share') === 'collaborate'
+                                checked: record.get('ShareMethod') === 'collaborate'
                             }]
                         }]
                     }).showAt(Ext.fly(btn).getXY());
