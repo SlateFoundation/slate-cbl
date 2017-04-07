@@ -2,6 +2,10 @@
 
 namespace Google;
 
+use \Slate\CBL\Tasks\Attachments\GoogleDriveFile;
+use \Slate\CBL\Tasks\Task;
+use \Slate\CBL\Tasks\StudentTask;
+
 class DriveFile extends \ActiveRecord
 {
     public static $tableName = 'google_files';
@@ -12,18 +16,18 @@ class DriveFile extends \ActiveRecord
     public $details;
 
     public static $fields = [
+        'Title',
+        'OwnerEmail',
+        'Type',
         'DriveID' => [
             'unique' => true
         ],
-        'OwnerEmail',
-        'Title',
-        'Type',
+        'ParentDriveID' => [
+            'default' => null
+        ],
         'Status' => [
             'values' => ['normal', 'trashed', 'deleted'],
             'default' => 'normal'
-        ],
-        'ParentDriveID' => [
-            'default' => null
         ]
     ];
 
@@ -32,8 +36,13 @@ class DriveFile extends \ActiveRecord
             'validator' => 'email',
             'required' => true
         ],
-        'FileDetails' => [
-            'validator' => [__CLASS__, 'validateGoogleFileDetails']
+        'Title' => [
+            'required' => true,
+            'validator' => [__CLASS__, 'validateTitle']
+        ],
+        'Type' => [
+            'required' => true,
+            'validator' => [__CLASS__, 'validateType']
         ]
     ];
 
@@ -45,6 +54,10 @@ class DriveFile extends \ActiveRecord
 
     public function getGoogleFileDetails()
     {
+        if ($this->details) {
+            return $this->details;
+        }
+
         if (!$this->OwnerEmail) {
             return null;
         }
@@ -60,27 +73,36 @@ class DriveFile extends \ActiveRecord
         return $response;
     }
 
-    public static function validateGoogleFileDetails(\RecordValidator $validator, File $File)
+    public static function validateType(\RecordValidator $validator, \Google\DriveFile $File)
     {
-        if (empty($File->details)) {
-            try {
-                $File->details = $File->getGoogleFileDetails();
-            } catch (\Exception $e) {
-                $validator->addError('GoogleDriveFile', $e->getMessage());
+        try {
+            if (!$File->Type) {
+                $details = $File->getGoogleFileDetails();
+                $mimeTypeParts = explode('.', $details['mimeType']);
+                $File->Type = end($mimeTypeParts);
             }
+        } catch (\Exception $e) {
+            $valiadtor->addError('Type', 'Type is missing or invalid.');
         }
 
-        if (empty($File->details)) {
-            return;
+        if (!\Validators::string($File->Type)) {
+            $validator->addError('Type', 'Type is missing or invalid.');
+        }
+    }
+
+    public static function validateTitle(\RecordValidator $validator, \Google\DriveFile $File)
+    {
+        try {
+            if (!$File->Title) {
+                $details = $File->getGoogleFileDetails();
+                $File->Title = $File->details['name'];
+            }
+        } catch (\Exception $e) {
+            $valiadtor->addError('Title', 'Title is missing or invalid.');
         }
 
-        if (isset($File->details['name'])) {
-            $File->Title = $File->details['name'];
-        }
-
-        if (isset($File->details['mimeType'])) {
-            $mimeTypeParts = explode('.', $File->details['mimeType']);
-            $File->Type = end($mimeTypeParts);
+        if (!\Validators::string($File->Title)) {
+            $validator->addError('Title', 'Title is missing or invalid.');
         }
     }
 }
