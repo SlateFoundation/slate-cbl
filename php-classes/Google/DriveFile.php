@@ -51,7 +51,7 @@ class DriveFile extends \ActiveRecord
 
         $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
 
-        $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->ExternalIdentifier, []);
+        $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, []);
 
         if (!empty($response['error'])) {
             throw new \Exception('Error looking up document. '.$response['error']['errors'][0]['message']);
