@@ -691,7 +691,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             }
 
             attachmentsField.setAttachments({
-                Class: 'Slate\\CBL\\Tasks\\Attachments\\GoogleDocument',
+                Class: 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile',
                 URL: file[google.picker.Document.URL],
                 Title: file[google.picker.Document.NAME],
                 RevisionID: latestRevision.id,
@@ -842,7 +842,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             for (; i < record.get('Attachments').length; i++) {
                 attachment = record.get('Attachments')[i];
 
-                if (attachment.Class == 'Slate\\CBL\\Tasks\\Attachments\\GoogleDocument') {
+                if (attachment.Class == 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile') {
                     showDocumentSharingWarning = true;
                     continue;
                 }

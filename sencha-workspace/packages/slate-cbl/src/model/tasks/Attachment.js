@@ -72,7 +72,7 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
             depends: ['Class'],
             calculate: function(data) {
                 switch (data.Class) {
-                    case 'Slate\\CBL\\Tasks\\Attachments\\GoogleDocument':
+                    case 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile':
                         return 'doc';
                     case 'Slate\\CBL\\Tasks\\Attachments\\Link':
                         return 'link';
