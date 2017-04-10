@@ -19,7 +19,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         vtype: 'url',
         keyHandlers: {
             ENTER: function() {
-                this.up('slate-tasks-attachmentsfield').addAttachment();
+                this.up('slate-tasks-attachmentsfield').addLinkAttachment();
             }
         }
     },

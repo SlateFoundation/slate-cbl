@@ -504,9 +504,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onAddGoogleAttachmentClick: function() {
         var me = this,
             taskEditor = me.getTaskEditor(),
-            googleUtil = Slate.cbl.util.Google,
-            picker;
-            // token = Ext.util.Cookies.get('googleAppsToken', '/');
+            googleUtil = Slate.cbl.util.Google;
 
         if (!taskEditor.getTask().phantom) {
             Ext.Msg.alert('Error', 'Unable to add attachments while editing&hellip; Please create a new task.');
@@ -571,62 +569,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         then(_verifyUserIsWithinDomain);
     },
 
-    onPickerSelect: function(data) {
-        console.info('pickerCallback(%o)', data);
-        var me = this,
-            taskEditor = me.getTaskEditor(),
-
-            googleAppsDomain = SiteEnvironment && SiteEnvironment.googleAppsDomain,
-            userPermissionId = Ext.util.Cookies.get('googleAppsPermissionId', '/'),
-            googleAppsToken = Ext.util.Cookies.get('googleAppsToken', '/'),
-
-            showTaskEditor = [
-                google.picker.Action.CANCEL,
-                google.picker.Action.PICKED
-            ].indexOf(data[google.picker.Response.ACTION]) > -1,
-            filePicked = data[google.picker.Response.ACTION] == google.picker.Action.PICKED,
-
-            doc = filePicked && data[google.picker.Response.DOCUMENTS][0],
-
-            _getGoogleFileOwner = Ext.bind(me.getGoogleFileOwner, me),
-            _getGoogleFileOwnerEmail = function(response) {
-                return me.getGoogleFileOwnerEmail(response, doc);
-            },
-            _doVerifyGoogleFileOwner = function(response) {
-                return me.doVerifyGoogleFileOwner(response, doc);
-            };
-
-        if (showTaskEditor) {
-            taskEditor.show(true);
-        }
-
-        if (filePicked) {
-            gapi.client.request({
-                path: '/drive/v3/files/'+doc[google.picker.Document.ID]+'/permissions',
-                method: 'GET',
-                params: {
-                    'access_token': googleAppsToken
-                }
-            }).
-            then(_getGoogleFileOwner).
-            then(_getGoogleFileOwnerEmail).
-            then(_doVerifyGoogleFileOwner);
-
-            // TODO: confirm if isShared means that the document is shared with user
-            // if (doc.isShared) {
-            //     Ext.Msg.confirm('File Shared', 'You are not the owner of this file.<br>Would you like to create a copy?', function(answer) {
-            //         if (answer == 'yes') {
-            //             // create copy of file
-            //             me.doCloneGoogleFile(doc);
-            //         }
-            //     });
-            //     return;
-            // }
-
-            // me.doAddGoogleFile(doc);
-        }
-    },
-
     doAddGoogleFile: function(file, ownerEmail) {
         var me = this,
             attachmentsField = me.getAttachmentsField(),
@@ -666,7 +608,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         taskEditor.hide(true);
 
-        picker = googleUtil.
+        googleUtil.
             initFilePicker().
             setCallback(function(data) {
                 var showTaskEditor = [

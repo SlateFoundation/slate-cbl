@@ -101,9 +101,7 @@ Ext.define('Slate.cbl.util.Google', {
     onUserAuthenticated: function(authResult) {
         return new Ext.Promise(function(resolve, reject) {
             var me = Slate.cbl.util.Google,
-                googleAppsDomain = me.getGoogleAppsDomain(),
-                googleAppsEmailRegex = new RegExp('^.+@'+googleAppsDomain+'$'),
-                tokenExpiration;
+                googleAppsDomain = me.getGoogleAppsDomain();
 
             console.info('handleAuthResult(%o)', authResult);
 
@@ -151,7 +149,7 @@ Ext.define('Slate.cbl.util.Google', {
         });
     },
 
-    cloneGoogleFile: function(fileData) {
+    cloneGoogleFile: function(file) {
         var me = Slate.cbl.util.Google,
             googleAppsToken = me.getToken();
 

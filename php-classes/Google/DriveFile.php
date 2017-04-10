@@ -87,7 +87,7 @@ class DriveFile extends \ActiveRecord
                 $File->Type = end($mimeTypeParts);
             }
         } catch (\Exception $e) {
-            $valiadtor->addError('Type', 'Type is missing or invalid.');
+            $validator->addError('Type', 'Type is missing or invalid.');
         }
 
         if (!\Validators::string($File->Type)) {
@@ -103,7 +103,7 @@ class DriveFile extends \ActiveRecord
                 $File->Title = $File->details['name'];
             }
         } catch (\Exception $e) {
-            $valiadtor->addError('Title', 'Title is missing or invalid.');
+            $validator->addError('Title', 'Title is missing or invalid.');
         }
 
         if (!\Validators::string($File->Title)) {
