@@ -163,11 +163,48 @@ class TasksRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
+
+    public static function applyRecordDelta(\ActiveRecord $Record, $requestData)
+    {
+        parent::applyRecordDelta($Record, $requestData);
+
+        if (isset($requestData['Attachments'])) {
+            foreach ($requestData['Attachments'] as $attachmentData) {
+                $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
+                if ($attachmentData['ID'] >= 1) {
+                    if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
+                        $failed[] = $attachmentData;
+                        continue;
+                    }
+                } else {
+                    $Attachment = $attachmentClass::create($attachmentData);
+                }
+
+                if ($Attachment instanceof Attachments\GoogleDriveFile) {
+                    if (!$Attachment->File) {
+                        if (!$File = \Google\DriveFile::getByWhere(['DriveID' => $attachmentData['File']['DriveID']])) {
+                            $File = \Google\DriveFile::create($attachmentData['File']);
+                            if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
+                                $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
+                            }
+                        }
+
+                        $Attachment->File = $File;
+                    }
+                }
+
+                $Attachment->Context = $Record;
+                $attachments[] = $Attachment;
+            }
+
+            $Record->Attachments = $attachments;
+        }
+    }
+
     /*
     *   Responsibilities:
     *       - Update relationships for Skills, Attachments, and StudentTasks.
     */
-
     protected static function onRecordSaved(\ActiveRecord $Record, $data)
     {
         //update skills
@@ -195,51 +232,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 ]);
             }
         }
-
-        // update attachments
-        if (isset($data['Attachments'])) {
-            $originalAttachments = $Record->Attachments;
-            $originalAttachmentIds = array_map(function($s) {
-                return $s->ID;
-            }, $originalAttachments);
-
-            $failed = [];
-            $attachmentIds = [];
-            $attachments = [];
-            $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
-
-            foreach ($data['Attachments'] as $attachmentData) {
-                $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
-                if ($attachmentData['ID'] >= 1) {
-                    if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
-                        $failed[] = $attachmentData;
-                        continue;
-                    }
-                } else {
-                    $Attachment = $attachmentClass::create($attachmentData);
-                }
-
-                $Attachment->ContextID = $Record->ID;
-                $Attachment->ContextClass = $Record->getRootClass();
-                $Attachment->save();
-                $attachments[] = $Attachment;
-                $attachmentIds[] = $Attachment->ID;
-            }
-
-            if (!empty($attachments)) {
-                try {
-                    DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
-                        AbstractTaskAttachment::$tableName,
-                        $Record->getRootClass(),
-                        $Record->ID,
-                        join('", "', $attachmentIds)
-                    ]);
-                } catch (\TableNotFoundException $e) {}
-            }
-
-            $Record->Attachments = $attachments;
-        }
-
 
         // update student tasks
         if (isset($data['Assignees'])) {
