@@ -511,8 +511,20 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             return;
         }
 
-        if (googleUtil.getAuthenticatedUser()) {
+        if (googleUtil.getToken()) {
             googleUtil.loadAPI().
+                then(function() {
+                    return gapi.client.request({
+                        path: '/drive/v3/about',
+                        params: {
+                            fields: 'user',
+                            'access_token': googleUtil.getToken()
+                        }
+                    });
+                }).
+                then(function(response) {
+                    Ext.Promise.resolve(googleUtil.setAuthenticatedUser(response.result.user));
+                }, googleUtil.authenticateUser).
                 then(Ext.bind(me.openFilePicker, me));
         } else {
             googleUtil.loadAPI().
