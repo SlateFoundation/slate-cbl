@@ -94,11 +94,8 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                             vertical: true,
                             defaults: {
                                 name: 'ShareMethod',
-                                record: record,
                                 handler: function(item, checked) {
-                                    if (checked) {
-                                        item.record.set(item.getName(), item.inputValue);
-                                    }
+                                    me.fireEvent('sharemethodchange', this, record, item, checked);
                                 }
                             },
                             items: [{
