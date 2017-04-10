@@ -31,4 +31,79 @@ class GoogleDriveFile extends AbstractTaskAttachment
             'class' => \Google\DriveFile::class
         ]
     ];
+
+    public function getRequiredPermissions()
+    {
+        $permissions = [
+            'read' => [],
+            'write' => []
+        ];
+
+        switch ($this->ShareMethod) {
+            case 'view-only':
+                $permissions['read'] = array_merge(static::getRequiredStudents($this), static::getRequiredTeachers($this));
+                break;
+            case 'collaborate':
+                $permissions['write'] = array_merge(static::getRequiredStudents($this), static::getRequiredTeachers($this));
+                break;
+#
+#            case 'duplicate':
+##                    $permissions['duplicate'] = array_merge($permissions['duplicate'], static::getRequiredDuplicatePermissions($googleFileAttachment));
+##                    break;
+        }
+
+        return $permissions;
+    }
+
+    protected static function getRequiredStudents(GoogleDriveFile $Attachment)
+    {
+        $userIds = [];
+
+        if ($Attachment->ContextClass == Task::getStaticRootClass()) {
+            $userIds = \DB::allValues(
+                'StudentID',
+                'SELECT StudentID FROM `%s` %s '.
+                ' WHERE TaskID = %u ',
+                [
+                    StudentTask::$tableName,
+                    StudentTask::getTableAlias(),
+                    $Attachment->ContextID
+                ]
+            );
+        }
+
+        return $userIds;
+    }
+
+    protected static function getRequiredTeachers(GoogleDriveFile $Attachment)
+    {
+        $userIds = [];
+
+        if ($Attachment->ContextClass == Task::getStaticRootClass()) {
+            $userIds = \DB::allValues(
+                'TeacherID',
+                'SELECT %6$s.PersonID as TeacherID '.
+                '  FROM `%1$s` %2$s '.
+                '  JOIN `%3$s` %4$s '.
+                '    ON %2$s.ID = %4$s.TaskID '.
+                '  JOIN `%5$s` %6$s '.
+                '    ON %4$s.SectionID = %6$s.CourseSectionID '.
+                ' WHERE %6$s.Role = "Teacher" '.
+                '   AND %2$s.ID = %7$u '.
+                ' GROUP BY %6$s.PersonID, %6$s.Role ',
+                [
+                    Task::$tableName,
+                    Task::getTableAlias(),
+                    StudentTask::$tableName,
+                    StudentTask::getTableAlias(),
+                    \Slate\Courses\SectionParticipant::$tableName,
+                    \Slate\Courses\SectionParticipant::getTableAlias(),
+                    $Attachment->ContextID
+                ]
+            );
+        }
+
+        return $userIds;
+    }
+
 }
