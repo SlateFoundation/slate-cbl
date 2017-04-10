@@ -2,6 +2,7 @@
 
 namespace Google;
 
+use Google\API as GoogleAPI;
 use \Slate\CBL\Tasks\Attachments\GoogleDriveFile;
 use \Slate\CBL\Tasks\Task;
 use \Slate\CBL\Tasks\StudentTask;
@@ -59,12 +60,16 @@ class DriveFile extends \ActiveRecord
         }
 
         if (!$this->OwnerEmail) {
-            return null;
+            try {
+                $token = GoogleAPI::fetchAccessToken('https://www.googleapis.com/auth/drive', $GLOBALS['Session']->Person->PrimaryEmail);
+            } catch (\Exception $e) {
+                return null;
+            }
+        } else {
+            $token = GoogleAPI::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
         }
 
-        $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
-
-        $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, []);
+        $response = GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, []);
 
         if (!empty($response['error'])) {
             throw new \Exception('Error looking up document. '.$response['error']['errors'][0]['message']);
