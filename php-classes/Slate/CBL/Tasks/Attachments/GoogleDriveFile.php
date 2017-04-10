@@ -2,6 +2,9 @@
 
 namespace Slate\CBL\Tasks\Attachments;
 
+use Slate\CBL\Tasks\Task;
+use Slate\CBL\Tasks\StudentTask;
+
 class GoogleDriveFile extends AbstractTaskAttachment
 {
     public static $fields = [
