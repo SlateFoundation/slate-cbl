@@ -28,6 +28,14 @@ Ext.define('Slate.cbl.util.Google', {
         return Ext.util.Cookies.get(this.getTokenName(), '/');
     },
 
+    setToken: function(token, expiration) {
+        if (token === null) {
+            expiration = new Date(0);
+        }
+
+        return Ext.util.Cookies.set(this.getTokenName(), token, expiration, '/');
+    },
+
     getDeveloperKey: function() {
         return SiteEnvironment && SiteEnvironment.googleAppsDeveloperKey;
     },
@@ -117,11 +125,9 @@ Ext.define('Slate.cbl.util.Google', {
                     return;
                 }
 
-                tokenExpiration = new Date(authResult.expires_at * 1000);
-
-                Ext.util.Cookies.set(me.getTokenName(), authResult.access_token, tokenExpiration, '/');
-
+                me.setToken(authResult.access_token, new Date(authResult.expires_at * 1000));
                 me.setAuthenticatedUser(userProfileResponse.result.user);
+
                 resolve(userProfileResponse);
             });
         });
