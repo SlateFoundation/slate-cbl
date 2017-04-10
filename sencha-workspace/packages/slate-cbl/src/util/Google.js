@@ -23,6 +23,11 @@ Ext.define('Slate.cbl.util.Google', {
         return this;
     },
 
+    updateAuthenticatedUser: function(user) {
+        if (user === null) {
+            this.setToken(null);
+        }
+    },
 
     getToken: function() {
         return Ext.util.Cookies.get(this.getTokenName(), '/');
