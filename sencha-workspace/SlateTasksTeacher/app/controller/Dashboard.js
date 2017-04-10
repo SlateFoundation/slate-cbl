@@ -491,8 +491,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     var errorMessage;
 
                     if (!role) {
-                        errorMessage = 'Unable to collaborate with this file. <br>You can either:<ul><li>a</li><li>b</li></ul>';
-                        Ext.Msg.alert('Error', errorMessage);
+                        errorMessage = 'Unable to collaborate with this file. <br>You can either:<ul><li>Duplicate this file into your drive</li>Request write access from the file owner.<li>b</li></ul>';
+                        Ext.Msg.alert('Unable to collaborate', errorMessage);
                     }
 
                 });
@@ -666,7 +666,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                         then(null, function(response) {
                             return new Ext.Promise(function(resolve, reject) {
                                 if (response.result && response.result.error && response.result.error.code === 403) {
-                                    Ext.Msg.confirm('Clone File', 'This google drive file is currently owned by someone outside of the '+googleUtil.getGoogleAppsDomain() + ' domain. Would you like to clone this document instead?', function(answer) {
+                                    Ext.Msg.confirm('Clone File', 'You must have write access to the file in order to share. Would you like to clone this document instead?', function(answer) {
                                         if (answer === 'yes') {
                                             resolve(googleUtil.cloneGoogleFile(fileData));
                                         }
