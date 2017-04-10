@@ -10,12 +10,12 @@ class AbstractTaskAttachment extends \ActiveRecord
 
     public static $singularNoun = 'task attachment';
     public static $pluralNoun = 'task attachments';
-    
+
     public static $subClasses =  [
         GoogleDriveFile::class,
         Link::class
     ];
-    
+
     public static $defaultClass = Link::class;
 
     public static $fields = [

@@ -32,27 +32,28 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                 '</tpl>',
             '</li>',
         '</tpl>',
-    {
-        isGoogleDoc: function (url) {
-            var googleDocUrls = [
-                    'docs.google.com',
-                    'sheets.google.com',
-                    'slides.google.com',
-                    'drawings.google.com',
-                    'script.google.com'
-                ],
-                googleDocUrlsLength = googleDocUrls.length,
-                i = 0;
+        {
+            isGoogleDoc: function (url) {
+                var googleDocUrls = [
+                        'docs.google.com',
+                        'sheets.google.com',
+                        'slides.google.com',
+                        'drawings.google.com',
+                        'script.google.com'
+                    ],
+                    googleDocUrlsLength = googleDocUrls.length,
+                    i = 0;
 
-            for (; i<googleDocUrlsLength; i++) {
-                if (url.indexOf(googleDocUrls[i]) > -1) {
-                    return true;
+                for (; i<googleDocUrlsLength; i++) {
+                    if (url.indexOf(googleDocUrls[i]) > -1) {
+                        return true;
+                    }
                 }
-            }
 
-            return false;
+                return false;
+            }
         }
-    }],
+    ],
 
     prepareData: function(data, recordIndex, record) {
         var me = this,
@@ -69,12 +70,12 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
         me.callParent();
 
         if (me.el) {
-            Ext.each(me.el.query('button',false), function(el) {
+            Ext.each(me.el.query('button', false), function(el) {
                 el.setVisible(me.getEditable());
             });
         }
 
-        me.el.on('click', function(ev, t) {
+        me.el.on('click', function(ev) {
             var btn = ev.getTarget('button'),
                 action, record;
 
