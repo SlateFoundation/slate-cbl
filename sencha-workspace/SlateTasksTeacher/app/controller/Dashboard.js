@@ -79,6 +79,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
         commentsField: 'slate-tasks-teacher-taskrater slate-commentsfield',
         attachmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield',
+        attachmentsList: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield slate-attachmentslist',
         assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
         assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
 
@@ -124,6 +125,11 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         acceptTaskBtn: {
             click: 'onAcceptTaskClick'
         },
+
+        attachmentsList: {
+            sharemethodchange: 'onGoogleFileShareMethodChange'
+        },
+
         'slate-tasks-teacher-taskrater button[action=reassign]': {
             click: 'onAssignRevisionClick'
         },
@@ -467,6 +473,32 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 me.doCloneTask(record);
             }
         });
+    },
+
+    onGoogleFileShareMethodChange: function(list, record, radio, selected) {
+        var me = this,
+            shareMethod = radio.inputValue;
+
+        if (selected === false) {
+            return false;
+        }
+
+        record.set('ShareMethod', shareMethod);
+
+        if (shareMethod === 'collaborate') {
+            return Slate.cbl.util.Google.getUserFilePermissions(record.get('File').DriveID).
+                then(function(role) {
+                    var errorMessage;
+
+                    if (!role) {
+                        errorMessage = 'Unable to collaborate with this file. <br>You can either:<ul><li>a</li><li>b</li></ul>';
+                        Ext.Msg.alert('Error', errorMessage);
+                    }
+
+                });
+        }
+
+        return false;
     },
 
     onAddGoogleAttachmentClick: function() {

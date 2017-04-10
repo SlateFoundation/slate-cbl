@@ -173,5 +173,65 @@ Ext.define('Slate.cbl.util.Google', {
                 }
             });
         });
+    },
+
+    /**
+    * Get user file permission role (owner, writer, commenter, reader)
+    * @param fileId string - Google Drive File ID
+    * @param token string - Google API token, with Google Drive API scope, defaults to last token cached
+    * @param permissionId string - Google User Permission ID, defaults to last authenticated user
+    * Returns Promise
+    */
+    getUserFilePermissions: function(fileId, token, permissionId) {
+        var me = Slate.cbl.util.Google,
+            userPermissionId = permissionId || me.getAuthenticatedUser() && me.getAuthenticatedUser().permissionId,
+            accessToken = token || me.getToken(),
+            roles = [
+                'reader',
+                'commenter',
+                'writer',
+                'owner'
+            ];
+
+        return gapi.client.request({
+            path: '/drive/v3/files/'+fileId+'/permissions',
+            method: 'GET',
+            params: {
+                'access_token': accessToken
+            }
+        }).
+        then(function(response) {
+            var userPermission,
+                permissions,
+                i = 0;
+
+            if (response.result && response.result.error) {
+                return Ext.Promise.reject(response.results.error.errors);
+            }
+
+            permissions = response.result.permissions;
+            for (; i < permissions.length; i++) {
+                switch (permissions[i].type) {
+                    case 'anyone':
+                    case 'user':
+                        if (permissions[i].id === userPermissionId
+                            && (!userPermission || roles.indexOf(permissions[i].role) > roles.indexOf(userPermission))
+                        ) {
+                            userPermission = permissions[i].role;
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if (userPermission === roles[roles.length - 1]) {
+                    continue;
+                }
+            }
+
+            return Ext.Promise.resolve(userPermission);
+        });
     }
 });
