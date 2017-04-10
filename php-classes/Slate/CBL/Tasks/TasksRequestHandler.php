@@ -273,5 +273,57 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 join('", "', $assigneeIds)
             ]);
         }
+
+        //update google drive file attachment permissions, after creating student tasks
+        foreach ($Record->Attachments as $attachment) {
+            if (!$attachment instanceof Slate\CBL\Tasks\Attachments\GoogleDriveFile) {
+                continue;
+            }
+
+            if (!$attachment->isNew) {
+                continue;
+            }
+
+            if ($attachment->ShareMethod == 'view-only' || $attachment->ShareMethod == 'collaborate') {
+                $requiredPermissions = $attachment->getRequiredPermissions();
+
+                foreach ($requiredPermissions['read'] as $userId) {
+                    $userEmail = Person::getByID($userId)->PrimaryEmail;
+
+                    if (!$userEmail) {
+                        continue;
+                    }
+
+                    try {
+                        $attachment->File->createPermission($userEmail, 'reader', 'user');
+                    } catch (\Exception $e) {
+                        \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail} on {googleFileRecord}', [
+                            'permissionRole' => 'reader',
+                            'userEmail' => $userEmail,
+                            'googleFileRecord' => $attachment->toString()
+                        ]);
+                        continue;
+                    }
+                }
+
+                foreach ($requiredPermissions['write'] as $userId) {
+                    $userEmail = Person::getByID($userId)->PrimaryEmail;
+
+                    if (!$userEmail) {
+                        continue;
+                    }
+
+                    try {
+                        $attachment->File->createPermission($userEmail, 'writer', 'user');
+                    } catch (\Exception $e) {
+                        \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail}', [
+                            'permissionRole' => 'writer',
+                            'userEmail' => $userEmail
+                        ]);
+                        continue;
+                    }
+                }
+            }
+        }
     }
 }

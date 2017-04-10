@@ -110,4 +110,22 @@ class DriveFile extends \ActiveRecord
             $validator->addError('Title', 'Title is missing or invalid.');
         }
     }
+
+    public function createPermission($email, $role, $type, $token = null)
+    {
+        if (!$token) {
+            $token = GoogleAPI::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
+        }
+
+        $postData = [
+            'type' => $type,
+            'role' => $role,
+            'emailAddress' => $email
+        ];
+
+        return GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/permissions', [
+            'method' => 'POST',
+            'post' => $postData
+        ]);
+    }
 }
