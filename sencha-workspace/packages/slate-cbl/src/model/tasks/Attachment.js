@@ -74,9 +74,9 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
         {
             name: 'title',
             persist: false,
-            depends: ['Title', 'URL'],
+            depends: ['Title', 'URL', 'File'],
             calculate: function(data) {
-                return data.Title || data.URL || 'Untitled';
+                return data.File && data.File.Title || data.Title || data.URL || 'Untitled';
             }
 
         }
