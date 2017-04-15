@@ -14,6 +14,10 @@ class GoogleDriveFile extends AbstractTaskAttachment
             'type' => 'enum',
             'values' => ['duplicate', 'view-only', 'collaborate'],
             'default' => 'view-only'
+        ],
+        'ParentAttachmentID' => [
+            'type' => 'uint',
+            'default' => null
         ]
     ];
 
@@ -32,6 +36,10 @@ class GoogleDriveFile extends AbstractTaskAttachment
         'File' => [
             'type' => 'one-one',
             'class' => \Google\DriveFile::class
+        ],
+        'ParentAttachment' => [
+            'type' => 'one-one',
+            'class' => __CLASS__
         ]
     ];
 
