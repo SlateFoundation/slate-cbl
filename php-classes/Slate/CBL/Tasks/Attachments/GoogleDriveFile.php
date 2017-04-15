@@ -43,7 +43,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
         ]
     ];
 
-    public function getRequiredPermissions()
+    public function getRequiredPermissions($type = null)
     {
         $permissions = [
             'read' => [],
@@ -61,6 +61,10 @@ class GoogleDriveFile extends AbstractTaskAttachment
 #            case 'duplicate':
 ##                    $permissions['duplicate'] = array_merge($permissions['duplicate'], static::getRequiredDuplicatePermissions($googleFileAttachment));
 ##                    break;
+        }
+
+        if  (!empty($type) && isset($permissions[$type])) {
+            return $permissions[$type];
         }
 
         return $permissions;
