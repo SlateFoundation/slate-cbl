@@ -37,7 +37,9 @@ class API
             $options['headers'] = [];
         }
 
-        if (empty($options['skipAuth'])) {
+        if (isset($options['token'])) {
+            $options['headers'][] = 'Authorization: Bearer ' . $options['token'];
+        } elseif (empty($options['skipAuth'])) {
             if (!static::$accessToken) {
                 throw new \Exception('fetchAccessToken must be called with a scope before executeRequest');
             }
