@@ -2,11 +2,6 @@
 
 namespace Google;
 
-use Google\API as GoogleAPI;
-use \Slate\CBL\Tasks\Attachments\GoogleDriveFile;
-use \Slate\CBL\Tasks\Task;
-use \Slate\CBL\Tasks\StudentTask;
-
 class DriveFile extends \ActiveRecord
 {
     public static $tableName = 'google_files';
@@ -61,15 +56,15 @@ class DriveFile extends \ActiveRecord
 
         if (!$this->OwnerEmail) {
             try {
-                $token = GoogleAPI::fetchAccessToken('https://www.googleapis.com/auth/drive', $GLOBALS['Session']->Person->PrimaryEmail);
+                $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $GLOBALS['Session']->Person->PrimaryEmail);
             } catch (\Exception $e) {
                 return null;
             }
         } else {
-            $token = GoogleAPI::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
+            $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
         }
 
-        $response = GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, []);
+        $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, ['token' => $token]);
 
         if (!empty($response['error'])) {
             throw new \Exception('Error looking up document. '.$response['error']['errors'][0]['message']);
@@ -114,7 +109,7 @@ class DriveFile extends \ActiveRecord
     public function createPermission($email, $role, $type, $token = null)
     {
         if (!$token) {
-            $token = GoogleAPI::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
+            $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
         }
 
         $postData = [
@@ -123,7 +118,7 @@ class DriveFile extends \ActiveRecord
             'emailAddress' => $email
         ];
 
-        return GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/permissions', [
+        return API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/permissions', [
             'method' => 'POST',
             'post' => $postData
         ]);
