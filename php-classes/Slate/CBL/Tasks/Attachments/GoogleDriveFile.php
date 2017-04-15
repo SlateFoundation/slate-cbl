@@ -43,6 +43,10 @@ class GoogleDriveFile extends AbstractTaskAttachment
         ]
     ];
 
+    public static $dynamicFields = [
+        'File',
+        'ParentAttachment'
+    ];
     public function getRequiredPermissions($type = null)
     {
         $permissions = [
