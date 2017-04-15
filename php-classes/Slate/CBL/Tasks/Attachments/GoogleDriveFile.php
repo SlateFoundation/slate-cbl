@@ -57,10 +57,10 @@ class GoogleDriveFile extends AbstractTaskAttachment
             case 'collaborate':
                 $permissions['write'] = array_merge(static::getRequiredStudents($this), static::getRequiredTeachers($this));
                 break;
-#
-#            case 'duplicate':
-##                    $permissions['duplicate'] = array_merge($permissions['duplicate'], static::getRequiredDuplicatePermissions($googleFileAttachment));
-##                    break;
+
+            case 'duplicate':
+                $permissions['read'] = static::getRequiredTeachers($this);
+                break;
         }
 
         if  (!empty($type) && isset($permissions[$type])) {
