@@ -73,7 +73,7 @@ class DriveFile extends \ActiveRecord
         return $this->details = $response;
     }
 
-    public static function validateType(\RecordValidator $validator, \Google\DriveFile $File)
+    public static function validateType(\RecordValidator $validator, self $File)
     {
         try {
             if (!$File->Type) {
@@ -90,7 +90,7 @@ class DriveFile extends \ActiveRecord
         }
     }
 
-    public static function validateTitle(\RecordValidator $validator, \Google\DriveFile $File)
+    public static function validateTitle(\RecordValidator $validator, self $File)
     {
         try {
             if (!$File->Title) {
