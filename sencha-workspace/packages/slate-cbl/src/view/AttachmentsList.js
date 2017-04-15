@@ -23,9 +23,9 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
     tpl: [
         '<tpl for=".">',
             '<li class="slate-attachmentslist-item <tpl if="kind">slate-attachment-{kind}</tpl>">',
-                '<span class="slate-attachment-title"><a href="{URL}" target=_blank>{title}</a></span>',
+                '<span class="slate-attachment-title"><a href="{[this.getURL(values)]}" target=_blank>{title}</a></span>',
                 '<tpl if="isEditable">',
-                    '<tpl if="this.isGoogleDoc(values.URL)">',
+                    '<tpl if="this.isGoogleDoc(values)">',
                         '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
                     '</tpl>',
                     '<button class="plain" action="remove"><i class="fa fa-times-circle"></i></button>',
@@ -33,24 +33,30 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
             '</li>',
         '</tpl>',
         {
-            isGoogleDoc: function (url) {
-                var googleDocUrls = [
-                        'docs.google.com',
-                        'sheets.google.com',
-                        'slides.google.com',
-                        'drawings.google.com',
-                        'script.google.com'
-                    ],
-                    googleDocUrlsLength = googleDocUrls.length,
-                    i = 0;
+            isGoogleDoc: function (values) {
+                return values.Class == 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile';
+            },
 
-                for (; i<googleDocUrlsLength; i++) {
-                    if (url.indexOf(googleDocUrls[i]) > -1) {
-                        return true;
+            getURL: function(values) {
+                var fileType;
+
+                if (this.isGoogleDoc(values) && values.File && values.File.DriveID) {
+                    switch (values.File.Type) {
+                        case 'drawing':
+                        case 'spreadsheet':
+                            fileType = values.File.Type + 's';
+                            break;
+
+                        case 'presentation':
+                        case 'document':
+                        default:
+                            fileType = values.File.Type;
+                            break;
                     }
+                    return 'https://docs.google.com/'+fileType+'/d/'+values.File.DriveID;
                 }
 
-                return false;
+                return values.URL;
             }
         }
     ],
