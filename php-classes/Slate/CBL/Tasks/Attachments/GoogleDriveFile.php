@@ -79,16 +79,22 @@ class GoogleDriveFile extends AbstractTaskAttachment
         $userIds = [];
 
         if ($Attachment->ContextClass == Task::getStaticRootClass()) {
-            $userIds = \DB::allValues(
-                'StudentID',
-                'SELECT StudentID FROM `%s` %s '.
-                ' WHERE TaskID = %u ',
-                [
-                    StudentTask::$tableName,
-                    StudentTask::getTableAlias(),
-                    $Attachment->ContextID
-                ]
-            );
+            if ($Attachment->isPhantom) {
+                $userIds = array_map(function($studentTask) {
+                    return $studentTask->StudentID;
+                }, $Attachment->Context->StudentTasks);
+            } else {
+                $userIds = \DB::allValues(
+                    'StudentID',
+                    'SELECT StudentID FROM `%s` %s '.
+                    ' WHERE TaskID = %u ',
+                    [
+                        StudentTask::$tableName,
+                        StudentTask::getTableAlias(),
+                        $Attachment->ContextID
+                    ]
+                );
+            }
         }
 
         return $userIds;
