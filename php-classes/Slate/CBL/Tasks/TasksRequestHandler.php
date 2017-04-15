@@ -5,6 +5,7 @@ namespace Slate\CBL\Tasks;
 use DB;
 use ActiveRecord;
 use Emergence\People\Person;
+use Google\DriveFile;
 
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
@@ -274,53 +275,166 @@ class TasksRequestHandler extends \RecordsRequestHandler
             ]);
         }
 
-        //update google drive file attachment permissions, after creating student tasks
-        foreach ($Record->Attachments as $attachment) {
-            if (!$attachment instanceof Slate\CBL\Tasks\Attachments\GoogleDriveFile) {
-                continue;
-            }
+        static::updateGoogleFilePermissions($Record);
+    }
 
-            if (!$attachment->isNew) {
-                continue;
-            }
-
-            if ($attachment->ShareMethod == 'view-only' || $attachment->ShareMethod == 'collaborate') {
-                $requiredPermissions = $attachment->getRequiredPermissions();
-
-                foreach ($requiredPermissions['read'] as $userId) {
-                    $userEmail = Person::getByID($userId)->PrimaryEmail;
-
-                    if (!$userEmail) {
-                        continue;
-                    }
-
-                    try {
-                        $attachment->File->createPermission($userEmail, 'reader', 'user');
-                    } catch (\Exception $e) {
-                        \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail} on {googleFileRecord}', [
-                            'permissionRole' => 'reader',
-                            'userEmail' => $userEmail,
-                            'googleFileRecord' => $attachment->toString()
-                        ]);
-                        continue;
-                    }
+    public static function updateGoogleFilePermissions(Task $Record)
+    {
+        $userTokens = [];
+        if (!empty($Record->Attachments)) {
+            $googleDriveClass = Attachments\GoogleDriveFile::class;
+            foreach ($Record->Attachments as $attachment) {
+                if (!$attachment instanceof $googleDriveClass) {
+                    continue;
                 }
 
-                foreach ($requiredPermissions['write'] as $userId) {
-                    $userEmail = Person::getByID($userId)->PrimaryEmail;
+                if (!$attachment->isNew) {
+                    continue;
+                }
 
-                    if (!$userEmail) {
-                        continue;
+                if ($attachment->ShareMethod == 'view-only' || $attachment->ShareMethod == 'collaborate') {
+                    $requiredPermissions = $attachment->getRequiredPermissions();
+                    if (empty($userTokens[$attachment->File->OwnerEmail])) {
+                        $userTokens[$attachment->File->OwnerEmail] = \Google\API::fetchAccessToken('https://www.googleapis.com/auth/drive', $attachment->File->OwnerEmail);
                     }
 
-                    try {
-                        $attachment->File->createPermission($userEmail, 'writer', 'user');
-                    } catch (\Exception $e) {
-                        \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail}', [
-                            'permissionRole' => 'writer',
-                            'userEmail' => $userEmail
-                        ]);
-                        continue;
+                    foreach ($requiredPermissions['read'] as $userId) {
+                        $userEmail = Person::getByID($userId)->PrimaryEmail;
+
+                        if (!$userEmail || !\Validators::email($userEmail->toString(), ['domain' => 'slatedemo.com'])) {
+                            \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user {userEmail} on {googleFileRecord}', [
+                                'permissionRole' => 'reader',
+                                'userId' => $userId,
+                                'userEmail' => $userEmail,
+                                'googleFileRecord' => $attachment
+                            ]);
+                            continue;
+                        }
+
+                        $userEmail = $userEmail->toString();
+                        try {
+                            $response = $attachment->File->createPermission($userEmail, 'reader', 'user', $userTokens[$attachment->File->OwnerEmail]);
+                        } catch (\Exception $e) {
+                            \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail} on {googleFileRecord}', [
+                                'permissionRole' => 'reader',
+                                'userEmail' => $userEmail,
+                                'googleFileRecord' => $attachment
+                            ]);
+                            continue;
+                        }
+                    }
+
+                    foreach ($requiredPermissions['write'] as $userId) {
+                        $userEmail = Person::getByID($userId)->PrimaryEmail;
+
+                        if (!$userEmail || !\Validators::email($userEmail->toString(), ['domain' => 'slatedemo.com'])) {
+                            \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user {userEmail} on {googleFileRecord}', [
+                                'permissionRole' => 'reader',
+                                'user' => $userId,
+                                'userEmail' => $userEmail ? $userEmail->toString() : 'no email',
+                                'googleFileRecord' => $attachment
+                            ]);
+                            continue;
+                        }
+
+                        $userEmail = $userEmail->toString();
+                        try {
+                            $response = $attachment->File->createPermission($userEmail, 'writer', 'user', $userTokens[$attachment->File->OwnerEmail]);
+                            \Emergence\Logger::general_warning('API request to create writer permission', [
+                                'response' => $response,
+                                'userEmail' => $userEmail,
+                                'attachment' => $attachment
+                            ]);
+                        } catch (\Exception $e) {
+                            \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail}', [
+                                'permissionRole' => 'writer',
+                                'userEmail' => $userEmail,
+                                'googleFileRecord' => $attachment
+                            ]);
+                            continue;
+                        }
+                    }
+                } elseif ($attachment->ShareMethod == 'duplicate') {
+
+                    if (empty($userTokens[$attachment->File->OwnerEmail])) {
+                        $userTokens[$attachment->File->OwnerEmail] = \Google\API::fetchAccessToken('https://www.googleapis.com/auth/drive', $attachment->File->OwnerEmail);
+                    }
+
+                    foreach (StudentTask::getAllByWhere(['TaskID' => $Record->ID]) as $StudentTask) {
+
+                        try {
+                            $studentEmail = $StudentTask->Student->PrimaryEmail;
+
+                            if (!$studentEmail || !\Validators::email($studentEmail->toString(), ['domain' => 'slatedemo.com'])) {
+                                \Emergence\Logger::general_alert('Unable to duplicate file ({googleDriveID}) for {slateUsername}', [
+                                    'slateUsername' => $studentEmail ? $studentEmail->toString() : 'no email',
+                                    'student' => $StudentTask->Student,
+                                    'googleDriveID' => $attachment->File->DriveID
+                                ]);
+                                continue;
+                            }
+
+                            $studentEmail = $studentEmail->toString();
+                            if (empty($userTokens[$studentEmail])) {
+                                $userTokens[$studentEmail] = \Google\API::fetchAccessToken('https://www.googleapis.com/auth/drive', $studentEmail);
+                            }
+
+                            $attachment->File->createPermission($studentEmail, 'reader', 'user', $userTokens[$attachment->File->OwnerEmail]);
+
+                            $duplicateFileResponse = $attachment->File->duplicate($studentEmail, $userTokens[$studentEmail]);
+
+                            $DriveFile = DriveFile::create([
+                                'OwnerEmail' => $studentEmail,
+                                'DriveID' => $duplicateFileResponse['id'],
+                                'ParentDriveID' => $attachment->File->DriveID
+                            ]);
+                            $DriveFile->details = $duplicateFileResponse;
+
+                            $GoogleDriveAttachment = $googleDriveClass::create([
+                                'File' => $DriveFile,
+                                'Context' => $StudentTask,
+                                'ParentAttachment' => $attachment,
+                                'RevisionID' => 1
+                            ]);
+
+                            $GoogleDriveAttachment->validate();
+                            $GoogleDriveAttachment->save();
+
+                            foreach ($attachment->getRequiredPermissions('read') as $userId) {
+                                $userEmail = Person::getByID($userId)->PrimaryEmail;
+                                if (!$userEmail || !\Validators::email($userEmail->toString(), ['domain' => 'slatedemo.com'])) {
+                                    \Emergence\Logger::general_alert('Unable to duplicate file ({googleDriveID}) for {slateUsername}', [
+                                        'slateUsername' => $userEmail ? $userEmail->toString() : 'no email',
+                                        'userId' => $userId,
+                                        'googleDriveID' => $DriveFile->DriveID
+                                    ]);
+                                    continue;
+                                }
+                                $userEmail = $userEmail->toString();
+
+                                if (empty($userTokens[$userEmail])) {
+                                    $userTokens[$userEmail] = \Google\API::fetchAccessToken('https://www.googleapis.com/auth/drive', $userEmail);
+                                }
+
+                                $DriveFile->createPermission($userEmail, 'reader', 'user', $userTokens[$studentEmail]);
+                            }
+
+                        } catch (\RecordValidationException $v) {
+                            \Emergence\Logger::general_alert('Unable to save google drive duplicate file and attachment for user: {userEmail}', [
+                                'userEmail' => $studentEmail,
+                                'duplicateFileResponse' => $duplicateFileResponse,
+                                'StudentTask' => $StudentTask,
+                                'validationError' => $v
+                            ]);
+                            continue;
+                        } catch (\Exception $e) {
+                            \Emergence\Logger::general_alert('Unknown error while creating duplicate file and attachment for user: {userEmail}', [
+                                'userEmail' => $studentEmail,
+                                'duplicateFileResponse' => $duplicateFileResponse,
+                                'StudentTask' => $StudentTask
+                            ]);
+                            continue;
+                        }
                     }
                 }
             }
