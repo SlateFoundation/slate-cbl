@@ -124,4 +124,20 @@ class DriveFile extends \ActiveRecord
             'token' => $token
         ]);
     }
+
+    public function duplicate($email, $token = null)
+    {
+        if (!$token) {
+            $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $email);
+        }
+
+        //TODO: confirm/create read permissions for the user duplicating the file
+
+        return API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/copy', [
+            'post' => [
+                'name' => $this->Title,
+                'token' => $token
+            ]
+        ]);
+    }
 }
