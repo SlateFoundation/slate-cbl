@@ -70,7 +70,7 @@ class DriveFile extends \ActiveRecord
             throw new \Exception('Error looking up document. '.$response['error']['errors'][0]['message']);
         }
 
-        return $response;
+        return $this->details = $response;
     }
 
     public static function validateType(\RecordValidator $validator, \Google\DriveFile $File)
