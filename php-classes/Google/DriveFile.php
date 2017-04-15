@@ -120,7 +120,8 @@ class DriveFile extends \ActiveRecord
 
         return API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/permissions', [
             'method' => 'POST',
-            'post' => $postData
+            'post' => $postData,
+            'token' => $token
         ]);
     }
 }
