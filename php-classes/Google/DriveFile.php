@@ -2,6 +2,10 @@
 
 namespace Google;
 
+use Exception;
+use RecordValidator;
+use Validators;
+
 class DriveFile extends \ActiveRecord
 {
     public static $tableName = 'google_files';
@@ -57,23 +61,22 @@ class DriveFile extends \ActiveRecord
         if (!$this->OwnerEmail) {
             try {
                 $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $GLOBALS['Session']->Person->PrimaryEmail);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return null;
             }
         } else {
             $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
         }
-
         $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, ['token' => $token]);
 
         if (!empty($response['error'])) {
-            throw new \Exception('Error looking up document. '.$response['error']['errors'][0]['message']);
+            throw new Exception('Error looking up document. '.$response['error']['errors'][0]['message']);
         }
 
         return $this->details = $response;
     }
 
-    public static function validateType(\RecordValidator $validator, self $File)
+    public static function validateType(RecordValidator $validator, self $File)
     {
         try {
             if (!$File->Type) {
@@ -81,27 +84,27 @@ class DriveFile extends \ActiveRecord
                 $mimeTypeParts = explode('.', $details['mimeType']);
                 $File->Type = end($mimeTypeParts);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $validator->addError('Type', 'Type is missing or invalid.');
         }
 
-        if (!\Validators::string($File->Type)) {
+        if (!Validators::string($File->Type)) {
             $validator->addError('Type', 'Type is missing or invalid.');
         }
     }
 
-    public static function validateTitle(\RecordValidator $validator, self $File)
+    public static function validateTitle(RecordValidator $validator, self $File)
     {
         try {
             if (!$File->Title) {
                 $details = $File->getGoogleFileDetails();
-                $File->Title = $File->details['name'];
+                $File->Title = $details['name'];
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $validator->addError('Title', 'Title is missing or invalid.');
         }
 
-        if (!\Validators::string($File->Title)) {
+        if (!Validators::string($File->Title)) {
             $validator->addError('Title', 'Title is missing or invalid.');
         }
     }
