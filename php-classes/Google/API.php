@@ -114,7 +114,7 @@ class API
         return 'https://www.googleapis.com/' . ltrim($url, '/');
     }
 
-    public static function fetchAccessToken($scope, $user = null)
+    public static function fetchAccessToken($scope, $user)
     {
         if (!static::$clientEmail) {
             throw new \Exception('$clientEmail must be configured');
@@ -135,7 +135,7 @@ class API
         ];
 
         if ($user) {
-            $assertion['sub'] = 'demoteacher@slatedemo.com';// $user;
+            $assertion['sub'] = $user;
         }
 
         $response = static::request($tokenCredentialUrl, [
