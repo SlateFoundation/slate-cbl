@@ -5,7 +5,8 @@
 Ext.define('SlateTasksStudent.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
-        'Ext.window.Toast'
+        'Ext.window.Toast',
+        'Slate.cbl.util.Google'
     ],
 
 
@@ -46,7 +47,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         // attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
         // addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
         // addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
-        submitButton: 'slate-taskdetails button#submit'
+        submitButton: 'slate-taskdetails button#submit',
+        studentAttachmentsField: 'slate-tasks-attachmentsfield#student-attachments'
     },
 
 
@@ -58,6 +60,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         },
         submitButton: {
             click: 'onSubmitButtonClick'
+        },
+        studentAttachmentsField: {
+            addgoogleattachment: 'onAddGoogleAttachmentClick'
         },
         'button#filter menucheckitem': {
             checkchange: 'onFilterItemCheckChange'
@@ -208,6 +213,128 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
     },
 
+    onAddGoogleAttachmentClick: function() {
+        var me = this,
+            googleUtil = Slate.cbl.util.Google;
+
+        if (googleUtil.getToken()) {
+            googleUtil.loadAPI().
+                then(function() {
+                    return gapi.client.request({
+                        path: '/drive/v3/about',
+                        params: {
+                            fields: 'user',
+                            'access_token': googleUtil.getToken()
+                        }
+                    });
+                }).
+                then(function(response) {
+                    Ext.Promise.resolve(googleUtil.setAuthenticatedUser(response.result.user));
+                }, googleUtil.authenticateUser).
+                then(Ext.bind(me.openFilePicker, me));
+        } else {
+            googleUtil.loadAPI().
+                then(googleUtil.authenticateUser).
+                then(Ext.bind(me.openFilePicker, me)).
+                then(null, function(error) {
+                    Ext.Msg.alert('Error', error);
+                });
+        }
+    },
+
+    openFilePicker: function() {
+        var me = this,
+            googleUtil = Slate.cbl.util.Google;
+            taskDetails = me.getTaskDetails();
+
+        taskDetails.hide(true);
+
+        googleUtil.
+            initFilePicker().
+            setCallback(function(data) {
+                var filePicked = data[google.picker.Response.ACTION] == google.picker.Action.PICKED,
+                    fileData = filePicked && data[google.picker.Response.DOCUMENTS][0];
+
+                if (data[google.picker.Response.ACTION] == 'loaded') {
+                    return;
+                } else if (data[google.picker.Response.ACTION] === google.picker.Action.CANCEL) {
+                    googleUtil.setAuthenticatedUser(null);
+                }
+
+                taskDetails.show(true);
+
+                if (fileData) {
+                    googleUtil.
+                        getGoogleFileOwnerEmail(fileData).
+                        then(function(response) { // TODO: add to google util class?
+                            var emailIsValid = googleUtil.verifyEmailAddress(response.result.emailAddress);
+
+                            if (emailIsValid) {
+                                return Ext.Promise.resolve({
+                                    file: fileData,
+                                    email: response.result.emailAddress
+                                });
+                            }
+
+                            return new Ext.Promise(function(resolve) {
+                                Ext.Msg.confirm('Clone File', 'This google drive file is currently owned by someone outside of the '+googleUtil.getGoogleAppsDomain() + ' domain. Would you like to clone this document instead?', function(answer) {
+                                    if (answer === 'yes') {
+                                        resolve(googleUtil.cloneGoogleFile(fileData));
+                                    }
+                                });
+                            });
+                        }).
+                        then(null, function(response) {
+                            return new Ext.Promise(function(resolve) {
+                                if (response.result && response.result.error && response.result.error.code === 403) {
+                                    Ext.Msg.confirm('Clone File', 'You must have write access to the file in order to share. Would you like to clone this document instead?', function(answer) {
+                                        if (answer === 'yes') {
+                                            resolve(googleUtil.cloneGoogleFile(fileData));
+                                        }
+                                    });
+                                }
+                            });
+                        }).
+                        then(function(response) {
+                            me.doAddGoogleFile(response.file, response.email);
+                        });
+                }
+            }).
+            build().
+            setVisible(true);
+    },
+
+    doAddGoogleFile: function(file, ownerEmail) {
+        var me = this,
+            attachmentsField = me.getStudentAttachmentsField(),
+            fileId = file[google.picker.Document.ID];
+
+        gapi.client.request({
+            path: '/drive/v3/files/'+fileId+'/revisions/head',
+            method: 'GET',
+            params: {
+                'access_token': Ext.util.Cookies.get('googleAppsToken', '/')
+            }
+        }).then(function(response) {
+            var latestRevision = response.result;
+
+            if (response.error) {
+                Ext.Msg.alert('Error', 'Unable to lookup details about google document. Please try again, or contact an administrator.');
+                return;
+            }
+
+            attachmentsField.setAttachments({
+                Class: 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile',
+                URL: file[google.picker.Document.URL],
+                Title: file[google.picker.Document.NAME],
+                RevisionID: latestRevision.id,
+                File: {
+                    DriveID: fileId,
+                    OwnerEmail: ownerEmail
+                }
+            }, true);
+        });
+    },
 
     // custom controller methods
     displayTaskData: function(recs) {
