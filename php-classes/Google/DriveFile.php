@@ -52,6 +52,17 @@ class DriveFile extends \ActiveRecord
         ]
     ];
 
+    public static function __classLoaded()
+    {
+        if (empty(GoogleAPI::$domain)) {
+            throw new Exception('Domain must be configured first');
+        }
+
+        if (empty(static::$validators['OwnerEmail']['domain'])) {
+            static::$validators['OwnerEmail']['domain'] = GoogleAPI::$domain;
+        }
+    }
+
     public function getGoogleFileDetails()
     {
         if ($this->details) {
