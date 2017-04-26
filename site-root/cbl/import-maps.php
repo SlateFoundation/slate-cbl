@@ -35,6 +35,7 @@ while ($mapsRow = $mapsCsv->getNextRow()) {
                     'default' => $row['ER']
                 ];
             } else { // handle comma-delimited level:values pairs: i.e 9:2,10:3,default:4
+                $demonstrationRequirements = [];
                 $splitERs = explode(',', $row['ER']);
                 foreach ($splitERs as $er) {
                     list($lvl, $total) = explode(':', $er);
@@ -44,6 +45,10 @@ while ($mapsRow = $mapsCsv->getNextRow()) {
                     }
 
                     $demonstrationRequirements[$lvl] = $total;
+                }
+
+                if (!isset($demonstrationRequirements['default'])) {
+                    $demonstrationRequirements['default'] = 0;
                 }
             }
 
