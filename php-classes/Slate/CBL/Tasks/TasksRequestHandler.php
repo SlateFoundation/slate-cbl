@@ -329,12 +329,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
                         $userEmail = Person::getByID($userId)->PrimaryEmail;
 
                         if (!$userEmail || !\Validators::email($userEmail->toString(), ['domain' => 'slatedemo.com'])) {
-                            \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user {userEmail} on {googleFileRecord}', [
-                                'permissionRole' => 'reader',
-                                'user' => $userId,
-                                'userEmail' => $userEmail ? $userEmail->toString() : 'no email',
-                                'googleFileRecord' => $attachment
-                            ]);
                             continue;
                         }
 
