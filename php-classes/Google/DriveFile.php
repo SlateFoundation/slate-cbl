@@ -70,13 +70,7 @@ class DriveFile extends \ActiveRecord
         }
 
         if (!$this->OwnerEmail) {
-            try {
-                $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $GLOBALS['Session']->Person->PrimaryEmail);
-            } catch (Exception $e) {
-                return null;
-            }
-        } else {
-            $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
+            return null;
         }
         $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, ['token' => $token]);
 
