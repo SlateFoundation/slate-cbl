@@ -2,6 +2,7 @@
 
 namespace Google;
 
+use Cache;
 use Firebase\JWT\JWT;
 
 
@@ -14,10 +15,20 @@ class API
 {
     public static $clientEmail;
     public static $privateKey;
+    public static $domain;
     public static $skew = 60;
     public static $expiry = 3600;
 
     protected static $accessToken;
+
+    public static function getAccessToken($user, $scope)
+    {
+        if (!$userToken = Cache::fetch(sprintf('%s/%s/%s', __CLASS__, $user, $scope))) {
+            $userToken = static::fetchAccessToken($scope, $user);
+        }
+
+        return $userToken;
+    }
 
 
     public static function request($url, array $options = [])
@@ -37,8 +48,8 @@ class API
             $options['headers'] = [];
         }
 
-        if (isset($options['token'])) {
-            $options['headers'][] = 'Authorization: Bearer ' . $options['token'];
+        if (!empty($options['user']) && !empty($options['scope']) ) {
+            $options['headers'][] = 'Authorization: Bearer ' . static::getAccessToken($options['user'], $options['scope']);
         } elseif (empty($options['skipAuth'])) {
             if (!static::$accessToken) {
                 throw new \Exception('fetchAccessToken must be called with a scope before executeRequest');
@@ -153,6 +164,9 @@ class API
             throw new \Exception('access_token missing from auth response');
         }
 
-        return static::$accessToken = $response['access_token'];
+        // subtract 1 minute from returned token expiration
+        Cache::store(sprintf('%s/%s/%s', __CLASS__, $user, $scope), $response['access_token'], $response['expires_in'] - 60);
+
+        return $response['access_token'];
     }
 }
