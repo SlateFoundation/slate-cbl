@@ -15,7 +15,7 @@ Git::$repositories['slate-cbl'] = [
         'html-templates/cbl',
         'php-classes/Slate/CBL',
         'php-classes/Google/API.php',
-        'php-classes/Google/File.php',
+        'php-classes/Google/DriveFile.php',
         'php-config/Git.config.d/slate-cbl.php',
         'php-config/Slate/UI/Tools.config.d/cbl.php',
         'php-migrations/Slate/CBL',
