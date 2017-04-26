@@ -189,7 +189,8 @@ class TasksRequestHandler extends \RecordsRequestHandler
                                 $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
                             }
                         }
-
+                        $Attachment->File = $File;
+                    } else if ($Attachment->File->isPhantom && $File = \Google\DriveFile::getByWhere(['DriveID' => $attachmentData['File']['DriveID']])) {
                         $Attachment->File = $File;
                     }
                 }
