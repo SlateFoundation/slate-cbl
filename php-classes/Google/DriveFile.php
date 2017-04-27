@@ -5,19 +5,29 @@ namespace Google;
 use Exception;
 use RecordValidator;
 use Validators;
+use Google\API as GoogleAPI;
 
 class DriveFile extends \ActiveRecord
 {
+
+    const GOOGLE_EXCEPTION_CODES = [
+        'file-not-found' => 404
+    ];
+
     public static $tableName = 'google_files';
 
     public static $singularNoun = 'google file';
     public static $pluralNoun = 'google files';
 
+    public static $apiScope = 'https://www.googleapis.com/auth/drive';
+    public static $apiFields = 'id,kind,name,mimeType,owners,trashed,webViewLink';
+
     public $details;
 
+
     public static $fields = [
-        'Title',
         'OwnerEmail',
+        'Title',
         'Type',
         'DriveID' => [
             'unique' => true
@@ -63,6 +73,28 @@ class DriveFile extends \ActiveRecord
         }
     }
 
+    public function save($deep = true)
+    {
+        parent::save($deep);
+
+        if ($this->getOriginalValue('Status') != $this->Status && $this->Status == 'trashed') {
+            $message = sprintf(
+                'A shared google drive file (<a href="%s" target="_blank">%s</a>) was recently trashed. Please refrain from trashing/deleting shared documents.',
+                $this->details['webViewLink'],
+                $this->Title
+            );
+
+            $this->untrash();
+
+            \Emergence\Mailer\Mailer::send($this->OwnerEmail, 'Google Drive File removed from trash', $message);
+
+        } elseif ($this->getOriginalValue('Status') != $this->Status && $this->Status == 'deleted') {
+            $message = sprintf('A tracked google file (<a href="%s" target="_blank">%s</a>) was recently deleted. It previously belonged to %s', $this->details['webViewLink'], $this->Title, $this->OwnerEmail);
+
+            \Emergence\Mailer\Mailer::send('nafis@jarv.us', 'Tracked File Deleted', $message);
+        }
+    }
+
     public function getGoogleFileDetails()
     {
         if ($this->details) {
@@ -72,80 +104,128 @@ class DriveFile extends \ActiveRecord
         if (!$this->OwnerEmail) {
             return null;
         }
-        $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, ['token' => $token]);
+
+        $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, [
+            'user' => $this->OwnerEmail,
+            'scope' => static::$apiScope,
+            'get' => [
+                'fields' => static::$apiFields
+            ]
+        ]);
 
         if (!empty($response['error'])) {
-            throw new Exception('Error looking up document. '.$response['error']['errors'][0]['message']);
+            if ($response['error']['errors'][0]['reason'] == 'notFound') {
+                $exceptionCode = static::GOOGLE_EXCEPTION_CODES['file-not-found'];
+            } else {
+                $exceptionCode = 0;
+            }
+            throw new \Exception('Error looking up document. '.$response['error']['message'], $exceptionCode);
         }
 
         return $this->details = $response;
     }
 
-    public static function validateType(RecordValidator $validator, self $File)
+    public function updateGoogleFileDetails()
+    {
+        try {
+            $details = $this->getGoogleFileDetails();
+        } catch (\Exception $e) {
+            if ($e->getCode() === static::GOOGLE_EXCEPTION_CODES['file-not-found'] && !$this->isPhantom) {
+                $this->Status = 'deleted';
+            }
+            throw $e;
+        }
+
+        $mimeTypeParts = explode('.', $details['mimeType']);
+        $this->Type = end($mimeTypeParts);
+
+        $this->Title = $details['name'];
+
+        if (!empty($details['owners'])) {
+            $this->OwnerEmail = $details['owners'][0]['emailAddress'];
+        }
+
+        if ($details['trashed']) {
+            $this->Status = 'trashed';
+        } else {
+            $this->Status = 'normal';
+        }
+    }
+
+    public function createPermission($email, $role, $type)
+    {
+        return GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/permissions', [
+            'method' => 'POST',
+            'post' => [
+                'type' => $type,
+                'role' => $role,
+                'emailAddress' => $email
+            ],
+            'token' => $token,
+            'user' => $email,
+            'scope' => static::$apiScope
+        ]);
+    }
+
+    public function duplicate($email)
+    {
+        // TODO: return duplicated Google\DriveFile Object
+        return GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/copy', [
+            'post' => [
+                'name' => $this->Title
+            ],
+            'user' => $email,
+            'scope' => static::$apiScope
+        ]);
+    }
+
+    public function untrash()
+    {
+        $response = GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, [
+            'user' => $this->OwnerEmail,
+            'scope' => static::$apiScope,
+            'method' => 'PATCH',
+            'get' => [
+                'fields' => static::$apiFields
+            ],
+            'post' => [
+                'trashed' => false
+            ]
+        ]);
+
+        $this->details = $response;
+        $this->updateGoogleFileDetails();
+
+        $this->save();
+    }
+
+    public static function validateType(\RecordValidator $validator, \Google\DriveFile $File)
     {
         try {
             if (!$File->Type) {
-                $details = $File->getGoogleFileDetails();
-                $mimeTypeParts = explode('.', $details['mimeType']);
-                $File->Type = end($mimeTypeParts);
+                $File->updateGoogleFileDetails();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $validator->addError('Type', 'Type is missing or invalid.');
         }
 
-        if (!Validators::string($File->Type)) {
+        if (!\Validators::string($File->Type)) {
             $validator->addError('Type', 'Type is missing or invalid.');
         }
     }
 
-    public static function validateTitle(RecordValidator $validator, self $File)
+    public static function validateTitle(\RecordValidator $validator, \Google\DriveFile $File)
     {
         try {
             if (!$File->Title) {
-                $details = $File->getGoogleFileDetails();
-                $File->Title = $details['name'];
+                $File->updateGoogleFileDetails();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $validator->addError('Title', 'Title is missing or invalid.');
         }
 
-        if (!Validators::string($File->Title)) {
+        if (!\Validators::string($File->Title)) {
             $validator->addError('Title', 'Title is missing or invalid.');
         }
-    }
-
-    public function createPermission($email, $role, $type, $token = null)
-    {
-        if (!$token) {
-            $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $this->OwnerEmail);
-        }
-
-        $postData = [
-            'type' => $type,
-            'role' => $role,
-            'emailAddress' => $email
-        ];
-
-        return API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/permissions', [
-            'method' => 'POST',
-            'post' => $postData,
-            'token' => $token
-        ]);
-    }
-
-    public function duplicate($email, $token = null)
-    {
-        if (!$token) {
-            $token = API::fetchAccessToken('https://www.googleapis.com/auth/drive', $email);
-        }
-
-        //TODO: confirm/create read permissions for the user duplicating the file
-
-        return API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/copy', [
-            'post' => [
-                'name' => $this->Title,
-                'token' => $token
-            ]
-        ]);
     }
 }
