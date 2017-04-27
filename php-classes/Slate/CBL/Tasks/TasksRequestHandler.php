@@ -303,19 +303,18 @@ class TasksRequestHandler extends \RecordsRequestHandler
                             \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user {userEmail} on {googleFileRecord}', [
                                 'permissionRole' => 'reader',
                                 'userId' => $userId,
-                                'userEmail' => $userEmail,
+                                'userEmail' => $userEmail ? $userEmail->toString() : 'no email',
                                 'googleFileRecord' => $attachment
                             ]);
                             continue;
                         }
 
-                        $userEmail = $userEmail->toString();
                         try {
                             $response = $attachment->File->createPermission($userEmail->toString(), 'reader', 'user');
                         } catch (\Exception $e) {
                             \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail} on {googleFileRecord}', [
                                 'permissionRole' => 'reader',
-                                'userEmail' => $userEmail,
+                                'userEmail' => $userEmail->toString(),
                                 'googleFileRecord' => $attachment
                             ]);
                             continue;
@@ -329,18 +328,17 @@ class TasksRequestHandler extends \RecordsRequestHandler
                             continue;
                         }
 
-                        $userEmail = $userEmail->toString();
                         try {
                             $response = $attachment->File->createPermission($userEmail->toString(), 'writer', 'user', $accessToken);
                             \Emergence\Logger::general_warning('API request to create writer permission', [
                                 'response' => $response,
-                                'userEmail' => $userEmail,
+                                'userEmail' => $userEmail->toString(),
                                 'attachment' => $attachment
                             ]);
                         } catch (\Exception $e) {
                             \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail}', [
                                 'permissionRole' => 'writer',
-                                'userEmail' => $userEmail,
+                                'userEmail' => $userEmail->toString(),
                                 'googleFileRecord' => $attachment
                             ]);
                             continue;
