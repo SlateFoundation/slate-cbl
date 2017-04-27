@@ -295,9 +295,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
                 if ($attachment->ShareMethod == 'view-only' || $attachment->ShareMethod == 'collaborate') {
                     $requiredPermissions = $attachment->getRequiredPermissions();
-                    if (empty($userTokens[$attachment->File->OwnerEmail])) {
-                        $userTokens[$attachment->File->OwnerEmail] = \Google\API::fetchAccessToken('https://www.googleapis.com/auth/drive', $attachment->File->OwnerEmail);
-                    }
 
                     foreach ($requiredPermissions['read'] as $userId) {
                         $userEmail = Person::getByID($userId)->PrimaryEmail;
@@ -314,7 +311,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
                         $userEmail = $userEmail->toString();
                         try {
-                            $response = $attachment->File->createPermission($userEmail, 'reader', 'user', $userTokens[$attachment->File->OwnerEmail]);
+                            $response = $attachment->File->createPermission($userEmail->toString(), 'reader', 'user');
                         } catch (\Exception $e) {
                             \Emergence\Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail} on {googleFileRecord}', [
                                 'permissionRole' => 'reader',
@@ -334,7 +331,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
                         $userEmail = $userEmail->toString();
                         try {
-                            $response = $attachment->File->createPermission($userEmail, 'writer', 'user', $userTokens[$attachment->File->OwnerEmail]);
+                            $response = $attachment->File->createPermission($userEmail->toString(), 'writer', 'user', $accessToken);
                             \Emergence\Logger::general_warning('API request to create writer permission', [
                                 'response' => $response,
                                 'userEmail' => $userEmail,
@@ -351,10 +348,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     }
                 } elseif ($attachment->ShareMethod == 'duplicate') {
 
-                    if (empty($userTokens[$attachment->File->OwnerEmail])) {
-                        $userTokens[$attachment->File->OwnerEmail] = \Google\API::fetchAccessToken('https://www.googleapis.com/auth/drive', $attachment->File->OwnerEmail);
-                    }
-
                     foreach (StudentTask::getAllByWhere(['TaskID' => $Record->ID]) as $StudentTask) {
 
                         try {
@@ -370,13 +363,10 @@ class TasksRequestHandler extends \RecordsRequestHandler
                             }
 
                             $studentEmail = $studentEmail->toString();
-                            if (empty($userTokens[$studentEmail])) {
-                                $userTokens[$studentEmail] = \Google\API::fetchAccessToken('https://www.googleapis.com/auth/drive', $studentEmail);
-                            }
 
-                            $attachment->File->createPermission($studentEmail, 'reader', 'user', $userTokens[$attachment->File->OwnerEmail]);
+                            $attachment->File->createPermission($studentEmail, 'reader', 'user');
 
-                            $duplicateFileResponse = $attachment->File->duplicate($studentEmail, $userTokens[$studentEmail]);
+                            $duplicateFileResponse = $attachment->File->duplicate($studentEmail);
 
                             $DriveFile = DriveFile::create([
                                 'OwnerEmail' => $studentEmail,
@@ -407,11 +397,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
                                 }
                                 $userEmail = $userEmail->toString();
 
-                                if (empty($userTokens[$userEmail])) {
-                                    $userTokens[$userEmail] = \Google\API::fetchAccessToken('https://www.googleapis.com/auth/drive', $userEmail);
-                                }
-
-                                $DriveFile->createPermission($userEmail, 'reader', 'user', $userTokens[$studentEmail]);
+                                $DriveFile->createPermission($userEmail, 'reader', 'user');
                             }
 
                         } catch (\RecordValidationException $v) {
