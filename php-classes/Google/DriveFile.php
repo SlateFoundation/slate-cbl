@@ -161,7 +161,6 @@ class DriveFile extends \ActiveRecord
                 'role' => $role,
                 'emailAddress' => $email
             ],
-            'token' => $token,
             'user' => $email,
             'scope' => static::$apiScope
         ]);
