@@ -377,7 +377,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
                                 'File' => $DriveFile,
                                 'Context' => $StudentTask,
                                 'ParentAttachment' => $attachment,
-                                'RevisionID' => 1
+                                'FileRevisionID' => 1
                             ]);
 
                             $GoogleDriveAttachment->validate();

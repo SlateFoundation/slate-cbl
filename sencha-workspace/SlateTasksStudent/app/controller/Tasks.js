@@ -327,7 +327,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 Class: 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile',
                 URL: file[google.picker.Document.URL],
                 Title: file[google.picker.Document.NAME],
-                RevisionID: latestRevision.id,
+                FileRevisionID: latestRevision.id,
                 File: {
                     DriveID: fileId,
                     OwnerEmail: ownerEmail
