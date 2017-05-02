@@ -6,11 +6,6 @@ use Cache;
 use Firebase\JWT\JWT;
 
 
-/**
- * TODO:
- * - implement token caching using clientEmail+scope as key and returned expiry
- */
-
 class API
 {
     public static $clientEmail;
