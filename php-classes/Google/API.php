@@ -14,16 +14,7 @@ class API
     public static $skew = 60;
     public static $expiry = 3600;
 
-    protected static $accessToken;
-
-    public static function getAccessToken($user, $scope)
-    {
-        if (!$userToken = Cache::fetch(sprintf('%s/%s/%s', __CLASS__, $user, $scope))) {
-            $userToken = static::fetchAccessToken($scope, $user);
-        }
-
-        return $userToken;
-    }
+    public static $defaultAccessToken;
 
 
     public static function request($url, array $options = [])
@@ -43,14 +34,16 @@ class API
             $options['headers'] = [];
         }
 
-        if (!empty($options['user']) && !empty($options['scope']) ) {
-            $options['headers'][] = 'Authorization: Bearer ' . static::getAccessToken($options['user'], $options['scope']);
+        if (!empty($options['token'])) {
+            $options['headers'][] = 'Authorization: Bearer ' . $options['token'];
+        } elseif (!empty($options['user']) && !empty($options['scope']) ) {
+            $options['headers'][] = 'Authorization: Bearer ' . static::getAccessToken($options['scope'], $options['user']);
         } elseif (empty($options['skipAuth'])) {
-            if (!static::$accessToken) {
-                throw new \Exception('fetchAccessToken must be called with a scope before executeRequest');
+            if (!static::$defaultAccessToken) {
+                throw new \Exception('executeRequest must be called with token, skipAuth, user+scope, or $defaultAccessToken provided');
             }
 
-            $options['headers'][] = 'Authorization: Bearer ' . static::$accessToken;
+            $options['headers'][] = 'Authorization: Bearer ' . static::$defaultAccessToken;
         }
 
         $options['headers'][] = 'User-Agent: emergence';
@@ -120,7 +113,7 @@ class API
         return 'https://www.googleapis.com/' . ltrim($url, '/');
     }
 
-    public static function fetchAccessToken($scope, $user)
+    public static function getAccessToken($scope, $user)
     {
         if (!static::$clientEmail) {
             throw new \Exception('$clientEmail must be configured');
@@ -130,6 +123,14 @@ class API
             throw new \Exception('$privateKey must be configured');
         }
 
+        // return from cache if available
+        $cacheKey = sprintf('%s/%s/%s', __CLASS__, $user, $scope);
+
+        if ($accessToken = Cache::fetch($cacheKey)) {
+            return $accessToken;
+        }
+
+        // fetch from API
         $tokenCredentialUrl = static::buildUrl('/oauth2/v4/token');
 
         $assertion = [
@@ -156,11 +157,11 @@ class API
         ]);
 
         if (empty($response['access_token'])) {
-            throw new \Exception('access_token missing from auth response');
+            throw new \Exception('access_token missing from auth response' . (!empty($response['error_description']) ? ': '.$response['error_description'] : ''));
         }
 
         // subtract 1 minute from returned token expiration
-        Cache::store(sprintf('%s/%s/%s', __CLASS__, $user, $scope), $response['access_token'], $response['expires_in'] - 60);
+        Cache::store($cacheKey, $response['access_token'], $response['expires_in'] - 60);
 
         return $response['access_token'];
     }
