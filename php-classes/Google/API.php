@@ -11,6 +11,8 @@ class API
     public static $clientEmail;
     public static $privateKey;
     public static $domain;
+    public static $developerKey;
+    public static $clientId;
     public static $skew = 60;
     public static $expiry = 3600;
 
