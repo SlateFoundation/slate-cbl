@@ -506,11 +506,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             taskEditor = me.getTaskEditor(),
             googleUtil = Slate.cbl.util.Google;
 
-        if (!taskEditor.getTask().phantom) {
-            Ext.Msg.alert('Error', 'Unable to add attachments while editing&hellip; Please create a new task.');
-            return;
-        }
-
         if (googleUtil.getToken()) {
             googleUtil.loadAPI().
                 then(function() {
