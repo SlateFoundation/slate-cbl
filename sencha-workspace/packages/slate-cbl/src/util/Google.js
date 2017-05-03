@@ -71,7 +71,7 @@ Ext.define('Slate.cbl.util.Google', {
     loadAPI: function() {
         var me = Slate.cbl.util.Google,
             exception = {},
-            requiredAPIs = this.getRequiredAPIs().join(':');
+            requiredAPIs = me.getRequiredAPIs().join(':');
 
         if (!gapi) {
             exception.error = 'Unable to find gapi, aborting.';
