@@ -520,7 +520,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 then(function(response) {
                     Ext.Promise.resolve(googleUtil.setAuthenticatedUser(response.result.user));
                 }, googleUtil.authenticateUser).
-                then(Ext.bind(me.openFilePicker, me));
+                then(Ext.bind(me.openFilePicker, me)).
+                then(null, function(error) {
+                    Ext.Msg.alert('Error', error);
+                });
         } else {
             googleUtil.loadAPI().
                 then(googleUtil.authenticateUser).
