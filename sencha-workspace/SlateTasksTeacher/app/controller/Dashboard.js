@@ -564,7 +564,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             tokenExpiration = new Date(authResult.expires_at * 1000);
 
             Ext.util.Cookies.set('googleAppsToken', authResult.access_token, tokenExpiration, '/');
-            Ext.util.Cookies.set('googleAppsPermissionId', response.result.user.permissionId, tokenExpiration, '/');
 
             me.doOpenFilePicker(authResult.access_token);
         };
