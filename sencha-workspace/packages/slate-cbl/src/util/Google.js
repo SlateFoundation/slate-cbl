@@ -8,8 +8,9 @@ Ext.define('Slate.cbl.util.Google', {
 
     config: {
         tokenName: 'googleAppsToken',
+        scope: 'https://www.googleapis.com/auth/drive',
         requiredAPIs: [
-            'auth',
+            'auth2',
             'client',
             'picker'
         ],
@@ -80,7 +81,14 @@ Ext.define('Slate.cbl.util.Google', {
 
         return new Ext.Promise(function(resolve) {
             me.setApiIsLoaded(true);
-            gapi.load(requiredAPIs, resolve);
+            gapi.load(requiredAPIs, function() {
+                gapi.auth2.init({
+                    'client_id': me.getClientId()
+                });
+
+                resolve(arguments);
+            });
+
         });
     },
 
@@ -88,14 +96,11 @@ Ext.define('Slate.cbl.util.Google', {
     * Returns Ext.Promise object
     */
     authenticateUser: function() {
-        var me = Slate.cbl.util.Google,
-            scope = ['https://www.googleapis.com/auth/drive'],
-            clientId = me.getClientId();
+        var me = Slate.cbl.util.Google;
 
-        return gapi.auth.authorize({
-            'client_id': clientId,
-            'scope': scope,
-            'immediate': false
+        return gapi.auth2.getAuthInstance().signIn({
+            'scope': me.getScope(),
+            prompt: 'select_account'
         }).
         then(me.onUserAuthenticated);
     },
@@ -103,10 +108,11 @@ Ext.define('Slate.cbl.util.Google', {
     /*
     * Returns Ext.Promise object
     */
-    onUserAuthenticated: function(authResult) {
+    onUserAuthenticated: function(response) {
         return new Ext.Promise(function(resolve, reject) {
             var me = Slate.cbl.util.Google,
-                googleAppsDomain = me.getGoogleAppsDomain();
+                googleAppsDomain = me.getGoogleAppsDomain(),
+                authResult = response.getAuthResponse();
 
             console.info('handleAuthResult(%o)', authResult);
 
