@@ -5,6 +5,13 @@ namespace Slate\CBL\Tasks\Attachments;
 use Slate\CBL\Tasks\Task;
 use Slate\CBL\Tasks\StudentTask;
 
+use Emergence\People\Person;
+use Emergence\Logger;
+
+use Exception;
+use RecordValidationException;
+use Validators;
+
 class GoogleDriveFile extends AbstractTaskAttachment
 {
     public static $fields = [
@@ -47,6 +54,148 @@ class GoogleDriveFile extends AbstractTaskAttachment
         'File',
         'ParentAttachment'
     ];
+
+    public function save($deep = true)
+    {
+        parent::save($deep);
+
+        if ($this->isNew) {
+            $this->updateFilePermissions();
+        }
+    }
+
+    public function updateFilePermissions()
+    {
+
+        if ($this->ShareMethod == 'view-only' || $this->ShareMethod == 'collaborate') {
+            $requiredPermissions = $this->getRequiredPermissions();
+
+            $validatorConfig = [
+                'domain' => \Google\API::$domain
+            ];
+
+            foreach ($requiredPermissions['read'] as $userId) {
+                $userEmail = Person::getByID($userId)->PrimaryEmail;
+
+                if (!$userEmail || !Validators::email($userEmail->toString(), $validatorConfig)) {
+                    Logger::general_alert('Unable to create {permissionRole} permissions for user {userEmail} on {googleFileRecord}', [
+                        'permissionRole' => 'reader',
+                        'userId' => $userId,
+                        'userEmail' => $userEmail ? $userEmail->toString() : 'no email',
+                        'googleFileRecord' => $this
+                    ]);
+                    continue;
+                }
+
+                try {
+                    $response = $this->File->createPermission($userEmail->toString(), 'reader', 'user');
+                } catch (Exception $e) {
+                    Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail} on {googleFileRecord}', [
+                        'permissionRole' => 'reader',
+                        'userEmail' => $userEmail->toString(),
+                        'googleFileRecord' => $this
+                    ]);
+                    continue;
+                }
+            }
+
+            foreach ($requiredPermissions['write'] as $userId) {
+                $userEmail = Person::getByID($userId)->PrimaryEmail;
+
+                if (!$userEmail || !Validators::email($userEmail->toString(), $validatorConfig)) {
+                    continue;
+                }
+
+                try {
+                    $response = $this->File->createPermission($userEmail->toString(), 'writer', 'user', $accessToken);
+                    Logger::general_warning('API request to create writer permission', [
+                        'response' => $response,
+                        'userEmail' => $userEmail->toString(),
+                        'attachment' => $this
+                    ]);
+                } catch (Exception $e) {
+                    Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail}', [
+                        'permissionRole' => 'writer',
+                        'userEmail' => $userEmail->toString(),
+                        'googleFileRecord' => $this
+                    ]);
+                    continue;
+                }
+            }
+        } elseif ($this->ShareMethod == 'duplicate') {
+
+            foreach (StudentTask::getAllByWhere(['TaskID' => $Record->ID]) as $StudentTask) {
+
+                try {
+                    $studentEmail = $StudentTask->Student->PrimaryEmail;
+
+                    if (!$studentEmail || !Validators::email($studentEmail->toString(), $validatorConfig)) {
+                        Logger::general_alert('Unable to duplicate file ({googleDriveID}) for {slateUsername}', [
+                            'slateUsername' => $studentEmail ? $studentEmail->toString() : 'no email',
+                            'student' => $StudentTask->Student,
+                            'googleDriveID' => $this->File->DriveID
+                        ]);
+                        continue;
+                    }
+
+                    $studentEmail = $studentEmail->toString();
+
+                    $this->File->createPermission($studentEmail, 'reader', 'user');
+
+                    $duplicateFileResponse = $this->File->duplicate($studentEmail);
+
+                    $DriveFile = DriveFile::create([
+                        'OwnerEmail' => $studentEmail,
+                        'DriveID' => $duplicateFileResponse['id'],
+                        'ParentDriveID' => $this->File->DriveID
+                    ]);
+                    $DriveFile->details = $duplicateFileResponse;
+
+                    $GoogleDriveAttachment = $googleDriveClass::create([
+                        'File' => $DriveFile,
+                        'Context' => $StudentTask,
+                        'ParentAttachment' => $this,
+                        'FileRevisionID' => 1
+                    ]);
+
+                    $GoogleDriveAttachment->validate();
+                    $GoogleDriveAttachment->save();
+
+                    foreach ($this->getRequiredPermissions('read') as $userId) {
+                        $userEmail = Person::getByID($userId)->PrimaryEmail;
+                        if (!$userEmail || !Validators::email($userEmail->toString(), ['domain' => 'slatedemo.com'])) {
+                            Logger::general_alert('Unable to duplicate file ({googleDriveID}) for {slateUsername}', [
+                                'slateUsername' => $userEmail ? $userEmail->toString() : 'no email',
+                                'userId' => $userId,
+                                'googleDriveID' => $DriveFile->DriveID
+                            ]);
+                            continue;
+                        }
+                        $userEmail = $userEmail->toString();
+
+                        $DriveFile->createPermission($userEmail, 'reader', 'user');
+                    }
+
+                } catch (RecordValidationException $v) {
+                    Logger::general_alert('Unable to save google drive duplicate file and attachment for user: {userEmail}', [
+                        'userEmail' => $studentEmail,
+                        'duplicateFileResponse' => $duplicateFileResponse,
+                        'StudentTask' => $StudentTask,
+                        'validationError' => $v
+                    ]);
+                    continue;
+                } catch (Exception $e) {
+                    Logger::general_alert('Unknown error while creating duplicate file and attachment for user: {userEmail}', [
+                        'userEmail' => $studentEmail,
+                        'duplicateFileResponse' => $duplicateFileResponse,
+                        'StudentTask' => $StudentTask
+                    ]);
+                    continue;
+                }
+            }
+        }
+    }
+
     public function getRequiredPermissions($type = null)
     {
         $permissions = [
