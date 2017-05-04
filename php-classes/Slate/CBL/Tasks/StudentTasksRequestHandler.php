@@ -162,20 +162,11 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
-    public static function setStudentTaskAttachments(StudentTask $Record, $data)
+    public static function setStudentTaskAttachments(StudentTask $Record, $requestData)
     {
-        if (isset($data['Attachments'])) {
-            $originalAttachments = $Record->Attachments;
-            $originalAttachmentIds = array_map(function($s) {
-                return $s->ID;
-            }, $originalAttachments);
 
-            $failed = [];
-            $attachmentIds = [];
-            $attachments = [];
-            $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
-
-            foreach ($data['Attachments'] as $attachmentData) {
+        if (isset($requestData['Attachments'])) {
+            foreach ($requestData['Attachments'] as $attachmentData) {
                 $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
                 if ($attachmentData['ID'] >= 1) {
                     if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
@@ -186,23 +177,27 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
                     $Attachment = $attachmentClass::create($attachmentData);
                 }
 
-                $Attachment->ContextID = $Record->ID;
-                $Attachment->ContextClass = $Record->getRootClass();
-                $Attachment->save();
+                if ($Attachment instanceof Attachments\GoogleDriveFile) {
+                    if (!$Attachment->File) {
+                        if (!$File = \Google\DriveFile::getByWhere(['DriveID' => $attachmentData['File']['DriveID']])) {
+                            $File = \Google\DriveFile::create($attachmentData['File']);
+                            if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
+                                $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
+                            }
+                        }
+                        $Attachment->File = $File;
+                    } else if ($Attachment->File->isPhantom && $File = \Google\DriveFile::getByWhere(['DriveID' => $attachmentData['File']['DriveID']])) {
+                        $Attachment->File = $File;
+                    }
+                }
+
+                $Attachment->Context = $Record;
                 $attachments[] = $Attachment;
-                $attachmentIds[] = $Attachment->ID;
             }
 
-            \DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
-                AbstractTaskAttachment::$tableName,
-                \DB::escape($Record->getRootClass()),
-                $Record->ID,
-                join('", "', $attachmentIds)
-            ]);
-
+            $Record->Attachments = $attachments;
         }
 
-        $Record->Attachments = $attachments;
     }
 
     public static function onRecordSaved(\ActiveRecord $Record, $data)
