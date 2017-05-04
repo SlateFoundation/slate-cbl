@@ -120,6 +120,28 @@ class GoogleDriveFile extends AbstractTaskAttachment
                     $Attachment->ContextID
                 ]
             );
+        } elseif ($Attachment->ContextClass == StudentTask::getStaticRootCLass()) {
+            $userIds = \DB::allValues(
+                'TeacherID',
+                'SELECT %6$s.PersonID as TeacherID '.
+                '  FROM `%1$s` %2$s '.
+                '  JOIN `%3$s` %4$s '.
+                '    ON %2$s.ID = %4$s.TaskID '.
+                '  JOIN `%5$s` %6$s '.
+                '    ON %4$s.SectionID = %6$s.CourseSectionID '.
+                ' WHERE %6$s.Role = "Teacher" '.
+                '   AND %2$s.ID = %7$u '.
+                ' GROUP BY %6$s.PersonID, %6$s.Role ',
+                [
+                    Task::$tableName,
+                    Task::getTableAlias(),
+                    StudentTask::$tableName,
+                    StudentTask::getTableAlias(),
+                    \Slate\Courses\SectionParticipant::$tableName,
+                    \Slate\Courses\SectionParticipant::getTableAlias(),
+                    $Attachment->Context->TaskID
+                ]
+            );
         }
 
         return $userIds;
