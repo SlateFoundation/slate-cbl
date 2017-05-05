@@ -14,6 +14,7 @@ use Exception;
 use RecordValidationException;
 use Validators;
 
+
 class GoogleDriveFile extends AbstractTaskAttachment
 {
     public $syncedPermissions = [];
@@ -70,14 +71,12 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
     public function updateFilePermissions()
     {
-
         $validatorConfig = [
             'domain' => \Google\API::$domain
         ];
 
         if ($this->ShareMethod == 'view-only' || $this->ShareMethod == 'collaborate') {
             $requiredPermissions = $this->getRequiredPermissions();
-
 
             foreach ($requiredPermissions['read'] as $userId) {
                 $userEmail = Person::getByID($userId)->PrimaryEmail;
@@ -254,7 +253,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
                     $Attachment->ContextID
                 ]
             );
-        } elseif ($Attachment->ContextClass == StudentTask::getStaticRootCLass()) {
+        } elseif ($Attachment->ContextClass == StudentTask::getStaticRootClass()) {
             $userIds = \DB::allValues(
                 'TeacherID',
                 'SELECT %6$s.PersonID as TeacherID '.
@@ -280,5 +279,4 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
         return $userIds;
     }
-
 }
