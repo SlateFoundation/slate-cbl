@@ -185,7 +185,8 @@ Ext.define('Slate.cbl.util.Google', {
                     url: response.result.webViewLink,
                     name: response.result.name,
                     id: response.result.id
-                }
+                },
+                email: me.getAuthenticatedUser().emailAddress
             });
         });
     },
