@@ -1,13 +1,29 @@
 Ext.define('Slate.cbl.widget.AttachmentsField', {
     extend: 'Ext.form.FieldContainer',
     requires: [
-        'Slate.cbl.view.AttachmentsList'
+        'Slate.cbl.view.AttachmentsList',
+        'Slate.cbl.util.Google'
     ],
 
     xtype: 'slate-tasks-attachmentsfield',
 
     config: {
         readOnly: false
+    },
+
+    initComponent: function() {
+        var me = this,
+            googleUtil = Slate.cbl.util.Google,
+            googleAttachmentBtn;
+
+        me.callParent(arguments);
+
+        googleAttachmentBtn = me.down('button[action=addattachment]');
+        if (googleUtil.getDeveloperKey() && googleUtil.getClientId() && googleUtil.getGoogleAppsDomain()) {
+            googleAttachmentBtn.enable();
+        } else {
+            googleAttachmentBtn.disable();
+        }
     },
 
     fieldLabel: 'Attachments',
