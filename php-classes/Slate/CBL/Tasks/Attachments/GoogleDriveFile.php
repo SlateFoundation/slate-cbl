@@ -17,7 +17,7 @@ use Validators;
 class GoogleDriveFile extends AbstractTaskAttachment
 {
     public $syncedPermissions = [];
-    
+
     public static $fields = [
         'FileID' => 'uint',
         'FileRevisionID',
@@ -151,9 +151,9 @@ class GoogleDriveFile extends AbstractTaskAttachment
                         'File' => $DuplicateDriveFile,
                         'Context' => $StudentTask,
                         'ParentAttachment' => $this,
-                        'FileRevisionID' => 1
+                        'FileRevisionID' => "1"
                     ]);
-                    
+
                     if ($GoogleDriveAttachment->validate()) {
                         $GoogleDriveAttachment->save();
                     } else {
