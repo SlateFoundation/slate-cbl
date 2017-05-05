@@ -92,15 +92,26 @@ class UserChangeMonitor extends \ActiveRecord
             ]
         ]);
 
-        if (empty($request['resourceId'])) {
+
+        if (empty($request['resourceId']) &&
+            !(!empty($request['error']) && is_array($request['error']) && !empty($request['error']['errors']) && is_array($request['error']['errors'][0]) && $request['error']['errors'][0]['reason'] == 'channelIdNotUnique')
+        ) {
             $this->Status = 'inactive';
             $this->save();
+            \Emergence\Logger::general_warning('Failed monitor response for {slateUsername}', [
+                'monitorRequest' => $request,
+                'slateUsername' => $Teacher->Username
+            ]);
+            \MICS::dump($request, 'request', true);
             throw new Exception('Error while attempting to monitor user changes.');
-        } else {
-            $this->Expiration = $request['expiration'] / 1000;
-            $this->Status = 'active';
-            $this->save();
         }
+
+        if (!empty($request['expiration'])) {
+            $this->Expiration = $request['expiration'] / 1000;            
+        }
+        
+        $this->Status = 'active';
+        $this->save();
 
         return $this->Status == 'active';
     }
