@@ -652,7 +652,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                             }
 
                             return new Ext.Promise(function(resolve) {
-                                Ext.Msg.confirm('Clone File', 'This google drive file is currently owned by someone outside of the '+googleUtil.getGoogleAppsDomain() + ' domain. Would you like to clone this document instead?', function(answer) {
+                                Ext.Msg.confirm('Clone File', 'This google drive file is currently owned by someone outside of the '+googleUtil.getGoogleAppsDomain() + ' domain. Would you like to clone this file instead?', function(answer) {
                                     if (answer === 'yes') {
                                         resolve(googleUtil.cloneGoogleFile(fileData));
                                     }
@@ -662,7 +662,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                         then(null, function(response) {
                             return new Ext.Promise(function(resolve) {
                                 if (response.result && response.result.error && response.result.error.code === 403) {
-                                    Ext.Msg.confirm('Clone File', 'You must have write access to the file in order to share. Would you like to clone this document instead?', function(answer) {
+                                    Ext.Msg.confirm('Clone File', 'You must have write access to the file in order to share. Would you like to clone this file instead?', function(answer) {
                                         if (answer === 'yes') {
                                             resolve(googleUtil.cloneGoogleFile(fileData));
                                         }
