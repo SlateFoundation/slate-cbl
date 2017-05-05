@@ -168,14 +168,28 @@ class DriveFile extends \ActiveRecord
 
     public function duplicate($email)
     {
-        // TODO: return duplicated Google\DriveFile Object
-        return GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/copy', [
+         
+        $permissionRequest = $this->createPermission($email, 'reader', 'user');
+        
+        $response = GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/copy', [
             'post' => [
                 'name' => $this->Title
             ],
             'user' => $email,
             'scope' => static::$apiScope
         ]);
+        
+        $duplicatedDriveFile = static::create([
+            'DriveID' => $response['id'],
+            'ParentDriveID' => $this->DriveID,
+            'OwnerEmail' => $email
+        ]);
+        
+        $duplicatedDriveFile->updateGoogleFileDetails();
+        $duplicatedDriveFile->save();
+        
+        return $duplicatedDriveFile;
+        
     }
 
     public function untrash()

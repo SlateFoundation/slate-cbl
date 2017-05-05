@@ -2,6 +2,8 @@
 
 namespace Slate\CBL\Tasks\Attachments;
 
+use Google\DriveFile;
+
 use Slate\CBL\Tasks\Task;
 use Slate\CBL\Tasks\StudentTask;
 
@@ -14,6 +16,8 @@ use Validators;
 
 class GoogleDriveFile extends AbstractTaskAttachment
 {
+    public $syncedPermissions = [];
+    
     public static $fields = [
         'FileID' => 'uint',
         'FileRevisionID',
@@ -59,7 +63,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
     {
         parent::save($deep);
 
-        if ($this->isNew) {
+        if ($this->isNew && empty($this->syncedPermissions)) {
             $this->updateFilePermissions();
         }
     }
@@ -67,12 +71,13 @@ class GoogleDriveFile extends AbstractTaskAttachment
     public function updateFilePermissions()
     {
 
+        $validatorConfig = [
+            'domain' => \Google\API::$domain
+        ];
+
         if ($this->ShareMethod == 'view-only' || $this->ShareMethod == 'collaborate') {
             $requiredPermissions = $this->getRequiredPermissions();
 
-            $validatorConfig = [
-                'domain' => \Google\API::$domain
-            ];
 
             foreach ($requiredPermissions['read'] as $userId) {
                 $userEmail = Person::getByID($userId)->PrimaryEmail;
@@ -89,6 +94,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
                 try {
                     $response = $this->File->createPermission($userEmail->toString(), 'reader', 'user');
+                    $this->syncedPermissions[] = $userEmail->toString();
                 } catch (Exception $e) {
                     Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail} on {googleFileRecord}', [
                         'permissionRole' => 'reader',
@@ -108,11 +114,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
                 try {
                     $response = $this->File->createPermission($userEmail->toString(), 'writer', 'user', $accessToken);
-                    Logger::general_warning('API request to create writer permission', [
-                        'response' => $response,
-                        'userEmail' => $userEmail->toString(),
-                        'attachment' => $this
-                    ]);
+                    $this->syncedPermissions[] = $userEmail->toString();
                 } catch (Exception $e) {
                     Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail}', [
                         'permissionRole' => 'writer',
@@ -124,7 +126,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
             }
         } elseif ($this->ShareMethod == 'duplicate') {
 
-            foreach (StudentTask::getAllByWhere(['TaskID' => $Record->ID]) as $StudentTask) {
+            foreach ($this->Context->StudentTasks as $StudentTask) {
 
                 try {
                     $studentEmail = $StudentTask->Student->PrimaryEmail;
@@ -141,39 +143,21 @@ class GoogleDriveFile extends AbstractTaskAttachment
                     $studentEmail = $studentEmail->toString();
 
                     $this->File->createPermission($studentEmail, 'reader', 'user');
+                    $this->syncedPermissions[] = $studentEmail;
 
-                    $duplicateFileResponse = $this->File->duplicate($studentEmail);
+                    $DuplicateDriveFile = $this->File->duplicate($studentEmail);
 
-                    $DriveFile = DriveFile::create([
-                        'OwnerEmail' => $studentEmail,
-                        'DriveID' => $duplicateFileResponse['id'],
-                        'ParentDriveID' => $this->File->DriveID
-                    ]);
-                    $DriveFile->details = $duplicateFileResponse;
-
-                    $GoogleDriveAttachment = $googleDriveClass::create([
-                        'File' => $DriveFile,
+                    $GoogleDriveAttachment = static::create([
+                        'File' => $DuplicateDriveFile,
                         'Context' => $StudentTask,
                         'ParentAttachment' => $this,
                         'FileRevisionID' => 1
                     ]);
-
-                    $GoogleDriveAttachment->validate();
-                    $GoogleDriveAttachment->save();
-
-                    foreach ($this->getRequiredPermissions('read') as $userId) {
-                        $userEmail = Person::getByID($userId)->PrimaryEmail;
-                        if (!$userEmail || !Validators::email($userEmail->toString(), ['domain' => 'slatedemo.com'])) {
-                            Logger::general_alert('Unable to duplicate file ({googleDriveID}) for {slateUsername}', [
-                                'slateUsername' => $userEmail ? $userEmail->toString() : 'no email',
-                                'userId' => $userId,
-                                'googleDriveID' => $DriveFile->DriveID
-                            ]);
-                            continue;
-                        }
-                        $userEmail = $userEmail->toString();
-
-                        $DriveFile->createPermission($userEmail, 'reader', 'user');
+                    
+                    if ($GoogleDriveAttachment->validate()) {
+                        $GoogleDriveAttachment->save();
+                    } else {
+                        throw new RecrodValidationException($GoogleDriveAttachment, 'Unable to save invalid attachment.');
                     }
 
                 } catch (RecordValidationException $v) {
@@ -181,13 +165,14 @@ class GoogleDriveFile extends AbstractTaskAttachment
                         'userEmail' => $studentEmail,
                         'duplicateFileResponse' => $duplicateFileResponse,
                         'StudentTask' => $StudentTask,
-                        'validationError' => $v
+                        'validationErrors' => $v->validationErrors
                     ]);
                     continue;
                 } catch (Exception $e) {
                     Logger::general_alert('Unknown error while creating duplicate file and attachment for user: {userEmail}', [
                         'userEmail' => $studentEmail,
-                        'duplicateFileResponse' => $duplicateFileResponse,
+                        'Attachment' => $GoogleDriveAttachment,
+                        'ParentAttachment' => $this,
                         'StudentTask' => $StudentTask
                     ]);
                     continue;
