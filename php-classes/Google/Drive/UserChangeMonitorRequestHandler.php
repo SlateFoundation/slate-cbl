@@ -2,6 +2,10 @@
 
 namespace Google\Drive;
 
+use Exception;
+use Emergence\People\User;
+use Emergence\Logger;
+
 use Google\API as GoogleAPI;
 use Google\DriveFile;
 
@@ -17,10 +21,53 @@ class UserChangeMonitorRequestHandler extends \RecordsRequestHandler
         switch ($action ?: $action = static::shiftPath()) {
             case 'ping':
                 return static::handleUserChangeRequest();
+                
+            case 'monitor-all':
+                return static::handleMonitorAllRequest();
 
             default:
                 return parent::handleRequest($action);
         }
+    }
+    
+    public static function handleMonitorAllRequest()
+    {
+        foreach (User::getAllByWhere(['AccountLevel' => 'Teacher']) as $Teacher) {
+            if (!$Teacher->PrimaryEmail) {
+                Logger::general_warning('Google Drive User Change Monitor is not configured for {slateUsername} because no primary email is set.', [
+                    'slateUsername' => $Teacher->Username
+                ]);
+               continue;
+            } elseif ($Teacher->PrimaryEmail->getDomainName() != GoogleAPI::$domain) {
+                Logger::general_warning('Google Drive User Change Monitior is not configured for {slateUsername} due to domain mismatch.', [
+                    'slateUsername' => $Teacher->Username,
+                    'userEmail' => $Teacher->PrimaryEmail
+                ]);
+               continue;
+            }
+            
+            $Monitor = UserChangeMonitor::getOrCreate($Teacher->PrimaryEmail);
+            
+            $monitoring = 0;
+            $failed = 0;
+            try {
+                if ($Monitor->monitor()) {
+                    $monitoring++;
+                }
+            } catch (Exception $e) {
+                $failed++;
+                Logger::general_alert('Unable to monitor {slateUsername}\'s changes for Google Drive', [
+                    'slateUsername' => $Teacher->Username,
+                    'exception' => $e
+                ]);
+                continue;
+            }
+        }
+        
+        return static::respond('usersMonitored', [
+            'total' => $monitoring,
+            'failed' => $failed
+        ], 'json');
     }
 
     public static function handleUserChangeRequest()
