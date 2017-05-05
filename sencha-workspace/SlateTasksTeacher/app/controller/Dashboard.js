@@ -522,14 +522,26 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 }, googleUtil.authenticateUser).
                 then(Ext.bind(me.openFilePicker, me)).
                 then(null, function(error) {
-                    Ext.Msg.alert('Error', error);
+                    if (error && (error.error == 'popup_closed_by_user' || error.error == 'access_denied')) {
+                        return;
+                    }
+
+                    if (error) {
+                        Ext.Msg.alert('Error', error);
+                    }
                 });
         } else {
             googleUtil.loadAPI().
                 then(googleUtil.authenticateUser).
                 then(Ext.bind(me.openFilePicker, me)).
                 then(null, function(error) {
-                    Ext.Msg.alert('Error', error);
+                    if (error && (error.error == 'popup_closed_by_user' || error.error == 'access_denied')) {
+                        return;
+                    }
+
+                    if (error) {
+                        Ext.Msg.alert('Error', error);
+                    }
                 });
         }
     },
