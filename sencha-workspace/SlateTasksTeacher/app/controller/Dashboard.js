@@ -709,6 +709,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     doSaveStudentTask: function(studentTask, callback, scope) {
+        var me = this,
+            taskEditor = me.getTaskEditor();
+
+        taskEditor.mask('Publishing&hellip;');
         studentTask.save({
             callback: function(record, request, success) {
                 var message = [],
@@ -738,6 +742,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                         Ext.Msg.alert('Error', message.join(' '));
                     }
                 }
+                taskEditor.unmask();
                 Ext.callback(callback, scope, arguments);
             }
         });
@@ -745,6 +750,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     doSaveTask: function(forceReload) {
         var me = this,
+            taskEditor = me.getTaskEditor(),
             form = me.getTaskEditorForm(),
             skillsField = me.getSkillsField(),
             attachmentsField = me.getAttachmentsField(),
@@ -791,9 +797,11 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
 
         _saveRecord = function() {
+            taskEditor.mask('Publishing&hellip;');
             record.save({
                 success: function(rec) {
-                    me.getTaskEditor().close();
+                    taskEditor.unmask();
+                    taskEditor.close();
 
                     if (wasPhantom) {
                         me.getTasksStore().add(rec);
@@ -808,6 +816,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                         }, 1000);
                     }
                     Ext.toast('Task succesfully saved!');
+                },
+                failure: function() {
+                    Ext.Msg.alert('Error', 'There was an error while publishing. Please try again.');
+                    taskEditor.unmask();
                 }
             });
         };
