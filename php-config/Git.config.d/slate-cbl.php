@@ -7,6 +7,8 @@ Git::$repositories['slate-cbl'] = [
     'localOnly' => true,
     'trees' => [
         'event-handlers/Slate/CBL',
+        'event-handlers/Emergence/Site/nightly-maintenance/50_cbl-google-drive-changes-monitor.php',
+        'event-handlers/Emergence/Site/nightly-maintenance/50_cbl-invalidate-expired-tasks.php',
         'html-templates/app/SlateDemonstrationsStudent',
         'html-templates/app/SlateDemonstrationsTeacher',
         'html-templates/app/SlateTasksManager',
@@ -26,6 +28,7 @@ Git::$repositories['slate-cbl'] = [
         'sencha-workspace/SlateTasksManager',
         'sencha-workspace/SlateTasksStudent',
         'sencha-workspace/SlateTasksTeacher',
-        'site-root/cbl'
+        'site-root/cbl',
+        'site-root/google-drive/user-change-monitor.php'
     ]
 ];
