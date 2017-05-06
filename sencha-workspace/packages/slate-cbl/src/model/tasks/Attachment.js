@@ -53,6 +53,11 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
             defaultValue: 'view-only'
         },
         {
+            name: 'Status',
+            type: 'string',
+            defaultValue: 'normal'
+        },
+        {
             name: 'File',
             defaultValue: {}
         },
