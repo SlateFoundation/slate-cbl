@@ -24,6 +24,11 @@ class AbstractTaskAttachment extends \ActiveRecord
         'Title' => [
             'type' => 'string',
             'default' => null
+        ],
+        'Status' => [
+            'type' => 'enum',
+            'values' => ['normal', 'removed'],
+            'default' => 'normal'
         ]
     ];
 
