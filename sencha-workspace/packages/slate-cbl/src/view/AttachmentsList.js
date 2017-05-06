@@ -22,14 +22,16 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
 
     tpl: [
         '<tpl for=".">',
-            '<li class="slate-attachmentslist-item <tpl if="kind">slate-attachment-{kind}</tpl>">',
-                '<span class="slate-attachment-title"><a href="{[this.getURL(values)]}" target=_blank>{title}</a></span>',
+            '<li class="slate-attachmentslist-item<tpl if="kind"> slate-attachment-{kind}</tpl><tpl if="Status == &quot;removed&quot;"> removed</tpl>">',
+                '<span class="slate-attachment-title"><a href="{[this.getURL(values)]}" target=_blank>{title}</a><tpl if="Status == &quot;removed&quot;"><i> (removed) </i></tpl></span>',
                 '<tpl if="isEditable">',
                     '<tpl if="this.isGoogleDoc(values) && values.ID <= 0">',
                         '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
                     '</tpl>',
-                    '<tpl if="!this.isGoogleDoc(values) || values.ID <= 0">',
-                        '<button class="plain" action="remove"><i class="fa fa-times-circle"></i></button>',
+                    '<tpl if="isEditable && Status == &quot;normal&quot;">',
+                        '<button class="plain" action="toggle-status" data-status="removed"><i class="fa fa-times-circle"></i></button>',
+                    '<tpl elseif="isEditable && Status == &quot;removed&quot;">',
+                        '<button class="plain" action="toggle-status" data-status="normal"><i class="fa fa-undo"></i></button>',
                     '</tpl>',
                 '</tpl>',
             '</li>',
@@ -125,9 +127,12 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                         }]
                     }).showAt(Ext.fly(btn).getXY());
                     break;
-                case 'remove':
-
-                    me.getStore().remove(record);
+                case 'toggle-status':
+                    if (record.phantom) {
+                        me.getStore().remove(record);
+                    } else {
+                        record.set('Status', btn.getAttribute('data-status'));
+                    }
                     break;
             }
         }, null, { delegate: 'button' });
