@@ -27,7 +27,7 @@ foreach ($expiredTasks as $expiredTask) {
     $expiredTask->getDemonstration();
     // set demonstration creator to task assigner
     $expiredTask->Demonstration->CreatorID = $expiredTask->CreatorID;
-    $expiredTask->save(false);
+    $expiredTask->save();
 }
 
 // insert 'Missing' ratings for unrated skills associated with expired tasks
