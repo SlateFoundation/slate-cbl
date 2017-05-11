@@ -165,6 +165,8 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
     public static function setStudentTaskAttachments(StudentTask $Record, $requestData)
     {
 
+        $defaultAttachmentClass = AbstractTaskAttachment::class;
+
         if (isset($requestData['Attachments'])) {
             foreach ($requestData['Attachments'] as $attachmentData) {
                 $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
@@ -173,6 +175,10 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
                         $failed[] = $attachmentData;
                         continue;
                     }
+
+                    if (!empty($attachmentData['Status']) && in_array($attachmentData['Status'], $defaultAttachmentClass::getFieldOptions('Status', 'values'))) {
+                         $Attachment->Status = $attachmentData['Status'];
+                     }
                 } else {
                     $Attachment = $attachmentClass::create($attachmentData);
                 }
