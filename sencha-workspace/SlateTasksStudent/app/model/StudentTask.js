@@ -184,6 +184,48 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         ]
     },
 
+    getTeacherAttachments: function() {
+        // only return 'view-only' google drive attachments
+        return Ext.Array.filter(this.TaskAttachments().getRange(), function(attachment) {
+            if (attachment.get('Class') == 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile') {
+                return attachment.get('ShareMethod') == 'view-only';
+            }
+            return true;
+        });
+    },
+
+    getStudentAttachments: function() {
+        var me = this,
+            taskAttachments = me.TaskAttachments().getRange(),
+            attachments = me.Attachments().getRange(),
+            i = 0;
+
+        // include 'collaborate' google drive attachments
+        for (; i < taskAttachments.length; i++) {
+            if (taskAttachments[i].get('Class') == 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile' && taskAttachments[i].get('ShareMethod') == 'collaborate') {
+                attachments.push(taskAttachments[i]);
+            }
+        }
+
+        // disallow editing of teacher created attachments
+        for (i = 0; i < attachments.length; i++) {
+            if (attachments[i].get('FileID')) {
+                if (
+                    attachments[i].get('ShareMethod') == 'collaborate'
+                    || attachments[i].get('ShareMethod') == 'view-only'
+                    && attachments[i].get('ParentAttachmentID')
+                ) {
+                    attachments[i].set({
+                        shareMethodMutable: false,
+                        statusMutable: false
+                    });
+                }
+            }
+        }
+
+        return attachments;
+    },
+
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
             skills = this.get('TaskSkills'),

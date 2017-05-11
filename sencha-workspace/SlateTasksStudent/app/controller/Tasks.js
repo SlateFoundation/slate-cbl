@@ -99,6 +99,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             ratingView = me.getRatingView(),
             teacherAttachmentsField = me.getTeacherAttachmentsField(),
             studentAttachmentsField = me.getStudentAttachmentsField(),
+            studentAttachmentList = studentAttachmentsField.down('slate-attachmentslist'),
             commentsField = me.getCommentsField(),
             submissions = rec.get('Submissions'),
             readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
@@ -119,14 +120,18 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
 
         me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
-        teacherAttachmentsField.setAttachments(rec.get('Task').Attachments);
+        teacherAttachmentsField.setAttachments(rec.getTeacherAttachments());
         teacherAttachmentsField.setReadOnly(true);
         commentsField.setRecord(rec);
         commentsField.setReadOnly(true);
 
-        studentAttachmentsField.setAttachments(rec.Attachments().getRange());
+        studentAttachmentsField.setAttachments(rec.getStudentAttachments());
         studentAttachmentsField.setReadOnly(readonly);
 
+        studentAttachmentList.setConfig({
+            editable: !readonly,
+            shareMethodMutable: false
+        });
         me.getSubmitButton().setDisabled(readonly);
 
         details.show();
@@ -136,13 +141,20 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         var me = this,
             form = me.getTaskForm(),
             attachmentsField = me.getStudentAttachmentsField(),
-            record = form.getRecord();
+            attachments = attachmentsField.getAttachments(false),
+            record = form.getRecord(),
+            studentTaskAttachments = Ext.Array.filter(attachments, function(attachment) {
+                if (attachment.ContextClass == 'Slate\\CBL\\Tasks\\Task') {
+                    return false;
+                }
+                return true;
+            });
 
         Slate.API.request({
             url: Slate.API.buildUrl('/cbl/student-tasks/submit'),
             jsonData: {
                 ID: record.get('ID'),
-                Attachments: attachmentsField.getAttachments(false)
+                Attachments: studentTaskAttachments
             },
             success: function() {
                 Ext.toast('Task successfully submitted!');
