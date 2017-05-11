@@ -84,6 +84,15 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
                 return data.File && data.File.Title || data.Title || data.URL || 'Untitled';
             }
 
+        },
+        {
+            name: 'statusMutable',
+            persist: false
+
+        },
+        {
+            name: 'sharingMutable',
+            persist: false
         }
     ]
 });

@@ -6,7 +6,9 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
     ],
 
     config: {
-        editable: true
+        editable: true,
+        shareMethodMutable: true,
+        statusMutable: true
     },
 
     autoEl: 'ul',
@@ -25,12 +27,14 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
             '<li class="slate-attachmentslist-item<tpl if="kind"> slate-attachment-{kind}</tpl><tpl if="Status == &quot;removed&quot;"> removed</tpl>">',
                 '<span class="slate-attachment-title"><a href="{[this.getURL(values)]}" target=_blank>{title}</a><tpl if="Status == &quot;removed&quot;"><i> (removed) </i></tpl></span>',
                 '<tpl if="isEditable">',
-                    '<tpl if="this.isGoogleDoc(values) && values.ID <= 0">',
-                        '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
+                    '<tpl if="isPhantom">',
+                        '<tpl if="shareMethodMutable && isPhantom && this.isGoogleDoc(values)">',
+                            '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
+                        '</tpl>',
                     '</tpl>',
-                    '<tpl if="isEditable && Status == &quot;normal&quot;">',
+                    '<tpl if="statusMutable && Status == &quot;normal&quot;">',
                         '<button class="plain" action="toggle-status" data-status="removed"><i class="fa fa-times-circle"></i></button>',
-                    '<tpl elseif="isEditable && Status == &quot;removed&quot;">',
+                    '<tpl elseif="statusMutable && Status == &quot;removed&quot;">',
                         '<button class="plain" action="toggle-status" data-status="normal"><i class="fa fa-undo"></i></button>',
                     '</tpl>',
                 '</tpl>',
@@ -67,11 +71,26 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
 
     prepareData: function(data, recordIndex, record) {
         var me = this,
-            editable = me.getEditable(),
             recordData = record.getData();
 
-        recordData.isEditable = editable;
-        return recordData;
+        return Ext.apply({}, recordData, {
+            isPhantom: record.phantom,
+            isEditable: me.getEditable(),
+            statusMutable: me.getStatusMutable(),
+            shareMethodMutable: me.getShareMethodMutable()
+        });
+    },
+
+    updateEditable: function() {
+        this.refreshView();
+    },
+
+    updateStatusMutable: function() {
+        this.refreshView();
+    },
+
+    updateShareMethodMutable: function() {
+        this.refreshView();
     },
 
     afterRender: function() {
