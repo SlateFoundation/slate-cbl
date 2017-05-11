@@ -256,7 +256,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     openFilePicker: function() {
         var me = this,
-            googleUtil = Slate.cbl.util.Google;
+            googleUtil = Slate.cbl.util.Google,
             taskDetails = me.getTaskDetails();
 
         taskDetails.hide(true);
