@@ -15,6 +15,7 @@ Git::$repositories['slate-cbl'] = [
         'html-templates/app/SlateTasksStudent',
         'html-templates/app/SlateTasksTeacher',
         'html-templates/cbl',
+        'html-templates/google-drive/files.tpl',
         'php-classes/Slate/CBL',
         'php-classes/Google/API.php',
         'php-classes/Google/Drive',
@@ -29,6 +30,7 @@ Git::$repositories['slate-cbl'] = [
         'sencha-workspace/SlateTasksStudent',
         'sencha-workspace/SlateTasksTeacher',
         'site-root/cbl',
+        'site-root/google-drive/files.php',
         'site-root/google-drive/user-change-monitor.php'
     ]
 ];

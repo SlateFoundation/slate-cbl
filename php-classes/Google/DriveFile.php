@@ -94,6 +94,30 @@ class DriveFile extends \ActiveRecord
             \Emergence\Mailer\Mailer::send('nafis@jarv.us', 'Tracked File Deleted', $message);
         }
     }
+    
+    public function getLink()
+    {
+        if (!empty($this->details['webViewLink'])) {
+            return $this->details['webViewLink'];
+        }
+        
+        if ($this->Type && $this->DriveID) {
+            switch ($this->Type) {
+                case 'spreadsheet':
+                case 'drawing':
+                    $prefix = $this->Type.'s';
+                    break;
+                    
+                default:
+                    $prefix = $this->Type;
+                    break;
+            }
+            
+            return sprintf('https://docs.google.com/%s/d/%s', $prefix, $this->DriveID);
+        }
+        
+        return null;
+    }
 
     public function getGoogleFileDetails()
     {
