@@ -295,13 +295,15 @@ class Competency extends \VersionedRecord
 
     public function getCurrentLevelForStudent(Student $Student)
     {
-        $level = \DB::oneValue(
-            'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
-            [
-                $Student->ID,
-                $this->ID
-            ]
-        );
+        try {
+            $level = \DB::oneValue(
+                'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
+                [
+                    $Student->ID,
+                    $this->ID
+                ]
+            );
+        } catch (TableNotFoundException $e) {}
 
         return $level ? intval($level) : null;
     }

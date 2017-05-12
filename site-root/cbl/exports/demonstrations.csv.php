@@ -47,7 +47,7 @@ $results = \DB::query(
             '%2$s.PerformanceType, '.
             '%2$s.ArtifactURL '.
     ' FROM `%1$s` %2$s '.
-    ' JOIN `%3$s` %4$s '.
+    ' LEFT JOIN `%3$s` %4$s '.
     '   ON %2$s.CreatorID = %4$s.ID '.
     ' JOIN `%3$s` %5$s '.
     '   ON %2$s.StudentID = %5$s.ID '.
@@ -56,10 +56,10 @@ $results = \DB::query(
     [
         Demonstration::$tableName,
         Demonstration::getTableAlias(),
-        
+
         Person::$tableName,
         Person::getTableAlias(),
-        
+
         'Student',
         join(') AND (', Demonstration::mapConditions($demonstrationConditions))
     ]
@@ -87,23 +87,22 @@ $sw->writeRow($headers);
 while($row = $results->fetch_assoc()) {
     $rowId = $row['ID'];
     unset($row['ID']);
-    foreach (DemonstrationSkill::getAllByWhere(['DemonstrationID' => $rowId]) AS $DemonstrationSkill) {
-        $skill = $DemonstrationSkill->Skill;
+    $demonstrationSkills = DemonstrationSkill::getAllByWhere(['DemonstrationID' => $rowId]);
+    for ($i = 0; $i < count($demonstrationSkills); $i++) {
 
-        $row['Competency'] = $skill->Competency->Code;
-        $row['Standard'] = $skill->Code;
+        $row['Competency'] = $demonstrationSkills[$i]->Skill->Competency->Code;
+        $row['Standard'] = $demonstrationSkills[$i]->Skill->Code;
 
         // For overriden demonstrations, rating should be "O" rather than the DemonstratedLevel
-        if ($DemonstrationSkill->Override) {
+        if ($demonstrationSkills[$i]->Override) {
             $row['Rating'] = 'O';
-        } elseif ($DemonstrationSkill->DemonstratedLevel > 0) {
-            $row['Rating'] = $DemonstrationSkill->DemonstratedLevel;
+        } elseif ($demonstrationSkills[$i]->DemonstratedLevel > 0) {
+            $row['Rating'] = $demonstrationSkills[$i]->DemonstratedLevel;
         } else {
             $row['Rating'] = 'M';
         }
 
-        $row['Level'] = $DemonstrationSkill->TargetLevel;
-#        $row['Mapping'] = '';
+        $row['Level'] = $demonstrationSkills[$i]->TargetLevel;
 
         $sw->writeRow($row);
     }

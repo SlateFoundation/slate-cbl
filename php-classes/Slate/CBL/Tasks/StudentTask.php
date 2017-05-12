@@ -222,7 +222,8 @@ class StudentTask extends \VersionedRecord
                 'StudentID' => $this->StudentID,
                 'PerformanceType' => $this->Task->Title,
                 'Context' => $this->Section->Title,
-                'ExperienceType' => $this->ExperienceType
+                'ExperienceType' => $this->ExperienceType,
+                'CreatorID' => $this->CreatorID
             ], true);
 
             $this->DemonstrationID = $demonstration->ID;
