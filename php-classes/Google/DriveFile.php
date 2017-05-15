@@ -190,7 +190,7 @@ class DriveFile extends \ActiveRecord
         ]);
     }
 
-    public function duplicate($email)
+    public function cloneFile($email)
     {
         $permissionRequest = $this->createPermission($email, 'reader', 'user');
 
