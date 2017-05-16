@@ -309,8 +309,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             status = studentTask.get('TaskStatus') === 'completed' ? 're-assigned' : 'completed';
 
         studentTask.set('TaskStatus', status);
-
+        taskRater.mask((status === 'completed' ? 'Accepting' : 'Unaccepting') + '&hellip;');
         me.doSaveStudentTask(studentTask, function(rec, request, success) {
+            taskRater.unmask();
             if (success) {
                 taskRater.close();
                 me.getStudentTasksStore().load({
@@ -413,6 +414,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 SectionID: me.getCourseSelector().getSelection().getId()
             });
 
+        taskAssigner.mask('Assigning&hellip;');
         me.doSaveStudentTask(studentTask, function(rec, request, success) {
             if (success) {
                 taskAssigner.close();
@@ -421,6 +423,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     addRecords: true
                 });
                 Ext.toast(student.getFullName() + ' was assigned task: ' + task.get('Title'));
+            } else {
+                Ext.Msg.alert('An error occured', 'Please try again later.');
+                taskAssigner.unmask();
             }
         });
 
@@ -435,7 +440,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         if (studentTask) {
             me.getTaskEditorForm().updateRecord(studentTask);
             studentTask.set('SkillIDs', me.getSkillsField().getSkills(false, true)); // returnRecords, idsOnly
+            taskEditor.mask('Publishing&hellip;');
             return me.doSaveStudentTask(studentTask, function(rec, request, success) {
+                taskEditor.unmask();
                 if (success) {
                     me.getStudentTasksStore().load({
                         id: studentTask.getId(),
@@ -724,7 +731,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var me = this,
             taskEditor = me.getTaskEditor();
 
-        taskEditor.mask('Publishing&hellip;');
         studentTask.save({
             callback: function(record, request, success) {
                 var message = [],
@@ -754,7 +760,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                         Ext.Msg.alert('Error', message.join(' '));
                     }
                 }
-                taskEditor.unmask();
                 Ext.callback(callback, scope, arguments);
             }
         });
