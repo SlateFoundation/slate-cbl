@@ -6,6 +6,7 @@ use DB;
 use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
+use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
 use Slate\Courses\SectionsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
 use Emergence\Comments\Comment;
@@ -244,6 +245,21 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
                     join('", "', $oldSkillIds)
                 ]);
             }
+        }
+        
+        if ($Record->isNew) {
+            static::syncGoogleAttachmentPermissions($Record);
+        }
+    }
+    
+    public static function syncGoogleAttachmentPermissions(StudentTask $StudentTask)
+    {
+        foreach ($StudentTask->Task->Attachments as $Attachment) {
+            if (!$Attachment->isA(GoogleDriveFile::class)) {
+                continue;
+            }
+            
+            $Attachment->syncUserPermissions($StudentTask->Student);
         }
     }
 
