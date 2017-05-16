@@ -102,7 +102,6 @@ class UserChangeMonitor extends \ActiveRecord
                 'monitorRequest' => $request,
                 'slateUsername' => $Teacher->Username
             ]);
-            \MICS::dump($request, 'request', true);
             throw new Exception('Error while attempting to monitor user changes.');
         }
 
