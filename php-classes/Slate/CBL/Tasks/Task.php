@@ -94,7 +94,8 @@ class Task extends \VersionedRecord
         'StudentTasks' => [
             'type' => 'one-many',
             'class' => StudentTask::class,
-            'foreign' => 'TaskID'
+            'foreign' => 'TaskID',
+            'prune' => 'delete'
         ],
         'Assignees' => [
             'type' => 'many-many',

@@ -201,11 +201,28 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     }
                 }
 
-                $Attachment->Context = $Record;
                 $attachments[] = $Attachment;
             }
-
+            
             $Record->Attachments = $attachments;
+        }
+        // update student tasks
+        if (isset($requestData['Assignees'])) {
+            $studentTasks = [];
+            foreach ($requestData['Assignees'] as $assigneeId) {
+                if (!$StudentTask = StudentTask::getByWhere(['StudentID' => $assigneeId, 'TaskID' => $Record->ID])) {
+                    $StudentTask = StudentTask::create([
+                        'StudentID' => $assigneeId,
+                        'SectionID' => $requestData['SectionID'],
+                        'DueDate' => $Record->DueDate,
+                        'ExperienceType' => $Record->ExperienceType,
+                        'ExpirationDate' => $Record->ExpirationDate                    
+                    ]);
+                }
+                $studentTasks[] = $StudentTask;
+            }
+
+            $Record->StudentTasks = $studentTasks;
         }
     }
 
@@ -240,47 +257,5 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 ]);
             }
         }
-
-        // update student tasks
-        if (isset($data['Assignees'])) {
-            $originalAssignees = $Record->Assignees;
-            $originalAssigneeIds = array_map(function($s) {
-                return $s->ID;
-            }, $originalAssignees);
-
-            $assigneeIds = [];
-            $assignees = [];
-
-            foreach ($data['Assignees'] as $assigneeData) {
-                if (!$studentTask = StudentTask::getByWhere(['StudentID' => $assigneeData, 'TaskID' => $Record->ID])) {
-                    $studentTask = StudentTask::create([
-                        'TaskID' => $Record->ID,
-                        'StudentID' => $assigneeData,
-                        'SectionID' => $data['SectionID']
-                    ]);
-                }
-                $studentTask->setFields([
-                    'DueDate' => $Record->DueDate,
-                    'ExperienceType' => $Record->ExperienceType,
-                    'ExpirationDate' => $Record->ExpirationDate
-                ]);
-
-                try {
-                    $studentTask->save(false);
-                } catch (\RecordValidationException $e) {
-                    // record failed validation, continue creating others.
-                    continue;
-                }
-
-                $assigneeIds[] = $studentTask->StudentID;
-            }
-
-            DB::nonQuery('DELETE FROM `%s` WHERE TaskID = %u AND StudentID NOT IN ("%s")', [
-                StudentTask::$tableName,
-                $Record->ID,
-                join('", "', $assigneeIds)
-            ]);
-        }
-
     }
 }
