@@ -21,7 +21,7 @@ class UserChangeMonitorRequestHandler extends \RecordsRequestHandler
         switch ($action ?: $action = static::shiftPath()) {
             case 'ping':
                 return static::handleUserChangeRequest();
-                
+
             case 'monitor-all':
                 return static::handleMonitorAllRequest();
 
@@ -29,7 +29,7 @@ class UserChangeMonitorRequestHandler extends \RecordsRequestHandler
                 return parent::handleRequest($action);
         }
     }
-    
+
     public static function handleMonitorAllRequest()
     {
         foreach (User::getAllByWhere(['AccountLevel' => 'Teacher']) as $Teacher) {
@@ -45,9 +45,9 @@ class UserChangeMonitorRequestHandler extends \RecordsRequestHandler
                 ]);
                continue;
             }
-            
+
             $Monitor = UserChangeMonitor::getOrCreate($Teacher->PrimaryEmail);
-            
+
             $monitoring = 0;
             $failed = 0;
             try {
@@ -63,7 +63,7 @@ class UserChangeMonitorRequestHandler extends \RecordsRequestHandler
                 continue;
             }
         }
-        
+
         return static::respond('usersMonitored', [
             'total' => $monitoring,
             'failed' => $failed
@@ -107,7 +107,7 @@ class UserChangeMonitorRequestHandler extends \RecordsRequestHandler
             return static::throwError('Monitor not configured for channel.');
         }
 
-        $response = GoogleAPI::request('https://www.googleapis.com/drive/v3/changes', [
+        $response = GoogleAPI::request('/drive/v3/changes', [
             'user' => $Monitor->EmailContact->toString(),
             'scope' => DriveFile::$apiScope,
             'get' => [

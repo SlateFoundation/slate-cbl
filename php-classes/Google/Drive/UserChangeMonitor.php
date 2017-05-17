@@ -77,7 +77,7 @@ class UserChangeMonitor extends \ActiveRecord
             $this->getStartPageToken();
         }
 
-        $request = GoogleAPI::request('https://www.googleapis.com/drive/v3/changes/watch', [
+        $request = GoogleAPI::request('/drive/v3/changes/watch', [
             'user' => $this->EmailContact->toString(),
             'scope' => DriveFile::$apiScope,
             'get' => [
@@ -106,9 +106,9 @@ class UserChangeMonitor extends \ActiveRecord
         }
 
         if (!empty($request['expiration'])) {
-            $this->Expiration = $request['expiration'] / 1000;            
+            $this->Expiration = $request['expiration'] / 1000;
         }
-        
+
         $this->Status = 'active';
         $this->save();
 
@@ -121,7 +121,7 @@ class UserChangeMonitor extends \ActiveRecord
             throw new Exception('Email must be set');
         }
 
-        $request = GoogleAPI::request('https://www.googleapis.com/drive/v3/changes/startPageToken', [
+        $request = GoogleAPI::request('/drive/v3/changes/startPageToken', [
             'user' => $this->EmailContact->toString(),
             'scope' => DriveFile::$apiScope
         ]);
