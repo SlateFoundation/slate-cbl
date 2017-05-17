@@ -179,14 +179,14 @@ class TasksRequestHandler extends \RecordsRequestHandler
                         $failed[] = $attachmentData;
                         continue;
                     }
-                    
+
                     if (!empty($attachmentData['Status']) && in_array($attachmentData['Status'], $defaultAttachmentClass::getFieldOptions('Status', 'values'))) {
                         $Attachment->Status = $attachmentData['Status'];
                     }
                 } else {
                     $Attachment = $attachmentClass::create($attachmentData);
                 }
-                
+
 
                 if ($Attachment instanceof Attachments\GoogleDriveFile) {
                     if (!$Attachment->File) {
@@ -204,7 +204,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
                 $attachments[] = $Attachment;
             }
-            
+
             $Record->Attachments = $attachments;
         }
         // update student tasks
@@ -217,7 +217,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
                         'SectionID' => $requestData['SectionID'],
                         'DueDate' => $Record->DueDate,
                         'ExperienceType' => $Record->ExperienceType,
-                        'ExpirationDate' => $Record->ExpirationDate                    
+                        'ExpirationDate' => $Record->ExpirationDate
                     ]);
                 }
                 $studentTasks[] = $StudentTask;

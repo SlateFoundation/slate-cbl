@@ -152,7 +152,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         }
 
         $StudentTask->save();
-        
+
         static::syncStudentTaskGoogleAttachmentPermissions($StudentTask);
 
         $StudentTaskSubmission = new StudentTaskSubmission();
@@ -248,30 +248,30 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
                 ]);
             }
         }
-        
+
         if ($Record->isNew) {
             static::syncTaskGoogleAttachmentPermissions($Record);
         }
     }
-    
+
     public static function syncTaskGoogleAttachmentPermissions(StudentTask $StudentTask)
     {
         foreach ($StudentTask->Task->Attachments as $Attachment) {
             if (!$Attachment->isA(GoogleDriveFile::class)) {
                 continue;
             }
-            
+
             $Attachment->syncUserPermissions($StudentTask->Student);
         }
     }
-    
+
     public static function syncStudentTaskGoogleAttachmentPermissions(StudentTask $StudentTask)
     {
         foreach ($StudentTask->Attachments as $Attachment) {
             if (!$Attachment->isNew || !$Attachment->isA(GoogleDriveFile::class)) {
                 continue;
             }
-            
+
             foreach ($StudentTask->Section->Teachers as $Teacher) {
                 $Attachment->syncUserPermissions($Teacher);
             }

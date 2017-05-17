@@ -62,7 +62,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
         'File',
         'ParentAttachment'
     ];
-    
+
     public function getValue($name)
     {
         switch ($name) {
@@ -72,17 +72,17 @@ class GoogleDriveFile extends AbstractTaskAttachment
                 } elseif ($this->ContextClass == StudentTask::getStaticRootClass()) {
                     return $this->Context->Task;
                 }
-            
-            default:       
+
+            default:
                 return parent::getValue($name);
-                
+
         }
     }
-    
+
     public function cloneAttachment(StudentTask $StudentTask)
     {
         $validEmail = static::getValidEmailAddress($StudentTask->Student);
-        
+
         if (!$validEmail) {
             Logger::general_alert('Unable to clone google drive attachment for {personFullName} on {googleDriveAttachment}. Could not find a valid email address', [
                 'person' => $StudentTask->Student,
@@ -91,23 +91,23 @@ class GoogleDriveFile extends AbstractTaskAttachment
             ]);
             return false;
         }
-        
+
         try {
             $DuplicateDriveFile = $this->File->cloneFile($validEmail);
-    
+
             $GoogleDriveAttachment = static::create([
                 'File' => $DuplicateDriveFile,
                 'Context' => $StudentTask,
                 'ParentAttachment' => $this,
                 'FileRevisionID' => "1"
             ]);
-    
+
             if (!$GoogleDriveAttachment->validate()) {
                 throw new RecordValidationException($GoogleDriveAttachment, 'Cannot save invalid attachment record');
             }
-    
+
             $GoogleDriveAttachment->save();
-            
+
             return $GoogleDriveAttachment;
         } catch (Exception $e) {
             Logger::general_alert('Unable to clone google drive attachment for {personFullName} on {googleDriveAttachment}. {exceptionMessage}', [
@@ -120,7 +120,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
         }
 
     }
-    
+
     public function syncUserPermissions(IPerson $Person)
     {
 
@@ -133,24 +133,24 @@ class GoogleDriveFile extends AbstractTaskAttachment
                 $type = 'writer';
                 break;
         }
-        
+
         $permitted = $this->permit($Person, $type);
-        
+
         if ($permitted && $this->ShareMethod == 'duplicate') {
             if ($Person->isA(\Slate\People\Student::class)) { // currently only instructors can duplicate documents for students
                 if ($StudentTask = StudentTask::getByWhere(['TaskID' => $this->Task->ID, 'StudentID' => $Person->ID])) {
-                    
+
                     if (!$clonedAttachment = $this->cloneAttachment($StudentTask)) {
                         continue;
                     }
-                    
+
                     foreach (static::getRequiredTeachers($this) as $Teacher) {
                         $clonedAttachment->syncUserPermissions($Teacher);
-                    }                
+                    }
                 }
             }
         }
-        
+
         return $permitted;
     }
 
@@ -158,13 +158,13 @@ class GoogleDriveFile extends AbstractTaskAttachment
     {
         $success = true;
         $requiredTeachers = $this->getRequiredTeachers($this);
-        
+
         foreach ($this->Task->StudentTasks as $StudentTask) {
             if (empty($this->syncUserPermissions($StudentTask->Student))) {
                 $success = false;
-            }            
+            }
         }
-        
+
         foreach ($requiredTeachers as $Teacher) {
             if (empty($this->syncUserPermissions($Teacher))) {
                 $success = false;
@@ -179,11 +179,11 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
         return $permissions;
     }
-    
+
     public function permit(IPerson $Person, $type)
     {
         $validEmail = static::getValidEmailAddress($Person);
-        
+
         if (!$validEmail) {
             Logger::general_alert('Unable to create {permissionRole} permissions for person {personFullName} on {googleDriveAttachment}. Could not find a valid email address', [
                 'permissionRole' => $type,
@@ -193,13 +193,13 @@ class GoogleDriveFile extends AbstractTaskAttachment
             ]);
             return false;
         }
-        
+
         if ($this->File->OwnerEmail == $validEmail) {
             return true;
         } elseif (!empty($this->syncedPermissions[$validEmail])) {
-            return true;    
+            return true;
         }
-        
+
         try {
             $this->File->createPermission($validEmail, $type, 'user');
             $this->syncedPermissions[] = $validEmail;
@@ -213,15 +213,15 @@ class GoogleDriveFile extends AbstractTaskAttachment
             throw $e;
         }
     }
-    
+
     protected static function getValidEmailAddress(IPerson $Person)
     {
         $validEmail = false;
         $emailValidatorSettings = [
             'domain' => GoogleAPI::$domain
         ];
-        
-        
+
+
         if ($Person->PrimaryEmail && Validators::email($Person->PrimaryEmail->toString(), $emailValidatorSettings)) {
             $validEmail = $Person->PrimaryEmail->toString();
         } else if (!empty($Person->ContactPoints)) {
@@ -232,9 +232,9 @@ class GoogleDriveFile extends AbstractTaskAttachment
                 }
             }
         }
-        
+
         return $validEmail;
-        
+
     }
 
     protected static function getRequiredStudents(GoogleDriveFile $Attachment)
@@ -263,13 +263,13 @@ class GoogleDriveFile extends AbstractTaskAttachment
     protected static function getRequiredTeachers(GoogleDriveFile $Attachment)
     {
         $users = [];
-        
+
         if ($Attachment->ContextClass == Task::getStaticRootClass()) {
             $Task = $Attachment->Context;
         } else if ($Attachment->ContextClass == StudentTask::getStaticRootClass()) {
             $Task = $Attachment->Context->Task;
         }
-        
+
         if ($Task) {
             $users = Person::getAllByQuery(
                 'SELECT %8$s.* '.

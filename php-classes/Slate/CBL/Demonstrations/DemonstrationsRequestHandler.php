@@ -107,7 +107,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     } else {
                         $targetLevel = $competencyLevels[$Skill->CompetencyID] = $Skill->Competency->getCurrentLevelForStudent($Demonstration->Student);
                     }
-                    
+
                     $DemoSkill = DemonstrationSkill::create([
                         'Demonstration' => $Demonstration
                         ,'Skill' => $Skill
