@@ -139,6 +139,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     onSubmitButtonClick: function() {
         var me = this,
+            taskDetails = me.getTaskDetails(),
             form = me.getTaskForm(),
             attachmentsField = me.getStudentAttachmentsField(),
             attachments = attachmentsField.getAttachments(false),
@@ -150,6 +151,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 return true;
             });
 
+        taskDetails.mask('Submitting&hellip;');
         Slate.API.request({
             url: Slate.API.buildUrl('/cbl/student-tasks/submit'),
             jsonData: {
@@ -162,6 +164,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 me.getTaskDetails().close();
             },
             failure: function() {
+                taskDetails.unmask();
                 Ext.toast('Task could not be submitted.');
             }
         });
