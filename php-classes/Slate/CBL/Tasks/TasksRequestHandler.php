@@ -171,6 +171,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
         $defaultAttachmentClass = AbstractTaskAttachment::class;
         if (isset($requestData['Attachments'])) {
+            $attachments = [];
             foreach ($requestData['Attachments'] as $attachmentData) {
                 $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
                 if ($attachmentData['ID'] >= 1) {
