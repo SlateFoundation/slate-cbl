@@ -196,13 +196,15 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
         if ($this->File->OwnerEmail == $validEmail) {
             return true;
-        } elseif (!empty($this->syncedPermissions[$validEmail])) {
-            return true;
+        } elseif (!empty($syncedPermissions = $this->syncedPermissions[$validEmail])) {
+            if ($syncedPermissions == 'writer' || $type == $syncedPermissions) { // user has been granted the highest permissions already
+                return true;
+            }
         }
 
         try {
             $this->File->createPermission($validEmail, $type, 'user');
-            $this->syncedPermissions[] = $validEmail;
+            $this->syncedPermissions[$validEmail] = $type;
             return true;
         } catch (Exception $e) {
             Logger::general_alert('Unable to create {permissionRole} permissions for user: {userEmail} on {googleFileRecord}', [
