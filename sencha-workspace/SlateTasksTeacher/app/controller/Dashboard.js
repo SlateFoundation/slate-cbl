@@ -529,13 +529,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 }, googleUtil.authenticateUser).
                 then(Ext.bind(me.openFilePicker, me)).
                 then(null, function(error) {
-                    if (error && (error.error == 'popup_closed_by_user' || error.error == 'access_denied')) {
-                        return;
+                    if (Ext.isObject(error)) {
+                        if (error.error == 'popup_closed_by_user' || error.error == 'access_denied') {
+                            return;
+                        }
+
+                        if (error.error == 'popup_blocked_by_browser') {
+                            error = 'The sign-in popup was blocked by the browser. Please try again.';
+                        }
                     }
 
-                    if (error) {
-                        Ext.Msg.alert('Error', error);
+                    if (!Ext.isString(error)) {
+                        error = 'An error occured. Please try again.';
                     }
+
+                    Ext.Msg.alert('Error', error);
                 });
         } else {
             googleUtil.loadAPI().
