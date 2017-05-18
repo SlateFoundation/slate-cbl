@@ -57,8 +57,10 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
 
                         case 'presentation':
                         case 'document':
-                        default:
                             fileType = values.File.Type;
+                            break;
+                        default:
+                            fileType = 'file';
                             break;
                     }
                     return 'https://docs.google.com/'+fileType+'/d/'+values.File.DriveID;
