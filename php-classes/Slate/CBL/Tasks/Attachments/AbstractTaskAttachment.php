@@ -4,7 +4,7 @@ namespace Slate\CBL\Tasks\Attachments;
 
 use Slate\CBL\Tasks\Task;
 
-class AbstractTaskAttachment extends \ActiveRecord
+abstract class AbstractTaskAttachment extends \ActiveRecord
 {
     public static $tableName = 'cbl_task_attachments';
 

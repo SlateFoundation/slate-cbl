@@ -166,7 +166,8 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
     public static function setStudentTaskAttachments(StudentTask $Record, $requestData)
     {
 
-        $defaultAttachmentClass = AbstractTaskAttachment::class;
+        $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
+
         $attachments = [];
         if (isset($requestData['Attachments'])) {
             foreach ($requestData['Attachments'] as $attachmentData) {

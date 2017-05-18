@@ -169,7 +169,8 @@ class TasksRequestHandler extends \RecordsRequestHandler
     {
         parent::applyRecordDelta($Record, $requestData);
 
-        $defaultAttachmentClass = AbstractTaskAttachment::class;
+        $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
+
         if (isset($requestData['Attachments'])) {
             $attachments = [];
             foreach ($requestData['Attachments'] as $attachmentData) {
