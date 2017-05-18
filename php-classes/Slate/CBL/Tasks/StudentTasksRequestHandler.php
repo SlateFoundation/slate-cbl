@@ -169,7 +169,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
     {
 
         $defaultAttachmentClass = AbstractTaskAttachment::class;
-
+        $attachments = [];
         if (isset($requestData['Attachments'])) {
             foreach ($requestData['Attachments'] as $attachmentData) {
                 $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
