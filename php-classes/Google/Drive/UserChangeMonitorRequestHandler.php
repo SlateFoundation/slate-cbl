@@ -73,30 +73,16 @@ class UserChangeMonitorRequestHandler extends \RecordsRequestHandler
     public static function handleUserChangeRequest()
     {
         $recordClass = static::$recordClass;
-        function getallheaders() {
-            if (!is_array($_SERVER)) {
-                return array();
-            }
 
-            $headers = array();
-            foreach ($_SERVER as $name => $value) {
-                if (substr($name, 0, 5) == 'HTTP_') {
-                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-                }
-            }
-            return $headers;
-        }
-        $requestHeaders = getallheaders();
-
-        $channelId = $requestHeaders['X-Goog-Channel-Id'];
-        $resourceState = $requestHeaders['X-Goog-Resource-State'];
+        $channelId = $_SERVER['HTTP_X_GOOG_CHANNEL_ID'];
+        $resourceState = $_SERVER['HTTP_X_GOOG_RESOURCE_STATE'];
 
         if ($resourceState == 'sync') {
             return static::respond('changesProcessed', ['success' => true], 'json');
         }
 
         if (empty($channelId)) {
-            return static::throwInvalidRequestError('Invalid request - X-Goog-Channel-Id is not set.');
+            return static::throwInvalidRequestError('Invalid request - Header HTTP_X_GOOG_CHANNEL_ID is not set.');
         }
 
         $Monitor = $recordClass::getByWhere([
