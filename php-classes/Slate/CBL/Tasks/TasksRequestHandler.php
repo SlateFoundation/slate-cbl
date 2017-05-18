@@ -191,7 +191,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
                 if ($Attachment instanceof Attachments\GoogleDriveFile) {
                     if (!$Attachment->File) {
-                        if (!$File = \Google\DriveFile::getByField(['DriveID', $attachmentData['File']['DriveID'])) {
+                        if (!$File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
                             $File = \Google\DriveFile::create($attachmentData['File']);
                             if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
                                 $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
