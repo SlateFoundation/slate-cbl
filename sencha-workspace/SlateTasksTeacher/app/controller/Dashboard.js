@@ -510,7 +510,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     onAddGoogleAttachmentClick: function() {
         var me = this,
-            taskEditor = me.getTaskEditor(),
             googleUtil = Slate.cbl.util.Google;
 
         if (googleUtil.getToken()) {
