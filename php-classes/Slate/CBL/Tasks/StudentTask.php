@@ -131,6 +131,10 @@ class StudentTask extends \VersionedRecord
 
         'Student' => [
             'validator' => [__CLASS__, 'validateStudent']
+        ],
+
+        'Section' => [
+            'validator' => 'require-relationship'
         ]
     ];
 
