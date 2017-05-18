@@ -108,7 +108,7 @@ class DriveFile extends \ActiveRecord
                     $prefix = $this->Type.'s';
                     break;
 
-                case 'documeent':
+                case 'document':
                 case 'presentation':
                     $prefix = $this->Type;
                     break;
