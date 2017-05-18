@@ -8,7 +8,7 @@ use Slate\CBL\Tasks\StudentTask;
 $Attachment = $_EVENT['Record'];
 
 // student attached a drive file
-if ($Attachment->isNew && $Attachment->ContextClass == StudentTask::class && $Attachment->Creator && $Attachment->Creator->isA(Student::class)) {
+if ($Attachment->isNew && $Attachment->Context && $Attachment->Context->isA(StudentTask::class) && $Attachment->Creator && $Attachment->Creator->isA(Student::class)) {
     foreach ($Attachment->Context->Section->Teachers as $Teacher) {
         $Attachment->syncUserPermissions($Teacher);
     }
