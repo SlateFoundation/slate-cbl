@@ -124,53 +124,43 @@ class GoogleDriveFile extends AbstractTaskAttachment
     public function syncUserPermissions(IPerson $Person)
     {
 
-        switch ($this->ShareMethod) {
-            case 'duplicate':
-            case 'view-only':
-                $type = 'reader';
-                break;
-            case 'collaborate':
-                $type = 'writer';
-                break;
+        if ($Person->isA(\Slate\People\Student::class)) {
+            switch ($this->ShareMethod) {
+                case 'duplicate':
+                case 'view-only':
+                    $type = 'reader';
+                    break;
+                case 'collaborate':
+                    $type = 'writer';
+                    break;
+            }
+        } else { // teachers receive writer permissions to all student documents
+            $type = 'writer';
         }
 
         $permitted = $this->permit($Person, $type);
 
-        if ($permitted && $this->ShareMethod == 'duplicate') {
-            if ($Person->isA(\Slate\People\Student::class)) { // currently only instructors can duplicate documents for students
-                if ($StudentTask = StudentTask::getByWhere(['TaskID' => $this->Task->ID, 'StudentID' => $Person->ID])) {
+        if (
+            $permitted &&
+            $Person->isA(\Slate\People\Student::class) &&
+            $this->ShareMethod == 'duplicate' &&
+            $StudentTask = StudentTask::getByWhere(['TaskID' => $this->Task->ID, 'StudentID' => $Person->ID])
+        ) {
 
-                    if (!$clonedAttachment = $this->cloneAttachment($StudentTask)) {
-                        continue;
-                    }
+            if (GoogleDriveFile::getByWhere(['FileID' => $this->FileID, 'ContextID' => $StudentTask->ID, 'ContextClass' => $StudentTask->getRootClass()])) {
+                continue;
+            }
 
-                    foreach (static::getRequiredTeachers($this) as $Teacher) {
-                        $clonedAttachment->syncUserPermissions($Teacher);
-                    }
-                }
+            if (!$clonedAttachment = $this->cloneAttachment($StudentTask)) {
+                continue;
+            }
+
+            foreach (static::getRequiredTeachers($this) as $Teacher) {
+                $clonedAttachment->syncUserPermissions($Teacher);
             }
         }
 
         return $permitted;
-    }
-
-    public function syncPermissions()
-    {
-        $success = true;
-        $requiredTeachers = $this->getRequiredTeachers($this);
-
-        foreach ($this->Task->StudentTasks as $StudentTask) {
-            if (empty($this->syncUserPermissions($StudentTask->Student))) {
-                $success = false;
-            }
-        }
-
-        foreach ($requiredTeachers as $Teacher) {
-            if (empty($this->syncUserPermissions($Teacher))) {
-                $success = false;
-            }
-        }
-        return $success;
     }
 
     public function getRequiredPermissions()
