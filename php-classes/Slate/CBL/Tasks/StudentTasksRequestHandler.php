@@ -186,14 +186,14 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
                 if ($Attachment instanceof Attachments\GoogleDriveFile) {
                     if (!$Attachment->File) {
-                        if (!$File = \Google\DriveFile::getByWhere(['DriveID' => $attachmentData['File']['DriveID']])) {
+                        if (!$File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
                             $File = \Google\DriveFile::create($attachmentData['File']);
                             if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
                                 $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
                             }
                         }
                         $Attachment->File = $File;
-                    } else if ($Attachment->File->isPhantom && $File = \Google\DriveFile::getByWhere(['DriveID' => $attachmentData['File']['DriveID']])) {
+                    } else if ($Attachment->File->isPhantom && $File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
                         $Attachment->File = $File;
                     }
                 }
