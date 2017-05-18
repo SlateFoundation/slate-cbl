@@ -1,12 +1,12 @@
 <?php
 
 if (!$GLOBALS['Session']->hasAccountLevel('Administrator')) {
-    return RequestHandler::throwUnauthorizedRequestError();
+    return RequestHandler::throwUnauthorizedError();
 }
 
 $conditions = [];
 $options = [
-    'limit' => 0    
+    'limit' => 0
 ];
 
 if (!empty($_REQUEST['Status'])) {
