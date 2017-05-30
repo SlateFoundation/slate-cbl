@@ -146,7 +146,7 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                                 checked: record.get('ShareMethod') === 'collaborate'
                             }]
                         }]
-                    }).showAt(Ext.fly(btn).getXY());
+                    }).showBy(btn, 'tl-tl', [-3, 0]);
                     break;
                 case 'toggle-status':
                     if (record.phantom) {
