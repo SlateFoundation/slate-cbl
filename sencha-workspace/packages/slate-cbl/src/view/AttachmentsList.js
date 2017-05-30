@@ -118,34 +118,35 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
 
             switch (action) {
                 case 'settings':
-
-                    Ext.create('Ext.menu.Menu', {
-                        items: [{
-                            xtype: 'radiogroup',
-                            columns: 1,
-                            vertical: true,
-                            defaults: {
-                                name: 'ShareMethod',
-                                handler: function(item, checked) {
-                                    me.fireEvent('sharemethodchange', this, record, item, checked);
-                                }
-                            },
-                            items: [{
-                                boxLabel: 'View Only',
+                    Ext.create('Ext.menu.Menu', { // TODO don't create these without reusing/destroying
+                        bodyPadding: 3,
+                        defaults: {
+                            xtype: 'menucheckitem',
+                            group: 'ShareMethod',
+                            handler: function(item) {
+                                me.fireEvent('sharemethodchange', this, record, item, item.checked);
+                            }
+                        },
+                        items: [
+                            {
+                                iconCls: 'fa fa-eye',
+                                text: 'View Only',
                                 inputValue: 'view-only',
                                 checked: record.get('ShareMethod') === 'view-only'
                             },
                             {
-                                boxLabel: 'Duplicate',
+                                iconCls: 'fa fa-copy',
+                                text: 'Duplicate',
                                 inputValue: 'duplicate',
                                 checked: record.get('ShareMethod') === 'duplicate'
                             },
                             {
-                                boxLabel: 'Collaborate',
+                                iconCls: 'fa fa-users',
+                                text: 'Collaborate',
                                 inputValue: 'collaborate',
                                 checked: record.get('ShareMethod') === 'collaborate'
-                            }]
-                        }]
+                            }
+                        ]
                     }).showBy(btn, 'tl-tl', [-3, 0]);
                     break;
                 case 'toggle-status':
