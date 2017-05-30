@@ -24,12 +24,16 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
 
     tpl: [
         '<tpl for=".">',
-            '<li class="slate-attachmentslist-item<tpl if="kind"> slate-attachment-{kind}</tpl><tpl if="Status == &quot;removed&quot;"> removed</tpl>">',
+            '<li class="slate-attachmentslist-item',
+                '<tpl if="kind"> slate-attachment-{kind}</tpl>',
+                '<tpl if="ShareMethod"> slate-attachment-{ShareMethod}</tpl>',
+                '<tpl if="Status == &quot;removed&quot;"> removed</tpl>',
+            '">',
                 '<span class="slate-attachment-title"><a href="{[this.getURL(values)]}" target=_blank>{title}</a><tpl if="Status == &quot;removed&quot;"><i> (removed) </i></tpl></span>',
                 '<tpl if="isEditable">',
                     '<tpl if="isPhantom">',
                         '<tpl if="shareMethodMutable && isPhantom && this.isGoogleDoc(values)">',
-                            '<button class="plain" action="settings"><i class="fa fa-gear"></i></button>',
+                            '<button class="plain" action="settings"><i class="fa {[this.getShareMethodIcon(values.ShareMethod)]}" title="{ShareMethod}"></i></button>',
                         '</tpl>',
                     '</tpl>',
                     '<tpl if="statusMutable && Status == &quot;normal&quot;">',
@@ -43,6 +47,17 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
         {
             isGoogleDoc: function (values) {
                 return values.Class == 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile';
+            },
+
+            getShareMethodIcon: function(method) {
+                var icons = {
+                    'view-only': 'fa-eye',
+                    duplicate: 'fa-copy',
+                    collaborate: 'fa-users',
+                    default: 'fa-gear'
+                };
+
+                return icons[method] || icons.default;
             },
 
             getURL: function(values) {
