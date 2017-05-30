@@ -155,6 +155,8 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
                         record.set('Status', btn.getAttribute('data-status'));
                     }
                     break;
+                default:
+                    break;
             }
         }, null, { delegate: 'button' });
     }
