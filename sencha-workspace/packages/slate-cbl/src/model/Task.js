@@ -146,6 +146,10 @@ Ext.define('Slate.cbl.model.Task', {
 
                 return [];
             }
+        },
+        {
+            name: 'SectionID',
+            persist: true
         }
     ],
 
