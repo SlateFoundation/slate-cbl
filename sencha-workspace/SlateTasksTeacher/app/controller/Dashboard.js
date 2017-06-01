@@ -563,9 +563,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onGoogleAuthentication: function(authResult) {
         var me = this,
             googleAppsDomain = SiteEnvironment && SiteEnvironment.googleAppsDomain || location.host,
-            googleAppsEmailRegex = new RegExp('^.+\@'+googleAppsDomain+'$'),
-            tokenExpiration,
-            _verifyUserIsWithinDomain, _userIsNotWithinDomain;
+            googleAppsEmailRegex = new RegExp('^.+@'+googleAppsDomain+'$'),
+            tokenExpiration;
 
         console.info('handleAuthResult(%o)', authResult);
 
@@ -574,26 +573,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             return;
         }
 
-        _userIsNotWithinDomain = function(errorMessage) {
-            Ext.Msg.alert('Error', errorMessage);
-            return;
-        };
-
-        _verifyUserIsWithinDomain = function(response) {
-            console.info('loaded user', response.result);
-
-            if (!response.result || !response.result.user || !response.result.user.emailAddress.match(googleAppsEmailRegex)) {
-                return _userIsNotWithinDomain('Account must be under the correct domain. ' + googleAppsDomain);
-                // return false;
-            }
-
-            tokenExpiration = new Date(authResult.expires_at * 1000);
-
-            Ext.util.Cookies.set('googleAppsToken', authResult.access_token, tokenExpiration, '/');
-
-            me.doOpenFilePicker(authResult.access_token);
-        };
-
         // confirm authentication is within google apps domain
         gapi.client.request({
             path: '/drive/v3/about',
@@ -601,7 +580,33 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 fields: 'user'
             }
         }).
-        then(_verifyUserIsWithinDomain);
+        then(function(response) {
+            console.info('loaded user', response.result);
+
+            if (!response.result || !response.result.user || !response.result.user.emailAddress.match(googleAppsEmailRegex)) {
+                return Ext.Promise.reject('Please sign in with an account under ' + googleAppsDomain);
+            }
+
+            tokenExpiration = new Date(authResult.expires_at * 1000);
+
+            Ext.util.Cookies.set('googleAppsToken', authResult.access_token, tokenExpiration, '/');
+
+            me.doOpenFilePicker(authResult.access_token);
+        }).
+        then(null, function(error) {
+            var errorMessage;
+
+            if (error) {
+                if (Ext.isString(error)) {
+                    errorMessage = error;
+                } else if (Ext.isObject(error) && Ext.isString(error.error)) {
+                    errorMessage = error.error;
+                }
+            }
+            if (errorMessage) {
+                Ext.Msg.alert('Error', errorMessage);
+            }
+        });
     },
 
     doAddGoogleFile: function(file, ownerEmail) {
