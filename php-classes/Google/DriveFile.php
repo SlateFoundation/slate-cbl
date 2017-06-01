@@ -161,7 +161,7 @@ class DriveFile extends \ActiveRecord
     {
         try {
             $details = $this->getGoogleFileDetails();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($e->getCode() === static::GOOGLE_EXCEPTION_CODES['file-not-found'] && !$this->isPhantom) {
                 $this->Status = 'deleted';
             }
@@ -243,32 +243,32 @@ class DriveFile extends \ActiveRecord
         $this->save();
     }
 
-    public static function validateType(\RecordValidator $validator, \Google\DriveFile $File)
+    public static function validateType(RecordValidator $validator, self $File)
     {
         try {
             if (!$File->Type) {
                 $File->updateGoogleFileDetails();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $validator->addError('Type', 'Type is missing or invalid.');
         }
 
-        if (!\Validators::string($File->Type)) {
+        if (!Validators::string($File->Type)) {
             $validator->addError('Type', 'Type is missing or invalid.');
         }
     }
 
-    public static function validateTitle(\RecordValidator $validator, \Google\DriveFile $File)
+    public static function validateTitle(RecordValidator $validator, self $File)
     {
         try {
             if (!$File->Title) {
                 $File->updateGoogleFileDetails();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $validator->addError('Title', 'Title is missing or invalid.');
         }
 
-        if (!\Validators::string($File->Title)) {
+        if (!Validators::string($File->Title)) {
             $validator->addError('Title', 'Title is missing or invalid.');
         }
     }
