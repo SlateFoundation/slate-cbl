@@ -5,6 +5,9 @@ namespace Google;
 use Exception;
 use RecordValidator;
 use Validators;
+
+use Emergence\Mailer\Mailer;
+
 use Google\API as GoogleAPI;
 
 class DriveFile extends \ActiveRecord
@@ -86,12 +89,12 @@ class DriveFile extends \ActiveRecord
 
             $this->untrash();
 
-            \Emergence\Mailer\Mailer::send($this->OwnerEmail, 'Google Drive File removed from trash', $message);
+            Mailer::send($this->OwnerEmail, 'Google Drive File removed from trash', $message);
 
         } elseif ($this->getOriginalValue('Status') != $this->Status && $this->Status == 'deleted') {
             $message = sprintf('A tracked google file (<a href="%s" target="_blank">%s</a>) was recently deleted. It previously belonged to %s', $this->details['webViewLink'], $this->Title, $this->OwnerEmail);
 
-            \Emergence\Mailer\Mailer::send('nafis@jarv.us', 'Tracked File Deleted', $message);
+            Mailer::send('nafis@jarv.us', 'Tracked File Deleted', $message);
         }
     }
 
