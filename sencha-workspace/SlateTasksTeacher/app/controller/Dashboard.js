@@ -792,7 +792,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         record.set({
             Skills: skillsField.getSkills(false), // returnRecords
             Attachments: attachmentsField.getAttachments(false), // returnRecords
-            Assignees: currentAssignees // returnRecords        });
+            Assignees: currentAssignees, // returnRecords
+            SectionID: courseSection.getId()
         });
 
         errors = record.validate();
@@ -822,9 +823,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         _saveRecord = function() {
             taskEditor.mask('Publishing&hellip;');
             record.save({
-                params: {
-                    SectionID: courseSection.getId()
-                },
                 success: function(rec) {
                     taskEditor.unmask();
                     taskEditor.close();

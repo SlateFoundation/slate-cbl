@@ -215,7 +215,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 if (!$StudentTask = StudentTask::getByWhere(['StudentID' => $assigneeId, 'TaskID' => $Record->ID])) {
                     $StudentTask = StudentTask::create([
                         'StudentID' => $assigneeId,
-                        'SectionID' => $_GET['SectionID'],
+                        'SectionID' => $requestData['SectionID'],
                         'DueDate' => $Record->DueDate,
                         'ExperienceType' => $Record->ExperienceType,
                         'ExpirationDate' => $Record->ExpirationDate
