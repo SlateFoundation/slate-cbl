@@ -93,7 +93,9 @@ class GoogleDriveFile extends AbstractTaskAttachment
         }
 
         try {
-            $DuplicateDriveFile = $this->File->cloneFile($validEmail);
+            $DuplicateDriveFile = $this->File->cloneFile();
+            $DuplicateDriveFile->transferOwnership($validEmail);
+            $DuplicateDriveFile->updateGoogleFileDetails();
 
             $GoogleDriveAttachment = static::create([
                 'File' => $DuplicateDriveFile,

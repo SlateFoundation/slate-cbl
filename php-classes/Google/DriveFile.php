@@ -184,7 +184,7 @@ class DriveFile extends \ActiveRecord
         }
     }
 
-    public function createPermission($email, $role, $type)
+    public function createPermission($email, $role, $type, $getData = [])
     {
         return GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/permissions', [
             'method' => 'POST',
@@ -193,27 +193,32 @@ class DriveFile extends \ActiveRecord
                 'role' => $role,
                 'emailAddress' => $email
             ],
+            'get' => $getData,
             'user' => $this->OwnerEmail,
             'scope' => static::$apiScope
         ]);
     }
 
-    public function cloneFile($email)
+    public function transferOwnership($email)
     {
-        $permissionRequest = $this->createPermission($email, 'reader', 'user');
+        return $this->createPermission($email, 'owner', 'user', ['transferOwnership' => true]);
+    }
+
+    public function cloneFile()
+    {
 
         $response = GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/copy', [
             'post' => [
                 'name' => $this->Title
             ],
-            'user' => $email,
+            'user' => $this->OwnerEmail,
             'scope' => static::$apiScope
         ]);
 
         $duplicatedDriveFile = static::create([
             'DriveID' => $response['id'],
             'ParentDriveID' => $this->DriveID,
-            'OwnerEmail' => $email
+            'OwnerEmail' => $this->OwnerEmail
         ]);
 
         $duplicatedDriveFile->updateGoogleFileDetails();
