@@ -8,7 +8,9 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
     config: {
         editable: true,
         shareMethodMutable: true,
-        statusMutable: true
+        statusMutable: true,
+
+        shareMenu: null
     },
 
     autoEl: 'ul',
@@ -121,59 +123,77 @@ Ext.define('Slate.cbl.view.AttachmentsList', {
             });
         }
 
-        me.el.on('click', function(ev) {
-            var btn = ev.getTarget('button'),
+        me.el.on('tap', function(ev) {
+            var btn = Ext.get(ev.getTarget('button')),
                 action, record;
 
-            if (btn) {
-                action = btn.getAttribute('action');
+            if (!btn) {
+                return;
             }
 
-            record = me.getRecord(Ext.fly(event.target).parent(me.getItemSelector()));
+            action = btn.getAttribute('action');
+            record = me.getRecord(btn.parent(me.getItemSelector()));
 
-            switch (action) {
-                case 'settings':
-                    Ext.create('Ext.menu.Menu', { // TODO don't create these without reusing/destroying
-                        bodyPadding: 3,
-                        defaults: {
-                            xtype: 'menucheckitem',
-                            group: 'ShareMethod',
-                            handler: function(item) {
-                                me.fireEvent('sharemethodchange', this, record, item, item.checked);
-                            }
-                        },
-                        items: [
-                            {
-                                iconCls: 'fa fa-eye',
-                                text: 'View Only',
-                                inputValue: 'view-only',
-                                checked: record.get('ShareMethod') === 'view-only'
-                            },
-                            {
-                                iconCls: 'fa fa-copy',
-                                text: 'Duplicate',
-                                inputValue: 'duplicate',
-                                checked: record.get('ShareMethod') === 'duplicate'
-                            },
-                            {
-                                iconCls: 'fa fa-users',
-                                text: 'Collaborate',
-                                inputValue: 'collaborate',
-                                checked: record.get('ShareMethod') === 'collaborate'
-                            }
-                        ]
-                    }).showBy(btn, 'tl-tl', [-3, 0]);
-                    break;
-                case 'toggle-status':
-                    if (record.phantom) {
-                        me.getStore().remove(record);
-                    } else {
-                        record.set('Status', btn.getAttribute('data-status'));
-                    }
-                    break;
-                default:
-                    break;
+            if (action == 'settings') {
+                me.getShareMethodMenu(record).showBy(btn, 'tl-tl', [-3, 0]);
+            } else if (action == 'toggle-status') {
+                if (record.phantom) {
+                    me.getStore().remove(record);
+                } else {
+                    record.set('Status', btn.getAttribute('data-status'));
+                }
             }
         }, null, { delegate: 'button' });
+    },
+
+    getShareMethodMenu: function(attachment) {
+        var me = this,
+            menu = me.getShareMenu();
+
+        // create and set shareMenu config
+        if (!menu) {
+            menu = Ext.create('Ext.menu.Menu', {
+                setValue: function(val) {
+                    var item = this.down('menucheckitem[inputValue='+val+']');
+
+                    if (item) {
+                        item.setChecked(true);
+                    }
+                },
+                bodyPadding: 3,
+                defaults: {
+                    xtype: 'menucheckitem',
+                    group: 'ShareMethod',
+                    handler: Ext.bind(me.onMenuItemSelect, me)
+                },
+
+                items: [{
+                    iconCls: 'fa fa-eye',
+                    text: 'View Only',
+                    inputValue: 'view-only'
+                }, {
+                    iconCls: 'fa fa-copy',
+                    text: 'Duplicate',
+                    inputValue: 'duplicate'
+                }, {
+                    iconCls: 'fa fa-users',
+                    text: 'Collaborate',
+                    inputValue: 'collaborate'
+                }]
+            });
+            me.setShareMenu(menu);
+        }
+
+        menu.setConfig('attachment', attachment);
+        menu.setValue(attachment.get('ShareMethod'));
+
+        return menu;
+    },
+
+    onMenuItemSelect: function(item) {
+        var me = this,
+            menu = me.getShareMenu();
+
+        me.fireEvent('sharemethodchange', menu, menu.attachment, item, item.checked);
     }
 });
