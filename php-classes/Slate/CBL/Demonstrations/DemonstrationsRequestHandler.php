@@ -58,12 +58,12 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                 if (
                     empty($skill['Override']) &&
                     (
-                        !isset($skill['DemonstratedLevel']) ||
-                        !is_numeric($skill['DemonstratedLevel']) ||
-                        $skill['DemonstratedLevel'] < 0
+                        !isset($skill['Rating']) ||
+                        !is_numeric($skill['Rating']) ||
+                        $skill['Rating'] < 0
                     )
                 ) {
-                    return static::throwInvalidRequestError("Skill at index $index is missing DemonstratedLevel");
+                    return static::throwInvalidRequestError("Skill at index $index is missing Rating");
                 }
             }
         }
@@ -77,7 +77,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                 try {
                     $existingSkills = DB::table(
                         'SkillID'
-                        ,'SELECT ID, SkillID, DemonstratedLevel FROM `%s` WHERE DemonstrationID = %u'
+                        ,'SELECT ID, SkillID, Rating FROM `%s` WHERE DemonstrationID = %u'
                         ,[
                             DemonstrationSkill::$tableName
                             ,$Demonstration->ID
@@ -107,20 +107,20 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     } else {
                         $targetLevel = $competencyLevels[$Skill->CompetencyID] = $Skill->Competency->getCurrentLevelForStudent($Demonstration->Student);
                     }
-                    
+
                     $DemoSkill = DemonstrationSkill::create([
                         'Demonstration' => $Demonstration
                         ,'Skill' => $Skill
                         ,'TargetLevel' => $targetLevel
-                        ,'DemonstratedLevel' => empty($skill['DemonstratedLevel']) && !empty($skill['Override']) ? $targetLevel : $skill['DemonstratedLevel']
+                        ,'Rating' => empty($skill['Rating']) && !empty($skill['Override']) ? $targetLevel : $skill['Rating']
                         ,'Override' => !empty($skill['Override'])
                     ], true);
-                } elseif ($existingSkills[$skill['SkillID']]['DemonstratedLevel'] != $skill['DemonstratedLevel']) {
+                } elseif ($existingSkills[$skill['SkillID']]['Rating'] != $skill['Rating']) {
                     DB::nonQuery(
-                        'UPDATE `%s` SET DemonstratedLevel = "%s" WHERE ID = %u'
+                        'UPDATE `%s` SET Rating = "%s" WHERE ID = %u'
                         ,[
                             DemonstrationSkill::$tableName
-                            ,DB::escape($skill['DemonstratedLevel'])
+                            ,DB::escape($skill['Rating'])
                             ,$existingSkills[$skill['SkillID']]['ID']
                         ]
                     );

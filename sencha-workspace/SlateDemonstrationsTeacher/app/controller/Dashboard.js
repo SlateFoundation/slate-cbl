@@ -152,7 +152,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
                         '<ul>' +
                             '<li>' +
                             Ext.Array.map(demonstration.get('Skills'), function(demoSkill) {
-                                return '<strong>Level ' + demoSkill.DemonstratedLevel + '</strong> demonstrated in <strong>' + demoSkill.Skill.Code + '</strong>: <em>' + demoSkill.Skill.Statement + '</em>';
+                                return '<strong>Level ' + demoSkill.Rating + '</strong> demonstrated in <strong>' + demoSkill.Skill.Code + '</strong>: <em>' + demoSkill.Skill.Statement + '</em>';
                             }).join('</li><li>') +
                             '</li>' +
                         '</ul>',

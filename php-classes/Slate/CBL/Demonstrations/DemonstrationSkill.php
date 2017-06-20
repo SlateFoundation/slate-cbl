@@ -25,7 +25,7 @@ class DemonstrationSkill extends \ActiveRecord
             'type' => 'tinyint',
             'notnull' => false
         ],
-        'DemonstratedLevel' => [
+        'Rating' => [
             'type' => 'tinyint',
             'unsigned' => true
         ],
@@ -45,7 +45,7 @@ class DemonstrationSkill extends \ActiveRecord
             ,'class' => Skill::class
         ]
     ];
-    
+
     public static $validators = [
         'DemonstrationID' => [
             'validator' => 'number'
@@ -61,25 +61,25 @@ class DemonstrationSkill extends \ActiveRecord
             ,'max' => 13
             ,'required' => false
         ]
-        ,'DemonstratedLevel' => [
+        ,'Rating' => [
             'validator' => 'number'
             ,'min' => 0
             ,'max' => 13
         ]
     ];
-    
+
     public static $dynamicFields = [
         'Demonstration',
         'Skill'
     ];
-    
+
     public function save($deep = true)
     {
         // default TargetLevel to student's current level
         if (!$this->TargetLevel) {
             $this->TargetLevel = $this->Skill->Competency->getCurrentLevelForStudent($this->Demonstration->Student);
         }
-        
+
         return parent::save($deep);
     }
 }

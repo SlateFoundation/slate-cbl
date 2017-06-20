@@ -33,11 +33,11 @@ try {
         .'    ,Skill.CompetencyID'
         .'    ,%4$s.SkillID'
         .'    ,Skill.DemonstrationsRequired'
-        .'    ,SUM(IF(%4$s.DemonstratedLevel = 0, 1, 0)) totalMissing'
-        .'    ,SUM(IF(%4$s.DemonstratedLevel != 0, 1, 0)) totalNotMissing'
+        .'    ,SUM(IF(%4$s.Rating = 0, 1, 0)) totalMissing'
+        .'    ,SUM(IF(%4$s.Rating != 0, 1, 0)) totalNotMissing'
         .'    ,LEAST('
-        .'       GREATEST(Skill.DemonstrationsRequired - SUM(IF(%4$s.DemonstratedLevel != 0, 1, 0)), 0)' // how many needed demonstrations don't have non-missing levels
-        .'       ,SUM(IF(%4$s.DemonstratedLevel = 0, 1, 0))' // total missing demonstrations for this skill
+        .'       GREATEST(Skill.DemonstrationsRequired - SUM(IF(%4$s.Rating != 0, 1, 0)), 0)' // how many needed demonstrations don't have non-missing levels
+        .'       ,SUM(IF(%4$s.Rating = 0, 1, 0))' // total missing demonstrations for this skill
         .'    ) AS neededDemonstrationsMissed'
         .'   FROM `%1$s` %2$s'
         .'   JOIN `%3$s` %4$s'
@@ -95,12 +95,12 @@ foreach ($contentAreas AS $ContentArea) {
 // one row for each demonstration
 foreach ($students AS $Student) {
     $uniqueLevels = \DB::allValues(
-        'DemonstratedLevel',
-        $query = 'SELECT DISTINCT(%4$s.DemonstratedLevel) FROM `%1$s` %2$s '.
+        'Rating',
+        $query = 'SELECT DISTINCT(%4$s.Rating) FROM `%1$s` %2$s '.
         'RIGHT JOIN `%3$s` %4$s ON (%2$s.ID = %4$s.DemonstrationID) '.
-        'WHERE %2$s.StudentID=%5$u AND %4$s.DemonstratedLevel != 0 '.
+        'WHERE %2$s.StudentID=%5$u AND %4$s.Rating != 0 '.
         '%6$s '.
-        ' ORDER BY %4$s.DemonstratedLevel ASC',
+        ' ORDER BY %4$s.Rating ASC',
         $parameters = [
             Slate\CBL\Demonstrations\Demonstration::$tableName,
             Slate\CBL\Demonstrations\Demonstration::getTableAlias(),

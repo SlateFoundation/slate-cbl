@@ -60,7 +60,7 @@ foreach ($demonstrations AS $Demonstration) {
             if(!$row['Portfolio Level']) {
                 $row['Portfolio Level'] = $demonstrationSkills[$Skill->ID]->TargetLevel;
             }
-            $row[] = $demonstrationSkills[$Skill->ID]->DemonstratedLevel ? $demonstrationSkills[$Skill->ID]->DemonstratedLevel : 'M';
+            $row[] = $demonstrationSkills[$Skill->ID]->Rating ? $demonstrationSkills[$Skill->ID]->Rating : 'M';
         } else {
             $row[] = null;
         }

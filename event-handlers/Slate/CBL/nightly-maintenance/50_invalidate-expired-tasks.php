@@ -32,7 +32,7 @@ foreach ($expiredTasks as $expiredTask) {
 // insert 'Missing' ratings for unrated skills associated with expired tasks
 $query =
     'INSERT INTO `%1$s` '.
-    '(`Class`, `DemonstrationID`, `SkillID`, `TargetLevel`, `DemonstratedLevel`) '.
+    '(`Class`, `DemonstrationID`, `SkillID`, `TargetLevel`, `Rating`) '.
     'SELECT * FROM ('.
         '('.
             'SELECT '.

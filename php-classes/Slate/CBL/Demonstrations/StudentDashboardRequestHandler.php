@@ -64,7 +64,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
         try {
             // TODO: do name formatting on the client-side
             $progress = DB::allRecords('
-                SELECT ds.DemonstratedLevel AS demonstratedLevel,
+                SELECT ds.Rating AS rating,
                        d.Created AS demonstrationCreated,
                        CONCAT(CASE p.Gender
                          WHEN "Male"   THEN "Mr. "
@@ -102,7 +102,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
         // cast strings to integers
         foreach ($progress AS &$progressRecord) {
-            $progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
+            $progressRecord['rating'] = intval($progressRecord['rating']);
             $progressRecord['demonstrationCreated'] = strtotime($progressRecord['demonstrationCreated']);
         }
 
@@ -149,7 +149,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
                         Demonstration.Demonstrated,
                         DemonstrationSkill.SkillID,
                         DemonstrationSkill.TargetLevel,
-                        DemonstrationSkill.DemonstratedLevel,
+                        DemonstrationSkill.Rating,
                         DemonstrationSkill.Override,
                         DemonstrationSkill.ID
                    FROM (SELECT ID
@@ -189,7 +189,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
             $demonstrationSkill['StudentID'] = intval($demonstrationSkill['StudentID']);
             $demonstrationSkill['SkillID'] = intval($demonstrationSkill['SkillID']);
             $demonstrationSkill['TargetLevel'] = intval($demonstrationSkill['TargetLevel']);
-            $demonstrationSkill['DemonstratedLevel'] = intval($demonstrationSkill['DemonstratedLevel']);
+            $demonstrationSkill['Rating'] = intval($demonstrationSkill['Rating']);
             $demonstrationSkill['Override'] = boolval($demonstrationSkill['Override']);
             $demonstrationSkill['ID'] = intval($demonstrationSkill['ID']);
         }

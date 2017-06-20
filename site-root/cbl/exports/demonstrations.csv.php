@@ -93,11 +93,11 @@ while($row = $results->fetch_assoc()) {
         $row['Competency'] = $demonstrationSkills[$i]->Skill->Competency->Code;
         $row['Standard'] = $demonstrationSkills[$i]->Skill->Code;
 
-        // For overriden demonstrations, rating should be "O" rather than the DemonstratedLevel
+        // For overriden demonstrations, rating should be "O" rather than the Rating
         if ($demonstrationSkills[$i]->Override) {
             $row['Rating'] = 'O';
-        } elseif ($demonstrationSkills[$i]->DemonstratedLevel > 0) {
-            $row['Rating'] = $demonstrationSkills[$i]->DemonstratedLevel;
+        } elseif ($demonstrationSkills[$i]->Rating > 0) {
+            $row['Rating'] = $demonstrationSkills[$i]->Rating;
         } else {
             $row['Rating'] = 'M';
         }

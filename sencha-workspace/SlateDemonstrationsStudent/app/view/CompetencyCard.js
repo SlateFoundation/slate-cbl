@@ -89,7 +89,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                         '<li ',
                             'class="',
                                 'cbl-skill-demo',
-                                '<tpl if="values.DemonstratedLevel==0"> cbl-skill-demo-uncounted</tpl>',
+                                '<tpl if="values.Rating==0"> cbl-skill-demo-uncounted</tpl>',
                                 '<tpl if="this.standardOverridden"> cbl-skill-demo-overridden</tpl>',
                                 '<tpl if="Override"> cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}</tpl>',
                             '"',
@@ -97,8 +97,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                         '>',
                             '<tpl if="Override">',
                                 'O',
-                            '<tpl elseif="values.DemonstratedLevel &gt;= 0">',
-                                '{[values.DemonstratedLevel == 0 ? "M" : values.DemonstratedLevel]}',
+                            '<tpl elseif="values.Rating &gt;= 0">',
+                                '{[values.Rating == 0 ? "M" : values.Rating]}',
                             '<tpl else>',
                                 '&nbsp;',
                             '</tpl>',
@@ -288,7 +288,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
             skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
             Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);
-            skillData.isComplete = skillData.demonstrations.length == demonstrationsRequired && (skillData.demonstrations.length === 0 || skillData.demonstrations[demonstrationsRequired - 1].DemonstratedLevel);
+            skillData.isComplete = skillData.demonstrations.length == demonstrationsRequired && (skillData.demonstrations.length === 0 || skillData.demonstrations[demonstrationsRequired - 1].Rating);
         }
 
         return skillsData;

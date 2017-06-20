@@ -151,11 +151,11 @@ foreach ($students as $student) {
                         foreach ($demonstrationSkills as $demonstrationSkill) {
                             $totalOpportunities += 1;
 
-                            if ($demonstrationSkill->DemonstratedLevel > 0 && !$demonstrationSkill->Override) {
+                            if ($demonstrationSkill->Rating > 0 && !$demonstrationSkill->Override) {
                                 array_push($nonMissingDemonstrationSkills, $demonstrationSkill);
                             }
 
-                            if ($demonstrationSkill->DemonstratedLevel > 0) {
+                            if ($demonstrationSkill->Rating > 0) {
                                 $completedOpportunities += 1;
                             } else {
                                 $missedOpportunities += 1;
@@ -170,7 +170,7 @@ foreach ($students as $student) {
                             if ($demonstrationSkill->Override) {
                                 $completedOpportunities = $demonstrationsRequired;
                                 $missedOpportunities = 0;
-                            } elseif ($demonstrationSkill->DemonstratedLevel > 0 && $ratedOpportunities < $demonstrationsRequired) {
+                            } elseif ($demonstrationSkill->Rating > 0 && $ratedOpportunities < $demonstrationsRequired) {
                                 $ratedOpportunities++;
                             }
                         }
@@ -180,8 +180,8 @@ foreach ($students as $student) {
                             $skillsWithGrowth++;
 
                             // Our query is ordered by date so we can use first and last record. (breaking these out into vars for code clarity)
-                            $earliestLogLevel = $nonMissingDemonstrationSkills[0]->DemonstratedLevel;
-                            $latestLogLevel = $nonMissingDemonstrationSkills[count($nonMissingDemonstrationSkills)-1]->DemonstratedLevel;
+                            $earliestLogLevel = $nonMissingDemonstrationSkills[0]->Rating;
+                            $latestLogLevel = $nonMissingDemonstrationSkills[count($nonMissingDemonstrationSkills)-1]->Rating;
 
                             // growth is the difference between the first and last log.
                             $growth = $growth + ($latestLogLevel - $earliestLogLevel);

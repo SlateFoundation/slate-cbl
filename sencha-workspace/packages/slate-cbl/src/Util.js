@@ -51,8 +51,8 @@ Ext.define('Slate.cbl.Util', function() {
 
                 // skip placeholder blocks
                 if (demo !== true) {
-                    sortedDemonstrations[demo.DemonstratedLevel] = sortedDemonstrations[demo.DemonstratedLevel] || [];
-                    sortedDemonstrations[demo.DemonstratedLevel].push(demo);
+                    sortedDemonstrations[demo.Rating] = sortedDemonstrations[demo.Rating] || [];
+                    sortedDemonstrations[demo.Rating].push(demo);
                 }
             }
 
@@ -80,7 +80,7 @@ Ext.define('Slate.cbl.Util', function() {
 
             for (x = 0, len = displayDemonstrations.length; x < len; x++) {
                 demo = displayDemonstrations[x];
-                if (demo.DemonstratedLevel > 0) {
+                if (demo.Rating > 0) {
                     scored.push(demo);
                 } else {
                     missed.push(demo);

@@ -96,7 +96,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
                     ]);
                 }
 
-                $demoSkill->DemonstratedLevel = $rating;
+                $demoSkill->Rating = $rating;
                 $demoSkill->save(false);
             }
         }

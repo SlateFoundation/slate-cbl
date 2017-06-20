@@ -176,7 +176,7 @@ class Competency extends \VersionedRecord
                 return $levelTotals[$level];
             } else if (array_key_exists('default', $levelTotals)) {
                 return $levelTotals['default'];
-            } else { // handle competencies with no skills 
+            } else { // handle competencies with no skills
                 return 0;
             }
         }
@@ -203,13 +203,13 @@ class Competency extends \VersionedRecord
                             "SUM(demonstrationsAverage * demonstrationsLogged) / SUM(demonstrationsLogged) AS demonstrationsAverage ".
                       "FROM ( ".
                             "SELECT ".
-                                    "COUNT(IF(Override, NULL, DemonstratedLevel)) AS demonstrationsLogged, ".
+                                    "COUNT(IF(Override, NULL, Rating)) AS demonstrationsLogged, ".
                                     "LEAST(DemonstrationsRequired, SUM(IF(Override, DemonstrationsRequired, 1))) AS demonstrationsComplete, ".
-                                    "AVG(IF(Override, NULL, DemonstratedLevel)) AS demonstrationsAverage ".
+                                    "AVG(IF(Override, NULL, Rating)) AS demonstrationsAverage ".
                               "FROM ( ".
                                     "SELECT ".
                                             "StudentDemonstrationSkill.TargetLevel, ".
-                                            "StudentDemonstrationSkill.DemonstratedLevel, ".
+                                            "StudentDemonstrationSkill.Rating, ".
                                             "StudentDemonstrationSkill.Override, ".
                                             "@num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber, ".
                                             "@skill := StudentDemonstrationSkill.SkillID AS SkillID ".
@@ -217,17 +217,17 @@ class Competency extends \VersionedRecord
                                          "SELECT ".
                                                 "DemonstrationSkill.TargetLevel, ".
                                                 "DemonstrationSkill.SkillID, ".
-                                                "DemonstrationSkill.DemonstratedLevel, ".
+                                                "DemonstrationSkill.Rating, ".
                                                 "DemonstrationSkill.Override ".
                                            "FROM `%s` DemonstrationSkill ".
                                            "JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration ".
                                              "ON Demonstration.ID = DemonstrationSkill.DemonstrationID ".
                                           "WHERE DemonstrationSkill.SkillID IN (%s) ".
                                             "AND DemonstrationSkill.TargetLevel = %u ".
-                                            "AND DemonstrationSkill.DemonstratedLevel > 0 ".
+                                            "AND DemonstrationSkill.Rating > 0 ".
                                             "%s".
                                          ") StudentDemonstrationSkill ".
-                                   "ORDER BY SkillID, DemonstratedLevel DESC ".
+                                   "ORDER BY SkillID, Rating DESC ".
                                   ") OrderedDemonstrationSkill ".
                              "JOIN ( ".
                                     "SELECT ".

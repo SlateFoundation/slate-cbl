@@ -147,7 +147,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindowController', {
                 // load skills into competency
                 for (; competencySkillIndex < competencySkillsLength; competencySkillIndex++) {
                     competencySkill = competencySkills[competencySkillIndex];
-                    competencyCard.down('slate-cbl-levelsliderfield{skill.getId()=='+competencySkill.SkillID+'}').setLevel(competencySkill.DemonstratedLevel);
+                    competencyCard.down('slate-cbl-levelsliderfield{skill.getId()=='+competencySkill.SkillID+'}').setLevel(competencySkill.Rating);
                 }
 
                 // finish loading cycle when the queue is empty
@@ -280,7 +280,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindowController', {
             activeSlider = activeSliders[activeSliderIndex];
             skills.push({
                 SkillID: activeSlider.skill.getId(),
-                DemonstratedLevel: activeSlider.getLevel()
+                Rating: activeSlider.getLevel()
             });
         }
 

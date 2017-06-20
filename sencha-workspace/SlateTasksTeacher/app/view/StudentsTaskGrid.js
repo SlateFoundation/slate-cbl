@@ -380,7 +380,7 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
     onDemonstrationSkillUpdate: function(demoSkillsStore, demoSkill, operation, modifiedFieldNames, details) {
         console.log('ds->update', demoSkill, operation, modifiedFieldNames);
 
-        if (modifiedFieldNames.indexOf('DemonstratedLevel') != -1) {
+        if (modifiedFieldNames.indexOf('Rating') != -1) {
             this.updateDemonstrationSkills([demoSkill]);
         }
     },
@@ -949,7 +949,7 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
 
             skillDemonstrationBlockEls, skillDemonstrationBlockEl,
             skillDemonstrationsOverridden, renderedOverridden,
-            skillDemonstrationDemonstratedLevel, renderedDemonstrationLevel,
+            skillDemonstrationRating, renderedRating,
             skillDemonstrationOverride, renderedOverride,
             skillDemonstrationOverrideSpan, renderedOverrideSpan,
             skillDemonstrationDemonstrationID,
@@ -1102,13 +1102,13 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                         skillDemonstrationBlockEls = skillStudentRenderData.demonstrationBlockEls;
                         for (skillDemonstrationIndex = 0; skillDemonstrationIndex < skillDemonstrationsRequired; skillDemonstrationIndex++) {
                             skillDemonstration = skillDemonstrationBlocks[skillDemonstrationIndex];
-                            skillDemonstrationDemonstratedLevel = skillDemonstration.DemonstratedLevel;
+                            skillDemonstrationRating = skillDemonstration.Rating;
                             skillDemonstrationOverride = skillDemonstration.Override;
                             skillDemonstrationOverrideSpan = skillDemonstrationOverride ? skillDemonstrationsRequired - skillDemonstrationIndex : undefined;
                             skillDemonstrationDemonstrationID = skillDemonstration.DemonstrationID;
 
                             skillDemonstrationBlockEl = skillDemonstrationBlockEls.item(skillDemonstrationIndex);
-                            renderedDemonstrationLevel = skillDemonstrationBlockEl.renderedDemonstrationLevel;
+                            renderedRating = skillDemonstrationBlockEl.renderedRating;
                             renderedOverridden = skillDemonstrationBlockEl.renderedOverridden;
                             renderedOverride = skillDemonstrationBlockEl.renderedOverride;
                             renderedOverrideSpan = skillDemonstrationBlockEl.renderedOverrideSpan;
@@ -1154,34 +1154,34 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
 
                             // normalize level to output code
                             if (skillDemonstrationOverride) {
-                                skillDemonstrationDemonstratedLevel = 'O'; // letter O for override
-                            } else if (skillDemonstrationDemonstratedLevel === 0) {
-                                skillDemonstrationDemonstratedLevel = 'M';
+                                skillDemonstrationRating = 'O'; // letter O for override
+                            } else if (skillDemonstrationRating === 0) {
+                                skillDemonstrationRating = 'M';
                             }
 
                             // apply demonstrated level change
-                            if (renderedDemonstrationLevel !== skillDemonstrationDemonstratedLevel) {
-                                skillDemonstrationBlockEl.renderedDemonstrationLevel = skillDemonstrationDemonstratedLevel;
+                            if (renderedRating !== skillDemonstrationRating) {
+                                skillDemonstrationBlockEl.renderedDemonstrationLevel = skillDemonstrationRating;
 
-                                if (renderedDemonstrationLevel === undefined) {
+                                if (renderedRating === undefined) {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-empty');
-                                } else if (skillDemonstrationDemonstratedLevel === undefined) {
+                                } else if (skillDemonstrationRating === undefined) {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-empty');
                                 }
 
-                                if (renderedDemonstrationLevel === 'M') {
+                                if (renderedRating === 'M') {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-uncounted');
-                                } else if (skillDemonstrationDemonstratedLevel === 'M') {
+                                } else if (skillDemonstrationRating === 'M') {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-uncounted');
                                 }
 
-                                if (skillDemonstrationDemonstratedLevel && skillDemonstrationDemonstratedLevel != 'M') {
+                                if (skillDemonstrationRating && skillDemonstrationRating != 'M') {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-counted');
-                                } else if (renderedDemonstrationLevel) {
+                                } else if (renderedRating) {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-counted');
                                 }
 
-                                skillDemonstrationBlockEl.update(skillDemonstrationDemonstratedLevel === undefined ? '' : skillDemonstrationDemonstratedLevel);
+                                skillDemonstrationBlockEl.update(skillDemonstrationRating === undefined ? '' : skillDemonstrationRating);
 
                             }
 
