@@ -24,7 +24,9 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
     public static $fields = [
         'FileID' => 'uint',
-        'FileRevisionID',
+        'FileRevisionID' => [
+            'default' => null
+        ],
         'ShareMethod' => [
             'type' => 'enum',
             'values' => ['duplicate', 'view-only', 'collaborate'],
@@ -43,7 +45,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
         ],
         'FileRevisionID' => [
             'validator' => 'string',
-            'required' => true
+            'required' => false
         ]
     ];
 
