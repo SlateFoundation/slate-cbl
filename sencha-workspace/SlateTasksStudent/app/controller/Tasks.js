@@ -345,7 +345,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 'access_token': Ext.util.Cookies.get('googleAppsToken', '/')
             }
         }).then(function(response) {
-            var latestRevision = response.result;
+            var fileInfo = response.result;
 
             if (response.error) {
                 Ext.Msg.alert('Error', 'Unable to lookup details about google document. Please try again, or contact an administrator.');
@@ -356,12 +356,27 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 Class: 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile',
                 URL: file[google.picker.Document.URL],
                 Title: file[google.picker.Document.NAME],
-                FileRevisionID: latestRevision.id,
+                FileRevisionID: fileInfo.id,
                 File: {
                     DriveID: fileId,
                     OwnerEmail: ownerEmail
                 }
             }, true);
+        },
+        function(response) { // revision id could not be found
+            var error = response.result.error;
+
+            if (Ext.isObject(error) && error.code === 404) {
+                attachmentsField.setAttachments({
+                    Class: 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile',
+                    URL: file[google.picker.Document.URL],
+                    Title: file[google.picker.Document.NAME],
+                    File: {
+                        DriveID: fileId,
+                        OwnerEmail: ownerEmail
+                    }
+                }, true);
+            }
         });
     },
 
