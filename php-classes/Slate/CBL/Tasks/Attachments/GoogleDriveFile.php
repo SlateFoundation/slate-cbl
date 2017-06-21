@@ -125,44 +125,38 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
     public function syncUserPermissions(IPerson $Person)
     {
-
-        if ($Person->isA(\Slate\People\Student::class)) {
-            switch ($this->ShareMethod) {
-                case 'duplicate':
-                case 'view-only':
-                    $type = 'reader';
-                    break;
-                case 'collaborate':
-                    $type = 'writer';
-                    break;
-            }
-        } else { // teachers receive writer permissions to all student documents
-            $type = 'writer';
-        }
-
-        $permitted = $this->permit($Person, $type);
-
         if (
-            $permitted &&
-            $Person->isA(\Slate\People\Student::class) &&
             $this->ShareMethod == 'duplicate' &&
+            $Person->isA(\Slate\People\Student::class) &&
             $StudentTask = StudentTask::getByWhere(['TaskID' => $this->Task->ID, 'StudentID' => $Person->ID])
         ) {
-
-            if (GoogleDriveFile::getByWhere(['FileID' => $this->FileID, 'ContextID' => $StudentTask->ID, 'ContextClass' => $StudentTask->getRootClass()])) {
-                continue;
+            // file has been duplicated already
+            if (static::getByWhere(['ParentAttachmentID' => $this->ID, 'ContextID' => $StudentTask->ID, 'ContextClass' => $StudentTask->getRootClass()])) {
+                return false;
             }
 
             if (!$clonedAttachment = $this->cloneAttachment($StudentTask)) {
-                continue;
+                return false;
             }
 
             foreach (static::getRequiredTeachers($this) as $Teacher) {
                 $clonedAttachment->syncUserPermissions($Teacher);
             }
-        }
 
-        return $permitted;
+            return true;
+        } else {
+            if ($Person->isA(\Slate\People\Student::class)) {
+                if ($this->ShareMethod == 'view-only') {
+                    $type = 'reader';
+                } elseif ($this->ShareMethod == 'collaborate') {
+                    $type = 'writer';
+                }
+            } else { // teachers are granted write permissions on all documents
+                $type = 'writer';
+            }
+            
+            return $this->permit($Person, $type);
+        }
     }
 
     public function getRequiredPermissions()
