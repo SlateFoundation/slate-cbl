@@ -12,7 +12,7 @@ $completion = $Competency->getCompletionForStudent($Student);
 if (
         StudentCompetency::$autoGraduate &&
         StudentCompetency::isCurrentLevelComplete($Student, $Competency) &&
-        $completion['currentLevel'] < $Competency->getMaximumTargetLevel()
+        $completion['currentLevel'] < $Competency->getMaximumLevel()
    ) {
 
     // enroll student in next level

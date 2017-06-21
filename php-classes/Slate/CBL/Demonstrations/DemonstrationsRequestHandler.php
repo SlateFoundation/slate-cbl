@@ -100,19 +100,19 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                 if (!array_key_exists($skill['SkillID'], $existingSkills)) {
                     $Skill = Skill::getByID($skill['SkillID']);
 
-                    if (!empty($skill['TargetLevel'])) {
-                        $targetLevel = $skill['TargetLevel'];
+                    if (!empty($skill['Level'])) {
+                        $level = $skill['Level'];
                     } elseif(array_key_exists($Skill->CompetencyID, $competencyLevels)) {
-                        $targetLevel = $competencyLevels[$Skill->CompetencyID];
+                        $level = $competencyLevels[$Skill->CompetencyID];
                     } else {
-                        $targetLevel = $competencyLevels[$Skill->CompetencyID] = $Skill->Competency->getCurrentLevelForStudent($Demonstration->Student);
+                        $level = $competencyLevels[$Skill->CompetencyID] = $Skill->Competency->getCurrentLevelForStudent($Demonstration->Student);
                     }
 
                     $DemoSkill = DemonstrationSkill::create([
                         'Demonstration' => $Demonstration
                         ,'Skill' => $Skill
-                        ,'TargetLevel' => $targetLevel
-                        ,'Rating' => empty($skill['Rating']) && !empty($skill['Override']) ? $targetLevel : $skill['Rating']
+                        ,'Level' => $level
+                        ,'Rating' => empty($skill['Rating']) && !empty($skill['Override']) ? $level : $skill['Rating']
                         ,'Override' => !empty($skill['Override'])
                     ], true);
                 } elseif ($existingSkills[$skill['SkillID']]['Rating'] != $skill['Rating']) {

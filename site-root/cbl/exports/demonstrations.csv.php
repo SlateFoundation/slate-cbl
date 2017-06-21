@@ -102,7 +102,7 @@ while($row = $results->fetch_assoc()) {
             $row['Rating'] = 'M';
         }
 
-        $row['Level'] = $demonstrationSkills[$i]->TargetLevel;
+        $row['Level'] = $demonstrationSkills[$i]->Level;
 
         $sw->writeRow($row);
     }

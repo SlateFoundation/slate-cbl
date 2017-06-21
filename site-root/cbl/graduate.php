@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (
                 \Slate\CBL\StudentCompetency::isCurrentLevelComplete($Student, $Competency) &&
-                $currentLevel < $Competency->getMaximumTargetLevel()
+                $currentLevel < $Competency->getMaximumLevel()
             ) {
                 // enroll student in next level
                 \Slate\CBL\StudentCompetency::create([

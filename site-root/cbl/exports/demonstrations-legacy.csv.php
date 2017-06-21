@@ -58,7 +58,7 @@ foreach ($demonstrations AS $Demonstration) {
 
         if (array_key_exists($Skill->ID, $demonstrationSkills)) {
             if(!$row['Portfolio Level']) {
-                $row['Portfolio Level'] = $demonstrationSkills[$Skill->ID]->TargetLevel;
+                $row['Portfolio Level'] = $demonstrationSkills[$Skill->ID]->Level;
             }
             $row[] = $demonstrationSkills[$Skill->ID]->Rating ? $demonstrationSkills[$Skill->ID]->Rating : 'M';
         } else {

@@ -8,7 +8,7 @@ use Slate\People\Student;
 class Competency extends \VersionedRecord
 {
     public static $minimumAverageOffset = -0.5;
-    public static $maximumTargetLevel = 12;
+    public static $maximumLevel = 12;
 
     // ActiveRecord configuration
     public static $tableName = 'cbl_competencies';
@@ -104,10 +104,10 @@ class Competency extends \VersionedRecord
         return static::$minimumAverageOffset;
     }
 
-    public function getMaximumTargetLevel()
+    public function getMaximumLevel()
     {
         // TODO: convert to a database field for the competency or content area?
-        return static::$maximumTargetLevel;
+        return static::$maximumLevel;
     }
 
     public function getSkillIds($forceRefresh = false)
@@ -208,14 +208,14 @@ class Competency extends \VersionedRecord
                                     "AVG(IF(Override, NULL, Rating)) AS demonstrationsAverage ".
                               "FROM ( ".
                                     "SELECT ".
-                                            "StudentDemonstrationSkill.TargetLevel, ".
+                                            "StudentDemonstrationSkill.Level, ".
                                             "StudentDemonstrationSkill.Rating, ".
                                             "StudentDemonstrationSkill.Override, ".
                                             "@num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber, ".
                                             "@skill := StudentDemonstrationSkill.SkillID AS SkillID ".
                                     "FROM ( ".
                                          "SELECT ".
-                                                "DemonstrationSkill.TargetLevel, ".
+                                                "DemonstrationSkill.Level, ".
                                                 "DemonstrationSkill.SkillID, ".
                                                 "DemonstrationSkill.Rating, ".
                                                 "DemonstrationSkill.Override ".
@@ -223,7 +223,7 @@ class Competency extends \VersionedRecord
                                            "JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration ".
                                              "ON Demonstration.ID = DemonstrationSkill.DemonstrationID ".
                                           "WHERE DemonstrationSkill.SkillID IN (%s) ".
-                                            "AND DemonstrationSkill.TargetLevel = %u ".
+                                            "AND DemonstrationSkill.Level = %u ".
                                             "AND DemonstrationSkill.Rating > 0 ".
                                             "%s".
                                          ") StudentDemonstrationSkill ".

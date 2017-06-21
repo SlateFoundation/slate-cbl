@@ -138,7 +138,7 @@ foreach ($students as $student) {
                     if ($demonstrationsRequired > 0 && !empty($demonstrationIds)) {
                         $demonstrationSkills = \Slate\CBL\Demonstrations\DemonstrationSkill::getAllByWhere([
                             'SkillID' => $skill->ID,
-                            'TargetLevel' => $competencyLevel,
+                            'Level' => $competencyLevel,
                             'DemonstrationID' => [
                                 'values' => $demonstrationIds
                             ]

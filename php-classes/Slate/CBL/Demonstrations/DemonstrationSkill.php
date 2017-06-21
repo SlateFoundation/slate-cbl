@@ -21,7 +21,7 @@ class DemonstrationSkill extends \ActiveRecord
             'type' => 'uint'
             ,'index' => true
         ],
-        'TargetLevel' => [
+        'Level' => [
             'type' => 'tinyint',
             'notnull' => false
         ],
@@ -55,7 +55,7 @@ class DemonstrationSkill extends \ActiveRecord
             'validator' => 'number'
             ,'min' => 1
         ]
-        ,'TargetLevel' => [
+        ,'Level' => [
             'validator' => 'number'
             ,'min' => 1
             ,'max' => 13
@@ -75,9 +75,9 @@ class DemonstrationSkill extends \ActiveRecord
 
     public function save($deep = true)
     {
-        // default TargetLevel to student's current level
-        if (!$this->TargetLevel) {
-            $this->TargetLevel = $this->Skill->Competency->getCurrentLevelForStudent($this->Demonstration->Student);
+        // default Level to student's current level
+        if (!$this->Level) {
+            $this->Level = $this->Skill->Competency->getCurrentLevelForStudent($this->Demonstration->Student);
         }
 
         return parent::save($deep);

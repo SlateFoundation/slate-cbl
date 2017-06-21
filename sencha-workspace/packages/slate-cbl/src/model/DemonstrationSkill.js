@@ -42,7 +42,7 @@ Ext.define('Slate.cbl.model.DemonstrationSkill', {
             type: 'int'
         },
         {
-            name: 'TargetLevel',
+            name: 'Level',
             type: 'int',
             allowNull: true
         },

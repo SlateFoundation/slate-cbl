@@ -119,7 +119,7 @@ foreach ($students as $student) {
 
                     $demonstrationSkills = \Slate\CBL\Demonstrations\DemonstrationSkill::getAllByWhere([
                         'SkillID' => $skill->ID,
-                        'TargetLevel' => $level,
+                        'Level' => $level,
                         'DemonstrationID' => [
                             'values' => $demonstrationIds
                         ]

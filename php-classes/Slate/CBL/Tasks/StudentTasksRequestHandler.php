@@ -88,11 +88,11 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
             } else {
                 $competencyLevel = $Skill->Competency->getCurrentLevelForStudent($Record->Student);
 
-                if (!$demoSkill = DemonstrationSkill::getByWhere(['DemonstrationID' => $Demonstration->ID, 'SkillID' => $Skill->ID, 'TargetLevel' => $competencyLevel])) {
+                if (!$demoSkill = DemonstrationSkill::getByWhere(['DemonstrationID' => $Demonstration->ID, 'SkillID' => $Skill->ID, 'Level' => $competencyLevel])) {
                     $demoSkill = DemonstrationSkill::create([
                         'DemonstrationID' => $Demonstration->ID,
                         'SkillID' => $Skill->ID,
-                        'TargetLevel' => $competencyLevel
+                        'Level' => $competencyLevel
                     ]);
                 }
 
@@ -120,7 +120,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
             ($demonstrationSkill = DemonstrationSkill::getByWhere([
                 'DemonstrationID' => $Record->DemonstrationID,
                 'SkillID' => $skill->ID,
-                'TargetLevel' => $competencyLevel
+                'Level' => $competencyLevel
             ]))
         ) {
             $destroyed = $demonstrationSkill->destroy();

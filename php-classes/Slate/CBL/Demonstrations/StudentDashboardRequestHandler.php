@@ -148,7 +148,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
                         Demonstration.StudentID,
                         Demonstration.Demonstrated,
                         DemonstrationSkill.SkillID,
-                        DemonstrationSkill.TargetLevel,
+                        DemonstrationSkill.Level,
                         DemonstrationSkill.Rating,
                         DemonstrationSkill.Override,
                         DemonstrationSkill.ID
@@ -166,7 +166,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
                           WHERE StudentID = %6$u AND CompetencyID IN (%5$s)
                           GROUP BY StudentID) StudentCompetency
                      ON StudentCompetency.StudentID = Demonstration.StudentID
-                    AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
+                    AND StudentCompetency.CurrentLevel = DemonstrationSkill.Level'
                 ,[
                     Skill::$tableName                   // 1
                     ,DemonstrationSkill::$tableName     // 2
@@ -188,7 +188,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
             $demonstrationSkill['Demonstrated'] = intval($demonstrationSkill['Demonstrated']);
             $demonstrationSkill['StudentID'] = intval($demonstrationSkill['StudentID']);
             $demonstrationSkill['SkillID'] = intval($demonstrationSkill['SkillID']);
-            $demonstrationSkill['TargetLevel'] = intval($demonstrationSkill['TargetLevel']);
+            $demonstrationSkill['Level'] = intval($demonstrationSkill['Level']);
             $demonstrationSkill['Rating'] = intval($demonstrationSkill['Rating']);
             $demonstrationSkill['Override'] = boolval($demonstrationSkill['Override']);
             $demonstrationSkill['ID'] = intval($demonstrationSkill['ID']);

@@ -973,7 +973,7 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
+                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.Level) {
                     (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
@@ -995,7 +995,7 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
+                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.Level) {
                     (skillStudentRenderData.updatedDemonstrationSkills || (skillStudentRenderData.updatedDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
