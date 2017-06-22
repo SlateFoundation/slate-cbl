@@ -58,13 +58,13 @@ class DemonstrationSkill extends \ActiveRecord
         ,'TargetLevel' => [
             'validator' => 'number'
             ,'min' => 1
-            ,'max' => 13
+            ,'max' => 1
             ,'required' => false
         ]
         ,'DemonstratedLevel' => [
             'validator' => 'number'
             ,'min' => 0
-            ,'max' => 13
+            ,'max' => 4
         ]
     ];
     

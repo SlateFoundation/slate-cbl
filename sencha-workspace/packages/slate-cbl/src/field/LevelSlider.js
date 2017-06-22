@@ -15,8 +15,8 @@ Ext.define('Slate.cbl.field.LevelSlider', {
     },
 
     componentCls: 'cbl-level-slider-field',
-    minValue: 7,
-    maxValue: 13,
+    minValue: 0,
+    maxValue: 4,
     useTips: false,
     thumbTpl: [
         '<span class="value">',
@@ -72,11 +72,11 @@ Ext.define('Slate.cbl.field.LevelSlider', {
 
         return thumbValue == me.minValue ? me.getParkedValue() : thumbValue;
     },
-    
+
     setLevel: function(level) {
         var me = this,
             minValue = me.minValue;
-        
+
         if (level > minValue) {
             me.setValue(level);
         } else {
@@ -121,27 +121,6 @@ Ext.define('Slate.cbl.field.LevelSlider', {
                         }
                     },
                     items: [{
-                        text: '7',
-                        value: 7
-                    },{
-                        text: '6',
-                        value: 6
-                    },{
-                        text: '5',
-                        value: 5
-                    },{
-                        text: '4',
-                        value: 4
-                    },{
-                        text: '3',
-                        value: 3
-                    },{
-                        text: '2',
-                        value: 2
-                    },{
-                        text: '1',
-                        value: 1
-                    },{
                         text: 'M',
                         value: 0
                     },{

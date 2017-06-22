@@ -14,12 +14,12 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-@for $n from 8 through 13 {
+@for $n from 0 through 5 {
     .cbl-level-#{$n} {
-        $level-color:        nth($level-colors,        ($n - 7));
-        $level-color-light:  nth($level-colors-light,  ($n - 7));
-        $level-color-medium: nth($level-colors-medium, ($n - 7));
-        $level-color-dark:   nth($level-colors-dark,   ($n - 7));
+        $level-color:        nth($level-colors,        ($n + 1));
+        $level-color-light:  nth($level-colors-light,  ($n + 1));
+        $level-color-medium: nth($level-colors-medium, ($n + 1));
+        $level-color-dark:   nth($level-colors-dark,   ($n + 1));
 
         &.level-color {
             @extend .level-n;
