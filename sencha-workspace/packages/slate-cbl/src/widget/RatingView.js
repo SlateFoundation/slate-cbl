@@ -9,7 +9,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     config: {
         menu: null,
-        menuRatings: [1, 2, 3, 4, 5, 6],
+        menuRatings: [],
         readOnly: false
     },
     // todo: add ratings as config.
