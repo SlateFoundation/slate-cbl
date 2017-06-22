@@ -192,6 +192,7 @@ class Competency extends \VersionedRecord
 #            return $completion;
 #        }
         $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
+
         if ($currentLevel && !empty($this->Skills)) {
             try {
                 DB::nonQuery('SET @num := 0, @skill := ""');
@@ -272,7 +273,7 @@ class Competency extends \VersionedRecord
             'demonstrationsLogged' => 0,
             'demonstrationsComplete' => 0,
             'demonstrationsAverage' => null,
-            'currentLevel' => null
+            'currentLevel' => $currentLevel
         ];
     }
 
