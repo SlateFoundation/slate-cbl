@@ -9,7 +9,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     config: {
         menu: null,
-        menuRatings: [1, 2, 3, 4, 5, 6],
+        menuRatings: [],
         readOnly: false
     },
     // todo: add ratings as config.
@@ -197,25 +197,33 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 value: null
             }];
 
-        if (!me.getReadOnly()) {
-            if (!menu && menuRatings.length) {
-                Ext.each(menuRatings, function(mr) {
-                    items.push({
-                        text: mr,
-                        value: mr
-                    });
-                });
-                me.setMenu(menu = Ext.create('Ext.menu.Menu', {
-                    items: items
-                }));
-                menu.on('click', me.onMenuRatingClick, me);
-            }
+        if (me.getReadOnly()) {
+            return;
+        }
 
-            if (menu) {
-                menu.ratingEl = ratingEl;
-                menu.showAt(xy);
-                menu.focus();
-            }
+        if (Ext.isEmpty(menuRatings)) {
+            me.updateRatingEl(ratingEl, 'N/A');
+            me.selectRating(ratingEl, false);
+            return;
+        }
+
+        if (!menu && menuRatings.length) {
+            Ext.each(menuRatings, function(mr) {
+                items.push({
+                    text: mr,
+                    value: mr
+                });
+            });
+            me.setMenu(menu = Ext.create('Ext.menu.Menu', {
+                items: items
+            }));
+            menu.on('click', me.onMenuRatingClick, me);
+        }
+
+        if (menu) {
+            menu.ratingEl = ratingEl;
+            menu.showAt(xy);
+            menu.focus();
         }
     },
 
