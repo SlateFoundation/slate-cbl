@@ -65,6 +65,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
             // TODO: do name formatting on the client-side
             $progress = DB::allRecords('
                 SELECT ds.DemonstratedLevel AS demonstratedLevel,
+                       ds.TargetLevel AS targetLevel,
                        d.Created AS demonstrationCreated,
                        CONCAT(CASE p.Gender
                          WHEN "Male"   THEN "Mr. "
@@ -103,6 +104,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
         // cast strings to integers
         foreach ($progress AS &$progressRecord) {
             $progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
+            $progressRecord['targetLevel'] = intval($progressRecord['targetLevel']);
             $progressRecord['demonstrationCreated'] = strtotime($progressRecord['demonstrationCreated']);
         }
 
