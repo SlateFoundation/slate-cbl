@@ -109,7 +109,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
 
         ratingView.setData({
-            ratings: [7, 8, 9, 10, 11, 12, 'M'],
+            ratings: [1, 2, 3, 4, 'M'],
             competencies: rec.getTaskSkillsGroupedByCompetency()
         });
 
