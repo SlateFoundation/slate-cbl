@@ -49,14 +49,14 @@ class Demonstration extends \VersionedRecord
             ,'foreign' => 'DemonstrationID'
         ]
     ];
-    
+
     public static $validators = [
         'StudentID' => [
             'validator' => 'number'
             ,'min' => 1
         ]
     ];
-    
+
     public static $dynamicFields = [
         'Student',
         'competencyCompletions' => ['method' => 'getCompetencyCompletions'],
@@ -67,16 +67,16 @@ class Demonstration extends \VersionedRecord
 #    {
 #        return static::getAllByField('SkillID', $Skill->ID, ['order' => ['ID' => 'ASC']]);
 #    }
-    
+
     public function save($deep = true)
     {
         if (!$this->Demonstrated) {
             $this->Demonstrated = time();
         }
-        
+
         return parent::save($deep);
     }
-    
+
     public function destroy()
     {
         foreach ($this->Skills AS $Skill) {
@@ -117,7 +117,7 @@ class Demonstration extends \VersionedRecord
             $completion['CompetencyID'] = $Competency->ID;
             $completions[] = $completion;
         }
-        
+
         return $completions;
     }
 }

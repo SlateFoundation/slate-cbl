@@ -6,6 +6,7 @@ use DB;
 use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
+use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
 use Slate\Courses\SectionsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
 use Emergence\Comments\Comment;
@@ -162,75 +163,47 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
-    public static function setStudentTaskAttachments(StudentTask $Record, $data)
+    public static function setStudentTaskAttachments(StudentTask $Record, $requestData)
     {
-        if (isset($data['Attachments'])) {
-            $originalAttachments = $Record->Attachments;
-            $originalAttachmentIds = array_map(function($s) {
-                return $s->ID;
-            }, $originalAttachments);
 
-            $failed = [];
-            $attachmentIds = [];
-            $attachments = [];
-            $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
+        $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
 
-            foreach ($data['Attachments'] as $attachmentData) {
+        $attachments = [];
+        if (isset($requestData['Attachments'])) {
+            foreach ($requestData['Attachments'] as $attachmentData) {
                 $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
                 if ($attachmentData['ID'] >= 1) {
                     if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
                         $failed[] = $attachmentData;
                         continue;
                     }
+
+                    if (!empty($attachmentData['Status']) && in_array($attachmentData['Status'], $defaultAttachmentClass::getFieldOptions('Status', 'values'))) {
+                         $Attachment->Status = $attachmentData['Status'];
+                     }
                 } else {
                     $Attachment = $attachmentClass::create($attachmentData);
                 }
 
-                $Attachment->ContextID = $Record->ID;
-                $Attachment->ContextClass = $Record->getRootClass();
-                $Attachment->save();
-                $attachments[] = $Attachment;
-                $attachmentIds[] = $Attachment->ID;
-            }
-
-            \DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
-                AbstractTaskAttachment::$tableName,
-                \DB::escape($Record->getRootClass()),
-                $Record->ID,
-                join('", "', $attachmentIds)
-            ]);
-
-        }
-
-        $Record->Attachments = $attachments;
-
-        // update skills
-        if (isset($data['SkillIDs'])) {
-            $originalSkills = $Record->Skills;
-            $originalSkillIds = array_map(function($s) {
-                return $s->ID;
-            }, $originalSkills);
-
-            $oldSkillIds = array_diff($originalSkillIds, $data['SkillIDs']);
-            $newSkillIds = array_diff($data['SkillIDs'], $originalSkillIds);
-
-            foreach ($newSkillIds as $newSkill) {
-                if (!$taskSkill = TaskSkill::getByWhere(['TaskID' => $Record->Task->ID, 'SkillID' => $newSkill])) { // check if skill is attached to related task first
-                    StudentTaskSkill::create([
-                        'StudentTaskID' => $Record->ID,
-                        'SkillID' => $newSkill
-                    ], true);
+                if ($Attachment instanceof Attachments\GoogleDriveFile) {
+                    if (!$Attachment->File) {
+                        if (!$File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
+                            $File = \Google\DriveFile::create($attachmentData['File']);
+                            if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
+                                $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
+                            }
+                        }
+                        $Attachment->File = $File;
+                    } else if ($Attachment->File->isPhantom && $File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
+                        $Attachment->File = $File;
+                    }
                 }
+
+                $Attachment->Context = $Record;
+                $attachments[] = $Attachment;
             }
 
-            if (!empty($oldSkillIds)) {
-
-                DB::nonQuery('DELETE FROM `%s` WHERE StudentTaskID = %u AND SkillID IN ("%s")', [
-                    StudentTaskSkill::$tableName,
-                    $Record->ID,
-                    join('", "', $oldSkillIds)
-                ]);
-            }
+            $Record->Attachments = $attachments;
         }
 
     }

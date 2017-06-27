@@ -146,6 +146,10 @@ Ext.define('Slate.cbl.model.Task', {
 
                 return [];
             }
+        },
+        {
+            name: 'SectionID',
+            persist: true
         }
     ],
 
@@ -156,7 +160,7 @@ Ext.define('Slate.cbl.model.Task', {
             'Creator',
             'ParentTask',
             'Skills',
-            'Attachments',
+            'Attachments.File',
             'StudentTasks'
         ]
     },

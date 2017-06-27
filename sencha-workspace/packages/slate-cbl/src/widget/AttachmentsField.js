@@ -1,13 +1,29 @@
 Ext.define('Slate.cbl.widget.AttachmentsField', {
     extend: 'Ext.form.FieldContainer',
     requires: [
-        'Slate.cbl.view.AttachmentsList'
+        'Slate.cbl.view.AttachmentsList',
+        'Slate.cbl.util.Google'
     ],
 
     xtype: 'slate-tasks-attachmentsfield',
 
     config: {
         readOnly: false
+    },
+
+    initComponent: function() {
+        var me = this,
+            googleUtil = Slate.cbl.util.Google,
+            googleAttachmentBtn;
+
+        me.callParent(arguments);
+
+        googleAttachmentBtn = me.down('button[action=addattachment]');
+        if (googleUtil.getDeveloperKey() && googleUtil.getClientId() && googleUtil.getGoogleAppsDomain()) {
+            googleAttachmentBtn.enable();
+        } else {
+            googleAttachmentBtn.disable();
+        }
     },
 
     fieldLabel: 'Attachments',
@@ -19,7 +35,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         vtype: 'url',
         keyHandlers: {
             ENTER: function() {
-                this.up('slate-tasks-attachmentsfield').addAttachment();
+                this.up('slate-tasks-attachmentsfield').addLinkAttachment();
             }
         }
     },
@@ -34,7 +50,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         action: 'addlink',
         listeners: {
             click: function() {
-                this.up('slate-tasks-attachmentsfield').addAttachment();
+                this.up('slate-tasks-attachmentsfield').addLinkAttachment();
             }
         }
     },
@@ -42,7 +58,11 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         xtype: 'button',
         text: 'Attachment',
         action: 'addattachment',
-        disabled: true
+        listeners: {
+            click: function() {
+                return this.up('slate-tasks-attachmentsfield').fireEvent('addgoogleattachment', this);
+            }
+        }
     }],
 
     updateReadOnly: function(readOnly) {
@@ -74,7 +94,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
 
     },
 
-    addAttachment: function(url) {
+    addLinkAttachment: function(url) {
         var me = this,
             field = me.down('textfield'),
             value = url || field.getValue();

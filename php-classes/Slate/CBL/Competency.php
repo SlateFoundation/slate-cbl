@@ -176,7 +176,7 @@ class Competency extends \VersionedRecord
                 return $levelTotals[$level];
             } else if (array_key_exists('default', $levelTotals)) {
                 return $levelTotals['default'];
-            } else { // handle competencies with no skills 
+            } else { // handle competencies with no skills
                 return 0;
             }
         }

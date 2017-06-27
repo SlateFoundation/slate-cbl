@@ -4,18 +4,18 @@ namespace Slate\CBL\Tasks\Attachments;
 
 use Slate\CBL\Tasks\Task;
 
-class AbstractTaskAttachment extends \ActiveRecord
+abstract class AbstractTaskAttachment extends \ActiveRecord
 {
     public static $tableName = 'cbl_task_attachments';
 
     public static $singularNoun = 'task attachment';
     public static $pluralNoun = 'task attachments';
-    
+
     public static $subClasses =  [
-        GoogleDocument::class,
+        GoogleDriveFile::class,
         Link::class
     ];
-    
+
     public static $defaultClass = Link::class;
 
     public static $fields = [
@@ -24,6 +24,11 @@ class AbstractTaskAttachment extends \ActiveRecord
         'Title' => [
             'type' => 'string',
             'default' => null
+        ],
+        'Status' => [
+            'type' => 'enum',
+            'values' => ['normal', 'removed'],
+            'default' => 'normal'
         ]
     ];
 
