@@ -91,7 +91,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                         '<tr>',
                             '<tpl for="students">',
                                 '<th class="cbl-grid-student-name" data-student="{student.ID}">',
-                                    '<tpl if="dashboardUrl"><a href="{dashboardUrl}"></tpl>',
+                                    '<tpl if="dashboardUrl"><a href="{dashboardUrl}" target="_blank"></tpl>',
                                         '{student.FirstName} {student.LastName}',
                                     '<tpl if="dashboardUrl"></a></tpl>',
                                 '</th>',
@@ -605,7 +605,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             student = students[studentIndex];
             studentsData.push({
                 student: student.data,
-                dashboardUrl: studentDashboardLink && Ext.String.urlAppend(studentDashboardLink, 'student=' + window.escape(student.get('Username')))
+                dashboardUrl: studentDashboardLink && Slate.API.buildUrl(Ext.String.urlAppend(studentDashboardLink, 'student=' + window.escape(student.get('Username'))))
             });
         }
 
