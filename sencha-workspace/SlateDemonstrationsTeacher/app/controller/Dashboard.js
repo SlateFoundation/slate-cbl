@@ -31,6 +31,15 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
             editdemonstrationclick: 'onOverviewEditDemonstrationClick',
             deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
             createoverrideclick: 'onOverviewCreateOverrideClick'
+        },
+        studentGroupSelector: {
+            select: 'onStudentsGroupSelect'
+        },
+        'slate-demonstrations-teacher-appheader combo#contentAreaSelect': {
+            select: 'onContentAreaSelect'
+        },
+        'slate-demonstrations-teacher-appheader button[action=submitevidence]': {
+            click: 'onSubmitEvidenceClick'
         }
     },
 
@@ -47,6 +56,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         'Demonstration@Slate.cbl.model'
     ],
 
+    stores: [
+        'ContentAreas',
+        'CourseSections',
+        'Groups',
+        'StudentGroups'
+    ],
+
     refs: {
         dashboardCt: {
             selector: 'slate-demonstrations-teacher-dashboard',
@@ -54,30 +70,58 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
             xtype: 'slate-demonstrations-teacher-dashboard'
         },
-        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid'
+        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
+        appHeader: 'slate-demonstrations-teacher-appheader',
+        studentGroupSelector: 'slate-demonstrations-teacher-appheader slate-demonstrations-teacher-studentgroupselector'
     },
 
 
     // controller templates method overrides
     onLaunch: function () {
         var me = this,
-            siteEnv = window.SiteEnvironment || {},
-            contentAreaCode = (siteEnv.cblContentArea || {}).Code,
             dashboardCt = me.getDashboardCt(),
-            progressGrid = dashboardCt.getProgressGrid();
+            studentGroupSelector = me.getStudentGroupSelector(),
+            SiteEnvironment = window.SiteEnvironment;
 
-        // configure dashboard with any available embedded data
-        if (contentAreaCode) {
-            progressGrid.setStudentDashboardLink('/cbl/student-dashboard?content-area=' + encodeURIComponent(contentAreaCode));
+        if (SiteEnvironment === undefined) {
+            SiteEnvironment = window.SiteEnvironment = {};
         }
 
-        if (siteEnv.cblStudents) {
-            progressGrid.getStudentsStore().loadData(siteEnv.cblStudents);
-        }
+        // load bootstrap data
+        Slate.API.request({
+            url: '/cbl/dashboards/demonstrations/teacher/bootstrap',
+            success: function(response) {
+                var data = response.data || Ext.decode(response.responseText);
 
-        if (siteEnv.cblCompetencies) {
-            progressGrid.getCompetenciesStore().loadData(siteEnv.cblCompetencies);
-        }
+                if (data) {
+                    if (data.experience_types) {
+                        window.SiteEnvironment.cblExperienceTypeOptions = data.experience_types;
+                    }
+
+                    if (data.context_options) {
+                        SiteEnvironment.cblContextOptions = data.context_options;
+                    }
+
+                    if (data.performance_types) {
+                        SiteEnvironment.cblPerformanceTypeOptions = data.performance_types;
+                    }
+                }
+            }
+        });
+
+        // load current user sections
+        me.getCourseSectionsStore().load(function() {
+            studentGroupSelector.getStore().loadData(Ext.Array.map(this.getRange(), function(cs) {
+                return cs.data;
+            }), true);
+        });
+
+        // load all groups
+        me.getGroupsStore().load(function() {
+            studentGroupSelector.getStore().loadData(Ext.Array.map(this.getRange(), function(g) {
+                return g.data;
+            }), true);
+        });
 
         // handle any external "Log a Demonstartion" buttons
         Ext.getBody().on('click', function(ev) {
@@ -92,6 +136,47 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
 
     // event handers
+    onStudentsGroupSelect: function(combo) {
+        var me = this,
+            progressGrid = me.getStudentProgressGrid(),
+            studentsStore = progressGrid.getStudentsStore(),
+            selection = combo.getSelection();
+
+        if (selection) {
+            Slate.API.request({
+                url: '/cbl/dashboards/demonstrations/teacher/*students',
+                params: {
+                    students: selection.getIdentifier()
+                },
+                success: function(response) {
+                    var data = response.data || Ext.decode(response.responseText),
+                        students = data.data || [];
+
+                    studentsStore.loadRecords(Ext.Array.map(students, function(s) {
+                        return studentsStore.getSession().peekRecord(studentsStore.model, s.ID) || studentsStore.createModel(s);
+                    }), { addRecords: false });
+                }
+            });
+        }
+    },
+
+    onContentAreaSelect: function(combo) {
+        var me = this,
+            progressGrid = me.getStudentProgressGrid(),
+            competenciesStore = progressGrid.getCompetenciesStore(),
+            contentArea = combo.getSelection();
+
+        me.getDashboardCt().setContentArea(contentArea);
+        competenciesStore.getAllByContentArea(contentArea, function(competencies) {
+            competenciesStore.loadRecords(competencies.getRange(), { addRecords: false });
+        });
+
+    },
+
+    onSubmitEvidenceClick: function() {
+        this.showDemonstrationEditWindow();
+    },
+
     onCompetencyRowClick: function(me, competency, ev, targetEl) {
         me.toggleCompetency(competency);
     },

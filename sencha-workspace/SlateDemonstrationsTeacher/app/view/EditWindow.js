@@ -95,23 +95,20 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
             {
                 xtype: 'combobox',
                 name: 'ExperienceType',
-                fieldLabel: 'Type of Experience',
-
-                store: (window.SiteEnvironment && window.SiteEnvironment.cblExperienceTypeOptions) || []
+                itemId: 'experience-types',
+                fieldLabel: 'Type of Experience'
             },
             {
                 xtype: 'combobox',
                 name: 'Context',
-                fieldLabel: 'Name of Experience',
-
-                store: (window.SiteEnvironment && window.SiteEnvironment.cblContextOptions) || []
+                itemId: 'context-options',
+                fieldLabel: 'Name of Experience'
             },
             {
                 xtype: 'combobox',
                 name: 'PerformanceType',
-                fieldLabel: 'Performance Task',
-
-                store: (window.SiteEnvironment && window.SiteEnvironment.cblPerformanceTypeOptions) || []
+                itemId: 'performance-types',
+                fieldLabel: 'Performance Task'
             },
             {
                 xtype: 'textfield',
