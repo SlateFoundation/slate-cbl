@@ -96,6 +96,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                 xtype: 'combobox',
                 name: 'ExperienceType',
                 fieldLabel: 'Type of Experience',
+                allowBlank: true,
 
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblExperienceTypeOptions) || []
             },
@@ -103,6 +104,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                 xtype: 'combobox',
                 name: 'Context',
                 fieldLabel: 'Name of Experience',
+                allowBlank: true,
 
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblContextOptions) || []
             },
@@ -110,6 +112,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                 xtype: 'combobox',
                 name: 'PerformanceType',
                 fieldLabel: 'Performance Task',
+                allowBlank: true,
 
                 store: (window.SiteEnvironment && window.SiteEnvironment.cblPerformanceTypeOptions) || []
             },
@@ -117,6 +120,7 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindow', {
                 xtype: 'textfield',
                 name: 'ArtifactURL',
                 fieldLabel: 'Artifact (URL)',
+                allowBlank: true,
 
                 allowBlank: true,
                 regex: /^https?:\/\/.+/i,
