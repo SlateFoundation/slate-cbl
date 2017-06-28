@@ -16,8 +16,14 @@ class ExperienceDemonstration extends Demonstration
     ];
 
     public static $validators = [
-        'ExperienceType',
-        'Context',
-        'PerformanceType'
+        'ExperienceType' => [
+            'required' => true,
+        ],
+        'Context' => [
+            'required' => true,
+        ],
+        'PerformanceType' => [
+            'required' => true,
+        ]
     ];
 }
