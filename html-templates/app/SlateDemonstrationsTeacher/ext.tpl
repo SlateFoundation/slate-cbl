@@ -81,12 +81,6 @@
                     </form>
                 </header>
 
-                {if !$ContentArea || !is_array($students)}
-                    <p class="notify">Select a student group and content area above to begin</p>
-                {elseif !count($students)}
-                    <p class="notify error">There are currently no students enrolled in the selected group</p>
-                {/if}
-
                 <div id="slateapp-viewport">
                     <!-- app renders here -->
                 </div>
