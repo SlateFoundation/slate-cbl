@@ -53,13 +53,21 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
     tpl: [
         '{%var studentsCount = values.studentsCount%}',
         '{%var competenciesCount = values.competenciesCount%}',
-        '<tpl if="competenciesCount === 0">',
+        '<tpl if="competenciesCount === 0 || studentsCount === 0">',
+            '<div class="cbl-grid-ct">',
+                '<table class="cbl-grid cbl-grid-competencies"></table>',
+            '</div>',
+            '<div class="cbl-grid-ct">',
+                '<table class="cbl-grid cbl-grid-main"></table>',
+            '</div>',
             '<span class="empty">',
+                '<tpl if="studentsStoreLoaded === false || competenciesStoreLoaded === false">',
                     'Select a student group and content area above to begin',
-            '</span>',
-        '<tpl elseif="studentsCount === 0">',
-            '<span class="empty">',
+                '<tpl elseif="studentsCount === 0">',
                     'There are currently no students enrolled in the selected group',
+                '<tpl elseif="competenciesCount === 0">',
+                    'There are currently no competencies assigned to the selected Content Area',
+                '</tpl>',
             '</span>',
         '<tpl else>',
             '<div class="cbl-grid-ct">',
@@ -565,6 +573,12 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             competenciesStore = me.getCompetenciesStore();
 
         if (!studentsStore.isLoaded() || !competenciesStore.isLoaded()) {
+            me.setData({
+                studentsCount: studentsStore.getTotalCount(),
+                studentsStoreLoaded: studentsStore.isLoaded(),
+                competenciesCount: competenciesStore.getTotalCount(),
+                competenciesStoreLoaded: competenciesStore.isLoaded()
+            });
             return;
         }
 
