@@ -8,10 +8,6 @@
 {block body}
     {$dwoo.parent}
 
-    {$allContentAreas = Slate\CBL\ContentArea::getAll()}
-
-    {load_templates subtemplates/forms.tpl}
-
     <div class="wrapper site">
         <main class="content site" role="main">
             <div class="inner">
