@@ -19,7 +19,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         me.callParent(arguments);
 
         googleAttachmentBtn = me.down('button[action=addattachment]');
-        if (googleUtil.getDeveloperKey() && googleUtil.getClientId() && googleUtil.getGoogleAppsDomain()) {
+        if (googleUtil.getDeveloperKey() && googleUtil.getClientId() && googleUtil.getDomain()) {
             googleAttachmentBtn.enable();
         } else {
             googleAttachmentBtn.disable();
@@ -56,7 +56,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
     },
     {
         xtype: 'button',
-        text: 'Attachment',
+        text: 'Add from Drive',
         action: 'addattachment',
         listeners: {
             click: function() {
