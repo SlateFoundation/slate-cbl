@@ -7,6 +7,7 @@ use Google\API as GoogleAPI;
 
 use Slate\CBL\Tasks\Task;
 use Slate\CBL\Tasks\StudentTask;
+use Slate\People\Student;
 
 use Emergence\People\IPerson;
 use Emergence\People\Person;
@@ -21,6 +22,7 @@ use Validators;
 class GoogleDriveFile extends AbstractTaskAttachment
 {
     public $syncedPermissions = [];
+    public static $defaultPermissions = [];
 
     public static $fields = [
         'FileID' => 'uint',
@@ -124,12 +126,33 @@ class GoogleDriveFile extends AbstractTaskAttachment
         }
 
     }
+    
+    public function syncDefaultPermissions()
+    {
+        foreach (static::$defaultPermissions as $email => $permission) {
+            if (static::isEmailValid($email)) {
+                if (empty($syncedPermissions = $this->syncedPermissions[$email])) {
+                    try {
+                        $this->File->createPermission($email, $permission['role'], $permission['type']);
+                        $this->syncedPermissions[$email] = $permission['type'];
+                    } catch (Exception $e) {
+                        Logger::general_alert('Unable to create {permissionRole} permissions for {permissionType}: {userEmail} on {googleFileRecord}', [
+                            'permissionRole' => $permission['role'],
+                            'permissionType' => $permission['type'],
+                            'userEmail' => $email,
+                            'googleFileRecord' => $this
+                        ]);
+                    }
+                }
+            }
+        }
+    }
 
     public function syncUserPermissions(IPerson $Person)
     {
         if (
             $this->ShareMethod == 'duplicate' &&
-            $Person->isA(\Slate\People\Student::class) &&
+            $Person->isA(Student::class) &&
             $StudentTask = StudentTask::getByWhere(['TaskID' => $this->Task->ID, 'StudentID' => $Person->ID])
         ) {
             // file has been duplicated already
@@ -143,11 +166,12 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
             foreach (static::getRequiredTeachers($this) as $Teacher) {
                 $clonedAttachment->syncUserPermissions($Teacher);
+                $clonedAttachment->syncDefaultPermissions();
             }
 
             return true;
         } else {
-            if ($Person->isA(\Slate\People\Student::class)) {
+            if ($Person->isA(Student::class)) {
                 if ($this->ShareMethod == 'view-only') {
                     $type = 'reader';
                 } elseif ($this->ShareMethod == 'collaborate') {
@@ -207,16 +231,12 @@ class GoogleDriveFile extends AbstractTaskAttachment
     protected static function getValidEmailAddress(IPerson $Person)
     {
         $validEmail = false;
-        $emailValidatorSettings = [
-            'domain' => GoogleAPI::$domain
-        ];
 
-
-        if ($Person->PrimaryEmail && Validators::email($Person->PrimaryEmail->toString(), $emailValidatorSettings)) {
+        if ($Person->PrimaryEmail && static::isEmailValid($Person->PrimaryEmail->toString())) {
             $validEmail = $Person->PrimaryEmail->toString();
         } else if (!empty($Person->ContactPoints)) {
             foreach ($Person->ContactPoints as $ContactPoint) {
-                if ($ContactPoint->isA(\Emergence\People\ContactPoint\Email::class) && Validators::email($ContactPoint->toString(), $emailValidatorSettings)) {
+                if ($ContactPoint->isA(\Emergence\People\ContactPoint\Email::class) && static::isEmailValid($ContactPoint->toString())) {
                     $validEmail = $ContactPoint->toString();
                     break;
                 }
@@ -224,7 +244,13 @@ class GoogleDriveFile extends AbstractTaskAttachment
         }
 
         return $validEmail;
-
+    }
+    
+    protected static function isEmailValid($emailAddress)
+    {
+        return Validators::email($emailAddress, [
+            'domain' => GoogleAPI::$domain
+        ]);
     }
 
     protected static function getRequiredStudents(GoogleDriveFile $Attachment)

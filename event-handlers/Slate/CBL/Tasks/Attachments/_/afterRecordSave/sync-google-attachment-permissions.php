@@ -12,4 +12,5 @@ if ($Attachment->isNew && $Attachment->Context && $Attachment->Context->isA(Stud
     foreach ($Attachment->Context->Section->Teachers as $Teacher) {
         $Attachment->syncUserPermissions($Teacher);
     }
+    $Attachment->syncDefaultUsersPermissions();
 }
