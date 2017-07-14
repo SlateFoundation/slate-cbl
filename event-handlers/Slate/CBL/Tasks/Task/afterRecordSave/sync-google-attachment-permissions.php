@@ -14,7 +14,9 @@ foreach ($Task->Attachments as $Attachment) {
             foreach ($Attachment->getRequiredPermissions() as $Person) {
                 $Attachment->syncUserPermissions($Person);
             }
-            $Attachment->syncDefaultPermissions();
+            if ($Attachment->ShareMethod != 'duplicate') {
+                $Attachment->syncDefaultPermissions();
+            }
         }
     }   
 }
