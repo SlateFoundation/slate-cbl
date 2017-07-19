@@ -127,9 +127,9 @@ class DriveFile extends \ActiveRecord
         return null;
     }
 
-    public function getFileDetails()
+    public function getFileDetails($ignoreCache = false)
     {
-        if ($this->details) {
+        if (empty($ignoreCache) && $this->details) {
             return $this->details;
         }
 
@@ -151,17 +151,8 @@ class DriveFile extends \ActiveRecord
         return $this->details = $response;
     }
 
-    public function updateGoogleFileDetails()
+    public function applyFileDetails(array $details)
     {
-        try {
-            $details = $this->getFileDetails();
-        } catch (Exception $e) {
-            if ($e->getCode() === static::GOOGLE_EXCEPTION_CODES['file-not-found'] && !$this->isPhantom) {
-                $this->Status = 'deleted';
-            }
-            throw $e;
-        }
-
         $mimeTypeParts = explode('.', $details['mimeType']);
         $this->Type = end($mimeTypeParts);
 
@@ -176,6 +167,22 @@ class DriveFile extends \ActiveRecord
         } else {
             $this->Status = 'normal';
         }
+    }
+
+    public function updateFileDetails()
+    {
+        try {
+            $details = $this->getFileDetails();
+        } catch (Exception $e) {
+            if ($e->getCode() === static::GOOGLE_EXCEPTION_CODES['file-not-found'] && !$this->isPhantom) {
+                $this->Status = 'deleted';
+                return;
+            }
+
+            throw $e;
+        }
+
+        $this->applyFileDetails($details);
     }
 
     public function createPermission($email, $role, $type, $getData = [])
@@ -199,7 +206,7 @@ class DriveFile extends \ActiveRecord
             'OwnerEmail' => $this->OwnerEmail
         ]);
 
-        $duplicatedDriveFile->updateGoogleFileDetails();
+        $duplicatedDriveFile->updateFileDetails();
         $duplicatedDriveFile->save();
 
         return $duplicatedDriveFile;
@@ -211,7 +218,7 @@ class DriveFile extends \ActiveRecord
         $response = API::untrashFile($this);
 
         $this->details = $response;
-        $this->updateGoogleFileDetails();
+        $this->updateFileDetails();
 
         $this->save();
     }
@@ -220,7 +227,7 @@ class DriveFile extends \ActiveRecord
     {
         try {
             if (!$File->Type) {
-                $File->updateGoogleFileDetails();
+                $File->updateFileDetails();
             }
         } catch (Exception $e) {
             $validator->addError('Type', 'Type is missing or invalid.');
@@ -235,7 +242,7 @@ class DriveFile extends \ActiveRecord
     {
         try {
             if (!$File->Title) {
-                $File->updateGoogleFileDetails();
+                $File->updateFileDetails();
             }
         } catch (Exception $e) {
             $validator->addError('Title', 'Title is missing or invalid.');

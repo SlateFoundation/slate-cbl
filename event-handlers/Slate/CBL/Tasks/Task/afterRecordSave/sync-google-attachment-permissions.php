@@ -11,12 +11,7 @@ $GoogleDriveClass = GoogleDriveFile::class;
 foreach ($Task->Attachments as $Attachment) {
     if ($Attachment->isA(GoogleDriveFile::class)) {
         if ($Attachment->isNew) { // sync all permissions
-            foreach ($Attachment->getRequiredPermissions() as $Person) {
-                $Attachment->syncUserPermissions($Person);
-            }
-            if ($Attachment->ShareMethod != 'duplicate') {
-                $Attachment->syncDefaultPermissions();
-            }
+            $Attachment->syncUsersPermissions();
         }
-    }   
+    }
 }
