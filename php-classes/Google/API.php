@@ -180,9 +180,17 @@ class API
         return 'https://www.googleapis.com/' . ltrim($url, '/');
     }
 
-    public static function getAccessToken($scope, $user)
+    public static function getAccessToken($scope, $user, $ignoreCache = false)
     {
-        $response = static::executeRequest(RequestBuilder::getAccessToken($scope, $user));
+        $cacheKey = sprintf('%s/%s/%s', __CLASS__, $user, $scope);
+
+        if ($ignoreCache === false && $accessToken = \Cache::fetch($cacheKey)) {
+            return $accessToken;
+        }
+
+        $Request = RequestBuilder::getAccessToken($scope, $user);
+
+        $response = static::executeRequest($Request);
 
         if (empty($response['access_token'])) {
             throw new \Exception('access_token missing from auth response' . (!empty($response['error_description']) ? ': '.$response['error_description'] : ''));
@@ -190,7 +198,7 @@ class API
 
         // subtract 1 minute from returned token expiration
         Cache::store(
-            sprintf('%s/%s/%s', __CLASS__, $user, $scope),
+            $cacheKey,
             $response['access_token'],
             $response['expires_in'] - 60
         );
