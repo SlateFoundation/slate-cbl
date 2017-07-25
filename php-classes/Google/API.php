@@ -184,7 +184,7 @@ class API
     {
         $cacheKey = sprintf('%s/%s/%s', __CLASS__, $user, $scope);
 
-        if ($ignoreCache === false && $accessToken = \Cache::fetch($cacheKey)) {
+        if (empty($ignoreCache) && $accessToken = \Cache::fetch($cacheKey)) {
             return $accessToken;
         }
 

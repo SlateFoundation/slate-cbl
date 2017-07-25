@@ -4,7 +4,7 @@ namespace Emergence\Http\Message;
 
 use Exception;
 
-use Psr\Http\Message\MessageTrait;
+use Emergence\Http\Message\MessageTrait;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
