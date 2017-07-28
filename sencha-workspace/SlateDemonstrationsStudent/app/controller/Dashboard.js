@@ -66,14 +66,28 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
         // render components
         Ext.suspendLayouts();
-        recentProgressCmp.render('slateapp-viewport');
-        dashboardCt.render('slateapp-viewport');
-        Ext.DomHelper.insertBefore('slateapp-viewport', {
-            tag: 'div',
-            id: 'slateapp-header'
+        Slate.API.request({
+            url: '/cbl/dashboards/demonstrations/student/bootstrap',
+
+            callback: function(request, success, response) {
+                var data = response.data || Ext.decode(response.responseText);
+
+                if (data) {
+                    if (data.cblLevels) {
+                        Slate.cbl.data.CBLLevels.loadRawData(data.cblLevels, false);
+                    }
+                }
+
+                recentProgressCmp.render('slateapp-viewport');
+                dashboardCt.render('slateapp-viewport');
+                Ext.DomHelper.insertBefore('slateapp-viewport', {
+                    tag: 'div',
+                    id: 'slateapp-header'
+                });
+                appHeader.render('slateapp-header');
+                Ext.resumeLayouts(true);
+            },
         });
-        appHeader.render('slateapp-header');
-        Ext.resumeLayouts(true);
     },
 
 
@@ -101,6 +115,12 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             param, value,
             studentCombo, contentAreaCombo,
             student, contentArea;
+
+        if (!dashboardCt.rendered) {
+            return dashboardCt.on('render', function() {
+                me.syncFilters();
+            }, null, { single: true });
+        }
 
         if (token) {
             splitToken = token.split('&');
