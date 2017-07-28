@@ -33,12 +33,22 @@ class StudentDashboardRequestHandler extends \RequestHandler
                 return static::handleCompletionsRequest();
             case 'demonstration-skills':
                 return static::handleDemonstrationSkillsRequest();
+            case 'bootstrap':
+                return static::handleBootstrapRequest();
             case '':
             case false:
                 return static::handleDashboardRequest();
             default:
                 return static::throwNotFoundError();
         }
+    }
+
+    public static function handleBootstrapRequest()
+    {
+        return static::respond('bootstrap', [
+            'cblLevels' => array_values(\Slate\CBL\CBL::getLevelsConfig()),
+            'cblRatings' => \Slate\CBL\CBL::getRatingsConfig()
+        ], 'json');
     }
 
     public static function handleDashboardRequest()

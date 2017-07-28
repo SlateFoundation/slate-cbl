@@ -8,12 +8,9 @@ use Sencha_RequestHandler;
 
 use Slate\People\Student;
 
-use Slate\Courses\Section;
-use Slate\Courses\SectionParticipant;
-
+use Slate\CBL\CBL;
 use Slate\CBL\ContentArea;
 use Slate\CBL\Competency;
-use Slate\CBL\Demonstrations\ExperienceDemonstration;
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
 
@@ -37,7 +34,6 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                 return static::handleCompletionsRequest();
             case 'demonstration-skills':
                 return static::handleDemonstrationSkillsRequest();
-
             case 'bootstrap':
                 return static::handleBootstrapDataRequest();
 
@@ -182,6 +178,9 @@ class TeacherDashboardRequestHandler extends \RequestHandler
     public static function handleBootstrapDataRequest()
     {
         return static::respond('bootstrap', [
+            'cblLevels' => \Slate\CBL\CBL::getLevelsConfig(),
+            'cblRatings' => \Slate\CBL\CBL::getRatingsConfig(),
+
             'experience_types' => ExperienceDemonstration::$experienceTypeOptions,
             'performance_types' => ExperienceDemonstration::$performanceTypeOptions,
             'context_options' => ExperienceDemonstration::$contextOptions
