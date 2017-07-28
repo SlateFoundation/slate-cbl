@@ -5,6 +5,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         'Ext.util.Format',
 
         'Slate.cbl.Util',
+        'Slate.cbl.data.CBLLevels',
         'Slate.cbl.data.Skills',
         'Slate.cbl.store.DemonstrationSkills'
     ],
@@ -43,7 +44,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         '<div class="panel-body">',
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
                 '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width:{percentComplete:defaultValue(0)}%"></div>',
-                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{[ values.level - 8]}</div>',
+                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl for="level">{label}</tpl></div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete}%</div>',
                 '<div id="{id}-meterAverageEl" data-ref="meterAverageEl" class="cbl-progress-average" title="Average">{demonstrationsAverage:number(values.$comp.getAverageFormat())}</div>',
             '</div>',
@@ -130,7 +131,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     initRenderData: function() {
         var me = this;
 
-        return Ext.apply(this.callParent(), {
+        return Ext.apply(me.callParent(), {
             competency: me.getCompetency().getData(),
             level: me.getLevel(),
             percentComplete: me.getPercentComplete(),
@@ -166,19 +167,25 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         me.loadSkills();
     },
 
+    applyLevel: function(level) {
+        var levelRecord = Slate.cbl.data.CBLLevels.getById(level);
+
+        return levelRecord && levelRecord.getData();
+    },
+
     updateLevel: function(newLevel, oldLevel) {
         var me = this;
 
         if (oldLevel) {
-            me.removeCls('cbl-level-' + oldLevel);
+            me.removeCls('cbl-level-' + oldLevel.level);
         }
 
         if (newLevel) {
-            me.addCls('cbl-level-' + newLevel);
+            me.addCls('cbl-level-' + newLevel.level);
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? 'L'+newLevel : '');
+            me.meterLevelEl.update(newLevel.label ? newLevel.label : newLevel.level);
         }
     },
 
@@ -218,7 +225,6 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     applyDemonstrationSkillsStore: function(store) {
         return Ext.StoreMgr.lookup(store);
     },
-
 
     // event handlers
     onDemoCellClick: function(ev, t) {
