@@ -178,7 +178,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
     public static function handleBootstrapDataRequest()
     {
         return static::respond('bootstrap', [
-            'cblLevels' => \Slate\CBL\CBL::getLevelsConfig(),
+            'cblLevels' => array_values(\Slate\CBL\CBL::getLevelsConfig()),
             'cblRatings' => \Slate\CBL\CBL::getRatingsConfig(),
 
             'experience_types' => ExperienceDemonstration::$experienceTypeOptions,
