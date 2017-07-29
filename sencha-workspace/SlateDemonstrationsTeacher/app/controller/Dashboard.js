@@ -32,12 +32,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
             deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
             createoverrideclick: 'onOverviewCreateOverrideClick'
         },
-        studentGroupSelector: {
-            select: 'onStudentsGroupSelect'
-        },
-        'slate-demonstrations-teacher-appheader combo#contentAreaSelect': {
-            select: 'onContentAreaSelect'
-        },
         'slate-demonstrations-teacher-appheader button[action=submitevidence]': {
             click: 'onSubmitEvidenceClick'
         }
