@@ -15,8 +15,11 @@ Ext.define('Slate.cbl.field.LevelSlider', {
     },
 
     componentCls: 'cbl-level-slider-field',
-    minValue: 7,
-    maxValue: 13,
+    minValue: 3,
+    maxValue: 9,
+
+    minMenuValue: null,
+
     useTips: false,
     thumbTpl: [
         '<span class="value">',
@@ -85,6 +88,28 @@ Ext.define('Slate.cbl.field.LevelSlider', {
         }
     },
 
+    getMenuRatings: function() {
+        var me = this,
+            i = me.minMenuValue,
+            ratings = [];
+
+        if (Ext.isNumeric(i)) {
+            for (; i <= me.minValue; i++) {
+                ratings.push({
+                    text: i,
+                    value: i
+                });
+            }
+        }
+
+        ratings.push({
+            text: 'N/A',
+            value: null
+        });
+
+        return ratings;
+    },
+
     onThumbClick: function() {
         var me = this,
             specialGradeTip, thumbEl, menuItems;
@@ -120,34 +145,7 @@ Ext.define('Slate.cbl.field.LevelSlider', {
                             }
                         }
                     },
-                    items: [{
-                        text: '7',
-                        value: 7
-                    },{
-                        text: '6',
-                        value: 6
-                    },{
-                        text: '5',
-                        value: 5
-                    },{
-                        text: '4',
-                        value: 4
-                    },{
-                        text: '3',
-                        value: 3
-                    },{
-                        text: '2',
-                        value: 2
-                    },{
-                        text: '1',
-                        value: 1
-                    },{
-                        text: 'M',
-                        value: 0
-                    },{
-                        text: 'N/A',
-                        value: null
-                    }]
+                    items: me.getMenuRatings()
                 },
                 listeners: {
                     hide: function() {
