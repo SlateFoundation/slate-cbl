@@ -2,6 +2,7 @@ Ext.define('SlateDemonstrationsTeacher.view.AppHeader', {
     extend: 'Slate.cbl.view.AppHeader',
     requires: [
         'SlateDemonstrationsTeacher.store.ContentAreas',
+        'SlateDemonstrationsTeacher.view.AppHeaderController',
         'SlateDemonstrationsTeacher.view.StudentGroupSelector',
 
         'Ext.toolbar.Fill',
@@ -9,6 +10,8 @@ Ext.define('SlateDemonstrationsTeacher.view.AppHeader', {
     ],
 
     xtype: 'slate-demonstrations-teacher-appheader',
+
+    controller: 'slate-demonstrations-teacher-appheader',
 
     items: [{
         xtype: 'slate-demonstrations-teacher-studentgroupselector',

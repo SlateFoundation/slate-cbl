@@ -25,6 +25,14 @@ Ext.define('SlateDemonstrationsTeacher.model.StudentGroup', {
         calculate: function(data) {
             return data.Title || data.Name;
         }
+    }, {
+        name: 'Identifier',
+        depends: ['Type', 'Code', 'Handle'],
+        calculate: function(data) {
+            var type = data.Type.toLowerCase();
+
+            return type + ':' + data[type == 'section' ? 'Code' : 'Handle'];
+        }
     }],
 
     // generate compound IDs
@@ -40,9 +48,6 @@ Ext.define('SlateDemonstrationsTeacher.model.StudentGroup', {
     },
 
     getIdentifier: function() {
-        var me = this,
-            type = me.get('Type').toLowerCase();
-
-        return type + ' ' + me.get(type == 'section' ? 'Code' : 'Handle');
+        return this.get('Identifier');
     }
 });
