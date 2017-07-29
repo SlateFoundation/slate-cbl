@@ -8,7 +8,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         'Jarvus.util.APIDomain',
 
         'Slate.API',
-
+        'Slate.cbl.data.CBLLevels',
         'Ext.window.MessageBox'
     ],
 
