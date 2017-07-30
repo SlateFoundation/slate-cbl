@@ -6,9 +6,9 @@ class CBL
 {
     public static $continuaUrl;
 
-    public static $minRating = 1;
+    public static $minRating = 7;
     public static $maxRating = 13;
-    public static $minSliderRating = 8;
+    public static $menuMinRating = 1;
     public static $allowMissingRating = true;
 
     public static $levels = [
@@ -61,7 +61,7 @@ class CBL
         return [
             'min' => static::$minRating,
             'max' => static::$maxRating,
-            'sliderMin' => static::$minSliderRating,
+            'menuMin' => static::$menuMinRating,
             'allowMissing' => (bool) static::$allowMissingRating
         ];
     }
