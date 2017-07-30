@@ -22,7 +22,7 @@ class CBL
         'blue' => '#008cc1'
     ];
 
-    public static function getLevelsConfig($level = null)
+    public static function getLevelsConfig($indexed = true)
     {
         $levels = static::$levels;
         $levelsCfg = [];
@@ -53,7 +53,7 @@ class CBL
 
         }
 
-        return $levelsCfg;
+        return $indexed ? $levelsCfg : array_values($levelsCfg);
     }
 
     public static function getRatingsConfig()

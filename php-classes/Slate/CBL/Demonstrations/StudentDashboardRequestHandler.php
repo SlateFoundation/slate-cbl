@@ -9,6 +9,7 @@ use Emergence\People\PeopleRequestHandler;
 
 use Slate\People\Student;
 
+use Slate\CBL\CBL;
 use Slate\CBL\ContentAreasRequestHandler;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
@@ -46,8 +47,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
     public static function handleBootstrapRequest()
     {
         return static::respond('bootstrap', [
-            'cblLevels' => array_values(\Slate\CBL\CBL::getLevelsConfig()),
-            'cblRatings' => \Slate\CBL\CBL::getRatingsConfig()
+            'cblLevels' => CBL::getLevelsConfig(false),
+            'cblRatings' => CBL::getRatingsConfig()
         ], 'json');
     }
 
