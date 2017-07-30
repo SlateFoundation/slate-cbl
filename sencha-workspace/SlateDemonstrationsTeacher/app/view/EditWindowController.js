@@ -365,7 +365,8 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindowController', {
                 competency: competency,
                 items: []
             },
-            skillFieldsConfig = competencyCardConfig.items;
+            skillFieldsConfig = competencyCardConfig.items,
+            ratingsCfg = Slate.cbl.util.Ratings.getConfig();
 
         // convert competency id to instance
         if (!competency.isModel) {
@@ -394,7 +395,11 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindowController', {
             skills.each(function(skill) {
                 skillFieldsConfig.push({
                     fieldLabel: skill.get('Descriptor'),
-                    skill: skill
+                    skill: skill,
+                    minValue: ratingsCfg.min,
+                    maxValue: ratingsCfg.max,
+                    minMenuValue: ratingsCfg.menuMin,
+                    allowMissing: ratingsCfg.allowMissing
                 });
             });
 

@@ -9,6 +9,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
         'Slate.API',
         'Slate.cbl.data.CBLLevels',
+        'Slate.cbl.util.Ratings',
         'Ext.window.MessageBox'
     ],
 
@@ -111,6 +112,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
                     if (data.cblLevels) {
                         Slate.cbl.data.CBLLevels.loadRawData(data.cblLevels, false);
+                    }
+
+                    if (data.cblRatings) {
+                        Slate.cbl.util.Ratings.setConfig(data.cblRatings);
                     }
                 }
             }
