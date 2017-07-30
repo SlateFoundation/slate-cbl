@@ -18,11 +18,11 @@ Ext.define('SlateDemonstrationsStudent.view.AppHeaderController', {
     },
 
     onStudentSelect: function(combo, student) {
-        this.redirectTo('student='+student.get('Username'), false, true);
+        this.redirectTo('student='+window.encodeURI(student.get('Username')), false, true);
     },
 
     onContentAreaSelect: function(combo, contentArea) {
-        this.redirectTo('contentarea='+contentArea.get('Code'), false, true);
+        this.redirectTo('contentarea='+window.encodeURI(contentArea.get('Code')), false, true);
     },
 
     redirectTo: function(url, force, append) {

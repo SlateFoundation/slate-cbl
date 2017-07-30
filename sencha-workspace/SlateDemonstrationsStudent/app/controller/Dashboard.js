@@ -124,7 +124,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
                         return;
                     }
 
-                    student = studentCombo.getStore().findRecord('Username', value);
+                    student = studentCombo.getStore().findRecord('Username', window.decodeURI(value));
                     studentCombo.setValue(student);
                     if (student) {
                         // configure recent progress component with any available embedded data
@@ -143,7 +143,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
                         return;
                     }
 
-                    contentArea = contentAreaCombo.getStore().findRecord('Code', value);
+                    contentArea = contentAreaCombo.getStore().findRecord('Code', window.decodeURI(value));
                     contentAreaCombo.setValue(contentArea);
                     if (contentArea) {
                         recentProgressCmp.setContentAreaId(contentArea.getId());

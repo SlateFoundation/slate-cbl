@@ -333,10 +333,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
                             dashboardCt.unmask();
                             return me.syncFilters();
                         });
-                        return;
+                        return false;
                     }
 
-                    contentArea = contentAreaCombo.getStore().findRecord('Code', value);
+                    contentArea = contentAreaCombo.getStore().findRecord('Code', window.decodeURI(value));
                     contentAreaCombo.setValue(contentArea);
 
                     if (contentArea) {
@@ -346,7 +346,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
                         });
                     }
                 }
-
             }
         }
     }
