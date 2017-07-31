@@ -2,6 +2,13 @@
 
 namespace Slate\CBL\Tasks;
 
+use Google\API as GoogleAPI;
+
+use Slate\CBL\CBL;
+
+use Sencha_App;
+use Sencha_RequestHandler;
+
 class TeacherDashboardRequestHandler extends \RequestHandler
 {
     public static $userResponseModes = [
@@ -37,10 +44,13 @@ class TeacherDashboardRequestHandler extends \RequestHandler
     public static function handleBootstrapRequest()
     {
         return static::respond('bootstrap', [
+            'cblLevels' => CBL::getLevelsConfig(false),
+            'cblRatings' => CBL::getRatingsConfig(),
+
             'google' => [
-                 'domain' => \Google\API::$domain,
-                 'developerKey' => \Google\API::$developerKey,
-                 'clientId' => \Google\API::$clientId
+                 'domain' => GoogleAPI::$domain,
+                 'developerKey' => GoogleAPI::$developerKey,
+                 'clientId' => GoogleAPI::$clientId
             ]
         ]);
     }

@@ -13,7 +13,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     requires: [
         'Ext.window.Toast',
         'Ext.window.MessageBox',
-        'Slate.cbl.util.Google'
+        'Slate.cbl.util.Google',
+        'Slate.cbl.util.Ratings'
     ],
 
 
@@ -181,6 +182,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     if (data.google.domain) {
                         googleUtil.setDomain(data.google.domain);
                     }
+                }
+
+                if (data.cblRatings) {
+                    Slate.cbl.util.Ratings.setConfig(data.cblRatings);
                 }
             }
         });
