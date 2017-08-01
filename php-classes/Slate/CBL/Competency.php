@@ -272,7 +272,7 @@ class Competency extends \VersionedRecord
             'demonstrationsLogged' => 0,
             'demonstrationsComplete' => 0,
             'demonstrationsAverage' => null,
-            'currentLevel' => null
+            'currentLevel' => $currentLevel
         ];
     }
 
