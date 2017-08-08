@@ -307,4 +307,21 @@ class Competency extends \VersionedRecord
 
         return $level ? intval($level) : null;
     }
+
+    public function getStudentCompetency(Student $Student, $level = null)
+    {
+        $StudentCompetency = null;
+        try {
+            $StudentCompetency = StudentCompetency::getByQuery(
+                'SELECT * FROM `%s` WHERE StudentID = %u AND CompetencyID = %u ORDER BY Level DESC LIMIT 1',
+                [
+                    StudentCompetency::$tableName,
+                    $Student->ID,
+                    $this->ID
+                ]
+            );
+        } catch (TableNotFoundException $e) {}
+
+        return $StudentCompetency;
+    }
 }

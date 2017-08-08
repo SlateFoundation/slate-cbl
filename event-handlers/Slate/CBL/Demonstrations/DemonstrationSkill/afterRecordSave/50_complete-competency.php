@@ -23,4 +23,8 @@ if (
         'EnteredVia' => 'graduation',
         'BaselineRating' => $completion['demonstrationsAverage']
     ], true);
+} elseif (empty($completion['baselineRating'])) {
+    if ($StudentCompetency = $Competency->getStudentCompetency($Student)) {
+        $StudentCompetency->calculateStartingRating();
+    }
 }
