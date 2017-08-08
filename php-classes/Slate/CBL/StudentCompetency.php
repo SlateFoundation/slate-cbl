@@ -27,6 +27,11 @@ class StudentCompetency extends \ActiveRecord
         'EnteredVia' => [
             'type' => 'enum',
             'values' => array('enrollment', 'graduation')
+        ],
+        'BaselineRating' => [
+            'type' => 'decimal',
+            'length' => '5,2',
+            'default' => null
         ]
     ];
 
