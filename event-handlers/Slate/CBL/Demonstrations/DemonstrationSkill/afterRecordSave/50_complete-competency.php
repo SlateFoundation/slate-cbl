@@ -20,6 +20,7 @@ if (
         'StudentID' => $Student->ID,
         'CompetencyID' => $Competency->ID,
         'Level' => $completion['currentLevel'] + 1,
-        'EnteredVia' => 'graduation'
+        'EnteredVia' => 'graduation',
+        'BaselineRating' => $completion['demonstrationsAverage']
     ], true);
 }
