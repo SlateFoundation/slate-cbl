@@ -32,7 +32,7 @@
             </select>
         {/capture}
         {labeledField html=$studentsSelect type=select label=Students class=auto-width}
-        
+
         {capture assign=contentAreaSelect}
             <select class="field-control inline medium" name="content-area[]" multiple style="height:15em">
                 {foreach item=availableArea from=Slate\CBL\ContentArea::getAll(array('order' => 'Code'))}
@@ -41,9 +41,10 @@
             </select>
         {/capture}
         {labeledField html=$contentAreaSelect type=select label="Content Area" class=auto-width}
-        
+
         {field label='Initial Level' inputName=level default=9 type=number class=tiny attribs="min=1"}
-        
+        {field label='Baseline Rating' inputName=baselineRating type=number class=small attribs="min=.01 step=.01"}
+
         <input type="submit" value="Enroll students in all selected competencies">
     </form>
 {/block}
