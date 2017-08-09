@@ -191,8 +191,14 @@ class Competency extends \VersionedRecord
 #        if (!$forceRefresh && false !== ($completion = Cache::fetch($cacheKey))) {
 #            return $completion;
 #        }
-        $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
-        if ($currentLevel && !empty($this->Skills)) {
+
+        if ($level) {
+            $StudentCompetency = StudentCompetency::getByWhere(['CompetencyID' => $this->ID, 'StudentID' => $Student->ID, 'Level' => $level]);
+        } else {
+            $StudentCompetency = StudentCompetency::getCurrentForStudent($this, $Student);
+        }
+
+        if ($StudentCompetency && !empty($this->Skills)) {
             try {
                 DB::nonQuery('SET @num := 0, @skill := ""');
 
@@ -247,9 +253,9 @@ class Competency extends \VersionedRecord
                     Demonstrations\Demonstration::$tableName,
                     $Student->ID,
                     implode(',', $this->getSkillIds()),
-                    $currentLevel,
+                    $StudentCompetency->Level,
                     ($demonstrationConditions ? 'AND ' . $demonstrationConditions . ' ' : ''),
-                    $currentLevel,
+                    $StudentCompetency->Level,
                     Skill::$tableName
                 ];
 
@@ -257,7 +263,8 @@ class Competency extends \VersionedRecord
 
                 // cast strings to floats
                 return [
-                    'currentLevel' => $currentLevel,
+                    'currentLevel' => $StudentCompetency->Level,
+                    'baselineRating' => $StudentCompetency->BaselineRating ? floatval($StudentCompetency->BaselineRating) : null,
                     'demonstrationsLogged' => intval($completion['demonstrationsLogged']),
                     'demonstrationsComplete' => intval($completion['demonstrationsComplete']),
                     'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
@@ -271,8 +278,9 @@ class Competency extends \VersionedRecord
         return [
             'demonstrationsLogged' => 0,
             'demonstrationsComplete' => 0,
+            'baselineRating' => $StudentCompetency && $StudentCompetency->BaselineRating ? floatval($StudentCompetency->BaselineRating) : null,
             'demonstrationsAverage' => null,
-            'currentLevel' => $currentLevel
+            'currentLevel' => null
         ];
     }
 
@@ -293,35 +301,4 @@ class Competency extends \VersionedRecord
         throw new \Exception('Invalid list identifier for competencies');
     }
 
-    public function getCurrentLevelForStudent(Student $Student)
-    {
-        try {
-            $level = \DB::oneValue(
-                'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
-                [
-                    $Student->ID,
-                    $this->ID
-                ]
-            );
-        } catch (TableNotFoundException $e) {}
-
-        return $level ? intval($level) : null;
-    }
-
-    public function getStudentCompetency(Student $Student, $level = null)
-    {
-        $StudentCompetency = null;
-        try {
-            $StudentCompetency = StudentCompetency::getByQuery(
-                'SELECT * FROM `%s` WHERE StudentID = %u AND CompetencyID = %u ORDER BY Level DESC LIMIT 1',
-                [
-                    StudentCompetency::$tableName,
-                    $Student->ID,
-                    $this->ID
-                ]
-            );
-        } catch (TableNotFoundException $e) {}
-
-        return $StudentCompetency;
-    }
 }

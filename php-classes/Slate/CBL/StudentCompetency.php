@@ -159,6 +159,11 @@ class StudentCompetency extends \ActiveRecord
         }
     }
 
+    public static function getCurrentForStudent(Competency $Competency, Student $Student)
+    {
+        return static::getByWhere(['StudentID' => $Student->ID, 'CompetencyID' => $Competency->ID], ['order' => ['Level' => 'DESC']]);
+    }
+
     public static function isCurrentLevelComplete($Student, $Competency)
     {
         $completion = $Competency->getCompletionForStudent($Student);
