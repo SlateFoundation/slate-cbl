@@ -63,6 +63,25 @@ class StudentCompetency extends \ActiveRecord
         ]
     ];
 
+    public static $dynamicFields = [
+        'demonstrationsLogged' => [
+            'getter' => 'getDemonstrationsLogged'
+        ],
+        'demonstrationsComplete' => [
+            'getter' => 'getDemonstrationsComplete'
+        ],
+        'demonstrationsAverage' => [
+            'getter' => 'getDemonstrationsAverage'
+        ],
+        'demonstrationData' => [
+            'getter' => 'getDemonstrationData'
+        ],
+        'effectiveDemonstrationsData' => [
+            'getter' => 'getEffectiveDemonstrationsData'
+        ]
+
+    ];
+
     public function calculateStartingRating($autoSave = true)
     {
         $validSkills = DB::allRecords(
@@ -304,6 +323,24 @@ class StudentCompetency extends \ActiveRecord
         return $this->demonstrationsAverage = $average;
     }
 
+    public function isLevelComplete()
+    {
+        $logged = $this->getDemonstrationsLogged();
+        $completed = $this->getDemonstrationsComplete();
+        $average = $this->getDemonstrationsAverage();
+
+        $competencyEvidenceRequirements = $this->Competency->getTotalDemonstrationsRequired($this->Level);
+        $minimumOffset = $this->Competency->getMinimumAverageOffset();
+
+        return (
+            $completed >= $comptencyEvidenceRequirements &&
+            (
+                $logged === 0 ||
+                $average >= ($this->Level + $minimumOffset)
+            )
+        );
+    }
+
     public static function getCurrentForStudent(Competency $Competency, Student $Student)
     {
         return static::getByWhere(['StudentID' => $Student->ID, 'CompetencyID' => $Competency->ID], ['order' => ['Level' => 'DESC']]);
@@ -311,14 +348,12 @@ class StudentCompetency extends \ActiveRecord
 
     public static function isCurrentLevelComplete($Student, $Competency)
     {
-        $completion = $Competency->getCompletionForStudent($Student);
+        $StudentCompetency = static::getCurrentForStudent($Competency, $Student);
 
-        return (
-                $completion['demonstrationsComplete'] >= $Competency->getTotalDemonstrationsRequired($completion['currentLevel']) &&
-                (
-                    $completion['demonstrationsLogged'] == 0 || // if demonstrationsComplete is full but none are logged, the student has fulfilled all their demonstrations via overrides and the average is irrelevant
-                    $completion['demonstrationsAverage'] >= ($completion['currentLevel'] + $Competency->getMinimumAverageOffset())
-                )
-        );
+        if ($StudentCompetency) {
+            return $StudentCompetency->isLevelComplete();
+        }
+
+        return false;
     }
 }

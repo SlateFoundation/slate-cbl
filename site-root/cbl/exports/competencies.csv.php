@@ -124,20 +124,22 @@ foreach ($students AS $Student) {
             $contentAreaAverageTotal = 0;
 
             foreach ($ContentArea->Competencies AS $Competency) {
-                $competencyCompletion = $Competency->getCompletionForStudent($Student, $level, $conditions);
+
+                $StudentCompetency = \Slate\CBL\StudentCompetency::getByWhere(['StudentID' => $Student->ID, 'CompetencyID' => $Competency->ID, 'Level' => $level]);
+
                 $demonstrationsRequired = intval($Competency->getTotalDemonstrationsRequired($level, true));
 
                 // Logged
-                $row[] = intval($competencyCompletion['demonstrationsLogged']);
+                $row[] = $StudentCompetency ? intval($StudentCompetency->getDemonstrationsLogged()) : null;
                 // Total
                 $row[] = $demonstrationsRequired;
                 // Average
-                $row[] = $competencyCompletion['demonstrationsAverage'] ? round($competencyCompletion['demonstrationsAverage'], 2) : null;
-                $totalDemonstrationsCounted += $competencyCompletion['demonstrationsLogged'];
+                $row[] = $StudentCompetency && $StudentCompetency->getDemonstrationsAverage() ? round($StudentCompetency->getDemonstrationsAverage(), 2) : null;
+                $totalDemonstrationsCounted += $StudentCompetency ? $StudentCompetency->getDemonstrationsLogged() : 0;
                 $totalDemonstrationsRequired += $demonstrationsRequired;
 
                 // averages are weighted by number of demonstrations
-                $contentAreaAverageTotal += $competencyCompletion['demonstrationsAverage'] * $competencyCompletion['demonstrationsLogged'];
+                $contentAreaAverageTotal += $StudentCompetency ? $StudentCompetency->getDemonstrationsAverage() * $StudentCompetency->getDemonstrationsLogged() : null;
 
                 if(isset($missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID])) {
                     $totalDemonstrationsMissing += $missingDemonstrationsByStudentCompetency[$Student->ID][$Competency->ID];

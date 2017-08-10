@@ -122,10 +122,29 @@ class StudentDashboardRequestHandler extends \RequestHandler
         $completions = [];
 
         foreach ($competencies AS $Competency) {
-            $completions[] = array_merge([
-                'StudentID' => $Student->ID,
-                'CompetencyID' => $Competency->ID
-            ], $Competency->getCompletionForStudent($Student));
+            $StudentCompetency = StudentCompetency::getCurrentForStudent($Competency, $Student);
+
+            if ($StudentCompetency) {
+                $completions[] = [
+                    'StudentID' => $Student->ID,
+                    'CompetencyID' => $Competency->ID,
+                    'currentLevel' => $StudentCompetency->Level,
+                    'baselineRating' => $StudentCompetency->BaselineRating ? floatval($StudentCompetency->BaselineRating) : null,
+                    'demonstrationsLogged' => $StudentCompetency->getDemonstrationsLogged(),
+                    'demonstrationsComplete' => $StudentCompetency->getDemonstrationsComplete(),
+                    'demonstrationsAverage' => $StudentCompetency->getDemonstrationsAverage()
+                ];
+            } else {
+                $completions[] = [
+                    'StudentID' => $Student->ID,
+                    'CompetencyID' => $Competency->ID,
+                    'currentLevel' => null,
+                    'baselineRating' => null,
+                    'demonstrationsLogged' => 0,
+                    'demonstrationsComplete' => 0,
+                    'demonstrationsAverage' => null
+                ];
+            }
         }
 
         return static::respond('completions', [
