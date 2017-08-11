@@ -136,6 +136,16 @@ class Competency extends \VersionedRecord
         return $skillIds;
     }
 
+    private $totalSkills;
+    public function getTotalSkills($forceRefresh = false)
+    {
+        if (!empty($this->totalSkills)) {
+            return $this->totalSkills;
+        }
+
+        return $this->totalSkills = count($this->getSkillIds());
+    }
+
     public function getTotalDemonstrationsRequired($level = null, $forceRefresh = false)
     {
         $cacheKey = "cbl-competency/$this->ID/total-demonstrations-required";
