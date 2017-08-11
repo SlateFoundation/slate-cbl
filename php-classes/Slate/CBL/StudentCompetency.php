@@ -341,6 +341,43 @@ class StudentCompetency extends \ActiveRecord
         );
     }
 
+    public function getGrowth()
+    {
+        if (empty($this->BaselineRating)) {
+            return null;
+        }
+
+        $demonstrationData = $this->getDemonstrationData();
+
+        $totalSkills = $this->Competency->getTotalSkills();
+
+        $growthData = array_map(function($demonstrations, $skillId) {
+            if (count($demonstrations) === 1 && empty($this->BaselineRating)) {
+                return null;
+            }
+
+            $lastRating = end($demonstrations);
+            if ($this->BaselineRating) {
+                return $lastRating['DemonstratedLevel'] - floatval($this->BaselineRating);
+            } else {
+                $firstRating = reset($demonstrations);
+
+                return $lastRating['DemonstratedLevel'] - $firstRating['DemonstratedLevel'];
+            }
+
+        }, $demonstrationData, array_keys($demonstrationData));
+
+        array_filter($growthData);
+        $totalGrowthSkills = count($growthData);
+
+        if (count($growthData) * 2 < $totalSkills) {
+            return null;
+        }
+
+        return array_sum($growthData) / $totalSkills;
+    }
+
+
     public static function getCurrentForStudent(Competency $Competency, Student $Student)
     {
         return static::getByWhere(['StudentID' => $Student->ID, 'CompetencyID' => $Competency->ID], ['order' => ['Level' => 'DESC']]);
