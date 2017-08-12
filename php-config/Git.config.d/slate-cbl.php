@@ -6,6 +6,7 @@ Git::$repositories['slate-cbl'] = [
     'workingBranch' => 'releases/v2',
     'localOnly' => true,
     'trees' => [
+        'api-docs/definitions/Slate/CBL',
         'event-handlers/Slate/CBL',
         'event-handlers/Emergence/Site/nightly-maintenance/50_cbl-google-drive-changes-monitor.php',
         'event-handlers/Emergence/Site/nightly-maintenance/50_cbl-invalidate-expired-tasks.php',

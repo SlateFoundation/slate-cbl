@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\Skill
+description: |
+  A skill is a standard that students are rated against. One or more skills that should level together are grouped into a [competency](#models::slate-cbl-competency).
