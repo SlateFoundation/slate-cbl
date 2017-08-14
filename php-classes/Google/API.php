@@ -17,6 +17,14 @@ class API
     public static $skew = 60;
     public static $expiry = 3600;
 
+    public static $retryResponseCodes = [
+        403,
+        429,
+        500
+    ];
+
+    public static $maxRetries = 3;
+
     public static $defaultAccessToken;
 
     public static function __callStatic($name, $arguments)
@@ -66,7 +74,7 @@ class API
         return $result;
     }
 
-    public static function executeBatchRequest(array $Requests)
+    public static function executeBatchRequest(array $Requests, $retry = 1)
     {
 
         // configure curl
@@ -104,7 +112,7 @@ class API
                     PHP_EOL, // 1
                     $requestKey, // 2
                     $Request->getMethod(), // 3
-                    $Request->getUri()->getPath() . ($Request->getUri()->getQuery() ? '?'.$Request->getUri()->getQuery() : ''), // 4
+                    $Request->getUri()->getPath() . "?quotaUser=$requestKey". ($Request->getUri()->getQuery() ? '&'.$Request->getUri()->getQuery() : ''), // 4
                     join(PHP_EOL, static::formatHeaders($Request->getHeaders())), // 5
                     empty($Request->getBody()) ? '' : (string)$Request->getBody(), // 6
                     $boundary
@@ -121,6 +129,8 @@ class API
 
         // parse results
         $results = [];
+        $failedRequests = [];
+        $failedResponses = [];
         if (preg_match('/^(--batch_)([a-z0-9_\-]+)(--)?/i', $result, $matches)) {
             $responseBoundary = $matches[0];
             foreach (explode($responseBoundary, $result) as $responsePart) {
@@ -141,15 +151,37 @@ class API
 
                 // skip unparsable response bodies
                 if (count($responseParts) >= 2) {
-                    $responseBody = $responseParts[count($responseParts) - 2];
+                    $responseBody = json_decode($responseParts[count($responseParts) - 2], true);
+
+                    if (
+                        (
+                            $retry === true ||
+                            is_numeric($retry) &&
+                            (int)$retry <= static::$maxRetries
+                        ) &&
+                        isset($responseBody['error']) &&
+                        is_array($responseBody['error']) &&
+                        isset($responseBody['error']['code']) &&
+                        in_array($responseBody['error']['code'], static::$retryResponseCodes)
+                    ) {
+                        $failedRequests[$contentId] = $Requests[$contentId];
+                        $failedResponses[$contentId] = $responseBody['error'];
+                    }
+
                 } else {
                     continue;
                 }
 
-                $results[$contentId] = json_decode($responseBody, true);
+                $results[$contentId] = $responseBody;
             }
         } else {
             throw new \Exception('Unable to parse response.');
+        }
+
+        if (!empty($failedRequests)) {
+            \Emergence\Mailer\Mailer::send('nafis@jarv.us', "Failed Responses (#$retry)", join('', ['<pre>', print_r($failedResponses, true), '</pre>']));
+            sleep(pow(2, (is_numeric($retry) ? $retry : 1) - 1));
+            $results = array_merge($results, static::executeBatchRequest($failedRequests, is_numeric($retry) ? (int)$retry + 1 : 2));
         }
 
         return $results;
