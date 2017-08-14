@@ -139,11 +139,11 @@ class Competency extends \VersionedRecord
     private $totalSkills;
     public function getTotalSkills($forceRefresh = false)
     {
-        if (!empty($this->totalSkills)) {
-            return $this->totalSkills;
+        if ($this->totalSkills === null || $forceRefresh === true) {
+            $this->totalSkills = count($this->getSkillIds($forceRefresh));
         }
 
-        return $this->totalSkills = count($this->getSkillIds());
+        return $this->totalSkills;
     }
 
     public function getTotalDemonstrationsRequired($level = null, $forceRefresh = false)
