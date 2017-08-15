@@ -114,15 +114,7 @@ class Demonstration extends \VersionedRecord
         foreach ($competencies AS $Competency) {
             $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student);
 
-            $completions[] = [
-                'StudentID' => $this->StudentID,
-                'CompetencyID' => $Competency->ID,
-                'currentLevel' => $StudentCompetency->Level,
-                'baselineRating' => $StudentCompetency->BaselineRating ? floatval($StudentCompetency->BaselineRating) : null,
-                'demonstrationsLogged' => $StudentCompetency->getDemonstrationsLogged(),
-                'demonstrationsComplete' => $StudentCompetency->getDemonstrationsComplete(),
-                'demonstrationsAverage' => $StudentCompetency->getDemonstrationsAverage()
-            ];
+            $completions[] = $StudentCompetency->getCompletion();
         }
 
         return $completions;

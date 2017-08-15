@@ -64,6 +64,9 @@ class StudentCompetency extends \ActiveRecord
     ];
 
     public static $dynamicFields = [
+        'completion' => [
+            'getter' => 'getCompletion'
+        ],
         'demonstrationsLogged' => [
             'getter' => 'getDemonstrationsLogged'
         ],
@@ -81,6 +84,19 @@ class StudentCompetency extends \ActiveRecord
         ]
 
     ];
+
+    public function getCompletion()
+    {
+        return [
+            'StudentID' => $this->StudentID,
+            'CompetencyID' => $this->CompetencyID,
+            'currentLevel' => $this->Level,
+            'baselineRating' => $this->BaselineRating,
+            'demonstrationsLogged' => $this->getDemonstrationsLogged(),
+            'demonstrationsComplete' => $this->getDemonstrationsComplete(),
+            'demonstrationsAverage' => $this->getDemonstrationsAverage()
+        ];
+    }
 
     public function calculateStartingRating($autoSave = true)
     {
