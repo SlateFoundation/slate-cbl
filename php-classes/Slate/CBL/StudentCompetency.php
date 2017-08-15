@@ -98,7 +98,7 @@ class StudentCompetency extends \ActiveRecord
         ];
     }
 
-    public function calculateStartingRating($autoSave = true)
+    public function calculateStartingRating()
     {
         $validSkills = DB::allRecords(
             'SELECT ID, '.
@@ -187,11 +187,7 @@ class StudentCompetency extends \ActiveRecord
             ]
         );
 
-        $this->BaselineRating = array_sum($demonstrationSkillRatings) / count($validSkills);
-
-        if ($autoSave === true) {
-            $this->save();
-        }
+        return array_sum($demonstrationSkillRatings) / count($validSkills);
     }
 
     private $demonstrationData;
