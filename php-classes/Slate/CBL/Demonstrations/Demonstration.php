@@ -59,7 +59,7 @@ class Demonstration extends \VersionedRecord
 
     public static $dynamicFields = [
         'Student',
-        'competencyCompletions' => ['method' => 'getCompetencyCompletions'],
+        'competencyCompletions' => ['getter' => 'getCompetencyCompletions'],
         'Skills'
     ];
 
