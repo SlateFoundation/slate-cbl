@@ -162,7 +162,7 @@ class StudentCompetency extends \ActiveRecord
     		  JOIN `%2$s` d
     		    ON d.ID = ds.DemonstrationID
     		 INNER JOIN (
-                    SELECT MIN(demoskill.Created) as Created, SkillID
+                    SELECT MIN(demo.Demonstrated) as Created, SkillID
     		          FROM `%1$s` demoskill
     		          JOIN `%2$s` demo
     		            ON demo.ID = demoskill.DemonstrationID
@@ -174,7 +174,7 @@ class StudentCompetency extends \ActiveRecord
                      GROUP BY SkillID
     		  ) ds2
     		    ON ds2.SkillID = ds.SkillID
-    		   AND ds2.Created = ds.Created
+    		   AND ds2.Created = d.Demonstrated
     		 WHERE ds.SkillID IN (%4$s)
     		   AND ds.TargetLevel = %3$u
     		   AND ds.DemonstratedLevel > 0
