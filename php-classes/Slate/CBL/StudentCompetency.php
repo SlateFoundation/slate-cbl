@@ -100,20 +100,20 @@ class StudentCompetency extends \ActiveRecord
     public function calculateStartingRating()
     {
         $validSkills = DB::allRecords(
-            'SELECT ID, '.
-            ' CAST( '.
-                'REPLACE( '.
-            '       IFNULL ( '.
-            '           JSON_EXTRACT(DemonstrationsRequired, "$.\"%u\""), '.
-            '           JSON_EXTRACT(DemonstrationsRequired, "$.default")'.
-            '       ), '.
-            '   \'"\', ' .
-            '   "")'.
-            '   AS UNSIGNED '.
-            ' ) AS DemonstrationsRequirements '.
-            '  FROM `%s` '.
-            ' WHERE CompetencyID = %u '.
-            'HAVING DemonstrationsRequirements > 0 ',
+            '
+            SELECT ID,
+                REPLACE(
+                   IFNULL (
+                       JSON_EXTRACT(DemonstrationsRequired, \'$."%u"\'),
+                       JSON_EXTRACT(DemonstrationsRequired, "$.default")
+                   ),
+                   \'"\',
+                   ""
+                ) AS DemonstrationsRequirements
+              FROM `%s`
+             WHERE CompetencyID = %u
+            HAVING DemonstrationsRequirements > 0
+            ',
             [
                 $this->Level,
                 Skill::$tableName,
@@ -125,16 +125,18 @@ class StudentCompetency extends \ActiveRecord
         $ratedSkills = DB::valuesTable(
             'SkillID',
             'skillRatings',
-            'SELECT COUNT(*) AS skillRatings, SkillID '.
-        	'  FROM `%1$s` ds '.
-    		'  JOIN `%2$s` d '.
-    		'	ON d.ID = ds.DemonstrationID '.
-    		' WHERE ds.SkillID IN (%3$s) '.
-    		'   AND ds.TargetLevel = %4$u '.
-    		'   AND ds.DemonstratedLevel > 0 '.
-    		'   AND d.StudentID = %5$u '.
-    		'   AND ds.Override = false '.
-    		' GROUP BY SkillID ',
+            '
+            SELECT COUNT(*) AS skillRatings, SkillID
+        	  FROM `%1$s` ds
+    		  JOIN `%2$s` d
+    			ON d.ID = ds.DemonstrationID
+    		 WHERE ds.SkillID IN (%3$s)
+    		   AND ds.TargetLevel = %4$u
+    		   AND ds.DemonstratedLevel > 0
+    		   AND d.StudentID = %5$u
+    		   AND ds.Override = false
+    		 GROUP BY SkillID
+            ',
             [
                 DemonstrationSkill::$tableName,
                 Demonstration::$tableName,
@@ -154,29 +156,31 @@ class StudentCompetency extends \ActiveRecord
         // get the first rating (by date) for each skill
         $demonstrationSkillRatings = DB::allValues(
             'skillRatings',
-            'SELECT ds.DemonstratedLevel as skillRatings'.
-        	'  FROM `%1$s` ds '.
-    		'  JOIN `%2$s` d '.
-    		'    ON d.ID = ds.DemonstrationID '.
-    		' INNER JOIN ( '.
-                    'SELECT MIN(demoskill.Created) as Created, SkillID '.
-    		        '  FROM `%1$s` demoskill '.
-    		        '  JOIN `%2$s` demo '.
-    		        '    ON demo.ID = demoskill.DemonstrationID '.
-    		        ' WHERE TargetLevel = %3$u '.
-                    '   AND DemonstratedLevel > 0 '.
-                    '   AND Override = false '.
-                    '   AND demoskill.SkillID IN (%4$s) '.
-                    '   AND demo.StudentID = %5$u '.
-                    ' GROUP BY SkillID '.
-    		'  ) ds2 '.
-    		'    ON ds2.SkillID = ds.SkillID '.
-    		'   AND ds2.Created = ds.Created '.
-    		' WHERE ds.SkillID IN (%4$s) '.
-    		'   AND ds.TargetLevel = %3$u '.
-    		'   AND ds.DemonstratedLevel > 0 '.
-    		'   AND d.StudentID = %5$u '.
-    		'   AND ds.Override = false ',
+            '
+            SELECT ds.DemonstratedLevel as skillRatings
+        	  FROM `%1$s` ds
+    		  JOIN `%2$s` d
+    		    ON d.ID = ds.DemonstrationID
+    		 INNER JOIN (
+                    SELECT MIN(demoskill.Created) as Created, SkillID
+    		          FROM `%1$s` demoskill
+    		          JOIN `%2$s` demo
+    		            ON demo.ID = demoskill.DemonstrationID
+    		         WHERE TargetLevel = %3$u
+                       AND DemonstratedLevel > 0
+                       AND Override = false
+                       AND demoskill.SkillID IN (%4$s)
+                       AND demo.StudentID = %5$u
+                     GROUP BY SkillID
+    		  ) ds2
+    		    ON ds2.SkillID = ds.SkillID
+    		   AND ds2.Created = ds.Created
+    		 WHERE ds.SkillID IN (%4$s)
+    		   AND ds.TargetLevel = %3$u
+    		   AND ds.DemonstratedLevel > 0
+    		   AND d.StudentID = %5$u
+    		   AND ds.Override = false
+            ',
             [
                 DemonstrationSkill::$tableName,
                 Demonstration::$tableName,
