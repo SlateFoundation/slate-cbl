@@ -260,7 +260,6 @@ class StudentCompetency extends \ActiveRecord
     private $demonstrationsLogged;
     public function getDemonstrationsLogged()
     {
-
         if ($this->demonstrationsLogged !== null) {
             return $this->demonstrationsLogged;
         }
