@@ -271,10 +271,8 @@ class StudentCompetency extends \ActiveRecord
             $Skill = Skill::getByID($skillId);
             $skillCount = 0;
             foreach ($demonstrationData as $demonstration) {
-                if (empty($demonstration['Override'])) {
-                    if (!empty($demonstration['DemonstratedLevel'])) {
-                        $skillCount++;
-                    }
+                if (empty($demonstration['Override']) && !empty($demonstration['DemonstratedLevel'])) {
+                    $skillCount++;
                 }
             }
             // ?
