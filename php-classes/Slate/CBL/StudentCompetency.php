@@ -211,7 +211,7 @@ class StudentCompetency extends \ActiveRecord
                 '    ON Demonstration.ID = DemonstrationSkill.DemonstrationID '.
                 ' WHERE DemonstrationSkill.SkillID IN (%s) '.
                 '   AND DemonstrationSkill.TargetLevel = %u '.
-                ' ORDER BY SkillID, DemonstrationDate',
+                ' ORDER BY SkillID, DemonstrationDate, DemonstrationID',
                 [
                     DemonstrationSkill::$tableName,
                     Demonstration::$tableName,
