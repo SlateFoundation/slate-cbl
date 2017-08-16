@@ -196,7 +196,7 @@ class StudentCompetency extends \ActiveRecord
     private $demonstrationData;
     public function getDemonstrationData()
     {
-        if (!empty($this->demonstrationData)) {
+        if ($this->demonstrationData !== null) {
             return $this->demonstrationData;
         }
 
@@ -223,7 +223,6 @@ class StudentCompetency extends \ActiveRecord
 
             return $this->demonstrationData = $data;
         } catch (\Exception $e) {
-            throw $e;
             return [];
         }
     }
@@ -231,7 +230,7 @@ class StudentCompetency extends \ActiveRecord
     private $effectiveDemonstrationsData;
     public function getEffectiveDemonstrationsData()
     {
-        if (!empty($this->effectiveDemonstrationsData)) {
+        if ($this->effectiveDemonstrationsData !== null) {
             return $this->effectiveDemonstrationsData;
         }
 
@@ -258,7 +257,7 @@ class StudentCompetency extends \ActiveRecord
     public function getDemonstrationsLogged()
     {
 
-        if (!empty($this->demonstrationsLogged)) {
+        if ($this->demonstrationsLogged !== null) {
             return $this->demonstrationsLogged;
         }
 
@@ -285,7 +284,7 @@ class StudentCompetency extends \ActiveRecord
     private $demonstrationsComplete;
     public function getDemonstrationsComplete()
     {
-        if (!empty($this->demonstrationsComplete)) {
+        if ($this->demonstrationsComplete !== null) {
             return $this->demonstrationsComplete;
         }
 
@@ -315,7 +314,7 @@ class StudentCompetency extends \ActiveRecord
     private $demonstrationsAverage;
     public function getDemonstrationsAverage()
     {
-        if (!empty($this->demonstrationsAverage)) {
+        if ($this->demonstrationsAverage !== null) {
             return $this->demonstrationsAverage;
         }
 
