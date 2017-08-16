@@ -228,6 +228,14 @@ class StudentCompetency extends \ActiveRecord
         }
     }
 
+    protected static function sortEffectiveDemonstrations($a, $b)
+    {
+        if ($a['DemonstratedLevel'] == $b['DemonstratedLevel']) {
+            return 0;
+        }
+        return ($a['DemonstratedLevel'] < $b['DemonstratedLevel']) ? -1 : 1;
+    }
+
     private $effectiveDemonstrationsData;
     public function getEffectiveDemonstrationsData()
     {
@@ -238,12 +246,7 @@ class StudentCompetency extends \ActiveRecord
         $demonstrationsData = $this->getDemonstrationData();
 
         foreach ($demonstrationsData as $skillId => &$demonstrationData) {
-            $sort = [];
-            foreach ($demonstrationData as $key => $row) {
-                $sort[$key]  = $row['DemonstratedLevel'];
-            }
-            // sort demonstrations by highest level
-            array_multisort($sort, SORT_DESC, $demonstrationData);
+            uasort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
 
             $Skill = Skill::getByID($skillId);
             $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
