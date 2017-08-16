@@ -82,7 +82,6 @@ class StudentCompetency extends \ActiveRecord
         'effectiveDemonstrationsData' => [
             'getter' => 'getEffectiveDemonstrationsData'
         ]
-
     ];
 
     public function getCompletion()
