@@ -104,7 +104,7 @@ class StudentCompetency extends \ActiveRecord
             ' CAST( '.
                 'REPLACE( '.
             '       IFNULL ( '.
-            '           JSON_EXTRACT(DemonstrationsRequired, CONCAT(\'$."\', %u, \'"\')), '.
+            '           JSON_EXTRACT(DemonstrationsRequired, "$.\"%u\""), '.
             '           JSON_EXTRACT(DemonstrationsRequired, "$.default")'.
             '       ), '.
             '   \'"\', ' .
