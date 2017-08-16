@@ -275,8 +275,7 @@ class StudentCompetency extends \ActiveRecord
                     $skillCount++;
                 }
             }
-            // ?
-            $count += min($skillCount, $Skill->getDemonstrationsRequiredByLevel($this->Level));
+            $count += $skillCount;
         }
 
         return $this->demonstrationsLogged = $count;
@@ -291,7 +290,7 @@ class StudentCompetency extends \ActiveRecord
         }
 
         $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
-        $count = 0;
+        $this->demonstrationsComplete = 0;
         foreach ($effectiveDemonstrationsData as $skillId => $demonstrationData) {
             $Skill = Skill::getByID($skillId);
             $skillCount = 0;
@@ -307,10 +306,10 @@ class StudentCompetency extends \ActiveRecord
                 $skillCount = min($Skill->getDemonstrationsRequiredByLevel($this->Level), $skillCount);
             }
 
-            $count += $skillCount;
+            $this->demonstrationsComplete += $skillCount;
         }
 
-        return $this->demonstrationsComplete = $count;
+        return $this->demonstrationsComplete;
     }
 
     private $demonstrationsAverage;
@@ -321,7 +320,6 @@ class StudentCompetency extends \ActiveRecord
         }
 
         $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
-        $average = null;
         $totalScore = 0;
 
         foreach ($effectiveDemonstrationsData as $skillId => $demonstrationsData) {
@@ -333,10 +331,10 @@ class StudentCompetency extends \ActiveRecord
         }
 
         if ($this->getDemonstrationsLogged()) {
-            $average = $totalScore / $this->getDemonstrationsLogged();
+            $this->demonstrationsAverage = $totalScore / $this->getDemonstrationsLogged();
         }
 
-        return $this->demonstrationsAverage = $average;
+        return $this->demonstrationsAverage;
     }
 
     public function isLevelComplete()
@@ -380,10 +378,8 @@ class StudentCompetency extends \ActiveRecord
 
                 return $lastRating['DemonstratedLevel'] - $firstRating['DemonstratedLevel'];
             }
+        }, $demonstrationData));
 
-        }, $demonstrationData, array_keys($demonstrationData));
-
-        array_filter($growthData);
         $totalGrowthSkills = count($growthData);
 
         if (count($growthData) * 2 < $totalSkills) {
