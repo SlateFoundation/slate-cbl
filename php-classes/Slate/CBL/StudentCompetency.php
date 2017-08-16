@@ -3,6 +3,7 @@
 namespace Slate\CBL;
 
 use DB;
+use TableNotFoundException;
 
 use Slate\People\Student;
 
@@ -222,7 +223,7 @@ class StudentCompetency extends \ActiveRecord
             );
 
             return $this->demonstrationData = $data;
-        } catch (\Exception $e) {
+        } catch (TableNotFoundException $e) {
             return [];
         }
     }
