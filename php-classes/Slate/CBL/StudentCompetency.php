@@ -355,18 +355,23 @@ class StudentCompetency extends \ActiveRecord
         );
     }
 
+    private $competencyGrowth;
     public function getGrowth()
     {
+        if ($this->competencyGrowth !== null) {
+            return $this->competencyGrowth;
+        }
+
         if (empty($this->BaselineRating)) {
-            return null;
+            return $this->competencyGrowth = null;
         }
 
         $demonstrationData = $this->getDemonstrationData();
 
         $totalSkills = $this->Competency->getTotalSkills();
 
-        $growthData = array_map(function($demonstrations, $skillId) {
-            if (count($demonstrations) === 1 && empty($this->BaselineRating)) {
+        $growthData = array_filter(array_map(function($demonstrations) {
+            if (count($demonstrations) === 1 && $this->BaselineRating) {
                 return null;
             }
 
@@ -386,7 +391,7 @@ class StudentCompetency extends \ActiveRecord
             return null;
         }
 
-        return array_sum($growthData) / $totalSkills;
+        return $this->competencyGrowth = array_sum($growthData) / $totalSkills;
     }
 
 
