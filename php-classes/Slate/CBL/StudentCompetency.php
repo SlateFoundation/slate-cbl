@@ -123,21 +123,19 @@ class StudentCompetency extends \ActiveRecord
         );
         $validSkillIds = array_column($validSkills, 'ID');
 
-        $ratedSkills = DB::oneValue(
-
-            'SELECT SUM(IF(skillRatings.total > 0, 1, 0)) as totalRatings '.
-            '  FROM ( '.
-                    'SELECT COUNT(*) AS total '.
-            		'  FROM `%1$s` ds '.
-            		'  JOIN `%2$s` d '.
-            		'	ON d.ID = ds.DemonstrationID '.
-            		' WHERE ds.SkillID IN (%3$s) '.
-            		'   AND ds.TargetLevel = %4$u '.
-            		'   AND ds.DemonstratedLevel > 0 '.
-            		'   AND d.StudentID = %5$u '.
-            		'   AND ds.Override = false '.
-            		' GROUP BY SkillID '.
-            ' ) AS skillRatings ',
+        $ratedSkills = DB::valuesTable(
+            'SkillID',
+            'skillRatings',
+            'SELECT COUNT(*) AS skillRatings, SkillID '.
+        	'  FROM `%1$s` ds '.
+    		'  JOIN `%2$s` d '.
+    		'	ON d.ID = ds.DemonstrationID '.
+    		' WHERE ds.SkillID IN (%3$s) '.
+    		'   AND ds.TargetLevel = %4$u '.
+    		'   AND ds.DemonstratedLevel > 0 '.
+    		'   AND d.StudentID = %5$u '.
+    		'   AND ds.Override = false '.
+    		' GROUP BY SkillID ',
             [
                 DemonstrationSkill::$tableName,
                 Demonstration::$tableName,
@@ -147,9 +145,11 @@ class StudentCompetency extends \ActiveRecord
             ]
         );
 
-        // check if each skill has been rated atleast once for the current level
-        if ((int)$ratedSkills !== count($validSkills)) {
-            return null;
+        // starting rating can not be calculated if each required skill has not been rated at least once
+        foreach ($validSkillIds as $skillId) {
+            if (empty($ratedSkills[$skillId])) {
+                return null;
+            }
         }
 
         // get the first rating (by date) for each skill
