@@ -278,7 +278,6 @@ class StudentCompetency extends \ActiveRecord
         }
 
         return $this->demonstrationsLogged = $count;
-
     }
 
     private $demonstrationsComplete;
