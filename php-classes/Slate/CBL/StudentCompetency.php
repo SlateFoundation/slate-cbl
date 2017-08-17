@@ -100,7 +100,8 @@ class StudentCompetency extends \ActiveRecord
 
     public function calculateStartingRating()
     {
-        $validSkills = DB::allRecords(
+        $validSkills = DB::table(
+            'ID',
             '
             SELECT ID,
                 REPLACE(
@@ -121,7 +122,7 @@ class StudentCompetency extends \ActiveRecord
                 $this->Competency->ID
             ]
         );
-        $validSkillIds = array_column($validSkills, 'ID');
+        $validSkillIds = array_keys($validSkills);
 
         $ratedSkills = DB::valuesTable(
             'SkillID',
