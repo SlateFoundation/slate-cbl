@@ -100,99 +100,47 @@ class StudentCompetency extends \ActiveRecord
 
     public function calculateStartingRating()
     {
-        $validSkills = DB::table(
-            'ID',
+        $ratings = DB::valuesTable(
+            'SkillID',
+            'Rating',
             '
-            SELECT ID,
-                REPLACE(
-                   IFNULL (
-                       JSON_EXTRACT(DemonstrationsRequired, \'$."%u"\'),
-                       JSON_EXTRACT(DemonstrationsRequired, "$.default")
-                   ),
-                   \'"\',
-                   ""
-                ) AS DemonstrationsRequirements
-              FROM `%s`
-             WHERE CompetencyID = %u
+            SELECT S.ID AS SkillID,
+                IFNULL(
+                    JSON_EXTRACT(DemonstrationsRequired, \'$."%4$u"\'),
+                    JSON_EXTRACT(DemonstrationsRequired, "$.default")
+                ) AS DemonstrationsRequirements,
+                (
+                    SELECT DS.DemonstratedLevel
+                    FROM `%3$s` DS
+                    JOIN `%2$s` D
+                        ON D.ID = DS.DemonstrationID
+                    WHERE DS.SkillID = S.ID
+                    AND DS.TargetLevel = %4$u
+                    AND DS.DemonstratedLevel > 0
+                    AND D.StudentID = %5$u
+                    ORDER BY D.Demonstrated, D.ID
+                    LIMIT 1
+                ) AS Rating
+              FROM `%1$s` S
+             WHERE S.CompetencyID = %6$u
             HAVING DemonstrationsRequirements > 0
             ',
             [
-                $this->Level,
-                Skill::$tableName,
-                $this->Competency->ID
-            ]
-        );
-        $validSkillIds = array_keys($validSkills);
-
-        $ratedSkills = DB::valuesTable(
-            'SkillID',
-            'skillRatings',
-            '
-            SELECT COUNT(*) AS skillRatings, SkillID
-        	  FROM `%1$s` ds
-    		  JOIN `%2$s` d
-    			ON d.ID = ds.DemonstrationID
-    		 WHERE ds.SkillID IN (%3$s)
-    		   AND ds.TargetLevel = %4$u
-    		   AND ds.DemonstratedLevel > 0
-    		   AND d.StudentID = %5$u
-    		   AND ds.Override = false
-    		 GROUP BY SkillID
-            ',
-            [
-                DemonstrationSkill::$tableName,
-                Demonstration::$tableName,
-                join(', ', $validSkillIds),
-                $this->Level,
-                $this->StudentID
+                Skill::$tableName, // %1$s
+                Demonstration::$tableName, // %2$s
+                DemonstrationSkill::$tableName, // %3$s
+                $this->Level, // %4$u
+                $this->StudentID, // %5$u
+                $this->CompetencyID // %6$u
             ]
         );
 
-        // starting rating can not be calculated if each required skill has not been rated at least once
-        foreach ($validSkillIds as $skillId) {
-            if (empty($ratedSkills[$skillId])) {
-                return null;
-            }
+        $ratingsCount = count(array_filter($ratings));
+        if ($ratingsCount != count($ratings)) {
+            return null;
         }
 
-        // get the first rating (by date) for each skill
-        $demonstrationSkillRatings = DB::allValues(
-            'skillRatings',
-            '
-            SELECT ds.DemonstratedLevel as skillRatings
-        	  FROM `%1$s` ds
-    		  JOIN `%2$s` d
-    		    ON d.ID = ds.DemonstrationID
-    		 INNER JOIN (
-                    SELECT MIN(demo.Demonstrated) as Created, SkillID
-    		          FROM `%1$s` demoskill
-    		          JOIN `%2$s` demo
-    		            ON demo.ID = demoskill.DemonstrationID
-    		         WHERE TargetLevel = %3$u
-                       AND DemonstratedLevel > 0
-                       AND Override = false
-                       AND demoskill.SkillID IN (%4$s)
-                       AND demo.StudentID = %5$u
-                     GROUP BY SkillID
-    		  ) ds2
-    		    ON ds2.SkillID = ds.SkillID
-    		   AND ds2.Created = d.Demonstrated
-    		 WHERE ds.SkillID IN (%4$s)
-    		   AND ds.TargetLevel = %3$u
-    		   AND ds.DemonstratedLevel > 0
-    		   AND d.StudentID = %5$u
-    		   AND ds.Override = false
-            ',
-            [
-                DemonstrationSkill::$tableName,
-                Demonstration::$tableName,
-                $this->Level,
-                join(', ', $validSkillIds),
-                $this->StudentID
-            ]
-        );
-
-        return array_sum($demonstrationSkillRatings) / count($validSkills);
+        return array_sum($ratings) / $ratingsCount;
     }
 
     private $demonstrationData;
