@@ -127,15 +127,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
             if ($StudentCompetency) {
                 $completions[] = $StudentCompetency->getCompletion();
             } else {
-                $completions[] = [
-                    'StudentID' => $Student->ID,
-                    'CompetencyID' => $Competency->ID,
-                    'currentLevel' => null,
-                    'baselineRating' => null,
-                    'demonstrationsLogged' => 0,
-                    'demonstrationsComplete' => 0,
-                    'demonstrationsAverage' => null
-                ];
+                $completions[] = StudentCompetency::getBlankCompletion($Student, $Competency);
             }
         }
 

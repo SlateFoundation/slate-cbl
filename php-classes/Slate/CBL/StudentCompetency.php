@@ -389,4 +389,17 @@ class StudentCompetency extends \ActiveRecord
 
         return false;
     }
+
+    public static function getBlankCompletion(Student $Student, Competency $Competency)
+    {
+        return [
+                'StudentID' => $Student->ID,
+                'CompetencyID' => $Competency->ID,
+                'currentLevel' => null,
+                'baselineRating' => null,
+                'demonstrationsLogged' => 0,
+                'demonstrationsComplete' => 0,
+                'demonstrationsAverage' => null
+            ];
+    }
 }
