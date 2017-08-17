@@ -122,7 +122,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
         $completions = [];
 
         foreach ($competencies AS $Competency) {
-            $StudentCompetency = StudentCompetency::getCurrentForStudent($Competency, $Student);
+            $StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
 
             if ($StudentCompetency) {
                 $completions[] = $StudentCompetency->getCompletion();

@@ -7,7 +7,7 @@ use Slate\CBL\StudentCompetency;
 $Student = $_EVENT['Record']->Demonstration->Student;
 $Competency = $_EVENT['Record']->Skill->Competency;
 
-$StudentCompetency = StudentCompetency::getCurrentForStudent($Competency, $Student);
+$StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
 
 if (
         $StudentCompetency &&

@@ -197,35 +197,34 @@ class StudentCompetency extends \ActiveRecord
     private $demonstrationData;
     public function getDemonstrationData()
     {
-        if ($this->demonstrationData !== null) {
-            return $this->demonstrationData;
+        if ($this->demonstrationData === null) {
+            try {
+                $this->demonstrationData = DB::arrayTable(
+                    'SkillID',
+                    '
+                    SELECT DemonstrationSkill.*,
+                           Demonstration.Demonstrated AS DemonstrationDate
+                      FROM `%s` DemonstrationSkill
+                      JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration
+                        ON Demonstration.ID = DemonstrationSkill.DemonstrationID
+                     WHERE DemonstrationSkill.SkillID IN (%s)
+                       AND DemonstrationSkill.TargetLevel = %u
+                     ORDER BY SkillID, DemonstrationDate, DemonstrationID
+                    ',
+                    [
+                        DemonstrationSkill::$tableName,
+                        Demonstration::$tableName,
+                        $this->StudentID,
+                        join(', ', $this->Competency->getSkillIds()),
+                        $this->Level
+                    ]
+                );
+            } catch (TableNotFoundException $e) {
+                $this->demonstrationData = [];
+            }
         }
 
-        try {
-            $data = DB::arrayTable(
-                'SkillID',
-                'SELECT '.
-                '    DemonstrationSkill.*, '.
-                '    Demonstration.Demonstrated AS DemonstrationDate '.
-                '  FROM `%s` DemonstrationSkill '.
-                '  JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration '.
-                '    ON Demonstration.ID = DemonstrationSkill.DemonstrationID '.
-                ' WHERE DemonstrationSkill.SkillID IN (%s) '.
-                '   AND DemonstrationSkill.TargetLevel = %u '.
-                ' ORDER BY SkillID, DemonstrationDate, DemonstrationID',
-                [
-                    DemonstrationSkill::$tableName,
-                    Demonstration::$tableName,
-                    $this->StudentID,
-                    join(', ', $this->Competency->getSkillIds()),
-                    $this->Level
-                ]
-            );
-
-            return $this->demonstrationData = $data;
-        } catch (TableNotFoundException $e) {
-            return [];
-        }
+        return $this->demonstrationData;
     }
 
     protected static function sortEffectiveDemonstrations($a, $b)
@@ -239,72 +238,65 @@ class StudentCompetency extends \ActiveRecord
     private $effectiveDemonstrationsData;
     public function getEffectiveDemonstrationsData()
     {
-        if ($this->effectiveDemonstrationsData !== null) {
-            return $this->effectiveDemonstrationsData;
+        if ($this->effectiveDemonstrationsData === null) {
+            $demonstrationsData = $this->getDemonstrationData();
+
+            foreach ($demonstrationsData as $skillId => &$demonstrationData) {
+                uasort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
+
+                $Skill = Skill::getByID($skillId);
+                $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
+
+                array_splice($demonstrationData, $demonstrationsRequired);
+            }
+            $this->effectiveDemonstrationsData = $demonstrationsData;
         }
 
-        $demonstrationsData = $this->getDemonstrationData();
-
-        foreach ($demonstrationsData as $skillId => &$demonstrationData) {
-            uasort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
-
-            $Skill = Skill::getByID($skillId);
-            $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
-
-            array_splice($demonstrationData, $demonstrationsRequired);
-        }
-
-        return $this->effectiveDemonstrationsData = $demonstrationsData;
+        return $this->effectiveDemonstrationsData;
     }
 
     private $demonstrationsLogged;
     public function getDemonstrationsLogged()
     {
-        if ($this->demonstrationsLogged !== null) {
-            return $this->demonstrationsLogged;
-        }
-
-        $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
-        $count = 0;
-        foreach ($effectiveDemonstrationsData as $skillId => $demonstrationData) {
-            $Skill = Skill::getByID($skillId);
-            $skillCount = 0;
-            foreach ($demonstrationData as $demonstration) {
-                if (empty($demonstration['Override']) && !empty($demonstration['DemonstratedLevel'])) {
-                    $skillCount++;
+        if ($this->demonstrationsLogged === null) {
+            $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
+            $this->getDemonstrationsLogged = 0;
+            foreach ($effectiveDemonstrationsData as $skillId => $demonstrationData) {
+                $Skill = Skill::getByID($skillId);
+                $skillCount = 0;
+                foreach ($demonstrationData as $demonstration) {
+                    if (empty($demonstration['Override']) && !empty($demonstration['DemonstratedLevel'])) {
+                        $skillCount++;
+                    }
                 }
+                $this->demonstrationsLogged += $skillCount;
             }
-            $count += $skillCount;
         }
 
-        return $this->demonstrationsLogged = $count;
+        return $this->demonstrationsLogged;
     }
 
     private $demonstrationsComplete;
     public function getDemonstrationsComplete()
     {
-        if ($this->demonstrationsComplete !== null) {
-            return $this->demonstrationsComplete;
-        }
-
-        $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
-        $this->demonstrationsComplete = 0;
-        foreach ($effectiveDemonstrationsData as $skillId => $demonstrationData) {
-            $Skill = Skill::getByID($skillId);
-            $skillCount = 0;
-            foreach ($demonstrationData as $demonstration) {
-                if (!empty($demonstration['DemonstratedLevel'])) {
-                    if ($demonstration['Override']) {
-                        $skillCount += $Skill->getDemonstrationsRequiredByLevel($this->Level);
-                    } else {
-                        $skillCount++;
+        if ($this->demonstrationsComplete === null) {
+            $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
+            $this->demonstrationsComplete = 0;
+            foreach ($effectiveDemonstrationsData as $skillId => $demonstrationData) {
+                $Skill = Skill::getByID($skillId);
+                $skillCount = 0;
+                foreach ($demonstrationData as $demonstration) {
+                    if (!empty($demonstration['DemonstratedLevel'])) {
+                        if ($demonstration['Override']) {
+                            $skillCount += $Skill->getDemonstrationsRequiredByLevel($this->Level);
+                        } else {
+                            $skillCount++;
+                        }
                     }
+                    $skillCount = min($Skill->getDemonstrationsRequiredByLevel($this->Level), $skillCount);
                 }
-
-                $skillCount = min($Skill->getDemonstrationsRequiredByLevel($this->Level), $skillCount);
+                $this->demonstrationsComplete += $skillCount;
             }
-
-            $this->demonstrationsComplete += $skillCount;
         }
 
         return $this->demonstrationsComplete;
@@ -313,23 +305,19 @@ class StudentCompetency extends \ActiveRecord
     private $demonstrationsAverage;
     public function getDemonstrationsAverage()
     {
-        if ($this->demonstrationsAverage !== null) {
-            return $this->demonstrationsAverage;
-        }
-
-        $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
-        $totalScore = 0;
-
-        foreach ($effectiveDemonstrationsData as $skillId => $demonstrationsData) {
-            foreach ($demonstrationsData as $demonstration) {
-                if (empty($demonstration['Override'])) {
-                    $totalScore += $demonstration['DemonstratedLevel'];
+        if ($this->demonstrationsAverage === null) {
+            if ($this->getDemonstrationsLogged()) {
+                $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
+                $totalScore = 0;
+                foreach ($effectiveDemonstrationsData as $skillId => $demonstrationsData) {
+                    foreach ($demonstrationsData as $demonstration) {
+                        if (empty($demonstration['Override'])) {
+                            $totalScore += $demonstration['DemonstratedLevel'];
+                        }
+                    }
                 }
+                $this->demonstrationsAverage = $totalScore / $this->getDemonstrationsLogged();
             }
-        }
-
-        if ($this->getDemonstrationsLogged()) {
-            $this->demonstrationsAverage = $totalScore / $this->getDemonstrationsLogged();
         }
 
         return $this->demonstrationsAverage;
@@ -356,51 +344,44 @@ class StudentCompetency extends \ActiveRecord
     private $competencyGrowth;
     public function getGrowth()
     {
-        if ($this->competencyGrowth !== null) {
-            return $this->competencyGrowth;
-        }
+        if ($this->competencyGrowth === null && $this->BaselineRating) {
+            $demonstrationData = $this->getDemonstrationData();
 
-        if (empty($this->BaselineRating)) {
-            return $this->competencyGrowth = null;
-        }
+            $totalSkills = $this->Competency->getTotalSkills();
 
-        $demonstrationData = $this->getDemonstrationData();
+            $growthData = array_filter(array_map(function($demonstrations) {
+                if (count($demonstrations) === 1 && $this->BaselineRating) {
+                    return null;
+                }
 
-        $totalSkills = $this->Competency->getTotalSkills();
+                $lastRating = end($demonstrations);
+                if ($this->BaselineRating) {
+                    return $lastRating['DemonstratedLevel'] - floatval($this->BaselineRating);
+                } else {
+                    $firstRating = reset($demonstrations);
 
-        $growthData = array_filter(array_map(function($demonstrations) {
-            if (count($demonstrations) === 1 && $this->BaselineRating) {
-                return null;
+                    return $lastRating['DemonstratedLevel'] - $firstRating['DemonstratedLevel'];
+                }
+            }, $demonstrationData));
+
+            $totalGrowthSkills = count($growthData);
+            if (false === (count($growthData) * 2 < $totalSkills)) {
+                $this->competencyGrowth = array_sum($growthData) / $totalSkills;
             }
-
-            $lastRating = end($demonstrations);
-            if ($this->BaselineRating) {
-                return $lastRating['DemonstratedLevel'] - floatval($this->BaselineRating);
-            } else {
-                $firstRating = reset($demonstrations);
-
-                return $lastRating['DemonstratedLevel'] - $firstRating['DemonstratedLevel'];
-            }
-        }, $demonstrationData));
-
-        $totalGrowthSkills = count($growthData);
-
-        if (count($growthData) * 2 < $totalSkills) {
-            return null;
         }
 
-        return $this->competencyGrowth = array_sum($growthData) / $totalSkills;
+        return $this->competencyGrowth;
     }
 
 
-    public static function getCurrentForStudent(Competency $Competency, Student $Student)
+    public static function getCurrentForStudent(Student $Student, Competency $Competency)
     {
         return static::getByWhere(['StudentID' => $Student->ID, 'CompetencyID' => $Competency->ID], ['order' => ['Level' => 'DESC']]);
     }
 
     public static function isCurrentLevelComplete(Student $Student, Competency $Competency)
     {
-        $StudentCompetency = static::getCurrentForStudent($Competency, $Student);
+        $StudentCompetency = static::getCurrentForStudent($Student, $Competency);
 
         if ($StudentCompetency) {
             return $StudentCompetency->isLevelComplete();
