@@ -100,6 +100,7 @@ class API
         // configure batch request body
         foreach ($Requests as $requestKey => $Request) {
             if ($Request instanceof MessageInterface) {
+                $requestQuery = $Request->getUri()->getQuery();
                 $body[] = sprintf(
                     'Content-Type: application/http%1$s'.
                     'content-id: %2$s%1$s'.
@@ -112,7 +113,7 @@ class API
                     PHP_EOL, // 1
                     $requestKey, // 2
                     $Request->getMethod(), // 3
-                    $Request->getUri()->getPath() . "?quotaUser=$requestKey". ($Request->getUri()->getQuery() ? '&'.$Request->getUri()->getQuery() : ''), // 4
+                    $Request->getUri()->getPath() . "?quotaUser=$requestKey". ($requestQuery ? '&'.$requestQuery : ''), // 4
                     join(PHP_EOL, static::formatHeaders($Request->getHeaders())), // 5
                     empty($Request->getBody()) ? '' : (string)$Request->getBody(), // 6
                     $boundary
