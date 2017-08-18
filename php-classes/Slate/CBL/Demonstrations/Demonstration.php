@@ -115,8 +115,11 @@ class Demonstration extends \VersionedRecord
         $completions = [];
         foreach ($competencies AS $Competency) {
             $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $Competency);
-
-            $completions[] = $StudentCompetency->getCompletion();
+            if ($StudentCompetency) {
+                $completions[] = $StudentCompetency->getCompletion();
+            } else {
+                $completions[] = StudentCompetency::getBlankCompletion($this->Student, $Competency);
+            }
         }
 
         return $completions;
