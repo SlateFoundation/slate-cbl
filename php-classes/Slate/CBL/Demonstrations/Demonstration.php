@@ -2,9 +2,11 @@
 
 namespace Slate\CBL\Demonstrations;
 
-use Slate\People\Student;
 use Slate\CBL\Competency;
+use Slate\CBL\StudentCompetency;
 use Slate\CBL\Skill;
+
+use Slate\People\Student;
 
 class Demonstration extends \VersionedRecord
 {
