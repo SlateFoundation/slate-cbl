@@ -129,7 +129,7 @@ class DriveFile extends \ActiveRecord
 
     public function getFileDetails($ignoreCache = false)
     {
-        if (empty($ignoreCache) && $this->details) {
+        if ($ignoreCache !== false && $this->details) {
             return $this->details;
         }
 

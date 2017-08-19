@@ -162,7 +162,8 @@ Ext.define('Slate.cbl.model.Task', {
             'Skills',
             'Attachments.File',
             'StudentTasks'
-        ]
+        ],
+        timeout: 180000 // extended timeout for handling attachment permission requests
     },
 
     validators: [{

@@ -114,7 +114,7 @@ class UserChangeMonitorRequestHandler extends \RecordsRequestHandler
 
                 try {
                     $updatedFiles[] = $DriveFile;
-                    $DriveFile->updateGoogleFileDetails();
+                    $DriveFile->updateFileDetails();
                     $DriveFile->save();
                 } catch (\Exception $e) {
                     if ($change['removed'] || $e->getCode() === $DriveFile::GOOGLE_EXCEPTION_CODES['file-not-found']) {

@@ -9,8 +9,5 @@ $Attachment = $_EVENT['Record'];
 
 // student attached a drive file
 if ($Attachment->isNew && $Attachment->Context && $Attachment->Context->isA(StudentTask::class) && $Attachment->Creator && $Attachment->Creator->isA(Student::class)) {
-    foreach ($Attachment->Context->Section->Teachers as $Teacher) {
-        $Attachment->syncUserPermissions($Teacher);
-    }
-    $Attachment->syncDefaultUsersPermissions();
+    GoogleDriveFile::syncUsersPermissions([$Attachment]);
 }
