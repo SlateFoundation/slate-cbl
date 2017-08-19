@@ -238,9 +238,9 @@ class API
                         isset($responseBody['error']) &&
                         is_array($responseBody['error']) &&
                         isset($responseBody['error']['code']) &&
-                        isset($responseBody['error']['reason']) &&
+                        isset($responseBody['error']['errors'][0]['reason']) &&
                         isset(static::$retryResponseCodes[$responseBody['error']['code']]) &&
-                        in_array($responseBody['error']['reason'], static::$retryResponseCodes[$responseBody['error']['code']])
+                        in_array($responseBody['error']['errors'][0]['reason'], static::$retryResponseCodes[$responseBody['error']['code']])
                     ) {
                         $Logger->log(
                             LogLevel::WARNING,
