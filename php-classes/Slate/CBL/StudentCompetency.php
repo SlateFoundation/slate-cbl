@@ -305,7 +305,7 @@ class StudentCompetency extends \ActiveRecord
 
                 $lastRating = end($demonstrations);
                 if ($this->BaselineRating) {
-                    return $lastRating['DemonstratedLevel'] - floatval($this->BaselineRating);
+                    return $lastRating['DemonstratedLevel'] - $this->BaselineRating;
                 } else {
                     $firstRating = reset($demonstrations);
 
