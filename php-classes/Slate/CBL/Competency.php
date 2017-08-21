@@ -136,6 +136,16 @@ class Competency extends \VersionedRecord
         return $skillIds;
     }
 
+    private $totalSkills;
+    public function getTotalSkills($forceRefresh = false)
+    {
+        if ($this->totalSkills === null || $forceRefresh) {
+            $this->totalSkills = count($this->getSkillIds($forceRefresh));
+        }
+
+        return $this->totalSkills;
+    }
+
     public function getTotalDemonstrationsRequired($level = null, $forceRefresh = false)
     {
         $cacheKey = "cbl-competency/$this->ID/total-demonstrations-required";
@@ -184,98 +194,6 @@ class Competency extends \VersionedRecord
         return $levelTotals;
     }
 
-    public function getCompletionForStudent(Student $Student, $level = null, $demonstrationConditions = '')
-    {
-#        $cacheKey = "cbl-competency/$this->ID/student-completion/$Student->ID";
-#
-#        if (!$forceRefresh && false !== ($completion = Cache::fetch($cacheKey))) {
-#            return $completion;
-#        }
-        $currentLevel = $level ?: $this->getCurrentLevelForStudent($Student);
-        if ($currentLevel && !empty($this->Skills)) {
-            try {
-                DB::nonQuery('SET @num := 0, @skill := ""');
-
-                    $query =
-                    "SELECT ".
-                            "SUM(demonstrationsLogged) AS demonstrationsLogged, ".
-                            "SUM(demonstrationsComplete) AS demonstrationsComplete, ".
-                            "SUM(demonstrationsAverage * demonstrationsLogged) / SUM(demonstrationsLogged) AS demonstrationsAverage ".
-                      "FROM ( ".
-                            "SELECT ".
-                                    "COUNT(IF(Override, NULL, DemonstratedLevel)) AS demonstrationsLogged, ".
-                                    "LEAST(DemonstrationsRequired, SUM(IF(Override, DemonstrationsRequired, 1))) AS demonstrationsComplete, ".
-                                    "AVG(IF(Override, NULL, DemonstratedLevel)) AS demonstrationsAverage ".
-                              "FROM ( ".
-                                    "SELECT ".
-                                            "StudentDemonstrationSkill.TargetLevel, ".
-                                            "StudentDemonstrationSkill.DemonstratedLevel, ".
-                                            "StudentDemonstrationSkill.Override, ".
-                                            "@num := if(@skill = StudentDemonstrationSkill.SkillID, @num + 1, 1) AS rowNumber, ".
-                                            "@skill := StudentDemonstrationSkill.SkillID AS SkillID ".
-                                    "FROM ( ".
-                                         "SELECT ".
-                                                "DemonstrationSkill.TargetLevel, ".
-                                                "DemonstrationSkill.SkillID, ".
-                                                "DemonstrationSkill.DemonstratedLevel, ".
-                                                "DemonstrationSkill.Override ".
-                                           "FROM `%s` DemonstrationSkill ".
-                                           "JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration ".
-                                             "ON Demonstration.ID = DemonstrationSkill.DemonstrationID ".
-                                          "WHERE DemonstrationSkill.SkillID IN (%s) ".
-                                            "AND DemonstrationSkill.TargetLevel = %u ".
-                                            "AND DemonstrationSkill.DemonstratedLevel > 0 ".
-                                            "%s".
-                                         ") StudentDemonstrationSkill ".
-                                   "ORDER BY SkillID, DemonstratedLevel DESC ".
-                                  ") OrderedDemonstrationSkill ".
-                             "JOIN ( ".
-                                    "SELECT ".
-                                            "ID,".
-                                            "IFNULL(".
-                                                 "JSON_EXTRACT( ".
-                                                     "DemonstrationsRequired, CONCAT('$.\"', %s, '\"') ".
-                                                 "),".
-                                                 "DemonstrationsRequired->'$.default') AS DemonstrationsRequired FROM `%s` ".
-                                            ") Skill ".
-                                        "ON Skill.ID = OrderedDemonstrationSkill.SkillID ".
-                            "WHERE rowNumber <= Skill.DemonstrationsRequired ".
-                            "GROUP BY SkillID".
-                            ") SkillCompletion";
-                $parameters = [
-                    Demonstrations\DemonstrationSkill::$tableName,
-                    Demonstrations\Demonstration::$tableName,
-                    $Student->ID,
-                    implode(',', $this->getSkillIds()),
-                    $currentLevel,
-                    ($demonstrationConditions ? 'AND ' . $demonstrationConditions . ' ' : ''),
-                    $currentLevel,
-                    Skill::$tableName
-                ];
-
-                $completion = DB::oneRecord($query, $parameters);
-
-                // cast strings to floats
-                return [
-                    'currentLevel' => $currentLevel,
-                    'demonstrationsLogged' => intval($completion['demonstrationsLogged']),
-                    'demonstrationsComplete' => intval($completion['demonstrationsComplete']),
-                    'demonstrationsAverage' => $completion['demonstrationsAverage'] == null ? null : floatval($completion['demonstrationsAverage'])
-                ];
-            } catch (TableNotFoundException $e) {}
-        }
-
-        // store in cache (will require cache-refreshers in relevant save methods)
-#        Cache::store($cacheKey, $completion);
-
-        return [
-            'demonstrationsLogged' => 0,
-            'demonstrationsComplete' => 0,
-            'demonstrationsAverage' => null,
-            'currentLevel' => $currentLevel
-        ];
-    }
-
     public static function getAllByListIdentifier($identifier)
     {
         if (!$identifier) {
@@ -293,18 +211,4 @@ class Competency extends \VersionedRecord
         throw new \Exception('Invalid list identifier for competencies');
     }
 
-    public function getCurrentLevelForStudent(Student $Student)
-    {
-        try {
-            $level = \DB::oneValue(
-                'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
-                [
-                    $Student->ID,
-                    $this->ID
-                ]
-            );
-        } catch (TableNotFoundException $e) {}
-
-        return $level ? intval($level) : null;
-    }
 }
