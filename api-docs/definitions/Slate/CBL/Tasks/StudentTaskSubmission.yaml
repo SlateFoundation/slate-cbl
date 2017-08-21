@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\Tasks\StudentTaskSubmission
+description: |
+  A student task submission records each time a student submits or re-submits a [student task](#models::slate-cbl-tasks-studenttask) for grading.

@@ -20,6 +20,7 @@ $headers = [
     'Total ER',
     'Total Opportunities',
     'Completed ER',
+    'Rated ER',
     'Missed ER'
 ];
 
@@ -91,12 +92,17 @@ foreach ($students as $student) {
             $totalER = 0;
             $totalOpportunities = 0;
             $totalCompletedOpportunities = 0;
+            $totalRatedOpportunities = 0;
             $totalMissedOpportunities = 0;
             $totalGrowth = 0;
             $totalPerformanceLevel = 0;
             $validPerformanceLevels = 0;
+            $totalCompetencyGrowth = 0;
+            $totalCompetenciesWithGrowth = 0;
 
             foreach ($studentCompetencies as $studentCompetency) {
+                $totalGrowth = 0;
+                $totalSkillsWithGrowth = 0;
                 $competency = $studentCompetency->Competency;
 
                 // no foreign key enforcemnt, client is manually deleting competency records, skip this studentCompetency if no associated competency
@@ -124,6 +130,7 @@ foreach ($students as $student) {
                     $growth = 0;
                     $skillsWithGrowth = 0;
                     $completedOpportunities = 0;
+                    $ratedOpportunities = 0;
                     $missedOpportunities = 0;
                     $demonstrationsRequired = 0;
 
@@ -139,17 +146,6 @@ foreach ($students as $student) {
                             'order' => 'Created ASC'
                         ]);
 
-                        // must have at least 2 non-zero logs to be counted for growth
-                        if (count($nonMissingDemonstrationSkills) >=2) {
-                            $skillsWithGrowth ++;
-
-                            // Our query is ordered by date so we can use first and last record. (breaking these out into vars for code clarity)
-                            $earliestLogLevel = $nonMissingDemonstrationSkills[0]->DemonstratedLevel;
-                            $latestLogLevel = $nonMissingDemonstrationSkills[count($nonMissingDemonstrationSkills)-1]->DemonstratedLevel;
-
-                            // growth is the difference between the first and last log.
-                            $growth = $growth + ($latestLogLevel - $earliestLogLevel);
-                        }
 
                         $nonMissingDemonstrationSkills = [];
                         foreach ($demonstrationSkills as $demonstrationSkill) {
@@ -174,7 +170,21 @@ foreach ($students as $student) {
                             if ($demonstrationSkill->Override) {
                                 $completedOpportunities = $demonstrationsRequired;
                                 $missedOpportunities = 0;
+                            } elseif ($demonstrationSkill->DemonstratedLevel > 0 && $ratedOpportunities < $demonstrationsRequired) {
+                                $ratedOpportunities++;
                             }
+                        }
+
+                        // must have at least 2 non-zero logs to be counted for growth
+                        if (count($nonMissingDemonstrationSkills) >= 2) {
+                            $skillsWithGrowth++;
+
+                            // Our query is ordered by date so we can use first and last record. (breaking these out into vars for code clarity)
+                            $earliestLogLevel = $nonMissingDemonstrationSkills[0]->DemonstratedLevel;
+                            $latestLogLevel = $nonMissingDemonstrationSkills[count($nonMissingDemonstrationSkills)-1]->DemonstratedLevel;
+
+                            // growth is the difference between the first and last log.
+                            $growth = $growth + ($latestLogLevel - $earliestLogLevel);
 
                         }
 
@@ -182,8 +192,17 @@ foreach ($students as $student) {
                         $totalSkillsWithGrowth += $skillsWithGrowth;
                         $totalCompletedOpportunities += $completedOpportunities;
                         $totalMissedOpportunities += min($missedOpportunities, $demonstrationsRequired - $completedOpportunities);
+                        $totalRatedOpportunities += $ratedOpportunities;
                     }
 
+                }
+
+                if ($totalSkillsWithGrowth > 0) {
+                    $totalCompetencyGrowth += $totalGrowth / $totalSkillsWithGrowth;
+                }
+
+                if ($totalSkillsWithGrowth> 0) {
+                    $totalCompetenciesWithGrowth++;
                 }
 
             }
@@ -192,8 +211,10 @@ foreach ($students as $student) {
                 $totalPerformanceLevel = $totalPerformanceLevel / $validPerformanceLevels;
             }
 
-            if ($totalSkillsWithGrowth > 0) {
-                $totalGrowth = $totalGrowth / $totalSkillsWithGrowth;
+            if ($totalCompetenciesWithGrowth > 0) {
+                $totalGrowth = $totalCompetencyGrowth / $totalCompetenciesWithGrowth;
+            } else {
+                $totalGrowth = 0; // can't be calculated, zero it so we don't get growth from last row
             }
 
             $progress = 0;
@@ -213,6 +234,7 @@ foreach ($students as $student) {
                 $totalER,
                 $totalOpportunities,
                 $totalCompletedOpportunities,
+                $totalRatedOpportunities,
                 $totalMissedOpportunities
             ];
 

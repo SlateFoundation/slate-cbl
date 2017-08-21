@@ -42,3 +42,11 @@ to run a basic local server at [http://localhost:1841](http://localhost:1841).
 ### Connecting to a server
 You can connect to any remote slate-cbl instance that has CORS enabled by appending the query
 parameter `apiHost` when loading the page.
+
+
+## Installing to a `v2.slate.is` server
+1. Copy [sample `slate-cbl.php` git config script](https://github.com/SlateFoundation/slate-cbl/blob/releases/v2/php-config/Git.config.d/slate-cbl.php) into site
+2. Visit `/site-admin/sources` and initialize the `slate-cbl` source
+3. Return to `/site-admin/sources/slate-cbl` and click <kbd>Sync</kbd> → <kbd>Update emergence VFS</kbd> for the `slate-cbl` layer
+4. Push sencha builds to instance, logging in with a developer account when prompted: `http://cbl.projects.jarv.us/push-builds?ref=releases/v2&host=SITE_HOSTNAME`
+  - Alternatively, builds may be created locally and uploaded to `sencha-build/APP_NAME/production`u

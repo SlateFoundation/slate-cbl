@@ -7,10 +7,17 @@ use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
 
+if (!StudentTask::$rateExpiredMissing) {
+    return false;
+}
+
+set_time_limit(0);
+
 $today = date('Y-m-d 00:00:00');
 
 $expiredTasks = StudentTask::getAllByWhere([
     'ExpirationDate' => [
+        'values' => null, // TODO: remove when ActiveRecord _mapFieldConditions can handle/prevent undefined index errors
         'value' => $today,
         'operator' => '<'
     ],

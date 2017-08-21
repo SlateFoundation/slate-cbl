@@ -176,7 +176,7 @@ class Competency extends \VersionedRecord
                 return $levelTotals[$level];
             } else if (array_key_exists('default', $levelTotals)) {
                 return $levelTotals['default'];
-            } else { // handle competencies with no skills 
+            } else { // handle competencies with no skills
                 return 0;
             }
         }
@@ -272,7 +272,7 @@ class Competency extends \VersionedRecord
             'demonstrationsLogged' => 0,
             'demonstrationsComplete' => 0,
             'demonstrationsAverage' => null,
-            'currentLevel' => null
+            'currentLevel' => $currentLevel
         ];
     }
 
@@ -295,13 +295,15 @@ class Competency extends \VersionedRecord
 
     public function getCurrentLevelForStudent(Student $Student)
     {
-        $level = \DB::oneValue(
-            'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
-            [
-                $Student->ID,
-                $this->ID
-            ]
-        );
+        try {
+            $level = \DB::oneValue(
+                'SELECT MAX(Level) AS Level FROM cbl_student_competencies WHERE StudentID = %u AND CompetencyID = %u',
+                [
+                    $Student->ID,
+                    $this->ID
+                ]
+            );
+        } catch (TableNotFoundException $e) {}
 
         return $level ? intval($level) : null;
     }

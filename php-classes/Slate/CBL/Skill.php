@@ -19,7 +19,7 @@ class Skill extends \VersionedRecord
         ,'Code' => [
             'unique' => true
         ]
-        ,'Descriptor'
+        ,'Descriptor' => 'clob'
         ,'Statement' => 'clob'
         ,'DemonstrationsRequired' => 'json'
     ];
@@ -177,7 +177,7 @@ class Skill extends \VersionedRecord
 
         return $level;
     }
-    
+
     public function getDemonstrationsRequiredByLevel($level, $returnDefault = true)
     {
         if (isset($this->DemonstrationsRequired[$level])) {
@@ -185,7 +185,7 @@ class Skill extends \VersionedRecord
         } else if ($returnDefault) { // return default value if level is not explicitely set.$_COOKIE
             return $this->DemonstrationsRequired['default'];
         }
-        
+
         return null;
     }
 }

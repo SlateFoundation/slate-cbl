@@ -23,7 +23,7 @@
     .slate-boundlist-datum {
         &::after {
             content: '\00b7'; // &middot;
-            margin: 0 .5em;
+            margin: 0 .25em;
         }
 
         &:last-child::after {

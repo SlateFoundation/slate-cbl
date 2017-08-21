@@ -5,6 +5,7 @@ namespace Slate\CBL\Tasks;
 use DB;
 use ActiveRecord;
 use Emergence\People\Person;
+use Google\DriveFile;
 
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
@@ -163,11 +164,74 @@ class TasksRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
+
+    public static function applyRecordDelta(\ActiveRecord $Record, $requestData)
+    {
+        parent::applyRecordDelta($Record, $requestData);
+
+        $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
+
+        if (isset($requestData['Attachments'])) {
+            $attachments = [];
+            foreach ($requestData['Attachments'] as $attachmentData) {
+                $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
+                if ($attachmentData['ID'] >= 1) {
+                    if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
+                        $failed[] = $attachmentData;
+                        continue;
+                    }
+
+                    if (!empty($attachmentData['Status']) && in_array($attachmentData['Status'], $defaultAttachmentClass::getFieldOptions('Status', 'values'))) {
+                        $Attachment->Status = $attachmentData['Status'];
+                    }
+                } else {
+                    $Attachment = $attachmentClass::create($attachmentData);
+                }
+
+
+                if ($Attachment instanceof Attachments\GoogleDriveFile) {
+                    if (!$Attachment->File) {
+                        if (!$File = DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
+                            $File = DriveFile::create($attachmentData['File']);
+                            if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
+                                $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
+                            }
+                        }
+                        $Attachment->File = $File;
+                    } else if ($Attachment->File->isPhantom && $File = DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
+                        $Attachment->File = $File;
+                    }
+                }
+
+                $attachments[] = $Attachment;
+            }
+
+            $Record->Attachments = $attachments;
+        }
+        // update student tasks
+        if (isset($requestData['Assignees'])) {
+            $studentTasks = [];
+            foreach ($requestData['Assignees'] as $assigneeId) {
+                if (!$StudentTask = StudentTask::getByWhere(['StudentID' => $assigneeId, 'TaskID' => $Record->ID])) {
+                    $StudentTask = StudentTask::create([
+                        'StudentID' => $assigneeId,
+                        'SectionID' => $requestData['SectionID'],
+                        'DueDate' => $Record->DueDate,
+                        'ExperienceType' => $Record->ExperienceType,
+                        'ExpirationDate' => $Record->ExpirationDate
+                    ]);
+                }
+                $studentTasks[] = $StudentTask;
+            }
+
+            $Record->StudentTasks = $studentTasks;
+        }
+    }
+
     /*
     *   Responsibilities:
     *       - Update relationships for Skills, Attachments, and StudentTasks.
     */
-
     protected static function onRecordSaved(\ActiveRecord $Record, $data)
     {
         //update skills
@@ -194,87 +258,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     join('", "', $oldSkillIds)
                 ]);
             }
-        }
-
-        // update attachments
-        if (isset($data['Attachments'])) {
-            $originalAttachments = $Record->Attachments;
-            $originalAttachmentIds = array_map(function($s) {
-                return $s->ID;
-            }, $originalAttachments);
-
-            $failed = [];
-            $attachmentIds = [];
-            $attachments = [];
-            $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
-
-            foreach ($data['Attachments'] as $attachmentData) {
-                $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
-                if ($attachmentData['ID'] >= 1) {
-                    if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
-                        $failed[] = $attachmentData;
-                        continue;
-                    }
-                } else {
-                    $Attachment = $attachmentClass::create($attachmentData);
-                }
-
-                $Attachment->ContextID = $Record->ID;
-                $Attachment->ContextClass = $Record->getRootClass();
-                $Attachment->save();
-                $attachments[] = $Attachment;
-                $attachmentIds[] = $Attachment->ID;
-            }
-
-            if (!empty($attachments)) {
-                try {
-                    DB::nonQuery('DELETE FROM `%s` WHERE ContextClass = "%s" AND ContextID = %u AND ID NOT IN ("%s")', [
-                        AbstractTaskAttachment::$tableName,
-                        $Record->getRootClass(),
-                        $Record->ID,
-                        join('", "', $attachmentIds)
-                    ]);
-                } catch (\TableNotFoundException $e) {}
-            }
-
-            $Record->Attachments = $attachments;
-        }
-
-
-        // update student tasks
-        if (isset($data['Assignees'])) {
-            $originalAssignees = $Record->Assignees;
-            $originalAssigneeIds = array_map(function($s) {
-                return $s->ID;
-            }, $originalAssignees);
-
-            $failed = [];
-            $assigneeIds = [];
-            $assignees = [];
-
-            foreach ($data['Assignees'] as $assigneeData) {
-                if (!$studentTask = StudentTask::getByWhere(['StudentID' => $assigneeData, 'TaskID' => $Record->ID])) {
-                    $studentTask = StudentTask::create([
-                        'TaskID' => $Record->ID,
-                        'StudentID' => $assigneeData,
-                        'CourseSectionID' => $data['CourseSectionID']
-                    ]);
-                }
-                $studentTask->setFields([
-                    'DueDate' => $Record->DueDate,
-                    'ExperienceType' => $Record->ExperienceType,
-                    'ExpirationDate' => $Record->ExpirationDate
-                ]);
-
-                $studentTask->save(false);
-                $assigneeIds[] = $studentTask->StudentID;
-            }
-
-            DB::nonQuery('DELETE FROM `%s` WHERE TaskID = %u AND StudentID NOT IN ("%s")', [
-                StudentTask::$tableName,
-                $Record->ID,
-                join('", "', $assigneeIds)
-            ]);
         }
     }
 }
