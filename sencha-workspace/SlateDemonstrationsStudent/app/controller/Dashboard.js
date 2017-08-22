@@ -103,6 +103,9 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             student, contentArea;
 
         if (token) {
+            if (dashboardCt.getContentAreaId() && dashboardCt.getStudentId()) {
+                window.location.reload();
+            }
             splitToken = token.split('&');
             for (; i < splitToken.length; i++) {
                 param = splitToken[i].split('=', 1)[0];
