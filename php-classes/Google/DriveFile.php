@@ -8,8 +8,6 @@ use Validators;
 
 use Emergence\Mailer\Mailer;
 
-use Google\API as GoogleAPI;
-
 class DriveFile extends \ActiveRecord
 {
 
@@ -69,12 +67,12 @@ class DriveFile extends \ActiveRecord
 
     public static function __classLoaded()
     {
-        if (empty(GoogleAPI::$domain)) {
+        if (empty(API::$domain)) {
             throw new Exception('Domain must be configured first');
         }
 
         if (empty(static::$validators['OwnerEmail']['domain'])) {
-            static::$validators['OwnerEmail']['domain'] = GoogleAPI::$domain;
+            static::$validators['OwnerEmail']['domain'] = API::$domain;
         }
     }
 
@@ -89,7 +87,7 @@ class DriveFile extends \ActiveRecord
                 $this->Title
             );
 
-            $this->untrash();
+            $this->untrashFile();
 
             Mailer::send($this->OwnerEmail, 'Google Drive File removed from trash', $message);
 
@@ -129,9 +127,9 @@ class DriveFile extends \ActiveRecord
         return null;
     }
 
-    public function getGoogleFileDetails()
+    public function getFileDetails($ignoreCache = false)
     {
-        if ($this->details) {
+        if ($ignoreCache !== false && $this->details) {
             return $this->details;
         }
 
@@ -139,13 +137,7 @@ class DriveFile extends \ActiveRecord
             return null;
         }
 
-        $response = API::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, [
-            'user' => $this->OwnerEmail,
-            'scope' => static::$apiScope,
-            'get' => [
-                'fields' => static::$apiFields
-            ]
-        ]);
+        $response = API::getFileDetails($this);
 
         if (!empty($response['error'])) {
             if ($response['error']['errors'][0]['reason'] == 'notFound') {
@@ -153,23 +145,14 @@ class DriveFile extends \ActiveRecord
             } else {
                 $exceptionCode = 0;
             }
-            throw new \Exception('Error looking up document. '.$response['error']['message'], $exceptionCode);
+            throw new Exception('Error looking up document. '.$response['error']['message'], $exceptionCode);
         }
 
         return $this->details = $response;
     }
 
-    public function updateGoogleFileDetails()
+    public function applyFileDetails(array $details)
     {
-        try {
-            $details = $this->getGoogleFileDetails();
-        } catch (Exception $e) {
-            if ($e->getCode() === static::GOOGLE_EXCEPTION_CODES['file-not-found'] && !$this->isPhantom) {
-                $this->Status = 'deleted';
-            }
-            throw $e;
-        }
-
         $mimeTypeParts = explode('.', $details['mimeType']);
         $this->Type = end($mimeTypeParts);
 
@@ -186,36 +169,36 @@ class DriveFile extends \ActiveRecord
         }
     }
 
-    public function createPermission($email, $role, $type, $getData = [])
+    public function updateFileDetails()
     {
-        return GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/permissions', [
-            'method' => 'POST',
-            'post' => [
-                'type' => $type,
-                'role' => $role,
-                'emailAddress' => $email
-            ],
-            'get' => $getData,
-            'user' => $this->OwnerEmail,
-            'scope' => static::$apiScope
-        ]);
+        try {
+            $details = $this->getFileDetails();
+        } catch (Exception $e) {
+            if ($e->getCode() === static::GOOGLE_EXCEPTION_CODES['file-not-found'] && !$this->isPhantom) {
+                $this->Status = 'deleted';
+                return;
+            }
+
+            throw $e;
+        }
+
+        $this->applyFileDetails($details);
     }
 
-    public function transferOwnership($email)
+    public function createPermission($email, $role, $type, $getData = [])
     {
-        return $this->createPermission($email, 'owner', 'user', ['transferOwnership' => true]);
+        return GoogleAPI::createPermission($this, $email, $role, $type);
+    }
+
+    public function transferOwnership($email, $type = 'user')
+    {
+        return GoogleAPI::transferOwnership($this, $email, $type);
     }
 
     public function cloneFile()
     {
 
-        $response = GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID.'/copy', [
-            'post' => [
-                'name' => $this->Title
-            ],
-            'user' => $this->OwnerEmail,
-            'scope' => static::$apiScope
-        ]);
+        $response = API::cloneFile($this);
 
         $duplicatedDriveFile = static::create([
             'DriveID' => $response['id'],
@@ -223,29 +206,19 @@ class DriveFile extends \ActiveRecord
             'OwnerEmail' => $this->OwnerEmail
         ]);
 
-        $duplicatedDriveFile->updateGoogleFileDetails();
+        $duplicatedDriveFile->updateFileDetails();
         $duplicatedDriveFile->save();
 
         return $duplicatedDriveFile;
 
     }
 
-    public function untrash()
+    public function untrashFile()
     {
-        $response = GoogleAPI::request('https://content.googleapis.com/drive/v3/files/'.$this->DriveID, [
-            'user' => $this->OwnerEmail,
-            'scope' => static::$apiScope,
-            'method' => 'PATCH',
-            'get' => [
-                'fields' => static::$apiFields
-            ],
-            'post' => [
-                'trashed' => false
-            ]
-        ]);
+        $response = API::untrashFile($this);
 
         $this->details = $response;
-        $this->updateGoogleFileDetails();
+        $this->updateFileDetails();
 
         $this->save();
     }
@@ -254,7 +227,7 @@ class DriveFile extends \ActiveRecord
     {
         try {
             if (!$File->Type) {
-                $File->updateGoogleFileDetails();
+                $File->updateFileDetails();
             }
         } catch (Exception $e) {
             $validator->addError('Type', 'Type is missing or invalid.');
@@ -269,7 +242,7 @@ class DriveFile extends \ActiveRecord
     {
         try {
             if (!$File->Title) {
-                $File->updateGoogleFileDetails();
+                $File->updateFileDetails();
             }
         } catch (Exception $e) {
             $validator->addError('Title', 'Title is missing or invalid.');

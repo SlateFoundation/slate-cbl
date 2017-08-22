@@ -2,6 +2,9 @@
 
 namespace Slate\CBL\Tasks;
 
+use Sencha_App;
+use Sencha_RequestHandler;
+
 class TeacherDashboardRequestHandler extends \RequestHandler
 {
     public static $userResponseModes = [

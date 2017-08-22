@@ -62,7 +62,9 @@ foreach ($studentTasks as $studentTask) {
         $dueDate,
         $expirationDate,
         $submittedDate,
-        implode(', ',$skillCodes)
+        implode(', ',$skillCodes),
+        $studentTask->Section->Course->Code,
+        $studentTask->Section->Term->Title
     ];
 }
 
@@ -78,7 +80,9 @@ $headers = [
     'Due date',
     'Expiration date',
     'Submitted date',
-    'Skills Codes'
+    'Skills Codes',
+    'Course Code',
+    'Term'
 ];
 
 $sw = new SpreadsheetWriter();

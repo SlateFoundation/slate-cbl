@@ -1,15 +1,24 @@
 <?php
 
+/*
+* TODO:
+* 1. Log any exceptions/errors while syncing user permissions
+*/
+
 namespace Slate\CBL\Tasks\Attachments;
 
 use Google\DriveFile;
 use Google\API as GoogleAPI;
+use Google\RequestBuilder;
+use Google\ResponseProcessor;
 
 use Slate\CBL\Tasks\Task;
 use Slate\CBL\Tasks\StudentTask;
+use Slate\People\Student;
 
 use Emergence\People\IPerson;
 use Emergence\People\Person;
+use Emergence\People\User;
 use Emergence\Logger;
 
 use DB;
@@ -21,6 +30,7 @@ use Validators;
 class GoogleDriveFile extends AbstractTaskAttachment
 {
     public $syncedPermissions = [];
+    public static $defaultPermissions = [];
 
     public static $fields = [
         'FileID' => 'uint',
@@ -97,7 +107,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
         try {
             $DuplicateDriveFile = $this->File->cloneFile();
             $DuplicateDriveFile->transferOwnership($validEmail);
-            $DuplicateDriveFile->updateGoogleFileDetails();
+            $DuplicateDriveFile->updateFileDetails();
 
             $GoogleDriveAttachment = static::create([
                 'File' => $DuplicateDriveFile,
@@ -125,11 +135,45 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
     }
 
+    /*
+    * Sync default permissions for attachment. Configured via static `$defaultPermissions` email keyed array, containing `role' & 'type' settings.
+    * i.e.
+    * [
+    *     'group-email@domain.com' => [
+    *         'role' => 'reader',
+    *         'type' => 'group'
+    *     ]
+    * ]
+    */
+    public function syncDefaultPermissions()
+    {
+        foreach (static::$defaultPermissions as $email => $permission) {
+            if (static::isEmailValid($email)) {
+                if (empty($syncedPermissions = $this->syncedPermissions[$email])) {
+                    try {
+                        $this->File->createPermission($email, $permission['role'], $permission['type']);
+                        $this->syncedPermissions[$email] = $permission['type'];
+                    } catch (Exception $e) {
+                        Logger::general_alert('Unable to create {permissionRole} permissions for {permissionType}: {userEmail} on {googleFileRecord}', [
+                            'permissionRole' => $permission['role'],
+                            'permissionType' => $permission['type'],
+                            'userEmail' => $email,
+                            'googleFileRecord' => $this
+                        ]);
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+    * Sync Google Drive Permissions for a given Person
+    */
     public function syncUserPermissions(IPerson $Person)
     {
         if (
             $this->ShareMethod == 'duplicate' &&
-            $Person->isA(\Slate\People\Student::class) &&
+            $Person->isA(Student::class) &&
             $StudentTask = StudentTask::getByWhere(['TaskID' => $this->Task->ID, 'StudentID' => $Person->ID])
         ) {
             // file has been duplicated already
@@ -143,24 +187,344 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
             foreach (static::getRequiredTeachers($this) as $Teacher) {
                 $clonedAttachment->syncUserPermissions($Teacher);
+                $clonedAttachment->syncDefaultPermissions();
             }
 
             return true;
         } else {
-            if ($Person->isA(\Slate\People\Student::class)) {
-                if ($this->ShareMethod == 'view-only') {
-                    $type = 'reader';
-                } elseif ($this->ShareMethod == 'collaborate') {
-                    $type = 'writer';
-                }
-            } else { // teachers are granted write permissions on all documents
-                $type = 'writer';
+            if ($Person->isA(Student::class)) {
+                $type = $this->getStudentPermissionRole();
+            } else {
+                $type = $this->getTeacherPermissionRole();
             }
-            
+
             return $this->permit($Person, $type);
         }
     }
 
+    /*
+    * Sync Google Drive File Permissions for all required students/teachers
+    */
+    private $_syncComplete = false;
+    protected static $maxPhase = 3;
+
+    public static function syncUsersPermissions(array $attachments = [])
+    {
+        $phase = 0;
+
+        while ($phase <= static::$maxPhase) {
+            $requests = [];
+
+            foreach ($attachments as $Attachment) {
+                if (!$Attachment->isA(__CLASS__)) {
+#                    \Debug\Logger::general_notice(
+#                        'Attachment is not a GoogleDriveFile, skipping.',
+#                        ['attachment' => $Attachment]
+#                    );
+                    continue;
+                }
+
+                if ($Attachment->isPhantom) {
+#                    \Debug\Logger::general_notice(
+#                        'Attachment is phantom, skipping.',
+#                        ['attachment' => $Attachment]
+#                    );
+                    continue;
+                }
+
+                if ($Attachment->_syncComplete === true) {
+#                    \Debug\Logger::general_notice(
+#                        'Attachment is has been synced already, skipping.',
+#                        ['attachment' => $Attachment]
+#                    );
+                    continue;
+                }
+
+                $attachmentRequests = $Attachment->_getBatchRequestsByPhase($phase);
+#                \Debug\Logger::general_notice(
+#                    '_syncUserPermissions: totalRequests (#{totalRequests})',
+#                    ['totalRequests' => count($attachmentRequests), 'attachmentRequests' => $attachmentRequests, 'requests' => $requests, 'phaseNumber' => $phase]
+#                );
+
+
+                if (!empty($attachmentRequests) && is_array($attachmentRequests)) {
+                    $requests = array_merge($requests, $attachmentRequests);
+                }
+            }
+
+#            \Debug\Logger::general_notice(
+#                'Total Requests: ({totalRequests}) during phase #{phaseNumber}',
+#                ['requests' => $requests, 'totalRequests' => count($requests), 'phaseNumber' => $phase]
+#            );
+
+            $responses = GoogleAPI::executeBatchRequest(array_filter($requests));
+
+            switch ($phase) {
+                case 0:
+                    ResponseProcessor::processBatchAccessTokenResponse($responses);
+                    break;
+
+                case 1:
+                    $cloneResponses = [];
+                    $permissionResponses = [];
+                    foreach ($responses as $key => $response) {
+                        if ($response['kind'] == 'drive#permission') {
+                            $permissionResponses[$key] = $response;
+                        } elseif ($response['kind'] == 'drive#file'){
+                            $cloneResponses[$key] = $response;
+                        }
+                    }
+
+                    if (!empty($cloneResponses)) {
+                        ResponseProcessor::processBatchCloneResponse($cloneResponses);
+                    }
+
+                    if (!empty($permissionResponses)) {
+                        ResponseProcessor::processBatchPermissionResponse($permissionResponses);
+                    }
+
+                    break;
+
+                case 2:
+                    ResponseProcessor::processBatchTransferOwnershipPermissionResponse($responses);
+                    break;
+
+                case 3:
+                    ResponseProcessor::processBatchFileDetailsResponse($responses);
+                    break;
+            }
+
+            $phase++;
+        }
+    }
+
+    private function _getBatchRequestsByPhase($phase)
+    {
+        $requests = [];
+        $scope = DriveFile::$apiScope;
+
+
+        switch ($phase) {
+            case null:
+            case 0:
+                return $this->buildAccessTokenRequests();
+
+            case 1:
+                if ($this->ShareMethod == 'duplicate') {
+                    return $this->buildCloneRequests();
+                }
+
+                return $this->buildPermissionRequests();
+
+            case 2:
+                if ($this->ShareMethod == 'duplicate') {
+                    return $this->buildTransferOwnershipPermissionRequests();
+                }
+
+                return $this->_syncComplete = true;
+
+            case 3:
+                if ($this->ShareMethod == 'duplicate') {
+                    return $this->buildFileDetailsRequest();
+                }
+
+            default:
+                $this->_syncComplete = true;
+                return $this->_syncComplete;
+        }
+
+    }
+
+    private function buildAccessTokenRequests()
+    {
+        $requests = [];
+        $scope = DriveFile::$apiScope;
+        foreach ($this->getRequiredPermissions() as $requiredUser) {
+            if ($emailAddress = static::getValidEmailAddress($requiredUser)) {
+                $requests[$emailAddress . '|' . $scope] = RequestBuilder::getAccessToken($scope, $emailAddress);
+            }
+        }
+
+        return $requests;
+    }
+
+    private function buildPermissionRequests()
+    {
+        $requests = [];
+        $studentPermissionRole = $this->getStudentPermissionRole();
+        $teacherPermissionRole = $this->getTeacherPermissionRole();
+
+
+        if ($studentPermissionRole) {
+            // sync student permissions
+            foreach (static::getRequiredStudents($this) as $Student) {
+                if (!$Student->isA(Student::class)) {
+                    // log error ?
+                    continue;
+                }
+
+                if (!$validEmail = static::getValidEmailAddress($Student)) {
+                    // log error
+                    continue;
+                }
+
+                $requestKey = sprintf('%u|%s|%s|%s', $this->ID, $validEmail, $studentPermissionRole, 'user');
+                $requests[$requestKey] = RequestBuilder::createPermission($this->File, $validEmail, $studentPermissionRole, 'user');
+            }
+        }
+
+        if ($teacherPermissionRole) {
+            // sync teacher permissions
+            foreach (static::getRequiredTeachers($this) as $Teacher) {
+                if (!$validEmail = static::getValidEmailAddress($Teacher)) {
+                    // log error
+                    continue;
+                }
+
+                $requestKey = sprintf('%u|%s|%s|%s', $this->ID, $validEmail, $teacherPermissionRole, 'user');
+                $requests[$requestKey] = RequestBuilder::createPermission($this->File, $validEmail, $teacherPermissionRole, 'user');
+            }
+        }
+
+        foreach (static::$defaultPermissions as $email => $settings) {
+            $requestKey = sprintf('%u|%s|%s|%s', $this->ID, $email, $settings['role'], $settings['type']);
+            $requests[$requestKey] = RequestBuilder::createPermission($this->File, $email, $settings['role'], $settings['type']);
+        }
+
+        return $requests;
+    }
+
+    private function buildCloneRequests()
+    {
+        $requests = [];
+
+        foreach (static::getRequiredStudents($this) as $Student) {
+            if (!$Student->isA(Student::class)) {
+                // log error ?
+                continue;
+            }
+
+            if (!$StudentTask = StudentTask::getByWhere(['StudentID' => $Student->ID, 'TaskID' => $this->Task->ID])) {
+                // log error
+                continue;
+            }
+
+            if (!$validEmail = static::getValidEmailAddress($Student)) {
+                // log error
+                continue;
+            }
+
+             // file has been duplicated already
+            if (static::getByWhere(['ParentAttachmentID' => $this->ID, 'ContextID' => $StudentTask->ID, 'ContextClass' => $StudentTask->getRootClass()])) {
+                // log notice
+                continue;
+            }
+
+            $requestKey = sprintf('%u|%s|%s|owner', $this->ID, $validEmail, $Student->Username);
+            $requests[$requestKey] = RequestBuilder::cloneFile($this->File);
+        }
+
+        return $requests;
+    }
+
+    private function buildTransferOwnershipPermissionRequests()
+    {
+        $requests = [];
+
+        foreach (static::getRequiredStudents($this) as $Student) {
+            if (!$StudentTask = StudentTask::getByWhere(['StudentID' => $Student->ID, 'TaskID' => $this->Task->ID])) {
+                \Debug\Logger::general_notice(
+                    'Unable to build permission request: Task #{taskId}: {taskName} not assigned to {slateUsername} was not found, skipping.',
+                    ['taskId' => $this->Task->ID, 'taskName' => $this->Task->Title, 'slateUsername' => $Student->Username]
+                );
+                continue;
+            }
+
+            if (!$ClonedAttachment = static::getByWhere(['ParentAttachmentID' => $this->ID, 'ContextID' => $StudentTask->ID, 'ContextClass' => $StudentTask->getRootClass()])) {
+                \Debug\Logger::general_notice(
+                    'Unable to build permission request: Cloned Attachment belonging to {slateUsername} not found, skipping.',
+                    ['StudentTask' => $StudentTask, 'slateUsername' => $Student->Username]
+                );
+                continue;
+            }
+
+            if (!$validEmail = static::getValidEmailAddress($Student)) {
+                \Debug\Logger::general_notice(
+                    'Unable to build permission request: User {slateUsername} email ({email}) is invaild, skipping.',
+                    ['email' => $validEmail, 'slateUsername' => $Student->Username]
+                );
+                continue;
+            }
+
+            $requestKey = sprintf('%u|%s|%s|%s', $ClonedAttachment->ID, $validEmail, $Student->Username, 'owner');
+            $requests[$requestKey] = RequestBuilder::transferOwnership($ClonedAttachment->File, $validEmail, 'user');
+
+            foreach (static::getRequiredTeachers($this) as $Teacher) {
+
+                if (!$validEmail = static::getValidEmailAddress($Teacher)) {
+                    // log notice
+                    continue;
+                }
+
+                $requestKey = sprintf('%u|%s|%s|%s', $ClonedAttachment->ID, $validEmail, $Teacher->Username, $ClonedAttachment->getTeacherPermissionRole());
+                $requests[$requestKey] = RequestBuilder::createPermission($ClonedAttachment->File, $validEmail, $ClonedAttachment->getTeacherPermissionRole(), 'user');
+            }
+
+            foreach (static::$defaultPermissions as $validEmail => $settings) {
+                if (!static::isEmailValid($validEmail)) {
+                    // log error
+                    continue;
+                }
+
+                $requestKey = sprintf('%u|%s|default|%s', $ClonedAttachment->ID, $validEmail, $settings['role']);
+                $requests[$requestKey] = RequestBuilder::createPermission($ClonedAttachment->File, $validEmail, $settings['role'], $settings['type']);
+            }
+        }
+
+        return $requests;
+    }
+
+    private function buildFileDetailsRequest()
+    {
+        return [
+            $this->File->DriveID => RequestBuilder::getFileDetails($this->File)
+        ];
+    }
+
+    /*
+    * Get student permission role for drive file
+    */
+    public function getStudentPermissionRole()
+    {
+        if ($this->Context->isA(Task::class)) {
+            if ($this->ShareMethod == 'view-only') {
+                return 'reader';
+            } elseif ($this->ShareMethod == 'collaborate') {
+                return 'writer';
+            }
+        }
+
+        return null;
+    }
+    /*
+    * Get teacher permission role for drive file
+    */
+    public function getTeacherPermissionRole()
+    {
+        if ($this->Context->isA(Task::class)) {
+            if ($this->ShareMethod == 'duplicate') {
+                return null;
+            }
+
+            return 'reader';
+        } elseif ($this->Context->isA(StudentTask::class)) {
+            return 'writer';
+        }
+    }
+
+    /*
+    * Get all users needing permission
+    */
     public function getRequiredPermissions()
     {
         $permissions = array_merge(static::getRequiredStudents($this), static::getRequiredTeachers($this));
@@ -168,6 +532,9 @@ class GoogleDriveFile extends AbstractTaskAttachment
         return $permissions;
     }
 
+    /*
+    * Permit user access to google drive file
+    */
     public function permit(IPerson $Person, $type)
     {
         $validEmail = static::getValidEmailAddress($Person);
@@ -207,16 +574,12 @@ class GoogleDriveFile extends AbstractTaskAttachment
     protected static function getValidEmailAddress(IPerson $Person)
     {
         $validEmail = false;
-        $emailValidatorSettings = [
-            'domain' => GoogleAPI::$domain
-        ];
 
-
-        if ($Person->PrimaryEmail && Validators::email($Person->PrimaryEmail->toString(), $emailValidatorSettings)) {
+        if ($Person->PrimaryEmail && static::isEmailValid($Person->PrimaryEmail->toString())) {
             $validEmail = $Person->PrimaryEmail->toString();
         } else if (!empty($Person->ContactPoints)) {
             foreach ($Person->ContactPoints as $ContactPoint) {
-                if ($ContactPoint->isA(\Emergence\People\ContactPoint\Email::class) && Validators::email($ContactPoint->toString(), $emailValidatorSettings)) {
+                if ($ContactPoint->isA(\Emergence\People\ContactPoint\Email::class) && static::isEmailValid($ContactPoint->toString())) {
                     $validEmail = $ContactPoint->toString();
                     break;
                 }
@@ -224,7 +587,13 @@ class GoogleDriveFile extends AbstractTaskAttachment
         }
 
         return $validEmail;
+    }
 
+    protected static function isEmailValid($emailAddress)
+    {
+        return Validators::email($emailAddress, [
+            'domain' => GoogleAPI::$domain
+        ]);
     }
 
     protected static function getRequiredStudents(GoogleDriveFile $Attachment)

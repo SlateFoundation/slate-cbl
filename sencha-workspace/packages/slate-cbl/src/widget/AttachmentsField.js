@@ -56,7 +56,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
     },
     {
         xtype: 'button',
-        text: 'Add from Drive',
+        text: 'Add From Drive',
         action: 'addattachment',
         listeners: {
             click: function() {

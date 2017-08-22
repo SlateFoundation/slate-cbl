@@ -77,36 +77,23 @@ class UserChangeMonitor extends \ActiveRecord
             $this->getStartPageToken();
         }
 
-        $request = GoogleAPI::request('/drive/v3/changes/watch', [
-            'user' => $this->EmailContact->toString(),
-            'scope' => DriveFile::$apiScope,
-            'get' => [
-                'pageToken' => $this->StartPageToken
-            ],
-            'post' => [
-                'id' => 'change-monitor-'.$this->EmailID,
-                'type' => 'web_hook',
-                'address' => static::$webHookAddress,
-                'expiration' => $expiration,
-                'payload' => true
-            ]
-        ]);
+        $response = GoogleAPI::monitor($this, $expiration);
 
 
-        if (empty($request['resourceId']) &&
-            !(!empty($request['error']) && is_array($request['error']) && !empty($request['error']['errors']) && is_array($request['error']['errors'][0]) && $request['error']['errors'][0]['reason'] == 'channelIdNotUnique')
+        if (empty($response['resourceId']) &&
+            !(!empty($response['error']) && is_array($response['error']) && !empty($response['error']['errors']) && is_array($response['error']['errors'][0]) && $response['error']['errors'][0]['reason'] == 'channelIdNotUnique')
         ) {
             $this->Status = 'inactive';
             $this->save();
             \Emergence\Logger::general_warning('Failed monitor response for {slateUsername}', [
-                'monitorRequest' => $request,
+                'monitorResponse' => $response,
                 'slateUsername' => $Teacher->Username
             ]);
             throw new Exception('Error while attempting to monitor user changes.');
         }
 
-        if (!empty($request['expiration'])) {
-            $this->Expiration = $request['expiration'] / 1000;
+        if (!empty($response['expiration'])) {
+            $this->Expiration = $response['expiration'] / 1000;
         }
 
         $this->Status = 'active';
@@ -121,15 +108,12 @@ class UserChangeMonitor extends \ActiveRecord
             throw new Exception('Email must be set');
         }
 
-        $request = GoogleAPI::request('/drive/v3/changes/startPageToken', [
-            'user' => $this->EmailContact->toString(),
-            'scope' => DriveFile::$apiScope
-        ]);
+        $response = GoogleAPI::getUserChangeMonitorStartPageToken($this);
 
-        if (empty($request['startPageToken'])) {
+        if (empty($response['startPageToken'])) {
             throw new Exception('Error retrieving start page token.');
         }
 
-        return $this->StartPageToken = $request['startPageToken'];
+        return $this->StartPageToken = $response['startPageToken'];
     }
 }

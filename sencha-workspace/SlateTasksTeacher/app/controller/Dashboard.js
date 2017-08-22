@@ -656,7 +656,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                 FileRevisionID: fileInfo.id,
                 File: {
                     DriveID: fileId,
-                    OwnerEmail: ownerEmail
+                    OwnerEmail: ownerEmail,
+                    Type: 'n/a',
+                    Title: file[google.picker.Document.NAME]
                 }
             }, true);
         },

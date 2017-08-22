@@ -44,7 +44,7 @@ while ($mapsRow = $mapsCsv->getNextRow()) {
                         throw new Exception('Unable to parse evidence requirements for Skill: '.$row['Code']);
                     }
 
-                    $demonstrationRequirements[$lvl] = $total;
+                    $demonstrationRequirements[$lvl] = intval($total);
                 }
 
                 if (!isset($demonstrationRequirements['default'])) {

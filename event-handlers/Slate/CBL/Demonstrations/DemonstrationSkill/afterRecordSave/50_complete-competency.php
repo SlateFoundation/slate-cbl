@@ -2,24 +2,29 @@
 
 namespace Slate\CBL;
 
-use \Slate\CBL\StudentCompetency;
+use Slate\CBL\StudentCompetency;
 
 $Student = $_EVENT['Record']->Demonstration->Student;
 $Competency = $_EVENT['Record']->Skill->Competency;
 
-$completion = $Competency->getCompletionForStudent($Student);
+$StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
 
 if (
+        $StudentCompetency &&
         StudentCompetency::$autoGraduate &&
-        StudentCompetency::isCurrentLevelComplete($Student, $Competency) &&
-        $completion['currentLevel'] < $Competency->getMaximumTargetLevel()
+        $StudentCompetency->isLevelComplete() &&
+        $StudentCompetency->Level < $Competency->getMaximumTargetLevel()
    ) {
 
     // enroll student in next level
     StudentCompetency::create([
         'StudentID' => $Student->ID,
         'CompetencyID' => $Competency->ID,
-        'Level' => $completion['currentLevel'] + 1,
-        'EnteredVia' => 'graduation'
+        'Level' => $StudentCompetency->Level + 1,
+        'EnteredVia' => 'graduation',
+        'BaselineRating' => $StudentCompetency->getDemonstrationsAverage()
     ], true);
+} elseif (empty($completion['baselineRating']) && $StudentCompetency) {
+    $StudentCompetency->BaselineRating = $StudentCompetency->calculateStartingRating();
+    $StudentCompetency->save();
 }

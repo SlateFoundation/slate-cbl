@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\Tasks\Todo
+description: |
+  A todo is an item of work for a student that the student may cross off on their own and is not graded.
