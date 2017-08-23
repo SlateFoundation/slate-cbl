@@ -3,16 +3,20 @@
 namespace Slate\CBL\Demonstrations;
 
 use DB, TableNotFoundException;
-use Sencha_App;
-use Sencha_RequestHandler;
+
+use Emergence\People\Person;
+use Emergence\People\GuardianRelationship;
 use Emergence\People\PeopleRequestHandler;
 
-use Slate\People\Student;
+use Sencha_App;
+use Sencha_RequestHandler;
 
+use Slate\CBL\ContentArea;
 use Slate\CBL\ContentAreasRequestHandler;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
+use Slate\People\Student;
 
 
 class StudentDashboardRequestHandler extends \RequestHandler
@@ -33,6 +37,12 @@ class StudentDashboardRequestHandler extends \RequestHandler
                 return static::handleCompletionsRequest();
             case 'demonstration-skills':
                 return static::handleDemonstrationSkillsRequest();
+            case 'students':
+            case '*students':
+                return static::handleStudentsRequest();
+            case 'content-areas':
+            case '*content-areas':
+                return static::handleContentAreasRequest();
             case '':
             case false:
                 return static::handleDashboardRequest();
@@ -47,6 +57,84 @@ class StudentDashboardRequestHandler extends \RequestHandler
             'App' => Sencha_App::getByName('SlateDemonstrationsStudent'),
             'mode' => 'production'
         ]);
+    }
+
+    public static function handleContentAreasRequest()
+    {
+        $conditions = [];
+
+        if ($GLOBALS['Session']->Person->isA(Student::class)) {
+            $conditions['ID'] = [
+                'operator' => 'IN',
+                'values' => DB::allValues(
+                    'ContentAreaID',
+                    '
+                    SELECT DISTINCT `%4$s`.ContentAreaID AS ContentAreaID
+                      FROM `%1$s` %2$s
+                      JOIN `%3$s` %4$s
+                        ON %4$s.ID = %2$s.CompetencyID
+                     WHERE %2$s.StudentID = %5$u
+                    ',
+                    [
+                        StudentCompetency::$tableName,
+                        StudentCompetency::getTableAlias(),
+
+                        Competency::$tableName,
+                        Competency::getTableAlias(),
+
+                        $GLOBALS['Session']->PersonID
+                    ]
+                )
+            ];
+        }
+
+        return static::respond('content-areas', [
+            'data' => ContentArea::getAllByWhere($conditions),
+            'success' => true
+        ]);
+    }
+
+    public static function handleStudentsRequest()
+    {
+        $User = $GLOBALS['Session']->Person;
+
+        if ($User->isA(Student::class)) {
+            return static::respond('students', [
+                'data' => [
+                    $User
+                ],
+                'total' => 1,
+                'success' => true
+            ]);
+        } else {
+            if (!$User->hasAccountLevel('Teacher')) {
+                $conditions['ID'] = [
+                    'operator' => 'IN',
+                    'values' => DB::allValues(
+                        'UserID',
+                        '
+                        SELECT DISTINCT %4$s.ID AS UserID
+                          FROM `%1$s` %2$s
+                          JOIN `%3$s` %4$s
+                            ON %4$s.ID = %2$s.PersonID
+                         WHERE %2$s.Class = "%5$s"
+                           AND %4$s.Class = "%6$s"
+                        ',
+                        [
+                            GuardianRelationship::$tableName, // 1
+                            GuardianRelationship::getTableAlias(), // 2
+                            Person::$tableName, // 3
+                            Person::getTableAlias(), // 4
+                            DB::escape(GuardianRelationship::class), // 5
+                            DB::escape(Student::class) // 6
+                        ]
+                    )
+                ];
+            }
+
+            PeopleRequestHandler::$accountLevelBrowse = 'User';
+            return PeopleRequestHandler::handleBrowseRequest([], $conditions);
+        }
     }
 
     public static function handleRecentProgressRequest()
