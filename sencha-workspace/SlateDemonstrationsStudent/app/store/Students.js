@@ -8,6 +8,6 @@ Ext.define('SlateDemonstrationsStudent.store.Students', {
 
     proxy: {
         type: 'slate-records',
-        url: '/people'
+        url: '/cbl/dashboards/demonstrations/student/*students'
     }
 });
