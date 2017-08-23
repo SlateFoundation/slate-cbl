@@ -45,9 +45,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
     {
         return Sencha_RequestHandler::respond('app/SlateDemonstrationsStudent/ext', [
             'App' => Sencha_App::getByName('SlateDemonstrationsStudent'),
-            'mode' => 'production',
-            'Student' => static::_getRequestedStudent(),
-            'ContentArea' => static::_getRequestedContentArea()
+            'mode' => 'production'
         ]);
     }
 
