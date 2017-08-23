@@ -49,7 +49,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
         ]);
     }
 
-    public static function handleRecentProgressRequest() {
+    public static function handleRecentProgressRequest()
+    {
         $Student = static::_getRequestedStudent();
         $ContentArea = static::_getRequestedContentArea();
 
