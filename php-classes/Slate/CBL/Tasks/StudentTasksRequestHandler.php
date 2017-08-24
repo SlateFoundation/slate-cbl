@@ -5,6 +5,7 @@ namespace Slate\CBL\Tasks;
 use DB;
 use Slate\People\Student;
 use Slate\CBL\Skill;
+use Slate\CBL\StudentCompetency;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
 use Slate\Courses\SectionsRequestHandler;
@@ -86,14 +87,14 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
             if (!isset($skillId) || !$Skill = Skill::getByHandle($skillId)) {
                 $error = sprintf('Skill %s not found.', $skillId);
+            } elseif (!$StudentCompetency = StudentCompetency::getCurrentForStudent($Record->Student, $Skill->Competency)) {
+                $error = sprintf('Student %s not enrolled in %s competency.', $Record->Student->Username, $Skill->Competency->Code);
             } else {
-                $competencyLevel = $Skill->Competency->getCurrentLevelForStudent($Record->Student);
-
                 if (!$demoSkill = DemonstrationSkill::getByWhere(['DemonstrationID' => $Demonstration->ID, 'SkillID' => $Skill->ID, 'TargetLevel' => $competencyLevel])) {
                     $demoSkill = DemonstrationSkill::create([
                         'DemonstrationID' => $Demonstration->ID,
                         'SkillID' => $Skill->ID,
-                        'TargetLevel' => $competencyLevel
+                        'TargetLevel' => $StudentCompetency->Level
                     ]);
                 }
 
@@ -117,11 +118,11 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         if (
             ($demonstration = $Record->Demonstration) &&
             ($skill = Skill::getByHandle($skillId)) &&
-            ($competencyLevel = $skill->Competency->getCurrentLevelForStudent($Record->Student)) &&
+            ($StudentCompetency = StudentCompetency::getCurrentForStudent($Record->Student, $skill->Competency)) &&
             ($demonstrationSkill = DemonstrationSkill::getByWhere([
                 'DemonstrationID' => $Record->DemonstrationID,
                 'SkillID' => $skill->ID,
-                'TargetLevel' => $competencyLevel
+                'TargetLevel' => $StudentCompetency->Level
             ]))
         ) {
             $destroyed = $demonstrationSkill->destroy();
