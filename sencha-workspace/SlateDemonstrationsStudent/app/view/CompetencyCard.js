@@ -43,9 +43,28 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         '<div class="panel-body">',
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
                 '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width:{percentComplete:defaultValue(0)}%"></div>',
+                // TODO set width dynamically
+                '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: 10%; left: {percentComplete:defaultValue(0)}%"></div>',
                 '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{[ values.level - 8]}</div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete}%</div>',
-                '<div id="{id}-meterAverageEl" data-ref="meterAverageEl" class="cbl-progress-average" title="Average">{demonstrationsAverage:number(values.$comp.getAverageFormat())}</div>',
+                // moved to stats table below
+                //'<div id="{id}-meterAverageEl" data-ref="meterAverageEl" class="cbl-progress-average" title="Average">{demonstrationsAverage:number(values.$comp.getAverageFormat())}</div>',
+            '</div>',
+
+            '<div class="stats-ct">',
+                '<table class="stats">',
+                    '<thead>',
+                        '<th>Baseline Score</th>',
+                        '<th>Performance Level</th>',
+                        '<th>My Growth</th>',
+                    '<tbody>',
+                        '<td>2</td>',
+                        //'<td>{demonstrationsAverage:number(values.$comp.getAverageFormat())}</td>',
+                        // '{% debugger %}',
+                        '<td>{[ this.getPerformanceLevel(values) ]}</td>',
+                        '<td>0.8 yr</td>',
+                    '</tbody>',
+                '</table>',
             '</div>',
 
             '<div class="explainer">',
@@ -53,7 +72,12 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '</div>',
 
             '<ul id="{id}-skillsCt" data-ref="skillsCt" class="cbl-skill-meter"></ul>',
-        '</div>'
+        '</div>',
+        {
+            getPerformanceLevel: function(values) {
+                return Ext.util.Format.number(values.demonstrationsAverage, values.$comp.getAverageFormat()) || '&mdash;';
+            }
+        }
     ],
     childEls: [
         'descriptorEl',
