@@ -759,8 +759,8 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             }
 
             if (countDirty) {
-                competencyStudentData.progressBarEl.setStyle('width', Math.round(percentComplete) + '%');
-                competencyStudentData.progressPercentEl.update(progressFormat(percentComplete));
+                competencyStudentData.progressBarEl.setStyle('width', isNaN(percentComplete) ? '0' : Math.round(percentComplete) + '%');
+                competencyStudentData.progressPercentEl.update(isNaN(percentComplete) ? '&mdash;' : progressFormat(percentComplete));
 
                 competencyStudentData.renderedCount = count;
             }
