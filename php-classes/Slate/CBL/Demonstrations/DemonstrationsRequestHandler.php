@@ -2,12 +2,14 @@
 
 namespace Slate\CBL\Demonstrations;
 
-use DB;
 use ActiveRecord;
+use DB;
 use SpreadsheetWriter;
 use TableNotFoundException;
-use Slate\People\Student;
+
 use Slate\CBL\Skill;
+use Slate\CBL\StudentCompetency;
+use Slate\People\Student;
 
 class DemonstrationsRequestHandler extends \RecordsRequestHandler
 {
@@ -105,7 +107,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                     } elseif(array_key_exists($Skill->CompetencyID, $competencyLevels)) {
                         $targetLevel = $competencyLevels[$Skill->CompetencyID];
                     } else {
-                        $targetLevel = $competencyLevels[$Skill->CompetencyID] = $Skill->Competency->getCurrentLevelForStudent($Demonstration->Student);
+                        $targetLevel = $competencyLevels[$Skill->CompetencyID] = $StudentCompetency = StudentCompetency::getCurrentForStudent($Demonstration->Student, $Skill->Competency) ? $StudentCompetency->Level : null;
                     }
 
                     $DemoSkill = DemonstrationSkill::create([

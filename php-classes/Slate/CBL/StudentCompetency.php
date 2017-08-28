@@ -282,7 +282,7 @@ class StudentCompetency extends \ActiveRecord
         $minimumOffset = $this->Competency->getMinimumAverageOffset();
 
         return (
-            $completed >= $comptencyEvidenceRequirements &&
+            $completed >= $competencyEvidenceRequirements &&
             (
                 $logged === 0 ||
                 $average >= ($this->Level + $minimumOffset)

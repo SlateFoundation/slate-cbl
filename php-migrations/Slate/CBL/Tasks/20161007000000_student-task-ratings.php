@@ -71,13 +71,14 @@ if (!static::tableExists($studentRatingsTable)) {
             $StudentTask->save(false);
         }
         $Skill = Skill::getByID($taskRating['SkillID']);
+        $StudentCompetency = StudentCompetency::getCurrentForStudent($StudentTask->Student, $Skill->Competency);
 
         $DemonstrationSkill = DemonstrationSkill::create([
             'DemonstrationID' => $Demonstration->ID,
             'Created' => $taskRating['Created'],
             'CreatorID' => $taskRating['CreatorID'],
             'SkillID' => $taskRating['SkillID'],
-            'TargetLevel' => $Skill->Competency->getCurrentLevelForStudent($StudentTask->Student),
+            'TargetLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
             'DemonstratedLevel' => intval($taskRating['Score'])
         ]);
         $DemonstrationSkill->save(false);

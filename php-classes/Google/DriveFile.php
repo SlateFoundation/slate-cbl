@@ -8,6 +8,8 @@ use Validators;
 
 use Emergence\Mailer\Mailer;
 
+use Google\API as GoogleAPI;
+
 class DriveFile extends \ActiveRecord
 {
 
