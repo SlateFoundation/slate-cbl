@@ -27,7 +27,7 @@ Git::$repositories['slate-cbl'] = [
         'php-config/Git.config.d/slate-cbl.php',
         'php-config/Slate/UI/Tools.config.d/cbl.php',
         'php-migrations/Slate/CBL',
-        'sencha-workspace/AggregridExample',
+        'sencha-workspace/packages/slate-cbl',
         'sencha-workspace/SlateDemonstrationsStudent',
         'sencha-workspace/SlateDemonstrationsTeacher',
         'sencha-workspace/SlateTasksManager',
