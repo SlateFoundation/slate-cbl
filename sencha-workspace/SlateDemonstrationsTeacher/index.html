@@ -526,8 +526,33 @@
 
 
             <main class="content site" role="main">
-                <div class="inner" id="slateapp-viewport">
-                    <!-- app renders here -->
+                <div class="inner">
+                    <header class="page-header">
+                        <div class="header-buttons">
+                            <button type="button" class="primary" data-action="demonstration-create">Submit Evidence</button>
+                        </div>
+
+                        <form class="inline-fields">
+                            <label class="field select-field auto-width">
+                                <span class="field-label">Students</span>
+                                <select class="field-control inline small" disabled>
+                                    <option>ELA-001</option>
+                                </select>
+                            </label>
+
+                            <label class="field select-field auto-width">
+                                <span class="field-label">Content Area</span>
+                                <select class="field-control inline small" disabled>
+                                    <option>ELA</option>
+                                </select>
+                            </label>
+                        </form>
+                    </header>
+
+
+                    <div id="slateapp-viewport">
+                        <!-- app renders here -->
+                    </div>
                 </div>
             </main>
 
