@@ -71,6 +71,9 @@ class StudentCompetency extends \ActiveRecord
         'demonstrationsLogged' => [
             'getter' => 'getDemonstrationsLogged'
         ],
+        'demonstrationsMissed' => [
+            'getter' => 'getDemonstrationsMissed'
+        ],
         'demonstrationsComplete' => [
             'getter' => 'getDemonstrationsComplete'
         ],
@@ -96,6 +99,7 @@ class StudentCompetency extends \ActiveRecord
             'currentLevel' => $this->Level,
             'baselineRating' => $this->BaselineRating,
             'demonstrationsLogged' => $this->getDemonstrationsLogged(),
+            'demonstrationsMissed' => $this->getDemonstrationsMissed(),
             'demonstrationsComplete' => $this->getDemonstrationsComplete(),
             'demonstrationsAverage' => $this->getDemonstrationsAverage(),
             'growth' => $this->getGrowth()
@@ -226,6 +230,24 @@ class StudentCompetency extends \ActiveRecord
         return $this->demonstrationsLogged;
     }
 
+    private $demonstrationsMissed;
+    public function getDemonstrationsMissed()
+    {
+        if ($this->demonstrationsMissed === null) {
+            $this->demonstrationsMissed = 0;
+
+            foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
+                foreach ($demonstrationData as $demonstration) {
+                    if (empty($demonstration['Override']) && empty($demonstration['DemonstratedLevel'])) {
+                        $this->demonstrationsMissed++;
+                    }
+                }
+            }
+        }
+
+        return $this->demonstrationsMissed;
+    }
+
     private $demonstrationsComplete;
     public function getDemonstrationsComplete()
     {
@@ -348,6 +370,7 @@ class StudentCompetency extends \ActiveRecord
                 'currentLevel' => null,
                 'baselineRating' => null,
                 'demonstrationsLogged' => 0,
+                'demonstrationsMissed' => 0,
                 'demonstrationsComplete' => 0,
                 'demonstrationsAverage' => null,
                 'growth' => null
