@@ -332,7 +332,7 @@ class StudentCompetency extends \ActiveRecord
     private $competencyGrowth;
     public function getGrowth()
     {
-        if ($this->competencyGrowth === null && $this->BaselineRating) {
+        if ($this->competencyGrowth === null) {
             $demonstrationData = $this->getDemonstrationData();
 
             $totalSkills = $this->Competency->getTotalSkills();
