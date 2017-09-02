@@ -22,8 +22,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
         // input-dependent state
         level: null,
-        percentComplete: null,
-        percentMissed: null,
+        percentComplete: 0,
+        percentMissed: 0,
         demonstrationsAverage: null,
         isAverageLow: null,
         baselineRating: null,
