@@ -246,6 +246,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             percentComplete = Ext.util.Format.number(percentComplete, me.getPercentFormat());
 
             me.meterBarEl.setStyle('width', percentComplete);
+            me.meterBarMissedEl.setStyle('left', percentComplete);
             me.meterPercentEl.update(percentComplete);
         }
     },
