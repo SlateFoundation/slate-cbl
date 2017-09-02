@@ -5,7 +5,6 @@ $GLOBALS['Session']->requireAccountLevel('Staff');
 \Site::$debug = false;
 set_time_limit(0);
 
-
 // fetch key objects from database
 $students = Slate\People\Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 $studentIds = array_map(function($Student) {
@@ -34,38 +33,42 @@ if ($from && $to) {
 $studentTasks = Slate\CBL\Tasks\StudentTask::getAllByWhere($conditions);
 
 // create result rows
-foreach ($studentTasks as $studentTask) {
+for ($i = 0; $i < count($studentTasks); $i++) {
 
     // Get Skill codes for each studentTask
-    $skillCodes = [];
+    $skillCodes = '';
 
-    foreach ($studentTask->AllSkills as $skill) {
-        array_push($skillCodes, $skill->Code);
+    for ($ii = 0; $ii < count($studentTasks[$i]->AllSkills); $ii++) {
+        $skillCodes .= $studentTasks[$i]->AllSkills[$ii]->Code;
+        if ($ii + 1 !== count($studentTasks[$i]->AllSkills)) {
+            $skillCodes .= ', ';
+        }
     }
+    $skillCodes = rtrim($skillCodes, ',');
 
     // Screen out null timestamps
-    $dueDate = $studentTask->DueDate ? date('m/d/Y', $studentTask->DueDate) : '';
-    $expirationDate = $studentTask->ExpirationDate ? date('m/d/Y', $studentTask->ExpirationDate) : '';
-    $createdDate = $studentTask->Created ? date("m/d/Y", $studentTask->Created) : '';
+    $dueDate = $studentTasks[$i]->DueDate ? date('m/d/Y', $studentTasks[$i]->DueDate) : '';
+    $expirationDate = $studentTasks[$i]->ExpirationDate ? date('m/d/Y', $studentTasks[$i]->ExpirationDate) : '';
+    $createdDate = $studentTasks[$i]->Created ? date("m/d/Y", $studentTasks[$i]->Created) : '';
 
-    $most_recent_submission = $studentTask->getSubmissionTimestamp();
+    $most_recent_submission = $studentTasks[$i]->getSubmissionTimestamp();
     $submittedDate = $most_recent_submission ? date('m/d/Y', $most_recent_submission) : '';
 
     $rows[] = [
-        $studentTask->Student->getFullName(),
-        $studentTask->Student->StudentNumber,
-        $studentTask->Task->Title,
-        $studentTask->ExperienceType,
-        $studentTask->Task->Creator->getFullName(),
+        $studentTasks[$i]->Student->getFullName(),
+        $studentTasks[$i]->Student->StudentNumber,
+        $studentTasks[$i]->Task->Title,
+        $studentTasks[$i]->ExperienceType,
+        $studentTasks[$i]->Task->Creator->getFullName(),
         $createdDate,
-        $studentTask->Section->Title,
-        $studentTask->TaskStatus,
+        $studentTasks[$i]->Section->Title,
+        $studentTasks[$i]->TaskStatus,
         $dueDate,
         $expirationDate,
         $submittedDate,
-        implode(', ',$skillCodes),
-        $studentTask->Section->Course->Code,
-        $studentTask->Section->Term->Title
+        $skillCodes,
+        $studentTasks[$i]->Section->Course->Code,
+        $studentTasks[$i]->Section->Term->Title
     ];
 }
 
