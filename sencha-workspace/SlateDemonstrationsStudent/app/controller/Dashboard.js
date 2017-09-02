@@ -57,6 +57,9 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         contentAreaStatusCmp = this.getContentAreaStatusCmp();
         recentProgressCmp = this.getRecentProgressCmp();
 
+        // configure content area status
+        contentAreaStatusCmp.setContentAreaTitle(cblContentArea.Title);
+
         // configure recent progress component with any available embedded data
         if (cblStudentId) {
             recentProgressCmp.setStudentId(cblStudentId);
@@ -87,7 +90,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     // event handlers
     onDashboardCtRender: function(dashboardCt) {
         var studentId = dashboardCt.getStudentId(),
-            competenciesStore = dashboardCt.getCompetenciesStore();
+            competenciesStore = dashboardCt.getCompetenciesStore(),
+            contentAreaStatusCmp = this.getContentAreaStatusCmp();
 
         if (!studentId || !competenciesStore.isLoaded()) { // TODO: check if competencies store is loaded instead
             return;
@@ -97,13 +101,48 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
         dashboardCt.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
             callback: function(completions) {
-                dashboardCt.add(Ext.Array.map(completions, function(completion) {
-                    return {
+                var minLevel = Infinity,
+                    totalRequired = 0,
+                    totalMissed = 0,
+                    totalComplete = 0,
+                    averageValues = [],
+                    growthValues = [],
+                    cardConfigs = [],
+                    completionsLength = completions.length,
+                    completionIndex = 0,
+                    completion, average, growth;
+
+                for (; completionIndex < completionsLength; completionIndex++) {
+                    completion = completions[completionIndex];
+
+                    minLevel = Math.min(minLevel, completion.get('currentLevel'));
+                    totalRequired += completion.get('demonstrationsRequired');
+                    totalMissed += completion.get('demonstrationsMissed');
+                    totalComplete += completion.get('demonstrationsComplete');
+
+                    if (growth = completion.get('growth')) {
+                        growthValues.push(growth);
+                    }
+
+                    if (average = completion.get('demonstrationsAverage')) {
+                        averageValues.push(average);
+                    }
+
+                    cardConfigs.push({
                         competency: competenciesStore.getById(completion.get('CompetencyID')),
                         completion: completion,
                         autoEl: 'li'
-                    };
-                }));
+                    });
+                }
+
+                contentAreaStatusCmp.setLevel(minLevel);
+                contentAreaStatusCmp.setPercentComplete(100 * totalComplete / totalRequired);
+                contentAreaStatusCmp.setPercentMissed(100 * totalMissed / totalRequired);
+                contentAreaStatusCmp.setMissed(totalMissed);
+                contentAreaStatusCmp.setAverage(Ext.Array.sum(averageValues) / averageValues.length);
+                contentAreaStatusCmp.setGrowth(Ext.Array.sum(growthValues) / growthValues.length);
+
+                dashboardCt.add(cardConfigs);
 
                 dashboardCt.setCompetenciesStatus('loaded');
             }
