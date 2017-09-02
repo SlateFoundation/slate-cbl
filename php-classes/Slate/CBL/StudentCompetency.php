@@ -189,7 +189,8 @@ class StudentCompetency extends \ActiveRecord
         if ($a['DemonstratedLevel'] == $b['DemonstratedLevel']) {
             return 0;
         }
-        return ($a['DemonstratedLevel'] < $b['DemonstratedLevel']) ? -1 : 1;
+
+        return $a['DemonstratedLevel'] < $b['DemonstratedLevel'] ? 1 : -1;
     }
 
     private $effectiveDemonstrationsData;
@@ -206,6 +207,7 @@ class StudentCompetency extends \ActiveRecord
 
                 array_splice($demonstrationData, $demonstrationsRequired);
             }
+
             $this->effectiveDemonstrationsData = $demonstrationsData;
         }
 
