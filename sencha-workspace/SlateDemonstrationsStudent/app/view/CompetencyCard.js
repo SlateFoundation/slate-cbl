@@ -231,7 +231,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? 'L'+newLevel : '');
+            me.meterLevelEl.update(newLevel ? 'Y'+newLevel : '');
         }
     },
 
