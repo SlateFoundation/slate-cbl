@@ -82,6 +82,9 @@ class StudentCompetency extends \ActiveRecord
         ],
         'effectiveDemonstrationsData' => [
             'getter' => 'getEffectiveDemonstrationsData'
+        ],
+        'growth' => [
+            'getter' => 'getGrowth'
         ]
     ];
 
@@ -94,7 +97,8 @@ class StudentCompetency extends \ActiveRecord
             'baselineRating' => $this->BaselineRating,
             'demonstrationsLogged' => $this->getDemonstrationsLogged(),
             'demonstrationsComplete' => $this->getDemonstrationsComplete(),
-            'demonstrationsAverage' => $this->getDemonstrationsAverage()
+            'demonstrationsAverage' => $this->getDemonstrationsAverage(),
+            'growth' => $this->getGrowth()
         ];
     }
 
@@ -348,7 +352,8 @@ class StudentCompetency extends \ActiveRecord
                 'baselineRating' => null,
                 'demonstrationsLogged' => 0,
                 'demonstrationsComplete' => 0,
-                'demonstrationsAverage' => null
+                'demonstrationsAverage' => null,
+                'growth' => null
             ];
     }
 }
