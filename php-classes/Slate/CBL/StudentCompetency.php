@@ -80,6 +80,9 @@ class StudentCompetency extends \ActiveRecord
         'demonstrationsAverage' => [
             'getter' => 'getDemonstrationsAverage'
         ],
+        'demonstrationsRequired' => [
+            'getter' => 'getDemonstrationsRequired'
+        ],
         'demonstrationData' => [
             'getter' => 'getDemonstrationData'
         ],
@@ -102,6 +105,7 @@ class StudentCompetency extends \ActiveRecord
             'demonstrationsMissed' => $this->getDemonstrationsMissed(),
             'demonstrationsComplete' => $this->getDemonstrationsComplete(),
             'demonstrationsAverage' => $this->getDemonstrationsAverage(),
+            'demonstrationsRequired' => $this->getDemonstrationsRequired(),
             'growth' => $this->getGrowth()
         ];
     }
@@ -297,6 +301,16 @@ class StudentCompetency extends \ActiveRecord
         return $this->demonstrationsAverage;
     }
 
+    private $demonstrationsRequired;
+    public function getDemonstrationsRequired()
+    {
+        if ($this->demonstrationsRequired === null) {
+            $this->demonstrationsRequired = $this->Competency->getTotalDemonstrationsRequired($this->Level);
+        }
+
+        return $this->demonstrationsRequired;
+    }
+
     public function isLevelComplete()
     {
         $logged = $this->getDemonstrationsLogged();
@@ -375,6 +389,7 @@ class StudentCompetency extends \ActiveRecord
                 'demonstrationsMissed' => 0,
                 'demonstrationsComplete' => 0,
                 'demonstrationsAverage' => null,
+                'demonstrationsRequired' => null,
                 'growth' => null
             ];
     }
