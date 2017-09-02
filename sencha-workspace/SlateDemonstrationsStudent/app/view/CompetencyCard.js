@@ -16,13 +16,18 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         completion: null,
 
         // optional config
+        percentFormat: '0%',
         averageFormat: '0.##',
+        growthFormat: '0.# yr',
 
         // input-dependent state
         level: null,
         percentComplete: null,
+        percentMissed: null,
         demonstrationsAverage: null,
         isAverageLow: null,
+        baselineRating: null,
+        growth: null,
 
         // internal state
         skillsStatus: 'unloaded',
@@ -42,10 +47,43 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
         '<div class="panel-body">',
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
-                '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width:{percentComplete:defaultValue(0)}%"></div>',
+                '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
+                '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
                 '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{[ values.level - 8]}</div>',
-                '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete}%</div>',
-                '<div id="{id}-meterAverageEl" data-ref="meterAverageEl" class="cbl-progress-average" title="Average">{demonstrationsAverage:number(values.$comp.getAverageFormat())}</div>',
+                '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
+            '</div>',
+
+            '<div class="stats-ct">',
+                '<table class="stats">',
+                    '<thead>',
+                        '<th>Baseline Score</th>',
+                        '<th>Performance Level</th>',
+                        '<th>My Growth</th>',
+                    '</thead>',
+                    '<tbody>',
+                        '<td id="{id}-baselineRatingEl" data-ref="baselineRatingEl">',
+                            '<tpl if="baselineRating">',
+                                '{baselineRating:number(values.averageFormat)}',
+                            '<tpl else>',
+                                '&mdash;',
+                            '</tpl>',
+                        '</td>',
+                        '<td id="{id}-averageEl" data-ref="averageEl">',
+                            '<tpl if="demonstrationsAverage">',
+                                '{demonstrationsAverage:number(values.averageFormat)}',
+                            '<tpl else>',
+                                '&mdash;',
+                            '</tpl>',
+                        '</td>',
+                        '<td id="{id}-growthEl" data-ref="growthEl">',
+                            '<tpl if="growth">',
+                                '{growth:number(values.growthFormat)}',
+                            '<tpl else>',
+                                '&mdash;',
+                            '</tpl>',
+                        '</td>',
+                    '</tbody>',
+                '</table>',
             '</div>',
 
             '<div class="explainer">',
@@ -59,9 +97,12 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         'descriptorEl',
         'meterEl',
         'meterBarEl',
+        'meterBarMissedEl',
         'meterLevelEl',
         'meterPercentEl',
-        'meterAverageEl',
+        'averageEl',
+        'baselineRatingEl',
+        'growthEl',
         'statementEl',
         'skillsCt'
     ],
@@ -89,7 +130,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                         '<li ',
                             'class="',
                                 'cbl-skill-demo',
-                                '<tpl if="values.DemonstratedLevel==0"> cbl-skill-demo-uncounted</tpl>',
+                                '<tpl if="values.DemonstratedLevel==0 && !Override"> cbl-skill-demo-uncounted</tpl>',
                                 '<tpl if="this.standardOverridden"> cbl-skill-demo-overridden</tpl>',
                                 '<tpl if="Override"> cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}</tpl>',
                             '"',
@@ -132,10 +173,18 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
         return Ext.apply(this.callParent(), {
             competency: me.getCompetency().getData(),
+
+            percentFormat: me.getPercentFormat(),
+            averageFormat: me.getAverageFormat(),
+            growthFormat: me.getGrowthFormat(),
+
             level: me.getLevel(),
             percentComplete: me.getPercentComplete(),
+            percentMissed: me.getPercentMissed(),
             demonstrationsAverage: me.getDemonstrationsAverage(),
-            isAverageLow: me.getIsAverageLow()
+            isAverageLow: me.getIsAverageLow(),
+            baselineRating: me.getBaselineRating(),
+            growth: me.getGrowth()
         });
     },
 
@@ -156,12 +205,16 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             competency = me.getCompetency(),
             demonstrationsAverage = completion.get('demonstrationsAverage'),
             currentLevel = completion.get('currentLevel'),
-            percentComplete = Math.round(100 * completion.get('demonstrationsComplete') / competency.getTotalDemonstrationsRequired(currentLevel));
+            demonstrationsRequired = competency.getTotalDemonstrationsRequired(currentLevel),
+            percentComplete = 100 * completion.get('demonstrationsComplete') / demonstrationsRequired;
 
         me.setLevel(currentLevel);
         me.setPercentComplete(percentComplete);
+        me.setPercentMissed(100 * completion.get('demonstrationsMissed') / demonstrationsRequired);
         me.setDemonstrationsAverage(demonstrationsAverage);
         me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
+        me.setBaselineRating(completion.get('baselineRating'));
+        me.setGrowth(completion.get('growth'));
 
         me.loadSkills();
     },
@@ -182,12 +235,31 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
     },
 
+    applyPercentComplete: function(percentComplete) {
+        return percentComplete || 0;
+    },
+
     updatePercentComplete: function(percentComplete) {
         var me = this;
 
         if (me.rendered) {
-            me.meterBarEl.setStyle('width', percentComplete + '%');
-            me.meterPercentEl.update(percentComplete + '%');
+            percentComplete = Ext.util.Format.number(percentComplete, me.getPercentFormat());
+
+            me.meterBarEl.setStyle('width', percentComplete);
+            me.meterPercentEl.update(percentComplete);
+        }
+    },
+
+    applyPercentMissed: function(percentMissed) {
+        return percentMissed || 0;
+    },
+
+    updatePercentMissed: function(percentMissed) {
+        var me = this;
+
+        if (me.rendered) {
+            percentMissed = Ext.util.Format.number(percentMissed, me.getPercentFormat());
+            me.meterBarMissedEl.setStyle('width', percentMissed);
         }
     },
 
@@ -195,13 +267,29 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this;
 
         if (me.rendered) {
-            me.meterAverageEl.update(Ext.util.Format.number(demonstrationsAverage, me.getAverageFormat()));
+            me.averageEl.update(Ext.util.Format.number(demonstrationsAverage, me.getAverageFormat()));
         }
     },
 
     updateIsAverageLow: function(isAverageLow) {
         if (this.rendered) {
             this.meterEl.toggleCls('is-average-low', isAverageLow);
+        }
+    },
+
+    updateBaselineRating: function(baselineRating) {
+        var me = this;
+
+        if (me.rendered) {
+            me.baselineRatingEl.update(Ext.util.Format.number(baselineRating, me.getAverageFormat()));
+        }
+    },
+
+    updateGrowth: function(growth) {
+        var me = this;
+
+        if (me.rendered) {
+            me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
         }
     },
 

@@ -16,6 +16,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
    // controller configuration
     views: [
         'Dashboard',
+        'ContentAreaStatus',
         'RecentProgress',
         'OverviewWindow'
     ],
@@ -27,6 +28,12 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             autoCreate: true,
 
             xtype: 'slate-demonstrations-student-dashboard'
+        },
+        contentAreaStatusCmp: {
+            selector: 'slate-demonstrations-student-contentareastatus',
+            autoCreate: true,
+
+            xtype: 'slate-demonstrations-student-contentareastatus'
         },
         recentProgressCmp: {
             selector: 'slate-demonstrations-student-recentprogress',
@@ -43,10 +50,11 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         var siteEnv = window.SiteEnvironment || {},
             cblStudentId = (siteEnv.cblStudent || {}).ID,
             cblContentArea = siteEnv.cblContentArea || {},
-            dashboardCt, recentProgressCmp;
+            dashboardCt, contentAreaStatusCmp, recentProgressCmp;
 
         // fetch component instances
         dashboardCt = this.getDashboardCt();
+        contentAreaStatusCmp = this.getContentAreaStatusCmp();
         recentProgressCmp = this.getRecentProgressCmp();
 
         // configure recent progress component with any available embedded data
@@ -69,6 +77,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
         // render components
         Ext.suspendLayouts();
+        contentAreaStatusCmp.render('slateapp-viewport');
         recentProgressCmp.render('slateapp-viewport');
         dashboardCt.render('slateapp-viewport');
         Ext.resumeLayouts(true);
