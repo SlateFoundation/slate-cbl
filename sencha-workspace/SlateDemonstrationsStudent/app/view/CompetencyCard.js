@@ -16,6 +16,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         completion: null,
 
         // optional config
+        percentFormat: '0%',
         averageFormat: '0.##',
         growthFormat: '0.# yr',
 
@@ -45,11 +46,9 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
         '<div class="panel-body">',
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
-                '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width:{percentComplete:defaultValue(0)}%"></div>',
-                // TODO set width dynamically
-                '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: 10%; left: {percentComplete:defaultValue(0)}%"></div>',
+                '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
                 '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{[ values.level - 8]}</div>',
-                '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete}%</div>',
+                '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
             '</div>',
 
             '<div class="stats-ct">',
@@ -58,24 +57,25 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                         '<th>Baseline Score</th>',
                         '<th>Performance Level</th>',
                         '<th>My Growth</th>',
+                    '</thead>',
                     '<tbody>',
                         '<td id="{id}-baselineRatingEl" data-ref="baselineRatingEl">',
                             '<tpl if="baselineRating">',
-                                '{baselineRating:number(values.$comp.getAverageFormat())}',
+                                '{baselineRating:number(values.averageFormat)}',
                             '<tpl else>',
                                 '&mdash;',
                             '</tpl>',
                         '</td>',
                         '<td id="{id}-averageEl" data-ref="averageEl">',
                             '<tpl if="demonstrationsAverage">',
-                                '{demonstrationsAverage:number(values.$comp.getAverageFormat())}',
+                                '{demonstrationsAverage:number(values.averageFormat)}',
                             '<tpl else>',
                                 '&mdash;',
                             '</tpl>',
                         '</td>',
                         '<td id="{id}-growthEl" data-ref="growthEl">',
                             '<tpl if="growth">',
-                                '{growth:number(values.$comp.getGrowthFormat())}',
+                                '{growth:number(values.growthFormat)}',
                             '<tpl else>',
                                 '&mdash;',
                             '</tpl>',
@@ -170,6 +170,11 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
         return Ext.apply(this.callParent(), {
             competency: me.getCompetency().getData(),
+
+            percentFormat: me.getPercentFormat(),
+            averageFormat: me.getAverageFormat(),
+            growthFormat: me.getGrowthFormat(),
+
             level: me.getLevel(),
             percentComplete: me.getPercentComplete(),
             demonstrationsAverage: me.getDemonstrationsAverage(),
@@ -224,12 +229,18 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
     },
 
+    applyPercentComplete: function(percentComplete) {
+        return percentComplete || 0;
+    },
+
     updatePercentComplete: function(percentComplete) {
         var me = this;
 
         if (me.rendered) {
-            me.meterBarEl.setStyle('width', percentComplete + '%');
-            me.meterPercentEl.update(percentComplete + '%');
+            percentComplete = Ext.util.Format.number(percentComplete, me.getPercentFormat());
+
+            me.meterBarEl.setStyle('width', percentComplete);
+            me.meterPercentEl.update(percentComplete);
         }
     },
 
