@@ -7,7 +7,7 @@ set_time_limit(0);
 
 
 // fetch key objects from database
-$students = Slate\People\Student::getAllByListIdentifier(empty($_GET['students']) ? 'all' : $_GET['students']);
+$students = Slate\People\Student::getAllByListIdentifier(empty($_REQUEST['students']) ? 'all' : $_REQUEST['students']);
 $studentIds = array_map(function($Student) {
     return $Student->ID;
 }, $students);
