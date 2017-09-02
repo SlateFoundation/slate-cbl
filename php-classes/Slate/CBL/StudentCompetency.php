@@ -212,17 +212,14 @@ class StudentCompetency extends \ActiveRecord
     public function getDemonstrationsLogged()
     {
         if ($this->demonstrationsLogged === null) {
-            $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
-            $this->getDemonstrationsLogged = 0;
-            foreach ($effectiveDemonstrationsData as $skillId => $demonstrationData) {
-                $Skill = Skill::getByID($skillId);
-                $skillCount = 0;
+            $this->demonstrationsLogged = 0;
+
+            foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
                 foreach ($demonstrationData as $demonstration) {
                     if (empty($demonstration['Override']) && !empty($demonstration['DemonstratedLevel'])) {
-                        $skillCount++;
+                        $this->demonstrationsLogged++;
                     }
                 }
-                $this->demonstrationsLogged += $skillCount;
             }
         }
 
@@ -233,22 +230,22 @@ class StudentCompetency extends \ActiveRecord
     public function getDemonstrationsComplete()
     {
         if ($this->demonstrationsComplete === null) {
-            $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
             $this->demonstrationsComplete = 0;
-            foreach ($effectiveDemonstrationsData as $skillId => $demonstrationData) {
+
+            foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
                 $Skill = Skill::getByID($skillId);
+                $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
                 $skillCount = 0;
+
                 foreach ($demonstrationData as $demonstration) {
-                    if (!empty($demonstration['DemonstratedLevel'])) {
-                        if ($demonstration['Override']) {
-                            $skillCount += $Skill->getDemonstrationsRequiredByLevel($this->Level);
-                        } else {
-                            $skillCount++;
-                        }
+                    if (!empty($demonstration['Override'])) {
+                        $skillCount += $demonstrationsRequired;
+                    } elseif (!empty($demonstration['DemonstratedLevel'])) {
+                        $skillCount++;
                     }
-                    $skillCount = min($Skill->getDemonstrationsRequiredByLevel($this->Level), $skillCount);
                 }
-                $this->demonstrationsComplete += $skillCount;
+
+                $this->demonstrationsComplete += min($demonstrationsRequired, $skillCount);
             }
         }
 
