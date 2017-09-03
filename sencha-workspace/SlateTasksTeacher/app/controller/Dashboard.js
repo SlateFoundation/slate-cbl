@@ -116,7 +116,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             reassign: 'onReAssignStudentTaskClick'
         },
         assignmentsComboField: {
-            render: 'onAssigneeComboRender'
+            afterrender: 'onAssigneeComboRender'
         },
         commentsField: {
             publish: 'onCommentsFieldPublish'
