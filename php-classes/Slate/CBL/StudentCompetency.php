@@ -338,6 +338,12 @@ class StudentCompetency extends \ActiveRecord
             $totalSkills = $this->Competency->getTotalSkills();
 
             $growthData = array_filter(array_map(function($demonstrations) {
+                // filter out overrides and missed demonstrations
+                $demonstrations = array_filter($demonstrations, function ($demonstration) {
+                    return $demonstration['DemonstratedLevel'] && empty($demonstration['Override']);
+                });
+
+                // growth can only be calculated if 2 ratings are available, or 1 rating and a baseline
                 if (count($demonstrations) === 1 && $this->BaselineRating) {
                     return null;
                 }
