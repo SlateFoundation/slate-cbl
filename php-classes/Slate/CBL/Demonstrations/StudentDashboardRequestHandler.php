@@ -119,16 +119,37 @@ class StudentDashboardRequestHandler extends \RequestHandler
             return static::throwNotFoundError('Competencies list required');
         }
 
+        $lowestLevel = null;
         $completions = [];
 
-        foreach ($competencies AS $Competency) {
+        // fetch completion for current level of each competency
+        foreach ($competencies as $Competency) {
             $StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
 
             if ($StudentCompetency) {
                 $completions[] = $StudentCompetency->getCompletion();
+
+                if (!$lowestLevel || $StudentCompetency->Level < $lowestLevel) {
+                    $lowestLevel = $StudentCompetency->Level;
+                }
             } else {
                 $completions[] = StudentCompetency::getBlankCompletion($Student, $Competency);
             }
+        }
+
+        // fill completions with data for lowest incomplete level
+        foreach ($completions as &$completion) {
+            if ($completion['currentLevel'] == $lowestLevel) {
+                continue;
+            }
+
+            $StudentCompetency = StudentCompetency::getByWhere([
+                'StudentID' => $completion['StudentID'],
+                'CompetencyID' => $completion['CompetencyID'],
+                'Level' => $lowestLevel
+            ]);
+
+            $completion['lowest'] = $StudentCompetency ? $StudentCompetency->getCompletion() : false;
         }
 
         return static::respond('completions', [
@@ -175,7 +196,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
                     ,DemonstrationSkill::$tableName     // 2
                     ,Demonstration::$tableName          // 3
                     ,StudentCompetency::$tableName      // 4
-                    ,implode(',', array_map(function($Competency) {
+                    ,implode(',', array_map(function ($Competency) {
                         return $Competency->ID;
                     }, $competencies))                  // 5
                     ,$Student->ID                       // 6
