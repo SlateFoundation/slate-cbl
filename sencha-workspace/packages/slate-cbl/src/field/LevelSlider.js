@@ -55,7 +55,7 @@ Ext.define('Slate.cbl.field.LevelSlider', {
             me.setParkedValue(null);
         }
 
-        me.getTpl('thumbTpl').overwrite(thumbEl, {
+        me.lookupTpl('thumbTpl').overwrite(thumbEl, {
             value: isParked ? me.getParkedValue() : value
         });
 
@@ -72,11 +72,11 @@ Ext.define('Slate.cbl.field.LevelSlider', {
 
         return thumbValue == me.minValue ? me.getParkedValue() : thumbValue;
     },
-    
+
     setLevel: function(level) {
         var me = this,
             minValue = me.minValue;
-        
+
         if (level > minValue) {
             me.setValue(level);
         } else {

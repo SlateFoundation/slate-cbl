@@ -342,7 +342,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             return;
         }
 
-        me.getTpl('skillsTpl').overwrite(me.skillsCt, me.getSkillsData());
+        me.lookupTpl('skillsTpl').overwrite(me.skillsCt, me.getSkillsData());
 
         me.setSkillsStatus('loaded');
     },
