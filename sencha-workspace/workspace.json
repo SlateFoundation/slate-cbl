@@ -1,9 +1,9 @@
 {
     /**
      * An object containing key value pair framework descriptors.
-     * 
+     *
      * The value can be a string or an object containing at least one of "dir" or "pkg",
-     * where "dir" can be a filesystem path to the framework sources and "pkg" can be a 
+     * where "dir" can be a filesystem path to the framework sources and "pkg" can be a
      * package name. For example:
      *
      *      "frameworks": {
@@ -23,7 +23,7 @@
      */
     "frameworks": {
         "ext": {
-            "path":"ext",
+            "path":"ext-6.2.0.981",
             "version":"6.2.0.981"
         }
     },
