@@ -15,6 +15,3 @@ sencha app build testing
 
 cd ../SlateTasksManager
 sencha app build testing
-
-cd ../AggregridExample
-sencha app build testing
