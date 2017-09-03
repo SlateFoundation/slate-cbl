@@ -16,7 +16,7 @@ Ext.define('Slate.cbl.field.LevelSlider', {
 
     componentCls: 'cbl-level-slider-field',
     minValue: 0,
-    maxValue: 3,
+    maxValue: 4,
     useTips: false,
     thumbTpl: [
         '<span class="value">',
