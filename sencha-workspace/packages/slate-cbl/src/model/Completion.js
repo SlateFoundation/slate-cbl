@@ -11,7 +11,18 @@ Ext.define('Slate.cbl.model.Completion', {
         { name: 'demonstrationsComplete', type: 'int' },
         { name: 'demonstrationsAverage', type: 'float', allowNull: true },
         { name: 'baselineRating', type: 'float', allowNull: true },
-        { name: 'growth', type: 'float', allowNull: true }
+        { name: 'growth', type: 'float', allowNull: true },
+        {
+            name: 'lowest',
+            allowNull: true,
+            convert: function(v, r) {
+                if (v) {
+                    return new r.self(v);
+                }
+
+                return v === false ? false : null;
+            }
+        }
     ],
 
     // generate compound IDs

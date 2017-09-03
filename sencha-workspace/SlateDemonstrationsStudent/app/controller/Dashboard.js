@@ -110,10 +110,27 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
                     cardConfigs = [],
                     completionsLength = completions.length,
                     completionIndex = 0,
-                    completion, average, growth;
+                    completion, lowestCompletion, average, growth;
 
                 for (; completionIndex < completionsLength; completionIndex++) {
                     completion = completions[completionIndex];
+
+                    cardConfigs.push({
+                        competency: competenciesStore.getById(completion.get('CompetencyID')),
+                        completion: completion,
+                        autoEl: 'li'
+                    });
+
+                    // only use completions for lowest incomplete level for aggregate figures
+                    lowestCompletion = completion.get('lowest');
+
+                    if (lowestCompletion === false) {
+                        // this completion isn't at the lowest level but one at that level isn't available
+                        continue;
+                    } else if (lowestCompletion) {
+                        // switch to lowest-level completion
+                        completion = lowestCompletion;
+                    }
 
                     minLevel = Math.min(minLevel, completion.get('currentLevel'));
                     totalRequired += completion.get('demonstrationsRequired');
@@ -127,12 +144,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
                     if (average = completion.get('demonstrationsAverage')) {
                         averageValues.push(average);
                     }
-
-                    cardConfigs.push({
-                        competency: competenciesStore.getById(completion.get('CompetencyID')),
-                        completion: completion,
-                        autoEl: 'li'
-                    });
                 }
 
                 contentAreaStatusCmp.setLevel(minLevel);
