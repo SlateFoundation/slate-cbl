@@ -131,6 +131,10 @@ class StudentTask extends \VersionedRecord
 
         'Student' => [
             'validator' => [__CLASS__, 'validateStudent']
+        ],
+
+        'Section' => [
+            'validator' => 'require-relationship'
         ]
     ];
 
@@ -186,11 +190,11 @@ class StudentTask extends \VersionedRecord
 
         if ($this->Task && $this->Task->Skills) {
             foreach ($this->Task->Skills as $skill) {
-                $currentLevel = $skill->Competency->getCurrentLevelForStudent($this->Student);
+                $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
                 $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
 
                 $taskSkills[] = array_merge($skill->getData(), [
-                    'CompetencyLevel' => $currentLevel,
+                    'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
                     'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
                     'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
                     'Rating' => $demoSkillRating
@@ -200,11 +204,11 @@ class StudentTask extends \VersionedRecord
 
         if ($this->Skills) {
             foreach ($this->Skills as $skill) {
-                $currentLevel = $skill->Competency->getCurrentLevelForStudent($this->Student);
+                $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
                 $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
 
                 $taskSkills[] = array_merge($skill->getData(), [
-                    'CompetencyLevel' => $currentLevel,
+                    'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
                     'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
                     'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
                     'Rating' => $demoSkillRating

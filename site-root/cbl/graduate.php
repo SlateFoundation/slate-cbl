@@ -1,5 +1,7 @@
 <?php
 
+use Slate\CBL\StudentCompetency;
+
 $GLOBALS['Session']->requireAccountLevel('Staff');
 $pretend = !empty($_REQUEST['pretend']);
 
@@ -19,17 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($students as $Student) {
 
         foreach ($competencies as $Competency) {
-            $currentLevel = $Competency->getCurrentLevelForStudent($Student);
+            $StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
 
             if (
-                \Slate\CBL\StudentCompetency::isCurrentLevelComplete($Student, $Competency) &&
-                $currentLevel < $Competency->getMaximumTargetLevel()
+                $StudentCompetency &&
+                $StudentCompetency->isLevelComplete() &&
+                $StudentCompetency->Level < $Competency->getMaximumTargetLevel()
             ) {
                 // enroll student in next level
-                \Slate\CBL\StudentCompetency::create([
+                StudentCompetency::create([
                     'StudentID' => $Student->ID,
                     'CompetencyID' => $Competency->ID,
-                    'Level' => $currentLevel + 1,
+                    'Level' => $StudentCompetency->Level + 1,
                     'EnteredVia' => 'graduation'
                 ], !$pretend);
 

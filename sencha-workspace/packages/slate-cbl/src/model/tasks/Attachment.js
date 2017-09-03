@@ -13,44 +13,53 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
 
     fields: [
         {
-            name: "ID",
-            type: "int",
+            name: 'ID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "Class",
-            type: "string",
-            defaultValue: "Slate\\CBL\\Tasks\\Attachments\\Link"
+            name: 'Class',
+            type: 'string',
+            defaultValue: 'Slate\\CBL\\Tasks\\Attachments\\Link'
         },
         {
-            name: "Created",
-            type: "date",
-            dateFormat: "timestamp",
+            name: 'Created',
+            type: 'date',
+            dateFormat: 'timestamp',
             allowNull: true
         },
         {
-            name: "CreatorID",
-            type: "int",
+            name: 'CreatorID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "TaskID",
-            type: "int"
+            name: 'TaskID',
+            type: 'int'
         },
         {
-            name: "Title",
-            type: "string",
+            name: 'Title',
+            type: 'string',
             allowNull: true
         },
         {
-            name: "ExternalID",
-            type: "string",
+            name: 'URL',
+            type: 'string',
             allowNull: true
         },
         {
-            name: "URL",
-            type: "string",
-            allowNull: true
+            name: 'ShareMethod',
+            type: 'string',
+            defaultValue: 'view-only'
+        },
+        {
+            name: 'Status',
+            type: 'string',
+            defaultValue: 'normal'
+        },
+        {
+            name: 'File',
+            defaultValue: {}
         },
         {
             name: 'kind',
@@ -58,7 +67,7 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
             depends: ['Class'],
             calculate: function(data) {
                 switch (data.Class) {
-                    case 'Slate\\CBL\\Tasks\\Attachments\\GoogleDocument':
+                    case 'Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile':
                         return 'doc';
                     case 'Slate\\CBL\\Tasks\\Attachments\\Link':
                         return 'link';
@@ -70,11 +79,20 @@ Ext.define('Slate.cbl.model.tasks.Attachment', {
         {
             name: 'title',
             persist: false,
-            depends: ['Title', 'URL'],
+            depends: ['Title', 'URL', 'File'],
             calculate: function(data) {
-                return data.Title || data.URL || 'Untitled';
+                return data.File && data.File.Title || data.Title || data.URL || 'Untitled';
             }
 
+        },
+        {
+            name: 'statusMutable',
+            persist: false
+
+        },
+        {
+            name: 'sharingMutable',
+            persist: false
         }
     ]
 });

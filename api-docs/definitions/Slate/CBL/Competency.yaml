@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\Competency
+description: |
+  A competency is a group of [skills](#models::slate-cbl-skill) within a [content area](#models::slate-cbl-contentarea) that are leveled together.

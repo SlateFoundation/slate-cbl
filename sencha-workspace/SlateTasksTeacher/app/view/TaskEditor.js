@@ -72,7 +72,7 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
             assignmentsField.setAssignees(task.getAssigneeIds());
 
             me.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
-            me.down('button[action=save]').setText(task.phantom ? 'Create' : 'Save');
+            me.down('button[action=save]').setText(task.phantom ? 'Publish' : 'Save');
 
             if (task.get('ParentTaskID')) {
                 parentTaskField = form.down('slate-tasks-titlefield[name=ParentTaskID]');

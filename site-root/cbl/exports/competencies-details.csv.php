@@ -45,10 +45,10 @@ if ($from && $to) {
     $defaultDemonstrationConditions[] = sprintf('Demonstrated <= "%s"', $to);
 }
 
-foreach ($students as $student) {
+foreach ($students as $Student) {
 
     $demonstrationConditions = array_merge($defaultDemonstrationConditions, [
-        'StudentID' => $student->ID
+        'StudentID' => $Student->ID
     ]);
 
     $demonstrationIds = \DB::allValues(
@@ -63,7 +63,7 @@ foreach ($students as $student) {
 
     $studentCompetenciesByLevel = \DB::arrayTable(
         'Level',
-        'SELECT %2$s.* FROM `%1$s` `%2$s`'.
+        'SELECT %2$s.ID FROM `%1$s` `%2$s`'.
         '  JOIN `%3$s` %4$s'.
         '    ON %2$s.CompetencyID = %4$s.ID'.
         ' WHERE %2$s.StudentID = %5$u'.
@@ -73,7 +73,7 @@ foreach ($students as $student) {
             \Slate\CBL\StudentCompetency::getTableAlias(),
             \Slate\CBL\Competency::$tableName,
             \Slate\CBL\Competency::getTableAlias(),
-            $student->ID
+            $Student->ID
         ]
     );
 
@@ -89,22 +89,23 @@ foreach ($students as $student) {
             $totalMissedOpportunities = 0;
             $competenciesWithGrowth = 0;
 
+            $StudentCompetency = \Slate\CBL\StudentCompetency::getByID($studentCompetency['ID']);
+
             // get competency for the competency completion data
-            $competency = \Slate\CBL\Competency::getByID($studentCompetency['CompetencyID']);
+            $Competency = \Slate\CBL\Competency::getByID($StudentCompetency->CompetencyID);
 
             // competency record was deleted
-            if (!$competency) {
+            if (!$Competency) {
                 continue;
             }
 
-            $completion = $competency->getCompletionForStudent($student, $level, $defaultDemonstrationConditions[0]);
-            $totalER = $competency->getTotalDemonstrationsRequired($level);
+            $totalER = $Competency->getTotalDemonstrationsRequired($level);
 
             // get all skills for this competency
-            $skills = $competency->Skills;
+            $skills = $Competency->Skills;
             $skillsWithGrowth = 0;
 
-            foreach ($skills as $skill) {
+            foreach ($skills as $Skill) {
                 // initialize variables
                 $growth = 0;
                 $skillsWithGrowth = 0;
@@ -114,11 +115,11 @@ foreach ($students as $student) {
                 $demonstrationsRequired = 0;
 
                 // get demonstrations required for this skill
-                $demonstrationsRequired = $skill->getDemonstrationsRequiredByLevel($level, true);
+                $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($level, true);
                 if (!empty($demonstrationIds)) {
 
                     $demonstrationSkills = \Slate\CBL\Demonstrations\DemonstrationSkill::getAllByWhere([
-                        'SkillID' => $skill->ID,
+                        'SkillID' => $Skill->ID,
                         'TargetLevel' => $level,
                         'DemonstrationID' => [
                             'values' => $demonstrationIds
@@ -128,14 +129,14 @@ foreach ($students as $student) {
                     ]);
 
                     $nonMissingDemonstrationSkills = [];
-                    foreach ($demonstrationSkills as $demonstrationSkill) {
+                    foreach ($demonstrationSkills as $DemonstrationSkill) {
                         $totalOpportunities++;
 
-                        if ($demonstrationSkill->DemonstratedLevel > 0 && !$demonstrationSkill->Override) {
-                            array_push($nonMissingDemonstrationSkills, $demonstrationSkill);
+                        if ($DemonstrationSkill->DemonstratedLevel > 0 && !$DemonstrationSkill->Override) {
+                            array_push($nonMissingDemonstrationSkills, $DemonstrationSkill);
                         }
 
-                        if ($demonstrationSkill->DemonstratedLevel > 0) {
+                        if ($DemonstrationSkill->DemonstratedLevel > 0) {
                             $completedOpportunities += 1;
                         } else {
                             $missedOpportunities++;
@@ -147,10 +148,10 @@ foreach ($students as $student) {
                         }
 
                         // if demo is overridden, it is a completed opportunity and not a missed opportunity
-                        if ($demonstrationSkill->Override) {
+                        if ($DemonstrationSkill->Override) {
                             $completedOpportunities = $demonstrationsRequired;
                             $missedOpportunities = 0;
-                        } elseif ($demonstrationSkill->DemonstratedLevel > 0 && $ratedOpportunities < $demonstrationsRequired) {
+                        } elseif ($DemonstrationSkill->DemonstratedLevel > 0 && $ratedOpportunities < $demonstrationsRequired) {
                             $ratedOpportunities++;
                         }
 
@@ -189,12 +190,12 @@ foreach ($students as $student) {
 
             // add date to result
             $row = [
-                $student->ID,
-                $student->getFullName(),
-                $student->StudentNumber,
-                $competency->Code,
-                $studentCompetency['Level'],
-                number_format((float)$completion['demonstrationsAverage'], 2, '.', ''),
+                $Student->ID,
+                $Student->getFullName(),
+                $Student->StudentNumber,
+                $Competency->Code,
+                $StudentCompetency->Level,
+                number_format((float)$StudentCompetency->getDemonstrationsAverage(), 2, '.', ''),
                 number_format((float)$totalGrowth, 2, '.', ''),
                 round($progress) . "%",
                 $totalER,

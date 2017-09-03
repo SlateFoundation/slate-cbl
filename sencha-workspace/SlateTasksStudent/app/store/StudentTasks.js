@@ -16,10 +16,10 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
             'Student',
             'Section',
             'Comments',
-            'Attachments',
+            'Attachments.File',
             'Submissions',
             'TaskSkills',
-            'Task.Attachments',
+            'Task.Attachments.File',
             'Task.ParentTask'
         ]
     }

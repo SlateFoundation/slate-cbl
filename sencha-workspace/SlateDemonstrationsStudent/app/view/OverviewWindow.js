@@ -18,8 +18,8 @@ Ext.define('SlateDemonstrationsStudent.view.OverviewWindow', {
     },
 
     modal: true,
-    fixed: true,
     shadow: 'frame',
+    constrainHeader: true,
 
     dockedItems: [
         {

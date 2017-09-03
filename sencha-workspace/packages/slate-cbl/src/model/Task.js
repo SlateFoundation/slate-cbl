@@ -146,6 +146,10 @@ Ext.define('Slate.cbl.model.Task', {
 
                 return [];
             }
+        },
+        {
+            name: 'SectionID',
+            persist: true
         }
     ],
 
@@ -156,9 +160,10 @@ Ext.define('Slate.cbl.model.Task', {
             'Creator',
             'ParentTask',
             'Skills',
-            'Attachments',
+            'Attachments.File',
             'StudentTasks'
-        ]
+        ],
+        timeout: 180000 // extended timeout for handling attachment permission requests
     },
 
     validators: [{

@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\Demonstrations\DemonstrationSkill
+description: |
+  A demonstration skill records a rating a student earned for a [skill](#models::slate-cbl-skill) through a [demonstration](#models::slate-cbl-demonstrations-demonstration).
