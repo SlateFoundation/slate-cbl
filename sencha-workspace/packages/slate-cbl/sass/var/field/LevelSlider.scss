@@ -1,12 +1,10 @@
-$cbl-level-6-color:             dynamic(#ccc);
-$cbl-level-7-color:             dynamic(#999);
-
 $cbl-level-0-color:             dynamic(#666);
 $cbl-level-1-color:             dynamic(#d94181);
 $cbl-level-2-color:            dynamic(#ffa200);
 $cbl-level-3-color:            dynamic(#5dc02a);
 $cbl-level-4-color:            dynamic(#008cc1);
 $cbl-level-5-color:            dynamic(#a0522d);
+$cbl-level-6-color:             dynamic(#ccc);
 
 $cbl-level-0-color-light:       dynamic(#999);
 $cbl-level-1-color-light:       dynamic(#ea97ba);
@@ -14,6 +12,7 @@ $cbl-level-2-color-light:      dynamic(#ffcc73);
 $cbl-level-3-color-light:      dynamic(#a6dc8a);
 $cbl-level-4-color-light:      dynamic(#73c0dd);
 $cbl-level-5-color-light:      dynamic(#da845c);
+$cbl-level-6-color-light:      dynamic(#da845c);
 
 $cbl-level-0-color-medium:      dynamic(#777);
 $cbl-level-1-color-medium:      dynamic(#e1679a);
@@ -21,6 +20,7 @@ $cbl-level-2-color-medium:     dynamic(#ffb533);
 $cbl-level-3-color-medium:     dynamic(#7dcd55);
 $cbl-level-4-color-medium:     dynamic(#33a3cd);
 $cbl-level-5-color-medium:     dynamic(#b66540);
+$cbl-level-6-color-medium:     dynamic(#b66540);
 
 $cbl-level-0-color-dark:        dynamic(#555);
 $cbl-level-1-color-dark:        dynamic(#ca274f);
@@ -28,6 +28,7 @@ $cbl-level-2-color-dark:       dynamic(#ff7d00);
 $cbl-level-3-color-dark:       dynamic(#38a719);
 $cbl-level-4-color-dark:       dynamic(#005ea8);
 $cbl-level-5-color-dark:       dynamic(#8e4320);
+$cbl-level-6-color-dark:       dynamic(#8e4320);
 
 $cbl-level-colors: dynamic(
     $cbl-level-0-color,
@@ -35,7 +36,8 @@ $cbl-level-colors: dynamic(
     $cbl-level-2-color,
     $cbl-level-3-color,
     $cbl-level-4-color,
-    $cbl-level-5-color
+    $cbl-level-5-color,
+    $cbl-level-6-color
 );
 
 $cbl-level-colors-light: dynamic(
@@ -44,6 +46,7 @@ $cbl-level-colors-light: dynamic(
     $cbl-level-2-color-light,
     $cbl-level-3-color-light,
     $cbl-level-4-color-light,
+    $cbl-level-6-color-light,
     $cbl-level-5-color-light
 );
 
@@ -53,6 +56,7 @@ $cbl-level-colors-medium: dynamic(
     $cbl-level-2-color-medium,
     $cbl-level-3-color-medium,
     $cbl-level-4-color-medium,
+    $cbl-level-6-color-medium,
     $cbl-level-5-color-medium
 );
 
@@ -62,5 +66,6 @@ $cbl-level-colors-dark: dynamic(
     $cbl-level-2-color-dark,
     $cbl-level-3-color-dark,
     $cbl-level-4-color-dark,
-    $cbl-level-5-color-dark
+    $cbl-level-5-color-dark,
+    $cbl-level-6-color-dark
 );
