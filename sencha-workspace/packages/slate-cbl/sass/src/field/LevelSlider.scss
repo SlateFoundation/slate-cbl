@@ -21,31 +21,23 @@
     }
 
     .x-slider-horz {
-        padding: 0 32px;
+        padding: 0 48px 0 32px;
     }
 
     .x-slider-horz,
     .x-slider-horz .x-slider-end {
-        @include background(linear-gradient(left, transparent 50%, $cbl-level-6-color 50% ));
+        @include background(linear-gradient(left, transparent 50%, $cbl-level-3-color 50% ));
     }
 
     .x-slider-inner {
         @include background-image(linear-gradient(left,
-            transparent percentage(1/8),
-            $cbl-level-0-color percentage(1/14),
-            $cbl-level-0-color percentage(3/14),
-            $cbl-level-1-color percentage(3/14),
-            $cbl-level-1-color percentage(5/14),
-            $cbl-level-2-color percentage(5/14),
-            $cbl-level-2-color percentage(7/14),
-            $cbl-level-3-color percentage(7/14),
-            $cbl-level-3-color percentage(9/14),
-            $cbl-level-4-color percentage(9/14),
-            $cbl-level-4-color percentage(11/14),
-            $cbl-level-5-color percentage(11/14),
-            $cbl-level-5-color percentage(13/14),
-            $cbl-level-6-color percentage(13/14),
-            $cbl-level-6-color percentage(14/14)
+                    transparent percentage(1/6),
+             $cbl-level-1-color percentage(1/6),
+             $cbl-level-1-color percentage(3/6),
+            $cbl-level-2-color percentage(3/6),
+            $cbl-level-2-color percentage(5/6),
+            $cbl-level-3-color percentage(5/6),
+            $cbl-level-3-color percentage(6/6)
         ));
 
         height: 10px;
