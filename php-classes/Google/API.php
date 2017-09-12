@@ -205,7 +205,7 @@ class API
                     }
 
                     // skip responses that are unparsable
-                    if (!preg_match('/\{([a-z0-9\s-_\\\\\/\.\,\?\="\\\':#@\[\{\]\}]+)\}/i', $responsePart, $responseParts)) {
+                    if (!preg_match('/\{([\S\s]+)\}\s+?$/i', $responsePart, $responseParts)) {
                         $Logger->log(
                             LogLevel::ERROR,
                             'Response unparsable, skipping.',
