@@ -212,12 +212,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
     {
         $phase = 0;
 
-        $Logger = new \Debug\Logger();
-        $Logger->notice('syncUserPermissions backtrace', [
-            'backtrace' => array_map(function($trace) {
-                return sprintf('%s%s%s Line #: %u (%s)', $trace['class'], $trace['type'], $trace['function'], $trace['line'], $trace['file']);
-            }, debug_backtrace())
-        ]);
+        $Logger = new \Emergence\Logger();
         $Logger->notice('Syncing permissions for {totalStudents} to {totalAttachments} files', [
             'totalAttachments' => count($attachments),
             'totalStudents' => count($students),
@@ -252,17 +247,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
                     continue;
                 }
 
-#                $Logger->notice('Adding batch requests for Attachment #{attachmentId} in phase #{phase}', [
-#                    'attachmentId' => $Attachment->ID,
-#                    'phase' => $phase
-#                ]);
-
                 $attachmentRequests = $Attachment->_getBatchRequestsByPhase($phase, $students, $teachers, $syncDefault);
-
-#                \Debug\Logger::general_notice(
-#                    '_syncUserPermissions: totalRequests (#{totalRequests})',
-#                    ['totalRequests' => count($attachmentRequests), 'attachmentRequests' => $attachmentRequests, 'requests' => $requests, 'phaseNumber' => $phase]
-#                );
 
 
                 if (!empty($attachmentRequests) && is_array($attachmentRequests)) {
@@ -270,15 +255,6 @@ class GoogleDriveFile extends AbstractTaskAttachment
                 }
             }
 
-            $Logger->notice('{totalRequests} Attachment Requests pending', [
-                'totalRequests' => count($requests),
-                'request keys' => array_keys($requests)
-#                'requests' => $requests
-            ]);
-#            \Debug\Logger::general_notice(
-#                'Total Requests: ({totalRequests}) during phase #{phaseNumber}',
-#                ['requests' => $requests, 'totalRequests' => count($requests), 'phaseNumber' => $phase]
-#            );
 
 
             $responses = GoogleAPI::executeBatchRequest(array_filter($requests), 1, $Logger);
@@ -472,7 +448,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
         foreach ($requiredStudents as $Student) {
             if (!$StudentTask = StudentTask::getByWhere(['StudentID' => $Student->ID, 'TaskID' => $this->Task->ID])) {
-                \Debug\Logger::general_notice(
+                \Emergence\Logger::general_notice(
                     'Unable to build permission request: Task #{taskId}: {taskName} not assigned to {slateUsername} was not found, skipping.',
                     ['taskId' => $this->Task->ID, 'taskName' => $this->Task->Title, 'slateUsername' => $Student->Username]
                 );
@@ -480,7 +456,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
             }
 
             if (!$ClonedAttachment = static::getByWhere(['ParentAttachmentID' => $this->ID, 'ContextID' => $StudentTask->ID, 'ContextClass' => $StudentTask->getRootClass()])) {
-                \Debug\Logger::general_notice(
+                \Emergence\Logger::general_notice(
                     'Unable to build permission request: Cloned Attachment belonging to {slateUsername} not found, skipping.',
                     ['StudentTask' => $StudentTask, 'slateUsername' => $Student->Username]
                 );
@@ -488,7 +464,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
             }
 
             if (!$validEmail = static::getValidEmailAddress($Student)) {
-                \Debug\Logger::general_notice(
+                \Emergence\Logger::general_notice(
                     'Unable to build permission request: User {slateUsername} email ({email}) is invaild, skipping.',
                     ['email' => $validEmail, 'slateUsername' => $Student->Username]
                 );
