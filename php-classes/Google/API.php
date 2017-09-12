@@ -30,7 +30,8 @@ class API
             'rateLimitExceeded'
         ],
         500 => [
-            'backendError'
+            'backendError',
+            'internalError'
         ]
     ];
 
