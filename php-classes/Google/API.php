@@ -271,6 +271,12 @@ class API
 
             // queue failed requestest
             if (!empty($failedRequests)) {
+                $Logger->warning('{totalFailedRequests} requests failed, retrying...', [
+                    'totalFailedRequests' => count($failedRequests),
+                    'failed request keys' => array_keys($failedRequests),
+                    'failed responses' => $failedResponses,
+                    'failed requests' => $failedRequests
+                ]);
                 sleep(pow(2, (is_numeric($retry) ? $retry : 1) - 1));
                 $retry++;
                 static::queueBatchRequests($failedRequests);
