@@ -178,7 +178,7 @@ class API
                     }
 
                     // skip responses where content-id can not be retrieved
-                    if (!preg_match('/Content-ID:\sresponse-([a-z0-9\_\-\|@\.\:\/]+)/i', $responsePart, $headerMatches)) {
+                    if (!preg_match('/Content-ID:\sresponse-([\S]+)/i', $responsePart, $headerMatches)) {
                         // end of batch request
                         if ($responsePart != '--') {
                             $Logger->log(
