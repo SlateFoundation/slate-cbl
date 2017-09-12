@@ -44,8 +44,47 @@ class API
         return static::executeRequest(call_user_func_array([RequestBuilder::class, $name], $arguments));
     }
 
-    public static function executeRequest(MessageInterface $Request, array $options = [])
+    public static function buildUrl($url)
     {
+        if (strpos($url, 'https://') === 0 || strpos($url, 'http://') === 0) {
+            return $url;
+        }
+
+        return 'https://www.googleapis.com/' . ltrim($url, '/');
+    }
+
+    public static function getAccessToken($scope, $user, $ignoreCache = false)
+    {
+        $cacheKey = sprintf('%s/%s/%s', __CLASS__, $user, $scope);
+
+        if (empty($ignoreCache) && $accessToken = \Cache::fetch($cacheKey)) {
+            return $accessToken;
+        }
+
+        $Request = RequestBuilder::getAccessToken($scope, $user);
+
+        $response = static::executeRequest($Request);
+
+        if (empty($response['access_token'])) {
+            throw new \Exception('access_token missing from auth response' . (!empty($response['error_description']) ? ': '.$response['error_description'] : ''));
+        }
+
+        // subtract 1 minute from returned token expiration
+        Cache::store(
+            $cacheKey,
+            $response['access_token'],
+            $response['expires_in'] - 60
+        );
+
+        return $response['access_token'];
+    }
+
+    public static function executeRequest(MessageInterface $Request, array $options = [], LoggerInterface $Logger = null)
+    {
+        if (!$Logger) {
+            $Logger = new static::$defaultLogger();
+        }
+
         $Request = $Request->withAddedHeader('User-Agent', 'emergence');
         // configure curl
         $ch = curl_init((string)$Request->getUri());
@@ -85,6 +124,11 @@ class API
 
         return $result;
     }
+
+
+    /**
+    * Batch Requests
+    **/
 
     private static $batchRequestsQueue = [];
     private static function queueBatchRequests($requests)
@@ -141,7 +185,7 @@ class API
         }
 
         $results = [];
-            $failedRequests = [];
+        $failedRequests = [];
         $failedResponses = [];
         $splitAt = 95;
         do {
@@ -189,6 +233,7 @@ class API
                                 ]
                             );
                         }
+
                         continue;
                     }
                     $contentId = $headerMatches[1];
@@ -239,9 +284,9 @@ class API
                         isset($responseBody['error']) &&
                         is_array($responseBody['error']) &&
                         isset($responseBody['error']['code']) &&
-                        isset($responseBody['error']['errors'][0]['reason']) &&
+                        isset($responseBody['error']['reason']) &&
                         isset(static::$retryResponseCodes[$responseBody['error']['code']]) &&
-                        in_array($responseBody['error']['errors'][0]['reason'], static::$retryResponseCodes[$responseBody['error']['code']])
+                        in_array($responseBody['error']['reason'], static::$retryResponseCodes[$responseBody['error']['code']])
                     ) {
                         $Logger->log(
                             LogLevel::WARNING,
@@ -259,6 +304,7 @@ class API
                     $results[$contentId] = $responseBody;
                 }
             } else {
+#                \MICS::dump($result, 'exception');
                 $Logger->log(
                     LogLevel::ERROR,
                     'Batch response unparsable.',
@@ -309,38 +355,5 @@ class API
         return $formattedHeaders;
     }
 
-    public static function buildUrl($url)
-    {
-        if (strpos($url, 'https://') === 0 || strpos($url, 'http://') === 0) {
-            return $url;
-        }
 
-        return 'https://www.googleapis.com/' . ltrim($url, '/');
-    }
-
-    public static function getAccessToken($scope, $user, $ignoreCache = false)
-    {
-        $cacheKey = sprintf('%s/%s/%s', __CLASS__, $user, $scope);
-
-        if ($ignoreCache === false && $accessToken = \Cache::fetch($cacheKey)) {
-            return $accessToken;
-        }
-
-        $Request = RequestBuilder::getAccessToken($scope, $user);
-
-        $response = static::executeRequest($Request);
-
-        if (empty($response['access_token'])) {
-            throw new \Exception('access_token missing from auth response' . (!empty($response['error_description']) ? ': '.$response['error_description'] : ''));
-        }
-
-        // subtract 1 minute from returned token expiration
-        Cache::store(
-            $cacheKey,
-            $response['access_token'],
-            $response['expires_in'] - 60
-        );
-
-        return $response['access_token'];
-    }
 }
