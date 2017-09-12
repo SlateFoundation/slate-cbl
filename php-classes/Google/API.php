@@ -180,7 +180,7 @@ class API
                     // skip responses where content-id can not be retrieved
                     if (!preg_match('/Content-ID:\sresponse-([\S]+)/i', $responsePart, $headerMatches)) {
                         // end of batch request
-                        if ($responsePart != '--') {
+                        if (!preg_match("/^(--)?(\s+)?/", trim($responsePart))) {
                             $Logger->log(
                                 LogLevel::WARNING,
                                 'Unparsable content-id',
