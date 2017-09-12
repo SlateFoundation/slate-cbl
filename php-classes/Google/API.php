@@ -141,10 +141,10 @@ class API
         }
 
         $results = [];
-        $splitAt = 100;
-        do {
-            $failedResponses = [];
             $failedRequests = [];
+        $failedResponses = [];
+        $splitAt = 95;
+        do {
             $boundary = mt_rand();
             $ch = static::initializeBatchRequest($boundary);
             $body = [
