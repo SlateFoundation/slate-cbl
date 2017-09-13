@@ -7,6 +7,7 @@ use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
 $Task = $_EVENT['Record'];
 $GoogleDriveClass = GoogleDriveFile::class;
 $attachments = [];
+$newAttachments = [];
 $students = [];
 
 // sync google drive file permssions for when creating new tasks, or editing a task with new attachments
@@ -23,12 +24,18 @@ if ($Task->isNew) {
         }
     }
 
-    if (count($students)) {
-        foreach ($Task->Attachments as $Attachment) {
-            if ($Attachment->isA(GoogleDriveFile::class)) {
+    foreach ($Task->Attachments as $Attachment) {
+        if ($Attachment->isA(GoogleDriveFile::class)) {
+            if ($Attachment->isNew) {
+                $newAttachments[] = $Attachment;
+            } elseif (count($students)) {
                 $attachments[] = $Attachment;
             }
         }
+    }
+
+    if (count($newAttachments)) {
+        GoogleDriveFile::syncUsersPermissions($newAttachments);
     }
 }
 
