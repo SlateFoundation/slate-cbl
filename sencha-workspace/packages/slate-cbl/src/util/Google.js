@@ -83,7 +83,8 @@ Ext.define('Slate.cbl.util.Google', {
             me.setApiIsLoaded(true);
             gapi.load(requiredAPIs, function() {
                 gapi.auth2.init({
-                    'client_id': me.getClientId()
+                    'client_id': me.getClientId(),
+                    'hosted_domain': me.getGoogleAppsDomain()
                 });
 
                 resolve(arguments);
