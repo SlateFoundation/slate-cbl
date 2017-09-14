@@ -224,7 +224,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
             foreach ($attachments as $Attachment) {
                 if (!$Attachment->isA(__CLASS__)) {
-                    $Logger->notice(
+                    $Logger->error(
                         'Attachment is not a GoogleDriveFile, skipping.',
                         ['attachment' => $Attachment]
                     );
@@ -232,7 +232,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
                 }
 
                 if ($Attachment->isPhantom) {
-                    $Logger->notice(
+                    $Logger->error(
                         'Attachment is phantom, skipping.',
                         ['attachment' => $Attachment]
                     );
@@ -240,7 +240,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
                 }
 
                 if ($Attachment->_syncComplete === true) {
-                    $Logger->notice(
+                    $Logger->error(
                         'Attachment is has been synced already, skipping.',
                         ['attachment' => $Attachment]
                     );
@@ -256,7 +256,10 @@ class GoogleDriveFile extends AbstractTaskAttachment
             }
 
 
-
+            $Logger->notice('{totalRequests} Attachment Requests pending', [
+                'totalRequests' => count($requests),
+                'request keys' => array_keys($requests)
+            ]);
             $responses = GoogleAPI::executeBatchRequest(array_filter($requests), 1, $Logger);
 
             switch ($phase) {
@@ -448,7 +451,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
         foreach ($requiredStudents as $Student) {
             if (!$StudentTask = StudentTask::getByWhere(['StudentID' => $Student->ID, 'TaskID' => $this->Task->ID])) {
-                \Emergence\Logger::general_notice(
+                \Emergence\Logger::general_warning(
                     'Unable to build permission request: Task #{taskId}: {taskName} not assigned to {slateUsername} was not found, skipping.',
                     ['taskId' => $this->Task->ID, 'taskName' => $this->Task->Title, 'slateUsername' => $Student->Username]
                 );
@@ -456,7 +459,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
             }
 
             if (!$ClonedAttachment = static::getByWhere(['ParentAttachmentID' => $this->ID, 'ContextID' => $StudentTask->ID, 'ContextClass' => $StudentTask->getRootClass()])) {
-                \Emergence\Logger::general_notice(
+                \Emergence\Logger::general_warning(
                     'Unable to build permission request: Cloned Attachment belonging to {slateUsername} not found, skipping.',
                     ['StudentTask' => $StudentTask, 'slateUsername' => $Student->Username]
                 );
@@ -464,7 +467,7 @@ class GoogleDriveFile extends AbstractTaskAttachment
             }
 
             if (!$validEmail = static::getValidEmailAddress($Student)) {
-                \Emergence\Logger::general_notice(
+                \Emergence\Logger::general_warning(
                     'Unable to build permission request: User {slateUsername} email ({email}) is invaild, skipping.',
                     ['email' => $validEmail, 'slateUsername' => $Student->Username]
                 );
