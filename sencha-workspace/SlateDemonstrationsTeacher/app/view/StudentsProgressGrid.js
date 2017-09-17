@@ -128,13 +128,11 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
         '</div>',
         '<div class="cbl-grid-legend">',
             '<span class="cbl-grid-legend-label">Portfolios:&ensp;</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-0">NE</span>',
             '<span class="cbl-grid-legend-item level-color cbl-level-1">EN</span>',
             '<span class="cbl-grid-legend-item level-color cbl-level-2">PR</span>',
             '<span class="cbl-grid-legend-item level-color cbl-level-3">GB</span>',
             '<span class="cbl-grid-legend-item level-color cbl-level-4">AD</span>',
             '<span class="cbl-grid-legend-item level-color cbl-level-5">EX</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-6">BA</span>',
         '</div>'
     ],
 
