@@ -160,26 +160,32 @@ class StudentCompetency extends \ActiveRecord
     {
         if ($this->demonstrationData === null) {
             try {
-                $this->demonstrationData = DB::arrayTable(
-                    'SkillID',
-                    '
-                    SELECT DemonstrationSkill.*,
-                           Demonstration.Demonstrated AS DemonstrationDate
-                      FROM `%s` DemonstrationSkill
-                      JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration
-                        ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-                     WHERE DemonstrationSkill.SkillID IN (%s)
-                       AND DemonstrationSkill.TargetLevel = %u
-                     ORDER BY SkillID, DemonstrationDate, DemonstrationID
-                    ',
-                    [
-                        DemonstrationSkill::$tableName,
-                        Demonstration::$tableName,
-                        $this->StudentID,
-                        join(', ', $this->Competency->getSkillIds()),
-                        $this->Level
-                    ]
-                );
+                $skillIds = $this->Competency->getSkillIds();
+
+                if (count($skillIds)) {
+                    $this->demonstrationData = DB::arrayTable(
+                        'SkillID',
+                        '
+                        SELECT DemonstrationSkill.*,
+                               Demonstration.Demonstrated AS DemonstrationDate
+                          FROM `%s` DemonstrationSkill
+                          JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration
+                            ON Demonstration.ID = DemonstrationSkill.DemonstrationID
+                         WHERE DemonstrationSkill.SkillID IN (%s)
+                           AND DemonstrationSkill.TargetLevel = %u
+                         ORDER BY SkillID, DemonstrationDate, DemonstrationID
+                        ',
+                        [
+                            DemonstrationSkill::$tableName,
+                            Demonstration::$tableName,
+                            $this->StudentID,
+                            join(', ', $skillIds),
+                            $this->Level
+                        ]
+                    );
+                } else {
+                    $this->demonstrationData = [];
+                }
             } catch (TableNotFoundException $e) {
                 $this->demonstrationData = [];
             }
