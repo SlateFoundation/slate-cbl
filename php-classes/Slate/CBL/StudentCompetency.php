@@ -148,7 +148,7 @@ class StudentCompetency extends \ActiveRecord
         );
 
         $ratingsCount = count(array_filter($ratings));
-        if ($ratingsCount != count($ratings)) {
+        if (!$ratingsCount || $ratingsCount != count($ratings)) {
             return null;
         }
 
