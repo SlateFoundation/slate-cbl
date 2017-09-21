@@ -341,8 +341,6 @@ class StudentCompetency extends \ActiveRecord
         if ($this->competencyGrowth === null) {
             $demonstrationData = $this->getDemonstrationData();
 
-            $totalSkills = $this->Competency->getTotalSkills();
-
             $growthData = array_filter(array_map(function($demonstrations) {
                 // filter out overrides and missed demonstrations
                 $demonstrations = array_filter($demonstrations, function ($demonstration) {
@@ -365,12 +363,15 @@ class StudentCompetency extends \ActiveRecord
             }, $demonstrationData));
 
             $totalGrowthSkills = count($growthData);
-            if (false === (count($growthData) * 2 < $totalSkills)) {
-                $this->competencyGrowth = array_sum($growthData) / $totalSkills;
+
+            if ($totalGrowthSkills * 2 >= $this->Competency->getTotalSkills()) {
+                $this->competencyGrowth = array_sum($growthData) / $totalGrowthSkills;
+            } else {
+                $this->competencyGrowth = false;
             }
         }
 
-        return $this->competencyGrowth;
+        return $this->competencyGrowth === false ? null : $this->competencyGrowth;
     }
 
 
