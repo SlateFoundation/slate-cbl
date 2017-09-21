@@ -350,7 +350,7 @@ class StudentCompetency extends \ActiveRecord
                 });
 
                 // growth can only be calculated if 2 ratings are available, or 1 rating and a baseline
-                if (count($demonstrations) <= 1 && !$this->BaselineRating) {
+                if (count($demonstrations) + ($this->BaselineRating ? 1 : 0) < 2) {
                     return null;
                 }
 
