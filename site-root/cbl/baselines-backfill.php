@@ -3,11 +3,12 @@
 use Slate\CBL\StudentCompetency;
 
 
+$GLOBALS['Session']->requireAccountLevel('Administrator');
 set_time_limit(0);
-
 Benchmark::startLive();
 
 
+// search for prior-average baselines
 $studentCompetencies = StudentCompetency::getAllByQuery(
     '
      SELECT sc1.*
@@ -21,8 +22,17 @@ $studentCompetencies = StudentCompetency::getAllByQuery(
     ]
 );
 
+$total = count($studentCompetencies);
+$digits = strlen($total);
+
+Benchmark::mark(sprintf('Fetched %u candidate StudentCompetency records for prior-average baselines', $total));
+
+
+$count = 0;
 
 while ($StudentCompetency = array_shift($studentCompetencies)) {
+    $count++;
+
     $LastStudentCompetency = StudentCompetency::getByWhere([
         'StudentID' => $StudentCompetency->StudentID,
         'CompetencyID' => $StudentCompetency->CompetencyID,
@@ -32,5 +42,30 @@ while ($StudentCompetency = array_shift($studentCompetencies)) {
     $StudentCompetency->BaselineRating = $LastStudentCompetency->getDemonstrationsAverage();
     $StudentCompetency->save();
 
-    Benchmark::mark(sprintf('Set baseline=%s for Student=%s Competency=%s Level=%s', $StudentCompetency->BaselineRating ?: 'NULL', $StudentCompetency->StudentID, $StudentCompetency->CompetencyID, $StudentCompetency->Level));
+    Benchmark::mark(sprintf("%0{$digits}u/%u: Set baseline=%s for Student=%s Competency=%s Level=%s", $count, $total, $StudentCompetency->BaselineRating ?: 'NULL', $StudentCompetency->StudentID, $StudentCompetency->CompetencyID, $StudentCompetency->Level));
 }
+
+Benchmark::mark(sprintf('Finished analyzing %u successor StudentCompetency records for prior-average baseline', $total));
+
+
+// search for initial-rating baselines
+$studentCompetencies = StudentCompetency::getAllByWhere(['BaselineRating' => null]);
+
+$total = count($studentCompetencies);
+$digits = strlen($total);
+
+Benchmark::mark(sprintf('Fetched %u candidate StudentCompetency records for initial-rating baselines', $total));
+
+
+$count = 0;
+
+while ($StudentCompetency = array_shift($studentCompetencies)) {
+    $count++;
+
+    $StudentCompetency->BaselineRating = $StudentCompetency->calculateStartingRating();
+    $StudentCompetency->save();
+
+    Benchmark::mark(sprintf("%0{$digits}u/%u: Set baseline=%s for Student=%s Competency=%s Level=%s", $count, $total, $StudentCompetency->BaselineRating ?: 'NULL', $StudentCompetency->StudentID, $StudentCompetency->CompetencyID, $StudentCompetency->Level));
+}
+
+Benchmark::mark(sprintf('Finished analyzing %u StudentCompetency records for initial-ratings baseline', $total));
