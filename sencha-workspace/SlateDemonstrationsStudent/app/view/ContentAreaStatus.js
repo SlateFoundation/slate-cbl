@@ -121,7 +121,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? 'Y'+newLevel : '');
+            me.meterLevelEl.update(newLevel ? 'Y'+(newLevel - 8) : '');
         }
     },
 

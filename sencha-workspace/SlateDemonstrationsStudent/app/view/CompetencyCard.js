@@ -49,7 +49,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
                 '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
                 '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{[ values.level - 8]}</div>',
+                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{level - 8}</div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
             '</div>',
 
@@ -231,7 +231,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? 'Y'+newLevel : '');
+            me.meterLevelEl.update(newLevel ? 'Y'+(newLevel - 8) : '');
         }
     },
 
