@@ -120,7 +120,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
     refreshProgress: function() {
         var me = this;
 
-        me.getTpl('progressTpl').overwrite(me.tableEl, {
+        me.lookupTpl('progressTpl').overwrite(me.tableEl, {
             progress: Ext.pluck(me.getRecentProgressStore().getRange(), 'data')
         });
 

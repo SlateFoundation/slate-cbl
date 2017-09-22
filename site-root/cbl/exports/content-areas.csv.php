@@ -110,11 +110,9 @@ foreach ($students as $student) {
                     continue;
                 }
 
-                $completion = $competency->getCompletionForStudent($student, $competencyLevel, $defaultDemonstrationConditions[0]);
-
                 $totalER = $totalER + $competency->getTotalDemonstrationsRequired($competencyLevel);
 
-                $performanceLevel = $completion['demonstrationsAverage'];
+                $performanceLevel = $studentCompetency->getDemonstrationsAverage();
                 if ($performanceLevel) {
                     $validPerformanceLevels++;
                     $totalPerformanceLevel += $performanceLevel;

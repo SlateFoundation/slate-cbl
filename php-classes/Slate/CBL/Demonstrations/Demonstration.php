@@ -2,9 +2,11 @@
 
 namespace Slate\CBL\Demonstrations;
 
-use Slate\People\Student;
 use Slate\CBL\Competency;
+use Slate\CBL\StudentCompetency;
 use Slate\CBL\Skill;
+
+use Slate\People\Student;
 
 class Demonstration extends \VersionedRecord
 {
@@ -49,17 +51,17 @@ class Demonstration extends \VersionedRecord
             ,'foreign' => 'DemonstrationID'
         ]
     ];
-    
+
     public static $validators = [
         'StudentID' => [
             'validator' => 'number'
             ,'min' => 1
         ]
     ];
-    
+
     public static $dynamicFields = [
         'Student',
-        'competencyCompletions' => ['method' => 'getCompetencyCompletions'],
+        'competencyCompletions' => ['getter' => 'getCompetencyCompletions'],
         'Skills'
     ];
 
@@ -67,16 +69,16 @@ class Demonstration extends \VersionedRecord
 #    {
 #        return static::getAllByField('SkillID', $Skill->ID, ['order' => ['ID' => 'ASC']]);
 #    }
-    
+
     public function save($deep = true)
     {
         if (!$this->Demonstrated) {
             $this->Demonstrated = time();
         }
-        
+
         return parent::save($deep);
     }
-    
+
     public function destroy()
     {
         foreach ($this->Skills AS $Skill) {
@@ -112,12 +114,14 @@ class Demonstration extends \VersionedRecord
 
         $completions = [];
         foreach ($competencies AS $Competency) {
-            $completion = $Competency->getCompletionForStudent($this->Student);
-            $completion['StudentID'] = $this->StudentID;
-            $completion['CompetencyID'] = $Competency->ID;
-            $completions[] = $completion;
+            $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $Competency);
+            if ($StudentCompetency) {
+                $completions[] = $StudentCompetency->getCompletion();
+            } else {
+                $completions[] = StudentCompetency::getBlankCompletion($this->Student, $Competency);
+            }
         }
-        
+
         return $completions;
     }
 }

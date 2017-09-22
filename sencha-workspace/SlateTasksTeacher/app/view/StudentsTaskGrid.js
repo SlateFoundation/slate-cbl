@@ -501,8 +501,8 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
             demonstrationsRowEl.removeCls(loadingCls);
 
             // render skill subtables within expanded competency
-            me.getTpl('competencySkillsTpl').overwrite(skillsRowEl.down('tbody'), competencyRenderData);
-            me.getTpl('competencyDemonstrationsTpl').overwrite(demonstrationsBodyEl, competencyRenderData);
+            me.lookupTpl('competencySkillsTpl').overwrite(skillsRowEl.down('tbody'), competencyRenderData);
+            me.lookupTpl('competencyDemonstrationsTpl').overwrite(demonstrationsBodyEl, competencyRenderData);
 
             // decorate renderData with instances
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {

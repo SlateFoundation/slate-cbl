@@ -5,7 +5,13 @@ Ext.define('Slate.cbl.Util', function() {
     }
 
     function _sortOldestDemonstrationFirstFn(a, b) {
-        return a.Demonstrated > b.Demonstrated ? 1 : a.Demonstrated < b.Demonstrated ? -1 : 0;
+        if (a.Demonstrated > b.Demonstrated) {
+            return 1;
+        } else if (a.Demonstrated < b.Demonstrated) {
+            return -1;
+        }
+
+        return a.ID > b.ID ? 1 : -1;
     }
 
     function _sortGreatestLevelFirstFn(a, b) {

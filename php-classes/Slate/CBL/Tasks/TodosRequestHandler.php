@@ -2,12 +2,14 @@
 
 namespace Slate\CBL\Tasks;
 
+use DB;
 use Slate\Term;
 use Slate\People\Student;
 use Slate\Courses\Section;
 use Slate\Courses\SectionParticipant;
 use Slate\Courses\SectionsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
+
 
 class TodosRequestHandler extends \RecordsRequestHandler
 {
@@ -28,21 +30,20 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
     {
-        static::handleTodoListRequest();
-    }
+        $GLOBALS['Session']->requireAuthentication();
 
-    public static function handleTodoListRequest()
-    {
-        $student = static::_getRequestedStudent();
-        $courseSection = static::_getRequestedCourseSection();
+
+        $Student = static::_getRequestedStudent();
+        $Section = static::_getRequestedCourseSection();
+
+
         $enrolledSections = [];
-
         $todos = [];
 
-        $sectionTodos = static::getSectionTodos($student, null);
 
         // Todos with a null SectionID are considered personal Todos
-        array_push($todos, [
+        $sectionTodos = static::getSectionTodos($student, null);
+        $todos[] = [
             'ID' => 0,
             'SectionID' => 0,
             'StudentID' => $student->ID,
@@ -50,57 +51,50 @@ class TodosRequestHandler extends \RecordsRequestHandler
             'Section' => [],
             'Todos' => $sectionTodos,
             'TodoCount' => count($sectionTodos)
-        ]);
-
-        $enrolledSectionWhere = [
-            'PersonID' => $student->ID
         ];
 
-        if ($courseSection) {
+
+        // get section-based Todos for specified section, current term, or any
+        $participantConditions = [
+            'PersonID' => $Student->ID
+        ];
+
+        if ($Section) {
             // return todos from a specific section
-            $enrolledSectionWhere['CourseSectionID'] = $courseSection->ID;
-            $enrolledSections = SectionParticipant::getAllByWhere($enrolledSectionWhere);
-        } else {
+            $participantConditions['CourseSectionID'] = $Section->ID;
+        } elseif ($currentTerm = Term::getCurrent()) {
             // return all todos from sections in the current term
-            $currentTermIDs = Term::getCurrent()->getConcurrentTermIDs();
-
-            $sections = Section::getAllByWhere(['TermID' => ['values' => $currentTermIDs]]);
-
-            if (count($currentTermIDs) > 0) {
-
-                $sectionIds = array_map(function($s) {
-                    return $s->ID;
-                }, $sections);
-
-                if (count($sectionIds) > 0) {
-                    array_push($enrolledSectionWhere, 'CourseSectionId IN ('.implode(',',$sectionIds).')');
-                    $enrolledSections = SectionParticipant::getAllByWhere($enrolledSectionWhere);
-                }
-            }
+            $participantConditions['CourseSectionID'] = [
+                'values' => DB::allValues(
+                    'ID',
+                    'SELECT ID FROM `%s` Section WHERE TermID IN (%s)',
+                    [
+                        Section::$tableName,
+                        implode(',', $currentTerm->getConcurrentTermIDs())
+                    ]
+                )
+            ];
         }
 
-        foreach($enrolledSections as $enrolledSection) {
-            $section = $enrolledSection-> getDynamicFieldValue('Section');
 
-            $sectionTodos = static::getSectionTodos($student, $enrolledSection->CourseSectionID);
+        foreach (SectionParticipant::getAllByWhere($participantConditions) as $Participant) {
+            $sectionTodos = static::getSectionTodos($Student, $Participant->CourseSectionID);
 
-            $todo = [
-                'ID' => $enrolledSection->ID,
-                'SectionID' => $section->ID,
-                'StudentID' => $student->ID,
-                'Title' => $section->Title,
-                'Section' => $section,
+            $todos[] = [
+                'ID' => $Participant->ID,
+                'SectionID' => $Participant->SectionID,
+                'StudentID' => $Student->ID,
+                'Title' => $Participant->Section->Title,
+                'Section' => $Participant->Section,
                 'Todos' => $sectionTodos,
                 'TodoCount' => count($sectionTodos)
             ];
-
-            array_push($todos,$todo);
         }
 
-        return static::respond('todos',[
-            'success' => true
-            ,'data' => $todos
-            ,'total' => count($todos)
+        return static::respond('todos', [
+            'success' => true,
+            'data' => $todos,
+            'total' => count($todos)
         ]);
     }
 
@@ -165,6 +159,4 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
         return $CourseSection;
     }
-
 }
-

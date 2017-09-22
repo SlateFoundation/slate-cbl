@@ -446,8 +446,8 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             demonstrationsRowEl.removeCls(loadingCls);
 
             // render skill subtables within expanded competency
-            me.getTpl('competencySkillsTpl').overwrite(skillsRowEl.down('tbody'), competencyRenderData);
-            me.getTpl('competencyDemonstrationsTpl').overwrite(demonstrationsBodyEl, competencyRenderData);
+            me.lookupTpl('competencySkillsTpl').overwrite(skillsRowEl.down('tbody'), competencyRenderData);
+            me.lookupTpl('competencyDemonstrationsTpl').overwrite(demonstrationsBodyEl, competencyRenderData);
 
             // decorate renderData with instances
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
@@ -759,8 +759,8 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             }
 
             if (countDirty) {
-                competencyStudentData.progressBarEl.setStyle('width', Math.round(percentComplete) + '%');
-                competencyStudentData.progressPercentEl.update(progressFormat(percentComplete));
+                competencyStudentData.progressBarEl.setStyle('width', isNaN(percentComplete) ? '0' : Math.round(percentComplete) + '%');
+                competencyStudentData.progressPercentEl.update(isNaN(percentComplete) ? '&mdash;' : progressFormat(percentComplete));
 
                 competencyStudentData.renderedCount = count;
             }

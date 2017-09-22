@@ -9,7 +9,7 @@ Ext.define('SlateTasksTeacher.store.Tasks',{
             '*.StudentTasks.SkillRatings',
             'Skills.CompetencyCode',
             'Skills.CompetencyDescriptor',
-            '*.Attachments'
+            'Attachments.File'
         ]
     },
     pageSize: 0,

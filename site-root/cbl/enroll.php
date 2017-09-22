@@ -1,9 +1,9 @@
 <?php
-	
+
 use Slate\People\Student;
 use Slate\CBL\ContentArea;
 use Slate\CBL\StudentCompetency;
-	
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$students = Student::getAllByListIdentifier($_POST['students']);
 	if (empty($students)) {
@@ -16,10 +16,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			throw new Exception('Invalid content area code');
 		}
 	}
-	
+
 	if (empty($_POST['level']) || !ctype_digit($_POST['level'])) {
 		throw new Exception('level must be positive int');
 	}
+
+    $baselineRating = null;
+    if (!empty($_POST['baselineRating'])) {
+        $baselineRating = floatval($_POST['baselineRating']);
+    }
 
 	$createdCount = 0;
 	foreach ($students AS $Student) {
@@ -30,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				        'StudentID' => $Student->ID,
 				        'CompetencyID' => $Competency->ID,
 				        'Level' => $_POST['level'],
+                        'BaselineRating' => $baselineRating,
 				        'EnteredVia' => 'enrollment'
 				    ], true);
 					$createdCount++;

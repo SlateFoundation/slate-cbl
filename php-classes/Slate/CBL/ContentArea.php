@@ -27,13 +27,13 @@ class ContentArea extends \ActiveRecord
             ,'order' => ['Code' => 'ASC']
         ]
     ];
-    
+
     public static $validators = [
         'Title' => [
             'errorMessage' => 'A title is required'
         ]
     ];
-    
+
     public static $dynamicFields = [
         'Competencies'
     ];

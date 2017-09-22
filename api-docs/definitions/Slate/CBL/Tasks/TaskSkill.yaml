@@ -1,0 +1,7 @@
+x-activeRecord: Slate\CBL\Tasks\TaskSkill
+description: |
+  A task skill records a skill that students are expected to demonstrate in the course of a [task](#models::slate-cbl-tasks-task).
+
+  Planning what skills are expected to be demonstrated for a task provides graders the convenience
+  of having skills preselected for rating, but at that time they may leave any skills unrated or
+  add additional ones per each student.

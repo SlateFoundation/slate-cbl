@@ -64,6 +64,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             xtype: 'container',
             cls: 'slate-modalfooter',
             layout: {
+                align: 'center',
                 type: 'hbox',
                 pack: 'end'
             },
