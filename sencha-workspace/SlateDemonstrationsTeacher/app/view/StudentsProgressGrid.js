@@ -1,6 +1,16 @@
 /**
  * Renders progress for a given list of students across a given list of competencies
  */
+
+var levelLut = {
+  0 : "NE",
+  1 : "EN",
+  2 : "PR",
+  3 : "GB",
+  4 : "AD",
+  5 : "EX"
+}
+
 Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-teacher-studentsprogressgrid',
@@ -795,9 +805,10 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                     competencyStudentData.outgoingLevel = renderedLevel;
                 }
 
-                competencyStudentData.progressLevelEl.update('Y' + level - 8);
 
-                competencyStudentData.renderedLevel = level;
+                competencyStudentData.progressLevelEl.update(levelLut[level]);
+
+                competencyStudentData.renderedLevel = levelLut[level];
             }
 
             competencyStudentData.completion = completion.data;
@@ -1112,6 +1123,8 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                                 skillDemonstrationDemonstratedLevel = 'O'; // letter O for override
                             } else if (skillDemonstrationDemonstratedLevel === 0) {
                                 skillDemonstrationDemonstratedLevel = 'M';
+                            } else {
+                              skillDemonstrationDemonstratedLevel = levelLut[skillDemonstrationDemonstratedLevel];
                             }
 
                             // apply demonstrated level change
