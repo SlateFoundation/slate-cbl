@@ -1,3 +1,11 @@
+var levelLut = {
+  0 : "NE",
+  1 : "EN",
+  2 : "PR",
+  3 : "GB",
+  4 : "AD",
+  5 : "EX"
+}
 Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-student-competencycard',
@@ -231,7 +239,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? 'Y'+(newLevel - 8) : '');
+            me.meterLevelEl.update(newLevel ? levelLut[newLevel] : '');
         }
     },
 
