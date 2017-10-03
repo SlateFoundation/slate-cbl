@@ -10,17 +10,13 @@ $cblTools = [
 
 if ($GLOBALS['Session']->hasAccountLevel('Staff')) {
     $cblTools['Competency Dashboard'] = '/cbl/dashboards/demonstrations/teacher';
-    $cblTools['Teacher Task Dashboard'] = '/cbl/dashboards/tasks/teacher';
-    $cblTools['My Assigned Tasks'] = '/cbl/dashboards/tasks/student';
-    $cblTools['Task Manager'] = '/cbl/dashboards/tasks/manager';
+    $cblTools['Task Dashboard'] = '/cbl/dashboards/tasks/teacher';
+    //$cblTools['My Assigned Tasks'] = '/cbl/dashboards/tasks/student';
+    $cblTools['Task Library'] = '/cbl/dashboards/tasks/manager';
 
     $cblTools['Exports'] = [
         '_icon' => 'export',
-        'Demonstrations' => '/cbl/exports/demonstrations.csv',
-        'Progress' => [
-            '_href' => '/cbl/exports/progress.csv',
-            '_icon' => 'bar-chart'
-        ]
+        '_href' => '/cbl/exports'
     ];
 } elseif ($GLOBALS['Session']->Person && $GLOBALS['Session']->Person->isA(Slate\People\Student::class)) {
     $cblTools['Competency Dashboard'] = '/cbl/dashboards/demonstrations/student';
