@@ -8,7 +8,7 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-@for $n from 0 through 6 {
+@for $n from 1 through 6 {
     .cbl-level-#{$n} {
         $level-color:        nth($level-colors,        ($n));
         $level-color-light:  nth($level-colors-light,  ($n));
@@ -16,7 +16,7 @@
         $level-color-dark:   nth($level-colors-dark,   ($n));
 
         &.level-color {
-            background-color: nth($level-colors, ($n - 8));
+            background-color: nth($level-colors, ($n));
             color: white;
         }
 
