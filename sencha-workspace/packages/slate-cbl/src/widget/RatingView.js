@@ -81,6 +81,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
             getMenuRatingElLabel: function(rating, scope) {
                 if (scope.menuRatings.indexOf(rating) > -1) {
+                    ["M","EN","PR","GB","AD","EX","BA"]
                     return rating;
                 }
 
