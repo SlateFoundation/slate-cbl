@@ -42,15 +42,12 @@ class Competency extends \VersionedRecord
     ];
 
     public static $validators = [
-        'ContentAreaID' => [
-            'validator' => 'number'
-            ,'min' => 1
-        ]
-        ,'Code' => [
-            'validator' => 'handle'
-            ,'errorMessage' => 'Code can only contain letters, numbers, hyphens, underscores, and periods'
-        ]
-        ,'Descriptor' => [
+        'ContentArea' => 'require-relationship',
+        'Code' => [
+            'validator' => 'handle',
+            'errorMessage' => 'Code can only contain letters, numbers, hyphens, underscores, and periods'
+        ],
+        'Descriptor' => [
             'errorMessage' => 'A descriptor is required'
         ]
     ];

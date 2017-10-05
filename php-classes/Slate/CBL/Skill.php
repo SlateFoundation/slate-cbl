@@ -32,15 +32,12 @@ class Skill extends \VersionedRecord
     ];
 
     public static $validators = [
-        'CompetencyID' => [
-            'validator' => 'number'
-            ,'min' => 1
-        ]
-        ,'Code' => [
-            'validator' => 'handle'
-            ,'errorMessage' => 'Code can only contain letters, numbers, hyphens, underscores, and periods'
-        ]
-        ,'Descriptor' => [
+        'Competency' => 'require-relationship',
+        'Code' => [
+            'validator' => 'handle',
+            'errorMessage' => 'Code can only contain letters, numbers, hyphens, underscores, and periods'
+        ],
+        'Descriptor' => [
             'errorMessage' => 'A descriptor is required'
         ]
     ];
