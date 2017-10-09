@@ -14,6 +14,7 @@ class StudentCompetency extends \ActiveRecord
 {
     public static $autoGraduate = true;
     public static $isLevelComplete;
+    public static $minimumRatingOffset = null;
 
     // ActiveRecord configuration
     public static $tableName = 'cbl_student_competencies';
@@ -335,6 +336,19 @@ class StudentCompetency extends \ActiveRecord
         // Require minimum average as offset from level
         if ($minimumOffset !== null && $average < $this->Level + $minimumOffset) {
             return false;
+        }
+
+        // Require all demonstrations have ratings above minimum
+        if (static::$minimumRatingOffset !== null) {
+            $minRating = $this->Level - static::$minimumRatingOffset;
+
+            foreach ($this->getEffectiveDemonstrationsData() as $skillID => $demonstrations) {
+                foreach ($demonstrations as $demonstration) {
+                    if ($demonstration['DemonstratedLevel'] < $minRating) {
+                        return false;
+                    }
+                }
+            }
         }
 
         // Custom level complete function
