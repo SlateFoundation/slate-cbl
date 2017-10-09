@@ -13,6 +13,7 @@ use Slate\CBL\Demonstrations\DemonstrationSkill;
 class StudentCompetency extends \ActiveRecord
 {
     public static $autoGraduate = true;
+    public static $isLevelComplete;
 
     // ActiveRecord configuration
     public static $tableName = 'cbl_student_competencies';
@@ -326,13 +327,22 @@ class StudentCompetency extends \ActiveRecord
         $competencyEvidenceRequirements = $this->Competency->getTotalDemonstrationsRequired($this->Level);
         $minimumOffset = $this->Competency->getMinimumAverageOffset();
 
-        return (
-            $completed >= $competencyEvidenceRequirements &&
-            (
-                $logged === 0 ||
-                $average >= ($this->Level + $minimumOffset)
-            )
-        );
+        // Require a minimum total demonstrations for the competency
+        if ($competencyEvidenceRequirements && $completed < $competencyEvidenceRequirements) {
+            return false;
+        }
+
+        // Require minimum average as offset from level
+        if ($minimumOffset !== null && $average < $this->Level + $minimumOffset) {
+            return false;
+        }
+
+        // Custom level complete function
+        if (is_callable(static::$isLevelComplete)) {
+            return call_user_func(static::$isLevelComplete, $this);
+        }
+
+        return true;
     }
 
     private $competencyGrowth;
