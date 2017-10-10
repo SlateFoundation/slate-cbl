@@ -26,12 +26,15 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
         },
         {
             xtype: 'tbfill'
-        },
-        {
-            xtype: 'button',
-            iconCls: 'x-fa fa-clock-o',
-            enableToggle: true,
-            action: 'show-recent'
+
+        // @todo Unide recent activity toggle once the RecentActivity.js
+        // view is populated with real data.
+        // },
+        // {
+        //     xtype: 'button',
+        //     iconCls: 'x-fa fa-clock-o',
+        //     enableToggle: true,
+        //     action: 'show-recent'
         }]
     }]
 

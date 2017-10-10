@@ -38,10 +38,11 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
                             flex: 1
                         }
                     ]
-                },
-                {
-                    xtype: 'slate-taskhistory',
-                    margin: '32 0 0'
+                // @todo Unhide task history once it can be populated with live data
+                // },
+                // {
+                //     xtype: 'slate-taskhistory',
+                //     margin: '32 0 0'
                 }
             ]
         }
