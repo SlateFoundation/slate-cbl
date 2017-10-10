@@ -1,11 +1,4 @@
-var levelLut = {
-  0 : "NE",
-  1 : "EN",
-  2 : "PR",
-  3 : "GB",
-  4 : "AD",
-  5 : "EX"
-}
+
 
 /**
  * Renders tasks for a given list of students across a given list of competencies
@@ -1166,8 +1159,6 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                                 skillDemonstrationDemonstratedLevel = 'O'; // letter O for override
                             } else if (skillDemonstrationDemonstratedLevel === 0) {
                                 skillDemonstrationDemonstratedLevel = 'M';
-                            } else {
-                              skillDemonstrationDemonstratedLevel = levelLut[skillDemonstrationDemonstratedLevel];
                             }
 
 
