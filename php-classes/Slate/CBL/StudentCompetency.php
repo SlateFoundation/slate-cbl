@@ -14,7 +14,7 @@ class StudentCompetency extends \ActiveRecord
 {
     public static $autoGraduate = true;
     public static $isLevelComplete;
-    public static $minimumRatingOffset = null;
+    public static $minimumRatingOffset;
 
     // ActiveRecord configuration
     public static $tableName = 'cbl_student_competencies';
