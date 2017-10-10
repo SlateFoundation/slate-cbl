@@ -55,10 +55,10 @@ Ext.define('Slate.cbl.widget.RatingView', {
         {
             getRatingElLabel: function(rating) {
                 if (rating === 0) {
-                    return 'M';
+                    return 'X';
                 }
 
-                return return ["M","EN","PR","GB","AD","EX","BA"][rating];
+                return ["M","EN","PR","GB","AD","EX","BA"][rating];
             },
 
             getMenuRatingElCls: function(rating, scope) {
