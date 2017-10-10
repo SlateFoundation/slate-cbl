@@ -45,7 +45,7 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
         submissionsCmp.setData(studentTask.get('Submissions'));
         skillsField.setSkills(studentTask.get('Skills'), true, false); // appendSkills, editable
         ratingsView.setData({
-            ratings: [0, 1, 2, 3, 4, 5, 6, 'M'],
+            ratings: [1, 2, 3, 4, 'M'],
             competencies: groupedSkills
         });
     },

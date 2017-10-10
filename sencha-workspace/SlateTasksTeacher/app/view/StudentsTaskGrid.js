@@ -1,5 +1,3 @@
-
-
 /**
  * Renders tasks for a given list of students across a given list of competencies
  */
@@ -1160,7 +1158,6 @@ Ext.define('SlateTasksTeacher.view.StudentsTaskGrid', {
                             } else if (skillDemonstrationDemonstratedLevel === 0) {
                                 skillDemonstrationDemonstratedLevel = 'M';
                             }
-
 
                             // apply demonstrated level change
                             if (renderedDemonstrationLevel !== skillDemonstrationDemonstratedLevel) {
