@@ -12,3 +12,6 @@
 /sencha-workspace/*Example/sass/example/bootstrap.*
 
 /sencha-workspace/docs/*/build/
+*.log
+.tags
+.tags_swap

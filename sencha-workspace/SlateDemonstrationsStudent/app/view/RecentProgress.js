@@ -56,7 +56,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
                     '</td>',
                     '<td class="level-col">',
                         '<div class="cbl-level-colored cbl-level-{targetLevel}">',
-                           '<tpl if="demonstratedLevel != 0">{demonstratedLevel}<tpl else>M</tpl>',
+                           '<tpl if="demonstratedLevel != 0 || typeof(demonstratedLevel == \'undefined\')">{[ ["M","EN","PR","GB","AD","EX","BA"][demonstratedLevel] ]}<tpl else>M</tpl>',
                        '</div>',
                     '</td>',
                 '</tr>',
