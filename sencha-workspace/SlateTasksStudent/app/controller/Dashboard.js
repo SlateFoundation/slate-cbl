@@ -178,8 +178,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
             todoList.setStudent(params.student);
             todoList.setReadOnly(true);
-
-            sectionSelectorCombo.setDisabled(true);
         }
 
         if (!rec && sectionCode !== 'all') {
