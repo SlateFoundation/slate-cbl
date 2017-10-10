@@ -340,11 +340,11 @@ class StudentCompetency extends \ActiveRecord
 
         // Require all demonstrations have ratings above minimum
         if (static::$minimumRatingOffset !== null) {
-            $minRating = $this->Level - static::$minimumRatingOffset;
+            $minimumRating = $this->Level - static::$minimumRatingOffset;
 
             foreach ($this->getEffectiveDemonstrationsData() as $skillID => $demonstrations) {
                 foreach ($demonstrations as $demonstration) {
-                    if ($demonstration['DemonstratedLevel'] < $minRating) {
+                    if ($demonstration['DemonstratedLevel'] < $minimumRating) {
                         return false;
                     }
                 }
