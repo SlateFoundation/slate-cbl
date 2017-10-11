@@ -15,7 +15,7 @@ if (!static::tableExists(Demonstration::$tableName)) {
 // migration
 if (static::getColumnType(Demonstration::$tableName, 'Demonstrated') != $newDemonstratedType) {
     print("Updating `Demonstrated` column type\n");
-    \DB::nonQuery("ALTER TABLE " . Demonstration::$tableName . " CHANGE COLUMN `Demonstrated` `Demonstrated` $newDemonstratedType NOT NULL");
+    \DB::nonQuery("ALTER TABLE " . Demonstration::$tableName . " CHANGE COLUMN `Demonstrated` `Demonstrated` $newDemonstratedType `Demonstrated` NULL default NULL");
     $skipped = false;
 }
 
