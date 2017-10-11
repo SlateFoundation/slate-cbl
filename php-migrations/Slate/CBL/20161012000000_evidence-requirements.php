@@ -4,7 +4,7 @@ namespace Slate\CBL;
 
 use DB;
 
-$newColumnType = 'JSON';
+$newColumnType = 'json';
 $newColumnDefinition = $newColumnType . ' NOT NULL';
 
 $originalColumnName = 'DemonstrationsRequired';
