@@ -55,7 +55,11 @@ Ext.define('Slate.cbl.widget.RatingView', {
         {
             getRatingElLabel: function(rating) {
                 if (rating === 0) {
-                    return 'M';
+                    return 'NE';
+                } else if ( rating <= 0.5 ) {
+                    return 'IE'
+                } else {
+                    return ["NE","EN","PR","GB","AD","EX","BA"][rating];
                 }
 
                 return rating;
