@@ -171,6 +171,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     onStudentSelectorBoxReady: function(combo) {
         var params = this.getSearchParams();
+        combo.getStore().load();        
         combo.setValue(params.student);
 
         // reset section state
