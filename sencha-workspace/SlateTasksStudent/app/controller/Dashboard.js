@@ -34,6 +34,9 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         sectionSelectorCombo: {
             selector: 'combobox#section-selector',
         },
+        studentSelectorCombo: {
+            selector: 'combobox#student-selector',
+        },
         taskTree: {
             selector: 'slatetasksstudent-tasktree',
             autoCreate: true,
@@ -87,6 +90,10 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         'combo#section-selector': {
             select: 'onSectionSelectorSelect',
             boxready: 'onSectionSelectorBoxReady'
+        },
+        'combo#student-selector': {
+            select: 'onStudentSelectorSelect',
+            boxready: 'onStudentSelectorBoxReady'
         }
     },
 
@@ -136,6 +143,48 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         });
     },
 
+    onStudentSelectorSelect: function(combo, rec) {
+        var me = this,
+            studentCombo = me.getStudentSelectorCombo(),
+            params = me.getSearchParams(),
+            username;
+
+        if (!studentCombo) {
+            return;
+        }
+
+        // skip rerouting if student selection hasn't changed
+        username = studentCombo.getValue();
+        if (username === params.student) {
+            return;
+        }
+
+        // reroute page to reflect selected student
+        params.student = username;
+        location.search = Ext.Object.toQueryString(params);
+    },
+
+    onStudentSelectorBoxReady: function(combo) {
+        var params = this.getSearchParams();
+        combo.setValue(params.student);
+
+        // reset section state
+        this.redirectTo('section/all');
+    },
+
+    // parse active location.search params into object
+    getSearchParams: function() {
+        var querystring = location.search.substring(location.search.indexOf('?')+1).split('&'),
+            params = {}, pair, d = decodeURIComponent;
+
+        // match and parse
+        for (var i = querystring.length - 1; i >= 0; i--) {
+            pair = querystring[i].split('=');
+            params[d(pair[0])] = d(pair[1] || '');
+        }
+
+        return params;
+    },
 
     // custom controller methods
     maskDemoElements: function () {

@@ -19,6 +19,33 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
             align: 'center'
         },
         items: [{
+            xtype: 'combo',
+            itemId: 'student-selector',
+            name: 'StudentSelector',
+            fieldLabel: 'Student',
+            displayField: 'Username',
+            valueField: 'Username',
+            allowBlank: true,
+            queryParam: 'q',
+            margin: '0 10 0 0',
+            store: {
+                fields: ['Username'],
+                proxy: {
+                    type: 'slate-records',
+                    url: '/people'
+                }
+            },
+            listeners: {
+                beforequery: function (qe) {
+                    if (!qe) {
+                        return false;
+                    }
+
+                    qe.query += ' class:student';
+                }
+            }
+        },
+        {
             xtype: 'slate-section-selector',
             itemId: 'section-selector',
             queryMode: 'local',
