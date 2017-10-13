@@ -154,10 +154,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             params = me.getSearchParams(),
             username;
 
-        if (!studentCombo) {
-            return;
-        }
-
         // skip rerouting if student selection hasn't changed
         username = studentCombo.getValue();
         if (username === params.student) {
