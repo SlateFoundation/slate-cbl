@@ -92,20 +92,31 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             boxready: 'onSectionSelectorBoxReady'
         },
         'combo#student-selector': {
-            select: 'onStudentSelectorSelect',
-            boxready: 'onStudentSelectorBoxReady'
+            select: 'onStudentSelectorSelect'
         }
     },
 
 
     // controller templates method overrides
     onLaunch: function () {
-        this.getDashboard().render('slateapp-viewport');
+        var me = this,
+            queryParams = Ext.Object.fromQueryString(location.search),
+            studentCombo;
+
+        me.getDashboard().render('slateapp-viewport');
 
         // hide student selector from students
         if (window.SiteEnvironment && SiteEnvironment.user && SiteEnvironment.user.AccountLevel != 'User') {
-            this.getStudentSelectorCombo().setHidden(false);
+            me.getStudentSelectorCombo().setHidden(false);
         }
+
+        // load student combo and set value
+        studentCombo = me.getStudentSelectorCombo();        
+        studentCombo.getStore().load();        
+        studentCombo.setValue(queryParams.student);
+
+        // reset section state
+        me.redirectTo('section/all');
     },
 
 
@@ -160,15 +171,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         // reroute page to reflect selected student
         params.student = username;
         location.search = Ext.Object.toQueryString(params);
-    },
-
-    onStudentSelectorBoxReady: function(combo) {
-        var params = Ext.Object.fromQueryString(location.search);
-        combo.getStore().load();        
-        combo.setValue(params.student);
-
-        // reset section state
-        this.redirectTo('section/all');
     },
 
     // custom controller methods
