@@ -148,7 +148,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         });
     },
 
-    onStudentSelectorSelect: function(combo, rec) {
+    onStudentSelectorSelect: function(studentCombo, student) {
         var me = this,
             studentCombo = me.getStudentSelectorCombo(),
             params = Ext.Object.fromQueryString(location.search),
