@@ -151,7 +151,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     onStudentSelectorSelect: function(combo, rec) {
         var me = this,
             studentCombo = me.getStudentSelectorCombo(),
-            params = me.getSearchParams(),
+            params = Ext.Object.fromQueryString(location.search),
             username;
 
         // skip rerouting if student selection hasn't changed
@@ -166,26 +166,12 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     onStudentSelectorBoxReady: function(combo) {
-        var params = this.getSearchParams();
+        var params = Ext.Object.fromQueryString(location.search);
         combo.getStore().load();        
         combo.setValue(params.student);
 
         // reset section state
         this.redirectTo('section/all');
-    },
-
-    // parse active location.search params into object
-    getSearchParams: function() {
-        var querystring = location.search.substring(location.search.indexOf('?')+1).split('&'),
-            params = {}, pair, d = decodeURIComponent;
-
-        // match and parse
-        for (var i = querystring.length - 1; i >= 0; i--) {
-            pair = querystring[i].split('=');
-            params[d(pair[0])] = d(pair[1] || '');
-        }
-
-        return params;
     },
 
     // custom controller methods
