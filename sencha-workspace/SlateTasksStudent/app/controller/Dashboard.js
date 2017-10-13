@@ -100,7 +100,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     // controller templates method overrides
     onLaunch: function () {
         var me = this,
-            queryParams = Ext.Object.fromQueryString(location.search),
             studentCombo;
 
         me.getDashboard().render('slateapp-viewport');
@@ -112,8 +111,10 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
         // load student combo and set value
         studentCombo = me.getStudentSelectorCombo();        
-        studentCombo.getStore().load();        
-        studentCombo.setValue(queryParams.student);
+        studentCombo.getStore().load({ callback: function() {
+            var queryParams = Ext.Object.fromQueryString(location.search);
+            this.getStudentSelectorCombo().setValue(queryParams.student);
+        }, scope: me});
 
         // reset section state
         me.redirectTo('section/all');
