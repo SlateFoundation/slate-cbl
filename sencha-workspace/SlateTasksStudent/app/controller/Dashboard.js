@@ -149,8 +149,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     onStudentSelectorSelect: function(studentCombo, student) {
-        var me = this,
-            params = Ext.Object.fromQueryString(location.search),
+        var params = Ext.Object.fromQueryString(location.search),
             username;
 
         // skip rerouting if student selection hasn't changed
