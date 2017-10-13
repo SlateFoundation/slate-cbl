@@ -28,16 +28,16 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
             allowBlank: true,
             queryParam: 'q',
             margin: '0 10 0 0',
-            displayTpl: Ext.create('Ext.XTemplate',
+            displayTpl: [
                 '<tpl for=".">',
                     '{FirstName} {LastName}',
                 '</tpl>'
-            ),
-            tpl: Ext.create('Ext.XTemplate',
+            ],
+            tpl: [
                 '<ul class="x-list-plain"><tpl for=".">',
                     '<li role="option" class="x-boundlist-item">{FirstName} {LastName}</li>',
                 '</tpl></ul>'
-            ),
+            ],
             store: {
                 fields: ['Username'],
                 proxy: {
