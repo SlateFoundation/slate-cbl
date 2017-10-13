@@ -24,6 +24,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
             name: 'StudentSelector',
             fieldLabel: 'Student',
             valueField: 'Username',
+            hidden: true,
             allowBlank: true,
             queryParam: 'q',
             margin: '0 10 0 0',

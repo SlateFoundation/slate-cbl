@@ -103,8 +103,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.getDashboard().render('slateapp-viewport');
 
         // hide student selector from students
-        if (SiteEnvironment.user && SiteEnvironment.user.AccountLevel == "User") {
-            this.getStudentSelectorCombo().setHidden(true);
+        if (window.SiteEnvironment && SiteEnvironment.user && SiteEnvironment.user.AccountLevel != 'User') {
+            this.getStudentSelectorCombo().setHidden(false);
         }
     },
 
