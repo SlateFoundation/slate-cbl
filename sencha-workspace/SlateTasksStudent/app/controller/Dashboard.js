@@ -115,9 +115,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             var queryParams = Ext.Object.fromQueryString(location.search);
             this.getStudentSelectorCombo().setValue(queryParams.student);
         }, scope: me});
-
-        // reset section state
-        me.redirectTo('section/all');
     },
 
 
@@ -168,6 +165,9 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         if (username === params.student) {
             return;
         }
+
+        // reset section state
+        this.redirectTo('section/all');
 
         // reroute page to reflect selected student
         params.student = username;
