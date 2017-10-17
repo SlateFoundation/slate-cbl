@@ -384,14 +384,14 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             callback: function(opts, success, response) {
                 // var record = response.data.record;
 
-                if (success) {
+                if (success && response.data && response.data.success) {
                     me.getStudentTasksStore().load({
                         id: studentTask.getId(),
                         addRecords: true
                     });
                     // studentTask.set(record);
                 } else {
-                    Ext.toast('Error. Please try again.');
+                    Ext.toast(response.data && response.data.error || 'Please try again or report the issue to an administrator', 'Failed to save rating');
                 }
             }
         });
