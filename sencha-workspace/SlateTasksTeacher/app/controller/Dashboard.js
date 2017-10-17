@@ -379,7 +379,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             method: 'POST',
             params: {
                 SkillID: ratingObject.SkillID,
-                Score: ratingObject.rating
+                Rating: ratingObject.rating,
             },
             callback: function(opts, success, response) {
                 // var record = response.data.record;
