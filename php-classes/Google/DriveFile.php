@@ -69,11 +69,7 @@ class DriveFile extends \ActiveRecord
 
     public static function __classLoaded()
     {
-        if (empty(API::$domain)) {
-            throw new Exception('Domain must be configured first');
-        }
-
-        if (empty(static::$validators['OwnerEmail']['domain'])) {
+        if (API::$domain && empty(static::$validators['OwnerEmail']['domain'])) {
             static::$validators['OwnerEmail']['domain'] = API::$domain;
         }
     }
