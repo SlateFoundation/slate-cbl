@@ -76,7 +76,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                     return rating;
                 }
 
-                return 'N/A';
+                return null;
             },
 
             getMenuRatingElLabel: function(rating, menuRatings) {
@@ -139,7 +139,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         if (!me.getReadOnly()) {
             if (isRemoveEl) {
                 naRatingEl = target.parent('.slate-ratingview-skill').down('.slate-ratingview-rating-menu');
-                me.updateRatingEl(naRatingEl, 'N/A');
+                me.updateRatingEl(naRatingEl, null);
                 me.selectRating(naRatingEl, false);
             } else if (isRatingEl) {
                 me.selectRating(target);
@@ -151,7 +151,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         var me = this,
             skillEl = target.parent('.slate-ratingview-skill'),
 
-            rating = target.getAttribute('data-rating') || 'N/A',
+            rating = target.getAttribute('data-rating') || null,
             competency = skillEl.getAttribute('data-competency'),
             skill = skillEl.getAttribute('data-skill'),
 
@@ -166,11 +166,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         // deselect other ratings
         ratingEls.removeCls('is-selected');
 
-        if (rating == 'N/A') {
-            naRating.addCls('slate-ratingview-rating-null');
-        } else {
-            naRating.removeCls('slate-ratingview-rating-null');
-        }
+        naRating.toggleCls('slate-ratingview-rating-null', !rating);
 
         target.addCls('is-selected');
 
