@@ -32,9 +32,9 @@ Ext.define('Slate.cbl.widget.RatingView', {
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu slate-ratingview-rating-null{[this.getMenuRatingElCls(values.Rating, this)]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this)]}">',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu slate-ratingview-rating-null{[this.getMenuRatingElCls(values.Rating, this.menuRatings)]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this.menuRatings)]}">',
                                         '<div class="slate-ratingview-rating-bubble" tabindex="0">',
-                                            '<span class="slate-ratingview-rating-label">{[this.getMenuRatingElLabel(values.Rating, this)]}</span>',
+                                            '<span class="slate-ratingview-rating-label">{[this.getMenuRatingElLabel(values.Rating, this.menuRatings)]}</span>',
                                         '</div>',
                                     '</li>',
                                     '<tpl for="this.ratings">', // access template-scoped variable declared at top
@@ -61,26 +61,26 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 return rating;
             },
 
-            getMenuRatingElCls: function(rating, scope) {
+            getMenuRatingElCls: function(rating, menuRatings) {
                 var cls = '';
 
-                if (rating === null || scope.menuRatings.indexOf(rating) > -1) {
+                if (rating === null || menuRatings.indexOf(rating) > -1) {
                     cls += ' is-selected';
                 }
 
                 return cls;
             },
 
-            getMenuElRatingValue: function(rating, scope) {
-                if (rating && scope.menuRatings.indexOf(rating) > -1) {
+            getMenuElRatingValue: function(rating, menuRatings) {
+                if (rating && menuRatings.indexOf(rating) > -1) {
                     return rating;
                 }
 
                 return 'N/A';
             },
 
-            getMenuRatingElLabel: function(rating, scope) {
-                if (scope.menuRatings.indexOf(rating) > -1) {
+            getMenuRatingElLabel: function(rating, menuRatings) {
+                if (menuRatings.indexOf(rating) > -1) {
                     return rating;
                 }
 
@@ -182,10 +182,11 @@ Ext.define('Slate.cbl.widget.RatingView', {
     },
 
     updateRatingEl: function(el, rating) {
-        var text = rating || 'N/A';
+        var tpl = this.lookupTpl('tpl'),
+            menuRatings = this.getMenuRatings();
 
-        el.dom.setAttribute('data-rating', text);
-        el.down('.slate-ratingview-rating-label').setHtml(text);
+        el.dom.setAttribute('data-rating', tpl.getMenuElRatingValue(rating, menuRatings) || '');
+        el.down('.slate-ratingview-rating-label').setHtml(tpl.getMenuRatingElLabel(rating, menuRatings));
     },
 
     showMenu: function(ratingEl, xy) {
