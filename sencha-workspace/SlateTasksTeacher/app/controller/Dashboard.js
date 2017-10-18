@@ -369,7 +369,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         me.doEditStudentTask(studentTask);
     },
 
-    onRateSkillClick: function(ratingView, ratingObject) {
+    onRateSkillClick: function(ratingView, ratingData) {
         var me = this,
             taskRater = me.getTaskRater(),
             studentTask = taskRater.getStudentTask();
@@ -378,8 +378,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             url: studentTask.toUrl() + '/rate',
             method: 'POST',
             params: {
-                SkillID: ratingObject.SkillID,
-                Rating: ratingObject.rating,
+                SkillID: ratingData.SkillID,
+                Rating: ratingData.Rating,
             },
             callback: function(opts, success, response) {
                 // var record = response.data.record;

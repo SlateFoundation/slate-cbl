@@ -171,9 +171,9 @@ Ext.define('Slate.cbl.widget.RatingView', {
         target.addCls('is-selected');
 
         return me.fireEvent('rateskill', me, {
-            rating: rating,
+            CompetencyID: competency,
             SkillID: skill,
-            CompetencyID: competency
+            Rating: rating
         });
     },
 
