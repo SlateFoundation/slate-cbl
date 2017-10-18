@@ -371,25 +371,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     onRateSkillClick: function(ratingView, ratingData) {
         var me = this,
-            taskRater = me.getTaskRater(),
-            studentTask = taskRater.getStudentTask();
+            studentTask = me.getTaskRater().getStudentTask();
 
         Slate.API.request({
             url: studentTask.toUrl() + '/rate',
             method: 'POST',
             params: {
+                include: me.getStudentTasksStore().getProxy().getInclude()
+            },
+            jsonData: {
                 SkillID: ratingData.SkillID,
                 Rating: ratingData.Rating,
             },
-            callback: function(opts, success, response) {
-                // var record = response.data.record;
-
+            callback: function(options, success, response) {
                 if (success && response.data && response.data.success) {
-                    me.getStudentTasksStore().load({
-                        id: studentTask.getId(),
-                        addRecords: true
-                    });
-                    // studentTask.set(record);
+                    studentTask.set(response.data.StudentTask, { dirty: false });
                 } else {
                     Ext.toast(response.data && response.data.message || 'Please try again or report the issue to an administrator', 'Failed to save rating');
                 }
