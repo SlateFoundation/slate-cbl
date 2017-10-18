@@ -32,7 +32,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu slate-ratingview-rating-null{[this.getMenuRatingElCls(values.Rating, this.menuRatings)]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this.menuRatings)]}">',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu slate-ratingview-rating-null {[this.getMenuRatingElCls(values.Rating, this.menuRatings)]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this.menuRatings)]}">',
                                         '<div class="slate-ratingview-rating-bubble" tabindex="0">',
                                             '<span class="slate-ratingview-rating-label">{[this.getMenuRatingElLabel(values.Rating, this.menuRatings)]}</span>',
                                         '</div>',
@@ -65,7 +65,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 var cls = '';
 
                 if (rating === null || menuRatings.indexOf(rating) > -1) {
-                    cls += ' is-selected';
+                    cls += 'is-selected';
                 }
 
                 return cls;
@@ -218,7 +218,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     onMenuRatingClick: function(menu, menuRating) {
         var me = this;
-        console.log('onMenuRatingClick');
+
         me.updateRatingEl(menu.ratingEl, menuRating.getValue());
         me.selectRating(menu.ratingEl, false);
         menu.hide();
