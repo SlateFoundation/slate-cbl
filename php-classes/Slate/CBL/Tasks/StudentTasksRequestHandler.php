@@ -94,11 +94,10 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         $demoSkill = DemonstrationSkill::getByWhere([
             'DemonstrationID' => $Demonstration->ID,
-            'SkillID' => $Skill->ID,
-            'TargetLevel' => $competencyLevel
+            'SkillID' => $Skill->ID
         ]);
 
-        if (!demoSkill) {
+        if (!$demoSkill) {
             $demoSkill = DemonstrationSkill::create([
                 'DemonstrationID' => $Demonstration->ID,
                 'SkillID' => $Skill->ID,
