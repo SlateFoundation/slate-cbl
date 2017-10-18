@@ -13,6 +13,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         readOnly: false
     },
     // todo: add ratings as config.
+    // TODO: refactor as a container of individual stateful slider components
     tpl: [
         '{% this.ratings = values.ratings %}',
         '{% this.menuRatings = values.menuRatings %}',
@@ -24,7 +25,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                     '<h4 class="slate-ratingview-competency-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h4>',
                     '<ul class="slate-ratingview-skills">',
                         '<tpl for="skills">',
-                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{[values.Level || values.CompetencyLevel]}" data-competency="{[parent.Code]}" data-skill="{Code}">',
+                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{[values.Level || values.CompetencyLevel]}" data-competency="{[parent.Code]}" data-skill="{Code}" data-competency-level="{CompetencyLevel}" data-level="{Level}">',
                                 '<header class="slate-ratingview-skill-header">',
                                     '<tpl if="!this.readOnly">', // hide when in readOnly mode
                                         '<button class="slate-ratingview-remove"><i class="fa fa-times-circle"></i></button>',
@@ -150,29 +151,25 @@ Ext.define('Slate.cbl.widget.RatingView', {
     selectRating: function(target, showMenu) {
         var me = this,
             skillEl = target.parent('.slate-ratingview-skill'),
+            menuThumbEl = skillEl.down('.slate-ratingview-rating-menu'),
+            rating = target.getAttribute('data-rating') || null;
 
-            rating = target.getAttribute('data-rating') || null,
-            competency = skillEl.getAttribute('data-competency'),
-            skill = skillEl.getAttribute('data-skill'),
-
-            ratingEls = skillEl.select('.slate-ratingview-rating'),
-            naRating = skillEl.down('.slate-ratingview-rating-menu');
-
-
-        if (target == naRating && showMenu !== false) {
+        if (target === menuThumbEl && showMenu !== false) {
             return me.showMenu(target, target.getXY());
         }
 
-        // deselect other ratings
-        ratingEls.removeCls('is-selected');
+        target.radioCls('is-selected');
+        menuThumbEl.toggleCls('slate-ratingview-rating-null', rating === null);
 
-        naRating.toggleCls('slate-ratingview-rating-null', !rating);
-
-        target.addCls('is-selected');
+        // if rating is being removed, revert level styling to current competency level that future ratings would get logged against
+        if (rating === null) {
+            skillEl.removeCls('slate-ratingview-skill-level-'+skillEl.getAttribute('data-level'));
+            skillEl.addCls('slate-ratingview-skill-level-'+skillEl.getAttribute('data-competency-level'));
+        }
 
         return me.fireEvent('rateskill', me, {
-            CompetencyID: competency,
-            SkillID: skill,
+            CompetencyID: skillEl.getAttribute('data-competency'),
+            SkillID: skillEl.getAttribute('data-skill'),
             Rating: rating
         });
     },
