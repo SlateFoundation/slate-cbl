@@ -391,7 +391,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     });
                     // studentTask.set(record);
                 } else {
-                    Ext.toast(response.data && response.data.error || 'Please try again or report the issue to an administrator', 'Failed to save rating');
+                    Ext.toast(response.data && response.data.message || 'Please try again or report the issue to an administrator', 'Failed to save rating');
                 }
             }
         });
