@@ -24,7 +24,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                     '<h4 class="slate-ratingview-competency-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h4>',
                     '<ul class="slate-ratingview-skills">',
                         '<tpl for="skills">',
-                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{CompetencyLevel}" data-competency="{[parent.Code]}" data-skill="{Code}">',
+                            '<li class="slate-ratingview-skill slate-ratingview-skill-level-{[values.Level || values.CompetencyLevel]}" data-competency="{[parent.Code]}" data-skill="{Code}">',
                                 '<header class="slate-ratingview-skill-header">',
                                     '<tpl if="!this.readOnly">', // hide when in readOnly mode
                                         '<button class="slate-ratingview-remove"><i class="fa fa-times-circle"></i></button>',
