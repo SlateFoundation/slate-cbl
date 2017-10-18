@@ -92,25 +92,25 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
         $Demonstration = $StudentTask->getDemonstration();
 
-        $demoSkill = DemonstrationSkill::getByWhere([
+        $DemonstrationSkill = DemonstrationSkill::getByWhere([
             'DemonstrationID' => $Demonstration->ID,
             'SkillID' => $Skill->ID
         ]);
 
-        if (!$demoSkill) {
-            $demoSkill = DemonstrationSkill::create([
+        if (!$DemonstrationSkill) {
+            $DemonstrationSkill = DemonstrationSkill::create([
                 'DemonstrationID' => $Demonstration->ID,
                 'SkillID' => $Skill->ID,
                 'TargetLevel' => $StudentCompetency->Level
             ]);
         }
 
-        $demoSkill->DemonstratedLevel = $requestData['Rating'];
-        $demoSkill->save(false);
+        $DemonstrationSkill->DemonstratedLevel = $requestData['Rating'];
+        $DemonstrationSkill->save(false);
 
         return static::respond('studenttask/ratings', [
             'success' => true,
-            'data' => $demoSkill,
+            'data' => $DemonstrationSkill,
             'StudentTask' => $StudentTask
         ]);
     }
