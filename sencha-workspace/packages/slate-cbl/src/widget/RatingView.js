@@ -132,34 +132,38 @@ Ext.define('Slate.cbl.widget.RatingView', {
     onScaleClick: function(ev, t) {
         var me = this,
             target = Ext.get(t),
-            isRatingEl = target.is('.slate-ratingview-rating'),
-            isRemoveEl = target.is('.slate-ratingview-remove'),
-            naRatingEl;
+            menuThumbEl;
 
+        if (me.getReadOnly()) {
+            return;
+        }
 
-        if (!me.getReadOnly()) {
-            if (isRemoveEl) {
-                naRatingEl = target.parent('.slate-ratingview-skill').down('.slate-ratingview-rating-menu');
-                me.updateRatingEl(naRatingEl, null);
-                me.selectRating(naRatingEl, false);
-            } else if (isRatingEl) {
-                me.selectRating(target);
-            }
+        if (target.is('.slate-ratingview-rating-menu')) {
+            me.showMenu(target, target.getXY());
+            return;
+        }
+
+        if (target.hasCls('is-selected')) {
+            return;
+        }
+
+        if (target.is('.slate-ratingview-remove')) {
+            menuThumbEl = target.parent('.slate-ratingview-skill').down('.slate-ratingview-rating-menu');
+            me.updateRatingEl(menuThumbEl, null);
+            me.selectRating(menuThumbEl, false);
+        } else {
+            me.selectRating(target);
         }
     },
 
-    selectRating: function(target, showMenu) {
+    selectRating: function(target) {
         var me = this,
             skillEl = target.parent('.slate-ratingview-skill'),
             menuThumbEl = skillEl.down('.slate-ratingview-rating-menu'),
             rating = target.getAttribute('data-rating') || null;
 
-        if (target === menuThumbEl && showMenu !== false) {
-            return me.showMenu(target, target.getXY());
-        }
-
         target.radioCls('is-selected');
-        menuThumbEl.toggleCls('slate-ratingview-rating-null', rating === null);
+        menuThumbEl.toggleCls('slate-ratingview-rating-null', rating !== null);
 
         // if rating is being removed, revert level styling to current competency level that future ratings would get logged against
         if (rating === null) {
