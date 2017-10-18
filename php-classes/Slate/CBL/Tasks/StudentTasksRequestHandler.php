@@ -108,7 +108,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         $DemonstrationSkill->DemonstratedLevel = $requestData['Rating'];
         $DemonstrationSkill->save(false);
 
-        return static::respond('studenttask/ratings', [
+        return static::respond('ratingUpdated', [
             'success' => true,
             'data' => $DemonstrationSkill,
             'StudentTask' => $StudentTask
@@ -162,7 +162,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         $StudentTaskSubmission->StudentTaskID = $StudentTask->ID;
         $StudentTaskSubmission->save();
 
-        return static::respond('studenttask/submit', [
+        return static::respond('submitted', [
             'data' => $StudentTask,
             'success' => true,
         ]);
