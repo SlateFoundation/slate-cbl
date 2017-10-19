@@ -191,13 +191,14 @@ class StudentTask extends \VersionedRecord
         if ($this->Task && $this->Task->Skills) {
             foreach ($this->Task->Skills as $skill) {
                 $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
-                $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
+                $DemonstrationSkill = $demoSkillIds[$skill->ID];
 
                 $taskSkills[] = array_merge($skill->getData(), [
                     'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
                     'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
                     'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-                    'Rating' => $demoSkillRating
+                    'Rating' => $DemonstrationSkill ? $DemonstrationSkill->DemonstratedLevel : null,
+                    'Level' => $DemonstrationSkill ? $DemonstrationSkill->TargetLevel : null
                 ]);
             }
         }
@@ -205,13 +206,14 @@ class StudentTask extends \VersionedRecord
         if ($this->Skills) {
             foreach ($this->Skills as $skill) {
                 $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
-                $demoSkillRating = $demoSkillIds[$skill->ID] ? $demoSkillIds[$skill->ID]->DemonstratedLevel : null;
+                $DemonstrationSkill = $demoSkillIds[$skill->ID];
 
                 $taskSkills[] = array_merge($skill->getData(), [
                     'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
                     'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
                     'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-                    'Rating' => $demoSkillRating
+                    'Rating' => $DemonstrationSkill ? $DemonstrationSkill->DemonstratedLevel : null,
+                    'Level' => $DemonstrationSkill ? $DemonstrationSkill->TargetLevel : null
                 ]);
             }
         }

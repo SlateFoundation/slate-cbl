@@ -1,3 +1,4 @@
+// TODO: merge with Slate.cbl.model.StudentTask ?
 Ext.define('SlateTasksStudent.model.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
