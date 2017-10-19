@@ -110,10 +110,6 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     readOnly: true
                 },
                 {
-                    xtype: 'slate-skillsfield',
-                    fieldLabel: 'Skills'
-                },
-                {
                     xtype: 'slate-ratingview'
                 },
                 {
