@@ -27,9 +27,6 @@ Ext.define('Slate.cbl.widget.RatingView', {
                         '<tpl for="skills">',
                             '<li class="slate-ratingview-skill slate-ratingview-skill-level-{[values.Level || values.CompetencyLevel]}" data-competency="{[parent.Code]}" data-skill="{Code}" data-competency-level="{CompetencyLevel}" data-level="{Level}">',
                                 '<header class="slate-ratingview-skill-header">',
-                                    '<tpl if="!this.readOnly">', // hide when in readOnly mode
-                                        '<button class="slate-ratingview-remove"><i class="fa fa-times-circle"></i></button>',
-                                    '</tpl>',
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
@@ -95,7 +92,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         click: {
             fn: 'onScaleClick',
             element: 'el',
-            delegate: ['.slate-ratingview-rating', '.slate-ratingview-remove']
+            delegate: '.slate-ratingview-rating'
         }
     },
 
@@ -131,8 +128,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     onScaleClick: function(ev, t) {
         var me = this,
-            target = Ext.get(t),
-            menuThumbEl;
+            target = Ext.get(t);
 
         if (me.getReadOnly()) {
             return;
@@ -147,13 +143,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
             return;
         }
 
-        if (target.is('.slate-ratingview-remove')) {
-            menuThumbEl = target.parent('.slate-ratingview-skill').down('.slate-ratingview-rating-menu');
-            me.updateRatingEl(menuThumbEl, null);
-            me.selectRating(menuThumbEl, false);
-        } else {
             me.selectRating(target);
-        }
     },
 
     selectRating: function(target) {
@@ -221,7 +211,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         var me = this;
 
         me.updateRatingEl(menu.ratingEl, menuRating.getValue());
-        me.selectRating(menu.ratingEl, false);
+        me.selectRating(menu.ratingEl);
         menu.hide();
     }
 });
