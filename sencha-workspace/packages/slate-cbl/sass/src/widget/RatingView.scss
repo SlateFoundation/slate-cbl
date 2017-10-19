@@ -132,6 +132,19 @@
     justify-content: center;
     margin: auto;
     width: $slate-ratingview-bubble-size;
+
+    &:hover,
+    &:focus {
+        background-color: mix(white, #ccc, 75%);
+    }
+
+    &:active {
+        background-color: #ccc;
+    }
+}
+
+.is-selected .slate-ratingview-rating-bubble {
+    background-color: #ccc;
 }
 
 .slate-ratingview-rating-label {
