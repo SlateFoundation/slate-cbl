@@ -144,11 +144,6 @@
         border-color: $neutral-dark-color !important;
         position: relative;
         z-index: 1;
-
-        &:hover {
-            border: 1px dashed #666;
-            cursor: context-menu;
-        }
     }
 
     &.is-selected .slate-ratingview-rating-bubble {
@@ -160,4 +155,9 @@
         font-size: .6em;
         font-weight: bold;
     }
+}
+
+.slate-ratingview-rating-menu .slate-ratingview-rating-bubble:hover {
+    border: 1px dashed #666;
+    cursor: context-menu;
 }
