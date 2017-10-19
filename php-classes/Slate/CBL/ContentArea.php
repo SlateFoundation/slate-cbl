@@ -43,6 +43,17 @@ class ContentArea extends \ActiveRecord
         return $this->Code;
     }
 
+    public function getTitle()
+    {
+        $title = $this->Code;
+
+        if ($this->Title) {
+            $title .= ': ' . $this->Title;
+        }
+
+        return $title;
+    }
+
     public static function getByHandle($handle)
     {
         return static::getByCode($handle);
