@@ -56,6 +56,9 @@
                                         <optgroup label="All Sections in {$Term->Title}">
                                             {foreach item=Section from=Slate\Courses\Section::getAllByWhere("TermID IN ($termIds)")}
                                                 <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
+                                                {foreach item=cohort from=$Section->getCohorts()}
+                                                    <option value="section {$Section->Code|escape} cohort {$cohort|escape}" {refill field=students selected="section $Section->Code cohort $cohort"}>{$Section->Code|escape} ▸ {$cohort}</option>
+                                                {/foreach}
                                             {/foreach}
                                         </optgroup>
                                     {/if}
