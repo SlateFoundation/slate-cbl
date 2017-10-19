@@ -30,7 +30,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu slate-ratingview-rating-null {[this.getMenuRatingElCls(values.Rating, this.menuRatings)]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this.menuRatings)]}">',
+                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu {[this.getMenuRatingElCls(values.Rating, this.menuRatings).join(" ")]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this.menuRatings)]}">',
                                         '<div class="slate-ratingview-rating-bubble" tabindex="0">',
                                             '<span class="slate-ratingview-rating-label">{[this.getMenuRatingElLabel(values.Rating, this.menuRatings)]}</span>',
                                         '</div>',
@@ -60,10 +60,15 @@ Ext.define('Slate.cbl.widget.RatingView', {
             },
 
             getMenuRatingElCls: function(rating, menuRatings) {
-                var cls = '';
+                var cls = [],
+                    ratingInMenu = menuRatings.indexOf(rating) > -1;
 
-                if (rating === null || menuRatings.indexOf(rating) > -1) {
-                    cls += 'is-selected';
+                if (rating === null || ratingInMenu) {
+                    cls.push('is-selected');
+                }
+
+                if (rating === null || !ratingInMenu) {
+                    cls.push('slate-ratingview-rating-null');
                 }
 
                 return cls;
@@ -128,38 +133,44 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
     onScaleClick: function(ev, t) {
         var me = this,
-            target = Ext.get(t);
+            ratingEl = Ext.get(t);
 
         if (me.getReadOnly()) {
             return;
         }
 
-        if (target.is('.slate-ratingview-rating-menu')) {
-            me.showMenu(target, target.getXY());
+        if (ratingEl.is('.slate-ratingview-rating-menu')) {
+            me.showMenu(ratingEl);
             return;
         }
 
-        if (target.hasCls('is-selected')) {
+        if (ratingEl.hasCls('is-selected')) {
             return;
         }
 
-            me.selectRating(target);
+        me.selectRating(ratingEl, parseInt(ratingEl.getAttribute('data-rating'), 10));
     },
 
-    selectRating: function(target) {
+    selectRating: function(ratingEl, rating) {
         var me = this,
-            skillEl = target.parent('.slate-ratingview-skill'),
+            tpl = me.lookupTpl('tpl'),
+            menuRatings = me.getMenuRatings(),
+            skillEl = ratingEl.parent('.slate-ratingview-skill'),
             menuThumbEl = skillEl.down('.slate-ratingview-rating-menu'),
-            rating = target.getAttribute('data-rating') || null;
+            ratingInMenu = menuRatings.indexOf(rating) > -1;
 
-        target.radioCls('is-selected');
-        menuThumbEl.toggleCls('slate-ratingview-rating-null', rating !== null);
+        ratingEl.radioCls('is-selected');
 
         // if rating is being removed, revert level styling to current competency level that future ratings would get logged against
         if (rating === null) {
             skillEl.removeCls('slate-ratingview-skill-level-'+skillEl.getAttribute('data-level'));
             skillEl.addCls('slate-ratingview-skill-level-'+skillEl.getAttribute('data-competency-level'));
         }
+
+        // update menu thumb el
+        menuThumbEl.toggleCls('slate-ratingview-rating-null', rating === null || !ratingInMenu);
+        menuThumbEl.dom.setAttribute('data-rating', tpl.getMenuElRatingValue(rating, menuRatings) || '');
+        menuThumbEl.down('.slate-ratingview-rating-label').setHtml(tpl.getMenuRatingElLabel(rating, menuRatings));
 
         return me.fireEvent('rateskill', me, {
             CompetencyID: skillEl.getAttribute('data-competency'),
@@ -168,15 +179,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         });
     },
 
-    updateRatingEl: function(el, rating) {
-        var tpl = this.lookupTpl('tpl'),
-            menuRatings = this.getMenuRatings();
-
-        el.dom.setAttribute('data-rating', tpl.getMenuElRatingValue(rating, menuRatings) || '');
-        el.down('.slate-ratingview-rating-label').setHtml(tpl.getMenuRatingElLabel(rating, menuRatings));
-    },
-
-    showMenu: function(ratingEl, xy) {
+    showMenu: function(ratingEl) {
         var me = this,
             menu = me.getMenu(),
             menuRatings = me.getMenuRatings(),
@@ -185,33 +188,30 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 value: null
             }];
 
-        if (!me.getReadOnly()) {
-            if (!menu && menuRatings.length) {
-                Ext.each(menuRatings, function(mr) {
-                    items.push({
-                        text: mr,
-                        value: mr
-                    });
+        if (!menu && menuRatings.length) {
+            Ext.each(menuRatings, function(mr) {
+                items.push({
+                    text: mr,
+                    value: mr
                 });
-                me.setMenu(menu = Ext.create('Ext.menu.Menu', {
-                    items: items
-                }));
-                menu.on('click', me.onMenuRatingClick, me);
-            }
+            });
+            me.setMenu(menu = Ext.create('Ext.menu.Menu', {
+                items: items
+            }));
+            menu.on('click', me.onMenuRatingClick, me);
+        }
 
-            if (menu) {
-                menu.ratingEl = ratingEl;
-                menu.showAt(xy);
-                menu.focus();
-            }
+        if (menu) {
+            menu.ratingEl = ratingEl;
+            menu.showAt(ratingEl.getXY());
+            menu.focus();
         }
     },
 
-    onMenuRatingClick: function(menu, menuRating) {
+    onMenuRatingClick: function(menu, menuItem) {
         var me = this;
 
-        me.updateRatingEl(menu.ratingEl, menuRating.getValue());
-        me.selectRating(menu.ratingEl);
+        me.selectRating(menu.ratingEl, menuItem.getValue());
         menu.hide();
     }
 });
