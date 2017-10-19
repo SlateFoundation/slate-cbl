@@ -7,7 +7,8 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
         'Slate.cbl.widget.RatingView',
         'Slate.cbl.widget.CommentsField',
         'Slate.cbl.widget.ReAssignmentField',
-        'Slate.cbl.widget.SubmissionsField'
+        'Slate.cbl.widget.SubmissionsField',
+        'Slate.cbl.widget.rating.Container'
     ],
 
     title: 'Rate Task',
@@ -108,6 +109,9 @@ Ext.define('Slate.cbl.view.modals.RateTask', {
                     itemId: 'student-attachments',
                     fieldLabel: 'Student Attachments',
                     readOnly: true
+                },
+                {
+                    xtype: 'slate-ratingcontainer'
                 },
                 {
                     xtype: 'slate-ratingview'

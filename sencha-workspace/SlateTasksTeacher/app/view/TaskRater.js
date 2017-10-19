@@ -42,6 +42,14 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
             ratings: [7, 8, 9, 10, 11, 12, 0],
             competencies: groupedSkills
         });
+
+        me.down('slate-cbl-ratingcontainer').add(Ext.Array.map(groupedSkills, function (competency) {
+            return {
+                Code: competency.Code,
+                Descriptor: competency.Descriptor,
+                items: competency.skills
+            }
+        }));
     },
 
     updateReadOnly: function(readOnly) {
