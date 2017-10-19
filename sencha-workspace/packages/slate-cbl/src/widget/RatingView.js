@@ -166,7 +166,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
         // deselect other ratings
         ratingEls.removeCls('is-selected');
 
-        if (rating == 'N/A') {
+        if (me.getMenuRatings().includes(parseInt(rating)) == false) {
             naRating.addCls('slate-ratingview-rating-null');
         } else {
             naRating.removeCls('slate-ratingview-rating-null');
