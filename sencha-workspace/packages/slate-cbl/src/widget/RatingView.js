@@ -30,7 +30,7 @@ Ext.define('Slate.cbl.widget.RatingView', {
                                     '<h5 class="slate-ratingview-skill-title">{Code}<tpl if="Code &amp;&amp; Descriptor"> – </tpl>{Descriptor}</h5>',
                                 '</header>',
                                 '<ol class="slate-ratingview-ratings">',
-                                    '<li class="slate-ratingview-rating slate-ratingview-rating-menu {[this.getMenuRatingElCls(values.Rating, this.menuRatings).join(" ")]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this.menuRatings)]}">',
+                                    '<li class="slate-ratingview-rating <tpl if="this.menuRatings.length">slate-ratingview-rating-menu</tpl> {[this.getMenuRatingElCls(values.Rating, this.menuRatings).join(" ")]}" data-rating="{[this.getMenuElRatingValue(values.Rating, this.menuRatings)]}">',
                                         '<div class="slate-ratingview-rating-bubble" tabindex="0">',
                                             '<span class="slate-ratingview-rating-label">{[this.getMenuRatingElLabel(values.Rating, this.menuRatings)]}</span>',
                                         '</div>',
@@ -168,9 +168,11 @@ Ext.define('Slate.cbl.widget.RatingView', {
         }
 
         // update menu thumb el
-        menuThumbEl.toggleCls('slate-ratingview-rating-null', rating === null || !ratingInMenu);
-        menuThumbEl.dom.setAttribute('data-rating', tpl.getMenuElRatingValue(rating, menuRatings) || '');
-        menuThumbEl.down('.slate-ratingview-rating-label').setHtml(tpl.getMenuRatingElLabel(rating, menuRatings));
+        if (menuThumbEl) {
+            menuThumbEl.toggleCls('slate-ratingview-rating-null', rating === null || !ratingInMenu);
+            menuThumbEl.dom.setAttribute('data-rating', tpl.getMenuElRatingValue(rating, menuRatings) || '');
+            menuThumbEl.down('.slate-ratingview-rating-label').setHtml(tpl.getMenuRatingElLabel(rating, menuRatings));
+        }
 
         return me.fireEvent('rateskill', me, {
             CompetencyID: skillEl.getAttribute('data-competency'),
@@ -187,6 +189,10 @@ Ext.define('Slate.cbl.widget.RatingView', {
                 text: 'N/A',
                 value: null
             }];
+
+        if (Ext.isEmpty(menuRatings)) {
+            return;
+        }
 
         if (!menu && menuRatings.length) {
             Ext.each(menuRatings, function(mr) {
