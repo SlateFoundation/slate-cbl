@@ -100,11 +100,6 @@
     flex: 1;
 }
 
-@include slate-ratingview-skill-level(9, $level-9-color);
-@include slate-ratingview-skill-level(10, $level-10-color);
-@include slate-ratingview-skill-level(11, $level-11-color);
-@include slate-ratingview-skill-level(12, $level-12-color);
-
 .slate-ratingview-rating-bubble {
     align-items: center;
     background-color: white;
@@ -123,12 +118,14 @@
     }
 
     &:active {
-        background-color: #ccc;
+        background-color: $color;
+        color: #ccc;
     }
 }
 
 .is-selected .slate-ratingview-rating-bubble {
     background-color: #ccc;
+    color: white;
 }
 
 .slate-ratingview-rating-label {
@@ -156,6 +153,11 @@
         font-weight: bold;
     }
 }
+
+@include slate-ratingview-skill-level(9, $level-9-color);
+@include slate-ratingview-skill-level(10, $level-10-color);
+@include slate-ratingview-skill-level(11, $level-11-color);
+@include slate-ratingview-skill-level(12, $level-12-color);
 
 .slate-ratingview-rating-menu .slate-ratingview-rating-bubble:hover {
     border: 1px dashed #666;
