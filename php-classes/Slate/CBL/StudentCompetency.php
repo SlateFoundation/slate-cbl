@@ -388,7 +388,7 @@ class StudentCompetency extends \ActiveRecord
 
             $totalGrowthSkills = count($growthData);
 
-            if ($totalGrowthSkills * 2 >= $this->Competency->getTotalSkills()) {
+            if ($totalGrowthSkills && $totalGrowthSkills * 2 >= $this->Competency->getTotalSkills()) {
                 $this->competencyGrowth = array_sum($growthData) / $totalGrowthSkills;
             } else {
                 $this->competencyGrowth = false;

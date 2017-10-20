@@ -89,6 +89,17 @@ class Skill extends \VersionedRecord
         return $this->Code;
     }
 
+    public function getTitle()
+    {
+        $title = $this->Code;
+
+        if ($this->Descriptor) {
+            $title .= ': ' . $this->Descriptor;
+        }
+
+        return $title;
+    }
+
     public static function getByHandle($handle)
     {
         return static::getByCode($handle);
