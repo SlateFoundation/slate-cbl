@@ -5,7 +5,8 @@ Ext.define('SlateTasksTeacher.store.Students',{
     ],
 
     config: {
-        courseSection: null
+        courseSection: null,
+        sectionCohort: null
     },
 
     proxy: {
@@ -18,10 +19,33 @@ Ext.define('SlateTasksTeacher.store.Students',{
     }],
 
     updateCourseSection: function(courseSection) {
-        var me = this;
+        var me = this,
+            path = '/sections/'+courseSection+'/students';
 
-        me.getProxy().setUrl('/sections/'+courseSection+'/students');
+        if (me.getProxy().getUrl() != path) {
+            me.getProxy().setUrl(path);
+            me.dirty = true;
+        }
 
         return me;
+    },
+
+    updateSectionCohort: function(sectionCohort) {
+        var me = this,
+            proxy = me.getProxy();
+
+        if (me.getProxy().getExtraParams().cohort != sectionCohort) {
+            proxy.setExtraParam('cohort', sectionCohort);
+            me.dirty = true;
+        }
+
+        return me;
+    },
+
+    loadIfDirty: function() {
+        if (this.dirty || !(this.isLoading() || this.isLoaded())) {
+            this.load();
+            this.dirty = false;
+        }
     }
 });

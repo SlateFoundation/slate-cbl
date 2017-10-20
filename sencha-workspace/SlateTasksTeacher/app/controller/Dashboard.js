@@ -27,6 +27,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     ],
     stores: [
         'CourseSections',
+        'SectionCohorts',
         'Students',
         'StudentTasks',
         'Tasks'
@@ -83,7 +84,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
         assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
 
-        courseSelector: 'slate-tasks-teacher-appheader combo',
+        courseSelector: 'slate-tasks-teacher-appheader slate-section-selector',
+        cohortSelector: 'slate-tasks-teacher-appheader slate-cohort-selector',
         acceptTaskBtn: 'slate-tasks-teacher-taskrater button[action=accept]'
     },
 
@@ -93,6 +95,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'section/:sectionId': {
             sectionId: '([a-zA-Z0-9])+',
             action: 'showCourseSection'
+        },
+        'section/:sectionId/:cohort': {
+            sectionId: '([a-zA-Z0-9])+',
+            action: 'showCourseSection'
         }
     },
 
@@ -100,8 +106,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         courseSelector: {
             select: 'onCourseSectionSelect'
         },
+        cohortSelector: {
+            select: 'onSectionCohortSelect'
+        },
         dashboardCt: {
-            coursesectionselect: 'onDashboardSectionChange'
+            coursesectionselect: 'onDashboardSectionChange',
+            sectioncohortselect: 'onDashboardCohortChange'
         },
         tasksGrid: {
             cellclick: 'onTasksGridCellClick',
@@ -166,14 +176,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     // route handlers
-    showCourseSection: function(sectionCode) {
+    showCourseSection: function(sectionCode, cohortCode) {
         var me = this,
             courseSelector = me.getCourseSelector(),
             courseSectionsStore = courseSelector.getStore(),
             studentsStore = me.getStudentsStore(),
             tasksStore = me.getTasksStore(),
+            cohortsStore = me.getSectionCohortsStore(),
             studentTasksStore = me.getStudentTasksStore(),
-            courseSection = courseSectionsStore.findRecord('Code', sectionCode);
+            courseSection = courseSectionsStore.findRecord('Code', sectionCode),
+            cohortCode = unescape(cohortCode);
 
         // select section
         if (!courseSection && courseSectionsStore.isLoaded()) {
@@ -190,8 +202,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
         courseSelector.setValue(courseSectionsStore.findRecord('Code', sectionCode));
 
-        // update store urls
-        studentsStore.setCourseSection(sectionCode).load();
+        // update cohort section
+        cohortsStore.setCourseSection(sectionCode);
+        cohortsStore.loadIfDirty();
+
+        // sync store
+        studentsStore.setCourseSection(sectionCode);
+        studentsStore.setSectionCohort(cohortCode);
+        studentsStore.loadIfDirty();
+
+        // sync tasks and student tasks
         tasksStore.setCourseSection(sectionCode).load();
         studentTasksStore.setCourseSection(sectionCode).load();
     },
@@ -203,8 +223,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         me.getDashboardCt().setCourseSection(record);
     },
 
+    onSectionCohortSelect: function(combo, record) {
+        this.getDashboardCt().setSectionCohort(record);
+    },
+
     onDashboardSectionChange: function(dashboardView, record) {
         this.redirectTo('section/'+record.get('Code'));
+    },
+
+    onDashboardCohortChange: function(dashboardView, record) {
+        var me = this,
+            courseSelector = me.getCourseSelector(),
+            courseSectionsStore = courseSelector.getStore(),
+            activeCourse = courseSectionsStore.getById(courseSelector.getValue());
+
+        me.redirectTo('section/'+activeCourse.get('Code')+'/'+escape(record.get('Cohort')));
     },
 
     onTasksGridCellClick: function(grid, taskId, studentId) {

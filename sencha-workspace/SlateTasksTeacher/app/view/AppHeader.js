@@ -1,8 +1,8 @@
 Ext.define('SlateTasksTeacher.view.AppHeader', {
     extend: 'Slate.cbl.view.AppHeader',
     requires: [
-        'SlateTasksTeacher.store.CourseSections',
         'Slate.cbl.widget.SectionSelector',
+        'Slate.cbl.widget.CohortSelector',
         'Ext.toolbar.Fill',
         'Ext.form.field.ComboBox'
     ],
@@ -17,6 +17,10 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
         xtype: 'slate-section-selector',
         itemId: 'sectionSelect',
         store: 'CourseSections'
+    }, {
+        xtype: 'slate-cohort-selector',
+        itemId: 'cohortSelect',
+        store: 'SectionCohorts'
     }, {
         xtype: 'tbfill'
     }, {
