@@ -340,7 +340,7 @@ class StudentCompetency extends \ActiveRecord
 
         // Require all demonstrations have ratings above minimum
         if (static::$minimumRatingOffset !== null) {
-            $minimumRating = $this->Level - static::$minimumRatingOffset;
+            $minimumRating = $this->Level + static::$minimumRatingOffset;
 
             foreach ($this->getEffectiveDemonstrationsData() as $skillID => $demonstrations) {
                 foreach ($demonstrations as $demonstration) {
@@ -388,7 +388,7 @@ class StudentCompetency extends \ActiveRecord
 
             $totalGrowthSkills = count($growthData);
 
-            if ($totalGrowthSkills * 2 >= $this->Competency->getTotalSkills()) {
+            if ($totalGrowthSkills && $totalGrowthSkills * 2 >= $this->Competency->getTotalSkills()) {
                 $this->competencyGrowth = array_sum($growthData) / $totalGrowthSkills;
             } else {
                 $this->competencyGrowth = false;

@@ -369,29 +369,25 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         me.doEditStudentTask(studentTask);
     },
 
-    onRateSkillClick: function(ratingView, ratingObject) {
+    onRateSkillClick: function(ratingView, ratingData) {
         var me = this,
-            taskRater = me.getTaskRater(),
-            studentTask = taskRater.getStudentTask();
+            studentTask = me.getTaskRater().getStudentTask();
 
         Slate.API.request({
             url: studentTask.toUrl() + '/rate',
             method: 'POST',
             params: {
-                SkillID: ratingObject.SkillID,
-                Score: ratingObject.rating
+                include: me.getStudentTasksStore().getProxy().getInclude()
             },
-            callback: function(opts, success, response) {
-                // var record = response.data.record;
-
-                if (success) {
-                    me.getStudentTasksStore().load({
-                        id: studentTask.getId(),
-                        addRecords: true
-                    });
-                    // studentTask.set(record);
+            jsonData: {
+                SkillID: ratingData.SkillID,
+                Rating: ratingData.Rating,
+            },
+            callback: function(options, success, response) {
+                if (success && response.data && response.data.success) {
+                    studentTask.set(response.data.StudentTask, { dirty: false });
                 } else {
-                    Ext.toast('Error. Please try again.');
+                    Ext.toast(response.data && response.data.message || 'Please try again or report the issue to an administrator', 'Failed to save rating');
                 }
             }
         });

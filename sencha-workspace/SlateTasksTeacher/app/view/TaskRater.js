@@ -9,8 +9,7 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
     updateTask: function(task) {
         var me = this,
             form = me.down('slate-modalform'),
-            attachmentsField = me.down('slate-tasks-attachmentsfield'),
-            skillsField = me.down('slate-skillsfield');
+            attachmentsField = me.down('slate-tasks-attachmentsfield');
 
         form.down('[name=Title]').setValue(task.get('Title'));
         form.down('[name=ParentTaskTitle]').setValue(task.get('ParentTask') ? task.get('ParentTask').Title : '');
@@ -19,9 +18,6 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
 
         attachmentsField.setAttachments(task.get('Attachments'));
         attachmentsField.setReadOnly(true);
-
-        skillsField.setSkills(task.get('Skills'));
-        skillsField.setReadOnly(true);
     },
 
     updateStudentTask: function(studentTask) {
@@ -30,7 +26,6 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
             ratingsView = me.down('slate-ratingview'),
             commentsField = form.down('slate-commentsfield'),
             submissionsCmp = form.down('slate-tasks-submissions'),
-            skillsField = me.down('slate-skillsfield'),
             groupedSkills = studentTask.getTaskSkillsGroupedByCompetency();
 
         if (studentTask.get('DueDate')) {
@@ -43,9 +38,8 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
         form.down('#student-attachments').setAttachments(studentTask.get('Attachments'));
         commentsField.setRecord(studentTask);
         submissionsCmp.setData(studentTask.get('Submissions'));
-        skillsField.setSkills(studentTask.get('Skills'), true, false); // appendSkills, editable
         ratingsView.setData({
-            ratings: [7, 8, 9, 10, 11, 12, 'M'],
+            ratings: [7, 8, 9, 10, 11, 12, 0],
             competencies: groupedSkills
         });
     },
