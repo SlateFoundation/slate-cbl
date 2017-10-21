@@ -16,6 +16,7 @@ class DemonstrationSkill extends \ActiveRecord
     public static $fields = [
         'DemonstrationID' => [
             'type' => 'uint'
+            ,'index' => true
         ],
         'SkillID' => [
             'type' => 'uint'
@@ -32,13 +33,6 @@ class DemonstrationSkill extends \ActiveRecord
         'Override' => [
             'type' => 'boolean',
             'default' => false
-        ]
-    ];
-
-    public static $indexes = [
-        'DemonstrationSkill' => [
-            'fields' => ['DemonstrationID', 'SkillID'],
-            'unique' => true
         ]
     ];
 
@@ -64,14 +58,14 @@ class DemonstrationSkill extends \ActiveRecord
         ]
         ,'TargetLevel' => [
             'validator' => 'number'
-            ,'min' => 1
-            ,'max' => 1
+            ,'min' => 0
+            ,'max' => 6
             ,'required' => false
         ]
         ,'DemonstratedLevel' => [
             'validator' => 'number'
             ,'min' => 0
-            ,'max' => 4
+            ,'max' => 6
         ]
     ];
 
