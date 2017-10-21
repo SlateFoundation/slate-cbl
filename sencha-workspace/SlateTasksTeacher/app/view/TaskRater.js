@@ -39,7 +39,7 @@ Ext.define('SlateTasksTeacher.view.TaskRater', {
         commentsField.setRecord(studentTask);
         submissionsCmp.setData(studentTask.get('Submissions'));
         ratingsView.setData({
-            ratings: [1, 2, 3, 4, 0],
+          ratings: [0.5, 1, 2, 3, 4, 5, 6, 0],
             competencies: groupedSkills
         });
     },
