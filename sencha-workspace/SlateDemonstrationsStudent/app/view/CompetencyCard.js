@@ -1,3 +1,11 @@
+var levelLut = {
+  0 : "NE",
+  1 : "EN",
+  2 : "PR",
+  3 : "GB",
+  4 : "AD",
+  5 : "EX"
+}
 Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-student-competencycard',
@@ -49,7 +57,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
                 '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
                 '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">L{level}</div>',
+                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">{[ ["M","EN","PR","GB","AD","EX","BA"][values.level] ]}</div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
             '</div>',
 
@@ -231,7 +239,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? 'Y'+(newLevel - 8) : '');
+            me.meterLevelEl.update(newLevel ? levelLut[newLevel] : '');
         }
     },
 
