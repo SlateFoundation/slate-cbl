@@ -2,42 +2,59 @@ $level-1-color:         dynamic(#d94181);
 $level-2-color:        dynamic(#ffa200);
 $level-3-color:        dynamic(#5dc02a);
 $level-4-color:        dynamic(#008cc1);
+$level-5-color:        dynamic(#aa77cc);
+$level-6-color:        dynamic(#cc77aa);
 
 $level-1-color-light:   dynamic(#ea97ba);
 $level-2-color-light:  dynamic(#ffcc73);
 $level-3-color-light:  dynamic(#a6dc8a);
 $level-4-color-light:  dynamic(#73c0dd);
+$level-5-color-light: dynamic(#ddccff);
+$level-6-color-light: dynamic(#ffccdd);
 
 $level-1-color-medium:  dynamic(#e1679a);
 $level-2-color-medium: dynamic(#ffb533);
 $level-3-color-medium: dynamic(#7dcd55);
 $level-4-color-medium: dynamic(#33a3cd);
+$level-5-color-medium: dynamic(#aa77cc);
+$level-6-color-medium: dynamic(#cc77aa);
 
 $level-1-color-dark:    dynamic(#ca274f);
 $level-2-color-dark:   dynamic(#ff7d00);
 $level-3-color-dark:   dynamic(#38a719);
 $level-4-color-dark:   dynamic(#005ea8);
+$level-5-color-dark:   dynamic(#440077);
+$level-6-color-dark:   dynamic(#770044);
 
 $level-colors:
     $level-1-color,
     $level-2-color,
     $level-3-color,
-    $level-4-color;
+    $level-4-color,
+    $level-5-color,
+    $level-6-color;
 
 $level-colors-light:
     $level-1-color-light,
     $level-2-color-light,
     $level-3-color-light,
-    $level-4-color-light;
+    $level-4-color-light,
+    $level-5-color-light,
+    $level-6-color-light;
+
 
 $level-colors-medium:
     $level-1-color-medium,
     $level-2-color-medium,
     $level-3-color-medium,
-    $level-4-color-medium;
+    $level-4-color-medium,
+    $level-5-color-medium,
+    $level-6-color-medium;
 
 $level-colors-dark:
     $level-1-color-dark,
     $level-2-color-dark,
     $level-3-color-dark,
-    $level-4-color-dark;
+    $level-4-color-dark,
+    $level-5-color-dark,
+    $level-6-color-dark;
