@@ -60,9 +60,14 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
     {
         $student = static::_getRequestedStudent();
         $courseSection = static::_getRequestedCourseSection();
+        $task = static::_getRequestedTask();
 
         if ($courseSection) {
             $conditions['SectionID'] = $courseSection->ID;
+        }
+
+        if ($task) {
+            $conditions['TaskID'] = $task->ID;
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
@@ -289,5 +294,18 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         }
 
         return $CourseSection;
+    }
+    
+    protected static function _getRequestedTask()
+    {
+        $Task = null;
+
+        if (!empty($_REQUEST['TaskID'])) {
+            if (!$Task = Task::getByID($_REQUEST['TaskID'])) {
+                return static::throwNotFoundError('Task not found');
+            }
+        }
+
+        return $Task;
     }
 }
