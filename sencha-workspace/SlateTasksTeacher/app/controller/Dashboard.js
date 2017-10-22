@@ -859,7 +859,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
                     // reload studenttasks, as new records may exist
                     if (forceReload === true || wasPhantom) {
                         setTimeout(function() {
-                            me.getStudentTasksStore().reload();
+                            me.getStudentTasksStore().load({
+                                params: {
+                                    TaskID: record.getId()
+                                },
+                                addRecords: true
+                            });
                             // reload record to ensure relationships are included.
                             // todo: remove this when API removes the need
                             rec.load();
