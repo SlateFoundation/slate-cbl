@@ -55,12 +55,13 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
         // templates
         cellTpl: [
-            '<tpl if="values.records && values.records[0]">',
-                '{[this.getDisplayValue(values.records[0].record)]}',
+            '<tpl if="values.records && values.records.length">',
+                '{[this.getDisplayValue(values.records)]}',
             '</tpl>',
             {
-                getDisplayValue: function(studentTask) {
-                    var html = '';
+                getDisplayValue: function(data) {
+                    var studentTask = data[data.length - 1]['record'],
+                        html = '';
 
                     if (studentTask.get('TaskStatus') === 'completed') {
                         html = '<i class="fa fa-lg fa-check-circle-o"></i>';
@@ -74,12 +75,13 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         ],
 
         subCellTpl: [
-            '<tpl if="values.records && values.records[0]">',
-                '{[this.getDisplayValue(values.records[0].record)]}',
+            '<tpl if="values.records && values.records.length">',
+                '{[this.getDisplayValue(values.records)]}',
             '</tpl>',
             {
-                getDisplayValue: function(studentTask) {
-                    var html = '';
+                getDisplayValue: function(data) {
+                    var studentTask = data[data.length - 1]['record'],
+                        html = '';
 
                     if (studentTask.get('TaskStatus') === 'completed') {
                         html = '<i class="fa fa-lg fa-check-circle-o"></i>';
