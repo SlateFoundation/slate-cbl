@@ -34,7 +34,7 @@ Ext.define('SlateTasksTeacher.store.Students',{
         var me = this,
             proxy = me.getProxy();
 
-        if (sectionCohort == "undefined") {
+        if (sectionCohort == 'undefined') {
             proxy.setExtraParam('cohort', null);
 
         } else if (me.getProxy().getExtraParams().cohort != sectionCohort) {
