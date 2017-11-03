@@ -55,9 +55,9 @@
                                         {$termIds = $Term->getRelatedTermIDs()|implode:','}
                                         <optgroup label="All Sections in {$Term->Title}">
                                             {foreach item=Section from=Slate\Courses\Section::getAllByWhere("TermID IN ($termIds)")}
-                                                <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
+                                                <option value="section&gt;{$Section->Code|escape}" {refill field=students selected="section>$Section->Code"}>{$Section->Code|escape}</option>
                                                 {foreach item=cohort from=$Section->getCohorts()}
-                                                    <option value="section {$Section->Code|escape} cohort {$cohort|escape}" {refill field=students selected="section $Section->Code cohort $cohort"}>{$Section->Code|escape} ▸ {$cohort}</option>
+                                                    <option value="section&gt;{$Section->Code|escape}&gt;{$cohort|escape}" {refill field=students selected="section>$Section->Code>$cohort"}>{$Section->Code|escape} ▸ {$cohort}</option>
                                                 {/foreach}
                                             {/foreach}
                                         </optgroup>
@@ -65,7 +65,7 @@
                                 {/if}
                                 <optgroup label="All Groups">
                                     {foreach item=Group from=Emergence\People\Groups\Group::getAll(array(order=array(Left=ASC)))}
-                                        <option value="group {$Group->Handle|escape}" {refill field=students selected="group $Group->Handle"}>{$Group->getFullPath(' ▸ ')|escape}</option>
+                                        <option value="group&gt;{$Group->Handle|escape}" {refill field=students selected="group>$Group->Handle"}>{$Group->getFullPath(' ▸ ')|escape}</option>
                                     {/foreach}
                                 </optgroup>
                             </select>
