@@ -222,7 +222,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     $StudentTask->setFields([
                         'DueDate' => $Record->DueDate,
                         'ExperienceType' => $Record->ExperienceType,
-                        'ExpirationDate' => $Record->ExpirationDate    
+                        'ExpirationDate' => $Record->ExpirationDate
                     ]);
                 }
                 $studentTasks[] = $StudentTask;
