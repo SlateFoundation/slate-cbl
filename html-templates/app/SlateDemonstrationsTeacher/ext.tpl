@@ -47,6 +47,9 @@
                                     <optgroup label="My Sections">
                                         {foreach item=Section from=$.User->CurrentCourseSections}
                                             <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Code|escape}</option>
+                                            {foreach item=cohort from=$Section->getCohorts()}
+                                                <option value="section&gt;{$Section->Code|escape}&gt;{$cohort|escape}" {refill field=students selected="section>$Section->Code>$cohort"}>{$Section->Code|escape} ▸ {$cohort}</option>
+                                            {/foreach}
                                         {/foreach}
                                     </optgroup>
                                 {else}
