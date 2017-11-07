@@ -29,7 +29,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             xtype: 'slatetasksstudent-tasktree'
         },
         filterMenu: 'slatetasksstudent-taskfiltersmenu',
-        taskForm: 'slate-taskdetails slate-modalform',
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
         taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
@@ -39,14 +38,15 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         // attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
         // addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
         // addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
-        submitButton: 'slate-taskdetails button#submit',
 
         taskDetails: {
             selector: 'slatetasksstudent-taskdetails',
             autoCreate: true,
 
             xtype: 'slatetasksstudent-taskdetails'
-        }
+        },
+        taskForm: 'slatetasksstudent-taskdetails slate-modalform',
+        submitButton: 'slatetasksstudent-taskdetails button#submit'
     },
 
 
