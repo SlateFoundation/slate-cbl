@@ -1,6 +1,10 @@
 Ext.define('SlateTasksStudent.view.TaskTree', {
     extend: 'Slate.cbl.widget.SimplePanel',
     xtype: 'slatetasksstudent-tasktree',
+    requires: [
+        'SlateTasksStudent.view.TaskFilters'
+    ],
+
 
     config: {
         courseSection: null,

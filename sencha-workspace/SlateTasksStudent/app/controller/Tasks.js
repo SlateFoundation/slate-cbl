@@ -12,9 +12,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // dependencies
     views: [
-        'TaskTree',
-        'TaskDetails',
-        'TaskFilters'
+        'TaskDetails'
     ],
 
     stores: [
@@ -31,10 +29,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             xtype: 'slatetasksstudent-tasktree'
         },
         taskDetails: {
-            selector: 'slate-taskdetails',
+            selector: 'slatetasksstudent-taskdetails',
             autoCreate: true,
 
-            xtype: 'slate-taskdetails'
+            xtype: 'slatetasksstudent-taskdetails'
         },
         filterMenu: 'button#filter menu',
         taskForm: 'slate-taskdetails slate-modalform',

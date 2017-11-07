@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.TaskDetails', {
     extend: 'Slate.cbl.view.modals.Modal',
-    xtype: 'slate-taskdetails',
+    xtype: 'slatetasksstudent-taskdetails',
     requires: [
         'Slate.cbl.view.AttachmentsList',
         'Slate.cbl.widget.AttachmentsField',
