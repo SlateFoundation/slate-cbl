@@ -1,11 +1,11 @@
 Ext.define('SlateTasksStudent.view.AppHeader', {
     extend: 'Slate.cbl.view.AppHeader',
+    xtype: 'slatetasksstudent-appheader',
     requires: [
-        'SlateTasksStudent.store.CourseSections',
         'Slate.cbl.widget.SectionSelector',
         'Ext.toolbar.Fill'
     ],
-    xtype: 'slatetasksstudent-appheader',
+
 
     layout: {
         type: 'vbox',
@@ -18,52 +18,75 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
             type: 'hbox',
             align: 'center'
         },
-        items: [{
-            xtype: 'combo',
-            itemId: 'student-selector',
-            name: 'StudentSelector',
-            fieldLabel: 'Student',
-            valueField: 'Username',
-            hidden: true,
-            allowBlank: true,
-            queryParam: 'q',
-            margin: '0 10 0 0',
-            displayTpl: [
-                '<tpl for=".">',
-                    '{FirstName} {LastName}',
-                '</tpl>'
-            ],
-            tpl: [
-                '<ul class="x-list-plain"><tpl for=".">',
-                    '<li role="option" class="x-boundlist-item">{FirstName} {LastName}</li>',
-                '</tpl></ul>'
-            ],
-            store: {
-                fields: ['Username'],
-                proxy: {
-                    type: 'slate-records',
-                    url: '/people'
+        items: [
+            {
+                itemId: 'studentSelector',
+
+                xtype: 'combo',
+                hidden: true,
+                fieldLabel: 'Student',
+                store: 'Students',
+                displayField: 'SortName',
+                valueField: 'Username',
+                allowBlank: true,
+                forceSelection: true,
+                margin: '0 10 0 0',
+                queryParam: 'q',
+                autoSelect: false,
+                matchFieldWidth: false,
+                emptyText: 'Me',
+                triggers: {
+                    clear: {
+                        cls: 'x-form-clear-trigger',
+                        weight: -2,
+                        hidden: true,
+                        handler: function(combo) {
+                            combo.clearValue();
+                        }
+                    }
+                },
+                listeners: {
+                    beforequery: function (queryPlan) {
+                        if (queryPlan.query.length < 2 && !queryPlan.forceAll) {
+                            return false;
+                        }
+
+                        queryPlan.query += ' class:student';
+                    },
+                    change: function(combo, value) {
+                        this.getTrigger('clear').setHidden(!value);
+                    }
                 }
             },
-            listeners: {
-                beforequery: function (qe) {
-                    if (!qe) {
-                        return false;
-                    }
+            {
+                itemId: 'sectionSelector',
 
-                    qe.query += ' class:student';
+                xtype: 'slate-section-selector',
+                disabled: true,
+                store: 'CourseSections',
+                valueField: 'Code',
+                queryMode: 'local',
+                autoSelect: false,
+                matchFieldWidth: false,
+                emptyText: 'All',
+                triggers: {
+                    clear: {
+                        cls: 'x-form-clear-trigger',
+                        weight: -2,
+                        hidden: true,
+                        handler: function(combo) {
+                            combo.clearValue();
+                        }
+                    }
+                },
+                listeners: {
+                    change: function(combo, value) {
+                        this.getTrigger('clear').setHidden(!value);
+                    }
                 }
             }
-        },
-        {
-            xtype: 'slate-section-selector',
-            itemId: 'section-selector',
-            queryMode: 'local',
-            store: { xclass: 'SlateTasksStudent.store.CourseSections' }
-        },
-        {
-            xtype: 'tbfill'
-
+        // {
+        //     xtype: 'tbfill'
         // @todo Unide recent activity toggle once the RecentActivity.js
         // view is populated with real data.
         // },
@@ -72,7 +95,8 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
         //     iconCls: 'x-fa fa-clock-o',
         //     enableToggle: true,
         //     action: 'show-recent'
-        }]
+        // }
+        ]
     }]
 
 });

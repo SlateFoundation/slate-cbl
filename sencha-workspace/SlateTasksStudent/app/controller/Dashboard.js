@@ -1,6 +1,10 @@
 /**
- * The Dashboard controller manages the components of the student dashboard and
- * handles routing by course section.
+ * Main controller for SlateTasksStudent app
+ *
+ * Responsibilities:
+ * - Configure and render main view
+ * - Manage selection of student
+ * - Manage selection of section
  */
 Ext.define('SlateTasksStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
@@ -9,13 +13,14 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     ],
 
 
-    // dependencies
     views: [
-        'Dashboard',
-        'AppHeader',
-        'TaskTree',
-        'RecentActivity',
-        'Slate.cbl.view.student.TaskHistory'
+        'Dashboard'
+        // 'RecentActivity'
+    ],
+
+    stores: [
+        'Students',
+        'CourseSections@Slate.store'
     ],
 
     refs: {
@@ -25,42 +30,19 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
             xtype: 'slatetasksstudent-dashboard'
         },
-        appHeader: {
-            selector: 'slatetasksstudent-appheader',
-            autoCreate: true,
+        appHeader: 'slatetasksstudent-appheader',
+        studentSelector: 'combobox#studentSelector',
+        sectionSelector: 'combobox#sectionSelector',
+        taskTree: 'slatetasksstudent-tasktree',
+        todoList: 'slatetasksstudent-todolist'
+        // taskHistory: 'slate-taskhistory',
 
-            xtype: 'slatetasksstudent-appheader'
-        },
-        sectionSelectorCombo: {
-            selector: 'combobox#section-selector',
-        },
-        studentSelectorCombo: {
-            selector: 'combobox#student-selector',
-        },
-        taskTree: {
-            selector: 'slatetasksstudent-tasktree',
-            autoCreate: true,
+        // recentActivity: {
+        //     selector: 'slatetasksstudent-recentactivity',
+        //     autoCreate: true,
 
-            xtype: 'slatetasksstudent-tasktree'
-        },
-        todoList: {
-            selector: 'slatetasksstudent-todolist',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-todolist'
-        },
-        recentActivity: {
-            selector: 'slatetasksstudent-recentactivity',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-recentactivity'
-        },
-        taskHistory: {
-            selector: 'slate-taskhistory',
-            autoCreate: true,
-
-            xtype: 'slate-taskhistory'
-        }
+        //     xtype: 'slatetasksstudent-recentactivity'
+        // },
     },
 
 
@@ -77,44 +59,82 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             '#': {
                 unmatchedroute: 'onUnmatchedRoute'
             }
+        },
+        store: {
+            '#CourseSections': {
+                load: 'onCourseSectionsLoad'
+            }
         }
     },
 
     control: {
-        'slatetasksstudent-appheader button[action="show-recent"]': {
-            click: 'onShowRecentClick'
+        studentSelector: {
+            change: 'onStudentSelectorChange'
         },
-        'slatetasksstudent-tasktree': {
-            resize: 'onTaskTreeResize'
-        },
-        'combo#section-selector': {
-            select: 'onSectionSelectorSelect',
-            boxready: 'onSectionSelectorBoxReady'
-        },
-        'combo#student-selector': {
-            select: 'onStudentSelectorSelect'
+        sectionSelector: {
+            change: 'onSectionSelectorChange'
         }
+        // 'slatetasksstudent-appheader button[action="show-recent"]': {
+        //     click: 'onShowRecentClick'
+        // }
     },
 
 
     // controller templates method overrides
     onLaunch: function () {
         var me = this,
-            studentCombo;
+            siteEnv = window.SiteEnvironment || {},
+            pageParams = Ext.Object.fromQueryString(location.search),
+            selectedStudent = pageParams.student,
+            sectionsStore = me.getCourseSectionsStore(),
+            dashboard = me.getDashboard(),
+            studentCombo = me.getStudentSelector(),
+            taskTree = me.getTaskTree(),
+            todoList = me.getTodoList();
 
-        me.getDashboard().render('slateapp-viewport');
+        // show and load student selector for priveleged users
+        if (!siteEnv.user || siteEnv.user.AccountLevel != 'User') {
+            studentCombo.show();
 
-        // hide student selector from students
-        if (window.SiteEnvironment && SiteEnvironment.user && SiteEnvironment.user.AccountLevel != 'User') {
-            me.getStudentSelectorCombo().setHidden(false);
+            studentCombo.getStore().load({
+                params: {
+                    q: 'username:'+selectedStudent
+                },
+                callback: function() {
+                    studentCombo.setValue(selectedStudent);
+                }
+            });
         }
 
-        // load student combo and set value
-        studentCombo = me.getStudentSelectorCombo();        
-        studentCombo.getStore().load({ callback: function() {
-            var queryParams = Ext.Object.fromQueryString(location.search);
-            this.getStudentSelectorCombo().setValue(queryParams.student);
-        }, scope: me});
+        // load section selector
+        sectionsStore.getProxy().setExtraParam('enrolled_user', selectedStudent || 'current');
+        sectionsStore.load();
+
+        // lock task tree and todo list to a student if selected
+        if (selectedStudent) {
+            taskTree.setStudent(selectedStudent);
+            taskTree.setReadOnly(true);
+
+            todoList.setStudent(selectedStudent);
+            todoList.setReadOnly(true);
+        }
+
+        // instantiate and render viewport
+        dashboard.render('slateapp-viewport');
+    },
+
+
+    // route handlers
+    showCourseSection: function(sectionCode) {
+        var me = this;
+
+        if (sectionCode == 'all') {
+            sectionCode = null;
+        }
+
+        me.getSectionSelector().setValue(sectionCode);
+        me.getTaskTree().setCourseSection(sectionCode);
+        me.getTodoList().setCourseSection(sectionCode);
     },
 
 
@@ -123,113 +143,34 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.redirectTo('section/all');
     },
 
-    onShowRecentClick: function(button) {
-        var win = this.getRecentActivity();
-
-        if (button.pressed) {
-            win.showBy(button, 'tr-bl');
-        } else {
-            win.hide();
-        }
+    onCourseSectionsLoad: function() {
+        this.getSectionSelector().enable();
     },
 
-    onTaskTreeResize: function () {
-        this.maskDemoElements();
-    },
-
-    onSectionSelectorSelect: function(combo, rec) {
-        var sectionCode = rec.get('Code'),
-            route = 'section/all';
-
-        if (sectionCode) {
-            route = 'section/'+sectionCode;
-        }
-        this.redirectTo(route);
-    },
-
-    onSectionSelectorBoxReady: function(combo) {
-        combo.getStore().on('load', function(store) {
-            store.insert(0, {
-                ID: 0,
-                Code: null,
-                Title: 'All'
-            })
-        });
-    },
-
-    onStudentSelectorSelect: function(studentCombo, student) {
-        var params = Ext.Object.fromQueryString(location.search),
-            username = student.get('Username');
+    onStudentSelectorChange: function(studentCombo, studentUsername) {
+        var params = Ext.Object.fromQueryString(location.search);
 
         // skip rerouting if student selection hasn't changed
-        if (username === params.student) {
+        if (params.student == studentUsername) {
             return;
         }
-
-        // reset section state
-        this.redirectTo('section/all');
 
         // reroute page to reflect selected student
-        params.student = username;
-        location.search = Ext.Object.toQueryString(params);
+        params.student = studentUsername;
+        window.location = '?' + Ext.Object.toQueryString(params) + '#section/all';
     },
 
-    // custom controller methods
-    maskDemoElements: function () {
-        this.getTaskHistory().setLoading(false);
-
-        this.getTaskHistory().setLoading('');
-    },
-
-    showCourseSection: function(sectionCode) {
-        var me = this,
-            params = Ext.urlDecode(location.search.substring(1)),
-            sectionSelectorCombo = me.getSectionSelectorCombo(),
-            courseSectionsStore = sectionSelectorCombo.getStore(),
-            rec = courseSectionsStore.findRecord('Code', sectionCode),
-            taskTree = me.getTaskTree(),
-            todoList = me.getTodoList(),
-            user = params.student ? params.student : 'current';
-
-        // correct route if it does not match requested course_section parameter
-        if (params.course_section && params.course_section !== sectionCode) {
-            this.redirectTo('section/'+params.course_section);
-            return;
-        }
-
-        if (!courseSectionsStore.isLoaded()) {
-            courseSectionsStore.load({
-                params: {
-                    enrolled_user: user // eslint-disable-line camelcase
-                },
-                callback: function() {
-                    me.showCourseSection(sectionCode);
-                }
-            });
-            return;
-        }
-
-        if (params.student) {
-            taskTree.setStudent(params.student);
-            taskTree.setReadOnly(true);
-
-            todoList.setStudent(params.student);
-            todoList.setReadOnly(true);
-        }
-
-        if (!rec && sectionCode !== 'all') {
-            Ext.Msg.alert('Error', 'Course Section not found.');
-            return;
-        }
-
-        if (sectionCode === 'all') {
-            sectionCode = 0;
-            sectionSelectorCombo.setValue(0);
-        } else {
-            sectionSelectorCombo.setValue(rec);
-        }
-
-        taskTree.setCourseSection(sectionCode);
-        todoList.setCourseSection(sectionCode);
+    onSectionSelectorChange: function(sectionCombo, sectionCode) {
+        this.redirectTo('section/' + (sectionCode || 'all'));
     }
+
+    // onShowRecentClick: function(button) {
+    //     var win = this.getRecentActivity();
+
+    //     if (button.pressed) {
+    //         win.showBy(button, 'tr-bl');
+    //     } else {
+    //         win.hide();
+    //     }
+    // },
 });

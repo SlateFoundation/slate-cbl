@@ -5,6 +5,13 @@
 Ext.define('SlateTasksStudent.view.Dashboard', {
     extend: 'Ext.container.Container',
     xtype: 'slatetasksstudent-dashboard',
+    requires: [
+        'SlateTasksStudent.view.AppHeader',
+        'SlateTasksStudent.view.TaskTree',
+        'SlateTasksStudent.view.TodoList',
+        // 'Slate.cbl.view.student.TaskHistory'
+    ],
+
 
     items: [
         {

@@ -11,10 +11,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
 
     // dependencies
-    views: [
-        'TodoList'
-    ],
-
     models: [
         'Todo'
     ],
@@ -26,12 +22,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // component references
     refs: {
-        todoList: {
-            selector: 'slatetasksstudent-todolist',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-todolist'
-        }
+        todoList: 'slatetasksstudent-todolist'
     },
 
 

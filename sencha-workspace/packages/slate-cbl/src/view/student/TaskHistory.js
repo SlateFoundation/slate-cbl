@@ -1,3 +1,4 @@
+// TODO: move into SlateTasksStudent app
 Ext.define('Slate.cbl.view.student.TaskHistory', {
     extend: 'Slate.cbl.widget.SimplePanel',
     xtype: 'slate-taskhistory',
@@ -101,14 +102,14 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
                                                         '<span class="slate-taskhistory-taskbullet"></span>',
                                                         '<span class="slate-taskhistory-tasktitle">{title}</span>',
                                                     '</td>',
-                            
+
                                                     '<td class="slate-taskhistory-cell slate-taskhistory-skills-cell text-center">',
                                                         '<tpl foreach="skills">',
                                                             '{[ this.printSomeIndicators(values, xkey) ]}',
                                                         '</tpl>',
                                                         '<div class="slate-taskhistory-skills-overlay"><span class="slate-taskhistory-skills-caption">{[ this.printOverlayString(values.skills) ]}</span></div>',
                                                     '</td>',
-                            
+
                                                     '<td class="slate-taskhistory-cell text-center">',
                                                         '{date}',
                                                     '</td>',
@@ -119,7 +120,7 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
                                 '</div>',
                             '</td>',
                         '</tr>',
-                    '</tpl>',                       
+                    '</tpl>',
                 '</tpl>',
             '</tbody>',
         '</table>',
