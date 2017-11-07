@@ -37,8 +37,11 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         },
         {
             name: 'TaskID',
-            reference: 'Task',
             type: 'int'
+        },
+        {
+            name: 'Task',
+            persist: false
         },
         {
             name: 'SectionTitle',
@@ -149,9 +152,32 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             type: 'boolean',
             persist: false,
             defaultValue: false
-        }, {
+        },
+        {
             name: 'Comments',
             persist: false
+        },
+        {
+            name: 'DueTime',
+            persist: false,
+            depends: ['DueDate'],
+            convert: function(v, r) {
+                var dueDate = r.get('DueDate'),
+                    dueTime;
+
+                if (!dueDate) {
+                    return null;
+                }
+
+                dueTime = new Date(dueDate);
+
+                // task is late after midnight of due date
+                dueTime.setHours(23);
+                dueTime.setMinutes(59);
+                dueTime.setSeconds(59);
+
+                return dueTime;
+            }
         }
     ],
 

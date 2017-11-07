@@ -85,8 +85,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         this.getTaskTree().mask('Loading Tasks');
     },
 
-    onStudentTasksStoreLoad: function(store) {
-        this.displayTaskData(store.getRange(), true);
+    onStudentTasksStoreLoad: function() {
+        this.refreshTasksTree();
+        this.getTaskTree().unmask();
     },
 
     onTaskTreeItemClick: function(id) {
@@ -184,7 +185,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
         }
 
-        me.displayTaskData(store.getRange());
+        me.refreshTasksTree();
 
     },
 
@@ -206,7 +207,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             recs[i].set('filtered', false);
         }
 
-        me.displayTaskData(store.getRange());
+        me.refreshTasksTree();
     },
 
     onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
@@ -379,74 +380,39 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     // custom controller methods
-    displayTaskData: function(recs) {
+    refreshTasksTree: function() {
         var me = this,
-            tree = me.getTaskTree(),
-            tasks;
+            tasksStore = me.getStudentTasksStore(),
+            items = [],
 
-        tasks = me.formatTaskData(recs);
-        tree.setData({ tasks: tasks });
-        tree.unmask();
-    },
+            rootTasks = tasksStore.queryBy(function(task) {
+                return !task.get('ParentTaskID');
+            }),
+            rootTasksLength = rootTasks.getCount(),
+            rootTasksIndex = 0,
+            rootTask, rootTaskId, subTasks;
 
-    formatTaskData: function(recs) {
-        var me = this,
-            parentRecs = me.getParentRecs(recs),
-            parentRecsLength = parentRecs.length,
-            parentRec,
-            tasks = [],
-            task,
-            subTasks,
-            i = 0;
+        for (; rootTasksIndex < rootTasksLength; rootTasksIndex++) {
+            rootTask = rootTasks.getAt(rootTasksIndex);
+            rootTaskId = rootTask.get('TaskID');
 
-        for (; i<parentRecsLength; i++) {
-            parentRec = parentRecs[i];
-            task = parentRec.getData();
-            subTasks = me.getSubTasks(recs, task.TaskID);
+            subTasks = tasksStore.queryBy(function(task) { // eslint-disable-line no-loop-func
+                return task.get('ParentTaskID') == rootTaskId && !task.get('filtered');
+            });
 
-            if (subTasks.length > 0) {
-                task.subtasks = subTasks;
-                parentRec.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
+            if (subTasks.getCount() > 0) {
+                rootTask.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
             }
-            if (!parentRec.get('filtered')) {
-                tasks.push(task);
+
+            if (!rootTask.get('filtered')) {
+                items.push({
+                    task: rootTask.getData(),
+                    subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
+                });
             }
         }
 
-        return tasks;
-    },
-
-    getParentRecs: function(recs) {
-        var recsLength = recs.length,
-            parentRecs = [],
-            i = 0,
-            rec;
-
-        for (; i<recsLength; i++) {
-            rec = recs[i];
-            if (rec.get('ParentTaskID') === null) {
-                parentRecs.push(rec);
-            }
-        }
-
-        return parentRecs;
-    },
-
-    getSubTasks: function(recs, parentId) {
-        var recsLength = recs.length,
-            i = 0,
-            subTasks = [],
-            rec;
-
-        for (; i<recsLength; i++) {
-            rec = recs[i];
-            if (rec.get('ParentTaskID') === parentId && !rec.get('filtered')) {
-                rec.set('ParentTaskTitle', rec.get('Task').ParentTask.Title);
-                subTasks.push(rec.getData());
-            }
-        }
-
-        return subTasks;
+        me.getTaskTree().setData(items);
     },
 
     /**

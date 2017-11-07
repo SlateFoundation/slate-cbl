@@ -129,7 +129,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         var me = this;
 
         if (sectionCode == 'all') {
-            sectionCode = null;
+            sectionCode = false; // use false instead of null, to indicate selecting *no section* vs having no selection
         }
 
         me.getSectionSelector().setValue(sectionCode);
