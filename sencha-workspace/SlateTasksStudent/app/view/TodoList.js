@@ -1,8 +1,7 @@
 Ext.define('SlateTasksStudent.view.TodoList', {
     extend: 'Ext.Component',
     xtype: 'slatetasksstudent-todolist',
-    requires: [
-    ],
+
 
     config: {
         courseSection: null,
@@ -11,8 +10,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         sectionVisibility: {}
     },
 
-    // baseCls: 'slate-simplepanel',
-    componentCls: 'slate-todolist',
+    cls: 'slate-todolist',
 
     listeners: {
         click: {

@@ -2,7 +2,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     extend: 'Slate.cbl.widget.SimplePanel',
     xtype: 'slatetasksstudent-tasktree',
     requires: [
-        'SlateTasksStudent.view.TaskFilters'
+        'SlateTasksStudent.view.TaskFiltersMenu'
     ],
 
 
@@ -32,41 +32,15 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     },
 
     title: 'Current Tasks',
-    showTools: true,
 
-    componentCls: 'slate-tasktree',
+    cls: 'slate-tasktree',
 
-    items: [
-        {
-            xtype: 'container',
-            componentCls: 'slate-simplepanel-header',
-            layout: 'hbox',
-            items: [
-                {
-                    flex: 1,
-                    xtype: 'component',
-                    cls: 'slate-simplepanel-title',
-                    html: '',
-                    itemId: 'title'
-                },
-                {
-                    // TODO make this configurable
-                    xtype: 'container',
-                    layout: 'hbox',
-                    itemId: 'tools',
-                    items: [{
-                        xtype: 'button',
-                        ui: 'light',
-                        text: 'Filter',
-                        itemId: 'filter',
-                        menu: {
-                            xtype: 'slatetasksstudent-taskfilters'
-                        }
-                    }]
-                }
-            ]
+    tools: [{
+        text: 'Filter',
+        menu: {
+            xtype: 'slatetasksstudent-taskfiltersmenu'
         }
-    ],
+    }],
 
     tpl: [
         '<ul class="slate-tasktree-list">',

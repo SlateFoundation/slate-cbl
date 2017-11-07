@@ -2,15 +2,10 @@
 Ext.define('Slate.cbl.view.student.TaskHistory', {
     extend: 'Slate.cbl.widget.SimplePanel',
     xtype: 'slate-taskhistory',
-    requires:[
-    ],
 
-    config: {
-    },
 
     title: 'Past English Tasks',
-
-    componentCls: 'slate-taskhistory',
+    cls: 'slate-taskhistory',
 
     data: {
         tasks: [
@@ -171,10 +166,11 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
     },
 
     onExpandClick: function(ev, t) {
-        var target = Ext.get(t);
+        var target = Ext.get(t),
+            row;
 
         if (target.is('.slate-taskhistory-taskbullet')) {
-            var row = target.up('.slate-taskhistory-row');
+            row = target.up('.slate-taskhistory-row');
 
             row.toggleCls('is-expanded');
         }

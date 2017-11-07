@@ -28,13 +28,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
             xtype: 'slatetasksstudent-tasktree'
         },
-        taskDetails: {
-            selector: 'slatetasksstudent-taskdetails',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-taskdetails'
-        },
-        filterMenu: 'button#filter menu',
+        filterMenu: 'slatetasksstudent-taskfiltersmenu',
         taskForm: 'slate-taskdetails slate-modalform',
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
@@ -46,13 +40,19 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         // addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
         // addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
         submitButton: 'slate-taskdetails button#submit',
-        studentAttachmentsField: 'slate-tasks-attachmentsfield#student-attachments'
+
+        taskDetails: {
+            selector: 'slatetasksstudent-taskdetails',
+            autoCreate: true,
+
+            xtype: 'slatetasksstudent-taskdetails'
+        }
     },
 
 
     // entry points
     control: {
-        'slatetasksstudent-tasktree': {
+        taskTree: {
             itemclick: 'onTaskTreeItemClick',
             coursesectionchange: 'onTaskTreeCourseSectionChange'
         },
@@ -62,10 +62,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         studentAttachmentsField: {
             addgoogleattachment: 'onAddGoogleAttachmentClick'
         },
-        'button#filter menucheckitem': {
+        'slatetasksstudent-taskfiltersmenu menucheckitem': {
             checkchange: 'onFilterItemCheckChange'
         },
-        'button#filter button#view-all': {
+        'slatetasksstudent-taskfiltersmenu button#view-all': {
             click: 'onFilterViewAllClick'
         }
     },
