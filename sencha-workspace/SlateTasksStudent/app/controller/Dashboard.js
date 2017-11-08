@@ -55,6 +55,9 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     listen: {
+        global: {
+            resize: 'onBrowserResize'
+        },
         controller: {
             '#': {
                 unmatchedroute: 'onUnmatchedRoute'
@@ -139,6 +142,10 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
 
     // event handlers
+    onBrowserResize: function() {
+        this.getDashboard().updateLayout();
+    },
+
     onUnmatchedRoute: function() {
         this.redirectTo('section/all');
     },
