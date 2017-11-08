@@ -70,26 +70,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
     },
 
-    listen: {
-        store: {
-            '#StudentTasks': {
-                beforeload: 'onStudentTasksStoreBeforeLoad',
-                load: 'onStudentTasksStoreLoad'
-            }
-        }
-    },
-
 
     // event handlers
-    onStudentTasksStoreBeforeLoad: function() {
-        this.getTaskTree().mask('Loading Tasks');
-    },
-
-    onStudentTasksStoreLoad: function() {
-        this.refreshTasksTree();
-        this.getTaskTree().unmask();
-    },
-
+    // TODO: audit
     onTaskTreeItemClick: function(id) {
         var me = this,
             rec = me.getStudentTasksStore().getById(id),
@@ -152,7 +135,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         taskDetails.mask('Submitting&hellip;');
         Slate.API.request({
-            url: Slate.API.buildUrl('/cbl/student-tasks/submit'),
+            url: '/cbl/student-tasks/submit',
             jsonData: {
                 ID: record.get('ID'),
                 Attachments: studentTaskAttachments
@@ -160,7 +143,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             success: function() {
                 Ext.toast('Task successfully submitted!');
                 me.getStudentTasksStore().reload();
-                me.getTaskDetails().close();
+                taskDetails.close();
             },
             failure: function() {
                 taskDetails.unmask();
@@ -380,41 +363,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     // custom controller methods
-    refreshTasksTree: function() {
-        var me = this,
-            tasksStore = me.getStudentTasksStore(),
-            items = [],
-
-            rootTasks = tasksStore.queryBy(function(task) {
-                return !task.get('ParentTaskID');
-            }),
-            rootTasksLength = rootTasks.getCount(),
-            rootTasksIndex = 0,
-            rootTask, rootTaskId, subTasks;
-
-        for (; rootTasksIndex < rootTasksLength; rootTasksIndex++) {
-            rootTask = rootTasks.getAt(rootTasksIndex);
-            rootTaskId = rootTask.get('TaskID');
-
-            subTasks = tasksStore.queryBy(function(task) { // eslint-disable-line no-loop-func
-                return task.get('ParentTaskID') == rootTaskId && !task.get('filtered');
-            });
-
-            if (subTasks.getCount() > 0) {
-                rootTask.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
-            }
-
-            if (!rootTask.get('filtered')) {
-                items.push({
-                    task: rootTask.getData(),
-                    subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
-                });
-            }
-        }
-
-        me.getTaskTree().setData(items);
-    },
-
     /**
      * Passes a record through a group of filters.
      * @param {Ext.data.Model} rec- The record to be tested.

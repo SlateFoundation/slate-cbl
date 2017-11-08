@@ -41,6 +41,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         student: null,
         courseSection: null,
         readOnly: false,
+        store: null
     },
 
     title: 'Current Tasks',
@@ -149,8 +150,39 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         me.fireEvent('coursesectionchange', me, section, oldSection);
     },
 
+    applyStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    updateStore: function(store, oldStore) {
+        if (oldStore) {
+            oldStore.un({
+                beforeload: 'onBeforeStoreLoad',
+                load: 'onStoreLoad',
+                scope: this
+            });
+        }
+
+        if (store) {
+            store.on({
+                beforeload: 'onBeforeStoreLoad',
+                load: 'onStoreLoad',
+                scope: this
+            });
+        }
+    },
+
 
     // event handlers
+    onBeforeStoreLoad: function() {
+        this.mask('Loading Tasks');
+    },
+
+    onStoreLoad: function() {
+        this.refresh();
+        this.unmask();
+    },
+
     onTreeClick: function(ev, t) {
         var me = this,
             target = Ext.get(t),
@@ -159,8 +191,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         if (target.is('.slate-tasktree-nub.is-clickable')) {
             parentEl = target.up('.slate-tasktree-item');
             parentEl.toggleCls('is-expanded');
-            me.resizeSubtasksContainer(parentEl);
-            me.resizeParentContainer();
+            // me.resizeSubtasksContainer(parentEl);
+            // me.resizeParentContainer();
         } else {
             parentEl = target.up('.slate-tasktree-item');
             if (parentEl) {
@@ -172,6 +204,41 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
 
     // custom methods
+    refresh: function() {
+        var me = this,
+            store = me.getStore(),
+            items = [],
+
+            rootTasks = store.queryBy(function(task) {
+                return !task.get('ParentTaskID');
+            }),
+            rootTasksLength = rootTasks.getCount(),
+            rootTasksIndex = 0,
+            rootTask, rootTaskId, subTasks;
+
+        for (; rootTasksIndex < rootTasksLength; rootTasksIndex++) {
+            rootTask = rootTasks.getAt(rootTasksIndex);
+            rootTaskId = rootTask.get('TaskID');
+
+            subTasks = store.queryBy(function(task) { // eslint-disable-line no-loop-func
+                return task.get('ParentTaskID') == rootTaskId && !task.get('filtered');
+            });
+
+            if (subTasks.getCount() > 0) {
+                rootTask.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
+            }
+
+            if (!rootTask.get('filtered')) {
+                items.push({
+                    task: rootTask.getData(),
+                    subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
+                });
+            }
+        }
+
+        me.setData(items);
+    },
+
     /*
      * TODO: This seems hacky to me.  If the height of the subtasks can't be correctly sized in CSS, I'd prefer handling
      * subitem expansion with Ext.Dom visibility methods as is currently implemeted in the Todo list.
