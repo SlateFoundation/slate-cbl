@@ -6,6 +6,8 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     requires: [
         'Ext.form.field.Date',
         'Ext.window.Toast',
+
+        /* global Slate */
         'Slate.API'
     ],
 
@@ -92,7 +94,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     onTodosListClearCompletedClick: function(cmp, sectionId) {
         var me = this;
 
-        Slate.API.request({ // eslint-disable-line no-undef
+        Slate.API.request({
             url: '/cbl/todos/clear-section',
             params: {
                 sectionId: sectionId
