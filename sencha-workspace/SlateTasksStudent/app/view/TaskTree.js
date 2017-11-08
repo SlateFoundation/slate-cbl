@@ -71,7 +71,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '    <ul class="slate-tasktree-list">',
 
         '        <tpl for=".">',
-        '            <li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task, now) ]}" recordId="{task.ID}">',
+        '            <li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task, now) ]}" data-id="{task.ID}">',
 
         '                <div class="flex-ct">',
         '                    <div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -89,7 +89,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '                    <ul class="slate-tasktree-sublist">',
 
         '                        <tpl for="subTasks">',
-        '                            <li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values, now) ]}" recordId="{ID}">',
+        '                            <li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values, now) ]}" data-id="{ID}">',
 
         '                                <div class="flex-ct">',
         '                                    <div class="slate-tasktree-nub"></div>',
@@ -188,19 +188,12 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     onTreeClick: function(ev, t) {
         var me = this,
             target = Ext.get(t),
-            parentEl, recordId;
+            parentEl = target.up('.slate-tasktree-item');
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            parentEl = target.up('.slate-tasktree-item');
             parentEl.toggleCls('is-expanded');
-            // me.resizeSubtasksContainer(parentEl);
-            // me.resizeParentContainer();
-        } else {
-            parentEl = target.up('.slate-tasktree-item');
-            if (parentEl) {
-                recordId = parentEl.dom.getAttribute('recordId');
-                me.fireEvent('itemclick', recordId);
-            }
+        } else if (parentEl) {
+            me.fireEvent('itemclick', me, me.getStore().getById(parentEl.getAttribute('data-id')));
         }
     },
 

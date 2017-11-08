@@ -75,9 +75,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // event handlers
     // TODO: audit and optimize
-    onTaskTreeItemClick: function(id) {
+    onTaskTreeItemClick: function(tasksTree, rec) {
         var me = this,
-            rec = me.getStudentTasksStore().getById(id),
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
             ratingView = me.getRatingView(),
