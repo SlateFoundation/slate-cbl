@@ -1,4 +1,4 @@
-/* global Slate *//* eslint new-cap: 0 */
+/* global google, gapi */
 /**
  * The Tasks controller manages the student task list and the task details pop-up.
  */
@@ -6,6 +6,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.window.Toast',
+
+        /* global Slate */
         'Slate.cbl.util.Google'
     ],
 
@@ -72,7 +74,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     // event handlers
-    // TODO: audit
+    // TODO: audit and optimize
     onTaskTreeItemClick: function(id) {
         var me = this,
             rec = me.getStudentTasksStore().getById(id),
@@ -119,6 +121,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         details.show();
     },
 
+    // TODO: audit and optimize
     onSubmitButtonClick: function() {
         var me = this,
             taskDetails = me.getTaskDetails(),
@@ -152,6 +155,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
     },
 
+    // TODO: audit and optimize
     onFilterItemCheckChange: function() {
         var me = this,
             menu = me.getFilterMenu(),
@@ -172,6 +176,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     },
 
+    // TODO: audit and optimize
     onFilterViewAllClick: function() {
         var me = this,
             menu = me.getFilterMenu(),
@@ -193,12 +198,13 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         me.refreshTasksTree();
     },
 
+    // TODO: audit and optimize
     onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
         var student = taskTree.getStudent(),
             params = {};
 
         if (courseSectionId) {
-            params.course_section = courseSectionId;  // eslint-disable-line camelcase
+            params.course_section = courseSectionId; // eslint-disable-line camelcase
         }
 
         if (student) {
@@ -210,6 +216,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
     },
 
+    // TODO: audit and optimize
     onAddGoogleAttachmentClick: function() {
         var me = this,
             googleUtil = Slate.cbl.util.Google;
@@ -253,6 +260,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
     },
 
+    // TODO: audit and optimize
     openFilePicker: function() {
         var me = this,
             googleUtil = Slate.cbl.util.Google,
@@ -315,6 +323,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             setVisible(true);
     },
 
+    // TODO: audit and optimize
     doAddGoogleFile: function(file, ownerEmail) {
         var me = this,
             attachmentsField = me.getStudentAttachmentsField(),
@@ -369,9 +378,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
      * @param {Array} filterGroup - An array of objects with a filter function.
      * @returns {boolean} filtered - true if this rec should be filtered
      */
+    // TODO: audit and optimize
     filterRecord: function(rec, filterGroup) {
         var filterGroupLength = filterGroup.length,
-            filtered = filterGroupLength !== 0,  // if no filters, return false
+            filtered = filterGroupLength !== 0, // if no filters, return false
             i = 0;
 
         for (; i < filterGroupLength; i++) {
