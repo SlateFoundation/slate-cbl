@@ -39,7 +39,6 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
                     items: [
                         {
                             xtype: 'slatetasksstudent-tasktree',
-                            minHeight: 200, // need a minimum height for load mask
                             margin: '0 32 0 0',
                             store: 'StudentTasks'
                         }, {

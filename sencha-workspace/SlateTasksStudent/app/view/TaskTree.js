@@ -65,53 +65,53 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     tpl: [
         '{% var now = new Date() %}',
 
-        '<ul class="slate-tasktree-list">',
+        '<tpl if="values.length == 0">',
+        '    <div class="empty-text">No tasks found</div>',
+        '<tpl else>',
+        '    <ul class="slate-tasktree-list">',
 
-        '    <tpl if="values.length == 0">',
-        '        <em>No tasks found</em>',
-        '    </tpl>',
+        '        <tpl for=".">',
+        '            <li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task, now) ]}" recordId="{task.ID}">',
 
-        '    <tpl for=".">',
-        '        <li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task, now) ]}" recordId="{task.ID}">',
-
-        '            <div class="flex-ct">',
-        '                <div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
-        '                <div class="slate-tasktree-data">',
-        '                    <div class="slate-tasktree-category">{task.SectionTitle}</div>',
-        '                    <div class="slate-tasktree-text">',
-        '                        <div class="slate-tasktree-title">{task.Title}</div>',
-        '                        <div class="slate-tasktree-status <tpl if="!this.getStatusDate(values.task)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.task.TaskStatus) ]}</div>',
-        '                        <div class="slate-tasktree-date">{[ this.getStatusDate(values.task) ]}</div>',
+        '                <div class="flex-ct">',
+        '                    <div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
+        '                    <div class="slate-tasktree-data">',
+        '                        <div class="slate-tasktree-category">{task.SectionTitle}</div>',
+        '                        <div class="slate-tasktree-text">',
+        '                            <div class="slate-tasktree-title">{task.Title}</div>',
+        '                            <div class="slate-tasktree-status <tpl if="!this.getStatusDate(values.task)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.task.TaskStatus) ]}</div>',
+        '                            <div class="slate-tasktree-date">{[ this.getStatusDate(values.task) ]}</div>',
+        '                        </div>',
         '                    </div>',
         '                </div>',
-        '            </div>',
 
-        '            <tpl if="subTasks.length">',
-        '                <ul class="slate-tasktree-sublist">',
+        '                <tpl if="subTasks.length">',
+        '                    <ul class="slate-tasktree-sublist">',
 
-        '                    <tpl for="subTasks">',
-        '                        <li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values, now) ]}" recordId="{ID}">',
+        '                        <tpl for="subTasks">',
+        '                            <li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values, now) ]}" recordId="{ID}">',
 
-        '                            <div class="flex-ct">',
-        '                                <div class="slate-tasktree-nub"></div>',
-        '                                <div class="slate-tasktree-data">',
-        '                                    <div class="slate-tasktree-text">',
-        '                                        <div class="slate-tasktree-title">{Title}</div>',
-        '                                        <div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-        '                                        <div class="slate-tasktree-date<tpl if="!values.DueDate">-null</tpl>">{[ this.getStatusDate(values) ]}</div>',
+        '                                <div class="flex-ct">',
+        '                                    <div class="slate-tasktree-nub"></div>',
+        '                                    <div class="slate-tasktree-data">',
+        '                                        <div class="slate-tasktree-text">',
+        '                                            <div class="slate-tasktree-title">{Title}</div>',
+        '                                            <div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
+        '                                            <div class="slate-tasktree-date<tpl if="!values.DueDate">-null</tpl>">{[ this.getStatusDate(values) ]}</div>',
+        '                                        </div>',
         '                                    </div>',
         '                                </div>',
-        '                            </div>',
 
-        '                        </li>',
-        '                    </tpl>',
+        '                            </li>',
+        '                        </tpl>',
 
-        '                </ul>',
-        '            </tpl>',
+        '                    </ul>',
+        '                </tpl>',
 
-        '        </li>',
-        '    </tpl>',
-        '</ul>',
+        '            </li>',
+        '        </tpl>',
+        '    </ul>',
+        '</tpl>',
         {
             getStatusString: function(taskStatus) {
                 return SlateTasksStudent.view.TaskTree.statusStrings[taskStatus] || '';
@@ -175,11 +175,13 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
     // event handlers
     onBeforeStoreLoad: function() {
+        this.addCls('is-loading');
         this.mask('Loading Tasks');
     },
 
     onStoreLoad: function() {
         this.refresh();
+        this.removeCls('is-loading');
         this.unmask();
     },
 
@@ -247,7 +249,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     syncSublistHeights: function() {
         var sublistEls, sublistElsLength, sublistElIndex = 0, sublistEl, sublistHeight,
             listItemEls, listItemElsLength, listItemElIndex,
-            sublistHeights = [], sublistHeightsLength, sublistHeightIndex = 0, sublistHeight;
+            sublistHeights = [], sublistHeightsLength, sublistHeightIndex = 0;
 
         // READ PHASE: sum heights of items in each sublist
         sublistEls = this.el.query('.slate-tasktree-sublist', false);

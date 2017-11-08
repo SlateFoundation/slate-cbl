@@ -2,6 +2,15 @@
     border-radius: 0 0 .25em .25em;
     box-shadow: 0 .125em .25em rgba(black, (1/6));
     overflow: hidden;
+
+    &.is-loading {
+        min-height: 150px;
+    }
+
+    .empty-text {
+        padding: 1.5em;
+        text-align: center;
+    }
 }
 
 .slate-simplepanel-header {
