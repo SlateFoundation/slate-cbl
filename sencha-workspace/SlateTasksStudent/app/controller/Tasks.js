@@ -171,8 +171,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
         }
 
-        me.refreshTasksTree();
-
+        me.getTaskTree().refresh();
     },
 
     // TODO: audit and optimize
@@ -194,7 +193,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             recs[i].set('filtered', false);
         }
 
-        me.refreshTasksTree();
+        me.getTaskTree().refresh();
     },
 
     // TODO: audit and optimize
