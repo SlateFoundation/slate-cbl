@@ -28,7 +28,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // entry points
     control: {
-        'slatetasksstudent-todolist': {
+        todoList: {
             checkclick: 'onTodosListCheckClick',
             clearcompleted: 'onTodosListClearCompletedClick',
             enterkeypress: 'onTodosListEnterKeyPress',
@@ -55,7 +55,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             params = {};
 
         if (courseSection) {
-            params.course_section = courseSection;  // eslint-disable-line camelcase
+            params.course_section = courseSection; // eslint-disable-line camelcase
         }
 
         if (student) {
@@ -92,7 +92,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
     onTodosListClearCompletedClick: function(cmp, sectionId) {
         var me = this;
 
-        Slate.API.request({     // eslint-disable-line no-undef
+        Slate.API.request({ // eslint-disable-line no-undef
             url: '/cbl/todos/clear-section',
             params: {
                 sectionId: sectionId
@@ -210,6 +210,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
                 Description: textfield.value,
                 DueDate: dueDate
             });
+
             rec.save({
                 success: function() {
                     store.load();
@@ -220,5 +221,4 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             });
         }
     }
-
 });
