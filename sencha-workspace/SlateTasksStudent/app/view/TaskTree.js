@@ -216,6 +216,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             rootTasksIndex = 0,
             rootTask, rootTaskId, subTasks;
 
+        // build tree of top-level tasks and subtasks
         for (; rootTasksIndex < rootTasksLength; rootTasksIndex++) {
             rootTask = rootTasks.getAt(rootTasksIndex);
             rootTaskId = rootTask.get('TaskID');
@@ -236,42 +237,46 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             }
         }
 
+        // render markup
         me.setData(items);
+
+        // sync heights for animated expansion
+        me.syncSublistHeights();
     },
 
-    /*
-     * TODO: This seems hacky to me.  If the height of the subtasks can't be correctly sized in CSS, I'd prefer handling
-     * subitem expansion with Ext.Dom visibility methods as is currently implemeted in the Todo list.
-     */
-    resizeSubtasksContainer: function(parentTaskEl) {
-        var subtasks,
-            subtasksLength,
-            subtasksHeight = 0,
-            i = 0;
+    syncSublistHeights: function() {
+        var sublistEls, sublistElsLength, sublistElIndex = 0, sublistEl, sublistHeight,
+            listItemEls, listItemElsLength, listItemElIndex,
+            sublistHeights = [], sublistHeightsLength, sublistHeightIndex = 0, sublistHeight;
 
-        if (parentTaskEl.hasCls('is-expanded')) {
-            subtasks = parentTaskEl.query('.slate-tasktree-item', false);
-            subtasksLength = subtasks.length;
+        // READ PHASE: sum heights of items in each sublist
+        sublistEls = this.el.query('.slate-tasktree-sublist', false);
+        sublistElsLength = sublistEls.length;
 
-            for (; i<subtasksLength; i++) {
-                subtasksHeight += subtasks[i].getHeight() + 1;
+        for (; sublistElIndex < sublistElsLength; sublistElIndex++) {
+            sublistEl = sublistEls[sublistElIndex];
+            sublistHeight = 0;
+
+            listItemEls = sublistEl.query('.slate-tasktree-item', false);
+            listItemElsLength = listItemEls.length;
+            listItemElIndex = 0;
+
+            for (; listItemElIndex < listItemElsLength; listItemElIndex++) {
+                sublistHeight += listItemEls[listItemElIndex].getHeight();
             }
 
-            parentTaskEl.down('ul').setHeight(subtasksHeight);
-
-        } else {
-            parentTaskEl.down('ul').setHeight(0);
+            sublistHeights.push({
+                el: sublistEl,
+                height: sublistHeight
+            });
         }
-    },
 
-    resizeParentContainer: function() {
-        var me = this,
-            doc = document.documentElement,
-            currentScroll = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+        // WRITE PHASE: set heights of sublists to item sums
+        sublistHeightsLength = sublistHeights.length;
 
-        Ext.Function.defer(function() {
-            me.up('container').updateLayout();
-            window.scrollTo(0, currentScroll);
-        }, 200);
+        for (; sublistHeightIndex < sublistHeightsLength; sublistHeightIndex++) {
+            sublistHeight = sublistHeights[sublistHeightIndex];
+            sublistHeight.el.setHeight(sublistHeight.height);
+        }
     }
 });

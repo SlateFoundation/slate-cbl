@@ -118,7 +118,6 @@
 }
 
 .slate-tasktree-sublist {
-    height: 0;
     list-style: none;
     margin: 0 0 0 1.5em;
     opacity: 0;
@@ -150,9 +149,12 @@
     }
 
     .is-expanded & {
-        height: 134px; // TODO make this dynamic!
         opacity: 1;
         transform: none;
+    }
+
+    .slate-tasktree-item:not(.is-expanded) & {
+        height: 0 !important;
     }
 }
 
