@@ -132,7 +132,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                     dueTime = task.DueTime,
                     status = task.TaskStatus;
 
-                if (self.activeStatuses.indexOf(status) > -1 && dueTime < now) {
+                if (dueTime && self.activeStatuses.indexOf(status) > -1 && dueTime < now) {
                     return self.lateStatusClasses[status] || '';
                 }
 
