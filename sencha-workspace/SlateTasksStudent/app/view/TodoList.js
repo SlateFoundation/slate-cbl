@@ -221,7 +221,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             SectionID: parseInt(sectionEl.getAttribute('data-section'), 10) || null,
             StudentID: parseInt(sectionEl.getAttribute('data-student'), 10) || null,
             Description: description,
-            DueDate: dueDate
+            DueDate: Ext.Date.utcToLocal(dueDate)
         }, sectionEl);
     }
 });
