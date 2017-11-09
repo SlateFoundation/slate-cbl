@@ -121,7 +121,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             oldStore.un({
                 beforeload: 'onBeforeStoreLoad',
                 load: 'onStoreLoad',
-                refresh: 'refresh',
                 scope: this
             });
         }
