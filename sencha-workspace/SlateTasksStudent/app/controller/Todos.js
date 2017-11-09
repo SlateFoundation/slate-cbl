@@ -197,6 +197,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
         todosData.push({
             Title: 'Active Items',
+            readOnly: readOnly,
             canAdd: true,
             items: activeTodos
         });
@@ -216,6 +217,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         if (completeTodos.length > 0) {
             todosData.push({
                 Title: 'Completed Items',
+                readOnly: readOnly,
                 buttons: buttons,
                 items: completeTodos
             });

@@ -43,7 +43,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
         '        <div class="slate-todolist-section-content">',
         '        <tpl for="todos">',
-        '            <tpl exec="values.parent = parent;"></tpl>', // access to parent when 2 deep
         '            <section class="slate-todolist-itemgroup">',
         '                <header class="slate-todolist-itemgroup-header">',
         '                    <h4 class="slate-todolist-itemgroup-title">{Title}</h4>',
@@ -59,7 +58,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '                    </tpl>',
         '                </header>',
         '                <ul class="slate-todolist-list">',
-        '                    <tpl exec="values.readOnly = parent.readOnly;"></tpl>', // access to readonly in items loop
         '                    <tpl for="items">',
         '                        <li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}">',
         '                            <input class="slate-todolist-item-checkbox" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
