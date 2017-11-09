@@ -172,9 +172,7 @@ Ext.define('SlateTasksStudent.model.Task', {
                 dueTime = new Date(dueDate);
 
                 // task is late after midnight of due date
-                dueTime.setHours(23);
-                dueTime.setMinutes(59);
-                dueTime.setSeconds(59);
+                dueTime.setHours(23, 59, 59, 999);
 
                 return dueTime;
             }

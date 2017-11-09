@@ -35,6 +35,8 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     },
 
     tpl: [
+        '{% var now = new Date() %}',
+
         '<tpl for=".">',
         '    <div class="slate-simplepanel slate-todolist-section" data-section="{sectionId}" data-student="{studentId}">',
         '        <div class="slate-simplepanel-header">',
@@ -71,7 +73,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '                    </header>',
         '                    <ul class="slate-todolist-list" <tpl if="parent.completedHidden && id == \'completed\'">style="display:none"</tpl>>',
         '                        <tpl for="items">',
-        '                            <li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}" data-todo="{ID}">',
+        '                            <li class="slate-todolist-item slate-todolist-status-{[ values.DueTime < now ? "late" : "due" ]}" data-todo="{ID}">',
         '                                <input class="slate-todolist-item-checkbox" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
         '                                <div class="slate-todolist-item-text">',
         '                                    <label for="todo-item" class="slate-todolist-item-title">{Description}</label>',
@@ -96,21 +98,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '        </tpl>',
         '        </div>',
         '    </div>',
-        '</tpl>',
-        {
-            getStatusCls: function(due) {
-                var dueEndOfDay = new Date(due.getTime()),
-                    now = new Date(),
-                    statusCls = 'due';
-
-                dueEndOfDay.setHours(23, 59, 59, 999); // TODO: calculate in model
-
-                if (dueEndOfDay < now) {
-                    statusCls = 'late';
-                }
-                return statusCls;
-            }
-        }
+        '</tpl>'
     ],
 
 
