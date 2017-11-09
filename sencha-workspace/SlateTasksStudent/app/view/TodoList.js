@@ -41,7 +41,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '            <div class="slate-simplepanel-title">To-Do List <small>{section}</small></div>',
         '        </div>',
 
-        '        <div class="slate-todolist-section-content">',
+        '        <div class="slate-todolist-section-content" <tpl if="collapsed">style="display:none"</tpl>>',
         '        <tpl for="todos">',
         '            <section class="slate-todolist-itemgroup">',
         '                <header class="slate-todolist-itemgroup-header">',
@@ -103,7 +103,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     // lifecycle methods
     initComponent: function() {
-        this.sectionVisibility = {};
+        this.collapsedSections = {};
 
         this.callParent(arguments);
     },
@@ -132,7 +132,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 el.checked
             );
         } else if (ev.getTarget('.slate-simplepanel-header')) {
-            me.onSectionTitleClick(el);
+            me.onSectionTitleClick(sectionId, sectionEl);
         } else if (ev.getTarget('.slate-todolist-button-clear')) {
             me.fireEvent('clearcompleted', me, dataParentId);
         } else if (ev.getTarget('.slate-todolist-button-hide')) {
@@ -140,25 +140,24 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         }
     },
 
-    onSectionTitleClick: function(el) {
+    onSectionTitleClick: function(sectionId, sectionEl) {
         var me = this,
-            sectionId = el.getAttribute('data-id'),
-            sectionSelector = '.slate-todolist-section-content[data-id="'+sectionId+'"]',
-            section = me.getEl().down(sectionSelector);
+            collapsedSections = me.collapsedSections,
+            sectionContentEl = sectionEl.down('.slate-todolist-section-content');
 
-        if (section) {
-            if (section.isVisible()) {
-                section.setVisibilityMode(Ext.dom.Element.DISPLAY);
-                section.slideOut('t', {
-                    duration: 200
-                });
-                me.recordVisibilityState(sectionSelector, false);
-            } else {
-                section.slideIn('t', {
-                    duration: 200
-                });
-                me.recordVisibilityState(sectionSelector, true);
-            }
+        if (collapsedSections[sectionId]) {
+            sectionContentEl.slideIn('t', {
+                duration: 200
+            });
+
+            collapsedSections[sectionId] = false;
+        } else {
+            sectionContentEl.setVisibilityMode(Ext.dom.Element.DISPLAY);
+            sectionContentEl.slideOut('t', {
+                duration: 200
+            });
+
+            collapsedSections[sectionId] = true;
         }
     },
 
@@ -209,25 +208,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     //         element = Ext.get(item);
     //     });
     // },
-
-    recordVisibilityState: function(sectionID, visible) {
-        this.sectionVisibility[sectionID] = visible;
-    },
-
-    restoreVisibilityState: function() {
-        var me = this,
-            sectionVisibility = me.sectionVisibility,
-            sectionSelector, section;
-
-        for (sectionSelector in sectionVisibility) {
-            if (sectionVisibility.hasOwnProperty(sectionSelector)) {
-                section = me.getEl().down(sectionSelector);
-                if (section) {
-                    section.setVisibilityMode(Ext.dom.Element.DISPLAY).setVisible(sectionVisibility[sectionSelector]);
-                }
-            }
-        }
-    },
 
     submitNewTask: function(sectionEl) {
         var description = sectionEl.down('input[name=Description]').getValue(),

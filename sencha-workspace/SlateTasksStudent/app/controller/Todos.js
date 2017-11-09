@@ -134,34 +134,37 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
 
     // custom controller methods
+    // TODO: move refresh and build data logic to view
     refreshTodoLists: function() {
         var me = this,
             todoList = me.getTodoList();
 
-
         todoList.update(me.buildTodoListsData());
-        todoList.restoreVisibilityState();
     },
 
     buildTodoListsData: function() {
         var me = this,
-            readOnly = me.getTodoList().getReadOnly(),
+            todoList = me.getTodoList(),
+            readOnly = todoList.getReadOnly(),
+            collapsedSections = todoList.collapsedSections,
             recs = me.getTodosStore().getRange(),
             recsLength = recs.length,
             todoSections = [],
             i = 0,
-            rec;
+            rec, sectionId;
 
         for (;i<recsLength; i++) {
             rec = recs[i];
+            sectionId = rec.get('SectionID');
 
             todoSections.push({
                 ID: rec.get('ID'),
                 section: rec.get('Title'),
-                sectionId: rec.get('SectionID'),
+                sectionId: sectionId,
                 studentId: rec.get('StudentID'),
                 todoCount: rec.get('TodoCount'),
                 readOnly: readOnly,
+                collapsed: Boolean(collapsedSections[sectionId]),
                 todos: me.buildTodoListData(rec.Todos().getRange()) // eslint-disable-line new-cap
             });
         }
