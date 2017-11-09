@@ -14,6 +14,11 @@
 	path = sencha-workspace/packages/emergence-apikit
 	url = https://github.com/JarvusInnovations/emergence-apikit.git
 	branch = master
+
+[submodule "jarvus-routing"]
+	path = sencha-workspace/packages/jarvus-routing
+	url = https://github.com/JarvusInnovations/jarvus-routing.git
+	branch = ext/6/2/0/981
 [submodule "jarvus-ext-glyphs"]
 	path = sencha-workspace/packages/jarvus-ext-glyphs
 	url = https://github.com/JarvusInnovations/jarvus-ext-glyphs.git
