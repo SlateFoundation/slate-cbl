@@ -45,7 +45,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
         '        <div class="slate-todolist-section-content" <tpl if="collapsed">style="display:none"</tpl>>',
         '        <tpl if="todos.length == 0">',
-        '            <div class="empty-text">No todos found</div>',
+        '            <div class="empty-text">No to-dos found</div>',
         '        <tpl else>',
         '            <tpl for="todos">',
         '                <section class="slate-todolist-itemgroup" data-group="{id}">',
