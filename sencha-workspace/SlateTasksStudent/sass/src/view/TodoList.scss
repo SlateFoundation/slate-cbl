@@ -12,9 +12,19 @@
         font-size: 14px;
     }
 
-    .fa-2x{ 
+    .fa-2x{
         font-size: 28px;
     }
+}
+
+.slate-todolist-section {
+    margin-bottom: 20px;
+}
+
+.slate-todolist-section-content {
+    border-radius: 0 0 0.25em 0.25em;
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.166);
+    overflow: hidden;
 }
 
 .slate-todolist-itemgroup-header {
@@ -128,4 +138,8 @@
 
 .slate-todolist-date-trigger {
     cursor: pointer;
+}
+
+.slate-todolist-new-item-text {
+    width: 100%;
 }

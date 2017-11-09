@@ -36,13 +36,12 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
     tpl: [
         '<tpl for=".">',
-        '    <div style="margin-bottom: 20px;" class="slate-todolist-section" data-section="{sectionId}" data-student="{studentId}">',
+        '    <div class="slate-todolist-section" data-section="{sectionId}" data-student="{studentId}">',
         '        <div class="slate-simplepanel-header">',
         '            <div class="slate-simplepanel-title">To-Do List <small>{section}</small></div>',
         '        </div>',
 
-        '        <div class="slate-todolist-section-content"',
-        '             style="border-radius: 0 0 0.25em 0.25em; box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.166); overflow: hidden;">', // TODO: replace inline styles with a class
+        '        <div class="slate-todolist-section-content">',
         '        <tpl for="todos">',
         '            <tpl exec="values.parent = parent;"></tpl>', // access to parent when 2 deep
         '            <section class="slate-todolist-itemgroup">',
@@ -74,7 +73,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '                        <li class="slate-todolist-item slate-todolist-blank-item">',
         '                            <input class="slate-todolist-item-checkbox" type="checkbox" disabled>',
         '                            <div class="slate-todolist-item-text">',
-        '                                <input name="Description" class="slate-todolist-new-item-text" placeholder="New to-do&hellip;" style="width: 100%">',
+        '                                <input name="Description" class="slate-todolist-new-item-text" placeholder="New to-do&hellip;">',
         '                            </div>',
         '                            <div class="slate-todolist-item-date">',
         '                                <input name="DueDate" class="slate-todolist-new-item-date" type="date">',
