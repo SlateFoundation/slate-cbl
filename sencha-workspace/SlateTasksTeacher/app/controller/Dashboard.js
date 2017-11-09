@@ -1,4 +1,3 @@
-/* jslint browser: true, undef: true, laxcomma:true *//* global Ext, Slate*/
 /**
  * The Dashboard controller manages the main functionality of the SlateTasksTeacher application where teachers can
  * browse, search, create, edit, and assign tasks.
@@ -7,6 +6,16 @@
  * - Handle section/:sectionId route
  * - Handle CRUD operations for tasks/student tasks
  * - Filter StudentsGrid tasks/students by selected section
+ *
+ * ## TODO
+ * - [ ] sort refs by parent
+ * - [ ] ensure no extra autoCreate refs
+ * - [ ] match dependencies to controller refs
+ * - [ ] media state through dashboard view config
+ * - [ ] drive store state via config
+ *
+ * ## Roadmap
+ * - Break out sibling controllers for post-navigation workflows
  */
 Ext.define('SlateTasksTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
@@ -25,6 +34,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'TaskAssigner',
         'tasks.AttachmentConfirmation'
     ],
+
     stores: [
         'CourseSections',
         'SectionCohorts',
@@ -32,6 +42,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'StudentTasks',
         'Tasks'
     ],
+
     models: [
         'Task@Slate.cbl.model',
         'StudentTask@Slate.cbl.model',
@@ -39,6 +50,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     ],
 
 
+    // component factories and selectors
     refs: {
         dashboardCt: {
             selector: 'slate-tasks-teacher-dashboard',

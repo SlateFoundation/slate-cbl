@@ -1,7 +1,7 @@
 /**
  * Main controller for SlateTasksStudent app
  *
- * Responsibilities:
+ * ## Responsibilities:
  * - Configure and render main view
  * - Manage selection of student
  * - Manage selection of section
@@ -13,6 +13,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     ],
 
 
+    // dependencies
     views: [
         'Dashboard'
     ],
@@ -22,6 +23,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         'CourseSections@Slate.store'
     ],
 
+
+    // component factories and selectors
     refs: {
         dashboard: {
             selector: 'slatetasksstudent-dashboard',
