@@ -200,13 +200,15 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             }
         }
 
-        todosData.push({
-            id: 'active',
-            title: 'Active Items',
-            readOnly: readOnly,
-            canAdd: true,
-            items: activeTodos
-        });
+        if (activeTodos.length || !readOnly) {
+            todosData.push({
+                id: 'active',
+                title: 'Active Items',
+                readOnly: readOnly,
+                canAdd: true,
+                items: activeTodos
+            });
+        }
 
         if (completeTodos.length > 0) {
             todosData.push({
