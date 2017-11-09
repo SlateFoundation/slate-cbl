@@ -153,6 +153,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
             todoList = me.getTodoList(),
             readOnly = todoList.getReadOnly(),
             collapsedSections = todoList.collapsedSections,
+            completedHiddenSections = todoList.completedHiddenSections,
             recs = me.getTodosStore().getRange(),
             recsLength = recs.length,
             todoSections = [],
@@ -171,6 +172,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
                 todoCount: rec.get('TodoCount'),
                 readOnly: readOnly,
                 collapsed: Boolean(collapsedSections[sectionId]),
+                completedHidden: Boolean(completedHiddenSections[sectionId]),
                 todos: me.buildTodoListData(rec.Todos().getRange()) // eslint-disable-line new-cap
             });
         }
@@ -199,27 +201,17 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         }
 
         todosData.push({
-            Title: 'Active Items',
+            id: 'active',
+            title: 'Active Items',
             readOnly: readOnly,
             canAdd: true,
             items: activeTodos
         });
 
-        if (!readOnly) {
-            buttons = [{
-                icon: 'times',
-                action: 'clear',
-                text: 'Clear All'
-            }, {
-                icon: 'caret-up',
-                action: 'hide',
-                text: 'Hide'
-            }];
-        }
-
         if (completeTodos.length > 0) {
             todosData.push({
-                Title: 'Completed Items',
+                id: 'completed',
+                title: 'Completed Items',
                 readOnly: readOnly,
                 buttons: buttons,
                 items: completeTodos

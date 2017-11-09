@@ -18,8 +18,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             delegate: [
                 '.slate-todolist-item-checkbox',
                 '.slate-simplepanel-header',
-                '.slate-todolist-button-clear',
-                '.slate-todolist-button-hide'
+                '.slate-todolist-itemgroup-action button'
             ].join()
         },
         keypress: {
@@ -43,21 +42,30 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
         '        <div class="slate-todolist-section-content" <tpl if="collapsed">style="display:none"</tpl>>',
         '        <tpl for="todos">',
-        '            <section class="slate-todolist-itemgroup">',
+        '            <section class="slate-todolist-itemgroup" data-group="{id}">',
         '                <header class="slate-todolist-itemgroup-header">',
-        '                    <h4 class="slate-todolist-itemgroup-title">{Title}</h4>',
-        '                    <tpl if="buttons">',
+        '                    <h4 class="slate-todolist-itemgroup-title">{title}</h4>',
+        '                    <tpl if="id == \'completed\'">',
         '                        <ul class="slate-todolist-itemgroup-actions">',
-        '                        <tpl for="buttons">',
-        '                            <li class="slate-todolist-itemgroup-action">',
-        '                                <button class="slate-todolist-button-{action}">',
-        '                                    <tpl if="icon"><i class="fa fa-{icon}"></i>&nbsp;</tpl>{text}',
+        '                            <li class="slate-todolist-itemgroup-action" data-action="clear">',
+        '                                <button>',
+        '                                    <i class="fa fa-times"></i>&nbsp;Clear ALl',
         '                                </button>',
         '                            </li>',
-        '                        </tpl>',
+        '                            <li class="slate-todolist-itemgroup-action" data-action="hide" <tpl if="parent.completedHidden">style="display:none"</tpl>>',
+        '                                <button >',
+        '                                    <i class="fa fa-caret-up"></i>&nbsp;Hide',
+        '                                </button>',
+        '                            </li>',
+        '                            <li class="slate-todolist-itemgroup-action" data-action="show" <tpl if="!parent.completedHidden">style="display:none"</tpl>>',
+        '                                <button>',
+        '                                    <i class="fa fa-caret-down"></i>&nbsp;Show',
+        '                                </button>',
+        '                            </li>',
+        '                        </ul>',
         '                    </tpl>',
         '                </header>',
-        '                <ul class="slate-todolist-list">',
+        '                <ul class="slate-todolist-list" <tpl if="parent.completedHidden && id == \'completed\'">style="display:none"</tpl>>',
         '                    <tpl for="items">',
         '                        <li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}" data-todo="{ID}">',
         '                            <input class="slate-todolist-item-checkbox" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
@@ -104,6 +112,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     // lifecycle methods
     initComponent: function() {
         this.collapsedSections = {};
+        this.completedHiddenSections = {};
 
         this.callParent(arguments);
     },
@@ -133,10 +142,10 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             );
         } else if (ev.getTarget('.slate-simplepanel-header')) {
             me.onSectionTitleClick(sectionId, sectionEl);
-        } else if (ev.getTarget('.slate-todolist-button-clear')) {
+        } else if (ev.getTarget('.slate-todolist-itemgroup-action[data-action=clear]')) {
             me.fireEvent('clearclick', me, sectionId);
-        } else if (ev.getTarget('.slate-todolist-button-hide')) {
-            me.onHideButtonClick(el);
+        } else if (ev.getTarget('.slate-todolist-itemgroup-action[data-action=hide], .slate-todolist-itemgroup-action[data-action=show]')) {
+            me.onToggleCompletedClick(sectionId, sectionEl);
         }
     },
 
@@ -161,29 +170,32 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         }
     },
 
-    onHideButtonClick: function(el) {
+    onToggleCompletedClick: function(sectionId, sectionEl) {
         var me = this,
-            sectionId = el.getAttribute('data-parent-id'),
-            itemGroupId = sectionId + '-2',
-            itemGroupSelector = '.slate-todolist-list[data-id="'+itemGroupId+'"]',
-            itemGroup = me.getEl().down(itemGroupSelector);
+            completedHiddenSections = me.completedHiddenSections,
+            completedGroupEl = sectionEl.down('.slate-todolist-itemgroup[data-group=completed] .slate-todolist-list'),
+            showActionEl = sectionEl.down('.slate-todolist-itemgroup-action[data-action=show]').setVisibilityMode(Ext.dom.Element.DISPLAY),
+            hideActionEl = sectionEl.down('.slate-todolist-itemgroup-action[data-action=hide]').setVisibilityMode(Ext.dom.Element.DISPLAY),
+            show = completedHiddenSections[sectionId];
 
-        if (itemGroup) {
-            if (itemGroup.isVisible()) {
-                itemGroup.setVisibilityMode(Ext.dom.Element.DISPLAY);
-                itemGroup.slideOut('t', {
-                    duration: 200
-                });
-                me.recordVisibilityState(itemGroupSelector, false);
-            } else {
-                itemGroup.slideIn('t', {
-                    duration: 200
-                });
-                me.recordVisibilityState(itemGroupSelector, true);
-            }
+        if (show) {
+            completedGroupEl.slideIn('t', {
+                duration: 200
+            });
+            showActionEl.hide();
+            hideActionEl.show();
+
+            completedHiddenSections[sectionId] = false;
+        } else {
+            completedGroupEl.setVisibilityMode(Ext.dom.Element.DISPLAY);
+            completedGroupEl.slideOut('t', {
+                duration: 200
+            });
+            showActionEl.show();
+            hideActionEl.hide();
+
+            completedHiddenSections[sectionId] = true;
         }
-
-        // me.syncItemGroupToggleButtons();
     },
 
     onTextFieldKeypress: function(ev) {
@@ -200,15 +212,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
 
     // internal methods
-    // syncItemGroupToggleButtons: function() {
-    //     var itemGroups = Ext.dom.Query.select('ul.slate-todolist-list'),
-    //         element;
-
-    //     Ext.Array.each(itemGroups, function(item) {
-    //         element = Ext.get(item);
-    //     });
-    // },
-
     submitNewTask: function(sectionEl) {
         var description = sectionEl.down('input[name=Description]').getValue(),
             dueDate = sectionEl.down('input[name=DueDate]').dom.valueAsDate;
