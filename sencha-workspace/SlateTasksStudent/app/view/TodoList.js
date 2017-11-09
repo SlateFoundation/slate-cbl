@@ -6,11 +6,10 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     config: {
         courseSection: null,
         student: null,
-        readOnly: false,
-        sectionVisibility: {}
+        readOnly: false
     },
 
-    cls: 'slate-todolist',
+    componentCls: 'slate-todolist',
 
     listeners: {
         click: {
@@ -35,20 +34,14 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         }
     },
 
-    updateCourseSection: function(val) {
-        var me = this;
-
-        me.fireEvent('coursesectionchange', me, val);
-    },
-
     tpl: [
         '<tpl for=".">',
-        '    <div style="margin-bottom: 20px;">',
-        '        <div class="slate-simplepanel-header" data-id="{ID}">',
+        '    <div style="margin-bottom: 20px;" class="slate-todolist-section" data-section="{sectionId}" data-student="{studentId}">',
+        '        <div class="slate-simplepanel-header">',
         '            <div class="slate-simplepanel-title">To-Do List <small>{section}</small></div>',
         '        </div>',
 
-        '        <div class="slate-todolist-section-content" data-id="{ID}" ',
+        '        <div class="slate-todolist-section-content"',
         '             style="border-radius: 0 0 0.25em 0.25em; box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.166); overflow: hidden;">', // TODO: replace inline styles with a class
         '        <tpl for="todos">',
         '            <tpl exec="values.parent = parent;"></tpl>', // access to parent when 2 deep
@@ -59,18 +52,18 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '                        <ul class="slate-todolist-itemgroup-actions">',
         '                        <tpl for="buttons">',
         '                            <li class="slate-todolist-itemgroup-action">',
-        '                                <button class="slate-todolist-button-{action}" data-parent-id="{parent.parent.sectionId}">',
+        '                                <button class="slate-todolist-button-{action}">',
         '                                    <tpl if="icon"><i class="fa fa-{icon}"></i>&nbsp;</tpl>{text}',
         '                                </button>',
         '                            </li>',
         '                        </tpl>',
         '                    </tpl>',
         '                </header>',
-        '                <ul class="slate-todolist-list" data-id="{parent.sectionId}-{#}" data-parent-id="{parent.ID}">',
+        '                <ul class="slate-todolist-list">',
         '                    <tpl exec="values.readOnly = parent.readOnly;"></tpl>', // access to readonly in items loop
         '                    <tpl for="items">',
         '                        <li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}">',
-        '                            <input class="slate-todolist-item-checkbox" data-parent-id="{parent.parent.ID}" data-id="{ID}" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
+        '                            <input class="slate-todolist-item-checkbox" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
         '                            <div class="slate-todolist-item-text">',
         '                                <label for="todo-item" class="slate-todolist-item-title">{Description}</label>',
         '                            </div>',
@@ -78,13 +71,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '                        </li>',
         '                    </tpl>',
         '                    <tpl if="!parent.readOnly">',
-        '                        <li class="slate-todolist-item slate-todolist-blank-item slate-todolist-blank-item-{parent.ID}">',
+        '                        <li class="slate-todolist-item slate-todolist-blank-item">',
         '                            <input class="slate-todolist-item-checkbox" type="checkbox" disabled>',
         '                            <div class="slate-todolist-item-text">',
-        '                                <input class="slate-todolist-new-item-text" placeholder="New to-do&hellip;" data-parent-id="{parent.ID}">',
+        '                                <input name="Description" class="slate-todolist-new-item-text" placeholder="New to-do&hellip;" style="width: 100%">',
         '                            </div>',
         '                            <div class="slate-todolist-item-date">',
-        '                                <input class="slate-todolist-new-item-date" type="date" data-parent-id="{parent.ID}">',
+        '                                <input name="DueDate" class="slate-todolist-new-item-date" type="date">',
         '                            </div>',
         '                        </li>',
         '                    </tpl>',
@@ -100,7 +93,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                     now = new Date(),
                     statusCls = 'due';
 
-                dueEndOfDay.setHours(23, 59, 59, 999);
+                dueEndOfDay.setHours(23, 59, 59, 999); // TODO: calculate in model
 
                 if (dueEndOfDay < now) {
                     statusCls = 'late';
@@ -110,6 +103,24 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         }
     ],
 
+
+    // lifecycle methods
+    initComponent: function() {
+        this.sectionVisibility = {};
+
+        this.callParent(arguments);
+    },
+
+
+    // config handlers
+    updateCourseSection: function(val) {
+        var me = this;
+
+        me.fireEvent('coursesectionchange', me, val);
+    },
+
+
+    // event handlers
     onElClick: function(ev, el) {
         var me = this,
             dataId = parseInt(el.getAttribute('data-id'), 10),
@@ -169,41 +180,40 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 me.recordVisibilityState(itemGroupSelector, true);
             }
         }
-        me.syncItemGroupToggleButtons();
+
+        // me.syncItemGroupToggleButtons();
     },
 
-    syncItemGroupToggleButtons: function() {
-
-    /*
-        var itemGroups = Ext.dom.Query.select('ul.slate-todolist-list'),
-            element;
-
-        Ext.Array.each(itemGroups, function(item) {
-            element = Ext.get(item);
-        });
-    */
-
-    },
-
-    onTextFieldKeypress: function(evt, el) {
-        if (evt.getKey() === evt.ENTER) {
-            this.fireEvent('enterkeypress', this, parseInt(el.getAttribute('data-parent-id'), 10));
+    onTextFieldKeypress: function(ev) {
+        if (ev.getKey() !== ev.ENTER) {
+            return;
         }
+
+        this.submitNewTask(ev.getTarget('.slate-todolist-section', null, true));
     },
 
-    onDateChange: function(evt, el) {
-        this.fireEvent('datechange', this, parseInt(el.getAttribute('data-parent-id'), 10));
+    onDateChange: function(ev) {
+        this.submitNewTask(ev.getTarget('.slate-todolist-section', null, true));
     },
+
+
+    // internal methods
+    // syncItemGroupToggleButtons: function() {
+    //     var itemGroups = Ext.dom.Query.select('ul.slate-todolist-list'),
+    //         element;
+
+    //     Ext.Array.each(itemGroups, function(item) {
+    //         element = Ext.get(item);
+    //     });
+    // },
 
     recordVisibilityState: function(sectionID, visible) {
-        var sectionVisibility = this.getSectionVisibility();
-
-        sectionVisibility[sectionID] = visible;
+        this.sectionVisibility[sectionID] = visible;
     },
 
     restoreVisibilityState: function() {
         var me = this,
-            sectionVisibility = me.getSectionVisibility(),
+            sectionVisibility = me.sectionVisibility,
             sectionSelector, section;
 
         for (sectionSelector in sectionVisibility) {
@@ -214,5 +224,21 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 }
             }
         }
+    },
+
+    submitNewTask: function(sectionEl) {
+        var description = sectionEl.down('input[name=Description]').getValue(),
+            dueDate = sectionEl.down('input[name=DueDate]').dom.valueAsDate;
+
+        if (!description || !dueDate) {
+            return;
+        }
+
+        this.fireEvent('tasksubmit', this, {
+            SectionID: parseInt(sectionEl.getAttribute('data-section'), 10) || null,
+            StudentID: parseInt(sectionEl.getAttribute('data-student'), 10) || null,
+            Description: description,
+            DueDate: dueDate
+        }, sectionEl);
     }
 });

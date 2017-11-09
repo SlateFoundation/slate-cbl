@@ -42,15 +42,13 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
 
         // Todos with a null SectionID are considered personal Todos
-        $sectionTodos = static::getSectionTodos($student, null);
         $todos[] = [
             'ID' => 0,
-            'SectionID' => 0,
-            'StudentID' => $student->ID,
+            'SectionID' => null,
+            'StudentID' => $Student->ID,
             'Title' => 'Personal',
-            'Section' => [],
-            'Todos' => $sectionTodos,
-            'TodoCount' => count($sectionTodos)
+            'Section' => null,
+            'Todos' => static::getSectionTodos($Student)
         ];
 
 
@@ -78,16 +76,13 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
 
         foreach (SectionParticipant::getAllByWhere($participantConditions) as $Participant) {
-            $sectionTodos = static::getSectionTodos($Student, $Participant->CourseSectionID);
-
             $todos[] = [
                 'ID' => $Participant->ID,
-                'SectionID' => $Participant->SectionID,
+                'SectionID' => $Participant->Section->ID,
                 'StudentID' => $Student->ID,
                 'Title' => $Participant->Section->Title,
                 'Section' => $Participant->Section,
-                'Todos' => $sectionTodos,
-                'TodoCount' => count($sectionTodos)
+                'Todos' => static::getSectionTodos($Student, $Participant->CourseSectionID)
             ];
         }
 
