@@ -1,10 +1,13 @@
-/*jslint browser: true, undef: true *//*global Ext*/
-Ext.define('SlateTasksStudent.store.StudentTasks', {
+Ext.define('SlateTasksStudent.store.Tasks', {
     extend: 'Ext.data.Store',
 
-    model: 'SlateTasksStudent.model.StudentTask',
+
+    model: 'SlateTasksStudent.model.Task',
 
     config: {
+        student: null,
+        section: null,
+
         pageSize: 0,
 
         sorters: [{
@@ -46,22 +49,44 @@ Ext.define('SlateTasksStudent.store.StudentTasks', {
                 // finally sort by oldest due date first
                 return date1 > date2 ? 1 : date1.getTime() == date2.getTime() ? 0 : -1;
             }
-        }]
+        }],
+
+        proxy: {
+            type: 'slate-records',
+            url: '/cbl/student-tasks/assigned',
+            include: [
+                'Submitted',
+                'Student',
+                'Section',
+                'Comments',
+                'Attachments.File',
+                'Submissions',
+                'TaskSkills',
+                'Task.Attachments.File',
+                'Task.ParentTask'
+            ]
+        }
     },
 
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/student-tasks/assigned',
-        include: [
-            'Submitted',
-            'Student',
-            'Section',
-            'Comments',
-            'Attachments.File',
-            'Submissions',
-            'TaskSkills',
-            'Task.Attachments.File',
-            'Task.ParentTask'
-        ]
+
+    // config handlers
+    updateStudent: function(student) {
+        this.getProxy().setExtraParam('student', student || null);
+        this.dirty = true;
+    },
+
+    updateSection: function(section) {
+        this.getProxy().setExtraParam('course_section', section || null);
+        this.dirty = true;
+    },
+
+
+    // member methods
+    loadIfDirty: function() {
+        if (!this.dirty || this.getStudent() === null || this.getSection() === null) {
+            return;
+        }
+
+        this.load();
     }
 });

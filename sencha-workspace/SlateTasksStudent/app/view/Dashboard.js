@@ -10,10 +10,14 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
 
         'SlateTasksStudent.view.AppHeader',
         'SlateTasksStudent.view.TaskTree',
-        'SlateTasksStudent.view.TodoList',
-        // 'Slate.cbl.view.student.TaskHistory'
+        'SlateTasksStudent.view.TodoList'
     ],
 
+
+    config: {
+        student: null,
+        section: null
+    },
 
     items: [
         {
@@ -40,18 +44,24 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
                         {
                             xtype: 'slatetasksstudent-tasktree',
                             margin: '0 32 0 0',
-                            store: 'StudentTasks'
+                            store: 'Tasks'
                         }, {
-                            xtype: 'slatetasksstudent-todolist'
+                            xtype: 'slatetasksstudent-todolist',
+                            store: 'Todos'
                         }
                     ]
-                // @todo Unhide task history once it can be populated with live data
-                // },
-                // {
-                //     xtype: 'slate-taskhistory',
-                //     margin: '32 0 0'
                 }
             ]
         }
-    ]
+    ],
+
+
+    // config handlers
+    updateStudent: function(student, oldStudent) {
+        this.fireEvent('studentchange', this, student, oldStudent);
+    },
+
+    updateSection: function(section, oldSection) {
+        this.fireEvent('sectionchange', this, section, oldSection);
+    }
 });

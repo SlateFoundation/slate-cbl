@@ -1,10 +1,10 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('SlateTasksStudent.model.StudentTodo', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records',
         'SlateTasksStudent.model.Todo'
     ],
+
 
     // model config
     idProperty: 'ID',
@@ -30,13 +30,6 @@ Ext.define('SlateTasksStudent.model.StudentTodo', {
         },
         {
             name: 'Todos'
-        },
-        {
-            name: 'TodoCount',
-            depends: ['Todos'],
-            convert: function(v, r) {
-                return r.get('Todos').length;
-            }
         }
     ],
 
@@ -50,5 +43,4 @@ Ext.define('SlateTasksStudent.model.StudentTodo', {
         type: 'slate-records',
         url: '/cbl/todos'
     }
-
 });

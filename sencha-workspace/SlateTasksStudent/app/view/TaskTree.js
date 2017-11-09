@@ -37,12 +37,12 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         ]
     },
 
+
     config: {
-        student: null,
-        courseSection: null,
-        readOnly: false,
-        store: null
+        store: null,
+        readOnly: false
     },
+
 
     title: 'Current Tasks',
     cls: 'slate-tasktree',
@@ -144,12 +144,6 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
 
     // config handlers
-    updateCourseSection: function(section, oldSection) {
-        var me = this;
-
-        me.fireEvent('coursesectionchange', me, section, oldSection);
-    },
-
     applyStore: function(store) {
         return Ext.StoreMgr.lookup(store);
     },
@@ -198,7 +192,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     },
 
 
-    // custom methods
+    // member methods
     refresh: function() {
         var me = this,
             store = me.getStore(),

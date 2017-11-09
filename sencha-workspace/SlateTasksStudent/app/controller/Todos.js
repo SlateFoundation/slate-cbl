@@ -24,23 +24,18 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // component references
     refs: {
+        dashboard: 'slatetasksstudent-dashboard',
         todoList: 'slatetasksstudent-todolist'
     },
 
 
     // entry points
-    listen: {
-        store: {
-            '#Todos': {
-                beforeload: 'onTodosStoreBeforeLoad',
-                load: 'onTodosStoreLoad'
-            }
-        }
-    },
-
     control: {
+        dashboard: {
+            studentchange: 'onStudentChange',
+            sectionchange: 'onSectionChange'
+        },
         todoList: {
-            coursesectionchange: 'onTodosListCourseSectionChange',
             tasksubmit: 'onTaskSubmit',
             checkclick: 'onTodosListCheckClick',
             clearclick: 'onTodosListClearClick'
@@ -49,23 +44,20 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
 
     // event handlers
-    onTodosStoreBeforeLoad: function(store) {
-        var proxy = store.getProxy(),
-            todoList = this.getTodoList(),
-            courseSection = todoList.getCourseSection(),
-            student = todoList.getStudent();
+    onStudentChange: function(dashboard, studentUsername) {
+        var todosStore = this.getTodosStore();
 
-        if (courseSection) {
-            proxy.setExtraParam('course_section', courseSection);
-        }
+        this.getTodoList().setReadOnly(studentUsername !== false);
 
-        if (student) {
-            proxy.setExtraParam('student', student);
-        }
+        todosStore.setStudent(studentUsername);
+        todosStore.loadIfDirty();
     },
 
-    onTodosStoreLoad: function() {
-        this.refreshTodoLists();
+    onSectionChange: function(dashboard, sectionCode) {
+        var todosStore = this.getTodosStore();
+
+        todosStore.setSection(sectionCode);
+        todosStore.loadIfDirty();
     },
 
     onTaskSubmit: function(todoList, todoData, sectionEl) {
@@ -82,7 +74,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         todo.save({
             success: function() {
                 todoSection.Todos().add(todo); // eslint-disable-line new-cap
-                me.refreshTodoLists();
+                todoList.refresh();
             },
             failure: function() {
                 Ext.toast('Todo could not be created.');
@@ -103,7 +95,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
         todo.save({
             success: function() {
-                me.refreshTodoLists();
+                todoList.refresh();
             },
             failure: function() {
                 Ext.toast('Todo could not be updated.');
@@ -126,100 +118,11 @@ Ext.define('SlateTasksStudent.controller.Todos', {
                     return todo.get('Completed');
                 }).getRange());
 
-                me.refreshTodoLists();
+                todoList.refresh();
             },
             failure: function() {
                 Ext.toast('Todos could not be cleared.');
             }
         });
-    },
-
-    onTodosListCourseSectionChange: function() {
-        this.getTodosStore().load();
-    },
-
-
-    // custom controller methods
-    // TODO: move refresh and build data logic to view
-    refreshTodoLists: function() {
-        var me = this,
-            todoList = me.getTodoList();
-
-        todoList.update(me.buildTodoListsData());
-    },
-
-    buildTodoListsData: function() {
-        var me = this,
-            todoList = me.getTodoList(),
-            readOnly = todoList.getReadOnly(),
-            collapsedSections = todoList.collapsedSections,
-            completedHiddenSections = todoList.completedHiddenSections,
-            recs = me.getTodosStore().getRange(),
-            recsLength = recs.length,
-            todoSections = [],
-            i = 0,
-            rec, sectionId;
-
-        for (;i<recsLength; i++) {
-            rec = recs[i];
-            sectionId = rec.get('SectionID');
-
-            todoSections.push({
-                ID: rec.get('ID'),
-                section: rec.get('Title'),
-                sectionId: sectionId,
-                studentId: rec.get('StudentID'),
-                todoCount: rec.get('TodoCount'),
-                readOnly: readOnly,
-                collapsed: Boolean(collapsedSections[sectionId]),
-                completedHidden: Boolean(completedHiddenSections[sectionId]),
-                todos: me.buildTodoListData(rec.Todos().getRange()) // eslint-disable-line new-cap
-            });
-        }
-
-        return todoSections;
-    },
-
-    buildTodoListData: function(todos) {
-        var readOnly = this.getTodoList().getReadOnly(),
-            todosLength = todos.length,
-            i = 0,
-            todosData = [],
-            completeTodos = [],
-            activeTodos = [],
-            buttons = [],
-            rec;
-
-        for (;i<todosLength; i++) {
-            rec = todos[i];
-
-            if (rec.get('Completed')) {
-                completeTodos.push(rec.getData());
-            } else {
-                activeTodos.push(rec.getData());
-            }
-        }
-
-        if (activeTodos.length || !readOnly) {
-            todosData.push({
-                id: 'active',
-                title: 'Active Items',
-                readOnly: readOnly,
-                canAdd: true,
-                items: activeTodos
-            });
-        }
-
-        if (completeTodos.length > 0) {
-            todosData.push({
-                id: 'completed',
-                title: 'Completed Items',
-                readOnly: readOnly,
-                buttons: buttons,
-                items: completeTodos
-            });
-        }
-
-        return todosData;
     }
 });

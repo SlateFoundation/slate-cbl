@@ -1,12 +1,12 @@
 // TODO: merge with Slate.cbl.model.StudentTask ?
-Ext.define('SlateTasksStudent.model.StudentTask', {
+Ext.define('SlateTasksStudent.model.Task', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records',
         'Slate.cbl.model.tasks.Attachment',
-        'Slate.cbl.model.tasks.Comment',
         'Slate.cbl.model.Skill'
     ],
+
 
     // model config
     idProperty: 'ID',

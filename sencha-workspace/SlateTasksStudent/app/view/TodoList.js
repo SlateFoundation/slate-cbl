@@ -4,12 +4,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
 
     config: {
-        courseSection: null,
-        student: null,
+        store: null,
         readOnly: false
     },
 
+
     componentCls: 'slate-todolist',
+    minHeight: 150,
 
     listeners: {
         click: {
@@ -37,7 +38,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '<tpl for=".">',
         '    <div class="slate-simplepanel slate-todolist-section" data-section="{sectionId}" data-student="{studentId}">',
         '        <div class="slate-simplepanel-header">',
-        '            <div class="slate-simplepanel-title">To-Do List <small>{section}</small></div>',
+        '            <div class="slate-simplepanel-title">To-Do List <small>{title}</small></div>',
         '        </div>',
 
         '        <div class="slate-todolist-section-content" <tpl if="collapsed">style="display:none"</tpl>>',
@@ -78,7 +79,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '                                <div class="slate-todolist-item-date">{DueDate:date("M j, Y")}</div>',
         '                            </li>',
         '                        </tpl>',
-        '                        <tpl if="!parent.readOnly">',
+        '                        <tpl if="!parent.readOnly && id == \'active\'">',
         '                            <li class="slate-todolist-item slate-todolist-blank-item">',
         '                                <input class="slate-todolist-item-checkbox" type="checkbox" disabled>',
         '                                <div class="slate-todolist-item-text">',
@@ -123,14 +124,42 @@ Ext.define('SlateTasksStudent.view.TodoList', {
 
 
     // config handlers
-    updateCourseSection: function(val) {
-        var me = this;
+    applyStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
 
-        me.fireEvent('coursesectionchange', me, val);
+    updateStore: function(store, oldStore) {
+        if (oldStore) {
+            oldStore.un({
+                beforeload: 'onBeforeStoreLoad',
+                load: 'onStoreLoad',
+                refresh: 'refresh',
+                scope: this
+            });
+        }
+
+        if (store) {
+            store.on({
+                beforeload: 'onBeforeStoreLoad',
+                load: 'onStoreLoad',
+                scope: this
+            });
+        }
     },
 
 
     // event handlers
+    onBeforeStoreLoad: function() {
+        this.addCls('is-loading');
+        this.mask('Loading Todos');
+    },
+
+    onStoreLoad: function() {
+        this.refresh();
+        this.removeCls('is-loading');
+        this.unmask();
+    },
+
     onElClick: function(ev, el) {
         var me = this,
             sectionEl = ev.getTarget('.slate-todolist-section', null, true),
@@ -144,10 +173,10 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 parseInt(ev.getTarget('.slate-todolist-item', null, true).getAttribute('data-todo'), 10),
                 el.checked
             );
-        } else if (ev.getTarget('.slate-simplepanel-header')) {
-            me.onSectionTitleClick(sectionId, sectionEl);
         } else if (ev.getTarget('.slate-todolist-itemgroup-action[data-action=clear]')) {
             me.fireEvent('clearclick', me, sectionId);
+        } else if (ev.getTarget('.slate-simplepanel-header')) {
+            me.onSectionTitleClick(sectionId, sectionEl);
         } else if (ev.getTarget('.slate-todolist-itemgroup-action[data-action=hide], .slate-todolist-itemgroup-action[data-action=show]')) {
             me.onToggleCompletedClick(sectionId, sectionEl);
         }
@@ -215,7 +244,75 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     },
 
 
-    // internal methods
+    // member methods
+    refresh: function() {
+        var me = this,
+            readOnly = me.getReadOnly(),
+            collapsedSections = me.collapsedSections,
+            completedHiddenSections = me.completedHiddenSections,
+
+            todoSectionsData = [], // template input
+
+            todoSectionsStore = me.getStore(),
+            todoSectionsCount = todoSectionsStore.getCount(),
+            todoSectionIndex = 0,
+            todoSection, sectionId,
+            todosStore, todosCount, todoIndex, todo,
+            completeTodos, activeTodos, todoGroups;
+
+        // build array of todo groups
+        for (; todoSectionIndex < todoSectionsCount; todoSectionIndex++) {
+            todoSection = todoSectionsStore.getAt(todoSectionIndex);
+            sectionId = todoSection.get('SectionID');
+            todosStore = todoSection.Todos(); // eslint-disable-line new-cap
+            todosCount = todosStore.getCount();
+
+            // group todos by active and completed
+            completeTodos = [];
+            activeTodos = [];
+
+            for (todoIndex = 0; todoIndex < todosCount; todoIndex++) {
+                todo = todosStore.getAt(todoIndex);
+
+                (todo.get('Completed') ? completeTodos : activeTodos).push(todo.getData());
+            }
+
+            // generate data for populated groups
+            todoGroups = [];
+
+            if (activeTodos.length || !readOnly) {
+                todoGroups.push({
+                    id: 'active',
+                    title: 'Active Items',
+                    readOnly: readOnly,
+                    items: activeTodos
+                });
+            }
+
+            if (completeTodos.length > 0) {
+                todoGroups.push({
+                    id: 'completed',
+                    title: 'Completed Items',
+                    readOnly: readOnly,
+                    items: completeTodos
+                });
+            }
+
+            todoSectionsData.push({
+                title: todoSection.get('Title'),
+                studentId: todoSection.get('StudentID'),
+                sectionId: sectionId,
+                readOnly: readOnly,
+                collapsed: Boolean(collapsedSections[sectionId]),
+                completedHidden: Boolean(completedHiddenSections[sectionId]),
+                todos: todoGroups
+            });
+        }
+
+        // render markup
+        this.setData(todoSectionsData);
+    },
+
     submitNewTask: function(sectionEl) {
         var description = sectionEl.down('input[name=Description]').getValue(),
             dueDate = sectionEl.down('input[name=DueDate]').dom.valueAsDate;

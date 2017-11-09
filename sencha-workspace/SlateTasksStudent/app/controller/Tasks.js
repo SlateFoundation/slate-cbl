@@ -18,12 +18,14 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     ],
 
     stores: [
-        'StudentTasks'
+        'Tasks'
     ],
 
 
     // component references
     refs: {
+        dashboard: 'slatetasksstudent-dashboard',
+
         taskTree: {
             selector: 'slatetasksstudent-tasktree',
             autoCreate: true,
@@ -54,9 +56,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // entry points
     control: {
+        dashboard: {
+            studentchange: 'onStudentChange',
+            sectionchange: 'onSectionChange'
+        },
         taskTree: {
-            itemclick: 'onTaskTreeItemClick',
-            coursesectionchange: 'onTaskTreeCourseSectionChange'
+            itemclick: 'onTaskTreeItemClick'
         },
         submitButton: {
             click: 'onSubmitButtonClick'
@@ -74,6 +79,22 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     // event handlers
+    onStudentChange: function(dashboard, studentUsername) {
+        var tasksStore = this.getTasksStore();
+
+        this.getTaskTree().setReadOnly(studentUsername !== false);
+
+        tasksStore.setStudent(studentUsername);
+        tasksStore.loadIfDirty();
+    },
+
+    onSectionChange: function(dashboard, sectionCode) {
+        var tasksStore = this.getTasksStore();
+
+        tasksStore.setSection(sectionCode);
+        tasksStore.loadIfDirty();
+    },
+
     // TODO: audit and optimize
     onTaskTreeItemClick: function(tasksTree, rec) {
         var me = this,
@@ -144,7 +165,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             },
             success: function() {
                 Ext.toast('Task successfully submitted!');
-                me.getStudentTasksStore().reload();
+                me.getTasksStore().reload();
                 taskDetails.close();
             },
             failure: function() {
@@ -160,7 +181,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             menu = me.getFilterMenu(),
             statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
             timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
-            store = me.getStudentTasksStore(),
+            store = me.getTasksStore(),
             recs = store.getRange(),
             recLength = recs.length,
             i = 0,
@@ -180,7 +201,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             menu = me.getFilterMenu(),
             checkedFilters = menu.query('menucheckitem[checked]'),
             checkedFiltersLength = checkedFilters.length,
-            store = this.getStudentTasksStore(),
+            store = this.getTasksStore(),
             recs = store.getRange(),
             recLength = recs.length,
             i = 0;
@@ -194,24 +215,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
 
         me.getTaskTree().refresh();
-    },
-
-    // TODO: audit and optimize
-    onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
-        var student = taskTree.getStudent(),
-            params = {};
-
-        if (courseSectionId) {
-            params.course_section = courseSectionId; // eslint-disable-line camelcase
-        }
-
-        if (student) {
-            params.student = student;
-        }
-
-        this.getStudentTasksStore().load({
-            params: params
-        });
     },
 
     // TODO: audit and optimize
@@ -388,5 +391,4 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         return filtered;
     }
-
 });

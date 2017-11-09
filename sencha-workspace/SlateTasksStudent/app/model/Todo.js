@@ -1,9 +1,9 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('SlateTasksStudent.model.Todo', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records'
     ],
+
 
     // model config
     idProperty: 'ID',
@@ -67,5 +67,4 @@ Ext.define('SlateTasksStudent.model.Todo', {
         type: 'slate-records',
         url: '/cbl/todos'
     }
-
 });
