@@ -42,6 +42,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
                         hidden: true,
                         handler: function(combo) {
                             combo.clearValue();
+                            combo.fireEvent('clear', combo);
                         }
                     }
                 },
@@ -76,6 +77,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
                         hidden: true,
                         handler: function(combo) {
                             combo.clearValue();
+                            combo.fireEvent('clear', combo);
                         }
                     }
                 },

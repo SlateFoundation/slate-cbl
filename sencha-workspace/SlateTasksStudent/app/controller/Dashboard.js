@@ -68,7 +68,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             sectionchange: 'onSectionChange'
         },
         studentSelector: {
-            change: 'onStudentSelectorChange'
+            select: 'onStudentSelectorSelect',
+            clear: 'onStudentSelectorClear'
         },
         sectionSelector: {
             change: 'onSectionSelectorChange'
@@ -144,8 +145,12 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         me.getSectionSelector().setValue(sectionCode);
     },
 
-    onStudentSelectorChange: function(studentCombo, studentUsername) {
-        this.redirectTo([studentUsername || 'me', 'all']);
+    onStudentSelectorSelect: function(studentCombo, student) {
+        this.redirectTo([student.get('Username'), 'all']);
+    },
+
+    onStudentSelectorClear: function() {
+        this.redirectTo(['me', 'all']);
     },
 
     onSectionSelectorChange: function(sectionCombo, sectionCode) {
