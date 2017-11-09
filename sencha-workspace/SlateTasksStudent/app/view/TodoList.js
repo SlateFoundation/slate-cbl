@@ -38,7 +38,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '{% var now = new Date() %}',
 
         '<tpl for=".">',
-        '    <div class="slate-simplepanel slate-todolist-section" data-section="{sectionId}" data-student="{studentId}">',
+        '    <div class="slate-simplepanel slate-todolist-section <tpl if="readOnly">is-readonly</tpl>" data-section="{sectionId}" data-student="{studentId}">',
         '        <div class="slate-simplepanel-header">',
         '            <div class="slate-simplepanel-title">To-Do List <small>{title}</small></div>',
         '        </div>',
@@ -76,7 +76,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '                            <li class="slate-todolist-item slate-todolist-status-{[ values.DueTime < now ? "late" : "due" ]}" data-todo="{ID}">',
         '                                <input class="slate-todolist-item-checkbox" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
         '                                <div class="slate-todolist-item-text">',
-        '                                    <label for="todo-item" class="slate-todolist-item-title">{Description}</label>',
+        '                                    <label class="slate-todolist-item-title">{Description}</label>',
         '                                </div>',
         '                                <div class="slate-todolist-item-date">{DueDate:date("M j, Y")}</div>',
         '                            </li>',

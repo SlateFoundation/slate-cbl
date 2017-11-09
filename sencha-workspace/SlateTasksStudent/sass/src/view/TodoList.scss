@@ -105,6 +105,11 @@
 .slate-todolist-item-checkbox {
     display: block;
     margin-top: .25em;
+    cursor: pointer;
+
+    .is-readonly & {
+        cursor: not-allowed;
+    }
 }
 
 .slate-todolist-item-text {
@@ -117,6 +122,7 @@
     overflow-wrap: break-word;
     word-break: break-word;
     word-wrap: break-word;
+    cursor: default;
 
     input& {
         width: 100%;
