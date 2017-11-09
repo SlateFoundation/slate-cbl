@@ -126,14 +126,6 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         });
     },
 
-    // onTodosListEnterKeyPress: function(cmp, parentId) {
-    //     this.insertNewTodo(parentId);
-    // },
-
-    // onTodosListDateChange: function(cmp, parentId) {
-    //     this.insertNewTodo(parentId);
-    // },
-
     onTodosListCourseSectionChange: function() {
         this.getTodosStore().load();
     },
@@ -225,31 +217,4 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
         return todosData;
     }
-
-//     insertNewTodo: function(parentId) {
-//         var textfield = Ext.dom.Query.select('input.slate-todolist-new-item-text[data-parent-id="'+parentId)[0],
-//             datefield = Ext.dom.Query.select('input.slate-todolist-new-item-date[data-parent-id="'+parentId)[0],
-//             dueDate = new Date(datefield.value.replace(/-/g, '/')).getTime() / 1000,
-//             store = this.getTodosStore(),
-//             parentRec = store.getById(parentId),
-//             rec;
-// debugger;
-//         if (textfield.value && datefield.value) {
-//             rec = this.getTodoModel().create({
-//                 SectionID: parentRec.get('SectionID'),
-//                 StudentID: parentRec.get('StudentID'),
-//                 Description: textfield.value,
-//                 DueDate: dueDate
-//             });
-
-//             rec.save({
-//                 success: function() {
-//                     store.load();
-//                 },
-//                 failure: function() {
-//                     Ext.toast('Todo could not be created.');
-//                 }
-//             });
-//         }
-//     }
 });
