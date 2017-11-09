@@ -16,26 +16,21 @@ graph TD
     VIEW_TASKS[Tasks View]
     VIEW_TODOS[Todos View]
 
-    subgraph User Navigation
+    subgraph User navigates via browser or in-app menus
         NAV_HASH_IN -.-> |Browser Navigation| CONTROLLER_MAIN_IN
         NAV_SELECTORS_IN -.-> |User Intents| CONTROLLER_MAIN_IN
     end
 
-    subgraph State transition
+    subgraph New values detected and applied to state
         CONTROLLER_MAIN_IN --> |"setStudent()"| VIEW_MAIN
         CONTROLLER_MAIN_IN --> |"setSection()"| VIEW_MAIN
     end
 
-    subgraph State propagation
-        VIEW_MAIN -.-> |studentchange| CONTROLLER_MAIN_OUT
-        VIEW_MAIN -.-> |sectionchange| CONTROLLER_MAIN_OUT
+    subgraph New state propagated throughout application
         VIEW_MAIN -.-> |studentchange| CONTROLLER_TASKS
         VIEW_MAIN -.-> |sectionchange| CONTROLLER_TASKS
         VIEW_MAIN -.-> |sectionchange| CONTROLLER_TODOS
         VIEW_MAIN -.-> |sectionchange| CONTROLLER_TODOS
-
-        CONTROLLER_MAIN_OUT --> |"redirectTo(...)"| NAV_HASH_OUT
-        CONTROLLER_MAIN_OUT --> |"setValue(...)"| NAV_SELECTORS_OUT
 
         CONTROLLER_TASKS --> |"setReadOnly(...)"| VIEW_TASKS
         CONTROLLER_TASKS --> |"setStudent(...)"| STORE_TASKS
@@ -50,4 +45,11 @@ graph TD
 
         VIEW_TASKS -.-> |User Intents| CONTROLLER_TASKS
         VIEW_TODOS -.-> |User Intents| CONTROLLER_TODOS
+    end
+
+    subgraph Navigation reflects new state
+        VIEW_MAIN -.-> |studentchange| CONTROLLER_MAIN_OUT
+        VIEW_MAIN -.-> |sectionchange| CONTROLLER_MAIN_OUT
+        CONTROLLER_MAIN_OUT --> |"redirectTo(...)"| NAV_HASH_OUT
+        CONTROLLER_MAIN_OUT --> |"setValue(...)"| NAV_SELECTORS_OUT
     end
