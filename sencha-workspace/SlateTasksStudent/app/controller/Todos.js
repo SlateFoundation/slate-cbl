@@ -93,15 +93,17 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         });
     },
 
-    onTodosListCheckClick: function(cmp, parentId, recordId, checked) {
+    onTodosListCheckClick: function(todoList, sectionId, todoId, checked) {
         var me = this,
-            todosStore = me.getTodosStore().getById(parentId).Todos(), // eslint-disable-line new-cap
-            rec = todosStore.getById(recordId);
+            store = me.getTodosStore(),
+            todoSection = store.getAt(store.findExact('SectionID', sectionId)),
+            todo = todoSection.Todos().getById(todoId); // eslint-disable-line new-cap
 
-        rec.set('Completed', checked);
-        rec.save({
+        todo.set('Completed', checked);
+
+        todo.save({
             success: function() {
-                me.getTodosStore().load();
+                me.refreshTodoLists();
             },
             failure: function() {
                 Ext.toast('Todo could not be updated.');

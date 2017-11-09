@@ -59,7 +59,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         '                </header>',
         '                <ul class="slate-todolist-list">',
         '                    <tpl for="items">',
-        '                        <li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}">',
+        '                        <li class="slate-todolist-item slate-todolist-status-{[ this.getStatusCls(values.DueDate) ]}" data-todo="{ID}">',
         '                            <input class="slate-todolist-item-checkbox" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
         '                            <div class="slate-todolist-item-text">',
         '                                <label for="todo-item" class="slate-todolist-item-title">{Description}</label>',
@@ -120,11 +120,17 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     // event handlers
     onElClick: function(ev, el) {
         var me = this,
-            dataId = parseInt(el.getAttribute('data-id'), 10),
-            dataParentId = parseInt(el.getAttribute('data-parent-id'), 10);
+            sectionEl = ev.getTarget('.slate-todolist-section', null, true),
+            sectionId = parseInt(sectionEl.getAttribute('data-section'), 10) || null;
 
         if (ev.getTarget('.slate-todolist-item-checkbox')) {
-            me.fireEvent('checkclick', me, dataParentId, dataId, el.checked);
+            me.fireEvent(
+                'checkclick',
+                me,
+                sectionId,
+                parseInt(ev.getTarget('.slate-todolist-item', null, true).getAttribute('data-todo'), 10),
+                el.checked
+            );
         } else if (ev.getTarget('.slate-simplepanel-header')) {
             me.onSectionTitleClick(el);
         } else if (ev.getTarget('.slate-todolist-button-clear')) {
