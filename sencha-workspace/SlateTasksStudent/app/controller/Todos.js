@@ -40,10 +40,10 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     control: {
         todoList: {
+            coursesectionchange: 'onTodosListCourseSectionChange',
             tasksubmit: 'onTaskSubmit',
             checkclick: 'onTodosListCheckClick',
-            clearcompleted: 'onTodosListClearCompletedClick',
-            coursesectionchange: 'onTodosListCourseSectionChange'
+            clearclick: 'onTodosListClearClick'
         }
     },
 
@@ -111,8 +111,10 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         });
     },
 
-    onTodosListClearCompletedClick: function(cmp, sectionId) {
-        var me = this;
+    onTodosListClearClick: function(todoList, sectionId) {
+        var me = this,
+            store = me.getTodosStore(),
+            todosStore = store.getAt(store.findExact('SectionID', sectionId)).Todos(); // eslint-disable-line new-cap
 
         Slate.API.request({
             url: '/cbl/todos/clear-section',
@@ -120,7 +122,11 @@ Ext.define('SlateTasksStudent.controller.Todos', {
                 sectionId: sectionId
             },
             success: function() {
-                me.getTodosStore().load();
+                todosStore.remove(todosStore.queryBy(function(todo) {
+                    return todo.get('Completed');
+                }).getRange());
+
+                me.refreshTodoLists();
             },
             failure: function() {
                 Ext.toast('Todos could not be cleared.');

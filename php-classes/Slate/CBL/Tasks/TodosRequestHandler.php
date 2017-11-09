@@ -21,7 +21,7 @@ class TodosRequestHandler extends \RecordsRequestHandler
     {
         switch ($action = ($action ?: static::shiftPath())) {
             case 'clear-section':
-                return static::handleClearRequest($_REQUEST['sectionId']);
+                return static::handleClearRequest();
 
             default:
                 return parent::handleRecordsRequest($action);
@@ -102,15 +102,12 @@ class TodosRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
-    public static function handleClearRequest($sectionId) {
+    public static function handleClearRequest()
+    {
         $student = static::_getRequestedStudent();
 
-        if ($sectionId == 0) {
-            $sectionId = null;  // using SectionID = 0 for personal todos
-        }
-
         $todos = Todo::getAllByWhere([
-            'SectionID' => $sectionId,
+            'SectionID' => !empty($_REQUEST['sectionId']) ? $_REQUEST['sectionId'] : null,
             'StudentID' => $student->ID,
             'Completed' => 1
         ]);

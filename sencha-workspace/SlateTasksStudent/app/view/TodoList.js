@@ -134,7 +134,7 @@ Ext.define('SlateTasksStudent.view.TodoList', {
         } else if (ev.getTarget('.slate-simplepanel-header')) {
             me.onSectionTitleClick(sectionId, sectionEl);
         } else if (ev.getTarget('.slate-todolist-button-clear')) {
-            me.fireEvent('clearcompleted', me, dataParentId);
+            me.fireEvent('clearclick', me, sectionId);
         } else if (ev.getTarget('.slate-todolist-button-hide')) {
             me.onHideButtonClick(el);
         }
