@@ -9,7 +9,7 @@
 
 ### State flow
 
-![State Flow Diagram](docs/state-flow.svg)
+![State Flow Diagram](docs/state-flow.png)
 
 
 ## TODO
