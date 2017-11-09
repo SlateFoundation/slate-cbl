@@ -54,4 +54,7 @@ class Todo extends \ActiveRecord
         'Section'
     );
 
+    public static $validators = [
+        'Student' => 'require-relationship'
+    ];
 }
