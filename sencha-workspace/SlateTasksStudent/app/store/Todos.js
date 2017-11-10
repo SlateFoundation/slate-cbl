@@ -30,6 +30,7 @@ Ext.define('SlateTasksStudent.store.Todos', {
             return;
         }
 
+        this.dirty = false;
         this.load();
     }
 });

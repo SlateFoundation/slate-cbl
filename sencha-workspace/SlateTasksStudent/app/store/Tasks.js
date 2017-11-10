@@ -87,6 +87,7 @@ Ext.define('SlateTasksStudent.store.Tasks', {
             return;
         }
 
+        this.dirty = false;
         this.load();
     }
 });
