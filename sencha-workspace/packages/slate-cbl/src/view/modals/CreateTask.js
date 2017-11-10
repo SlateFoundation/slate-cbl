@@ -104,6 +104,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     valueField: 'ID',
                     displayField: 'Title',
                     queryMode: 'local',
+                    autoSelect: false,
                     store: {
                         type: 'chained',
                         source: 'Tasks',
@@ -121,6 +122,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     displayField: 'name',
                     valueField: 'name',
                     allowBlank: true,
+                    autoSelect: false,
                     queryParam: 'q',
                     store: {
                         fields: ['name'],

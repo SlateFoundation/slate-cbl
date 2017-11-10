@@ -1,35 +1,17 @@
 Ext.define('Slate.cbl.widget.SimplePanel', {
     extend: 'Ext.Container',
     xtype: 'slate-simplepanel',
+    requires: [
+        'Ext.button.Button'
+    ],
 
-    baseCls: 'slate-simplepanel',
 
     config: {
-        title: '',
-        showTools: false
+        title: null,
+        tools: []
     },
 
-    updateShowTools: function(showTools) {
-        var me = this;
-        if (me.rendered && Ext.isBoolean(showTools)) {
-            me.down('#tools').setVisible(showTools);
-        }
-    },
-
-    updateTitle: function(title) {
-        var me = this;
-        if (me.rendered) {
-            me.down('#title').update(title);
-        }
-    },
-
-    afterRender: function() {
-        var me = this;
-        me.callParent();
-
-        me.down('#title').update(me.getTitle());
-        me.down('#tools').setVisible(me.getShowTools());
-    },
+    componentCls: 'slate-simplepanel',
 
     items: [
         {
@@ -39,59 +21,65 @@ Ext.define('Slate.cbl.widget.SimplePanel', {
             items: [
                 {
                     flex: 1,
+                    itemId: 'titleCmp',
+
                     xtype: 'component',
-                    cls: 'slate-simplepanel-title',
-                    html: '',
-                    itemId: 'title'
+                    cls: 'slate-simplepanel-title'
                 },
                 {
-                    // TODO make this configurable
                     xtype: 'container',
                     layout: 'hbox',
-                    itemId: 'tools',
-                    items: [
-                        {
-                            xtype: 'button',
-                            ui: 'light',
-                            text: 'Filter',
-                            menu: {
-                                plain: true,
-                                showSeparator: false,
-                                defaults: {
-                                    xtype: 'menucheckitem'
-                                },
-                                items: [
-                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Status' },
-                                    { text: 'Past Due Tasks' },
-                                    { text: 'Revision Tasks' },
-                                    { text: 'On-Time Tasks' },
-                                    { xtype: 'component', cls: 'slate-menu-header', html: 'Timeline' },
-                                    { text: 'Past Due' },
-                                    { text: 'Due Today' },
-                                    { text: 'Due This Week' },
-                                    { text: 'Due Next Week' },
-                                    { text: 'Due in Future' },
-                                    { xtype: 'menuseparator' },
-                                    {
-                                        xtype: 'container',
-                                        padding: 8,
-                                        layout: {
-                                            type: 'hbox',
-                                            pack: 'center'
-                                        },
-                                        items: [
-                                            {
-                                                xtype: 'button',
-                                                text: 'View All'
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ]
+                    itemId: 'toolsCt'
                 }
             ]
         }
-    ]
+    ],
+
+
+    // lifecycle methods
+    initComponent: function() {
+        var me = this,
+            titleCmp, toolsCt;
+
+        me.callParent(arguments);
+
+        titleCmp = me.titleCmp = me.down('#titleCmp');
+        toolsCt = me.toolsCt = me.down('#toolsCt');
+
+        titleCmp.update(me.getTitle());
+        toolsCt.add(me.getTools());
+    },
+
+
+    // config handlers
+    applyTools: function(tools) {
+        return Ext.Array.map(tools, function(tool) {
+            tool = Ext.applyIf({
+                ui: 'light'
+            }, tool);
+
+            return Ext.factory(tool, 'Ext.button.Button');
+        });
+    },
+
+    updateTools: function(tools, oldTools) {
+        var toolsCt = this.toolsCt;
+
+        if (!toolsCt) {
+            return;
+        }
+        if (oldTools) {
+            toolsCt.removeAll();
+        }
+
+        toolsCt.add(tools);
+    },
+
+    updateTitle: function(title) {
+        var me = this;
+
+        if (me.rendered) {
+            me.titleCmp.update(title);
+        }
+    }
 });

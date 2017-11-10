@@ -1,6 +1,10 @@
 /**
- * The Dashboard controller manages the components of the student dashboard and
- * handles routing by course section.
+ * Main controller for SlateTasksStudent app
+ *
+ * ## Responsibilities:
+ * - Configure and render main view
+ * - Manage selection of student
+ * - Manage selection of section
  */
 Ext.define('SlateTasksStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
@@ -11,13 +15,16 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // dependencies
     views: [
-        'Dashboard',
-        'AppHeader',
-        'TaskTree',
-        'RecentActivity',
-        'Slate.cbl.view.student.TaskHistory'
+        'Dashboard'
     ],
 
+    stores: [
+        'Students',
+        'CourseSections@Slate.store'
+    ],
+
+
+    // component factories and selectors
     refs: {
         dashboard: {
             selector: 'slatetasksstudent-dashboard',
@@ -25,176 +32,131 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
             xtype: 'slatetasksstudent-dashboard'
         },
-        appHeader: {
-            selector: 'slatetasksstudent-appheader',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-appheader'
-        },
-        sectionSelectorCombo: {
-            selector: 'combobox#section-selector',
-        },
-        taskTree: {
-            selector: 'slatetasksstudent-tasktree',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-tasktree'
-        },
-        todoList: {
-            selector: 'slatetasksstudent-todolist',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-todolist'
-        },
-        recentActivity: {
-            selector: 'slatetasksstudent-recentactivity',
-            autoCreate: true,
-
-            xtype: 'slatetasksstudent-recentactivity'
-        },
-        taskHistory: {
-            selector: 'slate-taskhistory',
-            autoCreate: true,
-
-            xtype: 'slate-taskhistory'
-        }
+        appHeader: 'slatetasksstudent-appheader',
+        studentSelector: 'combobox#studentSelector',
+        sectionSelector: 'combobox#sectionSelector',
+        taskTree: 'slatetasksstudent-tasktree',
+        todoList: 'slatetasksstudent-todolist'
     },
 
 
     // entry points
     routes: {
-        'section/:sectionCode': {
-            sectionCode: '([a-zA-Z0-9])+',
-            action: 'showCourseSection'
+        ':studentUsername/:sectionCode': {
+            studentUsername: '([^/])+',
+            sectionCode: '([^/])+',
+            action: 'showDashboard'
         }
     },
 
     listen: {
+        global: {
+            resize: 'onBrowserResize'
+        },
         controller: {
             '#': {
                 unmatchedroute: 'onUnmatchedRoute'
+            }
+        },
+        store: {
+            '#CourseSections': {
+                load: 'onCourseSectionsLoad'
             }
         }
     },
 
     control: {
-        'slatetasksstudent-appheader button[action="show-recent"]': {
-            click: 'onShowRecentClick'
+        dashboard: {
+            studentchange: 'onStudentChange',
+            sectionchange: 'onSectionChange'
         },
-        'slatetasksstudent-tasktree': {
-            resize: 'onTaskTreeResize'
+        studentSelector: {
+            select: 'onStudentSelectorSelect',
+            clear: 'onStudentSelectorClear'
         },
-        'combo#section-selector': {
-            select: 'onSectionSelectorSelect',
-            boxready: 'onSectionSelectorBoxReady'
+        sectionSelector: {
+            change: 'onSectionSelectorChange'
         }
     },
 
 
     // controller templates method overrides
     onLaunch: function () {
-        this.getDashboard().render('slateapp-viewport');
+        var me = this,
+            siteEnv = window.SiteEnvironment || {},
+            dashboard = me.getDashboard();
+
+        // show and load student selector for priveleged users
+        if (!siteEnv.user || siteEnv.user.AccountLevel != 'User') {
+            me.getStudentSelector().show();
+        }
+
+        // instantiate and render viewport
+        dashboard.render('slateapp-viewport');
+    },
+
+
+    // route handlers
+    showDashboard: function(studentUsername, sectionCode) {
+        var dashboard = this.getDashboard();
+
+        // use false instead of null, to indicate selecting *nothing* vs having no selection
+        dashboard.setStudent(studentUsername == 'me' ? false : studentUsername);
+        dashboard.setSection(sectionCode == 'all' ? false : sectionCode);
     },
 
 
     // event handlers
+    onBrowserResize: function() {
+        this.getDashboard().updateLayout();
+    },
+
     onUnmatchedRoute: function() {
-        this.redirectTo('section/all');
+        this.redirectTo('me/all');
     },
 
-    onShowRecentClick: function(button) {
-        var win = this.getRecentActivity();
-
-        if (button.pressed) {
-            win.showBy(button, 'tr-bl');
-        } else {
-            win.hide();
-        }
+    onCourseSectionsLoad: function() {
+        this.getSectionSelector().enable();
     },
 
-    onTaskTreeResize: function () {
-        this.maskDemoElements();
-    },
-
-    onSectionSelectorSelect: function(combo, rec) {
-        var sectionCode = rec.get('Code'),
-            route = 'section/all';
-
-        if (sectionCode) {
-            route = 'section/'+sectionCode;
-        }
-        this.redirectTo(route);
-    },
-
-    onSectionSelectorBoxReady: function(combo) {
-        combo.getStore().on('load', function(store) {
-            store.insert(0, {
-                ID: 0,
-                Code: null,
-                Title: 'All'
-            })
-        });
-    },
-
-
-    // custom controller methods
-    maskDemoElements: function () {
-        this.getTaskHistory().setLoading(false);
-
-        this.getTaskHistory().setLoading('');
-    },
-
-    showCourseSection: function(sectionCode) {
+    onStudentChange: function(dashboard, studentUsername) {
         var me = this,
-            params = Ext.urlDecode(location.search.substring(1)),
-            sectionSelectorCombo = me.getSectionSelectorCombo(),
-            courseSectionsStore = sectionSelectorCombo.getStore(),
-            rec = courseSectionsStore.findRecord('Code', sectionCode),
-            taskTree = me.getTaskTree(),
-            todoList = me.getTodoList(),
-            user = params.student ? params.student : 'current';
+            studentCombo = me.getStudentSelector(),
+            studentsStore = me.getStudentsStore(),
+            sectionsStore = me.getCourseSectionsStore();
 
-        // correct route if it does not match requested course_section parameter
-        if (params.course_section && params.course_section !== sectionCode) {
-            this.redirectTo('section/'+params.course_section);
-            return;
-        }
+        // (re)load sections list
+        sectionsStore.getProxy().setExtraParam('enrolled_user', studentUsername || 'current');
+        sectionsStore.load();
 
-        if (!courseSectionsStore.isLoaded()) {
-            courseSectionsStore.load({
+        // push value to selector
+        studentCombo.setValue(studentUsername);
+
+        // reload students store with just selected student if they're not in the current result set
+        if (studentUsername && !studentCombo.getSelectedRecord()) {
+            studentsStore.load({
                 params: {
-                    enrolled_user: user // eslint-disable-line camelcase
-                },
-                callback: function() {
-                    me.showCourseSection(sectionCode);
+                    q: 'username:'+studentUsername
                 }
             });
-            return;
         }
+    },
 
-        if (params.student) {
-            taskTree.setStudent(params.student);
-            taskTree.setReadOnly(true);
+    onSectionChange: function(dashboard, sectionCode) {
+        var me = this;
 
-            todoList.setStudent(params.student);
-            todoList.setReadOnly(true);
+        me.getSectionSelector().setValue(sectionCode);
+    },
 
-            sectionSelectorCombo.setDisabled(true);
-        }
+    onStudentSelectorSelect: function(studentCombo, student) {
+        this.redirectTo([student.get('Username'), 'all']);
+    },
 
-        if (!rec && sectionCode !== 'all') {
-            Ext.Msg.alert('Error', 'Course Section not found.');
-            return;
-        }
+    onStudentSelectorClear: function() {
+        this.redirectTo(['me', 'all']);
+    },
 
-        if (sectionCode === 'all') {
-            sectionCode = 0;
-            sectionSelectorCombo.setValue(0);
-        } else {
-            sectionSelectorCombo.setValue(rec);
-        }
-
-        taskTree.setCourseSection(sectionCode);
-        todoList.setCourseSection(sectionCode);
+    onSectionSelectorChange: function(sectionCombo, sectionCode) {
+        this.redirectTo([this.getDashboard().getStudent() || 'me', sectionCode || 'all']);
     }
 });

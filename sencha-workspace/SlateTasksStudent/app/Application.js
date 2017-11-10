@@ -9,9 +9,9 @@ Ext.define('SlateTasksStudent.Application', {
         'Ext.window.MessageBox'
     ],
 
-    name: 'SlateTasksStudent',
 
-    defaultToken: 'section/all',
+    name: 'SlateTasksStudent',
+    defaultToken: 'me/all',
 
     controllers: [
         'Dashboard',

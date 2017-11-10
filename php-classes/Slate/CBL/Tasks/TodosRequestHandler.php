@@ -21,7 +21,7 @@ class TodosRequestHandler extends \RecordsRequestHandler
     {
         switch ($action = ($action ?: static::shiftPath())) {
             case 'clear-section':
-                return static::handleClearRequest($_REQUEST['sectionId']);
+                return static::handleClearRequest();
 
             default:
                 return parent::handleRecordsRequest($action);
@@ -42,15 +42,13 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
 
         // Todos with a null SectionID are considered personal Todos
-        $sectionTodos = static::getSectionTodos($student, null);
         $todos[] = [
             'ID' => 0,
-            'SectionID' => 0,
-            'StudentID' => $student->ID,
+            'SectionID' => null,
+            'StudentID' => $Student->ID,
             'Title' => 'Personal',
-            'Section' => [],
-            'Todos' => $sectionTodos,
-            'TodoCount' => count($sectionTodos)
+            'Section' => null,
+            'Todos' => static::getSectionTodos($Student)
         ];
 
 
@@ -78,16 +76,13 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
 
         foreach (SectionParticipant::getAllByWhere($participantConditions) as $Participant) {
-            $sectionTodos = static::getSectionTodos($Student, $Participant->CourseSectionID);
-
             $todos[] = [
                 'ID' => $Participant->ID,
-                'SectionID' => $Participant->SectionID,
+                'SectionID' => $Participant->Section->ID,
                 'StudentID' => $Student->ID,
                 'Title' => $Participant->Section->Title,
                 'Section' => $Participant->Section,
-                'Todos' => $sectionTodos,
-                'TodoCount' => count($sectionTodos)
+                'Todos' => static::getSectionTodos($Student, $Participant->CourseSectionID)
             ];
         }
 
@@ -107,15 +102,12 @@ class TodosRequestHandler extends \RecordsRequestHandler
         ]);
     }
 
-    public static function handleClearRequest($sectionId) {
+    public static function handleClearRequest()
+    {
         $student = static::_getRequestedStudent();
 
-        if ($sectionId == 0) {
-            $sectionId = null;  // using SectionID = 0 for personal todos
-        }
-
         $todos = Todo::getAllByWhere([
-            'SectionID' => $sectionId,
+            'SectionID' => !empty($_REQUEST['sectionId']) ? $_REQUEST['sectionId'] : null,
             'StudentID' => $student->ID,
             'Completed' => 1
         ]);

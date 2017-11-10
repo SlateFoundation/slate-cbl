@@ -1,12 +1,12 @@
 // TODO: merge with Slate.cbl.model.StudentTask ?
-Ext.define('SlateTasksStudent.model.StudentTask', {
+Ext.define('SlateTasksStudent.model.Task', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records',
         'Slate.cbl.model.tasks.Attachment',
-        'Slate.cbl.model.tasks.Comment',
         'Slate.cbl.model.Skill'
     ],
+
 
     // model config
     idProperty: 'ID',
@@ -37,8 +37,11 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
         },
         {
             name: 'TaskID',
-            reference: 'Task',
             type: 'int'
+        },
+        {
+            name: 'Task',
+            persist: false
         },
         {
             name: 'SectionTitle',
@@ -149,9 +152,30 @@ Ext.define('SlateTasksStudent.model.StudentTask', {
             type: 'boolean',
             persist: false,
             defaultValue: false
-        }, {
+        },
+        {
             name: 'Comments',
             persist: false
+        },
+        {
+            name: 'DueTime',
+            persist: false,
+            depends: ['DueDate'],
+            convert: function(v, r) {
+                var dueDate = r.get('DueDate'),
+                    dueTime;
+
+                if (!dueDate) {
+                    return null;
+                }
+
+                dueTime = new Date(dueDate);
+
+                // task is late after midnight of due date
+                dueTime.setHours(23, 59, 59, 999);
+
+                return dueTime;
+            }
         }
     ],
 

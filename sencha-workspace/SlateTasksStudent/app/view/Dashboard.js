@@ -5,6 +5,19 @@
 Ext.define('SlateTasksStudent.view.Dashboard', {
     extend: 'Ext.container.Container',
     xtype: 'slatetasksstudent-dashboard',
+    requires: [
+        'Ext.layout.container.Column',
+
+        'SlateTasksStudent.view.AppHeader',
+        'SlateTasksStudent.view.TaskTree',
+        'SlateTasksStudent.view.TodoList'
+    ],
+
+
+    config: {
+        student: null,
+        section: null
+    },
 
     items: [
         {
@@ -23,28 +36,32 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
             items: [
                 {
                     xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
+                    layout: 'column',
+                    defaults: {
+                        columnWidth: 0.5
                     },
                     items: [
                         {
                             xtype: 'slatetasksstudent-tasktree',
-                            minHeight: 200,  // need a minimum height for load mask
                             margin: '0 32 0 0',
-                            flex: 1
+                            store: 'Tasks'
                         }, {
                             xtype: 'slatetasksstudent-todolist',
-                            flex: 1
+                            store: 'Todos'
                         }
                     ]
-                // @todo Unhide task history once it can be populated with live data
-                // },
-                // {
-                //     xtype: 'slate-taskhistory',
-                //     margin: '32 0 0'
                 }
             ]
         }
-    ]
+    ],
+
+
+    // config handlers
+    updateStudent: function(student, oldStudent) {
+        this.fireEvent('studentchange', this, student, oldStudent);
+    },
+
+    updateSection: function(section, oldSection) {
+        this.fireEvent('sectionchange', this, section, oldSection);
+    }
 });

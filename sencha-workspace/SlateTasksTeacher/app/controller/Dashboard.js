@@ -1,4 +1,3 @@
-/* jslint browser: true, undef: true, laxcomma:true *//* global Ext, Slate*/
 /**
  * The Dashboard controller manages the main functionality of the SlateTasksTeacher application where teachers can
  * browse, search, create, edit, and assign tasks.
@@ -7,12 +6,25 @@
  * - Handle section/:sectionId route
  * - Handle CRUD operations for tasks/student tasks
  * - Filter StudentsGrid tasks/students by selected section
+ *
+ * ## TODO
+ * - [ ] sort refs by parent
+ * - [ ] ensure no extra autoCreate refs
+ * - [ ] match dependencies to controller refs
+ * - [ ] media state through dashboard view config
+ * - [ ] drive store state via config
+ *
+ * ## Roadmap
+ * - Break out sibling controllers for post-navigation workflows
  */
 Ext.define('SlateTasksTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.window.Toast',
         'Ext.window.MessageBox',
+
+        /* global Slate */
+        'Slate.API',
         'Slate.cbl.util.Google'
     ],
 
@@ -25,12 +37,15 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'TaskAssigner',
         'tasks.AttachmentConfirmation'
     ],
+
     stores: [
         'CourseSections',
+        'SectionCohorts',
         'Students',
         'StudentTasks',
         'Tasks'
     ],
+
     models: [
         'Task@Slate.cbl.model',
         'StudentTask@Slate.cbl.model',
@@ -38,6 +53,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     ],
 
 
+    // component factories and selectors
     refs: {
         dashboardCt: {
             selector: 'slate-tasks-teacher-dashboard',
@@ -83,7 +99,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
         assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
 
-        courseSelector: 'slate-tasks-teacher-appheader combo',
+        courseSelector: 'slate-tasks-teacher-appheader slate-section-selector',
+        cohortSelector: 'slate-tasks-teacher-appheader slate-cohort-selector',
         acceptTaskBtn: 'slate-tasks-teacher-taskrater button[action=accept]'
     },
 
@@ -93,6 +110,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         'section/:sectionId': {
             sectionId: '([a-zA-Z0-9])+',
             action: 'showCourseSection'
+        },
+        'section/:sectionId/:cohort': {
+            sectionId: '([a-zA-Z0-9])+',
+            action: 'showCourseSection'
         }
     },
 
@@ -100,8 +121,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         courseSelector: {
             select: 'onCourseSectionSelect'
         },
+        cohortSelector: {
+            select: 'onSectionCohortSelect'
+        },
         dashboardCt: {
-            coursesectionselect: 'onDashboardSectionChange'
+            coursesectionselect: 'onDashboardSectionChange',
+            sectioncohortselect: 'onDashboardCohortChange'
         },
         tasksGrid: {
             cellclick: 'onTasksGridCellClick',
@@ -166,14 +191,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     // route handlers
-    showCourseSection: function(sectionCode) {
+    showCourseSection: function(sectionCode, cohortCode) {
         var me = this,
             courseSelector = me.getCourseSelector(),
             courseSectionsStore = courseSelector.getStore(),
             studentsStore = me.getStudentsStore(),
             tasksStore = me.getTasksStore(),
+            cohortsStore = me.getSectionCohortsStore(),
             studentTasksStore = me.getStudentTasksStore(),
-            courseSection = courseSectionsStore.findRecord('Code', sectionCode);
+            courseSection = courseSectionsStore.findRecord('Code', sectionCode),
+            cohortCode = unescape(cohortCode);
 
         // select section
         if (!courseSection && courseSectionsStore.isLoaded()) {
@@ -190,8 +217,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
         courseSelector.setValue(courseSectionsStore.findRecord('Code', sectionCode));
 
-        // update store urls
-        studentsStore.setCourseSection(sectionCode).load();
+        // update cohort section
+        cohortsStore.setCourseSection(sectionCode);
+        cohortsStore.loadIfDirty();
+
+        // sync store
+        studentsStore.setCourseSection(sectionCode);
+        studentsStore.setSectionCohort(cohortCode);
+        studentsStore.loadIfDirty();
+
+        // sync tasks and student tasks
         tasksStore.setCourseSection(sectionCode).load();
         studentTasksStore.setCourseSection(sectionCode).load();
     },
@@ -203,8 +238,21 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         me.getDashboardCt().setCourseSection(record);
     },
 
+    onSectionCohortSelect: function(combo, record) {
+        this.getDashboardCt().setSectionCohort(record);
+    },
+
     onDashboardSectionChange: function(dashboardView, record) {
         this.redirectTo('section/'+record.get('Code'));
+    },
+
+    onDashboardCohortChange: function(dashboardView, record) {
+        var me = this,
+            courseSelector = me.getCourseSelector(),
+            courseSectionsStore = courseSelector.getStore(),
+            activeCourse = courseSectionsStore.getById(courseSelector.getValue());
+
+        me.redirectTo('section/'+activeCourse.get('Code')+'/'+escape(record.get('Cohort')));
     },
 
     onTasksGridCellClick: function(grid, taskId, studentId) {
@@ -259,7 +307,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             student = me.getStudentsStore().getById(columnId);
             courseSection = me.getDashboardCt().getCourseSection();
 
-            window.open(Slate.API.buildUrl('/cbl/dashboards/tasks/student')+'?student='+student.get('Username')+'&course_section='+courseSection.get('Code'), '_blank');
+            window.open(Slate.API.buildUrl('/cbl/dashboards/tasks/student')+'#'+student.get('Username')+'/'+courseSection.get('Code'), '_blank');
         }
     },
 

@@ -13,7 +13,8 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     config: {
         taskGrid: true,
         gridLegend: true,
-        courseSection: null
+        courseSection: null,
+        sectionCohort: null
     },
 
     items: [{
@@ -30,6 +31,10 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
 
     updateCourseSection: function(courseSection) {
         this.fireEvent('coursesectionselect', this, courseSection);
+    },
+
+    updateSectionCohort: function(sectionCohort) {
+        this.fireEvent('sectioncohortselect', this, sectionCohort);
     },
 
     initComponent: function() {
