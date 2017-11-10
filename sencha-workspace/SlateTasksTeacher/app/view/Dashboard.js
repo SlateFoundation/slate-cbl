@@ -11,15 +11,24 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     ],
 
     config: {
+        section: null,
+        cohort: null,
+
         taskGrid: true,
-        gridLegend: true,
-        courseSection: null,
-        sectionCohort: null
+        gridLegend: true
     },
 
     items: [{
         xtype: 'slate-tasks-teacher-appheader'
     }],
+
+    updateSection: function(section) {
+        this.fireEvent('sectionselect', this, section);
+    },
+
+    updateCohort: function(cohort) {
+        this.fireEvent('cohortselect', this, cohort);
+    },
 
     applyTaskGrid: function(taskGrid, oldTaskGrid) {
         return Ext.factory(taskGrid, 'SlateTasksTeacher.view.StudentsGrid', oldTaskGrid);
@@ -27,14 +36,6 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
 
     applyGridLegend: function(gridLegend, oldGridLegend) {
         return Ext.factory(gridLegend, 'SlateTasksTeacher.view.GridLegend', oldGridLegend);
-    },
-
-    updateCourseSection: function(courseSection) {
-        this.fireEvent('coursesectionselect', this, courseSection);
-    },
-
-    updateSectionCohort: function(sectionCohort) {
-        this.fireEvent('sectioncohortselect', this, sectionCohort);
     },
 
     initComponent: function() {

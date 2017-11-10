@@ -4,6 +4,9 @@ Ext.define('SlateTasksTeacher.store.SectionCohorts', {
         'Slate.proxy.Records'
     ],
 
+    config: {
+        section: null
+    },
 
     remoteSort: false,
 
@@ -11,7 +14,7 @@ Ext.define('SlateTasksTeacher.store.SectionCohorts', {
         'Cohort'
     ],
 
-    setCourseSection: function(sectionCode) {
+    setSection: function(sectionCode) {
         var me = this,
             path = '/sections/'+sectionCode+'/cohorts';
 

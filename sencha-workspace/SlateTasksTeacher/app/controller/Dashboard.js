@@ -65,7 +65,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
             xtype: 'slate-tasks-teacher-dashboard'
         },
-        courseSelector: 'slate-tasks-teacher-appheader slate-section-selector',
+        sectionSelector: 'slate-tasks-teacher-appheader slate-section-selector',
         cohortSelector: 'slate-tasks-teacher-appheader slate-cohort-selector',
         tasksGrid: 'slate-studentsgrid',
 
@@ -109,26 +109,26 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     // entry points
     routes: {
-        'section/:sectionCode': {
+        ':sectionCode': {
             sectionCode: '([a-zA-Z0-9])+',
-            action: 'showCourseSection'
+            action: 'showDashboard'
         },
-        'section/:sectionCode/:cohort': {
+        ':sectionCode/:cohortCode': {
             sectionCode: '([a-zA-Z0-9])+',
-            action: 'showCourseSection'
+            action: 'showDashboard'
         }
     },
 
     control: {
-        courseSelector: {
-            select: 'onCourseSectionSelect'
+        dashboardCt: {
+            sectionselect: 'onSectionChange',
+            cohortselect: 'onCohortChange'
+        },
+        sectionSelector: {
+            select: 'onSectionSelectorSelect'
         },
         cohortSelector: {
-            select: 'onSectionCohortSelect'
-        },
-        dashboardCt: {
-            coursesectionselect: 'onDashboardSectionChange',
-            sectioncohortselect: 'onDashboardCohortChange'
+            select: 'onCohortSelectorSelect'
         },
         tasksGrid: {
             cellclick: 'onTasksGridCellClick',
@@ -193,68 +193,67 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     // route handlers
-    showCourseSection: function(sectionCode, cohortCode) {
+    showDashboard: function(sectionCode, cohortCode) {
+        var dashboardCt = this.getDashboardCt();
+
+        dashboardCt.setSection(sectionCode || false);
+        dashboardCt.setCohort(cohortCode || false);
+    },
+
+    // event handlers
+    onSectionSelectorSelect: function(sectionSelector, section) {
+        this.redirectTo([section.get('Code'), this.getDashboardCt().getCohort()]);
+    },
+
+    onCohortSelectorSelect: function(cohortSelector, cohort) {
+        this.redirectTo([this.getDashboardCt().getSection(), cohort.get('Cohort')]);
+    },
+
+    onSectionChange: function(dashboardView, courseSection) {
         var me = this,
-            courseSelector = me.getCourseSelector(),
+            courseSelector = me.getSectionSelector(),
             courseSectionsStore = courseSelector.getStore(),
+            courseSectionRecord = courseSectionsStore.findRecord('Code', courseSection),
+            cohortStore = me.getStore('SectionCohorts'),
             studentsStore = me.getStudentsStore(),
             tasksStore = me.getTasksStore(),
-            cohortsStore = me.getSectionCohortsStore(),
-            studentTasksStore = me.getStudentTasksStore(),
-            courseSection = courseSectionsStore.findRecord('Code', sectionCode),
-            cohortCode = unescape(cohortCode);
+            studentTasksStore = me.getStudentTasksStore();
 
-        // select section
-        if (!courseSection && courseSectionsStore.isLoaded()) {
+        // set section selector value
+        if (!courseSectionRecord && courseSectionsStore.isLoaded()) {
             Ext.Msg.alert('Error', 'Course Section not found.');
             return;
         } else if (!courseSectionsStore.isLoaded()) {
             courseSectionsStore.load(function() {
-                me.showCourseSection(sectionCode);
+                courseSelector.setValue(courseSectionsStore.findRecord('Code', courseSection));
             });
-            return;
+        } else {
+            courseSelector.setValue(courseSectionRecord);
         }
-        if (!me.getDashboardCt().getCourseSection() || me.getDashboardCt().getCourseSection().getId() != sectionCode) {
-            me.getDashboardCt().setCourseSection(courseSection);
-        }
-        courseSelector.setValue(courseSectionsStore.findRecord('Code', sectionCode));
 
-        // update cohort section
-        cohortsStore.setCourseSection(sectionCode);
-        cohortsStore.loadIfDirty();
+        // sync cohort store
+        cohortStore.setSection(courseSection);
+        cohortStore.loadIfDirty();
 
-        // sync store
-        studentsStore.setCourseSection(sectionCode);
-        studentsStore.setSectionCohort(cohortCode);
+        // sync student store
+        studentsStore.setCourseSection(courseSection);
+        // studentsStore.setSectionCohort(cohortCode); // @todo get fresh cohort value
         studentsStore.loadIfDirty();
 
         // sync tasks and student tasks
-        tasksStore.setCourseSection(sectionCode).load();
-        studentTasksStore.setCourseSection(sectionCode).load();
+        tasksStore.setCourseSection(courseSection).load(); // @todo add loadIfDirty
+        studentTasksStore.setCourseSection(courseSection).load(); // @todo add loadIfDirty
     },
 
-    // event handlers
-    onCourseSectionSelect: function(combo, record) {
-        var me = this;
-
-        me.getDashboardCt().setCourseSection(record);
-    },
-
-    onSectionCohortSelect: function(combo, record) {
-        this.getDashboardCt().setSectionCohort(record);
-    },
-
-    onDashboardSectionChange: function(dashboardView, record) {
-        this.redirectTo('section/'+record.get('Code'));
-    },
-
-    onDashboardCohortChange: function(dashboardView, record) {
+    onCohortChange: function(dashboardView, sectionCohort) {
         var me = this,
-            courseSelector = me.getCourseSelector(),
-            courseSectionsStore = courseSelector.getStore(),
-            activeCourse = courseSectionsStore.getById(courseSelector.getValue());
+            studentsStore = me.getStudentsStore();
 
-        me.redirectTo('section/'+activeCourse.get('Code')+'/'+escape(record.get('Cohort')));
+        // @todo select combo value
+
+        // @todo update student section cohort and reload students
+        // studentsStore.setSectionCohort(sectionCohort);
+        // studentsStore.loadIfDirty();
     },
 
     onTasksGridCellClick: function(grid, taskId, studentId) {
