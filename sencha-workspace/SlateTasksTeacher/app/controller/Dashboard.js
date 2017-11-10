@@ -11,7 +11,7 @@
  * - [X] sort refs by parent
  * - [X] ensure no extra autoCreate refs
  * - [X] match dependencies to controller refs
- * - [ ] change route format to ':sectionCode'
+ * - [X] change route format to ':sectionCode'
  * - [ ] mediate state through dashboard view config
  * - [ ] drive `setSection`/`sectionchange` and `setCohort`/`cohorthange` state via dashboard view config
  * - [ ] drive store and view config from change events in controller
@@ -109,12 +109,12 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     // entry points
     routes: {
-        'section/:sectionId': {
-            sectionId: '([a-zA-Z0-9])+',
+        'section/:sectionCode': {
+            sectionCode: '([a-zA-Z0-9])+',
             action: 'showCourseSection'
         },
-        'section/:sectionId/:cohort': {
-            sectionId: '([a-zA-Z0-9])+',
+        'section/:sectionCode/:cohort': {
+            sectionCode: '([a-zA-Z0-9])+',
             action: 'showCourseSection'
         }
     },
