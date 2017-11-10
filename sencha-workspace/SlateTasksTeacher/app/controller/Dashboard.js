@@ -22,6 +22,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     requires: [
         'Ext.window.Toast',
         'Ext.window.MessageBox',
+
+        /* global Slate */
+        'Slate.API',
         'Slate.cbl.util.Google'
     ],
 
@@ -304,7 +307,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             student = me.getStudentsStore().getById(columnId);
             courseSection = me.getDashboardCt().getCourseSection();
 
-            window.open(Slate.API.buildUrl('/cbl/dashboards/tasks/student')+'?student='+student.get('Username')+'&course_section='+courseSection.get('Code'), '_blank');
+            window.open(Slate.API.buildUrl('/cbl/dashboards/tasks/student')+'#'+student.get('Username')+'/'+courseSection.get('Code'), '_blank');
         }
     },
 
