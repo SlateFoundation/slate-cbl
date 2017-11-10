@@ -8,11 +8,15 @@
  * - Filter StudentsGrid tasks/students by selected section
  *
  * ## TODO
- * - [ ] sort refs by parent
- * - [ ] ensure no extra autoCreate refs
- * - [ ] match dependencies to controller refs
- * - [ ] media state through dashboard view config
- * - [ ] drive store state via config
+ * - [X] sort refs by parent
+ * - [X] ensure no extra autoCreate refs
+ * - [X] match dependencies to controller refs
+ * - [ ] change route format to ':sectionCode'
+ * - [ ] mediate state through dashboard view config
+ * - [ ] drive `setSection`/`sectionchange` and `setCohort`/`cohorthange` state via dashboard view config
+ * - [ ] drive store and view config from change events in controller
+ * - [ ] ensure Navigation <-> State flow
+ * - [ ] ensure requires include all and only the views being create within the same file
  *
  * ## Roadmap
  * - Break out sibling controllers for post-navigation workflows
@@ -33,9 +37,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     views: [
         'Dashboard',
         'TaskEditor',
-        'TaskRater',
+        'tasks.AttachmentConfirmation',
         'TaskAssigner',
-        'tasks.AttachmentConfirmation'
+        'TaskRater'
     ],
 
     stores: [
@@ -61,46 +65,44 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
             xtype: 'slate-tasks-teacher-dashboard'
         },
-        tasksGrid: {
-            selector: 'slate-studentsgrid',
-            autoCreate: true,
+        courseSelector: 'slate-tasks-teacher-appheader slate-section-selector',
+        cohortSelector: 'slate-tasks-teacher-appheader slate-cohort-selector',
+        tasksGrid: 'slate-studentsgrid',
 
-            xtype: 'slate-studentsgrid'
-        },
-        taskAssigner: {
-            selector: 'slate-tasks-teacher-taskassigner',
-            autoCreate: true,
-
-            xtype: 'slate-tasks-teacher-taskassigner'
-        },
-        taskRater: {
-            selector: 'slate-tasks-teacher-taskrater',
-            autoCreate: true,
-
-            xtype: 'slate-tasks-teacher-taskrater'
-        },
         taskEditor: {
             selector: 'slate-tasks-teacher-taskeditor',
             autoCreate: true,
 
             xtype: 'slate-tasks-teacher-taskeditor'
         },
+        taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
+        skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
+        attachmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield',
+        attachmentsList: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield slate-attachmentslist',
+        assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
+        assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
+
         attachmentConfirmationWindow: {
             selector: 'slate-tasks-attachmentconfirmation',
             autoCreate: true,
 
             xtype: 'slate-tasks-attachmentconfirmation'
         },
-        taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
-        skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
-        commentsField: 'slate-tasks-teacher-taskrater slate-commentsfield',
-        attachmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield',
-        attachmentsList: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield slate-attachmentslist',
-        assignmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield',
-        assignmentsComboField: 'slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo',
 
-        courseSelector: 'slate-tasks-teacher-appheader slate-section-selector',
-        cohortSelector: 'slate-tasks-teacher-appheader slate-cohort-selector',
+        taskAssigner: {
+            selector: 'slate-tasks-teacher-taskassigner',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskassigner'
+        },
+
+        taskRater: {
+            selector: 'slate-tasks-teacher-taskrater',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-teacher-taskrater'
+        },
+        commentsField: 'slate-tasks-teacher-taskrater slate-commentsfield',
         acceptTaskBtn: 'slate-tasks-teacher-taskrater button[action=accept]'
     },
 
