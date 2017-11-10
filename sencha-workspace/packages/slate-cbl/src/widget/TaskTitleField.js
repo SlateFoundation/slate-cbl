@@ -10,6 +10,7 @@ Ext.define('Slate.cbl.widget.TaskTitleField', {
     name: 'Title',
     valueField: 'Title',
     queryParam: 'q',
+    autoSelect: false,
     listConfig: {
         cls: 'slate-boundlist'
     },

@@ -18,6 +18,7 @@ Ext.define('Slate.cbl.widget.AssignmentsField', {
         itemId: 'assigned-to',
         flex: 1,
         xtype: 'combo', // todo: update to tagfield?
+        autoSelect: false,
         multiSelect: true,
         queryMode: 'local',
         displayField: 'FullName',
