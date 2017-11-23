@@ -78,7 +78,7 @@
                 <td><a href="{$StudentCompetency->getUrl()|escape}">#{$StudentCompetency->ID}</td>
                 <td>{contextLink $StudentCompetency->Student}</td>
                 <td>{contextLink $StudentCompetency->Competency}</td>
-                <td>{$StudentCompetency->Level}</td>
+                <td>{["NE","EN","PR","GB","AD","EX","BA"][$StudentCompetency->Level]}</td>
                 <td>{$StudentCompetency->EnteredVia|escape}</td>
                 <td>{$StudentCompetency->BaselineRating|escape|default:'&mdash;'}</td>
             </tr>
