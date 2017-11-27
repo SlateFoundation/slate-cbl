@@ -60,7 +60,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                 '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">{[ ["M","EN","PR","GB","AD","EX","BA"][values.level] ]}</div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
             '</div>',
-
+            /*
             '<div class="stats-ct">',
                 '<table class="stats">',
                     '<thead>',
@@ -93,6 +93,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                     '</tbody>',
                 '</table>',
             '</div>',
+            */
 
             '<div class="explainer">',
                 '<p id="{id}-statementEl" data-ref="statementEl">{competency.Statement:htmlEncode}</p>',
@@ -138,6 +139,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                         '<li ',
                             'class="',
                                 'cbl-skill-demo',
+                                '<tpl if="values.DemonstratedLevel &gt;= 0"> level-color cbl-level-{DemonstratedLevel + 1}</tpl>',
                                 '<tpl if="values.DemonstratedLevel==0 && !Override"> cbl-skill-demo-uncounted</tpl>',
                                 '<tpl if="this.standardOverridden"> cbl-skill-demo-overridden</tpl>',
                                 '<tpl if="Override"> cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}</tpl>',
@@ -214,15 +216,15 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             demonstrationsAverage = completion.get('demonstrationsAverage'),
             currentLevel = completion.get('currentLevel'),
             demonstrationsRequired = competency.getTotalDemonstrationsRequired(currentLevel),
-            percentComplete = 100 * completion.get('demonstrationsComplete') / demonstrationsRequired;
+            percentComplete = 100 * completion.get('demonstrationsAtLevel') / demonstrationsRequired;
 
         me.setLevel(currentLevel);
-        me.setPercentComplete(percentComplete);
+        me.setPercentComplete(percentComplete / (currentLevel));
         me.setPercentMissed(100 * completion.get('demonstrationsMissed') / demonstrationsRequired);
         me.setDemonstrationsAverage(demonstrationsAverage);
-        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
-        me.setBaselineRating(completion.get('baselineRating'));
-        me.setGrowth(completion.get('growth'));
+        //me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
+        //me.setBaselineRating(completion.get('baselineRating'));
+        //me.setGrowth(completion.get('growth'));
 
         me.loadSkills();
     },

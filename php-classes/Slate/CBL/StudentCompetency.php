@@ -106,6 +106,7 @@ class StudentCompetency extends \ActiveRecord
             'demonstrationsLogged' => $this->getDemonstrationsLogged(),
             'demonstrationsMissed' => $this->getDemonstrationsMissed(),
             'demonstrationsComplete' => $this->getDemonstrationsComplete(),
+            'demonstrationsAtLevel' => $this->getDemonstrationsAtLevel(),
             'demonstrationsAverage' => $this->getDemonstrationsAverage(),
             'demonstrationsRequired' => $this->getDemonstrationsRequired(),
             'growth' => $this->getGrowth()
@@ -288,6 +289,34 @@ class StudentCompetency extends \ActiveRecord
         return $this->demonstrationsComplete;
     }
 
+    private $demonstrationsAtLevel;
+    public function getDemonstrationsAtLevel()
+    {
+        if ($this->demonstrationsComplete === null) {
+            $this->demonstrationsAtLevel = 0;
+
+
+            foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
+                $Skill = Skill::getByID($skillId);
+                $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
+                $skillCount = 0;
+                $level = $this->Level;
+
+                foreach ($demonstrationData as $demonstration) {
+                    if (!empty($demonstration['Override'])) {
+                        $skillCount += $demonstrationsRequired;
+                      } elseif (!empty($demonstration['DemonstratedLevel']) && $demonstration['DemonstratedLevel'] >= $level) {
+                        $skillCount++;
+                    }
+                }
+
+                $this->demonstrationsComplete += min($demonstrationsRequired, $skillCount);
+            }
+        }
+
+        return $this->demonstrationsComplete;
+    }
+
     private $demonstrationsAverage;
     public function getDemonstrationsAverage()
     {
@@ -420,7 +449,7 @@ class StudentCompetency extends \ActiveRecord
         return [
                 'StudentID' => $Student->ID,
                 'CompetencyID' => $Competency->ID,
-                'currentLevel' => null,
+                'el' => null,
                 'baselineRating' => null,
                 'demonstrationsLogged' => 0,
                 'demonstrationsMissed' => 0,

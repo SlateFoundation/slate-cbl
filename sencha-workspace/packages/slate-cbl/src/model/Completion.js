@@ -9,6 +9,7 @@ Ext.define('Slate.cbl.model.Completion', {
         { name: 'currentLevel', type: 'int', allowNull: true },
         { name: 'demonstrationsLogged', type: 'int' },
         { name: 'demonstrationsComplete', type: 'int' },
+        { name: 'demonstrationsAtLevel', type: 'int' },
         { name: 'demonstrationsAverage', type: 'float', allowNull: true },
         { name: 'baselineRating', type: 'float', allowNull: true },
         { name: 'growth', type: 'float', allowNull: true },

@@ -1,3 +1,12 @@
+var levelLut = {
+  0 : "NE",
+  1 : "EN",
+  2 : "PR",
+  3 : "GB",
+  4 : "AD",
+  5 : "EX"
+}
+
 Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-student-contentareastatus',
@@ -30,10 +39,10 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter">',
                 '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
                 '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">Y{level - 8}</tpl></div>',
+                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">{level}</tpl></div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
             '</div>',
-
+            /*
             '<div class="stats-ct">',
                 '<table class="stats">',
                     '<thead>',
@@ -67,6 +76,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
                     '</tbody>',
                 '</table>',
             '</div>',
+            */
         '</div>'
     ],
     childEls: [
@@ -75,10 +85,10 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         'meterBarEl',
         'meterBarMissedEl',
         'meterLevelEl',
-        'meterPercentEl',
-        'missedEl',
-        'averageEl',
-        'growthEl'
+        //'meterPercentEl',
+        //'missedEl',
+        //'averageEl',
+        //'growthEl'
     ],
 
 
@@ -121,7 +131,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? 'Y'+(newLevel - 8) : '');
+          me.meterLevelEl.update(newLevel ? (newLevel) : '');
         }
     },
 
@@ -135,9 +145,9 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         if (me.rendered) {
             percentComplete = Ext.util.Format.number(percentComplete, me.getPercentFormat());
 
-            me.meterBarEl.setStyle('width', percentComplete);
-            me.meterBarMissedEl.setStyle('left', percentComplete);
-            me.meterPercentEl.update(percentComplete);
+           me.meterBarEl.setStyle('width', percentComplete);
+           // me.meterBarMissedEl.setStyle('left', percentComplete);
+           // me.meterPercentEl.update(percentComplete);
         }
     },
 
@@ -156,7 +166,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
 
     updateMissed: function(missed) {
         if (this.rendered) {
-            this.missedEl.update(Ext.isNumber(missed) ? missed.toString() : '&mdash;');
+            //this.missedEl.update(Ext.isNumber(missed) ? missed.toString() : '&mdash;');
         }
     },
 
@@ -164,7 +174,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         var me = this;
 
         if (me.rendered) {
-            me.averageEl.update(Ext.util.Format.number(average, me.getAverageFormat()));
+            //me.averageEl.update(Ext.util.Format.number(average, me.getAverageFormat()));
         }
     },
 
@@ -172,7 +182,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         var me = this;
 
         if (me.rendered) {
-            me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
+           // me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
         }
     }
 });
