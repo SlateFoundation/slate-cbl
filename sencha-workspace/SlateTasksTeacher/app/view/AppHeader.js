@@ -16,11 +16,31 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
     }, {
         xtype: 'slate-section-selector',
         itemId: 'sectionSelect',
+
         store: 'CourseSections'
     }, {
         xtype: 'slate-cohort-selector',
         itemId: 'cohortSelect',
-        store: 'SectionCohorts'
+        disabled: true,
+
+        store: 'SectionCohorts',
+        emptyText: 'All Students',
+        triggers: {
+            clear: {
+                cls: 'x-form-clear-trigger',
+                weight: -2,
+                hidden: true,
+                handler: function(combo) {
+                    combo.clearValue();
+                    combo.fireEvent('clear', combo);
+                }
+            }
+        },
+        listeners: {
+            change: function(combo, value) {
+                this.getTrigger('clear').setHidden(!value);
+            }
+        }
     }, {
         xtype: 'tbfill'
     }, {

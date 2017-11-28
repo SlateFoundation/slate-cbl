@@ -119,6 +119,14 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         }
     },
 
+    listen: {
+        store: {
+            '#SectionCohorts': {
+                load: 'onSectionCohortsLoad'
+            }
+        }
+    },
+
     control: {
         dashboardCt: {
             sectionselect: 'onSectionChange',
@@ -128,7 +136,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
             select: 'onSectionSelectorSelect'
         },
         cohortSelector: {
-            select: 'onCohortSelectorSelect'
+            select: 'onCohortSelectorSelect',
+            clear: 'onCohortSelectorClear'
         },
         tasksGrid: {
             cellclick: 'onTasksGridCellClick',
@@ -192,6 +201,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         this.getDashboardCt().render('slateapp-viewport');
     },
 
+
     // route handlers
     showDashboard: function(sectionCode, cohortCode) {
         var dashboardCt = this.getDashboardCt();
@@ -200,13 +210,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         dashboardCt.setCohort(cohortCode && cohortCode != 'all' ? cohortCode : false);
     },
 
-    // event handlers
-    onSectionSelectorSelect: function(sectionSelector, section) {
-        this.redirectTo([section.get('Code'), this.getDashboardCt().getCohort() || 'all']);
-    },
 
-    onCohortSelectorSelect: function(cohortSelector, cohort) {
-        this.redirectTo([this.getDashboardCt().getSection(), cohort.get('Cohort') || 'all']);
+    // event handlers
+    onSectionCohortsLoad: function() {
+        this.getCohortSelector().enable();
     },
 
     onSectionChange: function(dashboardView, courseSection) {
@@ -254,6 +261,18 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         // @todo update student section cohort and reload students
         // studentsStore.setSectionCohort(sectionCohort);
         // studentsStore.loadIfDirty();
+    },
+
+    onSectionSelectorSelect: function(sectionSelector, section) {
+        this.redirectTo([section.get('Code'), this.getDashboardCt().getCohort() || 'all']);
+    },
+
+    onCohortSelectorSelect: function(cohortSelector, cohort) {
+        this.redirectTo([this.getDashboardCt().getSection(), cohort.get('Cohort') || 'all']);
+    },
+
+    onCohortSelectorClear: function() {
+        this.redirectTo([this.getDashboardCt().getSection(), 'all']);
     },
 
     onTasksGridCellClick: function(grid, taskId, studentId) {
