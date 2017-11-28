@@ -197,16 +197,16 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var dashboardCt = this.getDashboardCt();
 
         dashboardCt.setSection(sectionCode || false);
-        dashboardCt.setCohort(cohortCode || false);
+        dashboardCt.setCohort(cohortCode && cohortCode != 'all' ? cohortCode : false);
     },
 
     // event handlers
     onSectionSelectorSelect: function(sectionSelector, section) {
-        this.redirectTo([section.get('Code'), this.getDashboardCt().getCohort()]);
+        this.redirectTo([section.get('Code'), this.getDashboardCt().getCohort() || 'all']);
     },
 
     onCohortSelectorSelect: function(cohortSelector, cohort) {
-        this.redirectTo([this.getDashboardCt().getSection(), cohort.get('Cohort')]);
+        this.redirectTo([this.getDashboardCt().getSection(), cohort.get('Cohort') || 'all']);
     },
 
     onSectionChange: function(dashboardView, courseSection) {
