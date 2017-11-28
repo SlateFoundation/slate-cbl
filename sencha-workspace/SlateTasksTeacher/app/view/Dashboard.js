@@ -4,45 +4,88 @@
 Ext.define('SlateTasksTeacher.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-tasks-teacher-dashboard',
-    requires:[
+    requires: [
         'SlateTasksTeacher.view.AppHeader',
         'SlateTasksTeacher.view.StudentsGrid',
-        'SlateTasksTeacher.view.GridLegend'
+        'SlateTasksTeacher.view.GridLegend',
+
+        'Slate.cbl.widget.Placeholder'
     ],
 
+
     config: {
+        // runtime state
         section: null,
         cohort: null,
 
-        taskGrid: true,
-        gridLegend: true
+        // subcomponent cubbies
+        placeholderCmp: {
+            html: 'Select a section to load tasks dashboard'
+        },
+        taskGrid: false,
+        gridLegend: false
     },
 
     items: [{
         xtype: 'slate-tasks-teacher-appheader'
     }],
 
+
+    // config handlers
     updateSection: function(section) {
-        this.fireEvent('sectionselect', this, section);
+        var me = this;
+
+        Ext.suspendLayouts();
+        me.setPlaceholderCmp(!section);
+        me.setTaskGrid(Boolean(section));
+        me.setGridLegend(Boolean(section));
+        Ext.resumeLayouts();
+
+        me.fireEvent('sectionselect', me, section);
     },
 
     updateCohort: function(cohort) {
         this.fireEvent('cohortselect', this, cohort);
     },
 
+    applyPlaceholderCmp: function(placeholderCmp, oldPlaceholderCmp) {
+        if (typeof placeholderCmp === 'boolean') {
+            placeholderCmp = {
+                hidden: !placeholderCmp
+            };
+        }
+
+        return Ext.factory(placeholderCmp, 'Slate.cbl.widget.Placeholder', oldPlaceholderCmp);
+    },
+
     applyTaskGrid: function(taskGrid, oldTaskGrid) {
+        if (typeof taskGrid === 'boolean') {
+            taskGrid = {
+                hidden: !taskGrid
+            };
+        }
+
         return Ext.factory(taskGrid, 'SlateTasksTeacher.view.StudentsGrid', oldTaskGrid);
     },
 
     applyGridLegend: function(gridLegend, oldGridLegend) {
+        if (typeof gridLegend === 'boolean') {
+            gridLegend = {
+                hidden: !gridLegend
+            };
+        }
+
         return Ext.factory(gridLegend, 'SlateTasksTeacher.view.GridLegend', oldGridLegend);
     },
 
+
+    // component lifecycle
     initComponent: function() {
         var me = this;
 
         me.callParent(arguments);
 
+        me.add(me.getPlaceholderCmp());
         me.add(me.getTaskGrid());
         me.add(me.getGridLegend());
     }
