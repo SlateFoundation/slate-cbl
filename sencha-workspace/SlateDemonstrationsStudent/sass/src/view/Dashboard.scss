@@ -16,7 +16,7 @@
         $level-color-dark:   nth($level-colors-dark,   ($n));
 
         &.level-color {
-            background-color: nth($level-colors, ($n));
+            background-color: nth($level-colors, ($n)) !important;
             color: white;
         }
 
