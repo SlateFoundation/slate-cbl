@@ -36,12 +36,14 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         '</header>',
 
         '<div class="panel-body">',
+            /*
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter">',
                 '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
                 '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
                 '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">{level}</tpl></div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
             '</div>',
+            */
             /*
             '<div class="stats-ct">',
                 '<table class="stats">',
@@ -131,7 +133,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         }
 
         if (me.rendered) {
-          me.meterLevelEl.update(newLevel ? (newLevel) : '');
+         // me.meterLevelEl.update(newLevel ? (newLevel) : '');
         }
     },
 
@@ -145,7 +147,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         if (me.rendered) {
             percentComplete = Ext.util.Format.number(percentComplete, me.getPercentFormat());
 
-           me.meterBarEl.setStyle('width', percentComplete);
+           //me.meterBarEl.setStyle('width', percentComplete);
            // me.meterBarMissedEl.setStyle('left', percentComplete);
            // me.meterPercentEl.update(percentComplete);
         }
@@ -160,7 +162,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
 
         if (me.rendered) {
             percentMissed = Ext.util.Format.number(percentMissed, me.getPercentFormat());
-            me.meterBarMissedEl.setStyle('width', percentMissed);
+            //me.meterBarMissedEl.setStyle('width', percentMissed);
         }
     },
 
