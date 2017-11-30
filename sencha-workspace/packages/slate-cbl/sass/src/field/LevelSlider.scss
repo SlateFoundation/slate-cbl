@@ -26,18 +26,18 @@
 
     .x-slider-horz,
     .x-slider-horz .x-slider-end {
-        @include background(linear-gradient(left, transparent 50%, $cbl-level-3-color 50% ));
+        @include background(linear-gradient(left, transparent 50%, $cbl-level-6-color 50% ));
     }
 
     .x-slider-inner {
         @include background-image(linear-gradient(left,
-                    transparent percentage(1/6),
-             $cbl-level-1-color percentage(1/6),
-             $cbl-level-1-color percentage(3/6),
-            $cbl-level-2-color percentage(3/6),
-            $cbl-level-2-color percentage(5/6),
-            $cbl-level-3-color percentage(5/6),
-            $cbl-level-3-color percentage(6/6)
+            transparent percentage(0.5/7),
+            $cbl-level-1-color percentage(1.5/7),
+            $cbl-level-2-color percentage(2.5/7),
+            $cbl-level-3-color percentage(3.5/7),
+            $cbl-level-4-color percentage(4.5/7),
+            $cbl-level-5-color percentage(5.5/7),
+            $cbl-level-6-color percentage(6.5/7)
         ));
 
         height: 10px;

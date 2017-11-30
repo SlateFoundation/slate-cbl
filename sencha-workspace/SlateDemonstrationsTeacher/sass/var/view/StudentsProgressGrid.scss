@@ -6,50 +6,20 @@ $label-cell-width: 180px;
 $data-cell-width:  150px;
 $data-cell-padding: .5em;
 
-$level-0-color: #666;
-$level-1-color: #d94181;
-$level-2-color: #ffa200;
-$level-3-color: #5dc02a;
-$level-4-color: #008cc1;
-$level-5-color: #a0522d;
-$level-6-color: #a0522d;
 
-$level-0-color-light: #999;
-$level-1-color-light: #ea97ba;
-$level-2-color-light: #ffcc73;
-$level-3-color-light: #a6dc8a;
-$level-4-color-light: #73c0dd;
-$level-5-color-light: #da845c;
-$level-6-color-light: #da845c;
-
-$level-0-color-medium: #777;
-$level-1-color-medium: #e1679a;
-$level-2-color-medium: #ffb533;
-$level-3-color-medium: #7dcd55;
-$level-4-color-medium: #33a3cd;
-$level-5-color-medium: #b66540;
-$level-6-color-medium: #b66540;
-
-$level-0-color-dark: #555;
-$level-1-color-dark: #ca274f;
-$level-2-color-dark: #ff7d00;
-$level-3-color-dark: #38a719;
-$level-4-color-dark: #005ea8;
-$level-5-color-dark: #8e4320;
-$level-6-color-dark: #8e4320;
 
 $level-colors:
-    $level-0-color,
+    $level-1-color,
     $level-1-color,
     $level-2-color,
     $level-3-color,
     $level-4-color,
     $level-5-color,
-    $level-5-color;
+    $level-6-color;
 
 $level-colors-light:
-     $level-0-color-light,
-     $level-1-color-light,
+    $level-1-color,
+    $level-1-color-light,
     $level-2-color-light,
     $level-3-color-light,
     $level-4-color-light,
@@ -57,8 +27,8 @@ $level-colors-light:
     $level-6-color-light;
 
 $level-colors-medium:
-     $level-0-color-medium,
-     $level-1-color-medium,
+    $level-1-color-medium,
+    $level-1-color-medium,
     $level-2-color-medium,
     $level-3-color-medium,
     $level-4-color-medium,
@@ -66,8 +36,8 @@ $level-colors-medium:
     $level-6-color-medium;
 
 $level-colors-dark:
-     $level-0-color-dark,
-     $level-1-color-dark,
+    $level-1-color-dark,
+    $level-1-color-dark,
     $level-2-color-dark,
     $level-3-color-dark,
     $level-4-color-dark,

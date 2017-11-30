@@ -2,6 +2,16 @@
 /**
  * TODO: convert to a direct decendent for sliderfield that appends the label element instead of using container+component and burying the form api
  */
+
+ var levelLut = {
+   0 : "NE",
+   1 : "EN",
+   2 : "PR",
+   3 : "GB",
+   4 : "AD",
+   5 : "EX",
+   6 : "BA"
+ }
 Ext.define('Slate.cbl.field.LevelSlider', {
     extend: 'Ext.slider.Single',
     xtype: 'slate-cbl-levelsliderfield',
@@ -16,7 +26,7 @@ Ext.define('Slate.cbl.field.LevelSlider', {
 
     componentCls: 'cbl-level-slider-field',
     minValue: 0,
-    maxValue: 4,
+    maxValue: 6,
     useTips: false,
     thumbTpl: [
         '<span class="value">',
@@ -25,7 +35,7 @@ Ext.define('Slate.cbl.field.LevelSlider', {
             '<tpl elseif="value === 0">',
                 'M',
             '<tpl else>',
-                '{value}',
+                '{[levelLut[values.value]]}',
             '</tpl>',
         '</span>'
     ],

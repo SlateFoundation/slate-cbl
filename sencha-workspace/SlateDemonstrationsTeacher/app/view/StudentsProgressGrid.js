@@ -4,6 +4,7 @@
 
 var levelLut = {
   0 : "NE",
+  0.5 : "IE",
   1 : "EN",
   2 : "PR",
   3 : "GB",
@@ -754,7 +755,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             competencyStudentData = competencyData.studentsById[studentId];
             progressCellEl = competencyStudentData.progressCellEl;
 
-            count = completion.get('demonstrationsComplete');
+            count = completion.get('demonstrationsAtLevel');
             average = completion.get('demonstrationsAverage');
             level = completion.get('currentLevel');
             renderedLevel = competencyStudentData.renderedLevel;
@@ -766,7 +767,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
             if (countDirty || averageDirty) {
                 percentComplete = 100 * (count || 0) / demonstrationsRequired;
-                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competencyData.competency.minimumAverageOffset));
+                //progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competencyData.competency.minimumAverageOffset));
             }
 
             if (countDirty) {
