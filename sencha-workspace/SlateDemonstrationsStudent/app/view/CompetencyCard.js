@@ -57,7 +57,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
                 '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
                 '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">{[ ["M","EN","PR","GB","AD","EX","BA"][values.level] ]}</div>',
+                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">{[ levelLut[values.level] ]}</div>',
                 '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
             '</div>',
             /*
@@ -219,7 +219,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             percentComplete = 100 * completion.get('demonstrationsAtLevel') / demonstrationsRequired;
 
         me.setLevel(currentLevel);
-        me.setPercentComplete(percentComplete / (currentLevel));
+        me.setPercentComplete(percentComplete);
         me.setPercentMissed(100 * completion.get('demonstrationsMissed') / demonstrationsRequired);
         me.setDemonstrationsAverage(demonstrationsAverage);
         //me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
