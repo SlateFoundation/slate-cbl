@@ -292,7 +292,7 @@ class StudentCompetency extends \ActiveRecord
     private $demonstrationsAtLevel;
     public function getDemonstrationsAtLevel()
     {
-        if ($this->demonstrationsComplete === null) {
+        if ($this->demonstrationsAtLevel === null) {
             $this->demonstrationsAtLevel = 0;
 
 
@@ -305,16 +305,16 @@ class StudentCompetency extends \ActiveRecord
                 foreach ($demonstrationData as $demonstration) {
                     if (!empty($demonstration['Override'])) {
                         $skillCount += $demonstrationsRequired;
-                      } elseif (!empty($demonstration['DemonstratedLevel']) && $demonstration['DemonstratedLevel'] >= $level) {
+                      } elseif (!empty($demonstration['DemonstratedLevel']) && $demonstration['DemonstratedLevel'] > $level + 1) {
                         $skillCount++;
                     }
                 }
 
-                $this->demonstrationsComplete += min($demonstrationsRequired, $skillCount);
+                $this->demonstrationsAtLevel += min($demonstrationsRequired, $skillCount);
             }
         }
 
-        return $this->demonstrationsComplete;
+        return $this->demonstrationsAtLevel;
     }
 
     private $demonstrationsAverage;
@@ -453,6 +453,7 @@ class StudentCompetency extends \ActiveRecord
                 'baselineRating' => null,
                 'demonstrationsLogged' => 0,
                 'demonstrationsMissed' => 0,
+                'demonstrationsAtLevel' => 0,
                 'demonstrationsComplete' => 0,
                 'demonstrationsAverage' => null,
                 'demonstrationsRequired' => null,
