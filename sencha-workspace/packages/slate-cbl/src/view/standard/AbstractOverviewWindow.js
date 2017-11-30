@@ -4,6 +4,10 @@
  *
  * @abstract
  */
+function getBaxterLevel(level) {
+  return ["M","EN","PR","GB","AD","EX","BA"][level];
+}
+
 Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
     extend: 'Ext.window.Window',
     xtype: 'slate-cbl-standard-abstractoverviewwindow',
@@ -69,7 +73,9 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                             '<tr class="skill-grid-demo-row" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstrated:date}</td>',
-                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{TargetLevel}"><tpl if="DemonstratedLevel==0">M<tpl else>{DemonstratedLevel}</tpl></div></td>',
+                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{TargetLevel}">',
+                                '<tpl if="DemonstratedLevel==0">M<tpl else>{[getBaxterLevel(values.DemonstratedLevel)]}',
+                                '</tpl></div></td>',
                                 '<tpl if="Override">',
                                     '<td colspan="3" class="skill-grid-demo-data skill-grid-override">Override</td>',
                                 '<tpl else>',
@@ -119,6 +125,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
 
 
     // template methods
+
     initComponent: function() {
         var me = this;
 
@@ -127,6 +134,8 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
         me.skillStatementCmp = me.down('[reference=skillStatement]');
         me.demonstrationsTable = me.down('[reference=demonstrationsTable]');
     },
+
+
 
     afterRender: function() {
         var me = this;
