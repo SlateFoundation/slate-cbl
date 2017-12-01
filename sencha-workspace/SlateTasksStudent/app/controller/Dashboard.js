@@ -43,9 +43,11 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     // entry points
     routes: {
         ':studentUsername/:sectionCode': {
-            studentUsername: '([^/])+',
-            sectionCode: '([^/])+',
-            action: 'showDashboard'
+            action: 'showDashboard',
+            conditions: {
+                ':studentUsername': '([^/]+)',
+                ':sectionCode': '([^/]+)'
+            }
         }
     },
 
