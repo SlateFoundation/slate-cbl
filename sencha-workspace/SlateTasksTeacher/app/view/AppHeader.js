@@ -9,21 +9,26 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
     xtype: 'slate-tasks-teacher-appheader',
 
     items: [{
+        itemId: 'title',
+
         xtype: 'component',
         cls: 'slate-appheader-title',
-        itemId: 'title',
         html: 'Teacher Task Manager'
     }, {
-        xtype: 'slate-section-selector',
         itemId: 'sectionSelect',
 
-        store: 'CourseSections'
+        xtype: 'slate-section-selector',
+        store: 'Sections',
+        valueField: 'Code',
+        queryMode: 'local',
+        emptyText: 'Select'
     }, {
-        xtype: 'slate-cohort-selector',
         itemId: 'cohortSelect',
-        disabled: true,
 
+        xtype: 'slate-cohort-selector',
+        disabled: true,
         store: 'SectionCohorts',
+        queryMode: 'local',
         emptyText: 'All Students',
         triggers: {
             clear: {

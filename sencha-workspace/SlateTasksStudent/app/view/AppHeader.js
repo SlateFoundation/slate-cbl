@@ -64,7 +64,7 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
 
                 xtype: 'slate-section-selector',
                 disabled: true,
-                store: 'CourseSections',
+                store: 'Sections',
                 valueField: 'Code',
                 queryMode: 'local',
                 autoSelect: false,

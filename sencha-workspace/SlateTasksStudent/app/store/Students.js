@@ -7,6 +7,7 @@ Ext.define('SlateTasksStudent.store.Students', {
 
     config: {
         pageSize: 0,
+        remoteSort: false,
         sorters: [{
             property: 'SortName',
             direction: 'ASC'
@@ -15,6 +16,6 @@ Ext.define('SlateTasksStudent.store.Students', {
             type: 'slate-records',
             url: '/people',
             summary: true
-        },
+        }
     }
 });
