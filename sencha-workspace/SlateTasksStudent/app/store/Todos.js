@@ -8,7 +8,8 @@ Ext.define('SlateTasksStudent.store.Todos', {
         student: null,
         section: null,
 
-        pageSize: 0
+        pageSize: 0,
+        remoteSort: false
     },
 
 

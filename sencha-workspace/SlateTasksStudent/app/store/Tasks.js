@@ -9,6 +9,7 @@ Ext.define('SlateTasksStudent.store.Tasks', {
         section: null,
 
         pageSize: 0,
+        remoteSort: false,
 
         sorters: [{
             sorterFn: function(task1, task2) {
