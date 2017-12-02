@@ -178,8 +178,10 @@ Ext.define('Slate.cbl.widget.RatingView', {
 
         target.addCls('is-selected');
 
+        console.log("SELECTRATING");
+        console.log(rating);
         return me.fireEvent('rateskill', me, {
-            rating: rating,
+            Rating: rating,
             SkillID: skill,
             CompetencyID: competency
         });
