@@ -132,15 +132,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     onCohortChange: function(dashboardView, cohortName) {
-        var cohortSelection = this.getCohortSelector(),
-            sectionParticipants = this.getSectionParticipantsStore();
-
         // push value to selector
-        cohortSelection.setValue(cohortName);
-
-        // (re)load participants list
-        sectionParticipants.setCohort(cohortName);
-        sectionParticipants.loadIfDirty();
+        this.getCohortSelector().setValue(cohortName);
     },
 
     onSectionSelectorSelect: function(sectionSelector, section) {
