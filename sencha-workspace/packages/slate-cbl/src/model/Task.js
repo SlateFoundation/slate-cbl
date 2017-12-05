@@ -165,10 +165,6 @@ Ext.define('Slate.cbl.model.Task', {
         message: 'Title is required'
     }],
 
-    toUrl: function() {
-        return '/cbl/tasks/' + this.getId();
-    },
-
     getSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
             skills = this.get('Skills');
