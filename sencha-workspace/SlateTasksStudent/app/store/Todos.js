@@ -2,7 +2,7 @@ Ext.define('SlateTasksStudent.store.Todos', {
     extend: 'Ext.data.Store',
 
 
-    model: 'SlateTasksStudent.model.StudentTodo',
+    model: 'SlateTasksStudent.model.TodosGroup',
 
     config: {
         student: null,
