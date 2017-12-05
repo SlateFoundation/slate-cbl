@@ -13,8 +13,7 @@ Ext.define('SlateTasksStudent.store.Students', {
             direction: 'ASC'
         }],
         proxy: {
-            type: 'slate-records',
-            url: '/people',
+            type: 'slate-people',
             summary: true
         }
     }
