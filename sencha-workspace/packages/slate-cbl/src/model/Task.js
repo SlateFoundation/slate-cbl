@@ -156,7 +156,15 @@ Ext.define('Slate.cbl.model.Task', {
     ],
 
     proxy: {
-        type: 'slate-cbl-tasks'
+        type: 'slate-cbl-tasks',
+        include: [
+            'Creator',
+            'ParentTask',
+            'Skills',
+            'Attachments.File',
+            'StudentTasks'
+        ],
+        timeout: 180000 // extended timeout for handling attachment permission requests
     },
 
     validators: [{
