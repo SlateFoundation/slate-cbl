@@ -25,17 +25,14 @@ Ext.define('Slate.cbl.model.StudentTask', {
             name: 'Created',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'CreatorID',
             type: 'int',
-            allowNull: true
-        },
-        {
-            name: 'RevisionID',
-            type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'Modified',
@@ -53,8 +50,16 @@ Ext.define('Slate.cbl.model.StudentTask', {
             type: 'int'
         },
         {
+            name: 'Task',
+            persist: false
+        },
+        {
             name: 'StudentID',
             type: 'int'
+        },
+        {
+            name: 'Student',
+            persist: false
         },
         {
             name: 'ExperienceType',
