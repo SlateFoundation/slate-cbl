@@ -9,7 +9,12 @@ Ext.define('SlateTasksStudent.store.Todos', {
         section: null,
 
         pageSize: 0,
-        remoteSort: false
+        remoteSort: false,
+
+        // redeclare identical proxy as model for dynamic reconfiguration
+        proxy: {
+            type: 'slate-cbl-todos'
+        }
     },
 
 
