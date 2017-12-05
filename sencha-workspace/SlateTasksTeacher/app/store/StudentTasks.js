@@ -1,24 +1,30 @@
 Ext.define('SlateTasksTeacher.store.StudentTasks', {
     extend: 'Ext.data.Store',
-    requires: [
-        'Slate.proxy.Records'
-    ],
+
 
     model: 'Slate.cbl.model.StudentTask',
-    remoteFilter: true,
-    remoteSort: true,
-    pageSize: 0,
-
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/student-tasks',
-        include: 'Attachments.File,Comments,Skills,Student,TaskSkills,Submissions'
-    },
-
     config: {
-        courseSection: null
+        courseSection: null,
+
+        remoteFilter: true,
+        remoteSort: true,
+        pageSize: 0,
+
+        // redeclare identical proxy as model for dynamic reconfiguration
+        proxy: {
+            type: 'slate-cbl-studenttasks',
+            include: [
+                'Attachments.File',
+                'Comments',
+                'Skills',
+                'Student',
+                'TaskSkills',
+                'Submissions'
+            ]
+        },
     },
 
+    // config handlers
     updateCourseSection: function(courseSection) {
         var me = this;
 

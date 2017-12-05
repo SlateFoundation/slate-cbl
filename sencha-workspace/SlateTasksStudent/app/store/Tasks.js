@@ -52,8 +52,9 @@ Ext.define('SlateTasksStudent.store.Tasks', {
             }
         }],
 
+        // redeclare identical proxy as model for dynamic reconfiguration
         proxy: {
-            type: 'slate-records',
+            type: 'slate-cbl-studenttasks',
             url: '/cbl/student-tasks/assigned',
             include: [
                 'Submitted',
