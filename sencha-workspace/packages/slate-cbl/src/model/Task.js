@@ -1,11 +1,12 @@
 Ext.define('Slate.cbl.model.Task', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records',
+        'Slate.cbl.proxy.tasks.Tasks',
         'Ext.data.identifier.Negative',
         'Ext.data.validator.Length',
         'Ext.data.validator.Presence'
     ],
+
 
     idProperty: 'ID',
     identifier: 'negative',
@@ -155,16 +156,7 @@ Ext.define('Slate.cbl.model.Task', {
     ],
 
     proxy: {
-        type: 'slate-records',
-        url: '/cbl/tasks',
-        include: [
-            'Creator',
-            'ParentTask',
-            'Skills',
-            'Attachments.File',
-            'StudentTasks'
-        ],
-        timeout: 180000 // extended timeout for handling attachment permission requests
+        type: 'slate-cbl-tasks'
     },
 
     validators: [{
@@ -177,12 +169,13 @@ Ext.define('Slate.cbl.model.Task', {
         return '/cbl/tasks/' + this.getId();
     },
 
-     getSkillsGroupedByCompetency: function() {
+    getSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
             skills = this.get('Skills');
 
         Ext.each(skills, function(skill) {
             var compIdx;
+
             if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
                 compIdx = compIds.length;
                 comps[compIdx] = {

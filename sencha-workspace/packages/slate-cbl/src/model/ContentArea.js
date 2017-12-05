@@ -1,8 +1,7 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.model.ContentArea', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records',
+        'Slate.cbl.proxy.ContentAreas',
         'Ext.data.identifier.Negative'
     ],
 
@@ -13,38 +12,37 @@ Ext.define('Slate.cbl.model.ContentArea', {
 
     fields: [
         {
-            name: "ID",
-            type: "int",
+            name: 'ID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "Class",
-            type: "string",
-            defaultValue: "Slate\\CBL\\ContentArea"
+            name: 'Class',
+            type: 'string',
+            defaultValue: 'Slate\\CBL\\ContentArea'
         },
         {
-            name: "Created",
-            type: "date",
-            dateFormat: "timestamp",
+            name: 'Created',
+            type: 'date',
+            dateFormat: 'timestamp',
             allowNull: true
         },
         {
-            name: "CreatorID",
-            type: "int",
+            name: 'CreatorID',
+            type: 'int',
             allowNull: true
         },
         {
-            name: "Code",
-            type: "string"
+            name: 'Code',
+            type: 'string'
         },
         {
-            name: "Title",
-            type: "string"
+            name: 'Title',
+            type: 'string'
         }
     ],
 
     proxy: {
-        type: 'slate-records',
-        url: '/cbl/content-areas'
+        type: 'slate-cbl-contentareas'
     }
 });

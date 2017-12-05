@@ -1,10 +1,10 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('Slate.cbl.model.Competency', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records',
+        'Slate.cbl.proxy.Competencies',
         'Ext.data.identifier.Negative'
     ],
+
 
     // model config
     idProperty: 'ID',
@@ -36,8 +36,6 @@ Ext.define('Slate.cbl.model.Competency', {
     },
 
     proxy: {
-        type: 'slate-records',
-        url: '/cbl/competencies',
-        include: ['totalDemonstrationsRequired', 'minimumAverageOffset']
+        type: 'slate-cbl-competencies'
     }
 });

@@ -1,8 +1,7 @@
-/* jslint browser: true, undef: true *//* global Ext*/
 Ext.define('Slate.cbl.model.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
-        'Emergence.ext.proxy.Records',
+        'Slate.cbl.proxy.tasks.StudentTasks',
         'Ext.data.identifier.Negative'
     ],
 
@@ -88,8 +87,7 @@ Ext.define('Slate.cbl.model.StudentTask', {
     ],
 
     proxy: {
-        type: 'slate-records',
-        url: '/cbl/student-tasks'
+        type: 'slate-cbl-studenttasks'
     },
 
     toUrl: function() {
