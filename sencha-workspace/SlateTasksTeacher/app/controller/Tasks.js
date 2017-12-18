@@ -151,7 +151,12 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
 
     // event handlers
-    onStudentTasksLoad: function(store) {
+    onStudentTasksLoad: function(store, records, success) {
+        if (!success) {
+            return;
+        }
+
+        // eslint-disable-next-line vars-on-top
         var relatedData = store.getProxy().getReader().rawData.related || {};
 
         this.getTasksStore().loadRawData(relatedData.Task || []);
