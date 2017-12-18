@@ -5,6 +5,7 @@ namespace Slate\CBL\Tasks;
 use DB;
 use HandleBehavior;
 use Emergence\People\Person;
+use Slate\Courses\Section;
 use Slate\CBL\Skill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
@@ -25,6 +26,11 @@ class Task extends \VersionedRecord
     ];
 
     public static $fields = [
+        'SectionID' => [
+            'type' => 'uint',
+            'index' => true,
+            'default' => null
+        ],
         'Title' => [
             'includeInSummary' => true
         ],
@@ -62,10 +68,17 @@ class Task extends \VersionedRecord
     ];
 
     public static $validators = [
+        'Section' => [
+            'validator' => 'require-relationship'
+        ],
         'Title'
     ];
 
     public static $relationships = [
+        'Section' => [
+            'type' => 'one-one',
+            'class' => Section::class
+        ],
         'ParentTask' => [
             'type' => 'one-one',
             'class' => __CLASS__,
@@ -107,6 +120,7 @@ class Task extends \VersionedRecord
     ];
 
     public static $dynamicFields = [
+        'Section',
         'Skills',
         'Creator' => [
             'includeInSummary' => true,
