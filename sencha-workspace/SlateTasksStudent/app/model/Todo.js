@@ -83,7 +83,5 @@ Ext.define('SlateTasksStudent.model.Todo', {
         }
     ],
 
-    proxy: {
-        type: 'slate-cbl-todos'
-    }
+    proxy: 'slate-cbl-todos'
 });

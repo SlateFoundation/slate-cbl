@@ -35,7 +35,5 @@ Ext.define('Slate.cbl.model.Competency', {
         return requirements['default']; // eslint-disable-dot-notation
     },
 
-    proxy: {
-        type: 'slate-cbl-competencies'
-    }
+    proxy: 'slate-cbl-competencies'
 });

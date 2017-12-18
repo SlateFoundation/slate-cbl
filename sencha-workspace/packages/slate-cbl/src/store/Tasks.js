@@ -11,9 +11,7 @@ Ext.define('Slate.cbl.store.Tasks', {
         pageSize: 0,
 
         // redeclare identical proxy as model for dynamic reconfiguration
-        proxy: {
-            type: 'slate-cbl-tasks'
-        }
+        proxy: 'slate-cbl-tasks'
     },
 
 

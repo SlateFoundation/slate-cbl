@@ -91,9 +91,7 @@ Ext.define('Slate.cbl.model.StudentTask', {
         }
     ],
 
-    proxy: {
-        type: 'slate-cbl-studenttasks'
-    },
+    proxy: 'slate-cbl-studenttasks',
 
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],

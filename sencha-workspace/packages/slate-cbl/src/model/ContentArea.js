@@ -42,7 +42,5 @@ Ext.define('Slate.cbl.model.ContentArea', {
         }
     ],
 
-    proxy: {
-        type: 'slate-cbl-contentareas'
-    }
+    proxy: 'slate-cbl-contentareas'
 });
