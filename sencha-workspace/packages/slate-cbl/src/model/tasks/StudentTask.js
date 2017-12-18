@@ -11,6 +11,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
     identifier: 'negative',
 
     fields: [
+        // ActiveRecord fields
         {
             name: 'ID',
             type: 'int',
@@ -45,21 +46,15 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             type: 'int',
             allowNull: true
         },
+
+        // StudentTask fields
         {
             name: 'TaskID',
             type: 'int'
         },
         {
-            name: 'Task',
-            persist: false
-        },
-        {
             name: 'StudentID',
             type: 'int'
-        },
-        {
-            name: 'Student',
-            persist: false
         },
         {
             name: 'ExperienceType',
@@ -68,12 +63,6 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
         },
         {
             name: 'DueDate',
-            type: 'date',
-            dateFormat: 'timestamp',
-            allowNull: true
-        },
-        {
-            name: 'Submitted',
             type: 'date',
             dateFormat: 'timestamp',
             allowNull: true
@@ -88,11 +77,17 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             name: 'TaskStatus',
             type: 'string',
             defaultValue: 'assigned'
+        },
+        {
+            name: 'DemonstrationID',
+            type: 'int',
+            allowNull: true
         }
     ],
 
     proxy: 'slate-cbl-studenttasks',
 
+    // TODO: review if still needed
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
             skills = this.get('TaskSkills') || [],

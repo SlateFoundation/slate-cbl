@@ -3,8 +3,8 @@ Ext.define('Slate.cbl.model.tasks.Task', {
     requires: [
         'Slate.cbl.proxy.tasks.Tasks',
         'Ext.data.identifier.Negative',
-        'Ext.data.validator.Length',
-        'Ext.data.validator.Presence'
+        'Ext.data.validator.Presence',
+        'Ext.data.validator.Range'
     ],
 
 
@@ -12,6 +12,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
     identifier: 'negative',
 
     fields: [
+        // ActiveRecord fields
         {
             name: 'ID',
             type: 'int',
@@ -35,11 +36,6 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             allowNull: true,
             persist: false
         },
-        { // remove field?
-            name: 'RevisionID',
-            type: 'int',
-            allowNull: true
-        },
         {
             name: 'Modified',
             type: 'date',
@@ -53,6 +49,13 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             allowNull: true,
             persist: false
         },
+
+        // Task fields
+        {
+            name: 'SectionID',
+            type: 'int',
+            allowNull: true
+        },
         {
             name: 'Title',
             type: 'string'
@@ -64,6 +67,11 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         },
         {
             name: 'ParentTaskID',
+            type: 'int',
+            allowNull: true
+        },
+        {
+            name: 'ClonedTaskID',
             type: 'int',
             allowNull: true
         },
@@ -93,86 +101,86 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             type: 'string',
             defaultValue: 'shared'
         },
+
+        // ExperienceTask fields
         {
             name: 'ExperienceType',
             type: 'string',
             defaultValue: 'Studio'
         },
-        {
-            name: 'Creator',
-            persist: false
-        },
+
+        // writable dynamic fields
         {
             name: 'Attachments'
         },
         {
-            name: 'Comments',
-            persist: false
+            name: 'Assignees'
         },
-        {
-            name: 'ParentTask',
-            persist: false
-        },
-        {
-            name: 'Skills',
-            persist: false
-        },
-        {
-            name: 'ParentTaskTitle',
-            depends: 'ParentTask',
-            mapping: 'ParentTask.Title',
-            persist: false
-        },
-        {
-            name: 'CreatorFullName',
-            depends: 'Creator',
-            persist: false,
-            calculate: function(data) {
-                if (!data.Creator) {
-                    return null;
-                }
-                return data.Creator.FirstName + ' ' + data.Creator.LastName;
-            }
-        },
-        {
-            name: 'SkillIDs',
-            depends: 'Skills',
-            persist: true,
-            calculate: function(data) {
-                if (!Ext.isEmpty(data.Skills)) {
-                    return Ext.Array.map(data.Skills, function(skill) {
-                        return skill.ID;
-                    });
-                }
 
-                return [];
-            }
+        // virtual fields
+        // TODO: review if still needed
+        // {
+        //     name: 'ParentTaskTitle',
+        //     depends: 'ParentTask',
+        //     mapping: 'ParentTask.Title'
+        // },
+        // {
+        //     name: 'CreatorFullName',
+        //     depends: 'Creator',
+        //     calculate: function(data) {
+        //         if (!data.Creator) {
+        //             return null;
+        //         }
+
+        //         return data.Creator.FirstName + ' ' + data.Creator.LastName;
+        //     }
+        // },
+        // {
+        //     name: 'SkillIDs',
+        //     depends: 'Skills',
+        //     persist: true,
+        //     calculate: function(data) {
+        //         if (!Ext.isEmpty(data.Skills)) {
+        //             return Ext.Array.map(data.Skills, function(skill) {
+        //                 return skill.ID;
+        //             });
+        //         }
+
+        //         return [];
+        //     }
+        // }
+    ],
+
+    proxy: 'slate-cbl-tasks',
+
+    // TODO: review if still needed
+    // proxy: {
+    //     type: 'slate-cbl-tasks',
+    //     include: [
+    //         'Creator',
+    //         'ParentTask',
+    //         'Skills',
+    //         'Attachments.File',
+    //         'StudentTasks'
+    //     ],
+    //     timeout: 180000 // extended timeout for handling attachment permission requests
+    // },
+
+    validators: [
+        {
+            type: 'min',
+            field: 'SectionID',
+            min: 1,
+            emptyMessage: 'SectionID is required'
         },
         {
-            name: 'SectionID',
-            persist: true,
-            critical: true
+            type: 'presence',
+            field: 'Title',
+            message: 'Title is required'
         }
     ],
 
-    proxy: {
-        type: 'slate-cbl-tasks',
-        include: [
-            'Creator',
-            'ParentTask',
-            'Skills',
-            'Attachments.File',
-            'StudentTasks'
-        ],
-        timeout: 180000 // extended timeout for handling attachment permission requests
-    },
-
-    validators: [{
-        type: 'presence',
-        field: 'Title',
-        message: 'Title is required'
-    }],
-
+    // TODO: review if still needed
     getSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
             skills = this.get('Skills');
@@ -196,6 +204,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         return comps;
     },
 
+    // TODO: review if still needed
     getAssigneeIds: function() {
         var assignees = [],
             studentTasks = this.get('StudentTasks') || [],
