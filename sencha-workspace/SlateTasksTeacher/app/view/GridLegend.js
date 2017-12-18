@@ -19,7 +19,7 @@ Ext.define('SlateTasksTeacher.view.GridLegend', {
 
     data: [
         {
-            cls: 'notassigned',
+            cls: 'unassigned',
             title: 'Not Assigned'
         },
         {
