@@ -18,12 +18,12 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
             }]
         },
         subRowsStore: 'Tasks',
-        columnsStore: 'Students',
+        columnsStore: 'SectionParticipants',
 
         dataStore: 'StudentTasks',
         subDataStore: 'StudentTasks',
 
-        columnHeaderField: 'FullName',
+        columnHeaderTpl: '{Person.FirstName} {Person.LastName}',
         rowHeaderField: 'Title',
         subRowHeaderField: 'Title',
 
