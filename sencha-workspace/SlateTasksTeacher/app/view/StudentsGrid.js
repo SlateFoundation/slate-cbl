@@ -5,7 +5,10 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
     extend: 'Jarvus.aggregrid.RollupAggregrid',
     xtype: 'slate-studentsgrid',
     requires: [
-        'Ext.data.ChainedStore'
+        'Ext.data.ChainedStore',
+
+        /* global Slate */
+        'Slate.cbl.model.tasks.Task'
     ],
 
     config: {
@@ -103,17 +106,14 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
 
         cellRenderer: function(group, cellEl) {
             var me = this,
-                activeStatuses = [
-                    'assigned',
-                    're-assigned',
-                    'submitted',
-                    're-submitted'
-                ],
+                activeStatuses = Slate.cbl.model.tasks.Task.activeStatuses,
                 cellClasses = ['jarvus-aggregrid-cell', 'slate-studentsgrid-cell'],
                 statusClasses = me.getStatusClasses(),
                 record,
                 dueDate, endOfDueDate, status,
                 now, isLate;
+
+debugger;
 
             if (group.records && group.records.length && (record = group.records[0].record)) {
                 dueDate = record.get('DueDate');

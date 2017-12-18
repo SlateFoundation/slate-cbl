@@ -95,7 +95,7 @@
         border-top: 1px solid #e3e3e3;
     }
 
-    @include slate-todolist-item-status('notassigned',  $slate-task-color-notassigned);
+    @include slate-todolist-item-status('unassigned',   $slate-task-color-unassigned);
     @include slate-todolist-item-status('due',          $slate-task-color-due);
     @include slate-todolist-item-status('completed',    $slate-task-color-completed);
     @include slate-todolist-item-status('revision',     $slate-task-color-revision);
