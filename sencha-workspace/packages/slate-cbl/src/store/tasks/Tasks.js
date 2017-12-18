@@ -36,5 +36,36 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
 
         this.dirty = false;
         this.load();
+    },
+
+    loadRecords: function() {
+        var me = this,
+            childTasks = {},
+            count, index, task, parentTaskId;
+
+        me.callParent(arguments);
+
+        // decorate Task records with ChildTasks arrays
+        count = me.getCount();
+
+        for (index = 0; index < count; index++) {
+            task = me.getAt(index);
+            parentTaskId = task.get('ParentTaskID');
+
+            if (!parentTaskId) {
+                continue;
+            }
+
+            if (parentTaskId in childTasks) {
+                childTasks[parentTaskId].push(task);
+            } else {
+                childTasks[parentTaskId] = [task];
+            }
+        }
+
+        for (index = 0; index < count; index++) {
+            task = me.getAt(index);
+            task.set('ChildTasks', childTasks[task.getId()] || []);
+        }
     }
 });
