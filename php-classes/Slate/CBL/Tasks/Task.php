@@ -39,20 +39,24 @@ class Task extends \VersionedRecord
         ],
         'ParentTaskID' => [
             'type' => 'uint',
-            'notnull' => false,
+            'default' => null,
             'includeInSummary' => true
+        ],
+        'ClonedTaskID' => [
+            'type' => 'uint',
+            'default' => null,
         ],
         'DueDate' => [
             'type' => 'timestamp',
-            'notnull' => false
+            'default' => null,
         ],
         'ExpirationDate' => [
             'type' => 'timestamp',
-            'notnull' => false
+            'default' => null,
         ],
         'Instructions' => [
             'type' => 'clob',
-            'notnull' => false
+            'default' => null,
         ],
         'Shared' => [
             'type' => 'enum',
@@ -81,8 +85,11 @@ class Task extends \VersionedRecord
         ],
         'ParentTask' => [
             'type' => 'one-one',
-            'class' => __CLASS__,
-            'local' => 'ParentTaskID'
+            'class' => __CLASS__
+        ],
+        'ClonedTask' => [
+            'type' => 'one-one',
+            'class' => __CLASS__
         ],
         'SubTasks' => [
             'type' => 'one-many',
