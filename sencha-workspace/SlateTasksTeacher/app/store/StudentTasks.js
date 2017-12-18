@@ -1,10 +1,10 @@
-Ext.define('SlateTasksTeacher.store.StudentTasks', {
+Ext.define('Slate.cbl.store.tasks.StudentTasks', {
     extend: 'Ext.data.Store',
 
 
     model: 'Slate.cbl.model.tasks.StudentTask',
     config: {
-        courseSection: null,
+        section: null,
 
         remoteFilter: true,
         remoteSort: true,
@@ -24,12 +24,27 @@ Ext.define('SlateTasksTeacher.store.StudentTasks', {
         },
     },
 
+
+    constructor: function() {
+        this.callParent(arguments);
+        this.dirty = true;
+    },
+
+
     // config handlers
-    updateCourseSection: function(courseSection) {
-        var me = this;
+    updateSection: function(section) {
+        this.getProxy().setExtraParam('course_section', section || null);
+        this.dirty = true;
+    },
 
-        me.getProxy().setExtraParam('course_section', courseSection);
 
-        return me;
+    // member methods
+    loadIfDirty: function() {
+        if (!this.dirty) {
+            return;
+        }
+
+        this.dirty = false;
+        this.load();
     }
 });
