@@ -2,10 +2,13 @@
 Ext.define('SlateTasksStudent.model.Task', {
     extend: 'Ext.data.Model',
     requires: [
+        'Ext.data.identifier.Negative',
+
+        /* global Slate */
         'Slate.cbl.proxy.tasks.StudentTasks',
         'Slate.cbl.model.tasks.Attachment',
         'Slate.cbl.model.Skill',
-        'Ext.data.identifier.Negative'
+        'Slate.cbl.model.tasks.Task'
     ],
 
 
@@ -196,6 +199,20 @@ Ext.define('SlateTasksStudent.model.Task', {
                 dueTime.setHours(23, 59, 59, 999);
 
                 return dueTime;
+            }
+        },
+        {
+            name: 'IsLate',
+            persist: false,
+            depends: ['DueTime', 'TaskStatus'],
+            convert: function (v, r) {
+                var dueTime = r.get('DueTime');
+
+                return (
+                    dueTime
+                    && dueTime.getTime() < Date.now()
+                    && Slate.cbl.model.tasks.Task.activeStatuses.indexOf(r.get('TaskStatus')) > -1
+                );
             }
         }
     ],
