@@ -1,8 +1,11 @@
 Ext.define('Slate.cbl.model.tasks.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
+        'Ext.data.identifier.Negative',
+
+        /* global Slate */
         'Slate.cbl.proxy.tasks.StudentTasks',
-        'Ext.data.identifier.Negative'
+        'Slate.cbl.model.tasks.Task'
     ],
 
 
@@ -82,6 +85,42 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             name: 'DemonstrationID',
             type: 'int',
             allowNull: true
+        },
+
+        // virtual fields
+        {
+            name: 'DueTime',
+            persist: false,
+            depends: ['DueDate'],
+            convert: function(v, r) {
+                var dueDate = r.get('DueDate'),
+                    dueTime;
+
+                if (!dueDate) {
+                    return null;
+                }
+
+                dueTime = new Date(dueDate);
+
+                // task is late after midnight of due date
+                dueTime.setHours(23, 59, 59, 999);
+
+                return dueTime;
+            }
+        },
+        {
+            name: 'IsLate',
+            persist: false,
+            depends: ['DueTime', 'TaskStatus'],
+            convert: function (v, r) {
+                var dueTime = r.get('DueTime');
+
+                return (
+                    dueTime
+                    && dueTime.getTime() < Date.now()
+                    && Slate.cbl.model.tasks.Task.activeStatuses.indexOf(r.get('TaskStatus')) > -1
+                );
+            }
         }
     ],
 
