@@ -7,6 +7,10 @@ Ext.define('SlateTasksTeacher.store.Tasks', {
 
     config: {
         remoteSort: false,
-        remoteFilter: false
+        remoteFilter: false,
+        sorters: [{
+            property: 'Created',
+            direction: 'DESC'
+        }]
     }
 });
