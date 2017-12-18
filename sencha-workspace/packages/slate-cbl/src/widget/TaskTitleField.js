@@ -1,7 +1,7 @@
 Ext.define('Slate.cbl.widget.TaskTitleField', {
     extend: 'Ext.form.field.ComboBox',
     requires: [
-        'Slate.cbl.model.Task'
+        'Slate.cbl.model.tasks.Task'
     ],
 
     xtype: 'slate-tasks-titlefield',
@@ -15,7 +15,7 @@ Ext.define('Slate.cbl.widget.TaskTitleField', {
         cls: 'slate-boundlist'
     },
     store: {
-        model: 'Slate.cbl.model.Task',
+        model: 'Slate.cbl.model.tasks.Task',
         autoLoad: true
     },
     tpl: [

@@ -1,8 +1,8 @@
-Ext.define('Slate.cbl.store.Tasks', {
+Ext.define('Slate.cbl.store.tasks.Tasks', {
     extend: 'Ext.data.Store',
 
 
-    model: 'Slate.cbl.model.Task',
+    model: 'Slate.cbl.model.tasks.Task',
     config: {
         section: null,
 

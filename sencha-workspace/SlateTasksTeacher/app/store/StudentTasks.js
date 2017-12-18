@@ -2,7 +2,7 @@ Ext.define('SlateTasksTeacher.store.StudentTasks', {
     extend: 'Ext.data.Store',
 
 
-    model: 'Slate.cbl.model.StudentTask',
+    model: 'Slate.cbl.model.tasks.StudentTask',
     config: {
         courseSection: null,
 

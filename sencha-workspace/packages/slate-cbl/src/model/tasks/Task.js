@@ -1,4 +1,4 @@
-Ext.define('Slate.cbl.model.Task', {
+Ext.define('Slate.cbl.model.tasks.Task', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.cbl.proxy.tasks.Tasks',
