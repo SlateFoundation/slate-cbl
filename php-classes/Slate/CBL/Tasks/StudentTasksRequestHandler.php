@@ -62,7 +62,9 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         $courseSection = static::_getRequestedCourseSection();
 
         if ($courseSection) {
-            $conditions['SectionID'] = $courseSection->ID;
+            $conditions['TaskID'] = [
+                'values' => DB::allValues('ID', 'SELECT ID FROM `%s` WHERE SectionID = %u', [Task::$tableName, $courseSection->ID])
+            ];
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);

@@ -45,31 +45,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 return static::throwInvalidRequestError('Course section not found.');
             }
 
-            try {
-                // check if ID or ParentTaskID is attached to a course section
-                $taskIds = DB::allRecords(
-                    'SELECT DISTINCT %4$s.ID, %4$s.ParentTaskID FROM `%1$s` %2$s JOIN `%3$s` %4$s ON (%4$s.ID = %2$s.TaskID) WHERE %2$s.SectionID = %5$u',
-                    [
-                        StudentTask::$tableName,
-                        StudentTask::getTableAlias(),
-
-                        Task::$tableName,
-                        Task::getTableAlias(),
-
-                        $Section->ID
-                    ]
-                );
-
-                $taskIds = array_filter(array_unique(array_merge(array_column($taskIds, 'ID'), array_column($taskIds, 'ParentTaskID'))));
-
-                $conditions['ID'] = [
-                    'values' => $taskIds
-                ];
-            } catch (\TableNotFoundException $e) {
-                $conditions['ID'] = [
-                    'values' => []
-                ];
-            }
+            $conditions['SectionID'] = $Section->ID;
         } else { // show all tasks that are either shared, or created by current user.
             $recordClass = static::$recordClass;
             $conditions[] = sprintf('(%1$s.Status = "shared" OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u))', $recordClass::getTableAlias(), $GLOBALS['Session']->PersonID);
