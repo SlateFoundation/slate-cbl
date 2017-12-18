@@ -1,41 +1,12 @@
-/* global SlateTasksStudent */
 Ext.define('SlateTasksStudent.view.TaskTree', {
     extend: 'Slate.cbl.widget.SimplePanel',
     xtype: 'slatetasksstudent-tasktree',
     requires: [
-        'SlateTasksStudent.view.TaskFiltersMenu'
+        'SlateTasksStudent.view.TaskFiltersMenu',
+
+        /* global Slate */
+        'Slate.cbl.model.tasks.Task'
     ],
-
-
-    statics: {
-        statusClasses: {
-            'assigned': 'due',
-            're-assigned': 'revision',
-            'submitted': 'due needsrated',
-            're-submitted': 'revision needsrated',
-            'completed': 'completed'
-        },
-        lateStatusClasses: {
-            'submitted': 'late needsrated',
-            're-submitted': 'late needsrated',
-
-            'assigned': 'late',
-            're-assigned': 'late'
-        },
-        statusStrings: {
-            'assigned': 'Due',
-            're-assigned': 'Revision',
-            'submitted': 'Submitted',
-            're-submitted': 'Resubmitted',
-            'completed': 'Completed'
-        },
-        activeStatuses: [
-            'assigned',
-            're-assigned',
-            'submitted',
-            're-submitted'
-        ]
-    },
 
 
     config: {
@@ -114,7 +85,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '</tpl>',
         {
             getStatusString: function(taskStatus) {
-                return SlateTasksStudent.view.TaskTree.statusStrings[taskStatus] || '';
+                return Slate.cbl.model.tasks.Task.statusStrings[taskStatus] || '';
             },
             getStatusDate: function(taskData) {
                 var taskStatus = taskData.TaskStatus,
@@ -129,15 +100,15 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
             getDueStatusCls: function(task, now) {
-                var self = SlateTasksStudent.view.TaskTree,
+                var TaskModel = Slate.cbl.model.tasks.Task,
                     dueTime = task.DueTime,
                     status = task.TaskStatus;
 
-                if (dueTime && self.activeStatuses.indexOf(status) > -1 && dueTime < now) {
-                    return self.lateStatusClasses[status] || '';
+                if (dueTime && TaskModel.activeStatuses.indexOf(status) > -1 && dueTime < now) {
+                    return TaskModel.lateStatusClasses[status] || '';
                 }
 
-                return self.statusClasses[status] || '';
+                return TaskModel.statusClasses[status] || '';
             }
         }
     ],

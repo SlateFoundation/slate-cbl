@@ -8,6 +8,37 @@ Ext.define('Slate.cbl.model.tasks.Task', {
     ],
 
 
+    statics: {
+        statusClasses: {
+            'assigned': 'due',
+            're-assigned': 'revision',
+            'submitted': 'due needsrated',
+            're-submitted': 'revision needsrated',
+            'completed': 'completed'
+        },
+        lateStatusClasses: {
+            'submitted': 'late needsrated',
+            're-submitted': 'late needsrated',
+
+            'assigned': 'late',
+            're-assigned': 'late'
+        },
+        statusStrings: {
+            'assigned': 'Due',
+            're-assigned': 'Revision',
+            'submitted': 'Submitted',
+            're-submitted': 'Resubmitted',
+            'completed': 'Completed'
+        },
+        activeStatuses: [
+            'assigned',
+            're-assigned',
+            'submitted',
+            're-submitted'
+        ]
+    },
+
+
     idProperty: 'ID',
     identifier: 'negative',
 
