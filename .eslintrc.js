@@ -207,7 +207,7 @@ module.exports = {
         "radix": "error",
         "require-jsdoc": "error",
         "require-yield": "error",
-        "semi": "off",
+        "semi": "error",
         "semi-spacing": [
             "error",
             {
