@@ -34,7 +34,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     stores: [
         'Sections@Slate.store.courses',
         'SectionCohorts@Slate.store.courses',
-        'SectionParticipants@Slate.store.courses'
+        'SectionParticipants'
     ],
 
 
