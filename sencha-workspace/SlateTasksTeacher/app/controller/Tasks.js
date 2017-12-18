@@ -80,6 +80,14 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
 
     // entry points
+    listen: {
+        store: {
+            '#StudentTasks': {
+                load: 'onStudentTasksLoad'
+            }
+        }
+    },
+
     control: {
         dashboardCt: {
             sectionselect: 'onSectionChange',
@@ -143,15 +151,19 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
 
     // event handlers
+    onStudentTasksLoad: function(store) {
+        var relatedData = store.getProxy().getReader().rawData.related || {};
+
+        this.getTasksStore().loadRawData(relatedData.Task || []);
+    },
+
     onSectionChange: function(dashboardView, sectionCode) {
-        console.info('Tasks.onSectionChange(%o)', sectionCode);
+        var me = this,
+            studentTasksStore = me.getStudentTasksStore();
 
-            // tasksStore = me.getTasksStore(),
-            // studentTasksStore = me.getStudentTasksStore();
-
-        // sync tasks and student tasks
-        // tasksStore.setCourseSection(sectionCode).load(); // @todo add loadIfDirty
-        // studentTasksStore.setCourseSection(sectionCode).load(); // @todo add loadIfDirty
+        // (re)load StudentTask list
+        studentTasksStore.setSection(sectionCode);
+        studentTasksStore.loadIfDirty();
     },
 
     onCohortChange: function(dashboardView, cohordCode) {
