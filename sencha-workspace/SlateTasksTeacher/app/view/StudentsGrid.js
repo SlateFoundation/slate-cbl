@@ -142,5 +142,9 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
             cellEl.dom.className = cellClasses.join(' ');
             me.cellTpl.overwrite(cellEl, group);
         }
+    },
+
+    isRowExpandable: function(row) {
+        return row.get('ChildTasks').length > 0;
     }
 });
