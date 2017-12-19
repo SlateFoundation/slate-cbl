@@ -12,6 +12,8 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
     ],
 
     config: {
+        dateRenderer: 'm/d',
+
         rowsStore: {
             type: 'chained',
             source: 'Tasks',
@@ -36,115 +38,77 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         subRowMapper: 'TaskID',
         parentRowMapper: 'ParentTaskID',
 
-        statusClasses: {
-            unassigned: 'slate-task-status-notassigned',
-
-            assigned: 'slate-task-status-due',
-            're-assigned': 'slate-task-status-revision',
-
-            submitted: 'slate-task-status-due slate-task-status-needsrated',
-            're-submitted': 'slate-task-status-revision slate-task-status-needsrated',
-
-            late: {
-                submitted: 'slate-task-status-late slate-task-status-needsrated',
-                're-submitted': 'slate-task-status-late slate-task-status-needsrated',
-
-                assigned: 'slate-task-status-late',
-                're-assigned': 'slate-task-status-late'
-            },
-
-            completed: 'slate-task-status-completed'
-        },
-
         // templates
-        cellTpl: [
-            '<tpl if="values.records && values.records[0]">',
-            '    {[this.getDisplayValue(values.records[0].record)]}',
-            '</tpl>',
-            {
-                getDisplayValue: function(studentTask) {
-                    var html = '';
+        cellTpl: false,
+        cellRenderer: function(group, cellEl) {
+            var me = this,
+                oldStatusClass = group.statusClass,
+                record, statusClass, taskStatus, dueDate;
 
-                    if (studentTask.get('TaskStatus') === 'completed') {
-                        html = '<i class="fa fa-lg fa-check-circle-o"></i>';
-                    } else if (studentTask.get('DueDate')) {
-                        html = Ext.Date.format(studentTask.get('DueDate'), 'm/d');
-                    }
-
-                    return html;
-                }
+            if (group.records.length && (record = group.records[0].record)) {
+                taskStatus = record.get('TaskStatus');
+                dueDate = record.get('DueDate');
+                statusClass = Slate.cbl.model.tasks.Task[record.get('IsLate') ? 'lateStatusClasses' : 'statusClasses'][taskStatus];
             }
-        ],
 
-        subCellTpl: [
-            '<tpl if="values.records && values.records[0]">',
-            '    {[this.getDisplayValue(values.records[0].record)]}',
-            '</tpl>',
-            {
-                getDisplayValue: function(studentTask) {
-                    var html = '';
-
-                    if (studentTask.get('TaskStatus') === 'completed') {
-                        html = '<i class="fa fa-lg fa-check-circle-o"></i>';
-                    } else if (studentTask.get('DueDate')) {
-                        html = Ext.Date.format(studentTask.get('DueDate'), 'm/d');
-                    }
-
-                    return html;
+            // write class changes
+            if (statusClass != oldStatusClass) {
+                if (oldStatusClass) {
+                    cellEl.removeCls('slate-task-status-'+oldStatusClass);
                 }
-            }
-        ],
 
-        subRowHeaderTpl: null,
+                cellEl.addCls('slate-task-status-'+statusClass);
+                group.statusClass = statusClass;
+            }
+
+            // write completed change
+            if (taskStatus == 'completed') {
+                if (group.taskStatus != 'completed') {
+                    cellEl.setHtml('<i class="fa fa-lg fa-check-circle-o"></i>');
+                }
+            } else if (dueDate) {
+                dueDate = me.getDateRenderer()(dueDate);
+
+                if (group.dueDate != dueDate) {
+                    cellEl.setHtml(dueDate);
+                    group.dueDate = dueDate;
+                }
+            } else {
+                cellEl.setHtml('');
+            }
+
+            group.taskStatus = taskStatus;
+        },
 
         rowHeaderTpl: [
             '<tpl for=".">',
             '    {Title}',
             '    <button class="button small edit-row">Edit</button>',
             '</tpl>'
-        ],
-
-        cellRenderer: function(group, cellEl) {
-            var me = this,
-                activeStatuses = Slate.cbl.model.tasks.Task.activeStatuses,
-                cellClasses = ['jarvus-aggregrid-cell', 'slate-studentsgrid-cell'],
-                statusClasses = me.getStatusClasses(),
-                record,
-                dueDate, endOfDueDate, status,
-                now, isLate;
-
-debugger;
-
-            if (group.records && group.records.length && (record = group.records[0].record)) {
-                dueDate = record.get('DueDate');
-                status = record.get('TaskStatus');
-
-                if (dueDate) {
-                    now = new Date();
-                    // TODO: use virtual model fields like student app
-                    endOfDueDate = new Date(dueDate);
-
-                    // task is late after midnight of due date
-                    endOfDueDate.setHours(23);
-                    endOfDueDate.setMinutes(59);
-                    endOfDueDate.setSeconds(59);
-
-                    isLate = activeStatuses.indexOf(status) > -1 && endOfDueDate < now;
-                }
-
-                if (isLate) {
-                    cellClasses.push(statusClasses.late[status] || '');
-                }
-
-                cellClasses.push(statusClasses[status] || statusClasses.assigned);
-            }
-
-            cellEl.dom.className = cellClasses.join(' ');
-            me.cellTpl.overwrite(cellEl, group);
-        }
+        ]
     },
 
+
+    // Aggregrid template methods
     isRowExpandable: function(row) {
         return row.get('ChildTasks').length > 0;
+    },
+
+    buildColumnTplData: function() {
+        var columnTplData = this.callParent(arguments);
+
+        columnTplData.$cls = 'slate-studentsgrid-cell';
+
+        return columnTplData;
+    },
+
+
+    // config handlers
+    applyDateRenderer: function(dateRenderer) {
+        if (typeof dateRenderer == 'string') {
+            dateRenderer = Ext.util.Format.dateRenderer(dateRenderer);
+        }
+
+        return dateRenderer;
     }
 });
