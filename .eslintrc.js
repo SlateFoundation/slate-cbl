@@ -5,6 +5,9 @@ module.exports = {
     "globals": {
         "Ext": true
     },
+    "parserOptions": {
+        "ecmaVersion": 6,
+    },
     "extends": "eslint:recommended",
     "rules": {
         "accessor-pairs": "error",
@@ -14,7 +17,6 @@ module.exports = {
         ],
         "array-callback-return": "error",
         "arrow-body-style": "error",
-        "arrow-parens": "error",
         "arrow-spacing": "error",
         "block-scoped-var": "error",
         "block-spacing": "error",
