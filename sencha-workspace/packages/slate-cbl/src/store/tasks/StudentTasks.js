@@ -36,5 +36,10 @@ Ext.define('Slate.cbl.store.tasks.StudentTasks', {
 
         this.dirty = false;
         this.load();
+    },
+
+    unload: function() {
+        this.loadCount = 0;
+        this.removeAll();
     }
 });

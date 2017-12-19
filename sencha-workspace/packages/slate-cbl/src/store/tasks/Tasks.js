@@ -68,5 +68,10 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
 
         this.dirty = false;
         this.load();
+    },
+
+    unload: function() {
+        this.loadCount = 0;
+        this.removeAll();
     }
 });
