@@ -91,8 +91,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     control: {
         dashboardCt: {
-            sectionselect: 'onSectionChange',
-            cohortselect: 'onCohortChange'
+            sectionselect: 'onSectionChange'
         }
     //     tasksGrid: {
     //         cellclick: 'onTasksGridCellClick',
@@ -174,10 +173,6 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         // (re)load StudentTask list
         studentTasksStore.setSection(sectionCode);
         studentTasksStore.loadIfDirty(true);
-    },
-
-    onCohortChange: function(dashboardView, cohordCode) {
-        console.info('Tasks.onCohortChange(%o)', cohordCode);
     }
 
     // onTasksGridCellClick: function(grid, taskId, studentId) {
