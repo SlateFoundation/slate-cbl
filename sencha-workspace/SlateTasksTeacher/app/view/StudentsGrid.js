@@ -29,8 +29,15 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         subDataStore: 'StudentTasks',
 
         columnHeaderTpl: '{Person.FirstName} {Person.LastName}',
-        rowHeaderField: 'Title',
-        subRowHeaderField: 'Title',
+
+        rowHeaderField: null,
+        subRowHeaderField: null,
+        rowHeaderTpl: [
+            '<tpl for=".">',
+            '    {Title}',
+            '    <button class="button small edit-row">Edit</button>',
+            '</tpl>'
+        ],
 
         columnMapper: function(studentTask, columnsStore) {
             return columnsStore.getByPersonId(studentTask.get('StudentID'));
@@ -83,14 +90,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
             }
 
             group.taskStatus = taskStatus;
-        },
-
-        rowHeaderTpl: [
-            '<tpl for=".">',
-            '    {Title}',
-            '    <button class="button small edit-row">Edit</button>',
-            '</tpl>'
-        ]
+        }
     },
 
 
