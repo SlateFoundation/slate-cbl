@@ -15,27 +15,10 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
     },
 
 
+    // model lifecycle
     constructor: function() {
         this.callParent(arguments);
         this.dirty = true;
-    },
-
-
-    // config handlers
-    updateSection: function(section) {
-        this.getProxy().setExtraParam('course_section', section || null);
-        this.dirty = true;
-    },
-
-
-    // member methods
-    loadIfDirty: function() {
-        if (!this.dirty) {
-            return;
-        }
-
-        this.dirty = false;
-        this.load();
     },
 
     loadRecords: function() {
@@ -67,5 +50,23 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
             task = me.getAt(index);
             task.set('ChildTasks', childTasks[task.getId()] || []);
         }
+    },
+
+
+    // config handlers
+    updateSection: function(section) {
+        this.getProxy().setExtraParam('course_section', section || null);
+        this.dirty = true;
+    },
+
+
+    // member methods
+    loadIfDirty: function() {
+        if (!this.dirty) {
+            return;
+        }
+
+        this.dirty = false;
+        this.load();
     }
 });
