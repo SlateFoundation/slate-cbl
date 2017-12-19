@@ -148,7 +148,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     onSectionSelectorSelect: function(sectionSelector, section) {
-        this.redirectTo([section.get('Code'), this.getDashboardCt().getCohort() || 'all']);
+        this.redirectTo([section.get('Code'), 'all']);
     },
 
     onCohortSelectorSelect: function(cohortSelector, cohort) {
