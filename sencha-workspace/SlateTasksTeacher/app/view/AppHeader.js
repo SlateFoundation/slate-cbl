@@ -52,13 +52,5 @@ Ext.define('SlateTasksTeacher.view.AppHeader', {
         cls: 'primary',
         iconCls: 'x-fa fa-plus',
         action: 'create'
-    }, {
-        iconCls: 'x-fa fa-pencil',
-        action: 'edit',
-        hidden: true // todo: remove?
-    }, {
-        iconCls: 'x-fa fa-trash-o',
-        action: 'delete',
-        hidden: true // todo: remove?
     }]
 });
