@@ -109,8 +109,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
 
     // event handlers
-    onSectionCohortsLoad: function() {
-        this.getCohortSelector().enable();
+    onSectionCohortsLoad: function(store, records, success) {
+        if (success) {
+            this.getCohortSelector().enable();
+        }
     },
 
     onSectionChange: function(dashboardView, sectionCode) {
