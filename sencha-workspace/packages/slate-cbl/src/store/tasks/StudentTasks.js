@@ -29,13 +29,20 @@ Ext.define('Slate.cbl.store.tasks.StudentTasks', {
 
 
     // member methods
-    loadIfDirty: function() {
-        if (!this.dirty) {
+    loadIfDirty: function(clearBeforeLoad) {
+        var me = this;
+
+        if (!me.dirty) {
             return;
         }
 
-        this.dirty = false;
-        this.load();
+        me.dirty = false;
+
+        if (clearBeforeLoad) {
+            me.unload();
+        }
+
+        me.load();
     },
 
     unload: function() {
