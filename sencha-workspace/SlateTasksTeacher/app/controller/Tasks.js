@@ -38,7 +38,8 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     // component factories and selectors
     refs: {
-        dashboardCt: 'slate-tasks-teacher-dashboard'
+        dashboardCt: 'slate-tasks-teacher-dashboard',
+        createBtn: 'slate-tasks-teacher-appheader button[action=create]',
     //     tasksGrid: 'slate-studentsgrid',
 
     //     taskEditor: {
@@ -169,6 +170,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     onSectionChange: function(dashboardView, sectionCode) {
         var me = this,
             studentTasksStore = me.getStudentTasksStore();
+
+        // show create button
+        me.getCreateBtn().setHidden(!sectionCode);
 
         // (re)load StudentTask list
         studentTasksStore.setSection(sectionCode);
