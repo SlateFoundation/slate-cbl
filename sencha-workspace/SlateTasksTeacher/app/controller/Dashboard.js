@@ -130,7 +130,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         // (re)load participants list
         sectionParticipants.setSection(sectionCode);
-        sectionParticipants.loadIfDirty();
+        sectionParticipants.loadIfDirty(true);
     },
 
     onCohortChange: function(dashboardView, cohortName) {

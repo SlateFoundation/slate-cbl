@@ -83,7 +83,8 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     listen: {
         store: {
             '#StudentTasks': {
-                load: 'onStudentTasksLoad'
+                load: 'onStudentTasksLoad',
+                clear: 'onStudentTasksClear'
             }
         }
     },
@@ -162,13 +163,17 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         this.getTasksStore().loadRawData(relatedData.Task || []);
     },
 
+    onStudentTasksClear: function() {
+        this.getTasksStore().unload();
+    },
+
     onSectionChange: function(dashboardView, sectionCode) {
         var me = this,
             studentTasksStore = me.getStudentTasksStore();
 
         // (re)load StudentTask list
         studentTasksStore.setSection(sectionCode);
-        studentTasksStore.loadIfDirty();
+        studentTasksStore.loadIfDirty(true);
     },
 
     onCohortChange: function(dashboardView, cohordCode) {
