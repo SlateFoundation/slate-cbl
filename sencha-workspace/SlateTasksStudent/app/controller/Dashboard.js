@@ -19,7 +19,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     ],
 
     stores: [
-        'Students',
+        'Students@Slate.cbl.store',
         'Sections@Slate.store.courses'
     ],
 
