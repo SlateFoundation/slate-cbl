@@ -72,8 +72,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     control: {
         dashboardCt: {
-            sectionselect: 'onSectionChange',
-            cohortselect: 'onCohortChange'
+            sectionchange: 'onSectionChange',
+            cohortchange: 'onCohortChange'
         },
         sectionSelector: {
             select: 'onSectionSelectorSelect'

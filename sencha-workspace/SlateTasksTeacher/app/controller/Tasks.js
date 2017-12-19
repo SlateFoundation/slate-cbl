@@ -91,7 +91,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     control: {
         dashboardCt: {
-            sectionselect: 'onSectionChange'
+            sectionchange: 'onSectionChange'
         }
     //     tasksGrid: {
     //         cellclick: 'onTasksGridCellClick',

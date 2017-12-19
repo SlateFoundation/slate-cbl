@@ -41,11 +41,11 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
         me.setGridLegend(Boolean(section));
         Ext.resumeLayouts();
 
-        me.fireEvent('sectionselect', me, section);
+        me.fireEvent('sectionchange', me, section);
     },
 
     updateCohort: function(cohort) {
-        this.fireEvent('cohortselect', this, cohort);
+        this.fireEvent('cohortchange', this, cohort);
     },
 
     applyPlaceholderCmp: function(placeholderCmp, oldPlaceholderCmp) {
