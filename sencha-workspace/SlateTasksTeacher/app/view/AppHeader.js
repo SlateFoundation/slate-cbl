@@ -1,12 +1,13 @@
 Ext.define('SlateTasksTeacher.view.AppHeader', {
     extend: 'Slate.cbl.view.AppHeader',
+    xtype: 'slate-tasks-teacher-appheader',
     requires: [
         'Slate.cbl.widget.SectionSelector',
         'Slate.cbl.widget.CohortSelector',
         'Ext.toolbar.Fill',
         'Ext.form.field.ComboBox'
     ],
-    xtype: 'slate-tasks-teacher-appheader',
+
 
     items: [{
         itemId: 'title',

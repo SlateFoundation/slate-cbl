@@ -2,6 +2,7 @@ Ext.define('SlateTasksTeacher.view.GridLegend', {
     extend: 'Ext.Component',
     xtype: 'slate-gridlegend',
 
+
     tpl: [
         '<div class="slate-gridlegend">',
         '    <div class="slate-gridlegend-title">Legend</div>',

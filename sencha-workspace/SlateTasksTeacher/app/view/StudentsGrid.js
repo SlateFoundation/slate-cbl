@@ -11,6 +11,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         'Slate.cbl.model.tasks.Task'
     ],
 
+
     config: {
         dateRenderer: 'm/d',
 
@@ -94,6 +95,16 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
     },
 
 
+    // config handlers
+    applyDateRenderer: function(dateRenderer) {
+        if (typeof dateRenderer == 'string') {
+            dateRenderer = Ext.util.Format.dateRenderer(dateRenderer);
+        }
+
+        return dateRenderer;
+    },
+
+
     // Aggregrid template methods
     isRowExpandable: function(row) {
         return row.get('ChildTasks').length > 0;
@@ -105,15 +116,5 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         columnTplData.$cls = 'slate-studentsgrid-cell';
 
         return columnTplData;
-    },
-
-
-    // config handlers
-    applyDateRenderer: function(dateRenderer) {
-        if (typeof dateRenderer == 'string') {
-            dateRenderer = Ext.util.Format.dateRenderer(dateRenderer);
-        }
-
-        return dateRenderer;
     }
 });
