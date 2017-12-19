@@ -64,11 +64,15 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
             // write class changes
             if (statusClass != oldStatusClass) {
                 if (oldStatusClass) {
-                    cellEl.removeCls(oldStatusClass.split(' ').map(cls => 'slate-task-status-'+cls));
+                    cellEl.removeCls(oldStatusClass.split(' ').map(function(cls) {
+                        return 'slate-task-status-'+cls;
+                    }));
                 }
 
                 if (statusClass) {
-                    cellEl.addCls(statusClass.split(' ').map(cls => 'slate-task-status-'+cls));
+                    cellEl.addCls(statusClass.split(' ').map(function(cls) {
+                        return 'slate-task-status-'+cls;
+                    }));
                 }
 
                 group.statusClass = statusClass;
