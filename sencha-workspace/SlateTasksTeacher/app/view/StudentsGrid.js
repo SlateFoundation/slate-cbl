@@ -32,7 +32,9 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', {
         rowHeaderField: 'Title',
         subRowHeaderField: 'Title',
 
-        columnMapper: 'StudentID',
+        columnMapper: function(studentTask, columnsStore) {
+            return columnsStore.getByPersonId(studentTask.get('StudentID'));
+        },
         rowMapper: 'TaskID',
 
         subRowMapper: 'TaskID',
