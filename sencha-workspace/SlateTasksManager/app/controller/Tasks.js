@@ -57,6 +57,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slatetasksmanager-task-editor button[action=save]': {
             click: 'onSaveTaskClick'
         },
+        // TODO: clonable was deleted from the form, due this another way
         'slatetasksmanager-task-editor slate-tasks-titlefield[clonable]': {
             select: 'onClonableTitleFieldSelect'
         },
