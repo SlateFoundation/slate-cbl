@@ -71,7 +71,8 @@
         "font-awesome",
         "slate-cbl",
         "jarvus-aggregrid",
-        "jarvus-routing"
+        "jarvus-routing",
+        "jarvus-lazydata"
     ],
 
     /**
