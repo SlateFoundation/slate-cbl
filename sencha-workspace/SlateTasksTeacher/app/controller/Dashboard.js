@@ -64,6 +64,9 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     listen: {
         store: {
+            '#Sections': {
+                load: 'onSectionsLoad'
+            },
             '#SectionCohorts': {
                 load: 'onSectionCohortsLoad'
             }
@@ -72,8 +75,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     control: {
         dashboardCt: {
-            sectionchange: 'onSectionChange',
-            cohortchange: 'onCohortChange'
+            selectedsectionchange: 'onSelectedSectionChange',
+            selectedcohortchange: 'onSelectedCohortChange'
         },
         sectionSelector: {
             select: 'onSectionSelectorSelect'
@@ -103,26 +106,52 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         var dashboardCt = this.getDashboardCt();
 
         // use false instead of null, to indicate selecting *nothing* vs having no selection
-        dashboardCt.setSection(sectionCode || false);
-        dashboardCt.setCohort(cohortName && cohortName != 'all' ? this.decodeRouteComponent(cohortName) : false);
+        dashboardCt.setSelectedSection(sectionCode || false);
+        dashboardCt.setSelectedCohort(cohortName && cohortName != 'all' ? this.decodeRouteComponent(cohortName) : false);
     },
 
 
     // event handlers
+    onSectionsLoad: function(sectionsStore) {
+        var dashboardCt = this.getDashboardCt(),
+            sectionCode = dashboardCt.getSelectedSection(),
+            loadedSection = dashboardCt.getLoadedSection();
+
+        if (!loadedSection || loadedSection.get('Code') != sectionCode) {
+            dashboardCt.setLoadedSection(sectionsStore.getByCode(sectionCode));
+        }
+    },
+
     onSectionCohortsLoad: function(store, records, success) {
         if (success) {
             this.getCohortSelector().enable();
         }
     },
 
-    onSectionChange: function(dashboardView, sectionCode) {
+    onSelectedSectionChange: function(dashboardCt, sectionCode) {
         var me = this,
             sectionSelector = me.getSectionSelector(),
+            sectionsStore = me.getSectionsStore(),
             cohortsStore = me.getSectionCohortsStore(),
-            sectionParticipants = me.getSectionParticipantsStore();
+            sectionParticipants = me.getSectionParticipantsStore(),
+            section;
 
         // push value to selector
         sectionSelector.setValue(sectionCode);
+
+        // update loaded section record
+        section = sectionsStore.getByCode(sectionCode);
+
+        if (section) {
+            dashboardCt.setLoadedSection(section);
+        } else {
+            sectionsStore.getModel().load(null, {
+                url: '/sections/'+encodeURIComponent(sectionCode),
+                success: function(loadedSection) {
+                    dashboardCt.setLoadedSection(loadedSection);
+                }
+            });
+        }
 
         // (re)load the cohorts list
         cohortsStore.setSection(sectionCode);
@@ -133,7 +162,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         sectionParticipants.loadIfDirty(true);
     },
 
-    onCohortChange: function(dashboardView, cohortName) {
+    onSelectedCohortChange: function(dashboardCt, cohortName) {
         var sectionParticipants = this.getSectionParticipantsStore();
 
         // push value to selector
@@ -152,10 +181,10 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     onCohortSelectorSelect: function(cohortSelector, cohort) {
-        this.redirectTo([this.getDashboardCt().getSection(), cohort.get('Cohort') || 'all']);
+        this.redirectTo([this.getDashboardCt().getSelectedSection(), cohort.get('Cohort') || 'all']);
     },
 
     onCohortSelectorClear: function() {
-        this.redirectTo([this.getDashboardCt().getSection(), 'all']);
+        this.redirectTo([this.getDashboardCt().getSelectedSection(), 'all']);
     }
 });

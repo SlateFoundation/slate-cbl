@@ -92,7 +92,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     control: {
         dashboardCt: {
-            sectionchange: 'onSectionChange'
+            selectedsectionchange: 'onSelectedSectionChange'
         }
     //     tasksGrid: {
     //         cellclick: 'onTasksGridCellClick',
@@ -167,7 +167,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         this.getTasksStore().unload();
     },
 
-    onSectionChange: function(dashboardView, sectionCode) {
+    onSelectedSectionChange: function(dashboardCt, sectionCode) {
         var me = this,
             studentTasksStore = me.getStudentTasksStore();
 
