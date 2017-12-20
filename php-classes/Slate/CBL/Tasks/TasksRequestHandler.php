@@ -8,6 +8,7 @@ use Emergence\People\Person;
 use Google\DriveFile;
 
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
+use Slate\CBL\Demonstrations\ExperienceDemonstration;
 
 class TasksRequestHandler extends \RecordsRequestHandler
 {
@@ -41,7 +42,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
     {
         switch ($action = ($action ?: static::shiftPath())) {
             case '*experience-types':
-                return static::handleFieldValuesRequest('ExperienceType');
+                return static::handleFieldValuesRequest('ExperienceType', ExperienceDemonstration::$experienceTypeOptions);
 
             default:
                 return parent::handleRecordsRequest($action);
