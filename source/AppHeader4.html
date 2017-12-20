@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;SlateTasksTeacher.view.AppHeader&#39;, {
+    extend: &#39;Slate.cbl.view.AppHeader&#39;,
+    xtype: &#39;slate-tasks-teacher-appheader&#39;,
+    requires: [
+        &#39;Slate.cbl.widget.SectionSelector&#39;,
+        &#39;Slate.cbl.widget.CohortSelector&#39;,
+        &#39;Ext.toolbar.Fill&#39;,
+        &#39;Ext.form.field.ComboBox&#39;
+    ],
+
+
+    items: [{
+        itemId: &#39;title&#39;,
+
+        xtype: &#39;component&#39;,
+        cls: &#39;slate-appheader-title&#39;,
+        html: &#39;Teacher Task Manager&#39;
+    }, {
+        itemId: &#39;sectionSelect&#39;,
+
+        xtype: &#39;slate-section-selector&#39;,
+        store: &#39;Sections&#39;,
+        valueField: &#39;Code&#39;,
+        queryMode: &#39;local&#39;,
+        emptyText: &#39;Select&#39;
+    }, {
+        itemId: &#39;cohortSelect&#39;,
+
+        xtype: &#39;slate-cohort-selector&#39;,
+        disabled: true,
+        store: &#39;SectionCohorts&#39;,
+        queryMode: &#39;local&#39;,
+        emptyText: &#39;All Students&#39;,
+        triggers: {
+            clear: {
+                cls: &#39;x-form-clear-trigger&#39;,
+                weight: -2,
+                hidden: true,
+                handler: function(combo) {
+                    combo.clearValue();
+                    combo.fireEvent(&#39;clear&#39;, combo);
+                }
+            }
+        },
+        listeners: {
+            change: function(combo, value) {
+                this.getTrigger(&#39;clear&#39;).setHidden(!value);
+            }
+        }
+    }, {
+        xtype: &#39;tbfill&#39;
+    }, {
+        cls: &#39;primary&#39;,
+        iconCls: &#39;x-fa fa-plus&#39;,
+        action: &#39;create&#39;,
+        hidden: true
+    }]
+});</pre>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.widget.RatingView&#39;, {
+    extend: &#39;Ext.Component&#39;,
+    xtype: &#39;slate-ratingview&#39;,
+    requires: [
+        &#39;Ext.menu.Menu&#39;
+    ],
+
+    componentCls: &#39;slate-ratingview&#39;,
+
+    config: {
+        menu: null,
+        menuRatings: [1, 2, 3, 4, 5, 6],
+        readOnly: false
+    },
+    // todo: add ratings as config.
+    // TODO: refactor as a container of individual stateful slider components
+    tpl: [
+        &#39;{% this.ratings = values.ratings %}&#39;,
+        &#39;{% this.menuRatings = values.menuRatings %}&#39;,
+        &#39;{% this.readOnly = values.readOnly %}&#39;,
+
+        &#39;&lt;ul class=&quot;slate-ratingview-competencies&quot;&gt;&#39;,
+            &#39;&lt;tpl for=&quot;competencies&quot;&gt;&#39;,
+                &#39;&lt;li class=&quot;slate-ratingview-competency&quot;&gt;&#39;,
+                    &#39;&lt;h4 class=&quot;slate-ratingview-competency-title&quot;&gt;{Code}&lt;tpl if=&quot;Code &amp;amp;&amp;amp; Descriptor&quot;&gt; – &lt;/tpl&gt;{Descriptor}&lt;/h4&gt;&#39;,
+                    &#39;&lt;ul class=&quot;slate-ratingview-skills&quot;&gt;&#39;,
+                        &#39;&lt;tpl for=&quot;skills&quot;&gt;&#39;,
+                            &#39;&lt;li class=&quot;slate-ratingview-skill slate-ratingview-skill-level-{[values.Level || values.CompetencyLevel]}&quot; data-competency=&quot;{[parent.Code]}&quot; data-skill=&quot;{Code}&quot; data-competency-level=&quot;{CompetencyLevel}&quot; data-level=&quot;{Level}&quot;&gt;&#39;,
+                                &#39;&lt;header class=&quot;slate-ratingview-skill-header&quot;&gt;&#39;,
+                                    &#39;&lt;h5 class=&quot;slate-ratingview-skill-title&quot;&gt;{Code}&lt;tpl if=&quot;Code &amp;amp;&amp;amp; Descriptor&quot;&gt; – &lt;/tpl&gt;{Descriptor}&lt;/h5&gt;&#39;,
+                                &#39;&lt;/header&gt;&#39;,
+                                &#39;&lt;ol class=&quot;slate-ratingview-ratings&quot;&gt;&#39;,
+                                    &#39;&lt;li class=&quot;slate-ratingview-rating &lt;tpl if=&quot;this.menuRatings.length&quot;&gt;slate-ratingview-rating-menu&lt;/tpl&gt; {[this.getMenuRatingElCls(values.Rating, this.menuRatings).join(&quot; &quot;)]}&quot; data-rating=&quot;{[this.getMenuElRatingValue(values.Rating, this.menuRatings)]}&quot;&gt;&#39;,
+                                        &#39;&lt;div class=&quot;slate-ratingview-rating-bubble&quot; tabindex=&quot;0&quot;&gt;&#39;,
+                                            &#39;&lt;span class=&quot;slate-ratingview-rating-label&quot;&gt;{[this.getMenuRatingElLabel(values.Rating, this.menuRatings)]}&lt;/span&gt;&#39;,
+                                        &#39;&lt;/div&gt;&#39;,
+                                    &#39;&lt;/li&gt;&#39;,
+                                    &#39;&lt;tpl for=&quot;this.ratings&quot;&gt;&#39;, // access template-scoped variable declared at top
+                                        &#39;&lt;li class=&quot;slate-ratingview-rating &lt;tpl if=&quot;values == parent.Rating || values === &amp;quot;M&amp;quot; &amp;&amp; parent.Rating === 0&quot;&gt;is-selected&lt;/tpl&gt;&quot; data-rating=&quot;{.}&quot;&gt;&#39;,
+                                            &#39;&lt;div class=&quot;slate-ratingview-rating-bubble&quot; tabindex=&quot;0&quot;&gt;&#39;,
+                                                &#39;&lt;span class=&quot;slate-ratingview-rating-label&quot;&gt;{[this.getRatingElLabel(values)]}&lt;/span&gt;&#39;,
+                                            &#39;&lt;/div&gt;&#39;,
+                                        &#39;&lt;/li&gt;&#39;,
+                                    &#39;&lt;/tpl&gt;&#39;,
+                                &#39;&lt;/ol&gt;&#39;,
+                            &#39;&lt;/li&gt;&#39;,
+                        &#39;&lt;/tpl&gt;&#39;,
+                    &#39;&lt;/ul&gt;&#39;,
+                &#39;&lt;/li&gt;&#39;,
+            &#39;&lt;/tpl&gt;&#39;,
+        &#39;&lt;/ul&gt;&#39;,
+
+        {
+            getRatingElLabel: function(rating) {
+                if (rating === 0) {
+                    return &#39;M&#39;;
+                }
+
+                return rating;
+            },
+
+            getMenuRatingElCls: function(rating, menuRatings) {
+                var cls = [],
+                    ratingInMenu = menuRatings.indexOf(rating) &gt; -1;
+
+                if (rating === null || ratingInMenu) {
+                    cls.push(&#39;is-selected&#39;);
+                }
+
+                if (rating === null || !ratingInMenu) {
+                    cls.push(&#39;slate-ratingview-rating-null&#39;);
+                }
+
+                return cls;
+            },
+
+            getMenuElRatingValue: function(rating, menuRatings) {
+                if (rating &amp;&amp; menuRatings.indexOf(rating) &gt; -1) {
+                    return rating;
+                }
+
+                return null;
+            },
+
+            getMenuRatingElLabel: function(rating, menuRatings) {
+                if (menuRatings.indexOf(rating) &gt; -1) {
+                    return rating;
+                }
+
+                return &#39;N/A&#39;;
+            }
+        }
+    ],
+
+    listeners: {
+        scope: &#39;this&#39;,
+        click: {
+            fn: &#39;onScaleClick&#39;,
+            element: &#39;el&#39;,
+            delegate: &#39;.slate-ratingview-rating&#39;
+        }
+    },
+
+    applyData: function(data) {
+        var dataObj = data || {};
+
+        dataObj.readOnly = this.getReadOnly();
+        dataObj.menuRatings = this.getMenuRatings();
+
+        return dataObj;
+    },
+
+    updateData: function(data, oldData) {
+        var me = this;
+
+        if (!me.rendered) {
+            me.on(&#39;render&#39;, function() {
+                me.updateData(data, oldData);
+            }, me, { single: true });
+            return;
+        }
+
+        if (data !== oldData) {
+            me.setHtml(me.tpl.apply(data));
+        }
+    },
+
+    updateReadOnly: function() {
+        var me = this;
+
+        me.setData(me.getData());
+    },
+
+    onScaleClick: function(ev, t) {
+        var me = this,
+            ratingEl = Ext.get(t);
+
+        if (me.getReadOnly()) {
+            return;
+        }
+
+        if (ratingEl.is(&#39;.slate-ratingview-rating-menu&#39;)) {
+            me.showMenu(ratingEl);
+            return;
+        }
+
+        if (ratingEl.hasCls(&#39;is-selected&#39;)) {
+            return;
+        }
+
+        me.selectRating(ratingEl, parseInt(ratingEl.getAttribute(&#39;data-rating&#39;), 10));
+    },
+
+    selectRating: function(ratingEl, rating) {
+        var me = this,
+            tpl = me.lookupTpl(&#39;tpl&#39;),
+            menuRatings = me.getMenuRatings(),
+            skillEl = ratingEl.parent(&#39;.slate-ratingview-skill&#39;),
+            menuThumbEl = skillEl.down(&#39;.slate-ratingview-rating-menu&#39;),
+            ratingInMenu = menuRatings.indexOf(rating) &gt; -1;
+
+        ratingEl.radioCls(&#39;is-selected&#39;);
+
+        // if rating is being removed, revert level styling to current competency level that future ratings would get logged against
+        if (rating === null) {
+            skillEl.removeCls(&#39;slate-ratingview-skill-level-&#39;+skillEl.getAttribute(&#39;data-level&#39;));
+            skillEl.addCls(&#39;slate-ratingview-skill-level-&#39;+skillEl.getAttribute(&#39;data-competency-level&#39;));
+        }
+
+        // update menu thumb el
+        if (menuThumbEl) {
+            menuThumbEl.toggleCls(&#39;slate-ratingview-rating-null&#39;, rating === null || !ratingInMenu);
+            menuThumbEl.dom.setAttribute(&#39;data-rating&#39;, tpl.getMenuElRatingValue(rating, menuRatings) || &#39;&#39;);
+            menuThumbEl.down(&#39;.slate-ratingview-rating-label&#39;).setHtml(tpl.getMenuRatingElLabel(rating, menuRatings));
+        }
+
+        return me.fireEvent(&#39;rateskill&#39;, me, {
+            CompetencyID: skillEl.getAttribute(&#39;data-competency&#39;),
+            SkillID: skillEl.getAttribute(&#39;data-skill&#39;),
+            Rating: rating
+        });
+    },
+
+    showMenu: function(ratingEl) {
+        var me = this,
+            menu = me.getMenu(),
+            menuRatings = me.getMenuRatings(),
+            items = [{
+                text: &#39;N/A&#39;,
+                value: null
+            }];
+
+        if (Ext.isEmpty(menuRatings)) {
+            return;
+        }
+
+        if (!menu &amp;&amp; menuRatings.length) {
+            Ext.each(menuRatings, function(mr) {
+                items.push({
+                    text: mr,
+                    value: mr
+                });
+            });
+            me.setMenu(menu = Ext.create(&#39;Ext.menu.Menu&#39;, {
+                items: items
+            }));
+            menu.on(&#39;click&#39;, me.onMenuRatingClick, me);
+        }
+
+        if (menu) {
+            menu.ratingEl = ratingEl;
+            menu.showAt(ratingEl.getXY());
+            menu.focus();
+        }
+    },
+
+    onMenuRatingClick: function(menu, menuItem) {
+        var me = this;
+
+        me.selectRating(menu.ratingEl, menuItem.getValue());
+        menu.hide();
+    }
+});
+</pre>
+</body>
+</html>

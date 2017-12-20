@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.view.modals.ModalForm&#39;, {
+    extend: &#39;Ext.form.Panel&#39;,
+    xtype: &#39;slate-modalform&#39;,
+
+    componentCls: &#39;slate-modalform&#39;,
+
+    defaultType: &#39;combo&#39;,
+    defaults: {
+        anchor: &#39;100%&#39;,
+        // TODO: figure out what to do with this hardcoded stuff: https://github.com/SlateFoundation/slate-cbl/commit/2edde3973982e3899942a3c80ffbc08cef21d5bb
+        beforeSubTpl: [
+            &#39;&lt;div class=&quot;slate-field-warning&quot;&gt;&#39;,
+                &#39;&lt;div class=&quot;slate-field-warning-popover&quot;&gt;&#39;,
+                    &#39;&lt;strong&gt;Some students will not be affected because of reasons:&lt;/strong&gt;&#39;,
+                    &#39;&lt;ul&gt;&#39;,
+                        &#39;&lt;li&gt;Foo Bar Baz&lt;/li&gt;&#39;,
+                        &#39;&lt;li&gt;Wibble Wobble Wubble&lt;/li&gt;&#39;,
+                        &#39;&lt;li&gt;Jane Doe&lt;/li&gt;&#39;,
+                    &#39;&lt;/ul&gt;&#39;,
+                &#39;&lt;/div&gt;&#39;,
+            &#39;&lt;/div&gt;&#39;
+        ],
+        combineErrors: true,
+        labelAlign: &#39;right&#39;,
+        labelPad: 16,
+        labelWidth: 144,
+        msgTarget: &#39;under&#39;
+    }
+});</pre>
+</body>
+</html>

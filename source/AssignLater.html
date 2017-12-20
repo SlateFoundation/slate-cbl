@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.view.modals.AssignLater&#39;, {
+    extend: &#39;Slate.cbl.view.modals.Modal&#39;,
+    xtype: &#39;slate-assignlaterwindow&#39;,
+    requires: [
+        &#39;Slate.cbl.view.AttachmentsList&#39;,
+        &#39;Slate.cbl.view.modals.ModalForm&#39;,
+        &#39;Slate.cbl.widget.SkillsField&#39;,
+        &#39;Slate.cbl.widget.AttachmentsField&#39;
+    ],
+
+    title: &#39;Assign Later&#39;,
+
+    dockedItems: [
+        {
+            dock: &#39;bottom&#39;,
+            xtype: &#39;container&#39;,
+            cls: &#39;slate-modalfooter&#39;,
+            layout: {
+                type: &#39;hbox&#39;,
+                pack: &#39;end&#39;
+            },
+            items: [
+                {
+                    xtype: &#39;button&#39;,
+                    scale: &#39;large&#39;,
+                    text: &#39;Assign&#39;,
+                    action: &#39;assign&#39;,
+                    margin: &#39;0 0 0 16&#39;
+                }
+            ]
+        }
+    ],
+
+    items: [
+        {
+            xtype: &#39;component&#39;,
+            itemId: &#39;informationCmp&#39;,
+            margin: &#39;0 0 16&#39;,
+            tpl: [&#39;&lt;strong&gt;This task was not assigned to {FirstName} {LastName}&lt;br&gt;Click below to assign it.&lt;/strong&gt;&#39;]
+        },
+        {
+            xtype: &#39;slate-modalform&#39;,
+            defaultType: &#39;displayfield&#39;,
+            items: [
+                {
+                    fieldLabel: &#39;Title&#39;,
+                    name: &#39;Title&#39;
+                },
+                {
+                    fieldLabel: &#39;Subtask of&#39;,
+                    name: &#39;ParentTaskTitle&#39;
+                },
+                {
+                    fieldLabel: &#39;Type of Experience&#39;,
+                    xtype: &#39;textfield&#39;,
+                    name: &#39;ExperienceType&#39;,
+                    readOnly: true,
+                    cls: &#39;is-editable&#39;
+                },
+                {
+                    cls: &#39;is-editable&#39;,
+                    xtype: &#39;datefield&#39;,
+                    fieldLabel: &#39;Due Date&#39;,
+                    name: &#39;DueDate&#39;,
+                    submitFormat: &#39;timestamp&#39;
+                },
+                {
+                    cls: &#39;is-editable&#39;,
+                    xtype: &#39;datefield&#39;,
+                    fieldLabel: &#39;Expiration Date&#39;,
+                    name: &#39;ExpirationDate&#39;,
+                    submitFormat: &#39;timestamp&#39;
+                },
+                {
+                    xtype: &#39;slate-skillsfield&#39;,
+                    emptyText: &#39;Competency code or statement&amp;hellip;&#39;
+                },
+                {
+                    xtype: &#39;slate-tasks-attachmentsfield&#39;,
+                    readOnly: true
+                },
+                {
+                    fieldLabel: &#39;Instructions&#39;,
+                    name: &#39;Instructions&#39;
+                }
+            ]
+        }
+    ]
+});</pre>
+</body>
+</html>

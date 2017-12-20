@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;SlateDemonstrationsStudent.view.Dashboard&#39;, {
+    extend: &#39;Ext.Container&#39;,
+    xtype: &#39;slate-demonstrations-student-dashboard&#39;,
+    requires:[
+        &#39;Slate.cbl.widget.Popover&#39;,
+        &#39;Slate.cbl.store.Competencies&#39;,
+        &#39;Slate.cbl.store.Completions&#39;,
+        &#39;Slate.cbl.store.DemonstrationSkills&#39;,
+
+        &#39;SlateDemonstrationsStudent.view.CompetencyCard&#39;
+    ],
+
+    config: {
+        studentId: null,
+
+        popover: {
+            pointer: &#39;none&#39;
+        },
+
+        competenciesStatus: &#39;unloaded&#39;,
+
+        competenciesStore: {
+            xclass: &#39;Slate.cbl.store.Competencies&#39;
+        },
+
+        skillsStore: &#39;cbl-skills&#39;,
+
+        completionsStore: {
+            xclass: &#39;Slate.cbl.store.Completions&#39;
+        },
+
+        demonstrationSkillsStore: {
+            xclass: &#39;Slate.cbl.store.DemonstrationSkills&#39;
+        }
+    },
+
+    autoEl: {
+        tag: &#39;ul&#39;,
+        cls: &#39;cbl-competency-panels&#39;
+    },
+    defaults: {
+        xtype: &#39;slate-demonstrations-student-competencycard&#39;,
+        autoEl: &#39;li&#39;
+    },
+    layout: &#39;container&#39;,
+
+
+    // config handlers
+    applyPopover: function(newPopover, oldPopover) {
+        return Ext.factory(newPopover, &#39;Slate.cbl.widget.Popover&#39;, oldPopover);
+    },
+
+    updateCompetenciesStatus: function(newStatus, oldStatus) {
+        if (oldStatus) {
+            this.removeCls(&#39;competencies-&#39; + oldStatus);
+        }
+
+        if (newStatus) {
+            this.addCls(&#39;competencies-&#39; + newStatus);
+        }
+    },
+
+    applyCompetenciesStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    applySkillsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    applyCompletionsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    applyDemonstrationSkillsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    }
+});</pre>
+</body>
+</html>

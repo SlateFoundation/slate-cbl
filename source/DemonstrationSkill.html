@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*jslint browser: true, undef: true *//*global Ext*/
+Ext.define(&#39;Slate.cbl.model.DemonstrationSkill&#39;, {
+    extend: &#39;Ext.data.Model&#39;,
+    requires: [
+        &#39;Slate.proxy.Records&#39;,
+        &#39;Ext.data.identifier.Negative&#39;
+    ],
+
+
+    // model config
+    idProperty: &#39;ID&#39;,
+    identifier: &#39;negative&#39;,
+
+    fields: [
+        {
+            name: &#39;ID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Class&#39;,
+            type: &#39;string&#39;,
+            defaultValue: &#39;Slate\\CBL\\Demonstrations\\DemonstrationSkill&#39;
+        },
+        {
+            name: &#39;Created&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;CreatorID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;DemonstrationID&#39;,
+            type: &#39;int&#39;
+        },
+        {
+            name: &#39;SkillID&#39;,
+            type: &#39;int&#39;
+        },
+        {
+            name: &#39;TargetLevel&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;DemonstratedLevel&#39;,
+            type: &#39;int&#39;
+        },
+        {
+            name: &#39;Override&#39;,
+            type: &#39;boolean&#39;
+        },
+
+        // dynamic fields that might be provided directly by server in some results
+        {
+            name: &#39;Demonstration&#39;,
+            persist: false
+        },
+        {
+            name: &#39;Demonstrated&#39;,
+            depends: [&#39;Demonstration&#39;],
+            persist: false,
+
+            type: &#39;date&#39;,
+            convert: function(v, r) {
+                if (r.data.Demonstration &amp;&amp; r.data.Demonstration.Demonstrated) {
+                    v = r.data.Demonstration.Demonstrated;
+                }
+
+                if (Ext.isDate(v)) {
+                    return v;
+                }
+
+                return v ? new Date(v * 1000) : null;
+            }
+        },
+        {
+            name: &#39;StudentID&#39;,
+            depends: [&#39;Demonstration&#39;],
+            persist: false,
+
+            type: &#39;int&#39;,
+            convert: function(v, r) {
+                return v || (r.data.Demonstration &amp;&amp; r.data.Demonstration.StudentID);
+            }
+        }
+    ],
+
+    proxy: {
+        type: &#39;slate-records&#39;,
+        url: &#39;/cbl/demonstration-skills&#39;,
+        include: &#39;Demonstration.Creator&#39;
+    }
+});</pre>
+</body>
+</html>

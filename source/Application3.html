@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='SlateTasksManager-Application'>/**
+</span> * The main application class. An instance of this class is created by app.js when it
+ * calls Ext.application(). This is the ideal place to handle application launch and
+ * initialization details.
+ */
+Ext.define(&#39;SlateTasksManager.Application&#39;, {
+    extend: &#39;Ext.app.Application&#39;,
+    requires: [
+        &#39;Ext.window.MessageBox&#39;
+    ],
+
+<span id='SlateTasksManager-Application-property-name'>    name: &#39;SlateTasksManager&#39;,
+</span>
+<span id='SlateTasksManager-Application-property-controllers'>    controllers: [
+</span>        &#39;Tasks&#39;
+    ],
+
+<span id='SlateTasksManager-Application-method-onAppUpdate'>    onAppUpdate: function () {
+</span>        Ext.Msg.confirm(&#39;Application Update&#39;, &#39;This application has an update, reload?&#39;,
+            function (choice) {
+                if (choice === &#39;yes&#39;) {
+                    window.location.reload();
+                }
+            }
+        );
+    }
+});
+</pre>
+</body>
+</html>

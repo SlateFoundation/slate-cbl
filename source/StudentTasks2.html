@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.store.tasks.StudentTasks&#39;, {
+    extend: &#39;Ext.data.Store&#39;,
+
+
+    model: &#39;Slate.cbl.model.tasks.StudentTask&#39;,
+    config: {
+        section: null,
+
+        remoteFilter: true,
+        remoteSort: true,
+        pageSize: 0,
+
+        // redeclare identical proxy as model for dynamic reconfiguration
+        proxy: &#39;slate-cbl-studenttasks&#39;,
+    },
+
+
+    constructor: function() {
+        this.callParent(arguments);
+        this.dirty = true;
+    },
+
+
+    // config handlers
+    updateSection: function(section) {
+        this.getProxy().setExtraParam(&#39;course_section&#39;, section || null);
+        this.dirty = true;
+    },
+
+
+    // member methods
+    loadIfDirty: function(clearBeforeLoad) {
+        var me = this;
+
+        if (!me.dirty) {
+            return;
+        }
+
+        me.dirty = false;
+
+        if (clearBeforeLoad) {
+            me.unload();
+        }
+
+        me.load();
+    },
+
+    unload: function() {
+        this.loadCount = 0;
+        this.removeAll();
+    }
+});
+</pre>
+</body>
+</html>

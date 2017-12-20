@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.widget.AttachmentsField&#39;, {
+    extend: &#39;Ext.form.FieldContainer&#39;,
+    requires: [
+        &#39;Slate.cbl.view.AttachmentsList&#39;,
+        &#39;Slate.cbl.util.Google&#39;
+    ],
+
+    xtype: &#39;slate-tasks-attachmentsfield&#39;,
+
+    config: {
+        readOnly: false
+    },
+
+    initComponent: function() {
+        var me = this,
+            googleUtil = Slate.cbl.util.Google,
+            googleAttachmentBtn;
+
+        me.callParent(arguments);
+
+        googleAttachmentBtn = me.down(&#39;button[action=addattachment]&#39;);
+        if (googleUtil.getDeveloperKey() &amp;&amp; googleUtil.getClientId() &amp;&amp; googleUtil.getGoogleAppsDomain()) {
+            googleAttachmentBtn.enable();
+        } else {
+            googleAttachmentBtn.disable();
+        }
+    },
+
+    fieldLabel: &#39;Attachments&#39;,
+    combineErrors: false,
+    items: [{
+        xtype: &#39;textfield&#39;,
+        emptyText: &#39;Enter URL&#39;,
+        width: &#39;100%&#39;,
+        vtype: &#39;url&#39;,
+        keyHandlers: {
+            ENTER: function() {
+                this.up(&#39;slate-tasks-attachmentsfield&#39;).addLinkAttachment();
+            }
+        }
+    },
+    {
+        xtype: &#39;slate-attachmentslist&#39;,
+        margin: &#39;0 0 8&#39;
+    },
+    {
+        xtype: &#39;button&#39;,
+        text: &#39;Add Link&#39;,
+        margin: &#39;0 8 0 0&#39;,
+        action: &#39;addlink&#39;,
+        listeners: {
+            click: function() {
+                this.up(&#39;slate-tasks-attachmentsfield&#39;).addLinkAttachment();
+            }
+        }
+    },
+    {
+        xtype: &#39;button&#39;,
+        text: &#39;Add From Drive&#39;,
+        action: &#39;addattachment&#39;,
+        listeners: {
+            click: function() {
+                return this.up(&#39;slate-tasks-attachmentsfield&#39;).fireEvent(&#39;addgoogleattachment&#39;, this);
+            }
+        }
+    }],
+
+    updateReadOnly: function(readOnly) {
+        var me = this,
+            field, buttons, list,
+            i = 0;
+
+        readOnly = Boolean(readOnly);
+
+        if (!me.rendered) {
+            me.on(&#39;render&#39;, function() {
+                return me.updateReadOnly(readOnly);
+            }, me, { single: true });
+            return;
+        }
+
+        field = me.down(&#39;textfield&#39;);
+        buttons = me.query(&#39;button&#39;);
+        list = me.down(&#39;slate-attachmentslist&#39;);
+
+        for (; i &lt; buttons.length; i++) {
+            buttons[i][readOnly ? &#39;hide&#39; : &#39;show&#39;]();
+        }
+
+        list.setEditable(!readOnly);
+        list.refreshView();
+
+        field[readOnly ? &#39;hide&#39; : &#39;show&#39;]();
+
+    },
+
+    addLinkAttachment: function(url) {
+        var me = this,
+            field = me.down(&#39;textfield&#39;),
+            value = url || field.getValue();
+
+        if (value &amp;&amp; field.validate()) {
+            me.setAttachments({
+                URL: value
+            }, true);
+            field.setValue(&#39;&#39;);
+        }
+    },
+
+    getAttachments: function(returnRecords) {
+        var me = this,
+            list = me.down(&#39;slate-attachmentslist&#39;),
+            store = list.getStore();
+
+        if (returnRecords === false) {
+            return Ext.Array.map(store.getRange(), function(s) {
+                return s.getData();
+            });
+        }
+        return store.getRange();
+    },
+
+    setAttachments: function(attachments, append) {
+        var me = this,
+            list = me.down(&#39;slate-attachmentslist&#39;),
+            store = list.getStore();
+
+        if (append !== true) {
+            store.removeAll();
+        }
+        store.add(attachments);
+    }
+
+});
+</pre>
+</body>
+</html>

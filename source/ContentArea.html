@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.model.ContentArea&#39;, {
+    extend: &#39;Ext.data.Model&#39;,
+    requires: [
+        &#39;Slate.cbl.proxy.ContentAreas&#39;,
+        &#39;Ext.data.identifier.Negative&#39;
+    ],
+
+
+    // model config
+    idProperty: &#39;ID&#39;,
+    identifier: &#39;negative&#39;,
+
+    fields: [
+        {
+            name: &#39;ID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Class&#39;,
+            type: &#39;string&#39;,
+            defaultValue: &#39;Slate\\CBL\\ContentArea&#39;
+        },
+        {
+            name: &#39;Created&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;CreatorID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Code&#39;,
+            type: &#39;string&#39;
+        },
+        {
+            name: &#39;Title&#39;,
+            type: &#39;string&#39;
+        }
+    ],
+
+    proxy: &#39;slate-cbl-contentareas&#39;
+});</pre>
+</body>
+</html>

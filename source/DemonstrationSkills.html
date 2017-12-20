@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*jslint browser: true, undef: true *//*global Ext,Slate*/
+Ext.define(&#39;Slate.cbl.store.DemonstrationSkills&#39;, {
+    extend: &#39;Ext.data.Store&#39;,
+
+    model: &#39;Slate.cbl.model.DemonstrationSkill&#39;,
+    pageSize: 0,
+
+
+<span id='global-method-loadByStudentsAndCompetencies'>    /**
+</span>     * Loads all current-level demonstrations for given lists of students and competencies and **add** them to this store.
+     * Because demonstartions have a unique ID, any subsequent overlapping loads will not duplicate records
+     */
+    loadByStudentsAndCompetencies: function(students, competencies, options) {
+        options = options || {};
+
+        options.params = Ext.apply(options.params || {}, {
+            competencies: Ext.isArray(competencies) ? competencies.join(&#39;,&#39;) : competencies
+        });
+
+        if (Ext.isArray(students)) {
+            options.url = &#39;/cbl/dashboards/demonstrations/teacher/demonstration-skills&#39;;
+            options.params.students = students.join(&#39;,&#39;);
+        } else {
+            options.url = &#39;/cbl/dashboards/demonstrations/student/demonstration-skills&#39;;
+            options.params.student = students;
+        }
+
+        options.addRecords = true;
+
+        return this.load(options);
+    },
+
+<span id='global-method-mergeRawData'>    /**
+</span>     * Loads an array of raw DemonstrationSkill data into the store, updating records that already exist. If demonstration
+     * is provided, existing skills not in the new list will be removed and embedded demonstration data may be omitted.
+     *
+     * @param {Object[]} data Array of DemonstrationSkill raw data
+     * @param {Slate.cbl.model.Demonstration} [demonstration] If provided, the data array is assumed to contain all skills for this demonstration
+     */
+    mergeRawData: function(data, demonstration) {
+        var me = this,
+            reader = me.getProxy().getReader(),
+            Model = me.getModel(),
+            existingRecords = demonstration &amp;&amp; me.query(&#39;DemonstrationID&#39;, demonstration.getId()).collect(&#39;ID&#39;, &#39;data&#39;),
+            demonstrationData = demonstration &amp;&amp; demonstration.getData(),
+            i, len,
+            datum, id, record,
+            newRecords = [];
+
+
+        me.beginUpdate();
+
+
+        // update existing records and build array of new records
+        for (i = 0, len = data.length; i &lt; len; i++) {
+            datum = data[i];
+            id = Model.getIdFromData(datum);
+            record = id &amp;&amp; me.getById(id);
+
+            datum = reader.extractModelData(datum);
+
+            if (!datum.Demonstration &amp;&amp; demonstrationData) {
+                datum.Demonstration = demonstrationData;
+            }
+
+            if (id) {
+                Ext.Array.remove(existingRecords, id);
+            }
+
+            if (record) {
+                record.set(datum, {
+                    dirty: false
+                });
+            } else {
+                newRecords.push(datum);
+            }
+        }
+
+
+        // add new records all together
+        me.add(newRecords);
+
+
+        // remove missing skills from same demonstration
+        for (i = 0, len = existingRecords.length; i &lt; len; i++) {
+            existingRecords[i] = me.getById(existingRecords[i]);
+        }
+        me.remove(existingRecords);
+
+
+        me.endUpdate();
+    }
+});</pre>
+</body>
+</html>

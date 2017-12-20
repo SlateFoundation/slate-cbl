@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='SlateTasksStudent-controller-Dashboard'>/**
+</span> * Main controller for SlateTasksStudent app
+ *
+ * ## Responsibilities:
+ * - Configure and render main view
+ * - Manage selection of student
+ * - Manage selection of section
+ */
+Ext.define(&#39;SlateTasksStudent.controller.Dashboard&#39;, {
+    extend: &#39;Ext.app.Controller&#39;,
+    requires: [
+        &#39;Slate.API&#39;
+    ],
+
+
+<span id='SlateTasksStudent-controller-Dashboard-property-views'>    // dependencies
+</span>    views: [
+        &#39;Dashboard&#39;
+    ],
+
+<span id='SlateTasksStudent-controller-Dashboard-property-stores'>    stores: [
+</span>        &#39;Students@Slate.cbl.store&#39;,
+        &#39;Sections@Slate.store.courses&#39;
+    ],
+
+
+<span id='SlateTasksStudent-controller-Dashboard-property-refs'>    // component factories and selectors
+</span>    refs: {
+        dashboard: {
+            selector: &#39;slatetasksstudent-dashboard&#39;,
+            autoCreate: true,
+
+            xtype: &#39;slatetasksstudent-dashboard&#39;
+        },
+        appHeader: &#39;slatetasksstudent-appheader&#39;,
+        studentSelector: &#39;combobox#studentSelector&#39;,
+        sectionSelector: &#39;combobox#sectionSelector&#39;,
+        taskTree: &#39;slatetasksstudent-tasktree&#39;,
+        todoList: &#39;slatetasksstudent-todolist&#39;
+    },
+
+
+<span id='SlateTasksStudent-controller-Dashboard-property-routes'>    // entry points
+</span>    routes: {
+        &#39;:studentUsername/:sectionCode&#39;: {
+            action: &#39;showDashboard&#39;,
+            conditions: {
+                &#39;:studentUsername&#39;: &#39;([^/]+)&#39;,
+                &#39;:sectionCode&#39;: &#39;([^/]+)&#39;
+            }
+        }
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-property-listen'>    listen: {
+</span>        global: {
+            resize: &#39;onBrowserResize&#39;
+        },
+        controller: {
+            &#39;#&#39;: {
+                unmatchedroute: &#39;onUnmatchedRoute&#39;
+            }
+        },
+        store: {
+            &#39;#Sections&#39;: {
+                load: &#39;onSectionsLoad&#39;
+            }
+        }
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-property-control'>    control: {
+</span>        dashboard: {
+            studentchange: &#39;onStudentChange&#39;,
+            sectionchange: &#39;onSectionChange&#39;
+        },
+        studentSelector: {
+            select: &#39;onStudentSelectorSelect&#39;,
+            clear: &#39;onStudentSelectorClear&#39;
+        },
+        sectionSelector: {
+            change: &#39;onSectionSelectorChange&#39;
+        }
+    },
+
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onLaunch'>    // controller templates method overrides
+</span>    onLaunch: function () {
+        var me = this,
+            siteEnv = window.SiteEnvironment || {},
+            dashboard = me.getDashboard();
+
+        // show and load student selector for priveleged users
+        if (!siteEnv.user || siteEnv.user.AccountLevel != &#39;User&#39;) {
+            me.getStudentSelector().show();
+        }
+
+        // instantiate and render viewport
+        dashboard.render(&#39;slateapp-viewport&#39;);
+    },
+
+
+<span id='SlateTasksStudent-controller-Dashboard-method-showDashboard'>    // route handlers
+</span>    showDashboard: function(studentUsername, sectionCode) {
+        var dashboard = this.getDashboard();
+
+        // use false instead of null, to indicate selecting *nothing* vs having no selection
+        dashboard.setStudent(studentUsername == &#39;me&#39; ? false : studentUsername);
+        dashboard.setSection(sectionCode == &#39;all&#39; ? false : sectionCode);
+    },
+
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onBrowserResize'>    // event handlers
+</span>    onBrowserResize: function() {
+        this.getDashboard().updateLayout();
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onUnmatchedRoute'>    onUnmatchedRoute: function() {
+</span>        this.redirectTo(&#39;me/all&#39;);
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onSectionsLoad'>    onSectionsLoad: function() {
+</span>        this.getSectionSelector().enable();
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onStudentChange'>    onStudentChange: function(dashboard, studentUsername) {
+</span>        var me = this,
+            studentCombo = me.getStudentSelector(),
+            studentsStore = me.getStudentsStore(),
+            sectionsStore = me.getSectionsStore();
+
+        // (re)load sections list
+        sectionsStore.getProxy().setExtraParam(&#39;enrolled_user&#39;, studentUsername || &#39;current&#39;);
+        sectionsStore.load();
+
+        // push value to selector
+        studentCombo.setValue(studentUsername);
+
+        // reload students store with just selected student if they&#39;re not in the current result set
+        if (studentUsername &amp;&amp; !studentCombo.getSelectedRecord()) {
+            studentsStore.load({
+                params: {
+                    q: &#39;username:&#39;+studentUsername
+                }
+            });
+        }
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onSectionChange'>    onSectionChange: function(dashboard, sectionCode) {
+</span>        var me = this;
+
+        me.getSectionSelector().setValue(sectionCode);
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onStudentSelectorSelect'>    onStudentSelectorSelect: function(studentCombo, student) {
+</span>        this.redirectTo([student.get(&#39;Username&#39;), &#39;all&#39;]);
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onStudentSelectorClear'>    onStudentSelectorClear: function() {
+</span>        this.redirectTo([&#39;me&#39;, &#39;all&#39;]);
+    },
+
+<span id='SlateTasksStudent-controller-Dashboard-method-onSectionSelectorChange'>    onSectionSelectorChange: function(sectionCombo, sectionCode) {
+</span>        this.redirectTo([this.getDashboard().getStudent() || &#39;me&#39;, sectionCode || &#39;all&#39;]);
+    }
+});</pre>
+</body>
+</html>

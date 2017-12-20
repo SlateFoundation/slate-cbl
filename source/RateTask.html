@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.view.modals.RateTask&#39;, {
+    extend: &#39;Slate.cbl.view.modals.Modal&#39;,
+    xtype: &#39;slate-ratetaskwindow&#39;,
+    requires: [
+        &#39;Slate.cbl.view.AttachmentsList&#39;,
+        &#39;Slate.cbl.view.modals.ModalForm&#39;,
+        &#39;Slate.cbl.widget.RatingView&#39;,
+        &#39;Slate.cbl.widget.CommentsField&#39;,
+        &#39;Slate.cbl.widget.ReAssignmentField&#39;,
+        &#39;Slate.cbl.widget.SubmissionsField&#39;
+    ],
+
+    title: &#39;Rate Task&#39;,
+
+    config: {
+        task: null,
+        studentTask: null
+    },
+
+    dockedItems: [
+        {
+            dock: &#39;bottom&#39;,
+            xtype: &#39;container&#39;,
+            cls: &#39;slate-modalfooter&#39;,
+            items: [
+                {
+                    xtype: &#39;container&#39;,
+                    layout: &#39;hbox&#39;,
+                    defaults: {
+                        xtype: &#39;button&#39;,
+                        scale: &#39;large&#39;
+                    },
+                    items: [
+                        {
+                            text: &#39;Edit Task&#39;,
+                            action: &#39;edit&#39;,
+                            margin: &#39;0 0 8&#39;
+                        },
+                        {
+                            xtype: &#39;tbfill&#39;
+                        },
+                        {
+                            text: &#39;Accept Task&#39;,
+                            action: &#39;accept&#39;
+                        }
+                    ]
+                },
+                {
+                    xtype: &#39;container&#39;,
+                    layout: &#39;hbox&#39;,
+                    defaults: {
+                        xtype: &#39;button&#39;,
+                        scale: &#39;large&#39;
+                    },
+                    items: [
+                        {
+                            text: &#39;Unassign Task&#39;,
+                            action: &#39;unassign&#39;
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+
+   items: [
+        {
+            xtype: &#39;slate-modalform&#39;,
+            defaultType: &#39;displayfield&#39;,
+            items: [
+                {
+                    fieldLabel: &#39;Student&#39;,
+                    name: &#39;StudentFullName&#39;
+                },
+                {
+                    fieldLabel: &#39;Title&#39;,
+                    name: &#39;Title&#39;
+                },
+                {
+                    fieldLabel: &#39;Subtask of&#39;,
+                    name: &#39;ParentTaskTitle&#39;
+                },
+                {
+                    fieldLabel: &#39;Type of Experience&#39;,
+                    name: &#39;ExperienceType&#39;
+                },
+                {
+                    xtype: &#39;datefield&#39;,
+                    fieldLabel: &#39;Due Date&#39;,
+                    name: &#39;DueDate&#39;,
+                    readOnly: true,
+                    format: &#39;m/d/Y&#39;
+                },
+                {
+                    xtype: &#39;datefield&#39;,
+                    fieldLabel: &#39;Expiration Date&#39;,
+                    name: &#39;ExpirationDate&#39;,
+                    readOnly: true,
+                    format: &#39;m/d/Y&#39;
+                },
+                {
+                    xtype: &#39;slate-tasks-attachmentsfield&#39;,
+                    fieldLabel: &#39;Attachments&#39;,
+                    readOnly: true
+                },
+                {
+                    xtype: &#39;slate-tasks-attachmentsfield&#39;,
+                    itemId: &#39;student-attachments&#39;,
+                    fieldLabel: &#39;Student Attachments&#39;,
+                    readOnly: true
+                },
+                {
+                    xtype: &#39;slate-ratingview&#39;
+                },
+                {
+                    xtype: &#39;slate-tasks-submissions&#39;
+                },
+                {
+                    xtype: &#39;slate-commentsfield&#39;
+                },
+                {
+                    xtype: &#39;slate-tasks-reassignfield&#39;
+                }
+            ]
+        }
+    ]
+});</pre>
+</body>
+</html>

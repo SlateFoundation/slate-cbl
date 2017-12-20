@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='SlateTasksStudent-view-Dashboard'>/**
+</span> * The application&#39;s top level container, to be manually rendered to a
+ * specific pre-painted container in the design
+ */
+Ext.define(&#39;SlateTasksStudent.view.Dashboard&#39;, {
+    extend: &#39;Ext.container.Container&#39;,
+    xtype: &#39;slatetasksstudent-dashboard&#39;,
+    requires: [
+        &#39;Ext.layout.container.Column&#39;,
+
+        &#39;SlateTasksStudent.view.AppHeader&#39;,
+        &#39;SlateTasksStudent.view.TaskTree&#39;,
+        &#39;SlateTasksStudent.view.TodoList&#39;
+    ],
+
+
+    config: {
+<span id='SlateTasksStudent-view-Dashboard-cfg-student'>        student: null,
+</span><span id='SlateTasksStudent-view-Dashboard-cfg-section'>        section: null
+</span>    },
+
+<span id='SlateTasksStudent-view-Dashboard-property-items'>    items: [
+</span>        {
+            xtype: &#39;slatetasksstudent-appheader&#39;,
+            style: {
+                border: &#39;none&#39;,
+                padding: &#39;1em 7.5%&#39;
+            }
+        },
+        {
+            // like .site &gt; .inner
+            xtype: &#39;container&#39;,
+            style: {
+                padding: &#39;2em 7.5%&#39;
+            },
+            items: [
+                {
+                    xtype: &#39;container&#39;,
+                    layout: &#39;column&#39;,
+                    defaults: {
+                        columnWidth: 0.5
+                    },
+                    items: [
+                        {
+                            xtype: &#39;slatetasksstudent-tasktree&#39;,
+                            margin: &#39;0 32 0 0&#39;,
+                            store: &#39;Tasks&#39;
+                        }, {
+                            xtype: &#39;slatetasksstudent-todolist&#39;,
+                            store: &#39;Todos&#39;
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+
+
+<span id='SlateTasksStudent-view-Dashboard-method-updateStudent'>    // config handlers
+</span>    updateStudent: function(student, oldStudent) {
+        this.fireEvent(&#39;studentchange&#39;, this, student, oldStudent);
+    },
+
+<span id='SlateTasksStudent-view-Dashboard-method-updateSection'>    updateSection: function(section, oldSection) {
+</span>        this.fireEvent(&#39;sectionchange&#39;, this, section, oldSection);
+    }
+});</pre>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*jslint browser: true, undef: true *//*global Ext*/
+<span id='Slate-cbl-field-LevelSlider'>/**
+</span> * TODO: convert to a direct decendent for sliderfield that appends the label element instead of using container+component and burying the form api
+ */
+Ext.define(&#39;Slate.cbl.field.LevelSlider&#39;, {
+    extend: &#39;Ext.slider.Single&#39;,
+    xtype: &#39;slate-cbl-levelsliderfield&#39;,
+    uses: [
+        &#39;Ext.tip.ToolTip&#39;
+    ],
+
+    config: {
+<span id='Slate-cbl-field-LevelSlider-cfg-thumbValue'>        thumbValue: null,
+</span><span id='Slate-cbl-field-LevelSlider-cfg-parkedValue'>        parkedValue: null
+</span>    },
+
+<span id='Slate-cbl-field-LevelSlider-property-componentCls'>    componentCls: &#39;cbl-level-slider-field&#39;,
+</span><span id='Slate-cbl-field-LevelSlider-property-minValue'>    minValue: 7,
+</span><span id='Slate-cbl-field-LevelSlider-property-maxValue'>    maxValue: 13,
+</span><span id='Slate-cbl-field-LevelSlider-property-useTips'>    useTips: false,
+</span><span id='Slate-cbl-field-LevelSlider-property-thumbTpl'>    thumbTpl: [
+</span>        &#39;&lt;span class=&quot;value&quot;&gt;&#39;,
+            &#39;&lt;tpl if=&quot;value === null&quot;&gt;&#39;,
+                &#39;&lt;small class=&quot;muted&quot;&gt;N/A&lt;/small&gt;&#39;,
+            &#39;&lt;tpl elseif=&quot;value === 0&quot;&gt;&#39;,
+                &#39;M&#39;,
+            &#39;&lt;tpl else&gt;&#39;,
+                &#39;{value}&#39;,
+            &#39;&lt;/tpl&gt;&#39;,
+        &#39;&lt;/span&gt;&#39;
+    ],
+
+<span id='Slate-cbl-field-LevelSlider-property-listeners'>    listeners: {
+</span>        change: function(levelSlider, value) {
+            levelSlider.setThumbValue(value);
+        }
+    },
+
+<span id='Slate-cbl-field-LevelSlider-method-onRender'>    onRender: function() {
+</span>        var me = this;
+
+        me.callParent(arguments);
+
+        me.setThumbValue(me.getValue());
+
+        me.thumbs[0].el.on(&#39;click&#39;, &#39;onThumbClick&#39;, me);
+    },
+
+<span id='Slate-cbl-field-LevelSlider-method-updateThumbValue'>    updateThumbValue: function(value, oldValue) {
+</span>        var me = this,
+            thumbEl = me.thumbs[0].el,
+            isParked = value == me.minValue;
+
+        if (oldValue &amp;&amp; isParked) {
+            me.setParkedValue(null);
+        }
+
+        me.lookupTpl(&#39;thumbTpl&#39;).overwrite(thumbEl, {
+            value: isParked ? me.getParkedValue() : value
+        });
+
+        thumbEl.toggleCls(&#39;thumb-parked&#39;, isParked);
+    },
+
+<span id='Slate-cbl-field-LevelSlider-method-updateParkedValue'>    updateParkedValue: function(value) {
+</span>        this.updateThumbValue(this.getThumbValue());
+    },
+
+<span id='Slate-cbl-field-LevelSlider-method-getLevel'>    getLevel: function() {
+</span>        var me = this,
+            thumbValue = me.getThumbValue();
+
+        return thumbValue == me.minValue ? me.getParkedValue() : thumbValue;
+    },
+
+<span id='Slate-cbl-field-LevelSlider-method-setLevel'>    setLevel: function(level) {
+</span>        var me = this,
+            minValue = me.minValue;
+
+        if (level &gt; minValue) {
+            me.setValue(level);
+        } else {
+            me.setValue(minValue);
+            me.setParkedValue(level);
+        }
+    },
+
+<span id='Slate-cbl-field-LevelSlider-method-onThumbClick'>    onThumbClick: function() {
+</span>        var me = this,
+            specialGradeTip, thumbEl, menuItems;
+
+        if (me.getValue() != me.minValue) {
+            return;
+        }
+
+        thumbEl = me.thumbs[0].el;
+
+        if (!(specialGradeTip = me.self.specialGradeTip)) {
+            specialGradeTip = me.self.specialGradeTip = Ext.create(&#39;Ext.tip.ToolTip&#39;, {
+                anchor: &#39;left&#39;,
+                target: thumbEl,
+                autoHide: false,
+                cls: &#39;special-grade-tip&#39;,
+                items: {
+                    xtype: &#39;menu&#39;,
+                    floating: false,
+                    plain: true,
+                    defaults: {
+                        checked: false,
+                        group: &#39;level&#39;,
+                        listeners: {
+                            checkchange: function(menuItem, checked) {
+                                if (!checked) {
+                                    return; // ignore uncheck events
+                                }
+
+                                specialGradeTip.targetSlider.setParkedValue(menuItem.value);
+
+                                Ext.defer(specialGradeTip.hide, 100, specialGradeTip);
+                            }
+                        }
+                    },
+                    items: [{
+                        text: &#39;7&#39;,
+                        value: 7
+                    },{
+                        text: &#39;6&#39;,
+                        value: 6
+                    },{
+                        text: &#39;5&#39;,
+                        value: 5
+                    },{
+                        text: &#39;4&#39;,
+                        value: 4
+                    },{
+                        text: &#39;3&#39;,
+                        value: 3
+                    },{
+                        text: &#39;2&#39;,
+                        value: 2
+                    },{
+                        text: &#39;1&#39;,
+                        value: 1
+                    },{
+                        text: &#39;M&#39;,
+                        value: 0
+                    },{
+                        text: &#39;N/A&#39;,
+                        value: null
+                    }]
+                },
+                listeners: {
+                    hide: function() {
+                        specialGradeTip.setTarget(null); // remove target on hide so that it does not open again on mouse hover
+                    }
+                }
+            });
+        } else {
+            specialGradeTip.setTarget(thumbEl);
+        }
+
+        menuItems = specialGradeTip.down(&#39;menu&#39;).items;
+
+        (
+            menuItems.findBy(function(item) {
+                return item.value === me.getParkedValue();
+            }) ||
+            menuItems.last()
+        ).setChecked(true, true);
+
+        specialGradeTip.targetSlider = me;
+        specialGradeTip.show();
+    }
+});</pre>
+</body>
+</html>

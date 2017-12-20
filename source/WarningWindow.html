@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.view.modals.WarningWindow&#39;, {
+    extend: &#39;Ext.Window&#39;,
+    requires: [],
+
+    xtype: &#39;slate-warningwindow&#39;,
+    componentCls: &#39;slate-warning-window&#39;,
+
+    constrain: true,
+    header: false,
+    modal: true,
+    resizable: false,
+    width: 400,
+
+    config: {
+        messageTpl: [
+            &#39;&lt;p&gt;&lt;strong&gt;The skills you removed from this task have already been rated for:&lt;/strong&gt;&lt;/p&gt;&#39;,
+            &#39;&lt;ul&gt;&#39;,
+                &#39;&lt;tpl for=&quot;students&quot;&gt;&#39;,
+                    &#39;&lt;li&gt;{.}&lt;/li&gt;&#39;,
+                &#39;&lt;/tpl&gt;&#39;,
+            &#39;&lt;/ul&gt;&#39;,
+            &#39;&lt;p&gt;&lt;strong&gt;These students will retain their existing evaluations.&lt;/strong&gt;&lt;/p&gt;&#39;
+        ],
+
+        messageData: {
+            students: [
+                &#39;Chris Alfano&#39;,
+                &#39;Jessie Cunningham&#39;,
+                &#39;John Fazio&#39;,
+                &#39;Christian Kunkel&#39;,
+                &#39;Alexandra Wiest&#39;
+            ]
+        }
+    },
+
+    items: [
+        {
+            itemId: &#39;messageArea&#39;,
+            xtype: &#39;component&#39;
+        },
+        {
+            xtype: &#39;container&#39;,
+            layout: &#39;hbox&#39;,
+            items: [
+                {
+                    xtype: &#39;button&#39;,
+                    text: &#39;Undo Remove&#39;,
+                    ui: &#39;normal&#39;,
+                    handler: function(btn, ev) {
+                        btn.up(&#39;slate-warningwindow&#39;).close();
+                    }
+                },
+                {
+                    xtype: &#39;component&#39;,
+                    flex: 1
+                },
+                {
+                    xtype: &#39;button&#39;,
+                    text: &#39;I Understand&#39;,
+                    ui: &#39;default&#39;
+                }
+            ]
+        }
+    ],
+
+    beforeRender: function() {
+        this.callParent();
+
+        var me = this,
+            messageArea = me.down(&#39;#messageArea&#39;);
+
+        messageArea.tpl = me.getMessageTpl();
+        messageArea.data = me.getMessageData();
+    }
+});</pre>
+</body>
+</html>

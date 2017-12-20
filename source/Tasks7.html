@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='SlateTasksTeacher-store-Tasks'>/**
+</span> * Disable remote sorting/filtering for manual data loading by controller
+ */
+Ext.define(&#39;SlateTasksTeacher.store.Tasks&#39;, {
+    extend: &#39;Slate.cbl.store.tasks.Tasks&#39;,
+
+
+    config: {
+<span id='SlateTasksTeacher-store-Tasks-cfg-remoteSort'>        remoteSort: false,
+</span><span id='SlateTasksTeacher-store-Tasks-cfg-remoteFilter'>        remoteFilter: false,
+</span><span id='SlateTasksTeacher-store-Tasks-cfg-sorters'>        sorters: [{
+</span>            property: &#39;Created&#39;,
+            direction: &#39;DESC&#39;
+        }]
+    }
+});
+</pre>
+</body>
+</html>

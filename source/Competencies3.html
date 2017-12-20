@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*jslint browser: true, undef: true *//*global Ext,Slate*/
+Ext.define(&#39;Slate.cbl.store.Competencies&#39;, {
+    extend: &#39;Ext.data.Store&#39;,
+    requires: [
+        &#39;Slate.cbl.API&#39;
+    ],
+
+    model: &#39;Slate.cbl.model.Competency&#39;,
+    pageSize: 0,
+
+    constructor: function(config) {
+        console.log(&#39;constructing&#39;, this.$className, config);
+        config = config || {};
+        config.session = Slate.cbl.API.getSession();
+
+        this.callParent([config]);
+
+        this.loadedContentAreas = {};
+    },
+    
+    getAllByContentArea: function(contentArea, callback, scope) {
+        var me = this,
+            loadedContentAreas = this.loadedContentAreas;
+
+        contentArea = contentArea.isModel ? contentArea.getId() : parseInt(contentArea, 10);
+
+        if (contentArea in loadedContentAreas) {
+            return Ext.callback(callback, scope, [loadedContentAreas[contentArea]]);
+        }
+
+        me.load({
+            addRecords: true,
+            params: {
+                &#39;content-area&#39;: contentArea
+            },
+            callback: function() {
+                Ext.callback(callback, scope, [loadedContentAreas[contentArea] = me.query(&#39;ContentAreaID&#39;, contentArea)]);
+            }
+        });
+    }
+});</pre>
+</body>
+</html>

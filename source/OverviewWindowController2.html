@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*jslint browser: true, undef: true *//*global Ext,Slate*/
+Ext.define(&#39;SlateDemonstrationsTeacher.view.OverviewWindowController&#39;, {
+    extend: &#39;Ext.app.ViewController&#39;,
+    alias: &#39;controller.slate-demonstrations-teacher-skill-overviewwindow&#39;,
+    requires: [
+        &#39;Jarvus.util.APIDomain&#39;
+    ],
+
+
+    config: {
+        // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        id: &#39;slate-demonstrations-teacher-skill-overviewwindow&#39;,
+        control: {
+            &#39;#&#39;: {
+                beforeshow: &#39;onBeforeWindowShow&#39;
+            },
+            &#39;combobox[reference=competencyCombo]&#39;: {
+                change: &#39;onCompetencyChange&#39;
+            },
+            &#39;combobox[reference=skillCombo]&#39;: {
+                change: &#39;onSkillChange&#39;
+            },
+            &#39;combobox[reference=studentCombo]&#39;: {
+                change: &#39;onStudentChange&#39;
+            },
+            &#39;button[action=override]&#39;: {
+                click: &#39;onOverrideClick&#39;
+            },
+            &#39;button[action=demonstration-create]&#39;: {
+                click: &#39;onCreateDemonstrationClick&#39;
+            }
+        },
+
+        listen: {
+            api: {
+                demonstrationsave: &#39;onDemonstrationSave&#39;,
+                demonstrationdelete: &#39;onDemonstrationDelete&#39;
+            }
+        }
+    },
+
+    // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+    applyId: function(id) {
+        return Ext.id(null, id);
+    },
+
+    init: function(overviewWindow) {
+        this.lookupReference(&#39;competencyCombo&#39;).getStore().setSource(overviewWindow.getCompetenciesStore());
+        this.lookupReference(&#39;studentCombo&#39;).getStore().setSource(overviewWindow.getStudentsStore());
+    },
+
+    onBeforeWindowShow: function(overviewWindow) {
+        this.lookupReference(&#39;competencyCombo&#39;).setValue(overviewWindow.getCompetency());
+        this.lookupReference(&#39;studentCombo&#39;).setValue(overviewWindow.getStudent());
+    },
+
+    onCompetencyChange: function(competencyCombo, competency) {
+        competency = competency &amp;&amp; competencyCombo.findRecordByValue(competency);
+
+        var me = this,
+            overviewWindow = me.getView(),
+            skillsCombo = me.lookupReference(&#39;skillCombo&#39;),
+            skillsComboStore = skillsCombo.getStore(),
+            initialValue = overviewWindow.getSkill();
+
+        if (!competency) {
+            return;
+        }
+
+        skillsCombo.disable();
+
+        skillsComboStore.getSource().getAllByCompetency(competency, function() {
+            skillsComboStore.setFilters({
+                property: &#39;CompetencyID&#39;,
+                value: competency.getId()
+            });
+
+            skillsCombo.enable();
+
+            if (!skillsCombo.findRecordByValue(skillsCombo.getValue() || initialValue)) {
+                overviewWindow.setSkill(null);
+                skillsCombo.clearValue();
+                skillsCombo.expand();
+                skillsCombo.focus();
+            } else if (initialValue) {
+                skillsCombo.setValue(initialValue);
+            }
+        });
+    },
+
+    onSkillChange: function(skillCombo, skill) {
+        skill = skill &amp;&amp; skillCombo.findRecordByValue(skill);
+
+        if (skill) {
+            this.lookupReference(&#39;skillStatement&#39;).update(skill.get(&#39;Statement&#39;));
+        }
+
+        this.getView().setSkill(skill ? skill.getId() : null);
+    },
+
+    onStudentChange: function(studentCombo, student) {
+        this.getView().setStudent(student);
+    },
+
+    onOverrideClick: function() {
+        var me = this,
+            overviewWindow = me.getView();
+
+        overviewWindow.fireEvent(&#39;createoverrideclick&#39;, overviewWindow, me.lookupReference(&#39;studentCombo&#39;).getValue(), me.lookupReference(&#39;skillCombo&#39;).getValue());
+    },
+
+    onCreateDemonstrationClick: function() {
+        var me = this,
+            overviewWindow = me.getView();
+
+        overviewWindow.fireEvent(&#39;createdemonstrationclick&#39;, overviewWindow, me.lookupReference(&#39;studentCombo&#39;).getValue(), me.lookupReference(&#39;competencyCombo&#39;).getValue());
+    },
+
+    onDemonstrationSave: function(demonstration) {
+        var overviewWindow = this.getView(),
+            demonstrationSkillIds = Ext.pluck(demonstration.get(&#39;Skills&#39;)||[], &#39;SkillID&#39;);
+
+        if (demonstration.get(&#39;StudentID&#39;) == overviewWindow.getStudent() &amp;&amp; Ext.Array.contains(demonstrationSkillIds, overviewWindow.getSkill())) {
+            overviewWindow.loadDemonstrationsTable(true);
+        }
+    },
+
+    onDemonstrationDelete: function(demonstration) {
+        var overviewWindow = this.getView(),
+            demoSkillsStore = overviewWindow.getDemonstrationSkillsStore();
+
+        if (demonstration.get(&#39;StudentID&#39;) == overviewWindow.getStudent()) {
+            demoSkillsStore.remove(demoSkillsStore.query(&#39;DemonstrationID&#39;, demonstration.getId()).getRange());
+        }
+
+    }
+});</pre>
+</body>
+</html>

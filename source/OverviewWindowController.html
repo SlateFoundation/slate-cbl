@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;SlateDemonstrationsStudent.view.OverviewWindowController&#39;, {
+    extend: &#39;Ext.app.ViewController&#39;,
+    alias: &#39;controller.slate-demonstrations-student-skill-overviewwindow&#39;,
+    requires: [
+        &#39;Slate.cbl.model.Competency&#39;,
+        &#39;Slate.cbl.model.Skill&#39;
+    ],
+
+
+    config: {
+        id: &#39;slate-demonstrations-student-skill-overviewwindow&#39;, // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+        control: {
+            &#39;#&#39;: {
+                beforeshow: &#39;onBeforeWindowShow&#39;
+            },
+            &#39;combobox[reference=skillCombo]&#39;: {
+                change: &#39;onSkillChange&#39;
+            }
+        }
+    },
+
+    // workaround for http://www.sencha.com/forum/showthread.php?290043-5.0.1-destroying-a-view-with-ViewController-attached-disables-listen-..-handlers
+    applyId: function(id) {
+        return Ext.id(null, id);
+    },
+
+    onBeforeWindowShow: function(overviewWindow) {
+        var competencyId = overviewWindow.getCompetency(),
+            skillsCombo = this.lookupReference(&#39;skillCombo&#39;),
+            skillsComboStore = skillsCombo.getStore();
+
+        skillsComboStore.getSource().getAllByCompetency(competencyId, function() {
+            skillsComboStore.setFilters({
+                property: &#39;CompetencyID&#39;,
+                value: competencyId
+            });
+
+            skillsCombo.setValue(overviewWindow.getSkill());
+            skillsCombo.enable();
+        });
+    },
+
+    onSkillChange: function(skillCombo, skill) {
+        skill = skill &amp;&amp; skillCombo.findRecordByValue(skill);
+
+        if (skill) {
+            this.lookupReference(&#39;skillStatement&#39;).update(skill.get(&#39;Statement&#39;));
+        }
+
+        this.getView().setSkill(skill ? skill.getId() : null);
+    }
+});
+</pre>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*jslint browser: true, undef: true *//*global Ext,Slate*/
+Ext.define(&#39;Slate.cbl.data.ContentAreas&#39;, {
+    extend: &#39;Ext.data.Store&#39;,
+    singleton: true,
+    requires: [
+        &#39;Slate.cbl.API&#39;
+    ],
+
+
+    storeId: &#39;cbl-contentareas&#39;,
+	model: &#39;Slate.cbl.model.ContentArea&#39;,
+
+    constructor: function(config) {
+        config = config || {};
+        config.session = Slate.cbl.API.getSession();
+
+        this.callParent([config]);
+    }
+});</pre>
+</body>
+</html>

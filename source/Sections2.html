@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.store.courses.Sections&#39;, {
+    extend: &#39;Ext.data.Store&#39;,
+    alternateClassName: [
+        &#39;Slate.store.CourseSections&#39;
+    ],
+
+
+    model: &#39;Slate.model.course.Section&#39;,
+
+    config: {
+        pageSize: 0,
+        remoteSort: true,
+        sorters: [
+            {
+                property: &#39;CurrentTerm&#39;,
+                direction: &#39;ASC&#39;
+            },
+            {
+                property: &#39;Code&#39;,
+                direction: &#39;ASC&#39;
+            }
+        ]
+    },
+
+    getByCode: function(code) {
+        var index = code ? this.findExact(&#39;Code&#39;, code) : -1;
+
+        return index == -1 ? null : this.getAt(index);
+    }
+});</pre>
+</body>
+</html>

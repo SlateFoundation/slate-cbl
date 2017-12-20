@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.widget.SubmissionsField&#39;, {
+    extend: &#39;Ext.form.FieldContainer&#39;,
+
+    xtype: &#39;slate-tasks-submissions&#39;,
+
+    fieldLabel: &#39;Submitted&#39;,
+    tpl: [
+        &#39;&lt;tpl for=&quot;.&quot;&gt;&#39;,
+            &#39;&lt;div class=&quot;slate-task-submissions-ct&quot;&gt;&#39;,
+                &#39;&lt;ul class=&quot;slate-task-submissions&quot;&gt;&#39;,
+                    &#39;&lt;tpl for=&quot;.&quot;&gt;&#39;,
+                        &#39;&lt;li class=&quot;slate-task-submission&quot;&gt;&#39;,
+                            &#39;&lt;div class=&quot;slate-task-submission-date&quot;&gt;{[Ext.Date.format(new Date(values.Created * 1000), &quot;H:ia M d, Y&quot;)]}&lt;/div&gt;&#39;,
+                        &#39;&lt;/li&gt;&#39;,
+                    &#39;&lt;/tpl&gt;&#39;,
+                &#39;&lt;/ul&gt;&#39;,
+            &#39;&lt;/div&gt;&#39;,
+        &#39;&lt;/tpl&gt;&#39;
+    ]
+
+});</pre>
+</body>
+</html>

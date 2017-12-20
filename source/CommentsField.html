@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.widget.CommentsField&#39;, {
+    extend: &#39;Ext.form.FieldContainer&#39;,
+    requires: [
+        &#39;Ext.form.field.TextArea&#39;,
+        &#39;Ext.button.Button&#39;
+    ],
+
+    xtype: &#39;slate-commentsfield&#39;,
+    config: {
+        record: null,
+        readOnly: false
+    },
+
+    fieldLabel: &#39;Comments&#39;,
+
+    items: [{
+        xtype: &#39;component&#39;,
+        itemId: &#39;comments-list&#39;,
+        tpl: [
+            &#39;&lt;tpl if=&quot;values &amp;&amp; values.length&quot;&gt;&#39;,
+                &#39;&lt;div class=&quot;slate-task-comments-ct&quot;&gt;&#39;,
+                    // &#39;&lt;h4 class=&quot;slate-task-comments-heading&quot;&gt;Comments&lt;/h4&gt;&#39;, // redundant?
+                    &#39;&lt;ul class=&quot;slate-task-comments&quot;&gt;&#39;,
+                        &#39;&lt;tpl for=&quot;.&quot;&gt;&#39;,
+                            &#39;&lt;li class=&quot;slate-task-comment&quot;&gt;&#39;,
+                                &#39;&lt;div class=&quot;slate-task-comment-date&quot;&gt;{[Ext.Date.format(new Date(values.Created * 1000), &quot;M d, Y&quot;)]}&lt;/div&gt;&#39;,
+                                &#39;&lt;div class=&quot;slate-task-comment-text&quot;&gt;{Message}&lt;/div&gt;&#39;,
+                            &#39;&lt;/li&gt;&#39;,
+                        &#39;&lt;/tpl&gt;&#39;,
+                    &#39;&lt;/ul&gt;&#39;,
+                &#39;&lt;/div&gt;&#39;,
+            &#39;&lt;/tpl&gt;&#39;
+        ]
+    }, {
+        xtype: &#39;textareafield&#39;,
+        name: &#39;Comment&#39;,
+        listeners: {
+            change: function() {
+                var me = this,
+                    button = me.next(&#39;button&#39;);
+
+                if (me.getValue()) {
+                    button.show();
+                } else {
+                    button.hide();
+                }
+            }
+        }
+    }, {
+        xtype: &#39;button&#39;,
+        text: &#39;Submit&#39;,
+        hidden: true,
+        action: &#39;publish&#39;,
+        handler: function() {
+            var me = this,
+                fieldContainer = me.up(&#39;slate-commentsfield&#39;),
+                commentField = me.prev(&#39;textareafield&#39;);
+
+                fieldContainer.fireEvent(&#39;publish&#39;, fieldContainer, commentField, me);
+        }
+    }],
+
+    updateRecord: function(record) {
+        var me = this,
+            list = me.down(&#39;#comments-list&#39;);
+
+        list.update(record.get(&#39;Comments&#39;));
+    },
+
+    updateReadOnly: function(readOnly) {
+        var me = this,
+            field;
+
+        if (!me.rendered) {
+            me.on(&#39;render&#39;, function() {
+                me.updateReadOnly(readOnly);
+            }, null, { single: true });
+            return;
+        }
+
+        field = me.down(&#39;textareafield&#39;);
+
+        field[readOnly?&#39;hide&#39;:&#39;show&#39;]();
+    }
+})</pre>
+</body>
+</html>

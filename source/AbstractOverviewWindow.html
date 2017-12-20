@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Slate-cbl-view-standard-AbstractOverviewWindow'>/**
+</span> * Provides a foundation for the window used in both the student and teacher
+ * UIs to display all the demonstrations affecting a given standard.
+ *
+ * @abstract
+ */
+Ext.define(&#39;Slate.cbl.view.standard.AbstractOverviewWindow&#39;, {
+    extend: &#39;Ext.window.Window&#39;,
+    xtype: &#39;slate-cbl-standard-abstractoverviewwindow&#39;,
+    requires: [
+        &#39;Slate.cbl.API&#39;,
+        &#39;Slate.cbl.model.Skill&#39;,
+        &#39;Slate.cbl.store.DemonstrationSkills&#39;,
+
+        &#39;Ext.LoadMask&#39;
+    ],
+
+    config: {
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-cfg-skill'>        // required input
+</span>        skill: null,
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-cfg-student'>        student: null,
+</span>
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-cfg-selectedDemonstration'>        // optional config
+</span>        selectedDemonstration: null,
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-cfg-showEditLinks'>        showEditLinks: false,
+</span><span id='Slate-cbl-view-standard-AbstractOverviewWindow-cfg-loadingText'>        loadingText: &#39;Loading demonstrations&amp;hellip;&#39;,
+</span>
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-cfg-demonstrationSkillsStore'>        demonstrationSkillsStore: {
+</span>            xclass: &#39;Slate.cbl.store.DemonstrationSkills&#39;,
+            sorters: &#39;Demonstrated&#39;
+        },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-cfg-loadedSkill'>        // internal state
+</span>        loadedSkill: null
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-property-title'>    title: &#39;Standard Overview&#39;,
+</span><span id='Slate-cbl-view-standard-AbstractOverviewWindow-property-width'>    width: 700,
+</span><span id='Slate-cbl-view-standard-AbstractOverviewWindow-property-minWidth'>    minWidth: 700,
+</span>
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-property-items'>    items: [
+</span>        {
+            reference: &#39;skillStatement&#39;,
+
+            xtype: &#39;component&#39;,
+            autoEl: &#39;p&#39;,
+            padding: &#39;5 50 0&#39;
+        },
+        {
+            reference: &#39;demonstrationsTable&#39;,
+
+            xtype: &#39;component&#39;,
+            minHeight: 200,
+            tpl: [
+                &#39;&lt;table class=&quot;skill-grid&quot;&gt;&#39;,
+                    &#39;&lt;thead&gt;&#39;,
+                        &#39;&lt;tr class=&quot;skill-grid-header-row&quot;&gt;&#39;,
+                            &#39;&lt;th class=&quot;skill-grid-header skill-grid-demo-index&quot;&gt;&amp;nbsp;&lt;/th&gt;&#39;,
+                            &#39;&lt;th class=&quot;skill-grid-header skill-grid-demo-date&quot;&gt;Date&lt;/th&gt;&#39;,
+                            &#39;&lt;th class=&quot;skill-grid-header skill-grid-demo-level&quot;&gt;Rating&lt;/th&gt;&#39;,
+                            &#39;&lt;th class=&quot;skill-grid-header skill-grid-demo-experience&quot;&gt;Experience Type&lt;/th&gt;&#39;,
+                            &#39;&lt;th class=&quot;skill-grid-header skill-grid-demo-context&quot;&gt;Experience Name&lt;/th&gt;&#39;,
+                            &#39;&lt;th class=&quot;skill-grid-header skill-grid-demo-task&quot;&gt;Performance&amp;nbsp;Task&lt;/th&gt;&#39;,
+                        &#39;&lt;/tr&gt;&#39;,
+                    &#39;&lt;/thead&gt;&#39;,
+
+                    &#39;&lt;tpl if=&quot;demonstrations &amp;&amp; demonstrations.length&quot;&gt;&#39;,
+                        &#39;&lt;tpl for=&quot;demonstrations&quot;&gt;&#39;,
+                            &#39;&lt;tr class=&quot;skill-grid-demo-row&quot; data-demonstration=&quot;{ID}&quot;&gt;&#39;,
+                                &#39;&lt;td class=&quot;skill-grid-demo-data skill-grid-demo-index&quot;&gt;{[xindex]}&lt;/td&gt;&#39;,
+                                &#39;&lt;td class=&quot;skill-grid-demo-data skill-grid-demo-date&quot;&gt;{Demonstrated:date}&lt;/td&gt;&#39;,
+                                &#39;&lt;td class=&quot;skill-grid-demo-data skill-grid-demo-level&quot;&gt;&lt;div class=&quot;level-color cbl-level-{TargetLevel}&quot;&gt;&lt;tpl if=&quot;DemonstratedLevel==0&quot;&gt;M&lt;tpl else&gt;{DemonstratedLevel}&lt;/tpl&gt;&lt;/div&gt;&lt;/td&gt;&#39;,
+                                &#39;&lt;tpl if=&quot;Override&quot;&gt;&#39;,
+                                    &#39;&lt;td colspan=&quot;3&quot; class=&quot;skill-grid-demo-data skill-grid-override&quot;&gt;Override&lt;/td&gt;&#39;,
+                                &#39;&lt;tpl else&gt;&#39;,
+                                    &#39;&lt;td class=&quot;skill-grid-demo-data skill-grid-demo-type&quot;&gt;{Demonstration.ExperienceType:htmlEncode}&lt;/td&gt;&#39;,
+                                    &#39;&lt;td class=&quot;skill-grid-demo-data skill-grid-demo-context&quot;&gt;{Demonstration.Context:htmlEncode}&lt;/td&gt;&#39;,
+                                    &#39;&lt;td class=&quot;skill-grid-demo-data skill-grid-demo-task&quot;&gt;{Demonstration.PerformanceType:htmlEncode}&lt;/td&gt;&#39;,
+                                &#39;&lt;/tpl&gt;&#39;,
+                            &#39;&lt;/tr&gt;&#39;,
+                            &#39;&lt;tr class=&quot;skill-grid-demo-detail-row &lt;tpl if=&quot;parent.selectedDemonstrationId == values.DemonstrationID&quot;&gt;is-expanded&lt;/tpl&gt;&quot; data-demonstration=&quot;{ID}&quot;&gt;&#39;,
+                                &#39;&lt;td class=&quot;skill-grid-demo-detail-data&quot; colspan=&quot;6&quot;&gt;&#39;,
+                                    &#39;&lt;div class=&quot;skill-grid-demo-detail-ct&quot;&gt;&#39;,
+                                        &#39;&lt;tpl if=&quot;Demonstration.ArtifactURL&quot;&gt;&#39;,
+                                            &#39;&lt;div class=&quot;skill-grid-demo-artifact&quot;&gt;&#39;,
+                                                &#39;&lt;strong&gt;Artifact: &lt;/strong&gt;&#39;,
+                                                &#39;&lt;a href=&quot;{Demonstration.ArtifactURL:htmlEncode}&quot; target=&quot;_blank&quot;&gt;{Demonstration.ArtifactURL:htmlEncode}&lt;/a&gt;&#39;,
+                                            &#39;&lt;/div&gt;&#39;,
+                                        &#39;&lt;/tpl&gt;&#39;,
+                                        &#39;&lt;tpl if=&quot;Demonstration.Comments&quot;&gt;&#39;,
+                                            &#39;&lt;div class=&quot;skill-grid-demo-comments&quot;&gt;&#39;,
+                                                &#39;&lt;strong&gt;Comments: &lt;/strong&gt;&#39;,
+                                                &#39;{[Ext.util.Format.nl2br(Ext.util.Format.htmlEncode(values.Demonstration.Comments))]}&#39;,
+                                            &#39;&lt;/div&gt;&#39;,
+                                        &#39;&lt;/tpl&gt;&#39;,
+                                        &#39;&lt;div class=&quot;skill-grid-demo-meta&quot;&gt;&#39;,
+                                            &#39;Demonstration #{DemonstrationID} &amp;middot;&amp;nbsp;&#39;,
+                                            &#39;&lt;tpl for=&quot;Demonstration.Creator&quot;&gt;&lt;a href=&quot;/people/{Username}&quot;&gt;{FirstName} {LastName}&lt;/a&gt;&lt;/tpl&gt; &amp;middot;&amp;nbsp;&#39;,
+                                            &#39;{Created:date(&quot;F j, Y, g:i a&quot;)}&#39;,
+                                            &#39;&lt;tpl if=&quot;parent.showEditLinks&quot;&gt;&#39;,
+                                                &#39; &amp;middot;&amp;nbsp;&#39;,
+                                                &#39;&lt;a href=&quot;#demonstration-edit&quot; data-demonstration=&quot;{DemonstrationID}&quot;&gt;Edit&lt;/a&gt; | &#39;,
+                                                &#39;&lt;a href=&quot;#demonstration-delete&quot; data-demonstration=&quot;{DemonstrationID}&quot;&gt;Delete&lt;/a&gt;&#39;,
+                                            &#39;&lt;/tpl&gt;&#39;,
+                                        &#39;&lt;/div&gt;&#39;,
+                                    &#39;&lt;/div&gt;&#39;,
+                                &#39;&lt;/td&gt;&#39;,
+                            &#39;&lt;/tr&gt;&#39;,
+                        &#39;&lt;/tpl&gt;&#39;,
+                    &#39;&lt;tpl else&gt;&#39;,
+                        &#39;&lt;tr class=&quot;skill-grid-emptytext-row&quot;&gt;&#39;,
+                            &#39;&lt;td class=&quot;skill-grid-emptytext-cell&quot; colspan=&quot;6&quot;&gt;No demonstrations are logged yet for this skill&lt;/td&gt;&#39;,
+                        &#39;&lt;/tr&gt;&#39;,
+                    &#39;&lt;/tpl&gt;&#39;,
+                &#39;&lt;/table&gt;&#39;
+            ]
+        }
+    ],
+
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-initComponent'>    // template methods
+</span>    initComponent: function() {
+        var me = this;
+
+        me.callParent();
+
+        me.skillStatementCmp = me.down(&#39;[reference=skillStatement]&#39;);
+        me.demonstrationsTable = me.down(&#39;[reference=demonstrationsTable]&#39;);
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-afterRender'>    afterRender: function() {
+</span>        var me = this;
+
+        me.callParent(arguments);
+
+        me.mon(me.demonstrationsTable.el, &#39;click&#39;, function(ev, targetEl) {
+            if (targetEl = ev.getTarget(&#39;.skill-grid-demo-row&#39;, me.el, true)) {
+                targetEl.toggleCls(&#39;is-expanded&#39;);
+                targetEl.next(&#39;.skill-grid-demo-detail-row&#39;).toggleCls(&#39;is-shown&#39;);
+                me.updateLayout();
+                me.fireEvent(&#39;demorowclick&#39;, me, ev, targetEl);
+            } else if (targetEl = ev.getTarget(&#39;a[href=&quot;#demonstration-edit&quot;]&#39;, me.el, true)) {
+                ev.stopEvent();
+                me.fireEvent(&#39;editdemonstrationclick&#39;, me, parseInt(targetEl.getAttribute(&#39;data-demonstration&#39;), 10), ev, targetEl);
+            } else if (targetEl = ev.getTarget(&#39;a[href=&quot;#demonstration-delete&quot;]&#39;, me.el, true)) {
+                ev.stopEvent();
+                me.fireEvent(&#39;deletedemonstrationclick&#39;, me, parseInt(targetEl.getAttribute(&#39;data-demonstration&#39;), 10), ev, targetEl);
+            }
+
+        }, me, { delegate: &#39;.skill-grid-demo-row, a[href=&quot;#demonstration-edit&quot;], a[href=&quot;#demonstration-delete&quot;]&#39; });
+
+        me.mon(Ext.GlobalEvents, &#39;resize&#39;, function() {
+            me.center();
+        });
+
+        me.loadMask = Ext.create(&#39;Ext.LoadMask&#39;, {
+            target: me.demonstrationsTable,
+            store: me.getDemonstrationSkillsStore(),
+            msg: me.getLoadingText()
+        });
+
+        if (me.getSkill() &amp;&amp; me.getStudent()) {
+            me.loadDemonstrationsTable();
+        }
+    },
+
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-updateSkill'>    // config handlers
+</span>    updateSkill: function() {
+        if (this.rendered) {
+            this.loadDemonstrationsTable();
+        }
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-updateStudent'>    updateStudent: function() {
+</span>        if (this.rendered) {
+            this.loadDemonstrationsTable();
+        }
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-applyDemonstrationSkillsStore'>    applyDemonstrationSkillsStore: function(store) {
+</span>        return Ext.StoreMgr.lookup(store);
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-updateDemonstrationSkillsStore'>    updateDemonstrationSkillsStore: function(store) {
+</span>        if (store) {
+            store.on({
+                scope: this,
+                refresh: &#39;onDemonstrationSkillsStoreRefresh&#39;,
+                clear: &#39;onDemonstrationSkillsStoreClear&#39;,
+                remove: &#39;onDemonstrationSkillsStoreRemove&#39;
+            });
+        }
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-applyLoadedSkill'>    applyLoadedSkill: function(skill) {
+</span>        if (!skill) {
+            return null;
+        }
+
+        return skill.isModel ? skill : Slate.cbl.API.getSession().getRecord(Slate.cbl.model.Skill, skill);
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-updateLoadedSkill'>    updateLoadedSkill: function(skill) {
+</span>        var me = this,
+            skillStatementCmp = me.skillStatementCmp;
+
+        if (!skill) {
+            skillStatementCmp.update(&#39;Select a standard&#39;);
+            return;
+        }
+
+        if (skill.isLoading()) {
+            // framework will append our callback to the existing operation if the model is already loading
+            skill.load({
+                callback: function() {
+                    me.updateLoadedSkill(skill);
+                }
+            });
+            return;
+        }
+
+        skillStatementCmp.update(skill.get(&#39;Statement&#39;));
+    },
+
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-onDemonstrationSkillsStoreRefresh'>    // event handlers
+</span>    onDemonstrationSkillsStoreRefresh: function() {
+        this.refreshDemonstrationsTable();
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-onDemonstrationSkillsStoreClear'>    onDemonstrationSkillsStoreClear: function() {
+</span>        this.setLoadedSkill(null);
+        this.refreshDemonstrationsTable();
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-onDemonstrationSkillsStoreRemove'>    onDemonstrationSkillsStoreRemove: function() {
+</span>        this.refreshDemonstrationsTable();
+    },
+
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-loadDemonstrationsTable'>    // public methods
+</span>    loadDemonstrationsTable: function(forceReload) {
+        var me = this,
+            demonstrationSkillsStore = me.getDemonstrationSkillsStore(),
+            skillId = me.getSkill(),
+            studentId = me.getStudent();
+
+        // skip load if neither skill or student has changed
+        if (!forceReload &amp;&amp; skillId == me.loadedSkillId &amp;&amp; studentId == me.loadedStudentId) {
+            return;
+        }
+
+        me.loadedSkillId = skillId;
+        me.loadedStudentId = studentId;
+
+        if (skillId &amp;&amp; studentId) {
+            demonstrationSkillsStore.load({
+                params: {
+                    student: studentId,
+                    skill: skillId
+                },
+                callback: function(demonstrationSkills, operation, success) {
+                    me.setLoadedSkill(skillId);
+                }
+            });
+        } else {
+            demonstrationSkillsStore.removeAll();
+        }
+    },
+
+<span id='Slate-cbl-view-standard-AbstractOverviewWindow-method-refreshDemonstrationsTable'>    refreshDemonstrationsTable: function() {
+</span>        var me = this;
+
+        me.demonstrationsTable.update({
+            demonstrations: Ext.pluck(me.getDemonstrationSkillsStore().getRange(), &#39;data&#39;),
+            selectedDemonstrationId: me.getSelectedDemonstration(),
+            showEditLinks: me.getShowEditLinks()
+        });
+    }
+});</pre>
+</body>
+</html>

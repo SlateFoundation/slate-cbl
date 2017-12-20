@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;SlateDemonstrationsStudent.view.CompetencyCard&#39;, {
+    extend: &#39;Ext.Component&#39;,
+    xtype: &#39;slate-demonstrations-student-competencycard&#39;,
+    requires: [
+        &#39;Ext.util.Format&#39;,
+
+        &#39;Slate.cbl.Util&#39;,
+        &#39;Slate.cbl.data.Skills&#39;,
+        &#39;Slate.cbl.store.DemonstrationSkills&#39;
+    ],
+
+
+    config: {
+        // required inputs
+        competency: null,
+        completion: null,
+
+        // optional config
+        percentFormat: &#39;0%&#39;,
+        averageFormat: &#39;0.##&#39;,
+        growthFormat: &#39;0.# yr&#39;,
+
+        // input-dependent state
+        level: null,
+        percentComplete: 0,
+        percentMissed: 0,
+        demonstrationsAverage: null,
+        isAverageLow: null,
+        baselineRating: null,
+        growth: null,
+
+        // internal state
+        skillsStatus: &#39;unloaded&#39;,
+
+        demonstrationSkillsStore: {
+            xclass: &#39;Slate.cbl.store.DemonstrationSkills&#39;
+        },
+
+        // component config
+        cls: &#39;cbl-competency-panel&#39;
+    },
+
+    renderTpl: [
+        &#39;&lt;header class=&quot;panel-header&quot;&gt;&#39;,
+            &#39;&lt;h3 id=&quot;{id}-descriptorEl&quot; data-ref=&quot;descriptorEl&quot; class=&quot;header-title&quot;&gt;{competency.Descriptor:htmlEncode}&lt;/h3&gt;&#39;,
+        &#39;&lt;/header&gt;&#39;,
+
+        &#39;&lt;div class=&quot;panel-body&quot;&gt;&#39;,
+            &#39;&lt;div id=&quot;{id}-meterEl&quot; data-ref=&quot;meterEl&quot; class=&quot;cbl-progress-meter &lt;tpl if=&quot;isAverageLow&quot;&gt;is-average-low&lt;/tpl&gt;&quot;&gt;&#39;,
+                &#39;&lt;div id=&quot;{id}-meterBarEl&quot; data-ref=&quot;meterBarEl&quot; class=&quot;cbl-progress-bar&quot; style=&quot;width: {percentComplete:number(values.percentFormat)}&quot;&gt;&lt;/div&gt;&#39;,
+                &#39;&lt;div id=&quot;{id}-meterBarMissedEl&quot; data-ref=&quot;meterBarMissedEl&quot; class=&quot;cbl-progress-bar cbl-progress-bar-missed&quot; style=&quot;width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}&quot;&gt;&lt;/div&gt;&#39;,
+                &#39;&lt;div id=&quot;{id}-meterLevelEl&quot; data-ref=&quot;meterLevelEl&quot; class=&quot;cbl-progress-level no-select&quot;&gt;Y{level - 8}&lt;/div&gt;&#39;,
+                &#39;&lt;div id=&quot;{id}-meterPercentEl&quot; data-ref=&quot;meterPercentEl&quot; class=&quot;cbl-progress-percent&quot;&gt;{percentComplete:number(values.percentFormat)}&lt;/div&gt;&#39;,
+            &#39;&lt;/div&gt;&#39;,
+
+            &#39;&lt;div class=&quot;stats-ct&quot;&gt;&#39;,
+                &#39;&lt;table class=&quot;stats&quot;&gt;&#39;,
+                    &#39;&lt;thead&gt;&#39;,
+                        &#39;&lt;th&gt;Baseline Score&lt;/th&gt;&#39;,
+                        &#39;&lt;th&gt;Performance Level&lt;/th&gt;&#39;,
+                        &#39;&lt;th&gt;My Growth&lt;/th&gt;&#39;,
+                    &#39;&lt;/thead&gt;&#39;,
+                    &#39;&lt;tbody&gt;&#39;,
+                        &#39;&lt;td id=&quot;{id}-baselineRatingEl&quot; data-ref=&quot;baselineRatingEl&quot;&gt;&#39;,
+                            &#39;&lt;tpl if=&quot;baselineRating&quot;&gt;&#39;,
+                                &#39;{baselineRating:number(values.averageFormat)}&#39;,
+                            &#39;&lt;tpl else&gt;&#39;,
+                                &#39;&amp;mdash;&#39;,
+                            &#39;&lt;/tpl&gt;&#39;,
+                        &#39;&lt;/td&gt;&#39;,
+                        &#39;&lt;td id=&quot;{id}-averageEl&quot; data-ref=&quot;averageEl&quot;&gt;&#39;,
+                            &#39;&lt;tpl if=&quot;demonstrationsAverage&quot;&gt;&#39;,
+                                &#39;{demonstrationsAverage:number(values.averageFormat)}&#39;,
+                            &#39;&lt;tpl else&gt;&#39;,
+                                &#39;&amp;mdash;&#39;,
+                            &#39;&lt;/tpl&gt;&#39;,
+                        &#39;&lt;/td&gt;&#39;,
+                        &#39;&lt;td id=&quot;{id}-growthEl&quot; data-ref=&quot;growthEl&quot;&gt;&#39;,
+                            &#39;&lt;tpl if=&quot;growth&quot;&gt;&#39;,
+                                &#39;{growth:number(values.growthFormat)}&#39;,
+                            &#39;&lt;tpl else&gt;&#39;,
+                                &#39;&amp;mdash;&#39;,
+                            &#39;&lt;/tpl&gt;&#39;,
+                        &#39;&lt;/td&gt;&#39;,
+                    &#39;&lt;/tbody&gt;&#39;,
+                &#39;&lt;/table&gt;&#39;,
+            &#39;&lt;/div&gt;&#39;,
+
+            &#39;&lt;div class=&quot;explainer&quot;&gt;&#39;,
+                &#39;&lt;p id=&quot;{id}-statementEl&quot; data-ref=&quot;statementEl&quot;&gt;{competency.Statement:htmlEncode}&lt;/p&gt;&#39;,
+            &#39;&lt;/div&gt;&#39;,
+
+            &#39;&lt;ul id=&quot;{id}-skillsCt&quot; data-ref=&quot;skillsCt&quot; class=&quot;cbl-skill-meter&quot;&gt;&lt;/ul&gt;&#39;,
+        &#39;&lt;/div&gt;&#39;
+    ],
+    childEls: [
+        &#39;descriptorEl&#39;,
+        &#39;meterEl&#39;,
+        &#39;meterBarEl&#39;,
+        &#39;meterBarMissedEl&#39;,
+        &#39;meterLevelEl&#39;,
+        &#39;meterPercentEl&#39;,
+        &#39;averageEl&#39;,
+        &#39;baselineRatingEl&#39;,
+        &#39;growthEl&#39;,
+        &#39;statementEl&#39;,
+        &#39;skillsCt&#39;
+    ],
+
+    listeners: {
+        scope: &#39;this&#39;,
+        click: {
+            fn: &#39;onDemoCellClick&#39;,
+            element: &#39;el&#39;,
+            delegate: &#39;.cbl-skill-demo&#39;
+        }
+    },
+
+
+    // local subtemplates
+    skillsTpl: [
+        &#39;&lt;tpl foreach=&quot;.&quot;&gt;&#39;,
+            &#39;&lt;li class=&quot;cbl-skill&quot;&gt;&#39;,
+                &#39;&lt;h5 class=&quot;cbl-skill-name&quot;&gt;{skill.Descriptor:htmlEncode}&lt;/h5&gt;&#39;,
+
+                &#39;&lt;ul class=&quot;cbl-skill-demos&quot; data-skill=&quot;{skill.ID}&quot;&gt;&#39;,
+                    &#39;{% this.standardOverridden = false %}&#39;,
+
+                    &#39;&lt;tpl for=&quot;demonstrations&quot;&gt;&#39;,
+                        &#39;&lt;li &#39;,
+                            &#39;class=&quot;&#39;,
+                                &#39;cbl-skill-demo&#39;,
+                                &#39;&lt;tpl if=&quot;values.DemonstratedLevel==0 &amp;&amp; !Override&quot;&gt; cbl-skill-demo-uncounted&lt;/tpl&gt;&#39;,
+                                &#39;&lt;tpl if=&quot;this.standardOverridden&quot;&gt; cbl-skill-demo-overridden&lt;/tpl&gt;&#39;,
+                                &#39;&lt;tpl if=&quot;Override&quot;&gt; cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}&lt;/tpl&gt;&#39;,
+                            &#39;&quot;&#39;,
+                            &#39;&lt;tpl if=&quot;DemonstrationID&quot;&gt;data-demonstration=&quot;{DemonstrationID}&quot;&lt;/tpl&gt;&#39;,
+                        &#39;&gt;&#39;,
+                            &#39;&lt;tpl if=&quot;Override&quot;&gt;&#39;,
+                                &#39;O&#39;,
+                            &#39;&lt;tpl elseif=&quot;values.DemonstratedLevel &amp;gt;= 0&quot;&gt;&#39;,
+                                &#39;{[values.DemonstratedLevel == 0 ? &quot;M&quot; : values.DemonstratedLevel]}&#39;,
+                            &#39;&lt;tpl else&gt;&#39;,
+                                &#39;&amp;nbsp;&#39;,
+                            &#39;&lt;/tpl&gt;&#39;,
+                        &#39;&lt;/li&gt;&#39;,
+                    &#39;&lt;/tpl&gt;&#39;,
+
+                    &#39;&lt;li class=&quot;cbl-skill-complete-indicator &lt;tpl if=&quot;isComplete&quot;&gt;is-checked&lt;/tpl&gt;&quot;&gt;&#39;,
+                        &#39;&lt;svg class=&quot;check-mark-image&quot; width=&quot;16&quot; height=&quot;16&quot;&gt;&#39;,
+                            &#39;&lt;polygon class=&quot;check-mark&quot; points=&quot;13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07&quot;/&gt;&#39;,
+                        &#39;&lt;/svg&gt;&#39;,
+                    &#39;&lt;/li&gt;&#39;,
+                &#39;&lt;/ul&gt;&#39;,
+
+                &#39;&lt;div class=&quot;cbl-skill-description&quot;&gt;&lt;p&gt;{skill.Statement}&lt;/p&gt;&lt;/div&gt;&#39;,
+            &#39;&lt;/li&gt;&#39;,
+        &#39;&lt;/tpl&gt;&#39;
+    ],
+
+
+    // component template methods
+    getElConfig: function() {
+        var config = this.callParent();
+
+        config[&#39;data-competency&#39;] = this.getCompetency().getId();
+
+        return config;
+    },
+
+    initRenderData: function() {
+        var me = this;
+
+        return Ext.apply(this.callParent(), {
+            competency: me.getCompetency().getData(),
+
+            percentFormat: me.getPercentFormat(),
+            averageFormat: me.getAverageFormat(),
+            growthFormat: me.getGrowthFormat(),
+
+            level: me.getLevel(),
+            percentComplete: me.getPercentComplete(),
+            percentMissed: me.getPercentMissed(),
+            demonstrationsAverage: me.getDemonstrationsAverage(),
+            isAverageLow: me.getIsAverageLow(),
+            baselineRating: me.getBaselineRating(),
+            growth: me.getGrowth()
+        });
+    },
+
+
+    // config handlers
+    updateCompetency: function(competency) {
+        var me = this,
+            htmlEncode = Ext.util.Format.htmlEncode;
+
+        if (me.rendered) {
+            me.descriptorEl.update(htmlEncode(competency.get(&#39;Descriptor&#39;)));
+            me.statementEl.update(htmlEncode(competency.get(&#39;Statement&#39;)));
+        }
+    },
+
+    updateCompletion: function(completion) {
+        var me = this,
+            competency = me.getCompetency(),
+            demonstrationsAverage = completion.get(&#39;demonstrationsAverage&#39;),
+            currentLevel = completion.get(&#39;currentLevel&#39;),
+            demonstrationsRequired = competency.getTotalDemonstrationsRequired(currentLevel),
+            percentComplete = 100 * completion.get(&#39;demonstrationsComplete&#39;) / demonstrationsRequired;
+
+        me.setLevel(currentLevel);
+        me.setPercentComplete(percentComplete);
+        me.setPercentMissed(100 * completion.get(&#39;demonstrationsMissed&#39;) / demonstrationsRequired);
+        me.setDemonstrationsAverage(demonstrationsAverage);
+        me.setIsAverageLow(percentComplete &gt;= 50 &amp;&amp; demonstrationsAverage !== null &amp;&amp; demonstrationsAverage &lt; (currentLevel + competency.get(&#39;minimumAverageOffset&#39;)));
+        me.setBaselineRating(completion.get(&#39;baselineRating&#39;));
+        me.setGrowth(completion.get(&#39;growth&#39;));
+
+        me.loadSkills();
+    },
+
+    updateLevel: function(newLevel, oldLevel) {
+        var me = this;
+
+        if (oldLevel) {
+            me.removeCls(&#39;cbl-level-&#39; + oldLevel);
+        }
+
+        if (newLevel) {
+            me.addCls(&#39;cbl-level-&#39; + newLevel);
+        }
+
+        if (me.rendered) {
+            me.meterLevelEl.update(newLevel ? &#39;Y&#39;+(newLevel - 8) : &#39;&#39;);
+        }
+    },
+
+    applyPercentComplete: function(percentComplete) {
+        return percentComplete || 0;
+    },
+
+    updatePercentComplete: function(percentComplete) {
+        var me = this;
+
+        if (me.rendered) {
+            percentComplete = Ext.util.Format.number(percentComplete, me.getPercentFormat());
+
+            me.meterBarEl.setStyle(&#39;width&#39;, percentComplete);
+            me.meterBarMissedEl.setStyle(&#39;left&#39;, percentComplete);
+            me.meterPercentEl.update(percentComplete);
+        }
+    },
+
+    applyPercentMissed: function(percentMissed) {
+        return percentMissed || 0;
+    },
+
+    updatePercentMissed: function(percentMissed) {
+        var me = this;
+
+        if (me.rendered) {
+            percentMissed = Ext.util.Format.number(percentMissed, me.getPercentFormat());
+            me.meterBarMissedEl.setStyle(&#39;width&#39;, percentMissed);
+        }
+    },
+
+    updateDemonstrationsAverage: function(demonstrationsAverage) {
+        var me = this;
+
+        if (me.rendered) {
+            me.averageEl.update(Ext.util.Format.number(demonstrationsAverage, me.getAverageFormat()));
+        }
+    },
+
+    updateIsAverageLow: function(isAverageLow) {
+        if (this.rendered) {
+            this.meterEl.toggleCls(&#39;is-average-low&#39;, isAverageLow);
+        }
+    },
+
+    updateBaselineRating: function(baselineRating) {
+        var me = this;
+
+        if (me.rendered) {
+            me.baselineRatingEl.update(Ext.util.Format.number(baselineRating, me.getAverageFormat()));
+        }
+    },
+
+    updateGrowth: function(growth) {
+        var me = this;
+
+        if (me.rendered) {
+            me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
+        }
+    },
+
+    updateSkillsStatus: function(newStatus, oldStatus) {
+        if (oldStatus) {
+            this.removeCls(&#39;skills-&#39; + oldStatus);
+        }
+
+        if (newStatus) {
+            this.addCls(&#39;skills-&#39; + newStatus);
+        }
+    },
+
+    applyDemonstrationSkillsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+
+    // event handlers
+    onDemoCellClick: function(ev, t) {
+        this.fireEvent(&#39;democellclick&#39;, this, ev, Ext.get(t));
+    },
+
+
+    // public methods
+    loadSkills: function() {
+        var me = this,
+            competency = me.getCompetency(),
+            demoSkillsStore = me.getDemonstrationSkillsStore();
+
+        me.setSkillsStatus(&#39;loading&#39;);
+
+        demoSkillsStore.loadByStudentsAndCompetencies(me.getCompletion().get(&#39;StudentID&#39;), competency.getId(), {
+            callback: function(demoSkills) {
+                me.refreshSkills();
+            }
+        });
+
+        Slate.cbl.data.Skills.getAllByCompetency(competency, function(skills) {
+            me.loadedSkills = skills;
+            me.refreshSkills();
+        });
+    },
+
+    refreshSkills: function() {
+        var me = this;
+
+        if (!me.loadedSkills || !me.getDemonstrationSkillsStore().isLoaded() || !me.rendered) {
+            return;
+        }
+
+        me.lookupTpl(&#39;skillsTpl&#39;).overwrite(me.skillsCt, me.getSkillsData());
+
+        me.setSkillsStatus(&#39;loaded&#39;);
+    },
+
+    getSkillsData: function() {
+        var me = this,
+            skills = me.loadedSkills,
+            skillsLen = skills.getCount(), skillIndex = 0, skill,
+            demoSkillsStore = me.getDemonstrationSkillsStore(),
+            demoSkillsLen = demoSkillsStore.getCount(), demoSkillIndex = 0, demoSkill,
+            skillsData = {}, skillData, demonstrationsRequired;
+
+        // index skills by ID and create empty demonstrations array
+        for (; skillIndex &lt; skillsLen; skillIndex++) {
+            skill = skills.getAt(skillIndex);
+            skillsData[skill.getId()] = {
+                skill: skill.getData(),
+                demonstrations: []
+            };
+        }
+
+        // group demonstrations by skill
+        for (; demoSkillIndex &lt; demoSkillsLen; demoSkillIndex++) {
+            demoSkill = demoSkillsStore.getAt(demoSkillIndex);
+            skillsData[demoSkill.get(&#39;SkillID&#39;)].demonstrations.push(demoSkill.getData());
+        }
+
+        // sort and pad demonstrations arrays
+        for (skillIndex in skillsData) {
+            skillData = skillsData[skillIndex];
+            demonstrationsRequired = skills.getByKey(skillIndex).getTotalDemonstrationsRequired(me.getLevel());
+
+            skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
+            Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);
+            skillData.isComplete = skillData.demonstrations.length == demonstrationsRequired &amp;&amp; (skillData.demonstrations.length === 0 || skillData.demonstrations[demonstrationsRequired - 1].DemonstratedLevel);
+        }
+
+        return skillsData;
+    }
+});</pre>
+</body>
+</html>

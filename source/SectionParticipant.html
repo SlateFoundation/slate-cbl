@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.model.course.SectionParticipant&#39;, {
+    extend: &#39;Ext.data.Model&#39;,
+    requires: [
+        &#39;Slate.proxy.courses.SectionParticipants&#39;,
+        &#39;Ext.data.identifier.Negative&#39;
+    ],
+
+
+    // model config
+    idProperty: &#39;ID&#39;,
+    identifier: &#39;negative&#39;,
+
+    fields: [
+        {
+            name: &#39;ID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Class&#39;,
+            type: &#39;string&#39;,
+            defaultValue: &#39;Slate\\Courses\\SectionParticipant&#39;
+        },
+        {
+            name: &#39;Created&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;CreatorID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;CourseSectionID&#39;,
+            type: &#39;int&#39;
+        },
+        {
+            name: &#39;PersonID&#39;,
+            type: &#39;int&#39;
+        },
+        {
+            name: &#39;Person&#39;
+        },
+        {
+            name: &#39;Role&#39;,
+            type: &#39;string&#39;
+        },
+        {
+            name: &#39;StartDate&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;EndDate&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Cohort&#39;,
+            type: &#39;string&#39;,
+            allowNull: true
+        },
+
+        // virtual fields
+        {
+            name: &#39;PersonFirstName&#39;,
+            mapping: &#39;Person.FirstName&#39;
+        },
+        {
+            name: &#39;PersonLastName&#39;,
+            mapping: &#39;Person.LastName&#39;
+        }
+    ],
+
+    proxy: &#39;slate-courses-participants&#39;
+});</pre>
+</body>
+</html>

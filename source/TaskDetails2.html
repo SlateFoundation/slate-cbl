@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;SlateTasksStudent.view.TaskDetails&#39;, {
+    extend: &#39;Slate.cbl.view.modals.Modal&#39;,
+    xtype: &#39;slatetasksstudent-taskdetails&#39;,
+    requires: [
+        &#39;Slate.cbl.view.AttachmentsList&#39;,
+        &#39;Slate.cbl.widget.AttachmentsField&#39;,
+        &#39;Slate.cbl.view.modals.ModalForm&#39;,
+        &#39;Slate.cbl.widget.CommentsField&#39;,
+        &#39;Slate.cbl.widget.RatingView&#39;,
+        &#39;Ext.util.Format&#39;
+    ],
+
+    modal: true,
+
+    title: &#39;Task&#39;,
+
+    dockedItems: [{
+        dock: &#39;bottom&#39;,
+        xtype: &#39;container&#39;,
+        cls: &#39;slate-modalfooter&#39;,
+        items: [{
+            xtype: &#39;container&#39;,
+            layout: &#39;hbox&#39;,
+            items: [{
+                xtype: &#39;tbfill&#39;
+            }, {
+                xtype: &#39;button&#39;,
+                itemId: &#39;submit&#39;,
+                text: &#39;Submit&#39;,
+            }]
+        }]
+    }],
+
+    items: [{
+        xtype: &#39;slate-modalform&#39;,
+        defaultType: &#39;displayfield&#39;,
+        items: [
+            {
+                fieldLabel: &#39;Student&#39;,
+                name: &#39;FullName&#39;
+            },
+            {
+                fieldLabel: &#39;Title&#39;,
+                name: &#39;Title&#39;
+            },
+            {
+                fieldLabel: &#39;Instructions&#39;,
+                name: &#39;Instructions&#39;
+            },
+            {
+                fieldLabel: &#39;Subtask of&#39;,
+                name: &#39;ParentTaskTitle&#39;
+            },
+            {
+                fieldLabel: &#39;Type of Experience&#39;,
+                name: &#39;ExperienceType&#39;
+            },
+            {
+                fieldLabel: &#39;Due Date&#39;,
+                name: &#39;DueDate&#39;,
+                renderer: Ext.util.Format.dateRenderer(&#39;m/d/y&#39;)
+            },
+            {
+                fieldLabel: &#39;Expiration Date&#39;,
+                name: &#39;ExpirationDate&#39;,
+                renderer: Ext.util.Format.dateRenderer(&#39;m/d/y&#39;)
+            },
+            {
+                xtype: &#39;slate-tasks-attachmentsfield&#39;,
+                itemId: &#39;teacher-attachments&#39;,
+                readOnly: true
+            },
+            {
+                fieldLabel: &#39;Submitted Date&#39;,
+                name: &#39;Submitted&#39;,
+                renderer: Ext.util.Format.dateRenderer(&#39;m/d/y&#39;)
+            },
+            {
+                fieldLabel: &#39;Submissions&#39;,
+                name: &#39;Submissions&#39;,
+                renderer: function(val) {
+                    var submissionsLength = val.length,
+                        submissionsText = &#39;&#39;,
+                        submissionDate,
+                        i = 0;
+
+                    for (; i&lt;submissionsLength; i++) {
+                        submissionDate = Ext.Date.format(new Date(val[i].Created * 1000), &#39;m/d/y&#39;);
+                        submissionsText += &#39;&lt;div&gt;&#39; + submissionDate + &#39;&lt;/div&gt;&#39;;
+                    }
+                    return submissionsText;
+                }
+            },
+            {
+                xtype: &#39;slate-ratingview&#39;,
+                readOnly: true
+            },
+            {
+                xtype: &#39;slate-commentsfield&#39;,
+                fieldLabel: &#39;Teacher Comments&#39;
+            },
+            {
+                xtype: &#39;slate-tasks-attachmentsfield&#39;,
+                itemId: &#39;student-attachments&#39;
+            }]
+    }]
+});
+</pre>
+</body>
+</html>

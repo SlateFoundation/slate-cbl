@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*jslint browser: true, undef: true *//*global Ext*/
+Ext.define(&#39;SlateDemonstrationsTeacher.view.CompetencyCard&#39;, {
+    extend: &#39;Ext.panel.Panel&#39;,
+    xtype: &#39;slate-demonstrations-teacher-demonstration-competencycard&#39;,
+    requires: [
+        &#39;Slate.cbl.field.LevelSlider&#39;
+    ],
+
+    padding: &#39;16 75&#39;,
+    layout: &#39;anchor&#39;,
+    bodyStyle: {
+        background: &#39;transparent&#39;,
+        border: 0
+    },
+    defaultType: &#39;slate-cbl-levelsliderfield&#39;,
+    defaults: {
+        labelAlign: &#39;top&#39;,
+        anchor: &#39;100%&#39;
+        // labelWidth: 150
+    },
+    dockedItems: [{
+        itemId: &#39;competencyDescription&#39;,
+        dock: &#39;top&#39;,
+
+        xtype: &#39;component&#39;,
+        margin: &#39;5 0 20&#39;,
+        tpl: [
+            &#39;&lt;h4 class=&quot;competency-descriptor&quot;&gt;{Descriptor}&lt;/h4&gt;&#39;,
+            &#39;&lt;blockquote class=&quot;competency-statement&quot;&gt;{Statement}&lt;/blockquote&gt;&#39;
+        ]
+    }]
+});</pre>
+</body>
+</html>

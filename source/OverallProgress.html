@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.view.student.OverallProgress&#39;, {
+    extend: &#39;Ext.Component&#39;,
+    xtype: &#39;slate-cbl-student-overallprogress&#39;,
+    requires:[
+    ],
+
+    config: {
+    },
+
+    componentCls: &#39;slate-cbl-student-overallprogress&#39;,
+
+    data: [
+        {
+            title: &#39;Overall Progress&#39;,
+            segments: [
+                {
+                    level: &#39;overall&#39;,
+                    complete: (1/3)
+                }
+            ]
+        },
+        {
+            title: &#39;ELA&#39;,
+            segments: [
+                {
+                    level: 9,
+                    complete: 1
+                },
+                {
+                    level: 10,
+                    complete: (2/5)
+                },
+                {
+                    level: 11,
+                    complete: (1/4)
+                },
+                {
+                    level: 12,
+                    complete: (1/5)
+                }
+            ]
+        },
+        {
+            title: &#39;Science&#39;,
+            segments: [
+                {
+                    level: 9,
+                    complete: 1
+                },
+                {
+                    level: 10,
+                    complete: 1
+                },
+                {
+                    level: 11,
+                    complete: (2/5)
+                }
+            ]
+        },
+        {
+            title: &#39;Social Studies&#39;,
+            segments: [
+                {
+                    level: 9,
+                    complete: 1
+                },
+                {
+                    level: 10,
+                    complete: (3/4)
+                },
+                {
+                    level: 11,
+                    complete: (1/2)
+                },
+                {
+                    level: 12,
+                    complete: 0
+                }
+            ]
+        }
+    ],
+
+    tpl: [
+        &#39;&lt;div class=&quot;slate-cbl-sutdent-overallprogress-cursor&quot;&gt;&lt;/div&gt;&#39;,
+
+        &#39;&lt;ul class=&quot;slate-cbl-student-overallprogress-courses&quot;&gt;&#39;,
+            &#39;&lt;tpl for=&quot;.&quot;&gt;&#39;,
+                &#39;&lt;li class=&quot;slate-cbl-student-overallprogress-course&quot;&gt;&#39;,
+                    &#39;&lt;h4 class=&quot;slate-cbl-student-overallprogress-course-title&quot;&gt;{title}&lt;/h4&gt;&#39;,
+                    &#39;&lt;div class=&quot;slate-progress-meter-stack&quot;&gt;&#39;,
+                        &#39;&lt;tpl for=&quot;segments&quot;&gt;&#39;,
+                            &#39;&lt;div class=&quot;slate-progress-meter slate-progress-color-{level}&quot;&gt;&#39;,
+                                &#39;&lt;div class=&quot;slate-progress-bar&quot; style=&quot;width: {[ 100 * values.complete ]}%&quot;&gt;&lt;/div&gt;&#39;,
+                            &#39;&lt;/div&gt;&#39;,
+                        &#39;&lt;/tpl&gt;&#39;,
+                    &#39;&lt;/div&gt;&#39;,
+                &#39;&lt;/li&gt;&#39;,
+            &#39;&lt;/tpl&gt;&#39;,
+        &#39;&lt;/ul&gt;&#39;
+    ]
+});</pre>
+</body>
+</html>

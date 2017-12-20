@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='SlateTasksStudent-controller-Todos'>/**
+</span> * The Todos controller manages the student todo list
+ */
+Ext.define(&#39;SlateTasksStudent.controller.Todos&#39;, {
+    extend: &#39;Ext.app.Controller&#39;,
+    requires: [
+        &#39;Ext.form.field.Date&#39;,
+        &#39;Ext.window.Toast&#39;,
+
+        /* global Slate */
+        &#39;Slate.API&#39;
+    ],
+
+
+<span id='SlateTasksStudent-controller-Todos-property-stores'>    // dependencies
+</span>    stores: [
+        &#39;Todos&#39;
+    ],
+
+<span id='SlateTasksStudent-controller-Todos-property-models'>    models: [
+</span>        &#39;Todo&#39;
+    ],
+
+
+<span id='SlateTasksStudent-controller-Todos-property-refs'>    // component references
+</span>    refs: {
+        dashboard: &#39;slatetasksstudent-dashboard&#39;,
+        todoList: &#39;slatetasksstudent-todolist&#39;
+    },
+
+
+<span id='SlateTasksStudent-controller-Todos-property-control'>    // entry points
+</span>    control: {
+        dashboard: {
+            studentchange: &#39;onStudentChange&#39;,
+            sectionchange: &#39;onSectionChange&#39;
+        },
+        todoList: {
+            tasksubmit: &#39;onTaskSubmit&#39;,
+            checkclick: &#39;onTodosListCheckClick&#39;,
+            clearclick: &#39;onTodosListClearClick&#39;
+        }
+    },
+
+
+<span id='SlateTasksStudent-controller-Todos-method-onStudentChange'>    // event handlers
+</span>    onStudentChange: function(dashboard, studentUsername) {
+        var todosStore = this.getTodosStore();
+
+        this.getTodoList().setReadOnly(studentUsername !== false);
+
+        todosStore.setStudent(studentUsername);
+        todosStore.loadIfDirty();
+    },
+
+<span id='SlateTasksStudent-controller-Todos-method-onSectionChange'>    onSectionChange: function(dashboard, sectionCode) {
+</span>        var todosStore = this.getTodosStore();
+
+        todosStore.setSection(sectionCode);
+        todosStore.loadIfDirty();
+    },
+
+<span id='SlateTasksStudent-controller-Todos-method-onTaskSubmit'>    onTaskSubmit: function(todoList, todoData, sectionEl) {
+</span>        var me = this,
+            todo = me.getTodoModel().create(todoData),
+            store = me.getTodosStore(),
+            todoSection = store.getAt(store.findExact(&#39;SectionID&#39;, todo.get(&#39;SectionID&#39;))),
+            inputEls = sectionEl.select(&#39;input:not([type=checkbox])&#39;);
+
+        inputEls.set({
+            disabled: &#39;&#39;
+        });
+
+        todo.save({
+            success: function() {
+                todoSection.Todos().add(todo); // eslint-disable-line new-cap
+                todoList.refresh();
+            },
+            failure: function() {
+                Ext.toast(&#39;Todo could not be created.&#39;);
+                inputEls.set({
+                    disabled: undefined // eslint-disable-line no-undefined
+                });
+            }
+        });
+    },
+
+<span id='SlateTasksStudent-controller-Todos-method-onTodosListCheckClick'>    onTodosListCheckClick: function(todoList, sectionId, todoId, checked) {
+</span>        var me = this,
+            store = me.getTodosStore(),
+            todoSection = store.getAt(store.findExact(&#39;SectionID&#39;, sectionId)),
+            todo = todoSection.Todos().getById(todoId); // eslint-disable-line new-cap
+
+        todo.set(&#39;Completed&#39;, checked);
+
+        todo.save({
+            success: function() {
+                todoList.refresh();
+            },
+            failure: function() {
+                Ext.toast(&#39;Todo could not be updated.&#39;);
+            }
+        });
+    },
+
+<span id='SlateTasksStudent-controller-Todos-method-onTodosListClearClick'>    onTodosListClearClick: function(todoList, sectionId) {
+</span>        var me = this,
+            store = me.getTodosStore(),
+            todosStore = store.getAt(store.findExact(&#39;SectionID&#39;, sectionId)).Todos(); // eslint-disable-line new-cap
+
+        Slate.API.request({
+            url: &#39;/cbl/todos/clear-section&#39;,
+            params: {
+                sectionId: sectionId
+            },
+            success: function() {
+                todosStore.remove(todosStore.queryBy(function(todo) {
+                    return todo.get(&#39;Completed&#39;);
+                }).getRange());
+
+                todoList.refresh();
+            },
+            failure: function() {
+                Ext.toast(&#39;Todos could not be cleared.&#39;);
+            }
+        });
+    }
+});</pre>
+</body>
+</html>

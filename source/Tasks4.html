@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/* global google, gapi */
+<span id='SlateTasksStudent-controller-Tasks'>/**
+</span> * The Tasks controller manages the student task list and the task details pop-up.
+ */
+Ext.define(&#39;SlateTasksStudent.controller.Tasks&#39;, {
+    extend: &#39;Ext.app.Controller&#39;,
+    requires: [
+        &#39;Ext.window.Toast&#39;,
+
+        /* global Slate */
+        &#39;Slate.cbl.util.Google&#39;
+    ],
+
+
+<span id='SlateTasksStudent-controller-Tasks-property-views'>    // dependencies
+</span>    views: [
+        &#39;TaskDetails&#39;
+    ],
+
+<span id='SlateTasksStudent-controller-Tasks-property-stores'>    stores: [
+</span>        &#39;Tasks&#39;
+    ],
+
+
+<span id='SlateTasksStudent-controller-Tasks-property-refs'>    // component references
+</span>    refs: {
+        dashboard: &#39;slatetasksstudent-dashboard&#39;,
+
+        taskTree: {
+            selector: &#39;slatetasksstudent-tasktree&#39;,
+            autoCreate: true,
+
+            xtype: &#39;slatetasksstudent-tasktree&#39;
+        },
+        filterMenu: &#39;slatetasksstudent-taskfiltersmenu&#39;,
+        parentTaskField: &#39;slate-modalform field[name=&quot;ParentTaskTitle&quot;]&#39;,
+        ratingView: &#39;slate-modalform slate-ratingview&#39;,
+        taskAttachmentsList: &#39;slate-modalform slate-attachmentslist#task-attachments&#39;,
+        commentsField: &#39;slate-commentsfield&#39;,
+        teacherAttachmentsField: &#39;slate-tasks-attachmentsfield#teacher-attachments&#39;,
+        studentAttachmentsField: &#39;slate-tasks-attachmentsfield#student-attachments&#39;,
+        // attachmentsTextField: &#39;slate-tasks-attachmentsfield textfield&#39;,
+        // addLinkButton: &#39;slate-tasks-attachmentsfield button[action=addlink]&#39;,
+        // addAttachmentButton: &#39;slate-tasks-attachmentsfield button[action=addattachment]&#39;,
+
+        taskDetails: {
+            selector: &#39;slatetasksstudent-taskdetails&#39;,
+            autoCreate: true,
+
+            xtype: &#39;slatetasksstudent-taskdetails&#39;
+        },
+        taskForm: &#39;slatetasksstudent-taskdetails slate-modalform&#39;,
+        submitButton: &#39;slatetasksstudent-taskdetails button#submit&#39;
+    },
+
+
+<span id='SlateTasksStudent-controller-Tasks-property-control'>    // entry points
+</span>    control: {
+        dashboard: {
+            studentchange: &#39;onStudentChange&#39;,
+            sectionchange: &#39;onSectionChange&#39;
+        },
+        taskTree: {
+            itemclick: &#39;onTaskTreeItemClick&#39;
+        },
+        submitButton: {
+            click: &#39;onSubmitButtonClick&#39;
+        },
+        studentAttachmentsField: {
+            addgoogleattachment: &#39;onAddGoogleAttachmentClick&#39;
+        },
+        &#39;slatetasksstudent-taskfiltersmenu menucheckitem&#39;: {
+            checkchange: &#39;onFilterItemCheckChange&#39;
+        },
+        &#39;slatetasksstudent-taskfiltersmenu button#view-all&#39;: {
+            click: &#39;onFilterViewAllClick&#39;
+        }
+    },
+
+
+<span id='SlateTasksStudent-controller-Tasks-method-onStudentChange'>    // event handlers
+</span>    onStudentChange: function(dashboard, studentUsername) {
+        var tasksStore = this.getTasksStore();
+
+        this.getTaskTree().setReadOnly(studentUsername !== false);
+
+        tasksStore.setStudent(studentUsername);
+        tasksStore.loadIfDirty();
+    },
+
+<span id='SlateTasksStudent-controller-Tasks-method-onSectionChange'>    onSectionChange: function(dashboard, sectionCode) {
+</span>        var tasksStore = this.getTasksStore();
+
+        tasksStore.setSection(sectionCode);
+        tasksStore.loadIfDirty();
+    },
+
+<span id='SlateTasksStudent-controller-Tasks-method-onTaskTreeItemClick'>    // TODO: audit and optimize
+</span>    onTaskTreeItemClick: function(tasksTree, rec) {
+        var me = this,
+            details = me.getTaskDetails(),
+            form = me.getTaskForm(),
+            ratingView = me.getRatingView(),
+            teacherAttachmentsField = me.getTeacherAttachmentsField(),
+            studentAttachmentsField = me.getStudentAttachmentsField(),
+            studentAttachmentList = studentAttachmentsField.down(&#39;slate-attachmentslist&#39;),
+            commentsField = me.getCommentsField(),
+            submissions = rec.get(&#39;Submissions&#39;),
+            readonly = me.getTaskTree().getReadOnly() || rec.get(&#39;TaskStatus&#39;) === &#39;completed&#39;;
+
+        form.getForm().loadRecord(rec);
+
+        if (submissions &amp;&amp; submissions.length &amp;&amp; submissions.length &gt; 0) {
+            form.down(&#39;displayfield[name=&quot;Submitted&quot;]&#39;).hide();
+            form.down(&#39;displayfield[name=&quot;Submissions&quot;]&#39;).show();
+        } else {
+            form.down(&#39;displayfield[name=&quot;Submitted&quot;]&#39;).show();
+            form.down(&#39;displayfield[name=&quot;Submissions&quot;]&#39;).hide();
+        }
+
+        ratingView.setData({
+            ratings: [7, 8, 9, 10, 11, 12, &#39;M&#39;],
+            competencies: rec.getTaskSkillsGroupedByCompetency()
+        });
+
+        me.getParentTaskField().setVisible(rec.get(&#39;ParentTaskID&#39;) !== null);
+        teacherAttachmentsField.setAttachments(rec.getTeacherAttachments());
+        teacherAttachmentsField.setReadOnly(true);
+        commentsField.setRecord(rec);
+        commentsField.setReadOnly(true);
+
+        studentAttachmentsField.setAttachments(rec.getStudentAttachments());
+        studentAttachmentsField.setReadOnly(readonly);
+
+        studentAttachmentList.setConfig({
+            editable: !readonly,
+            shareMethodMutable: false
+        });
+        me.getSubmitButton().setDisabled(readonly);
+
+        details.show();
+    },
+
+<span id='SlateTasksStudent-controller-Tasks-method-onSubmitButtonClick'>    // TODO: audit and optimize
+</span>    onSubmitButtonClick: function() {
+        var me = this,
+            taskDetails = me.getTaskDetails(),
+            form = me.getTaskForm(),
+            attachmentsField = me.getStudentAttachmentsField(),
+            attachments = attachmentsField.getAttachments(false),
+            record = form.getRecord(),
+            studentTaskAttachments = Ext.Array.filter(attachments, function(attachment) {
+                if (attachment.ContextClass == &#39;Slate\\CBL\\Tasks\\Task&#39;) {
+                    return false;
+                }
+                return true;
+            });
+
+        taskDetails.mask(&#39;Submitting&amp;hellip;&#39;);
+        Slate.API.request({
+            url: &#39;/cbl/student-tasks/submit&#39;,
+            jsonData: {
+                ID: record.get(&#39;ID&#39;),
+                Attachments: studentTaskAttachments
+            },
+            success: function() {
+                Ext.toast(&#39;Task successfully submitted!&#39;);
+                me.getTasksStore().reload();
+                taskDetails.close();
+            },
+            failure: function() {
+                taskDetails.unmask();
+                Ext.toast(&#39;Task could not be submitted.&#39;);
+            }
+        });
+    },
+
+<span id='SlateTasksStudent-controller-Tasks-method-onFilterItemCheckChange'>    // TODO: audit and optimize
+</span>    onFilterItemCheckChange: function() {
+        var me = this,
+            menu = me.getFilterMenu(),
+            statusFilters = menu.query(&#39;menucheckitem[filterGroup=Status][checked]&#39;),
+            timelineFilters = menu.query(&#39;menucheckitem[filterGroup=Timeline][checked]&#39;),
+            store = me.getTasksStore(),
+            recs = store.getRange(),
+            recLength = recs.length,
+            i = 0,
+            rec;
+
+        for (; i &lt; recLength; i++) {
+            rec = recs[i];
+            rec.set(&#39;filtered&#39;, me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
+        }
+
+        me.getTaskTree().refresh();
+    },
+
+<span id='SlateTasksStudent-controller-Tasks-method-onFilterViewAllClick'>    // TODO: audit and optimize
+</span>    onFilterViewAllClick: function() {
+        var me = this,
+            menu = me.getFilterMenu(),
+            checkedFilters = menu.query(&#39;menucheckitem[checked]&#39;),
+            checkedFiltersLength = checkedFilters.length,
+            store = this.getTasksStore(),
+            recs = store.getRange(),
+            recLength = recs.length,
+            i = 0;
+
+        for (; i &lt; checkedFiltersLength; i++) {
+            checkedFilters[i].setChecked(false, true);
+        }
+
+        for (i = 0; i &lt; recLength; i++) {
+            recs[i].set(&#39;filtered&#39;, false);
+        }
+
+        me.getTaskTree().refresh();
+    },
+
+<span id='SlateTasksStudent-controller-Tasks-method-onAddGoogleAttachmentClick'>    // TODO: audit and optimize
+</span>    onAddGoogleAttachmentClick: function() {
+        var me = this,
+            googleUtil = Slate.cbl.util.Google;
+
+        if (googleUtil.getToken()) {
+            googleUtil.loadAPI().
+                then(function() {
+                    return gapi.client.request({
+                        path: &#39;/drive/v3/about&#39;,
+                        params: {
+                            fields: &#39;user&#39;,
+                            &#39;access_token&#39;: googleUtil.getToken()
+                        }
+                    });
+                }).
+                then(function(response) {
+                    Ext.Promise.resolve(googleUtil.setAuthenticatedUser(response.result.user));
+                }, googleUtil.authenticateUser).
+                then(Ext.bind(me.openFilePicker, me));
+        } else {
+            googleUtil.loadAPI().
+                then(googleUtil.authenticateUser).
+                then(Ext.bind(me.openFilePicker, me)).
+                then(null, function(error) {
+                    if (Ext.isObject(error)) {
+                        if (error.error == &#39;popup_closed_by_user&#39; || error.error == &#39;access_denied&#39;) {
+                            return;
+                        }
+
+                        if (error.error == &#39;popup_blocked_by_browser&#39;) {
+                            error = &#39;The sign-in popup was blocked by the browser. Please try again.&#39;;
+                        }
+                    }
+
+                    if (!Ext.isString(error)) {
+                        error = &#39;An error occured. Please try again.&#39;;
+                    }
+
+                    Ext.Msg.alert(&#39;Error&#39;, error);
+                });
+        }
+    },
+
+<span id='SlateTasksStudent-controller-Tasks-method-openFilePicker'>    // TODO: audit and optimize
+</span>    openFilePicker: function() {
+        var me = this,
+            googleUtil = Slate.cbl.util.Google,
+            taskDetails = me.getTaskDetails();
+
+        taskDetails.hide(true);
+
+        googleUtil.
+            initFilePicker().
+            setCallback(function(data) {
+                var filePicked = data[google.picker.Response.ACTION] == google.picker.Action.PICKED,
+                    fileData = filePicked &amp;&amp; data[google.picker.Response.DOCUMENTS][0];
+
+                if (data[google.picker.Response.ACTION] == &#39;loaded&#39;) {
+                    return;
+                } else if (data[google.picker.Response.ACTION] === google.picker.Action.CANCEL) {
+                    googleUtil.setAuthenticatedUser(null);
+                }
+
+                taskDetails.show(true);
+
+                if (fileData) {
+                    googleUtil.
+                        getGoogleFileOwnerEmail(fileData).
+                        then(function(response) { // TODO: add to google util class?
+                            var emailIsValid = googleUtil.verifyEmailAddress(response.result.emailAddress);
+
+                            if (emailIsValid) {
+                                return Ext.Promise.resolve({
+                                    file: fileData,
+                                    email: response.result.emailAddress
+                                });
+                            }
+
+                            return new Ext.Promise(function(resolve) {
+                                Ext.Msg.confirm(&#39;Clone File&#39;, &#39;This google drive file is currently owned by someone outside of the &#39;+googleUtil.getGoogleAppsDomain() + &#39; domain. Would you like to clone this document instead?&#39;, function(answer) {
+                                    if (answer === &#39;yes&#39;) {
+                                        resolve(googleUtil.cloneGoogleFile(fileData));
+                                    }
+                                });
+                            });
+                        }).
+                        then(null, function(response) {
+                            return new Ext.Promise(function(resolve) {
+                                if (response.result &amp;&amp; response.result.error &amp;&amp; response.result.error.code === 403) {
+                                    Ext.Msg.confirm(&#39;Clone File&#39;, &#39;You must have write access to the file in order to share. Would you like to clone this document instead?&#39;, function(answer) {
+                                        if (answer === &#39;yes&#39;) {
+                                            resolve(googleUtil.cloneGoogleFile(fileData));
+                                        }
+                                    });
+                                }
+                            });
+                        }).
+                        then(function(response) {
+                            me.doAddGoogleFile(response.file, response.email);
+                        });
+                }
+            }).
+            build().
+            setVisible(true);
+    },
+
+<span id='SlateTasksStudent-controller-Tasks-method-doAddGoogleFile'>    // TODO: audit and optimize
+</span>    doAddGoogleFile: function(file, ownerEmail) {
+        var me = this,
+            attachmentsField = me.getStudentAttachmentsField(),
+            fileId = file[google.picker.Document.ID];
+
+        gapi.client.request({
+            path: &#39;/drive/v3/files/&#39;+fileId+&#39;/revisions/head&#39;,
+            method: &#39;GET&#39;,
+            params: {
+                &#39;access_token&#39;: Ext.util.Cookies.get(&#39;googleAppsToken&#39;, &#39;/&#39;)
+            }
+        }).then(function(response) {
+            var fileInfo = response.result;
+
+            if (response.error) {
+                Ext.Msg.alert(&#39;Error&#39;, &#39;Unable to lookup details about google document. Please try again, or contact an administrator.&#39;);
+                return;
+            }
+
+            attachmentsField.setAttachments({
+                Class: &#39;Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile&#39;,
+                URL: file[google.picker.Document.URL],
+                Title: file[google.picker.Document.NAME],
+                FileRevisionID: fileInfo.id,
+                File: {
+                    DriveID: fileId,
+                    OwnerEmail: ownerEmail
+                }
+            }, true);
+        },
+        function(response) { // revision id could not be found
+            var error = response.result.error;
+
+            if (Ext.isObject(error) &amp;&amp; error.code === 404) {
+                attachmentsField.setAttachments({
+                    Class: &#39;Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile&#39;,
+                    URL: file[google.picker.Document.URL],
+                    Title: file[google.picker.Document.NAME],
+                    File: {
+                        DriveID: fileId,
+                        OwnerEmail: ownerEmail
+                    }
+                }, true);
+            }
+        });
+    },
+
+    // custom controller methods
+<span id='SlateTasksStudent-controller-Tasks-method-'>    /**
+</span>     * Passes a record through a group of filters.
+     * @param {Ext.data.Model} rec- The record to be tested.
+     * @param {Array} filterGroup - An array of objects with a filter function.
+     * @returns {boolean} filtered - true if this rec should be filtered
+     */
+<span id='SlateTasksStudent-controller-Tasks-method-filterRecord'>    // TODO: audit and optimize
+</span>    filterRecord: function(rec, filterGroup) {
+        var filterGroupLength = filterGroup.length,
+            filtered = filterGroupLength !== 0, // if no filters, return false
+            i = 0;
+
+        for (; i &lt; filterGroupLength; i++) {
+            filtered = filtered &amp;&amp; filterGroup[i].filterFn(rec);
+        }
+
+        return filtered;
+    }
+});</pre>
+</body>
+</html>

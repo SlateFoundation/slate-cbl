@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*jslint browser: true, undef: true *//*global Ext*/
+Ext.define(&#39;Slate.cbl.model.Completion&#39;, {
+    extend: &#39;Ext.data.Model&#39;,
+
+    // model config
+    fields: [
+        { name: &#39;StudentID&#39;, type: &#39;int&#39; },
+        { name: &#39;CompetencyID&#39;, type: &#39;int&#39; },
+        { name: &#39;currentLevel&#39;, type: &#39;int&#39;, allowNull: true },
+        { name: &#39;demonstrationsLogged&#39;, type: &#39;int&#39; },
+        { name: &#39;demonstrationsComplete&#39;, type: &#39;int&#39; },
+        { name: &#39;demonstrationsAverage&#39;, type: &#39;float&#39;, allowNull: true },
+        { name: &#39;baselineRating&#39;, type: &#39;float&#39;, allowNull: true },
+        { name: &#39;growth&#39;, type: &#39;float&#39;, allowNull: true },
+        {
+            name: &#39;lowest&#39;,
+            allowNull: true,
+            convert: function(v, r) {
+                if (v) {
+                    return new r.self(v);
+                }
+
+                return v === false ? false : null;
+            }
+        }
+    ],
+
+    // generate compound IDs
+    statics: {
+        getIdFromData: function(data) {
+            return data.StudentID + &#39;-&#39; + data.CompetencyID;
+        }
+    },
+
+    constructor: function(data) {
+        data.id = data.id || this.self.getIdFromData(data);
+        this.callParent(arguments);
+    }
+});</pre>
+</body>
+</html>

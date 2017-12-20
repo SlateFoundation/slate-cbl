@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='SlateTasksTeacher-controller-Tasks'>/**
+</span> * The Tasks controller manages the creation, opening, and editing of tasks
+ *
+ * ## Responsibilities
+ * -
+ */
+Ext.define(&#39;SlateTasksTeacher.controller.Tasks&#39;, {
+    extend: &#39;Ext.app.Controller&#39;,
+    // requires: [
+    //     &#39;Ext.window.Toast&#39;,
+    //     &#39;Ext.window.MessageBox&#39;,
+
+    //     /* global Slate */
+    //     &#39;Slate.API&#39;,
+    //     &#39;Slate.cbl.util.Google&#39;
+    // ],
+
+
+<span id='SlateTasksTeacher-controller-Tasks-property-views'>    // dependencies
+</span>    views: [
+        &#39;TaskEditor&#39;
+    //     &#39;tasks.AttachmentConfirmation&#39;,
+    //     &#39;TaskAssigner&#39;,
+    //     &#39;TaskRater&#39;
+    ],
+
+<span id='SlateTasksTeacher-controller-Tasks-property-stores'>    stores: [
+</span>        &#39;StudentTasks&#39;,
+        &#39;Tasks&#39;
+    ],
+
+<span id='SlateTasksTeacher-controller-Tasks-property-models'>    models: [
+</span>        &#39;Task@Slate.cbl.model.tasks&#39;
+    //     &#39;StudentTask@Slate.cbl.model&#39;,
+    //     &#39;Comment@Slate.cbl.model.tasks&#39;
+    ],
+
+
+<span id='SlateTasksTeacher-controller-Tasks-property-refs'>    // component factories and selectors
+</span>    refs: {
+        dashboardCt: &#39;slate-tasks-teacher-dashboard&#39;,
+        createBtn: &#39;slate-tasks-teacher-appheader button[action=create]&#39;,
+        // tasksGrid: &#39;slate-studentsgrid&#39;,
+
+        taskEditor: {
+            selector: &#39;slate-tasks-teacher-taskeditor&#39;,
+            autoCreate: true,
+
+            xtype: &#39;slate-tasks-teacher-taskeditor&#39;
+        },
+
+    //     taskEditorForm: &#39;slate-tasks-teacher-taskeditor slate-modalform&#39;,
+    //     skillsField: &#39;slate-tasks-teacher-taskeditor slate-skillsfield&#39;,
+    //     attachmentsField: &#39;slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield&#39;,
+    //     attachmentsList: &#39;slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield slate-attachmentslist&#39;,
+    //     assignmentsField: &#39;slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield&#39;,
+    //     assignmentsComboField: &#39;slate-tasks-teacher-taskeditor slate-tasks-assignmentsfield combo&#39;,
+
+    //     attachmentConfirmationWindow: {
+    //         selector: &#39;slate-tasks-attachmentconfirmation&#39;,
+    //         autoCreate: true,
+
+    //         xtype: &#39;slate-tasks-attachmentconfirmation&#39;
+    //     },
+
+    //     taskAssigner: {
+    //         selector: &#39;slate-tasks-teacher-taskassigner&#39;,
+    //         autoCreate: true,
+
+    //         xtype: &#39;slate-tasks-teacher-taskassigner&#39;
+    //     },
+
+    //     taskRater: {
+    //         selector: &#39;slate-tasks-teacher-taskrater&#39;,
+    //         autoCreate: true,
+
+    //         xtype: &#39;slate-tasks-teacher-taskrater&#39;
+    //     },
+    //     commentsField: &#39;slate-tasks-teacher-taskrater slate-commentsfield&#39;,
+    //     acceptTaskBtn: &#39;slate-tasks-teacher-taskrater button[action=accept]&#39;
+    },
+
+
+<span id='SlateTasksTeacher-controller-Tasks-property-listen'>    // entry points
+</span>    listen: {
+        store: {
+            &#39;#StudentTasks&#39;: {
+                load: &#39;onStudentTasksLoad&#39;,
+                clear: &#39;onStudentTasksClear&#39;
+            }
+        }
+    },
+
+<span id='SlateTasksTeacher-controller-Tasks-property-control'>    control: {
+</span>        dashboardCt: {
+            selectedsectionchange: &#39;onSelectedSectionChange&#39;,
+            loadedsectionchange: &#39;onLoadedSectionChange&#39;
+        },
+        createBtn: {
+            click: &#39;onCreateClick&#39;
+        }
+    //     tasksGrid: {
+    //         cellclick: &#39;onTasksGridCellClick&#39;,
+    //         subcellclick: &#39;onTasksGridCellClick&#39;,
+    //         rowheaderclick: &#39;onTasksGridRowHeaderClick&#39;,
+    //         subrowheaderclick: &#39;onTasksGridRowHeaderClick&#39;,
+    //         beforeexpand: &#39;onBeforeRowHeaderToggle&#39;,
+    //         beforecollapse: &#39;onBeforeRowHeaderToggle&#39;,
+    //         columnheaderclick: &#39;onTasksGridColumnHeaderClick&#39;
+    //     },
+    //     taskRater: {
+    //         reassign: &#39;onReAssignStudentTaskClick&#39;
+    //     },
+    //     assignmentsComboField: {
+    //         afterrender: &#39;onAssigneeComboRender&#39;
+    //     },
+    //     commentsField: {
+    //         publish: &#39;onCommentsFieldPublish&#39;
+    //     },
+
+    //     acceptTaskBtn: {
+    //         click: &#39;onAcceptTaskClick&#39;
+    //     },
+
+    //     attachmentsList: {
+    //         sharemethodchange: &#39;onGoogleFileShareMethodChange&#39;
+    //     },
+
+    //     &#39;slate-tasks-teacher-taskrater button[action=reassign]&#39;: {
+    //         click: &#39;onAssignRevisionClick&#39;
+    //     },
+    //     &#39;slate-tasks-teacher-taskrater button[action=unassign]&#39;: {
+    //         click: &#39;onUnassignStudentTaskClick&#39;
+    //     },
+    //     &#39;slate-tasks-teacher-taskrater button[action=edit]&#39;: {
+    //         click: &#39;onEditStudentTaskClick&#39;
+    //     },
+    //     &#39;slate-tasks-teacher-taskrater slate-ratingview&#39;: {
+    //         rateskill: &#39;onRateSkillClick&#39;
+    //     },
+    //     &#39;slate-tasks-teacher-taskassigner button[action=assign]&#39;: {
+    //         click: &#39;onAssignTaskClick&#39;
+    //     },
+    //     &#39;slate-tasks-teacher-taskeditor button[action=save]&#39;: {
+    //         click: &#39;onSaveTaskClick&#39;
+    //     },
+    //     &#39;slate-tasks-teacher-appheader button[action=create]&#39;: {
+    //         click: &#39;onCreateTaskClick&#39;
+    //     },
+    //     &#39;slate-tasks-teacher-taskeditor slate-tasks-titlefield[clonable]&#39;: {
+    //         select: &#39;onClonableTitleFieldSelect&#39;
+    //     },
+    //     &#39;slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield&#39;: {
+    //         addgoogleattachment: &#39;onAddGoogleAttachmentClick&#39;
+    //     }
+    },
+
+
+<span id='SlateTasksTeacher-controller-Tasks-method-onStudentTasksLoad'>    // event handlers
+</span>    onStudentTasksLoad: function(store, records, success) {
+        if (!success) {
+            return;
+        }
+
+        // eslint-disable-next-line vars-on-top
+        var relatedData = store.getProxy().getReader().rawData.related || {};
+
+        this.getTasksStore().loadRawData(relatedData.Task || []);
+    },
+
+<span id='SlateTasksTeacher-controller-Tasks-method-onStudentTasksClear'>    onStudentTasksClear: function() {
+</span>        this.getTasksStore().unload();
+    },
+
+<span id='SlateTasksTeacher-controller-Tasks-method-onSelectedSectionChange'>    onSelectedSectionChange: function(dashboardCt, sectionCode) {
+</span>        var me = this,
+            studentTasksStore = me.getStudentTasksStore();
+
+        // (re)load StudentTask list
+        studentTasksStore.setSection(sectionCode);
+        studentTasksStore.loadIfDirty(true);
+    },
+
+<span id='SlateTasksTeacher-controller-Tasks-method-onLoadedSectionChange'>    onLoadedSectionChange: function(dashboardCt, section) {
+</span>        // show create button
+        this.getCreateBtn().setHidden(!section);
+    },
+
+<span id='SlateTasksTeacher-controller-Tasks-method-onCreateClick'>    onCreateClick: function() {
+</span>        var me = this,
+            taskCreator = me.getTaskEditor(),
+            task = me.getTaskModel().create({
+                SectionID: me.getDashboardCt().getLoadedSection().getId()
+            });
+
+        taskCreator.setTask(task);
+        taskCreator.show();
+    }
+
+    // onTasksGridCellClick: function(grid, taskId, studentId) {
+    //     var me = this,
+    //         dataStore = grid.getDataStore(),
+    //         studentTask = dataStore.getAt(dataStore.findBy(function(r) {
+    //             return r.get(&#39;TaskID&#39;) == taskId &amp;&amp; r.get(&#39;StudentID&#39;) == studentId;
+    //         }));
+
+    //     if (studentTask) {
+    //         return me.doRateStudentTask(studentTask);
+    //     }
+
+    //     return me.doAssignStudentTask(taskId, studentId);
+    // },
+
+    // onReAssignStudentTaskClick: function(taskRater, dateField, date) {
+    //     var studentTask = taskRater.getStudentTask();
+
+    //     studentTask.set({
+    //         DueDate: date,
+    //         TaskStatus: &#39;re-assigned&#39;
+    //     });
+
+    //     studentTask.save({
+    //         success: function(rec) {
+    //             taskRater.close();
+    //             Ext.toast(&#39;Student task successfully reassigned.&#39;);
+    //         }
+    //     });
+    // },
+
+    // onTasksGridRowHeaderClick: function(grid, rowId, el, ev) {
+    //     var me = this,
+    //         task;
+
+    //     if (ev.getTarget(&#39;.jarvus-aggregrid-rowheader .edit-row&#39;)) {
+    //         task = me.getTasksStore().getById(rowId);
+
+    //         me.doEditTask(task);
+    //     }
+
+    //     return;
+    // },
+
+    // onTasksGridColumnHeaderClick: function(grid, columnId, el, ev) {
+    //     var me = this,
+    //         courseSection,
+    //         student;
+
+    //     if (ev.getTarget(&#39;.jarvus-aggregrid-colheader&#39;)) {
+    //         student = me.getStudentsStore().getById(columnId);
+    //         courseSection = me.getDashboardCt().getCourseSection();
+
+    //         window.open(Slate.API.buildUrl(&#39;/cbl/dashboards/tasks/student&#39;)+&#39;#&#39;+student.get(&#39;Username&#39;)+&#39;/&#39;+courseSection.get(&#39;Code&#39;), &#39;_blank&#39;);
+    //     }
+    // },
+
+    // onBeforeRowHeaderToggle: function(grid, rowId, el, ev) {
+    //     if (ev.getTarget(&#39;.jarvus-aggregrid-rowheader .edit-row&#39;)) {
+    //         return false;
+    //     }
+    //     return null;
+    // },
+
+    // onAssigneeComboRender: function(combo) {
+    //     var me = this,
+    //         comboStore = combo.getStore(),
+    //         studentsStore = me.getStudentsStore();
+
+    //     comboStore.removeAll();
+    //     comboStore.add(studentsStore.getRange());
+    //     combo.setValueOnData();
+    // },
+
+    // onCommentsFieldPublish: function(fieldContainer, field) {
+    //     var me = this,
+    //         record = fieldContainer.getRecord(),
+    //         comment,
+    //         originalComments = record.get(&#39;Comments&#39;) || [];
+
+    //     comment = me.getCommentModel().create({
+    //         Message: field.getValue(),
+    //         ContextID: record.getId(),
+    //         ContextClass: record.get(&#39;Class&#39;)
+    //     });
+
+    //     comment.save({
+    //         success: function(rec) {
+    //             originalComments.push(rec.getData({ serialize: true }));
+    //             record.set(&#39;Comments&#39;, originalComments);
+    //             fieldContainer.updateRecord(record);
+    //             field.setValue(&#39;&#39;);
+    //         }
+    //     });
+    // },
+
+    // onAcceptTaskClick: function() {
+    //     var me = this,
+    //         taskRater = me.getTaskRater(),
+    //         studentTask = taskRater.getStudentTask(),
+    //         status = studentTask.get(&#39;TaskStatus&#39;) === &#39;completed&#39; ? &#39;re-assigned&#39; : &#39;completed&#39;;
+
+    //     studentTask.set(&#39;TaskStatus&#39;, status);
+    //     taskRater.mask((status === &#39;completed&#39; ? &#39;Accepting&#39; : &#39;Unaccepting&#39;) + &#39;&amp;hellip;&#39;);
+    //     me.doSaveStudentTask(studentTask, function(rec, request, success) {
+    //         taskRater.unmask();
+    //         if (success) {
+    //             taskRater.close();
+    //             me.getStudentTasksStore().load({
+    //                 id: studentTask.getId(),
+    //                 addRecords: true
+    //             });
+
+    //             if (status === &#39;re-assigned&#39;) {
+    //                 me.doRateStudentTask(rec);
+    //             }
+    //         }
+    //     });
+    // },
+
+    // onAssignRevisionClick: function(btn) {
+    //     var me = this,
+    //         coords = btn.getXY(),
+    //         datepicker;
+
+    //     if (btn.dateSelected) {
+    //         me.doAssignStudentTaskRevision(btn.dateSelected);
+    //     } else {
+    //         datepicker = Ext.widget({
+    //             xtype: &#39;datepicker&#39;,
+    //             floating: true,
+    //             handler: function(picker, date) {
+    //                 picker.destroy();
+    //                 btn.dateSelected = date;
+    //                 return btn.setText(&#39;Re-Assign revision due on &#39;+Ext.Date.format(date, &#39;m/d/y&#39;));
+    //             }
+    //         });
+    //         datepicker.show().showAt(coords[0], coords[1] - datepicker.getHeight()); // subtract datepicker height from y coord to show above button.
+    //     }
+    // },
+
+    // onUnassignStudentTaskClick: function() {
+    //     var me = this,
+    //         taskRater = me.getTaskRater(),
+    //         studentTask = taskRater.getStudentTask();
+
+    //     Ext.Msg.confirm(&#39;Are you sure?&#39;, &#39;Do you want to unassign this student task? This can not be undone.&#39;, function(ans) {
+    //         if (ans === &#39;yes&#39;) {
+    //             me.doUnAssignStudentTask(studentTask);
+    //         }
+    //     });
+
+    // },
+
+    // onEditStudentTaskClick: function() {
+    //     var me = this,
+    //         taskRater = me.getTaskRater(),
+    //         studentTask = taskRater.getStudentTask();
+
+    //     taskRater.close();
+    //     me.doEditStudentTask(studentTask);
+    // },
+
+    // onRateSkillClick: function(ratingView, ratingData) {
+    //     var me = this,
+    //         studentTask = me.getTaskRater().getStudentTask();
+
+    //     Slate.API.request({
+    //         url: studentTask.toUrl() + &#39;/rate&#39;,
+    //         method: &#39;POST&#39;,
+    //         params: {
+    //             include: me.getStudentTasksStore().getProxy().getInclude()
+    //         },
+    //         jsonData: {
+    //             SkillID: ratingData.SkillID,
+    //             Rating: ratingData.Rating,
+    //         },
+    //         callback: function(options, success, response) {
+    //             if (success &amp;&amp; response.data &amp;&amp; response.data.success) {
+    //                 studentTask.set(response.data.StudentTask, { dirty: false });
+    //             } else {
+    //                 Ext.toast(response.data &amp;&amp; response.data.message || &#39;Please try again or report the issue to an administrator&#39;, &#39;Failed to save rating&#39;);
+    //             }
+    //         }
+    //     });
+    // },
+
+    // onAssignTaskClick: function() {
+    //     var me = this,
+    //         taskAssigner = me.getTaskAssigner(),
+    //         taskAssignerValues = taskAssigner.down(&#39;slate-modalform&#39;).getValues(),
+    //         task = taskAssigner.getTask(),
+    //         student = taskAssigner.getStudent(),
+    //         studentTask = me.getStudentTaskModel().create({
+    //             TaskID: task.getId(),
+    //             Task: task.getData(),
+    //             StudentID: student.getId(),
+    //             Student: student.getData(),
+    //             DueDate: taskAssignerValues.DueDate,
+    //             ExpirationDate: taskAssignerValues.ExpirationDate,
+    //             ExperienceType: taskAssignerValues.ExperienceType,
+    //             SectionID: me.getCourseSelector().getSelection().getId()
+    //         });
+
+    //     taskAssigner.mask(&#39;Assigning&amp;hellip;&#39;);
+    //     me.doSaveStudentTask(studentTask, function(rec, request, success) {
+    //         if (success) {
+    //             taskAssigner.close();
+    //             me.getStudentTasksStore().load({
+    //                 id: studentTask.getId(),
+    //                 addRecords: true
+    //             });
+    //             Ext.toast(student.getFullName() + &#39; was assigned task: &#39; + task.get(&#39;Title&#39;));
+    //         } else {
+    //             Ext.Msg.alert(&#39;An error occured&#39;, &#39;Please try again later.&#39;);
+    //             taskAssigner.unmask();
+    //         }
+    //     });
+
+    // },
+
+    // onSaveTaskClick: function() {
+    //     var me = this,
+    //         taskEditor = me.getTaskEditor(),
+    //         task = taskEditor.getTask(),
+    //         studentTask = taskEditor.getStudentTask();
+
+    //     if (studentTask) {
+    //         me.getTaskEditorForm().updateRecord(studentTask);
+    //         studentTask.set(&#39;SkillIDs&#39;, me.getSkillsField().getSkills(false, true)); // returnRecords, idsOnly
+    //         taskEditor.mask(&#39;Publishing&amp;hellip;&#39;);
+    //         return me.doSaveStudentTask(studentTask, function(rec, request, success) {
+    //             taskEditor.unmask();
+    //             if (success) {
+    //                 me.getStudentTasksStore().load({
+    //                     id: studentTask.getId(),
+    //                     addRecords: true
+    //                 });
+    //                 taskEditor.close();
+    //                 Ext.toast(&#39;Student task successfully updated.&#39;);
+    //             }
+    //         });
+    //     }
+
+    //     if (!task.phantom &amp;&amp; task.getAssigneeIds().length) {
+    //         return me.doConfirmTaskAssignees(task);
+    //     }
+
+    //     return me.doSaveTask();
+
+    // },
+
+    // onClonableTitleFieldSelect: function(combo) {
+    //     var me = this,
+    //         record = combo.getSelectedRecord(),
+    //         title = &#39;New Task&#39;,
+    //         message = &#39;Do you want to clone this task?&lt;br&gt;&lt;strong&gt;&#39; + record.get(&#39;Title&#39;) + &#39;&lt;/strong&gt;&#39;;
+
+    //     Ext.Msg.confirm(title, message, function(btnId) {
+    //         if (btnId === &#39;yes&#39;) {
+    //             me.doCloneTask(record);
+    //         }
+    //     });
+    // },
+
+    // onGoogleFileShareMethodChange: function(list, record, radio, selected) {
+    //     var me = this,
+    //         shareMethod = radio.inputValue;
+
+    //     if (selected === false) {
+    //         return false;
+    //     }
+
+    //     record.set(&#39;ShareMethod&#39;, shareMethod);
+
+    //     if (shareMethod === &#39;collaborate&#39;) {
+    //         return Slate.cbl.util.Google.getUserFilePermissions(record.get(&#39;File&#39;).DriveID).
+    //             then(function(role) {
+    //                 var errorMessage;
+
+    //                 if (!role) {
+    //                     errorMessage = &#39;Unable to collaborate with this file. &lt;br&gt;You can either:&lt;ul&gt;&lt;li&gt;Duplicate this file into your drive&lt;/li&gt;Request write access from the file owner.&lt;li&gt;b&lt;/li&gt;&lt;/ul&gt;&#39;;
+    //                     Ext.Msg.alert(&#39;Unable to collaborate&#39;, errorMessage);
+    //                 }
+
+    //             });
+    //     }
+
+    //     return false;
+    // },
+
+    // onAddGoogleAttachmentClick: function() {
+    //     var me = this,
+    //         googleUtil = Slate.cbl.util.Google;
+
+    //     if (googleUtil.getToken()) {
+    //         googleUtil.loadAPI().
+    //             then(function() {
+    //                 return gapi.client.request({
+    //                     path: &#39;/drive/v3/about&#39;,
+    //                     params: {
+    //                         fields: &#39;user&#39;,
+    //                         &#39;access_token&#39;: googleUtil.getToken()
+    //                     }
+    //                 });
+    //             }).
+    //             then(function(response) {
+    //                 Ext.Promise.resolve(googleUtil.setAuthenticatedUser(response.result.user));
+    //             }, googleUtil.authenticateUser).
+    //             then(Ext.bind(me.openFilePicker, me)).
+    //             then(null, function(error) {
+    //                 if (Ext.isObject(error)) {
+    //                     if (error.error == &#39;popup_closed_by_user&#39; || error.error == &#39;access_denied&#39;) {
+    //                         return;
+    //                     }
+
+    //                     if (error.error == &#39;popup_blocked_by_browser&#39;) {
+    //                         error = &#39;The sign-in popup was blocked by the browser. Please try again.&#39;;
+    //                     }
+    //                 }
+
+    //                 if (!Ext.isString(error)) {
+    //                     error = &#39;An error occured. Please try again.&#39;;
+    //                 }
+
+    //                 Ext.Msg.alert(&#39;Error&#39;, error);
+    //             });
+    //     } else {
+    //         googleUtil.loadAPI().
+    //             then(googleUtil.authenticateUser).
+    //             then(Ext.bind(me.openFilePicker, me)).
+    //             then(null, function(error) {
+    //                 if (Ext.isObject(error)) {
+    //                     if (error.error == &#39;popup_closed_by_user&#39; || error.error == &#39;access_denied&#39;) {
+    //                     return;
+    //                     }
+
+    //                     if (error.error == &#39;popup_blocked_by_browser&#39;) {
+    //                         error = &#39;The sign-in popup was blocked by the browser. Please try again.&#39;;
+    //                     }
+    //                 }
+
+    //                 if (!Ext.isString(error)) {
+    //                     error = &#39;An error occured. Please try again.&#39;;
+    //                 }
+
+    //                     Ext.Msg.alert(&#39;Error&#39;, error);
+    //             });
+    //     }
+    // },
+
+    // onGoogleAuthentication: function(authResult) {
+    //     var me = this,
+    //         googleAppsDomain = SiteEnvironment &amp;&amp; SiteEnvironment.googleAppsDomain || location.host,
+    //         googleAppsEmailRegex = new RegExp(&#39;^.+@&#39;+googleAppsDomain+&#39;$&#39;),
+    //         tokenExpiration;
+
+    //     console.info(&#39;handleAuthResult(%o)&#39;, authResult);
+
+    //     if (!authResult || authResult.error) {
+    //         Ext.Msg.alert(&#39;Error&#39;, &#39;Unable to authenticate user. Please try again or contact an administrator.&#39;);
+    //         return;
+    //     }
+
+    //     // confirm authentication is within google apps domain
+    //     gapi.client.request({
+    //         path: &#39;/drive/v3/about&#39;,
+    //         params: {
+    //             fields: &#39;user&#39;
+    //         }
+    //     }).
+    //     then(function(response) {
+    //         console.info(&#39;loaded user&#39;, response.result);
+
+    //         if (!response.result || !response.result.user || !response.result.user.emailAddress.match(googleAppsEmailRegex)) {
+    //             return Ext.Promise.reject(&#39;Please sign in with an account under &#39; + googleAppsDomain);
+    //         }
+
+    //         tokenExpiration = new Date(authResult.expires_at * 1000);
+
+    //         Ext.util.Cookies.set(&#39;googleAppsToken&#39;, authResult.access_token, tokenExpiration, &#39;/&#39;);
+
+    //         me.doOpenFilePicker(authResult.access_token);
+    //     }).
+    //     then(null, function(error) {
+    //         var errorMessage;
+
+    //         if (error) {
+    //             if (Ext.isString(error)) {
+    //                 errorMessage = error;
+    //             } else if (Ext.isObject(error) &amp;&amp; Ext.isString(error.error)) {
+    //                 errorMessage = error.error;
+    //             }
+    //         }
+    //         if (errorMessage) {
+    //             Ext.Msg.alert(&#39;Error&#39;, errorMessage);
+    //         }
+    //     });
+    // },
+
+
+    // // internal methods
+    // doAddGoogleFile: function(file, ownerEmail) {
+    //     var me = this,
+    //         attachmentsField = me.getAttachmentsField(),
+    //         fileId = file[google.picker.Document.ID];
+
+    //     gapi.client.request({
+    //         path: &#39;/drive/v3/files/&#39;+fileId+&#39;/revisions/head&#39;,
+    //         method: &#39;GET&#39;,
+    //         params: {
+    //             &#39;access_token&#39;: Ext.util.Cookies.get(&#39;googleAppsToken&#39;, &#39;/&#39;)
+    //         }
+    //     }).then(function(response) {
+    //         var fileInfo = response.result;
+
+    //         if (response.error) {
+    //             Ext.Msg.alert(&#39;Error&#39;, &#39;Unable to lookup details about google document. Please try again, or contact an administrator.&#39;);
+    //             return;
+    //         }
+
+    //         attachmentsField.setAttachments({
+    //             Class: &#39;Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile&#39;,
+    //             URL: file[google.picker.Document.URL],
+    //             Title: file[google.picker.Document.NAME],
+    //             FileRevisionID: fileInfo.id,
+    //             File: {
+    //                 DriveID: fileId,
+    //                 OwnerEmail: ownerEmail,
+    //                 Type: &#39;n/a&#39;,
+    //                 Title: file[google.picker.Document.NAME]
+    //             }
+    //         }, true);
+    //     },
+    //     function(response) { // revision id could not be found
+    //         var error = response.result.error;
+
+    //         if (Ext.isObject(error) &amp;&amp; error.code === 404) {
+    //             attachmentsField.setAttachments({
+    //                 Class: &#39;Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile&#39;,
+    //                 URL: file[google.picker.Document.URL],
+    //                 Title: file[google.picker.Document.NAME],
+    //                 File: {
+    //                     DriveID: fileId,
+    //                     OwnerEmail: ownerEmail
+    //                 }
+    //             }, true);
+    //         }
+    //     });
+    // },
+
+    // openFilePicker: function() {
+    //     var me = this,
+    //         googleUtil = Slate.cbl.util.Google,
+    //         taskEditor = me.getTaskEditor();
+
+    //     taskEditor.hide(true);
+
+    //     googleUtil.
+    //         initFilePicker().
+    //         setCallback(function(data) {
+    //             var showTaskEditor = [
+    //                     google.picker.Action.CANCEL,
+    //                     google.picker.Action.PICKED
+    //                 ].indexOf(data[google.picker.Response.ACTION]) &gt; -1,
+
+    //                 filePicked = data[google.picker.Response.ACTION] == google.picker.Action.PICKED,
+    //                 fileData = filePicked &amp;&amp; data[google.picker.Response.DOCUMENTS][0];
+
+    //             if (data[google.picker.Response.ACTION] == &#39;loaded&#39;) {
+    //                 return;
+    //             } else if (data[google.picker.Response.ACTION] === google.picker.Action.CANCEL) {
+    //                 googleUtil.setAuthenticatedUser(null);
+    //             }
+
+    //             if (showTaskEditor) {
+    //                 taskEditor.show();
+    //             }
+
+    //             if (fileData) {
+    //                 googleUtil.
+    //                     getGoogleFileOwnerEmail(fileData).
+    //                     then(function(response) {
+    //                         var emailIsValid = googleUtil.verifyEmailAddress(response.result.emailAddress);
+
+    //                         if (emailIsValid) {
+    //                             return Ext.Promise.resolve({
+    //                                 file: fileData,
+    //                                 email: response.result.emailAddress
+    //                             });
+    //                         }
+
+    //                         return new Ext.Promise(function(resolve) {
+    //                             Ext.Msg.confirm(&#39;Clone File&#39;, &#39;This google drive file is currently owned by someone outside of the &#39;+googleUtil.getGoogleAppsDomain() + &#39; domain. Would you like to clone this file instead?&#39;, function(answer) {
+    //                                 if (answer === &#39;yes&#39;) {
+    //                                     resolve(googleUtil.cloneGoogleFile(fileData));
+    //                                 }
+    //                             });
+    //                         });
+    //                     }).
+    //                     then(null, function(response) {
+    //                         return new Ext.Promise(function(resolve) {
+    //                             if (response.result &amp;&amp; response.result.error &amp;&amp; response.result.error.code === 403) {
+    //                                 Ext.Msg.confirm(&#39;Clone File&#39;, &#39;You must have write access to the file in order to share. Would you like to clone this file instead?&#39;, function(answer) {
+    //                                     if (answer === &#39;yes&#39;) {
+    //                                         resolve(googleUtil.cloneGoogleFile(fileData));
+    //                                     }
+    //                                 });
+    //                             }
+    //                         });
+    //                     }).
+    //                     then(function(response) {
+    //                         me.doAddGoogleFile(response.file, response.email);
+    //                     });
+    //             }
+    //         }).
+    //         build().
+    //         setVisible(true);
+    // },
+
+    // doAssignStudentTaskRevision: function(date) {
+    //     var me = this,
+    //         taskRater = me.getTaskRater(),
+    //         studentTask = taskRater.getStudentTask();
+
+    //     studentTask.set(&#39;DueDate&#39;, date.getTime()/1000);
+    //     studentTask.set(&#39;TaskStatus&#39;, &#39;re-assigned&#39;);
+    //     studentTask.save({
+    //         callback: function() {
+    //             taskRater.close();
+    //             Ext.toast(&#39;Student task successfully updated.&#39;);
+    //             me.doRateStudentTask(studentTask);
+    //         }
+    //     });
+    // },
+
+    // doUnAssignStudentTask: function(studentTask) {
+    //     var me = this;
+
+    //     studentTask.erase({
+    //         callback: function(opts, success) {
+    //             if (success) {
+    //                 Ext.toast(&#39;Student task unassigned.&#39;);
+    //                 me.getTaskRater().close();
+    //             }
+    //         }
+    //     });
+    // },
+
+    // doSaveStudentTask: function(studentTask, callback, scope) {
+    //     var me = this,
+    //         taskEditor = me.getTaskEditor();
+
+    //     studentTask.save({
+    //         callback: function(record, request, success) {
+    //             var message = [],
+    //                 response = request.getResponse().data,
+    //                 validationErrors, key;
+
+    //             if (!success) {
+    //                 message.push(
+    //                     &#39;&lt;p&gt;&#39;,
+    //                     &#39;Unable to save task.&#39;,
+    //                     &#39;&lt;/p&gt;&#39;
+    //                 );
+
+    //                 if (response.failed &amp;&amp; response.failed.length) {
+    //                     validationErrors = response.failed[0].validationErrors;
+
+    //                     for (key in validationErrors) {
+    //                         if (validationErrors.hasOwnProperty(key)) {
+    //                             message.push(
+    //                                 &#39;&lt;p&gt;&#39;,
+    //                                 validationErrors[key],
+    //                                 &#39;&lt;/p&gt;&#39;
+    //                             );
+    //                         }
+    //                     }
+    //                     record.reject();
+    //                     Ext.Msg.alert(&#39;Error&#39;, message.join(&#39; &#39;));
+    //                 }
+    //             }
+    //             Ext.callback(callback, scope, arguments);
+    //         }
+    //     });
+    // },
+
+    // doSaveTask: function(forceReload) {
+    //     var me = this,
+    //         taskEditor = me.getTaskEditor(),
+    //         form = me.getTaskEditorForm(),
+    //         skillsField = me.getSkillsField(),
+    //         attachmentsField = me.getAttachmentsField(),
+    //         assignmentsField = me.getAssignmentsField(),
+    //         courseSection = me.getCourseSelector().getSelection(),
+    //         record = form.updateRecord().getRecord(),
+    //         wasPhantom = record.phantom,
+    //         currentAssignees = assignmentsField.getAssignees(false),
+    //         errors,
+    //         showDocumentSharingWarning = false,
+    //         attachment, i = 0,
+    //         confirmationWindow = me.getAttachmentConfirmationWindow(),
+    //         _saveRecord;
+
+    //     record.set({
+    //         Skills: skillsField.getSkills(false), // returnRecords
+    //         Attachments: attachmentsField.getAttachments(false), // returnRecords
+    //         Assignees: currentAssignees, // returnRecords
+    //         SectionID: courseSection.getId()
+    //     });
+
+    //     errors = record.validate();
+
+    //     if (errors.length) {
+    //         Ext.each(errors.items, function(item) {
+    //             var itemField = form.down(&#39;[name=&#39;+item.field +&#39;]&#39;);
+
+    //             if (itemField) {
+    //                 itemField.markInvalid(item.message);
+    //             }
+    //         });
+    //         return;
+    //     }
+
+    //     if (record.phantom &amp;&amp; !Ext.util.Cookies.get(&#39;skipGoogleDocumentSharingConfirmation&#39;, &#39;/&#39;)) {
+    //         for (; i &lt; record.get(&#39;Attachments&#39;).length; i++) {
+    //             attachment = record.get(&#39;Attachments&#39;)[i];
+
+    //             if (attachment.Class == &#39;Slate\\CBL\\Tasks\\Attachments\\GoogleDriveFile&#39;) {
+    //                 showDocumentSharingWarning = true;
+    //                 continue;
+    //             }
+    //         }
+    //     }
+
+    //     _saveRecord = function() {
+    //         taskEditor.mask(&#39;Publishing&amp;hellip;&#39;);
+    //         record.save({
+    //             success: function(rec) {
+    //                 taskEditor.unmask();
+    //                 taskEditor.close();
+
+    //                 if (wasPhantom) {
+    //                     me.getTasksStore().add(rec);
+    //                 }
+    //                 // reload studenttasks, as new records may exist
+    //                 if (forceReload === true || wasPhantom) {
+    //                     setTimeout(function() {
+    //                         me.getStudentTasksStore().reload();
+    //                         // reload record to ensure relationships are included.
+    //                         // todo: remove this when API removes the need
+    //                         rec.load();
+    //                     }, 1000);
+    //                 }
+    //                 Ext.toast(&#39;Task succesfully saved!&#39;);
+    //             },
+    //             failure: function() {
+    //                 Ext.Msg.alert(&#39;Error&#39;, &#39;There was an error while publishing. Please try again.&#39;);
+    //                 taskEditor.unmask();
+    //             }
+    //         });
+    //     };
+
+    //     if (showDocumentSharingWarning === true) {
+    //         confirmationWindow.show({
+    //             message: &#39;Publishing this task will share the attached Google Documents with all assignees and course instructors. You &lt;strong&gt;must not&lt;strong&gt; delete or trash this document after publishing this task.&#39;,
+    //             buttons: Ext.MessageBox.YESNO,
+    //             callback: function(answer) {
+    //                 if (answer == &#39;yes&#39;) {
+    //                     _saveRecord();
+
+    //                     if (confirmationWindow.down(&#39;checkboxfield&#39;).isChecked()) {
+    //                         Ext.util.Cookies.set(&#39;skipGoogleDocumentSharingConfirmation&#39;, &#39;/&#39;);
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //         return;
+    //     }
+
+    //     _saveRecord();
+    // },
+
+    // doConfirmTaskAssignees: function(task) {
+    //     var me = this,
+    //         assigneeIds = me.getAssignmentsField().getAssignees(false);
+
+    //     Slate.API.request({
+    //         url: task.toUrl() + &#39;/assignees&#39;,
+    //         callback: function(request, success, response) {
+    //             var assigned = response.data.data,
+    //                 unassigned = [],
+    //                 i = 0,
+    //                 message = &#39;Completing this action would result in un-assigning these students:&#39;;
+
+    //             for (; i &lt; assigned.length; i++) {
+    //                 if (assigneeIds.indexOf(parseInt(assigned[i].ID, 10)) === -1) {
+    //                     unassigned.push(assigned[i]);
+    //                 }
+    //             }
+
+    //             if (unassigned.length) {
+    //                 i = 0;
+    //                 for (; i &lt; unassigned.length; i++) {
+    //                     message += &#39;&lt;br&gt; &#39; + unassigned[i].FirstName + &#39; &#39; + unassigned[i].LastName;
+    //                 }
+    //                 message += &#39;&lt;br&gt; Would you like to continue?&#39;;
+    //                 Ext.Msg.confirm(&#39;Task Assignments&#39;, message, function(ans) {
+    //                     if (ans === &#39;yes&#39;) {
+    //                         me.doSaveTask(true);
+    //                     }
+    //                 });
+    //                 return;
+    //             }
+
+    //             me.doSaveTask(true);
+    //         }
+    //     });
+    // },
+
+    // doEditStudentTask: function(studentTask) {
+    //     var me = this,
+    //         grid = me.getTasksGrid(),
+    //         taskEditor = me.getTaskEditor(),
+    //         task = grid.getRowsStore().getById(studentTask.get(&#39;TaskID&#39;));
+
+    //     if (!task || !studentTask) { // is this likely?
+    //         Ext.Msg.error(&#39;Error&#39;, &#39;Unable to find task. Please refresh the page and try again.&#39;); // is this optimal?
+    //         return;
+    //     }
+
+    //     taskEditor.setTask(task);
+    //     taskEditor.setStudentTask(studentTask);
+    //     taskEditor.show();
+    // },
+
+    // doEditTask: function(taskRecord) {
+    //     var me = this,
+    //         taskEditor = me.getTaskEditor();
+
+    //     if (!taskRecord) {
+    //         taskRecord = me.getTaskModel().create();
+    //     }
+
+    //     taskEditor.setTask(taskRecord);
+    //     taskEditor.setStudentTask(null);
+    //     taskEditor.show();
+    // },
+
+    // doRateStudentTask: function(studentTask) {
+    //     var me = this,
+    //         taskRater = me.getTaskRater(),
+    //         task = me.getTasksStore().getById(studentTask.get(&#39;TaskID&#39;)),
+    //         readOnly = studentTask.get(&#39;TaskStatus&#39;) === &#39;completed&#39;,
+    //         acceptTaskBtn;
+
+    //     // handle failure
+    //     if (!task) {
+    //         // how can this fail?
+    //         Ext.Msg.alert(&#39;Task not found. Please refresh.&#39;);
+    //         return;
+    //     }
+
+    //     taskRater.setTask(task);
+    //     taskRater.setStudentTask(studentTask);
+    //     taskRater.setReadOnly(readOnly);
+
+    //     if (readOnly) {
+    //         acceptTaskBtn = me.getAcceptTaskBtn();
+    //         acceptTaskBtn.setDisabled(false);
+    //         acceptTaskBtn.setText(&#39;UnAccept Task&#39;);
+    //     }
+
+    //     taskRater.show();
+    // },
+
+    // doAssignStudentTask: function(taskId, studentId) {
+    //     var me = this,
+    //         taskAssigner = me.getTaskAssigner(),
+    //         student = me.getStudentsStore().getById(studentId),
+    //         task = me.getTasksStore().getById(taskId);
+
+    //     if (!task) {
+    //         // handle failure / how can this fail?
+    //         Ext.Msg.alert(&#39;Task not found. Please refresh.&#39;);
+    //         return;
+    //     }
+
+    //     taskAssigner.setStudent(student);
+    //     taskAssigner.setTask(task);
+    //     taskAssigner.show();
+    // },
+
+    // doCloneTask: function(taskRecord) {
+    //     var me = this,
+    //         taskCopy = taskRecord.copy(null),
+    //         copiedAttachments = taskCopy.get(&#39;Attachments&#39;),
+    //         attachments = [],
+    //         i = 0;
+
+
+    //     for (; i &lt; copiedAttachments.length; i++) {
+    //         attachments.push(Ext.apply(copiedAttachments[i], {
+    //             ID: null,
+    //             ContextID: null,
+    //             ContextClass: null
+    //         }));
+    //     }
+
+    //     taskCopy.set({
+    //         Title: taskCopy.get(&#39;Title&#39;) + &#39; Clone&#39;,
+    //         Attachments: attachments
+    //     });
+
+    //     me.doEditTask(taskCopy);
+    // }
+});</pre>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.widget.SimplePanel&#39;, {
+    extend: &#39;Ext.Container&#39;,
+    xtype: &#39;slate-simplepanel&#39;,
+    requires: [
+        &#39;Ext.button.Button&#39;
+    ],
+
+
+    config: {
+        title: null,
+        tools: []
+    },
+
+    componentCls: &#39;slate-simplepanel&#39;,
+
+    items: [
+        {
+            xtype: &#39;container&#39;,
+            componentCls: &#39;slate-simplepanel-header&#39;,
+            layout: &#39;hbox&#39;,
+            items: [
+                {
+                    flex: 1,
+                    itemId: &#39;titleCmp&#39;,
+
+                    xtype: &#39;component&#39;,
+                    cls: &#39;slate-simplepanel-title&#39;
+                },
+                {
+                    xtype: &#39;container&#39;,
+                    layout: &#39;hbox&#39;,
+                    itemId: &#39;toolsCt&#39;
+                }
+            ]
+        }
+    ],
+
+
+    // lifecycle methods
+    initComponent: function() {
+        var me = this,
+            titleCmp, toolsCt;
+
+        me.callParent(arguments);
+
+        titleCmp = me.titleCmp = me.down(&#39;#titleCmp&#39;);
+        toolsCt = me.toolsCt = me.down(&#39;#toolsCt&#39;);
+
+        titleCmp.update(me.getTitle());
+        toolsCt.add(me.getTools());
+    },
+
+
+    // config handlers
+    applyTools: function(tools) {
+        return Ext.Array.map(tools, function(tool) {
+            tool = Ext.applyIf({
+                ui: &#39;light&#39;
+            }, tool);
+
+            return Ext.factory(tool, &#39;Ext.button.Button&#39;);
+        });
+    },
+
+    updateTools: function(tools, oldTools) {
+        var toolsCt = this.toolsCt;
+
+        if (!toolsCt) {
+            return;
+        }
+        if (oldTools) {
+            toolsCt.removeAll();
+        }
+
+        toolsCt.add(tools);
+    },
+
+    updateTitle: function(title) {
+        var me = this;
+
+        if (me.rendered) {
+            me.titleCmp.update(title);
+        }
+    }
+});
+</pre>
+</body>
+</html>

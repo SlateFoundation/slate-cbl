@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;SlateTasksStudent.model.TodosGroup&#39;, {
+    extend: &#39;Ext.data.Model&#39;,
+    requires: [
+        &#39;Slate.proxy.Records&#39;,
+        &#39;SlateTasksStudent.model.Todo&#39;
+    ],
+
+
+    // model config
+    idProperty: &#39;ID&#39;,
+
+    fields: [
+        {
+            name: &#39;ID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;SectionID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;StudentID&#39;,
+            type: &#39;int&#39;
+        },
+        {
+            name: &#39;Title&#39;,
+            type: &#39;string&#39;
+        },
+        {
+            name: &#39;Todos&#39;
+        }
+    ],
+
+    hasMany: [{
+        model: &#39;SlateTasksStudent.model.Todo&#39;,
+        name: &#39;Todos&#39;,
+        associationKey: &#39;Todos&#39;
+    }],
+
+    proxy: {
+        type: &#39;slate-records&#39;,
+        url: &#39;/cbl/todos&#39;
+    }
+});</pre>
+</body>
+</html>

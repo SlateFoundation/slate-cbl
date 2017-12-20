@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;SlateTasksStudent.view.TodoList&#39;, {
+    extend: &#39;Ext.Component&#39;,
+    xtype: &#39;slatetasksstudent-todolist&#39;,
+
+
+    config: {
+        store: null,
+        readOnly: false
+    },
+
+
+    componentCls: &#39;slate-todolist&#39;,
+    minHeight: 150,
+
+    listeners: {
+        click: {
+            element: &#39;el&#39;,
+            fn: &#39;onElClick&#39;,
+            delegate: [
+                &#39;.slate-todolist-item-checkbox&#39;,
+                &#39;.slate-simplepanel-header&#39;,
+                &#39;.slate-todolist-itemgroup-action button&#39;
+            ].join()
+        },
+        keypress: {
+            element: &#39;el&#39;,
+            fn: &#39;onTextFieldKeypress&#39;,
+            delegate: &#39;input.slate-todolist-new-item-text&#39;
+        },
+        change: {
+            element: &#39;el&#39;,
+            fn: &#39;onDateChange&#39;,
+            delegate: &#39;input.slate-todolist-new-item-date&#39;
+        }
+    },
+
+    tpl: [
+        &#39;{% var now = new Date() %}&#39;,
+
+        &#39;&lt;tpl for=&quot;.&quot;&gt;&#39;,
+        &#39;    &lt;div class=&quot;slate-simplepanel slate-todolist-section &lt;tpl if=&quot;readOnly&quot;&gt;is-readonly&lt;/tpl&gt;&quot; data-section=&quot;{sectionId}&quot; data-student=&quot;{studentId}&quot;&gt;&#39;,
+        &#39;        &lt;div class=&quot;slate-simplepanel-header&quot;&gt;&#39;,
+        &#39;            &lt;div class=&quot;slate-simplepanel-title&quot;&gt;To-Do List &lt;small&gt;{title}&lt;/small&gt;&lt;/div&gt;&#39;,
+        &#39;        &lt;/div&gt;&#39;,
+
+        &#39;        &lt;div class=&quot;slate-todolist-section-content&quot; &lt;tpl if=&quot;collapsed&quot;&gt;style=&quot;display:none&quot;&lt;/tpl&gt;&gt;&#39;,
+        &#39;        &lt;tpl if=&quot;todos.length == 0&quot;&gt;&#39;,
+        &#39;            &lt;div class=&quot;empty-text&quot;&gt;No to-dos found&lt;/div&gt;&#39;,
+        &#39;        &lt;tpl else&gt;&#39;,
+        &#39;            &lt;tpl for=&quot;todos&quot;&gt;&#39;,
+        &#39;                &lt;section class=&quot;slate-todolist-itemgroup&quot; data-group=&quot;{id}&quot;&gt;&#39;,
+        &#39;                    &lt;header class=&quot;slate-todolist-itemgroup-header&quot;&gt;&#39;,
+        &#39;                        &lt;h4 class=&quot;slate-todolist-itemgroup-title&quot;&gt;{title}&lt;/h4&gt;&#39;,
+        &#39;                        &lt;tpl if=&quot;id == \&#39;completed\&#39;&quot;&gt;&#39;,
+        &#39;                            &lt;ul class=&quot;slate-todolist-itemgroup-actions&quot;&gt;&#39;,
+        &#39;                                &lt;tpl if=&quot;!readOnly&quot;&gt;&#39;,
+        &#39;                                    &lt;li class=&quot;slate-todolist-itemgroup-action&quot; data-action=&quot;clear&quot;&gt;&#39;,
+        &#39;                                        &lt;button&gt;&#39;,
+        &#39;                                            &lt;i class=&quot;fa fa-times&quot;&gt;&lt;/i&gt;&amp;nbsp;Clear ALl&#39;,
+        &#39;                                        &lt;/button&gt;&#39;,
+        &#39;                                    &lt;/li&gt;&#39;,
+        &#39;                                &lt;/tpl&gt;&#39;,
+        &#39;                                &lt;li class=&quot;slate-todolist-itemgroup-action&quot; data-action=&quot;hide&quot; &lt;tpl if=&quot;parent.completedHidden&quot;&gt;style=&quot;display:none&quot;&lt;/tpl&gt;&gt;&#39;,
+        &#39;                                    &lt;button &gt;&#39;,
+        &#39;                                        &lt;i class=&quot;fa fa-caret-up&quot;&gt;&lt;/i&gt;&amp;nbsp;Hide&#39;,
+        &#39;                                    &lt;/button&gt;&#39;,
+        &#39;                                &lt;/li&gt;&#39;,
+        &#39;                                &lt;li class=&quot;slate-todolist-itemgroup-action&quot; data-action=&quot;show&quot; &lt;tpl if=&quot;!parent.completedHidden&quot;&gt;style=&quot;display:none&quot;&lt;/tpl&gt;&gt;&#39;,
+        &#39;                                    &lt;button&gt;&#39;,
+        &#39;                                        &lt;i class=&quot;fa fa-caret-down&quot;&gt;&lt;/i&gt;&amp;nbsp;Show&#39;,
+        &#39;                                    &lt;/button&gt;&#39;,
+        &#39;                                &lt;/li&gt;&#39;,
+        &#39;                            &lt;/ul&gt;&#39;,
+        &#39;                        &lt;/tpl&gt;&#39;,
+        &#39;                    &lt;/header&gt;&#39;,
+        &#39;                    &lt;ul class=&quot;slate-todolist-list&quot; &lt;tpl if=&quot;parent.completedHidden &amp;&amp; id == \&#39;completed\&#39;&quot;&gt;style=&quot;display:none&quot;&lt;/tpl&gt;&gt;&#39;,
+        &#39;                        &lt;tpl for=&quot;items&quot;&gt;&#39;,
+        &#39;                            &lt;li class=&quot;slate-todolist-item slate-todolist-status-{[ values.DueTime &lt; now ? &quot;late&quot; : &quot;due&quot; ]}&quot; data-todo=&quot;{ID}&quot;&gt;&#39;,
+        &#39;                                &lt;input class=&quot;slate-todolist-item-checkbox&quot; type=&quot;checkbox&quot; &lt;tpl if=&quot;Completed&quot;&gt;checked&lt;/tpl&gt; &lt;tpl if=&quot;parent.readOnly&quot;&gt;disabled&lt;/tpl&gt;&gt;&#39;,
+        &#39;                                &lt;div class=&quot;slate-todolist-item-text&quot;&gt;&#39;,
+        &#39;                                    &lt;label class=&quot;slate-todolist-item-title&quot;&gt;{Description}&lt;/label&gt;&#39;,
+        &#39;                                &lt;/div&gt;&#39;,
+        &#39;                                &lt;div class=&quot;slate-todolist-item-date&quot;&gt;{DueDate:date(&quot;M j, Y&quot;)}&lt;/div&gt;&#39;,
+        &#39;                            &lt;/li&gt;&#39;,
+        &#39;                        &lt;/tpl&gt;&#39;,
+        &#39;                        &lt;tpl if=&quot;!parent.readOnly &amp;&amp; id == \&#39;active\&#39;&quot;&gt;&#39;,
+        &#39;                            &lt;li class=&quot;slate-todolist-item slate-todolist-blank-item&quot;&gt;&#39;,
+        &#39;                                &lt;input class=&quot;slate-todolist-item-checkbox&quot; type=&quot;checkbox&quot; disabled&gt;&#39;,
+        &#39;                                &lt;div class=&quot;slate-todolist-item-text&quot;&gt;&#39;,
+        &#39;                                    &lt;input name=&quot;Description&quot; class=&quot;slate-todolist-new-item-text&quot; placeholder=&quot;New to-do&amp;hellip;&quot;&gt;&#39;,
+        &#39;                                &lt;/div&gt;&#39;,
+        &#39;                                &lt;div class=&quot;slate-todolist-item-date&quot;&gt;&#39;,
+        &#39;                                    &lt;input name=&quot;DueDate&quot; class=&quot;slate-todolist-new-item-date&quot; type=&quot;date&quot;&gt;&#39;,
+        &#39;                                &lt;/div&gt;&#39;,
+        &#39;                            &lt;/li&gt;&#39;,
+        &#39;                        &lt;/tpl&gt;&#39;,
+        &#39;                    &lt;/ul&gt;&#39;,
+        &#39;                &lt;/section&gt;&#39;,
+        &#39;            &lt;/tpl&gt;&#39;,
+        &#39;        &lt;/tpl&gt;&#39;,
+        &#39;        &lt;/div&gt;&#39;,
+        &#39;    &lt;/div&gt;&#39;,
+        &#39;&lt;/tpl&gt;&#39;
+    ],
+
+
+    // lifecycle methods
+    initComponent: function() {
+        this.collapsedSections = {};
+        this.completedHiddenSections = {};
+
+        this.callParent(arguments);
+    },
+
+
+    // config handlers
+    applyStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    updateStore: function(store, oldStore) {
+        if (oldStore) {
+            oldStore.un({
+                beforeload: &#39;onBeforeStoreLoad&#39;,
+                load: &#39;onStoreLoad&#39;,
+                scope: this
+            });
+        }
+
+        if (store) {
+            store.on({
+                beforeload: &#39;onBeforeStoreLoad&#39;,
+                load: &#39;onStoreLoad&#39;,
+                scope: this
+            });
+        }
+    },
+
+
+    // event handlers
+    onBeforeStoreLoad: function() {
+        this.addCls(&#39;is-loading&#39;);
+        this.mask(&#39;Loading Todos&#39;);
+    },
+
+    onStoreLoad: function() {
+        this.refresh();
+        this.removeCls(&#39;is-loading&#39;);
+        this.unmask();
+    },
+
+    onElClick: function(ev, el) {
+        var me = this,
+            sectionEl = ev.getTarget(&#39;.slate-todolist-section&#39;, null, true),
+            sectionId = parseInt(sectionEl.getAttribute(&#39;data-section&#39;), 10) || null;
+
+        if (ev.getTarget(&#39;.slate-todolist-item-checkbox&#39;)) {
+            me.fireEvent(
+                &#39;checkclick&#39;,
+                me,
+                sectionId,
+                parseInt(ev.getTarget(&#39;.slate-todolist-item&#39;, null, true).getAttribute(&#39;data-todo&#39;), 10),
+                el.checked
+            );
+        } else if (ev.getTarget(&#39;.slate-todolist-itemgroup-action[data-action=clear]&#39;)) {
+            me.fireEvent(&#39;clearclick&#39;, me, sectionId);
+        } else if (ev.getTarget(&#39;.slate-simplepanel-header&#39;)) {
+            me.onSectionTitleClick(sectionId, sectionEl);
+        } else if (ev.getTarget(&#39;.slate-todolist-itemgroup-action[data-action=hide], .slate-todolist-itemgroup-action[data-action=show]&#39;)) {
+            me.onToggleCompletedClick(sectionId, sectionEl);
+        }
+    },
+
+    onSectionTitleClick: function(sectionId, sectionEl) {
+        var me = this,
+            collapsedSections = me.collapsedSections,
+            sectionContentEl = sectionEl.down(&#39;.slate-todolist-section-content&#39;);
+
+        if (collapsedSections[sectionId]) {
+            sectionContentEl.slideIn(&#39;t&#39;, {
+                duration: 200
+            });
+
+            collapsedSections[sectionId] = false;
+        } else {
+            sectionContentEl.setVisibilityMode(Ext.dom.Element.DISPLAY);
+            sectionContentEl.slideOut(&#39;t&#39;, {
+                duration: 200
+            });
+
+            collapsedSections[sectionId] = true;
+        }
+    },
+
+    onToggleCompletedClick: function(sectionId, sectionEl) {
+        var me = this,
+            completedHiddenSections = me.completedHiddenSections,
+            completedGroupEl = sectionEl.down(&#39;.slate-todolist-itemgroup[data-group=completed] .slate-todolist-list&#39;),
+            showActionEl = sectionEl.down(&#39;.slate-todolist-itemgroup-action[data-action=show]&#39;).setVisibilityMode(Ext.dom.Element.DISPLAY),
+            hideActionEl = sectionEl.down(&#39;.slate-todolist-itemgroup-action[data-action=hide]&#39;).setVisibilityMode(Ext.dom.Element.DISPLAY),
+            show = completedHiddenSections[sectionId];
+
+        if (show) {
+            completedGroupEl.slideIn(&#39;t&#39;, {
+                duration: 200
+            });
+            showActionEl.hide();
+            hideActionEl.show();
+
+            completedHiddenSections[sectionId] = false;
+        } else {
+            completedGroupEl.setVisibilityMode(Ext.dom.Element.DISPLAY);
+            completedGroupEl.slideOut(&#39;t&#39;, {
+                duration: 200
+            });
+            showActionEl.show();
+            hideActionEl.hide();
+
+            completedHiddenSections[sectionId] = true;
+        }
+    },
+
+    onTextFieldKeypress: function(ev) {
+        if (ev.getKey() !== ev.ENTER) {
+            return;
+        }
+
+        this.submitNewTask(ev.getTarget(&#39;.slate-todolist-section&#39;, null, true));
+    },
+
+    onDateChange: function(ev) {
+        this.submitNewTask(ev.getTarget(&#39;.slate-todolist-section&#39;, null, true));
+    },
+
+
+    // member methods
+    refresh: function() {
+        var me = this,
+            readOnly = me.getReadOnly(),
+            collapsedSections = me.collapsedSections,
+            completedHiddenSections = me.completedHiddenSections,
+
+            todoSectionsData = [], // template input
+
+            todoSectionsStore = me.getStore(),
+            todoSectionsCount = todoSectionsStore.getCount(),
+            todoSectionIndex = 0,
+            todoSection, sectionId,
+            todosStore, todosCount, todoIndex, todo,
+            completeTodos, activeTodos, todoGroups;
+
+        // build array of todo groups
+        for (; todoSectionIndex &lt; todoSectionsCount; todoSectionIndex++) {
+            todoSection = todoSectionsStore.getAt(todoSectionIndex);
+            sectionId = todoSection.get(&#39;SectionID&#39;);
+            todosStore = todoSection.Todos(); // eslint-disable-line new-cap
+            todosCount = todosStore.getCount();
+
+            // group todos by active and completed
+            completeTodos = [];
+            activeTodos = [];
+
+            for (todoIndex = 0; todoIndex &lt; todosCount; todoIndex++) {
+                todo = todosStore.getAt(todoIndex);
+
+                (todo.get(&#39;Completed&#39;) ? completeTodos : activeTodos).push(todo.getData());
+            }
+
+            // generate data for populated groups
+            todoGroups = [];
+
+            if (activeTodos.length || !readOnly) {
+                todoGroups.push({
+                    id: &#39;active&#39;,
+                    title: &#39;Active Items&#39;,
+                    readOnly: readOnly,
+                    items: activeTodos
+                });
+            }
+
+            if (completeTodos.length &gt; 0) {
+                todoGroups.push({
+                    id: &#39;completed&#39;,
+                    title: &#39;Completed Items&#39;,
+                    readOnly: readOnly,
+                    items: completeTodos
+                });
+            }
+
+            todoSectionsData.push({
+                title: todoSection.get(&#39;Title&#39;),
+                studentId: todoSection.get(&#39;StudentID&#39;),
+                sectionId: sectionId,
+                readOnly: readOnly,
+                collapsed: Boolean(collapsedSections[sectionId]),
+                completedHidden: Boolean(completedHiddenSections[sectionId]),
+                todos: todoGroups
+            });
+        }
+
+        // render markup
+        this.setData(todoSectionsData);
+    },
+
+    submitNewTask: function(sectionEl) {
+        var description = sectionEl.down(&#39;input[name=Description]&#39;).getValue(),
+            dueDate = sectionEl.down(&#39;input[name=DueDate]&#39;).dom.valueAsDate;
+
+        if (!description || !dueDate) {
+            return;
+        }
+
+        this.fireEvent(&#39;tasksubmit&#39;, this, {
+            SectionID: parseInt(sectionEl.getAttribute(&#39;data-section&#39;), 10) || null,
+            StudentID: parseInt(sectionEl.getAttribute(&#39;data-student&#39;), 10) || null,
+            Description: description,
+            DueDate: Ext.Date.utcToLocal(dueDate)
+        }, sectionEl);
+    }
+});</pre>
+</body>
+</html>

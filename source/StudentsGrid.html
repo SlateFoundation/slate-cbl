@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='SlateTasksTeacher-view-StudentsGrid'>/**
+</span> * Renders tasks for a given list of students across a given list of competencies
+ */
+Ext.define(&#39;SlateTasksTeacher.view.StudentsGrid&#39;, {
+    extend: &#39;Jarvus.aggregrid.RollupAggregrid&#39;,
+    xtype: &#39;slate-studentsgrid&#39;,
+    requires: [
+        &#39;Ext.data.ChainedStore&#39;,
+
+        /* global Slate */
+        &#39;Slate.cbl.model.tasks.Task&#39;
+    ],
+
+
+    config: {
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-dateRenderer'>        dateRenderer: &#39;m/d&#39;,
+</span>
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-rowsStore'>        rowsStore: {
+</span>            type: &#39;chained&#39;,
+            source: &#39;Tasks&#39;,
+            filters: [{
+                property: &#39;ParentTaskID&#39;,
+                value: null
+            }]
+        },
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-subRowsStore'>        subRowsStore: &#39;Tasks&#39;,
+</span><span id='SlateTasksTeacher-view-StudentsGrid-cfg-columnsStore'>        columnsStore: &#39;SectionParticipants&#39;,
+</span>
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-dataStore'>        dataStore: &#39;StudentTasks&#39;,
+</span><span id='SlateTasksTeacher-view-StudentsGrid-cfg-subDataStore'>        subDataStore: &#39;StudentTasks&#39;,
+</span>
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-columnHeaderTpl'>        columnHeaderTpl: &#39;{Person.FirstName} {Person.LastName}&#39;,
+</span>
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-rowHeaderField'>        rowHeaderField: null,
+</span><span id='SlateTasksTeacher-view-StudentsGrid-cfg-subRowHeaderField'>        subRowHeaderField: null,
+</span><span id='SlateTasksTeacher-view-StudentsGrid-cfg-rowHeaderTpl'>        rowHeaderTpl: [
+</span>            &#39;&lt;tpl for=&quot;.&quot;&gt;&#39;,
+            &#39;    {Title}&#39;,
+            &#39;    &lt;button class=&quot;button small edit-row&quot;&gt;Edit&lt;/button&gt;&#39;,
+            &#39;&lt;/tpl&gt;&#39;
+        ],
+
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-columnMapper'>        columnMapper: function(studentTask, columnsStore) {
+</span>            return columnsStore.getByPersonId(studentTask.get(&#39;StudentID&#39;));
+        },
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-rowMapper'>        rowMapper: &#39;TaskID&#39;,
+</span>
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-subRowMapper'>        subRowMapper: &#39;TaskID&#39;,
+</span><span id='SlateTasksTeacher-view-StudentsGrid-cfg-parentRowMapper'>        parentRowMapper: &#39;ParentTaskID&#39;,
+</span>
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-cellTpl'>        // templates
+</span>        cellTpl: false,
+<span id='SlateTasksTeacher-view-StudentsGrid-cfg-cellRenderer'>        cellRenderer: function(group, cellEl) {
+</span>            var me = this,
+                oldStatusClass = group.statusClass,
+                record, statusClass, taskStatus, dueDate;
+
+            if (group.records.length &amp;&amp; (record = group.records[0].record)) {
+                taskStatus = record.get(&#39;TaskStatus&#39;);
+                dueDate = record.get(&#39;DueDate&#39;);
+                statusClass = Slate.cbl.model.tasks.Task[record.get(&#39;IsLate&#39;) ? &#39;lateStatusClasses&#39; : &#39;statusClasses&#39;][taskStatus];
+            }
+
+            // write class changes
+            if (statusClass != oldStatusClass) {
+                if (oldStatusClass) {
+                    cellEl.removeCls(oldStatusClass.split(&#39; &#39;).map(function(cls) {
+                        return &#39;slate-task-status-&#39;+cls;
+                    }));
+                }
+
+                if (statusClass) {
+                    cellEl.addCls(statusClass.split(&#39; &#39;).map(function(cls) {
+                        return &#39;slate-task-status-&#39;+cls;
+                    }));
+                }
+
+                group.statusClass = statusClass;
+            }
+
+            // write completed change
+            if (taskStatus == &#39;completed&#39;) {
+                if (group.taskStatus != &#39;completed&#39;) {
+                    cellEl.setHtml(&#39;&lt;i class=&quot;fa fa-lg fa-check-circle-o&quot;&gt;&lt;/i&gt;&#39;);
+                }
+            } else if (dueDate) {
+                dueDate = me.getDateRenderer()(dueDate);
+
+                if (group.dueDate != dueDate) {
+                    cellEl.setHtml(dueDate);
+                    group.dueDate = dueDate;
+                }
+            } else {
+                cellEl.setHtml(&#39;&#39;);
+            }
+
+            group.taskStatus = taskStatus;
+        }
+    },
+
+
+<span id='SlateTasksTeacher-view-StudentsGrid-method-applyDateRenderer'>    // config handlers
+</span>    applyDateRenderer: function(dateRenderer) {
+        if (typeof dateRenderer == &#39;string&#39;) {
+            dateRenderer = Ext.util.Format.dateRenderer(dateRenderer);
+        }
+
+        return dateRenderer;
+    },
+
+
+<span id='SlateTasksTeacher-view-StudentsGrid-method-isRowExpandable'>    // Aggregrid template methods
+</span>    isRowExpandable: function(row) {
+        return row.get(&#39;ChildTasks&#39;).length &gt; 0;
+    },
+
+<span id='SlateTasksTeacher-view-StudentsGrid-method-buildColumnTplData'>    buildColumnTplData: function() {
+</span>        var columnTplData = this.callParent(arguments);
+
+        columnTplData.$cls = &#39;slate-studentsgrid-cell&#39;;
+
+        return columnTplData;
+    }
+});</pre>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;SlateDemonstrationsStudent.view.RecentProgress&#39;, {
+    extend: &#39;Ext.Component&#39;,
+    xtype: &#39;slate-demonstrations-student-recentprogress&#39;,
+    requires: [
+        &#39;Slate.cbl.store.RecentProgress&#39;
+    ],
+
+    config: {
+        studentId: null,
+        contentAreaId: null,
+
+        loadStatus: &#39;unloaded&#39;,
+
+        recentProgressStore: {
+            xclass: &#39;Slate.cbl.store.RecentProgress&#39;
+        },
+
+        componentCls: &#39;cbl-recent-progress&#39;,
+        cls: &#39;panel&#39;,
+
+        borderBoxCls: null,
+        rootCls: null
+    },
+
+    renderTpl: [
+        &#39;&lt;header class=&quot;panel-header&quot;&gt;&#39;,
+            &#39;&lt;h3 class=&quot;header-title&quot;&gt;Recent Progress&lt;/h3&gt;&#39;,
+        &#39;&lt;/header&gt;&#39;,
+
+        &#39;&lt;div class=&quot;table-ct&quot;&gt;&#39;,
+            &#39;&lt;table class=&quot;panel-body&quot; id=&quot;{id}-tableEl&quot; data-ref=&quot;tableEl&quot;&gt;&lt;/table&gt;&#39;,
+        &#39;&lt;/div&gt;&#39;
+    ],
+    childEls: [
+        &#39;tableEl&#39;
+    ],
+
+    progressTpl: [
+        &#39;&lt;tpl if=&quot;values.progress.length !== 0&quot;&gt;&#39;,
+            &#39;&lt;thead&gt;&#39;,
+                &#39;&lt;tr&gt;&#39;,
+                    &#39;&lt;th class=&quot;col-header scoring-domain-col&quot;&gt;Scoring Domain&lt;/th&gt;&#39;,
+                    &#39;&lt;th class=&quot;col-header level-col&quot;&gt;Rating&lt;/th&gt;&#39;,
+                &#39;&lt;/tr&gt;&#39;,
+            &#39;&lt;/thead&gt;&#39;,
+        &#39;&lt;/tpl&gt;&#39;,
+        &#39;&lt;tbody&gt;&#39;,
+            &#39;&lt;tpl for=&quot;progress&quot;&gt;&#39;,
+                &#39;&lt;tr&gt;&#39;,
+                    &#39;&lt;td class=&quot;scoring-domain-col&quot;&gt;&#39;,
+                        &#39;&lt;span class=&quot;domain-skill&quot;&gt;{skillDescriptor:htmlEncode}&lt;/span&gt;&#39;,
+                        &#39;&lt;div class=&quot;meta&quot;&gt;&#39;,
+                            &#39;&lt;span class=&quot;domain-competency&quot;&gt;{competencyDescriptor:htmlEncode}&lt;tpl if=&quot;teacherTitle&quot;&gt;, &lt;/tpl&gt;&lt;/span&gt;&#39;,
+                            &#39;&lt;span class=&quot;domain-teacher&quot;&gt;{teacherTitle:htmlEncode}&lt;/span&gt;&#39;,
+                        &#39;&lt;/div&gt;&#39;,
+                    &#39;&lt;/td&gt;&#39;,
+                    &#39;&lt;td class=&quot;level-col&quot;&gt;&#39;,
+                        &#39;&lt;div class=&quot;cbl-level-colored cbl-level-{demonstratedLevel}&quot;&gt;&#39;, // TODO color with target level, not demo. level
+                           &#39;&lt;tpl if=&quot;demonstratedLevel != 0&quot;&gt;{demonstratedLevel}&lt;tpl else&gt;M&lt;/tpl&gt;&#39;,
+                       &#39;&lt;/div&gt;&#39;,
+                    &#39;&lt;/td&gt;&#39;,
+                &#39;&lt;/tr&gt;&#39;,
+            &#39;&lt;/tpl&gt;&#39;,
+            &#39;&lt;tpl if=&quot;values.progress.length == 0&quot;&gt;&#39;,
+                &#39;&lt;tr&gt;&#39;,
+                    &#39;&lt;td&gt;No demonstrations have been logged in this content area.&lt;/td&gt;&#39;,
+                &#39;&lt;/tr&gt;&#39;,
+            &#39;&lt;/tpl&gt;&#39;,
+        &#39;&lt;/tbody&gt;&#39;
+    ],
+
+
+    // config handlers
+    updateLoadStatus: function(newStatus, oldStatus) {
+        if (oldStatus) {
+            this.removeCls(&#39;progress-&#39; + oldStatus);
+        }
+
+        if (newStatus) {
+            this.addCls(&#39;progress-&#39; + newStatus);
+        }
+    },
+
+    applyRecentProgressStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    updateRecentProgressStore: function(store) {
+        if (store) {
+            store.on(&#39;refresh&#39;, &#39;refreshProgress&#39;, this);
+        }
+    },
+
+
+    // template methods
+    onRender: function() {
+        var me = this;
+
+        me.callParent(arguments);
+
+        me.loadProgress();
+    },
+
+
+    // public methods
+    loadProgress: function() {
+        var me = this,
+            studentId = me.getStudentId(),
+            contentAreaId = me.getContentAreaId();
+
+        if (!studentId || !contentAreaId) {
+            throw &#39;Unable to load progress without studentId and contentAreaId set&#39;;
+        }
+
+        me.setLoadStatus(&#39;loading&#39;);
+
+        me.getRecentProgressStore().loadByStudentAndContentArea(studentId, contentAreaId);
+    },
+
+    refreshProgress: function() {
+        var me = this;
+
+        me.lookupTpl(&#39;progressTpl&#39;).overwrite(me.tableEl, {
+            progress: Ext.pluck(me.getRecentProgressStore().getRange(), &#39;data&#39;)
+        });
+
+        me.setLoadStatus(&#39;loaded&#39;);
+    }
+});</pre>
+</body>
+</html>

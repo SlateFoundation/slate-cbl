@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.define(&#39;Slate.cbl.model.tasks.Task&#39;, {
+    extend: &#39;Ext.data.Model&#39;,
+    requires: [
+        &#39;Slate.cbl.proxy.tasks.Tasks&#39;,
+        &#39;Ext.data.identifier.Negative&#39;,
+        &#39;Ext.data.validator.Presence&#39;,
+        &#39;Ext.data.validator.Range&#39;
+    ],
+
+
+    statics: {
+        statusClasses: {
+            &#39;assigned&#39;: &#39;due&#39;,
+            &#39;re-assigned&#39;: &#39;revision&#39;,
+            &#39;submitted&#39;: &#39;due needsrated&#39;,
+            &#39;re-submitted&#39;: &#39;revision needsrated&#39;,
+            &#39;completed&#39;: &#39;completed&#39;
+        },
+        lateStatusClasses: {
+            &#39;submitted&#39;: &#39;late needsrated&#39;,
+            &#39;re-submitted&#39;: &#39;late needsrated&#39;,
+
+            &#39;assigned&#39;: &#39;late&#39;,
+            &#39;re-assigned&#39;: &#39;late&#39;
+        },
+        statusStrings: {
+            &#39;assigned&#39;: &#39;Due&#39;,
+            &#39;re-assigned&#39;: &#39;Revision&#39;,
+            &#39;submitted&#39;: &#39;Submitted&#39;,
+            &#39;re-submitted&#39;: &#39;Resubmitted&#39;,
+            &#39;completed&#39;: &#39;Completed&#39;
+        },
+        activeStatuses: [
+            &#39;assigned&#39;,
+            &#39;re-assigned&#39;,
+            &#39;submitted&#39;,
+            &#39;re-submitted&#39;
+        ]
+    },
+
+
+    idProperty: &#39;ID&#39;,
+    identifier: &#39;negative&#39;,
+
+    fields: [
+        // ActiveRecord fields
+        {
+            name: &#39;ID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Class&#39;,
+            type: &#39;string&#39;,
+            defaultValue: &#39;Slate\\CBL\\Tasks\\ExperienceTask&#39;
+        },
+        {
+            name: &#39;Created&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true,
+            persist: false
+        },
+        {
+            name: &#39;CreatorID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true,
+            persist: false
+        },
+        {
+            name: &#39;Modified&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true,
+            persist: false
+        },
+        {
+            name: &#39;ModifierID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true,
+            persist: false
+        },
+
+        // Task fields
+        {
+            name: &#39;SectionID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Title&#39;,
+            type: &#39;string&#39;
+        },
+        {
+            name: &#39;Handle&#39;,
+            type: &#39;string&#39;,
+            persist: false
+        },
+        {
+            name: &#39;ParentTaskID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;ClonedTaskID&#39;,
+            type: &#39;int&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;DueDate&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;ExpirationDate&#39;,
+            type: &#39;date&#39;,
+            dateFormat: &#39;timestamp&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Instructions&#39;,
+            type: &#39;string&#39;,
+            allowNull: true
+        },
+        {
+            name: &#39;Shared&#39;,
+            type: &#39;string&#39;
+        },
+        {
+            name: &#39;Status&#39;,
+            type: &#39;string&#39;,
+            defaultValue: &#39;shared&#39;
+        },
+
+        // ExperienceTask fields
+        {
+            name: &#39;ExperienceType&#39;,
+            type: &#39;string&#39;,
+            defaultValue: &#39;Studio&#39;
+        },
+
+        // writable dynamic fields
+        {
+            name: &#39;Attachments&#39;
+        },
+        {
+            name: &#39;Assignees&#39;
+        },
+
+        // virtual fields
+        // TODO: review if still needed
+        // {
+        //     name: &#39;ParentTaskTitle&#39;,
+        //     depends: &#39;ParentTask&#39;,
+        //     mapping: &#39;ParentTask.Title&#39;
+        // },
+        // {
+        //     name: &#39;CreatorFullName&#39;,
+        //     depends: &#39;Creator&#39;,
+        //     calculate: function(data) {
+        //         if (!data.Creator) {
+        //             return null;
+        //         }
+
+        //         return data.Creator.FirstName + &#39; &#39; + data.Creator.LastName;
+        //     }
+        // },
+        // {
+        //     name: &#39;SkillIDs&#39;,
+        //     depends: &#39;Skills&#39;,
+        //     persist: true,
+        //     calculate: function(data) {
+        //         if (!Ext.isEmpty(data.Skills)) {
+        //             return Ext.Array.map(data.Skills, function(skill) {
+        //                 return skill.ID;
+        //             });
+        //         }
+
+        //         return [];
+        //     }
+        // }
+    ],
+
+    proxy: &#39;slate-cbl-tasks&#39;,
+
+    // TODO: review if still needed
+    // proxy: {
+    //     type: &#39;slate-cbl-tasks&#39;,
+    //     include: [
+    //         &#39;Creator&#39;,
+    //         &#39;ParentTask&#39;,
+    //         &#39;Skills&#39;,
+    //         &#39;Attachments.File&#39;,
+    //         &#39;StudentTasks&#39;
+    //     ],
+    //     timeout: 180000 // extended timeout for handling attachment permission requests
+    // },
+
+    validators: [
+        {
+            type: &#39;min&#39;,
+            field: &#39;SectionID&#39;,
+            min: 1,
+            emptyMessage: &#39;SectionID is required&#39;
+        },
+        {
+            type: &#39;presence&#39;,
+            field: &#39;Title&#39;,
+            message: &#39;Title is required&#39;
+        }
+    ],
+
+    // TODO: review if still needed
+    getSkillsGroupedByCompetency: function() {
+        var comps = [], compIds = [],
+            skills = this.get(&#39;Skills&#39;);
+
+        Ext.each(skills, function(skill) {
+            var compIdx;
+
+            if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
+                compIdx = compIds.length;
+                comps[compIdx] = {
+                    Code: skill.CompetencyCode,
+                    Descriptor: skill.CompetencyDescriptor,
+                    skills: []
+                };
+                compIds.push(skill.CompetencyCode);
+            }
+
+            comps[compIdx].skills.push(skill);
+        });
+
+        return comps;
+    },
+
+    // TODO: review if still needed
+    getAssigneeIds: function() {
+        var assignees = [],
+            studentTasks = this.get(&#39;StudentTasks&#39;) || [],
+            i = 0;
+
+        for (; i &lt; studentTasks.length; i++) {
+            assignees.push(studentTasks[i].StudentID);
+        }
+
+        return assignees;
+    }
+});</pre>
+</body>
+</html>
