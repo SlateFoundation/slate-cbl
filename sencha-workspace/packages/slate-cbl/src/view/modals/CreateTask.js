@@ -116,16 +116,16 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     itemId: 'experience-type',
                     name: 'ExperienceType',
                     fieldLabel: 'Type of Experience',
-                    displayField: 'name',
-                    valueField: 'name',
+                    displayField: 'value',
+                    valueField: 'value',
                     allowBlank: true,
                     autoSelect: false,
-                    queryParam: 'q',
+                    queryMode: 'local',
                     store: {
-                        fields: ['name'],
+                        fields: ['value'],
                         pageSize: 0,
                         proxy: {
-                            type: 'slate-records',
+                            type: 'emergence-values',
                             url: '/cbl/tasks/*experience-types'
                         }
                     }
