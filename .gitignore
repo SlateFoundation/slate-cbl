@@ -3,7 +3,6 @@
 /watcher.log
 .DS_Store
 
-/sencha-workspace/docs/
 /sencha-workspace/build/
 
 /sencha-workspace/Slate*/bootstrap.*
