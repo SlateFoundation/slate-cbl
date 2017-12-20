@@ -17,37 +17,38 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
 
     // dependencies
-    // views: [
-    //     'TaskEditor',
+    views: [
+        'TaskEditor'
     //     'tasks.AttachmentConfirmation',
     //     'TaskAssigner',
     //     'TaskRater'
-    // ],
+    ],
 
     stores: [
         'StudentTasks',
         'Tasks'
     ],
 
-    // models: [
-    //     'Task@Slate.cbl.model',
+    models: [
+        'Task@Slate.cbl.model.tasks'
     //     'StudentTask@Slate.cbl.model',
     //     'Comment@Slate.cbl.model.tasks'
-    // ],
+    ],
 
 
     // component factories and selectors
     refs: {
         dashboardCt: 'slate-tasks-teacher-dashboard',
         createBtn: 'slate-tasks-teacher-appheader button[action=create]',
-    //     tasksGrid: 'slate-studentsgrid',
+        // studentsGrid: 'slate-studentsgrid',
 
-    //     taskEditor: {
-    //         selector: 'slate-tasks-teacher-taskeditor',
-    //         autoCreate: true,
+        taskEditor: {
+            selector: 'slate-tasks-teacher-taskeditor',
+            autoCreate: true,
 
-    //         xtype: 'slate-tasks-teacher-taskeditor'
-    //     },
+            xtype: 'slate-tasks-teacher-taskeditor'
+        },
+
     //     taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
     //     skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
     //     attachmentsField: 'slate-tasks-teacher-taskeditor slate-tasks-attachmentsfield',
@@ -92,7 +93,11 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     control: {
         dashboardCt: {
-            selectedsectionchange: 'onSelectedSectionChange'
+            selectedsectionchange: 'onSelectedSectionChange',
+            loadedsectionchange: 'onLoadedSectionChange'
+        },
+        createBtn: {
+            click: 'onCreateClick'
         }
     //     tasksGrid: {
     //         cellclick: 'onTasksGridCellClick',
@@ -171,12 +176,25 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         var me = this,
             studentTasksStore = me.getStudentTasksStore();
 
-        // show create button
-        me.getCreateBtn().setHidden(!sectionCode);
-
         // (re)load StudentTask list
         studentTasksStore.setSection(sectionCode);
         studentTasksStore.loadIfDirty(true);
+    },
+
+    onLoadedSectionChange: function(dashboardCt, section) {
+        // show create button
+        this.getCreateBtn().setHidden(!section);
+    },
+
+    onCreateClick: function() {
+        var me = this,
+            taskCreator = me.getTaskEditor(),
+            task = me.getTaskModel().create({
+                SectionID: me.getDashboardCt().getLoadedSection().getId()
+            });
+
+        taskCreator.setTask(task);
+        taskCreator.show();
     }
 
     // onTasksGridCellClick: function(grid, taskId, studentId) {
@@ -428,13 +446,6 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     //     return me.doSaveTask();
 
-    // },
-
-    // onCreateTaskClick: function() {
-    //     var me = this;
-
-    //     me.getTaskEditor().close();
-    //     return me.doEditTask();
     // },
 
     // onClonableTitleFieldSelect: function(combo) {
