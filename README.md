@@ -39,6 +39,12 @@ If you have a version of GIT older than 1.6, get a newer version of git.
 Then run a web server from `sencha-workspace` or higher in your file tree and navigate to the subdirectory for the app you want to run in your browser. If you don't have a server you can run `sencha web start`
 to run a basic local server at [http://localhost:1841](http://localhost:1841).
 
+### Client-side UI application documentation
+
+View the latest docs online at [http://slatefoundation.github.io/slate-cbl/](http://slatefoundation.github.io/slate-cbl/)
+
+To update these docs, run `build.sh` and then `publish.sh` within `sencha-workspace/docs`
+
 ### Connecting to a server
 You can connect to any remote slate-cbl instance that has CORS enabled by appending the query
 parameter `apiHost` when loading the page.
