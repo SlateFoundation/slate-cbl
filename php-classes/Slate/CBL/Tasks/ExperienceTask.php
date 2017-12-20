@@ -4,8 +4,6 @@ namespace Slate\CBL\Tasks;
 
 class ExperienceTask extends Task
 {
-    public static $experienceTypeOptions = ['Studio', 'Flex Time', 'Internship'];
-
     public static $fields = [
         'ExperienceType' => [
             'type' => 'string',
