@@ -31,16 +31,13 @@ class Task extends \VersionedRecord
             'index' => true,
             'default' => null
         ],
-        'Title' => [
-            'includeInSummary' => true
-        ],
+        'Title',
         'Handle' => [
             'unique' => true
         ],
         'ParentTaskID' => [
             'type' => 'uint',
-            'default' => null,
-            'includeInSummary' => true
+            'default' => null
         ],
         'ClonedTaskID' => [
             'type' => 'uint',
@@ -129,10 +126,8 @@ class Task extends \VersionedRecord
     public static $dynamicFields = [
         'Section',
         'Skills',
-        'Creator' => [
-            'includeInSummary' => true,
-            'stringsOnly' => false
-        ],
+        'Creator',
+        'CreatorFullName' => 'Creator.FullName',
         'ParentTask',
         'SubTasks',
         'Context',
@@ -142,6 +137,13 @@ class Task extends \VersionedRecord
             'getter' => 'getParenTaskTitle'
         ],
         'Assignees'
+    ];
+
+    public static $summaryFields = [
+        'ID' => true,
+        'Title' => true,
+        'Created' => true,
+        'Creator' => true
     ];
 
     public static $searchConditions = [
