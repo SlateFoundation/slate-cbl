@@ -215,11 +215,11 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             competency = me.getCompetency(),
             demonstrationsAverage = completion.get('demonstrationsAverage'),
             currentLevel = completion.get('currentLevel'),
-            demonstrationsRequired = competency.getTotalDemonstrationsRequired(currentLevel),
-            percentComplete = 100 * completion.get('demonstrationsAtLevel') / demonstrationsRequired;
+            demonstrationsRequired = completion.get('demonstrationsRequired'),
+            demonstrationsAtLevel = completion.get('demonstrationsAtLevel');
 
         me.setLevel(currentLevel);
-        me.setPercentComplete(percentComplete);
+        me.setPercentComplete(100 * demonstrationsAtLevel / demonstrationsRequired);
         me.setPercentMissed(100 * completion.get('demonstrationsMissed') / demonstrationsRequired);
         me.setDemonstrationsAverage(demonstrationsAverage);
         //me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
