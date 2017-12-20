@@ -131,27 +131,14 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     onSelectedSectionChange: function(dashboardCt, sectionCode) {
         var me = this,
             sectionSelector = me.getSectionSelector(),
-            sectionsStore = me.getSectionsStore(),
             cohortsStore = me.getSectionCohortsStore(),
-            sectionParticipants = me.getSectionParticipantsStore(),
-            section;
+            sectionParticipants = me.getSectionParticipantsStore();
 
         // push value to selector
         sectionSelector.setValue(sectionCode);
 
         // update loaded section record
-        section = sectionsStore.getByCode(sectionCode);
-
-        if (section) {
-            dashboardCt.setLoadedSection(section);
-        } else {
-            sectionsStore.getModel().load(null, {
-                url: '/sections/'+encodeURIComponent(sectionCode),
-                success: function(loadedSection) {
-                    dashboardCt.setLoadedSection(loadedSection);
-                }
-            });
-        }
+        dashboardCt.setLoadedSection(me.getSectionsStore().getByCode(sectionCode));
 
         // (re)load the cohorts list
         cohortsStore.setSection(sectionCode);
