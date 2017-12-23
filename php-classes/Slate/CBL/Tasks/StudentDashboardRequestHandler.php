@@ -4,6 +4,7 @@ namespace Slate\CBL\Tasks;
 
 use Sencha_App;
 use Sencha_RequestHandler;
+use Google\API as GoogleAPI;
 
 class StudentDashboardRequestHandler extends \RequestHandler
 {
@@ -14,8 +15,6 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleRequest()
     {
-        $GLOBALS['Session']->requireAuthentication();
-
         switch (static::shiftPath()) {
             case '':
             case false:
@@ -31,6 +30,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleDashboardRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
+
         return Sencha_RequestHandler::respond('app/SlateTasksStudent/ext', [
             'App' => Sencha_App::getByName('SlateTasksStudent'),
             'mode' => 'production'
@@ -39,11 +40,14 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleBootstrapRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
+
         return static::respond('bootstrap', [
-            'google' => [
-                 'domain' => \Google\API::$domain,
-                 'developerKey' => \Google\API::$developerKey,
-                 'clientId' => \Google\API::$clientId
+            'user' => $GLOBALS['Session']->Person,
+            'googleApiConfig' => [
+                 'domain' => GoogleAPI::$domain,
+                 'developerKey' => GoogleAPI::$developerKey,
+                 'clientId' => GoogleAPI::$clientId
             ]
         ]);
     }
