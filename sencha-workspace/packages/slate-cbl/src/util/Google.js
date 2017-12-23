@@ -1,10 +1,16 @@
 Ext.define('Slate.cbl.util.Google', {
     singleton: true,
-
     requires: [
         'Ext.Promise',
         'Ext.util.Cookies'
     ],
+    mixins: [
+        'Ext.mixin.Mashup'
+    ],
+    requiredScripts: [
+        'https://apis.google.com/js/api.js'
+    ],
+
 
     config: {
         domain: null,

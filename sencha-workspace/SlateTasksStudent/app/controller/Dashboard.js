@@ -9,7 +9,9 @@
 Ext.define('SlateTasksStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
-        'Slate.API'
+        /* global Slate */
+        'Slate.API',
+        'Slate.cbl.util.Google'
     ],
 
 
@@ -84,17 +86,29 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // controller templates method overrides
     onLaunch: function () {
-        var me = this,
-            siteEnv = window.SiteEnvironment || {},
-            dashboard = me.getDashboard();
-
-        // show and load student selector for priveleged users
-        if (!siteEnv.user || siteEnv.user.AccountLevel != 'User') {
-            me.getStudentSelector().show();
-        }
+        var me = this;
 
         // instantiate and render viewport
-        dashboard.render('slateapp-viewport');
+        me.getDashboard().render('slateapp-viewport');
+
+        // load bootstrap data
+        Slate.API.request({
+            url: '/cbl/dashboards/tasks/student/bootstrap',
+            success: function(response) {
+                var userData = response.data.user,
+                    googleApiConfig = response.data.googleApiConfig || {};
+
+                // show and load student selector for priveleged users
+                if (!userData || userData.AccountLevel != 'User') {
+                    me.getStudentSelector().show();
+                }
+
+                // configure Google API
+                if (googleApiConfig) {
+                    Slate.cbl.util.Google.setConfig(googleApiConfig);
+                }
+            }
+        });
     },
 
 

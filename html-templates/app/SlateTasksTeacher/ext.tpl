@@ -16,8 +16,3 @@
         </main>
     </div>
 {/block}
-
-{block base}
-    {$dwoo.parent}
-    <script type="text/javascript" src="//apis.google.com/js/api.js"></script>
-{/block}

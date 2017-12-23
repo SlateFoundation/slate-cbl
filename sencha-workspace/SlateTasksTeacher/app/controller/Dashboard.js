@@ -24,6 +24,11 @@
  */
 Ext.define('SlateTasksTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
+    requires: [
+        /* global Slate */
+        'Slate.API',
+        'Slate.cbl.util.Google'
+    ],
 
 
     // dependencies
@@ -90,31 +95,26 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     // controller templates method overrides
     onLaunch: function () {
-        // render dashboard container to #slateapp-viewport element provided by framing HTML
-        this.getDashboardCt().render('slateapp-viewport');
+        var me = this,
+            sectionsStore = me.getSectionsStore();
 
+        // render dashboard container to #slateapp-viewport element provided by framing HTML
+        me.getDashboardCt().render('slateapp-viewport');
+
+        // configure and load sections store for selector
+        sectionsStore.getProxy().setExtraParam('enrolled_user', 'current');
+        sectionsStore.load();
+
+        // load bootstrap data
         Slate.API.request({
             url: '/cbl/dashboards/tasks/teacher/bootstrap',
             success: function(response) {
-                var data = response.data || Ext.decode(response.responseText),
-                    sectionsStore = this.getSectionsStore(),
-                    googleUtil = Slate.cbl.util.Google;
+                var googleApiConfig = response.data.googleApiConfig || {};
 
-                if (data.google) {
-                    if (data.google.clientId) {
-                        googleUtil.setClientId(data.google.clientId);
-                    }
-                    if (data.google.developerKey) {
-                        googleUtil.setDeveloperKey(data.google.developerKey);
-                    }
-                    if (data.google.domain) {
-                        googleUtil.setDomain(data.google.domain);
-                    }
+                // configure Google API
+                if (googleApiConfig) {
+                    Slate.cbl.util.Google.setConfig(googleApiConfig);
                 }
-
-                // configure and load sections store for selector
-                sectionsStore.getProxy().setExtraParam('enrolled_user', 'current');
-                sectionsStore.load();
             }
         });
     },
