@@ -24,15 +24,15 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // component references
     refs: {
-        dashboard: 'slatetasksstudent-dashboard',
+        dashboard: 'slate-tasks-student-dashboard',
 
         taskTree: {
-            selector: 'slatetasksstudent-tasktree',
+            selector: 'slate-tasks-student-tasktree',
             autoCreate: true,
 
-            xtype: 'slatetasksstudent-tasktree'
+            xtype: 'slate-tasks-student-tasktree'
         },
-        filterMenu: 'slatetasksstudent-taskfiltersmenu',
+        filterMenu: 'slate-tasks-student-taskfiltersmenu',
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
         taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
@@ -44,13 +44,13 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         // addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
 
         taskDetails: {
-            selector: 'slatetasksstudent-taskdetails',
+            selector: 'slate-tasks-student-taskdetails',
             autoCreate: true,
 
-            xtype: 'slatetasksstudent-taskdetails'
+            xtype: 'slate-tasks-student-taskdetails'
         },
-        taskForm: 'slatetasksstudent-taskdetails slate-modalform',
-        submitButton: 'slatetasksstudent-taskdetails button#submit'
+        taskForm: 'slate-tasks-student-taskdetails slate-modalform',
+        submitButton: 'slate-tasks-student-taskdetails button#submit'
     },
 
 
@@ -69,10 +69,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         studentAttachmentsField: {
             addgoogleattachment: 'onAddGoogleAttachmentClick'
         },
-        'slatetasksstudent-taskfiltersmenu menucheckitem': {
+        'slate-tasks-student-taskfiltersmenu menucheckitem': {
             checkchange: 'onFilterItemCheckChange'
         },
-        'slatetasksstudent-taskfiltersmenu button#view-all': {
+        'slate-tasks-student-taskfiltersmenu button#view-all': {
             click: 'onFilterViewAllClick'
         }
     },

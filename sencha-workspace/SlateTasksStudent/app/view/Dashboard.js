@@ -4,7 +4,7 @@
  */
 Ext.define('SlateTasksStudent.view.Dashboard', {
     extend: 'Ext.container.Container',
-    xtype: 'slatetasksstudent-dashboard',
+    xtype: 'slate-tasks-student-dashboard',
     requires: [
         'Ext.layout.container.Column',
 
@@ -21,7 +21,7 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
 
     items: [
         {
-            xtype: 'slatetasksstudent-appheader',
+            xtype: 'slate-tasks-student-appheader',
             style: {
                 border: 'none',
                 padding: '1em 7.5%'
@@ -42,11 +42,11 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
                     },
                     items: [
                         {
-                            xtype: 'slatetasksstudent-tasktree',
+                            xtype: 'slate-tasks-student-tasktree',
                             margin: '0 32 0 0',
                             store: 'Tasks'
                         }, {
-                            xtype: 'slatetasksstudent-todolist',
+                            xtype: 'slate-tasks-student-todolist',
                             store: 'Todos'
                         }
                     ]

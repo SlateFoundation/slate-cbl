@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.AppHeader', {
     extend: 'Slate.cbl.view.AppHeader',
-    xtype: 'slatetasksstudent-appheader',
+    xtype: 'slate-tasks-student-appheader',
     requires: [
         'Slate.cbl.widget.SectionSelector',
         'Ext.toolbar.Fill'

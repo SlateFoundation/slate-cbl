@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.TaskTree', {
     extend: 'Slate.cbl.widget.SimplePanel',
-    xtype: 'slatetasksstudent-tasktree',
+    xtype: 'slate-tasks-student-tasktree',
     requires: [
         'SlateTasksStudent.view.TaskFiltersMenu',
 
@@ -21,7 +21,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     tools: [{
         text: 'Filter',
         menu: {
-            xtype: 'slatetasksstudent-taskfiltersmenu'
+            xtype: 'slate-tasks-student-taskfiltersmenu'
         }
     }],
 

@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.TodoList', {
     extend: 'Ext.Component',
-    xtype: 'slatetasksstudent-todolist',
+    xtype: 'slate-tasks-student-todolist',
 
 
     config: {

@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.RecentActivity', {
     extend: 'Ext.window.Window',
-    xtype: 'slatetasksstudent-recentactivity',
+    xtype: 'slate-tasks-student-recentactivity',
     requires:[
     ],
 

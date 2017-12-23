@@ -24,8 +24,8 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // component references
     refs: {
-        dashboard: 'slatetasksstudent-dashboard',
-        todoList: 'slatetasksstudent-todolist'
+        dashboard: 'slate-tasks-student-dashboard',
+        todoList: 'slate-tasks-student-todolist'
     },
 
 

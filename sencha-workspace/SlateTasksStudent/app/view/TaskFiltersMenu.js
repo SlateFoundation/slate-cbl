@@ -1,6 +1,6 @@
 Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
     extend: 'Ext.menu.Menu',
-    xtype: 'slatetasksstudent-taskfiltersmenu',
+    xtype: 'slate-tasks-student-taskfiltersmenu',
 
     plain: true,
     showSeparator: false,

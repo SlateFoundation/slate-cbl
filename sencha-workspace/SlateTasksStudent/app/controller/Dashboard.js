@@ -27,16 +27,16 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     // component factories and selectors
     refs: {
         dashboard: {
-            selector: 'slatetasksstudent-dashboard',
+            selector: 'slate-tasks-student-dashboard',
             autoCreate: true,
 
-            xtype: 'slatetasksstudent-dashboard'
+            xtype: 'slate-tasks-student-dashboard'
         },
-        appHeader: 'slatetasksstudent-appheader',
+        appHeader: 'slate-tasks-student-appheader',
         studentSelector: 'combobox#studentSelector',
         sectionSelector: 'combobox#sectionSelector',
-        taskTree: 'slatetasksstudent-tasktree',
-        todoList: 'slatetasksstudent-todolist'
+        taskTree: 'slate-tasks-student-tasktree',
+        todoList: 'slate-tasks-student-todolist'
     },
 
 
