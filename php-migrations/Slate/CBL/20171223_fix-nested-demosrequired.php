@@ -1,8 +1,5 @@
 <?php
 
-$resetMigrationStatus();
-
-
 $skillsResult = DB::query(
     'SELECT ID, DemonstrationsRequired FROM `%s` WHERE DemonstrationsRequired LIKE \'{"default": "{%%}"}\'',
     [
@@ -28,3 +25,5 @@ while ($row = $skillsResult->fetch_assoc()) {
         ]
     );
 }
+
+return static::STATUS_EXECUTED;
