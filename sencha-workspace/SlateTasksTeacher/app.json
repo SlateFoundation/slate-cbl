@@ -70,7 +70,9 @@
         "jarvus-hotfixes",
         "font-awesome",
         "slate-cbl",
-        "jarvus-aggregrid"
+        "jarvus-aggregrid",
+        "jarvus-routing",
+        "jarvus-lazydata"
     ],
 
     /**

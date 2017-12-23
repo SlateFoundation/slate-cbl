@@ -1,39 +1,58 @@
 Ext.define('SlateTasksTeacher.view.AppHeader', {
     extend: 'Slate.cbl.view.AppHeader',
+    xtype: 'slate-tasks-teacher-appheader',
     requires: [
         'Slate.cbl.widget.SectionSelector',
         'Slate.cbl.widget.CohortSelector',
         'Ext.toolbar.Fill',
         'Ext.form.field.ComboBox'
     ],
-    xtype: 'slate-tasks-teacher-appheader',
+
 
     items: [{
+        itemId: 'title',
+
         xtype: 'component',
         cls: 'slate-appheader-title',
-        itemId: 'title',
         html: 'Teacher Task Manager'
     }, {
-        xtype: 'slate-section-selector',
         itemId: 'sectionSelect',
-        store: 'CourseSections'
+
+        xtype: 'slate-section-selector',
+        store: 'Sections',
+        valueField: 'Code',
+        queryMode: 'local',
+        emptyText: 'Select'
     }, {
-        xtype: 'slate-cohort-selector',
         itemId: 'cohortSelect',
-        store: 'SectionCohorts'
+
+        xtype: 'slate-cohort-selector',
+        disabled: true,
+        store: 'SectionCohorts',
+        queryMode: 'local',
+        emptyText: 'All Students',
+        triggers: {
+            clear: {
+                cls: 'x-form-clear-trigger',
+                weight: -2,
+                hidden: true,
+                handler: function(combo) {
+                    combo.clearValue();
+                    combo.fireEvent('clear', combo);
+                }
+            }
+        },
+        listeners: {
+            change: function(combo, value) {
+                this.getTrigger('clear').setHidden(!value);
+            }
+        }
     }, {
         xtype: 'tbfill'
     }, {
         cls: 'primary',
         iconCls: 'x-fa fa-plus',
-        action: 'create'
-    }, {
-        iconCls: 'x-fa fa-pencil',
-        action: 'edit',
-        hidden: true // todo: remove?
-    }, {
-        iconCls: 'x-fa fa-trash-o',
-        action: 'delete',
-        hidden: true // todo: remove?
+        action: 'create',
+        hidden: true
     }]
 });

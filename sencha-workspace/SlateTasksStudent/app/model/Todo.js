@@ -1,7 +1,7 @@
 Ext.define('SlateTasksStudent.model.Todo', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records'
+        'Slate.cbl.proxy.Todos'
     ],
 
 
@@ -83,8 +83,5 @@ Ext.define('SlateTasksStudent.model.Todo', {
         }
     ],
 
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/todos'
-    }
+    proxy: 'slate-cbl-todos'
 });

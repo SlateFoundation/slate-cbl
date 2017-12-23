@@ -1,4 +1,4 @@
-Ext.define('SlateTasksStudent.model.StudentTodo', {
+Ext.define('SlateTasksStudent.model.TodosGroup', {
     extend: 'Ext.data.Model',
     requires: [
         'Slate.proxy.Records',

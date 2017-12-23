@@ -1,9 +1,11 @@
-/* jslint browser: true, undef: true *//* global Ext*/
-Ext.define('Slate.cbl.model.StudentTask', {
+Ext.define('Slate.cbl.model.tasks.StudentTask', {
     extend: 'Ext.data.Model',
     requires: [
-        'Emergence.ext.proxy.Records',
-        'Ext.data.identifier.Negative'
+        'Ext.data.identifier.Negative',
+
+        /* global Slate */
+        'Slate.cbl.proxy.tasks.StudentTasks',
+        'Slate.cbl.model.tasks.Task'
     ],
 
 
@@ -12,6 +14,7 @@ Ext.define('Slate.cbl.model.StudentTask', {
     identifier: 'negative',
 
     fields: [
+        // ActiveRecord fields
         {
             name: 'ID',
             type: 'int',
@@ -26,17 +29,14 @@ Ext.define('Slate.cbl.model.StudentTask', {
             name: 'Created',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'CreatorID',
             type: 'int',
-            allowNull: true
-        },
-        {
-            name: 'RevisionID',
-            type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'Modified',
@@ -49,6 +49,8 @@ Ext.define('Slate.cbl.model.StudentTask', {
             type: 'int',
             allowNull: true
         },
+
+        // StudentTask fields
         {
             name: 'TaskID',
             type: 'int'
@@ -69,12 +71,6 @@ Ext.define('Slate.cbl.model.StudentTask', {
             allowNull: true
         },
         {
-            name: 'Submitted',
-            type: 'date',
-            dateFormat: 'timestamp',
-            allowNull: true
-        },
-        {
             name: 'ExpirationDate',
             type: 'date',
             dateFormat: 'timestamp',
@@ -84,21 +80,53 @@ Ext.define('Slate.cbl.model.StudentTask', {
             name: 'TaskStatus',
             type: 'string',
             defaultValue: 'assigned'
+        },
+        {
+            name: 'DemonstrationID',
+            type: 'int',
+            allowNull: true
+        },
+
+        // virtual fields
+        {
+            name: 'DueTime',
+            persist: false,
+            depends: ['DueDate'],
+            convert: function(v, r) {
+                var dueDate = r.get('DueDate'),
+                    dueTime;
+
+                if (!dueDate) {
+                    return null;
+                }
+
+                dueTime = new Date(dueDate);
+
+                // task is late after midnight of due date
+                dueTime.setHours(23, 59, 59, 999);
+
+                return dueTime;
+            }
+        },
+        {
+            name: 'IsLate',
+            persist: false,
+            depends: ['DueTime', 'TaskStatus'],
+            convert: function (v, r) {
+                var dueTime = r.get('DueTime');
+
+                return (
+                    dueTime
+                    && dueTime.getTime() < Date.now()
+                    && Slate.cbl.model.tasks.Task.activeStatuses.indexOf(r.get('TaskStatus')) > -1
+                );
+            }
         }
     ],
 
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/student-tasks'
-    },
+    proxy: 'slate-cbl-studenttasks',
 
-    toUrl: function() {
-        var me = this,
-            root = me.getProxy().getUrl();
-
-        return root + '/' + me.getId();
-    },
-
+    // TODO: review if still needed
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
             skills = this.get('TaskSkills') || [],

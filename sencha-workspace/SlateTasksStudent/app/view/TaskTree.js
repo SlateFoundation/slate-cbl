@@ -1,41 +1,12 @@
-/* global SlateTasksStudent */
 Ext.define('SlateTasksStudent.view.TaskTree', {
     extend: 'Slate.cbl.widget.SimplePanel',
     xtype: 'slatetasksstudent-tasktree',
     requires: [
-        'SlateTasksStudent.view.TaskFiltersMenu'
+        'SlateTasksStudent.view.TaskFiltersMenu',
+
+        /* global Slate */
+        'Slate.cbl.model.tasks.Task'
     ],
-
-
-    statics: {
-        statusClasses: {
-            'assigned': 'due',
-            're-assigned': 'revision',
-            'submitted': 'due needsrated',
-            're-submitted': 'revision needsrated',
-            'completed': 'completed'
-        },
-        lateStatusClasses: {
-            'submitted': 'late needsrated',
-            're-submitted': 'late needsrated',
-
-            'assigned': 'late',
-            're-assigned': 'late'
-        },
-        statusStrings: {
-            'assigned': 'Due',
-            're-assigned': 'Revision',
-            'submitted': 'Submitted',
-            're-submitted': 'Resubmitted',
-            'completed': 'Completed'
-        },
-        activeStatuses: [
-            'assigned',
-            're-assigned',
-            'submitted',
-            're-submitted'
-        ]
-    },
 
 
     config: {
@@ -63,15 +34,13 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     },
 
     tpl: [
-        '{% var now = new Date() %}',
-
         '<tpl if="values.length == 0">',
         '    <div class="empty-text">No tasks found</div>',
         '<tpl else>',
         '    <ul class="slate-tasktree-list">',
 
         '        <tpl for=".">',
-        '            <li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task, now) ]}" data-id="{task.ID}">',
+        '            <li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task) ]}" data-id="{task.ID}">',
 
         '                <div class="flex-ct">',
         '                    <div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -89,7 +58,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '                    <ul class="slate-tasktree-sublist">',
 
         '                        <tpl for="subTasks">',
-        '                            <li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values, now) ]}" data-id="{ID}">',
+        '                            <li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values) ]}" data-id="{ID}">',
 
         '                                <div class="flex-ct">',
         '                                    <div class="slate-tasktree-nub"></div>',
@@ -114,7 +83,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '</tpl>',
         {
             getStatusString: function(taskStatus) {
-                return SlateTasksStudent.view.TaskTree.statusStrings[taskStatus] || '';
+                return Slate.cbl.model.tasks.Task.statusStrings[taskStatus] || '';
             },
             getStatusDate: function(taskData) {
                 var taskStatus = taskData.TaskStatus,
@@ -128,16 +97,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
-            getDueStatusCls: function(task, now) {
-                var self = SlateTasksStudent.view.TaskTree,
-                    dueTime = task.DueTime,
-                    status = task.TaskStatus;
-
-                if (dueTime && self.activeStatuses.indexOf(status) > -1 && dueTime < now) {
-                    return self.lateStatusClasses[status] || '';
-                }
-
-                return self.statusClasses[status] || '';
+            getDueStatusCls: function(task) {
+                return Slate.cbl.model.tasks.Task[task.IsLate ? 'lateStatusClasses' : 'statusClasses'][task.TaskStatus] || '';
             }
         }
     ],

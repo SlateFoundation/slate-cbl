@@ -5,7 +5,6 @@ namespace Slate\CBL\Tasks;
 use Emergence\People\Person;
 use Emergence\Comments\Comment;
 use Slate\People\Student;
-use Slate\Courses\Section;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Skill;
 use Slate\CBL\Demonstrations\Demonstration;
@@ -27,10 +26,6 @@ class StudentTask extends \VersionedRecord
     public static $fields = [
         'TaskID' => 'uint',
         'StudentID' => 'uint',
-        'SectionID' => [
-            'type' => 'uint',
-            'default' => null
-        ],
         'ExperienceType' => [
             'default' => null
         ],
@@ -65,10 +60,6 @@ class StudentTask extends \VersionedRecord
             'local' => 'StudentID',
             'class' => Person::class
         ],
-        'Section' => [
-            'type' => 'one-one',
-            'class' => Section::class
-        ],
         'Comments' => [
             'type' => 'context-children',
             'class' => Comment::class
@@ -100,7 +91,6 @@ class StudentTask extends \VersionedRecord
     public static $dynamicFields = array(
         'Task',
         'Student',
-        'Section',
         'SkillRatings',
         'Comments',
         'Attachments',
@@ -131,10 +121,6 @@ class StudentTask extends \VersionedRecord
 
         'Student' => [
             'validator' => [__CLASS__, 'validateStudent']
-        ],
-
-        'Section' => [
-            'validator' => 'require-relationship'
         ]
     ];
 
@@ -227,7 +213,7 @@ class StudentTask extends \VersionedRecord
             $demonstration = ExperienceDemonstration::create([
                 'StudentID' => $this->StudentID,
                 'PerformanceType' => $this->Task->Title,
-                'Context' => $this->Section->Title,
+                'Context' => $this->Task->Section->Title,
                 'ExperienceType' => $this->ExperienceType,
                 'CreatorID' => $this->CreatorID
             ], true);

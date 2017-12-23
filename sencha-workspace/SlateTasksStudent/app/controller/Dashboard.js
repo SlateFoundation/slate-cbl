@@ -19,8 +19,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     ],
 
     stores: [
-        'Students',
-        'CourseSections@Slate.store'
+        'Students@Slate.cbl.store',
+        'Sections@Slate.store.courses'
     ],
 
 
@@ -43,9 +43,11 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     // entry points
     routes: {
         ':studentUsername/:sectionCode': {
-            studentUsername: '([^/])+',
-            sectionCode: '([^/])+',
-            action: 'showDashboard'
+            action: 'showDashboard',
+            conditions: {
+                ':studentUsername': '([^/]+)',
+                ':sectionCode': '([^/]+)'
+            }
         }
     },
 
@@ -59,8 +61,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             }
         },
         store: {
-            '#CourseSections': {
-                load: 'onCourseSectionsLoad'
+            '#Sections': {
+                load: 'onSectionsLoad'
             }
         }
     },
@@ -115,7 +117,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.redirectTo('me/all');
     },
 
-    onCourseSectionsLoad: function() {
+    onSectionsLoad: function() {
         this.getSectionSelector().enable();
     },
 
@@ -123,7 +125,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         var me = this,
             studentCombo = me.getStudentSelector(),
             studentsStore = me.getStudentsStore(),
-            sectionsStore = me.getCourseSectionsStore();
+            sectionsStore = me.getSectionsStore();
 
         // (re)load sections list
         sectionsStore.getProxy().setExtraParam('enrolled_user', studentUsername || 'current');

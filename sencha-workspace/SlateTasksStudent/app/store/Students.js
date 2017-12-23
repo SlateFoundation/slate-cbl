@@ -7,14 +7,14 @@ Ext.define('SlateTasksStudent.store.Students', {
 
     config: {
         pageSize: 0,
+        remoteSort: false,
         sorters: [{
             property: 'SortName',
             direction: 'ASC'
         }],
         proxy: {
-            type: 'slate-records',
-            url: '/people',
+            type: 'slate-people',
             summary: true
-        },
+        }
     }
 });

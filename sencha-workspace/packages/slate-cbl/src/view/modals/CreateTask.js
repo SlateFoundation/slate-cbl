@@ -93,8 +93,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             xtype: 'slate-modalform',
             items: [
                 {
-                    xtype: 'slate-tasks-titlefield',
-                    clonable: true
+                    xtype: 'slate-tasks-titlefield'
                 },
                 {
                     xtype: 'slate-tasks-titlefield',
@@ -102,9 +101,7 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     emptyText: '(Optional)',
                     name: 'ParentTaskID',
                     valueField: 'ID',
-                    displayField: 'Title',
                     queryMode: 'local',
-                    autoSelect: false,
                     store: {
                         type: 'chained',
                         source: 'Tasks',
@@ -119,16 +116,16 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
                     itemId: 'experience-type',
                     name: 'ExperienceType',
                     fieldLabel: 'Type of Experience',
-                    displayField: 'name',
-                    valueField: 'name',
+                    displayField: 'value',
+                    valueField: 'value',
                     allowBlank: true,
                     autoSelect: false,
-                    queryParam: 'q',
+                    queryMode: 'local',
                     store: {
-                        fields: ['name'],
+                        fields: ['value'],
                         pageSize: 0,
                         proxy: {
-                            type: 'slate-records',
+                            type: 'emergence-values',
                             url: '/cbl/tasks/*experience-types'
                         }
                     }

@@ -1,15 +1,20 @@
-// TODO: merge with Slate.cbl.model.StudentTask ?
+// TODO: merge with Slate.cbl.model.tasks.StudentTask ?
 Ext.define('SlateTasksStudent.model.Task', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records',
+        'Ext.data.identifier.Negative',
+
+        /* global Slate */
+        'Slate.cbl.proxy.tasks.StudentTasks',
         'Slate.cbl.model.tasks.Attachment',
-        'Slate.cbl.model.Skill'
+        'Slate.cbl.model.Skill',
+        'Slate.cbl.model.tasks.Task'
     ],
 
 
     // model config
     idProperty: 'ID',
+    identifier: 'negative',
 
     fields: [
         {
@@ -36,11 +41,30 @@ Ext.define('SlateTasksStudent.model.Task', {
             persist: false
         },
         {
+            name: 'Modified',
+            type: 'date',
+            dateFormat: 'timestamp',
+            allowNull: true
+        },
+        {
+            name: 'ModifierID',
+            type: 'int',
+            allowNull: true
+        },
+        {
             name: 'TaskID',
             type: 'int'
         },
         {
             name: 'Task',
+            persist: false
+        },
+        {
+            name: 'StudentID',
+            type: 'int'
+        },
+        {
+            name: 'Student',
             persist: false
         },
         {
@@ -176,6 +200,20 @@ Ext.define('SlateTasksStudent.model.Task', {
 
                 return dueTime;
             }
+        },
+        {
+            name: 'IsLate',
+            persist: false,
+            depends: ['DueTime', 'TaskStatus'],
+            convert: function (v, r) {
+                var dueTime = r.get('DueTime');
+
+                return (
+                    dueTime
+                    && dueTime.getTime() < Date.now()
+                    && Slate.cbl.model.tasks.Task.activeStatuses.indexOf(r.get('TaskStatus')) > -1
+                );
+            }
         }
     ],
 
@@ -196,8 +234,7 @@ Ext.define('SlateTasksStudent.model.Task', {
     }],
 
     proxy: {
-        type: 'slate-records',
-        url: '/cbl/student-tasks',
+        type: 'slate-cbl-studenttasks',
         include: [
             'Student',
             'Section',
@@ -253,7 +290,7 @@ Ext.define('SlateTasksStudent.model.Task', {
 
     getTaskSkillsGroupedByCompetency: function() {
         var comps = [], compIds = [],
-            skills = this.get('TaskSkills'),
+            skills = this.get('TaskSkills') || [],
             compIdx, skill,
             i = 0;
 
@@ -275,5 +312,4 @@ Ext.define('SlateTasksStudent.model.Task', {
 
         return comps;
     }
-
 });

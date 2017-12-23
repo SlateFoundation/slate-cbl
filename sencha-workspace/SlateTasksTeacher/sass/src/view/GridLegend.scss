@@ -32,7 +32,7 @@
     vertical-align: -.25em;
     width: 1.25em;
 
-    .slate-task-status-notassigned &    { background-color: $slate-task-color-notassigned; }
+    .slate-task-status-unassigned &     { background-color: $slate-task-color-unassigned; }
     .slate-task-status-due &            { background-color: $slate-task-color-due; }
     .slate-task-status-completed &      { background-color: $slate-task-color-completed; }
     .slate-task-status-revision &       { background-color: $slate-task-color-revision; }

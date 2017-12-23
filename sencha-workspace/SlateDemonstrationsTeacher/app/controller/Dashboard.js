@@ -198,13 +198,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     // public methods
     showDemonstrationEditWindow: function(options) {
-        var dashboardView = this.getDashboardCt();
+        var dashboardCt = this.getDashboardCt();
 
         return this.getEditWindowView().create(Ext.apply({
-            ownerCmp: dashboardView,
+            ownerCmp: dashboardCt,
             autoShow: true,
 
-            studentsStore: dashboardView.progressGrid.getStudentsStore()
+            studentsStore: dashboardCt.progressGrid.getStudentsStore()
         }, options));
     }
 });

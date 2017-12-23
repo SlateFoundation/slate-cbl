@@ -5,6 +5,9 @@ module.exports = {
     "globals": {
         "Ext": true
     },
+    "parserOptions": {
+        "ecmaVersion": 6,
+    },
     "extends": "eslint:recommended",
     "rules": {
         "accessor-pairs": "error",
@@ -14,7 +17,6 @@ module.exports = {
         ],
         "array-callback-return": "error",
         "arrow-body-style": "error",
-        "arrow-parens": "error",
         "arrow-spacing": "error",
         "block-scoped-var": "error",
         "block-spacing": "error",
@@ -47,7 +49,7 @@ module.exports = {
         "dot-location": "error",
         "dot-notation": "error",
         "eol-last": "off",
-        "eqeqeq": "warn",
+        "eqeqeq": "off",
         "func-names": "off",
         "func-style": "error",
         "generator-star-spacing": "error",
@@ -207,7 +209,7 @@ module.exports = {
         "radix": "error",
         "require-jsdoc": "error",
         "require-yield": "error",
-        "semi": "off",
+        "semi": "error",
         "semi-spacing": [
             "error",
             {

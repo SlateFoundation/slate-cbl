@@ -9,6 +9,7 @@ Ext.define('SlateTasksStudent.store.Tasks', {
         section: null,
 
         pageSize: 0,
+        remoteSort: false,
 
         sorters: [{
             sorterFn: function(task1, task2) {
@@ -51,8 +52,9 @@ Ext.define('SlateTasksStudent.store.Tasks', {
             }
         }],
 
+        // redeclare identical proxy as model for dynamic reconfiguration
         proxy: {
-            type: 'slate-records',
+            type: 'slate-cbl-studenttasks',
             url: '/cbl/student-tasks/assigned',
             include: [
                 'Submitted',
@@ -87,6 +89,7 @@ Ext.define('SlateTasksStudent.store.Tasks', {
             return;
         }
 
+        this.dirty = false;
         this.load();
     }
 });

@@ -17,9 +17,18 @@ Ext.define('SlateTasksStudent.view.RecentActivity', {
             title: 'Senior Thesis Project Synopsis',
             context: 'English',
             skills: [
-                { level: 10, title: 'Cite evidence' },
-                { level: 10, title: 'Use evidence to develop claims and counterclaims' },
-                { level: 10, title: 'Identify central idea' }
+                {
+                    level: 10,
+                    title: 'Cite evidence'
+                },
+                {
+                    level: 10,
+                    title: 'Use evidence to develop claims and counterclaims'
+                },
+                {
+                    level: 10,
+                    title: 'Identify central idea'
+                }
             ]
         },
         {
@@ -27,10 +36,25 @@ Ext.define('SlateTasksStudent.view.RecentActivity', {
             title: 'Position Paper',
             context: 'C. Kunkel',
             skills: [
-                { level: 9, title: 'Identify central theme/ideas' },
-                { level: 9, title: 'Analyze developments' },
-                { level: 9, title: 'Interpret words and phrases' },
-                { level: 9, title: 'Assess point of view' }
+                {
+                    level: 9,
+                    title: 'Identify central theme/ideas'
+                },
+                {
+
+                    level: 9,
+                    title: 'Analyze developments'
+                },
+                {
+
+                    level: 9,
+                    title: 'Interpret words and phrases'
+                },
+                {
+
+                    level: 9,
+                    title: 'Assess point of view'
+                }
             ]
         },
         {

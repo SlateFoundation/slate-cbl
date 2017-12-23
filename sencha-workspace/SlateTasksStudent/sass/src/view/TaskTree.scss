@@ -41,7 +41,7 @@
         margin-top: .75em;
     }
 
-    @include slate-tasktree-item-status('notassigned',  $slate-task-color-notassigned);
+    @include slate-tasktree-item-status('unassigned',   $slate-task-color-unassigned);
     @include slate-tasktree-item-status('due',          $slate-task-color-due);
     @include slate-tasktree-item-status('completed',    $slate-task-color-completed);
     @include slate-tasktree-item-status('revision',     $slate-task-color-revision);

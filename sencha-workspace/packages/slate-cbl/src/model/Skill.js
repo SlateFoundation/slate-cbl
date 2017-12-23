@@ -1,10 +1,8 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('Slate.cbl.model.Skill', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records',
-        'Ext.data.identifier.Negative',
-        'Ext.data.Store'
+        'Slate.cbl.proxy.Skills',
+        'Ext.data.identifier.Negative'
     ],
 
 
@@ -90,8 +88,5 @@ Ext.define('Slate.cbl.model.Skill', {
         return requirements['default']; // eslint-disable-dot-notation
     },
 
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/skills'
-    }
+    proxy: 'slate-cbl-skills'
 });

@@ -5,6 +5,7 @@ namespace Slate\CBL\Tasks;
 use DB;
 use HandleBehavior;
 use Emergence\People\Person;
+use Slate\Courses\Section;
 use Slate\CBL\Skill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
@@ -25,28 +26,34 @@ class Task extends \VersionedRecord
     ];
 
     public static $fields = [
-        'Title' => [
-            'includeInSummary' => true
+        'SectionID' => [
+            'type' => 'uint',
+            'index' => true,
+            'default' => null
         ],
+        'Title',
         'Handle' => [
             'unique' => true
         ],
         'ParentTaskID' => [
             'type' => 'uint',
-            'notnull' => false,
-            'includeInSummary' => true
+            'default' => null
+        ],
+        'ClonedTaskID' => [
+            'type' => 'uint',
+            'default' => null,
         ],
         'DueDate' => [
             'type' => 'timestamp',
-            'notnull' => false
+            'default' => null,
         ],
         'ExpirationDate' => [
             'type' => 'timestamp',
-            'notnull' => false
+            'default' => null,
         ],
         'Instructions' => [
             'type' => 'clob',
-            'notnull' => false
+            'default' => null,
         ],
         'Shared' => [
             'type' => 'enum',
@@ -62,14 +69,24 @@ class Task extends \VersionedRecord
     ];
 
     public static $validators = [
+        'Section' => [
+            'validator' => 'require-relationship'
+        ],
         'Title'
     ];
 
     public static $relationships = [
+        'Section' => [
+            'type' => 'one-one',
+            'class' => Section::class
+        ],
         'ParentTask' => [
             'type' => 'one-one',
-            'class' => __CLASS__,
-            'local' => 'ParentTaskID'
+            'class' => __CLASS__
+        ],
+        'ClonedTask' => [
+            'type' => 'one-one',
+            'class' => __CLASS__
         ],
         'SubTasks' => [
             'type' => 'one-many',
@@ -107,11 +124,10 @@ class Task extends \VersionedRecord
     ];
 
     public static $dynamicFields = [
+        'Section',
         'Skills',
-        'Creator' => [
-            'includeInSummary' => true,
-            'stringsOnly' => false
-        ],
+        'Creator',
+        'CreatorFullName' => 'Creator.FullName',
         'ParentTask',
         'SubTasks',
         'Context',
@@ -121,6 +137,13 @@ class Task extends \VersionedRecord
             'getter' => 'getParenTaskTitle'
         ],
         'Assignees'
+    ];
+
+    public static $summaryFields = [
+        'ID' => true,
+        'Title' => true,
+        'Created' => true,
+        'Creator' => true
     ];
 
     public static $searchConditions = [

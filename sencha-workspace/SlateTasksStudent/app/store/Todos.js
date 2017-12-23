@@ -2,13 +2,19 @@ Ext.define('SlateTasksStudent.store.Todos', {
     extend: 'Ext.data.Store',
 
 
-    model: 'SlateTasksStudent.model.StudentTodo',
+    model: 'SlateTasksStudent.model.TodosGroup',
 
     config: {
         student: null,
         section: null,
 
-        pageSize: 0
+        pageSize: 0,
+        remoteSort: false,
+
+        // redeclare identical proxy as model for dynamic reconfiguration
+        proxy: {
+            type: 'slate-cbl-todos'
+        }
     },
 
 
@@ -30,6 +36,7 @@ Ext.define('SlateTasksStudent.store.Todos', {
             return;
         }
 
+        this.dirty = false;
         this.load();
     }
 });
