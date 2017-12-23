@@ -1,124 +1,126 @@
 /**
  * Renders tasks for a given list of students across a given list of competencies
  */
-Ext.define('SlateTasksTeacher.view.StudentsGrid', {
-    extend: 'Jarvus.aggregrid.RollupAggregrid',
-    xtype: 'slate-studentsgrid',
-    requires: [
-        'Ext.data.ChainedStore',
+Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
+    var prefixTaskCls = function(cls) {
+        return 'slate-task-status-'+cls;
+    };
 
-        /* global Slate */
-        'Slate.cbl.model.tasks.Task'
-    ],
+    return {
+        extend: 'Jarvus.aggregrid.RollupAggregrid',
+        xtype: 'slate-studentsgrid',
+        requires: [
+            'Ext.data.ChainedStore',
 
-
-    config: {
-        dateRenderer: 'm/d',
-
-        rowsStore: {
-            type: 'chained',
-            source: 'Tasks',
-            filters: [{
-                property: 'ParentTaskID',
-                value: null
-            }]
-        },
-        subRowsStore: 'Tasks',
-        columnsStore: 'SectionParticipants',
-
-        dataStore: 'StudentTasks',
-        subDataStore: 'StudentTasks',
-
-        columnHeaderTpl: '{Person.FirstName} {Person.LastName}',
-
-        rowHeaderField: null,
-        subRowHeaderField: null,
-        rowHeaderTpl: [
-            '<tpl for=".">',
-            '    {Title}',
-            '    <button class="button small edit-row">Edit</button>',
-            '</tpl>'
+            /* global Slate */
+            'Slate.cbl.model.tasks.Task'
         ],
 
-        columnMapper: function(studentTask, columnsStore) {
-            return columnsStore.getByPersonId(studentTask.get('StudentID'));
+
+        config: {
+            dateRenderer: 'm/d',
+
+            rowsStore: {
+                type: 'chained',
+                source: 'Tasks',
+                filters: [{
+                    property: 'ParentTaskID',
+                    value: null
+                }]
+            },
+            subRowsStore: 'Tasks',
+            columnsStore: 'SectionParticipants',
+
+            dataStore: 'StudentTasks',
+            subDataStore: 'StudentTasks',
+
+            columnHeaderTpl: '{Person.FirstName} {Person.LastName}',
+
+            rowHeaderField: null,
+            subRowHeaderField: null,
+            rowHeaderTpl: [
+                '<tpl for=".">',
+                '    {Title}',
+                '    <button class="button small edit-row">Edit</button>',
+                '</tpl>'
+            ],
+
+            columnMapper: function(studentTask, columnsStore) {
+                return columnsStore.getByPersonId(studentTask.get('StudentID'));
+            },
+            rowMapper: 'TaskID',
+
+            subRowMapper: 'TaskID',
+            parentRowMapper: 'ParentTaskID',
+
+            // templates
+            cellTpl: false,
+            cellRenderer: function(group, cellEl) {
+                var me = this,
+                    oldStatusClass = group.statusClass,
+                    record, statusClass, taskStatus, dueDate;
+
+                if (group.records.length && (record = group.records[0].record)) {
+                    taskStatus = record.get('TaskStatus');
+                    dueDate = record.get('DueDate');
+                    statusClass = Slate.cbl.model.tasks.Task[record.get('IsLate') ? 'lateStatusClasses' : 'statusClasses'][taskStatus];
+                }
+
+                // write class changes
+                if (statusClass != oldStatusClass) {
+                    if (oldStatusClass) {
+                        cellEl.removeCls(oldStatusClass.split(' ').map(prefixTaskCls));
+                    }
+
+                    if (statusClass) {
+                        cellEl.addCls(statusClass.split(' ').map(prefixTaskCls));
+                    }
+
+                    group.statusClass = statusClass;
+                }
+
+                // write completed change
+                if (taskStatus == 'completed') {
+                    if (group.taskStatus != 'completed') {
+                        cellEl.setHtml('<i class="fa fa-lg fa-check-circle-o"></i>');
+                    }
+                } else if (dueDate) {
+                    dueDate = me.getDateRenderer()(dueDate);
+
+                    if (group.dueDate != dueDate) {
+                        cellEl.setHtml(dueDate);
+                        group.dueDate = dueDate;
+                    }
+                } else {
+                    cellEl.setHtml('');
+                }
+
+                group.taskStatus = taskStatus;
+            }
         },
-        rowMapper: 'TaskID',
 
-        subRowMapper: 'TaskID',
-        parentRowMapper: 'ParentTaskID',
 
-        // templates
-        cellTpl: false,
-        cellRenderer: function(group, cellEl) {
-            var me = this,
-                oldStatusClass = group.statusClass,
-                record, statusClass, taskStatus, dueDate;
-
-            if (group.records.length && (record = group.records[0].record)) {
-                taskStatus = record.get('TaskStatus');
-                dueDate = record.get('DueDate');
-                statusClass = Slate.cbl.model.tasks.Task[record.get('IsLate') ? 'lateStatusClasses' : 'statusClasses'][taskStatus];
+        // config handlers
+        applyDateRenderer: function(dateRenderer) {
+            if (typeof dateRenderer == 'string') {
+                dateRenderer = Ext.util.Format.dateRenderer(dateRenderer);
             }
 
-            // write class changes
-            if (statusClass != oldStatusClass) {
-                if (oldStatusClass) {
-                    cellEl.removeCls(oldStatusClass.split(' ').map(function(cls) {
-                        return 'slate-task-status-'+cls;
-                    }));
-                }
+            return dateRenderer;
+        },
 
-                if (statusClass) {
-                    cellEl.addCls(statusClass.split(' ').map(function(cls) {
-                        return 'slate-task-status-'+cls;
-                    }));
-                }
 
-                group.statusClass = statusClass;
-            }
+        // Aggregrid template methods
+        isRowExpandable: function(row) {
+            return row.get('ChildTasks').length > 0;
+        },
 
-            // write completed change
-            if (taskStatus == 'completed') {
-                if (group.taskStatus != 'completed') {
-                    cellEl.setHtml('<i class="fa fa-lg fa-check-circle-o"></i>');
-                }
-            } else if (dueDate) {
-                dueDate = me.getDateRenderer()(dueDate);
+        buildColumnTplData: function() {
+            var columnTplData = this.callParent(arguments);
 
-                if (group.dueDate != dueDate) {
-                    cellEl.setHtml(dueDate);
-                    group.dueDate = dueDate;
-                }
-            } else {
-                cellEl.setHtml('');
-            }
+            columnTplData.$cls = 'slate-studentsgrid-cell';
 
-            group.taskStatus = taskStatus;
+            return columnTplData;
         }
-    },
-
-
-    // config handlers
-    applyDateRenderer: function(dateRenderer) {
-        if (typeof dateRenderer == 'string') {
-            dateRenderer = Ext.util.Format.dateRenderer(dateRenderer);
-        }
-
-        return dateRenderer;
-    },
-
-
-    // Aggregrid template methods
-    isRowExpandable: function(row) {
-        return row.get('ChildTasks').length > 0;
-    },
-
-    buildColumnTplData: function() {
-        var columnTplData = this.callParent(arguments);
-
-        columnTplData.$cls = 'slate-studentsgrid-cell';
-
-        return columnTplData;
-    }
+    };
 });
