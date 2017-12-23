@@ -1,23 +1,17 @@
 Ext.define('SlateTasksStudent.view.AppHeader', {
-    extend: 'Slate.cbl.view.AppHeader',
+    extend: 'Slate.cbl.view.app.Header',
     xtype: 'slate-tasks-student-appheader',
     requires: [
-        'Slate.cbl.widget.SectionSelector',
-        'Ext.toolbar.Fill'
+        'Ext.form.field.ComboBox',
+        // 'Ext.toolbar.Fill',
+
+        'Slate.cbl.widget.SectionSelector'
     ],
 
 
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
+    config: {
+        title: 'Student Task Dashboard',
 
-    items: [{
-        xtype: 'container',
-        layout: {
-            type: 'hbox',
-            align: 'center'
-        },
         items: [
             {
                 itemId: 'studentSelector',
@@ -87,18 +81,18 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
                     }
                 }
             }
-        // {
-        //     xtype: 'tbfill'
-        // @todo Unide recent activity toggle once the RecentActivity.js
-        // view is populated with real data.
-        // },
-        // {
-        //     xtype: 'button',
-        //     iconCls: 'x-fa fa-clock-o',
-        //     enableToggle: true,
-        //     action: 'show-recent'
-        // }
-        ]
-    }]
 
+            // TODO: Unide recent activity toggle once the RecentActivity.js
+            // view is populated with real data.
+            // {
+            //     xtype: 'tbfill'
+            // },
+            // {
+            //     xtype: 'button',
+            //     iconCls: 'x-fa fa-clock-o',
+            //     enableToggle: true,
+            //     action: 'show-recent'
+            // }
+        ]
+    }
 });
