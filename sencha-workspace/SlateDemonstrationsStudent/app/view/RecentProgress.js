@@ -35,6 +35,10 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
         'tableEl'
     ],
 
+    uninitializedTpl: [
+        '<span>Please select a student and content area to begin.</span>'
+    ],
+
     progressTpl: [
         '<tpl if="values.progress.length !== 0">',
             '<thead>',
@@ -91,6 +95,14 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
         }
     },
 
+    updateStudentId: function() {
+        this.loadProgress();
+    },
+
+    updateContentAreaId: function() {
+        this.loadProgress();
+    },
+
 
     // template methods
     onRender: function() {
@@ -109,7 +121,8 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
             contentAreaId = me.getContentAreaId();
 
         if (!studentId || !contentAreaId) {
-            throw 'Unable to load progress without studentId and contentAreaId set';
+            me.getTpl('uninitializedTpl').overwrite(me.tableEl);
+            return;
         }
 
         me.setLoadStatus('loading');

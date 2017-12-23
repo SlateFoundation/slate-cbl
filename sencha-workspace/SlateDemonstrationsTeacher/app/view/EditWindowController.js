@@ -87,6 +87,18 @@ Ext.define('SlateDemonstrationsTeacher.view.EditWindowController', {
         if (defaultCompetency) {
             this.addCompetency(defaultCompetency);
         }
+
+        if (window && window.SiteEnvironment && window.SiteEnvironment.cblExperienceTypeOptions) {
+            editWindow.down('#experience-types').setStore(window.SiteEnvironment.cblExperienceTypeOptions);
+        }
+
+        if (window && window.SiteEnvironment && window.SiteEnvironment.cblPerformanceTypeOptions) {
+            editWindow.down('#performance-types').setStore(window.SiteEnvironment.cblPerformanceTypeOptions);
+        }
+
+        if (window && window.SiteEnvironment && window.SiteEnvironment.cblContextOptions) {
+            editWindow.down('#context-options').setStore(window.SiteEnvironment.cblContextOptions);
+        }
     },
 
     onShow: function(editWindow) {

@@ -14,6 +14,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
+
         switch (static::shiftPath()) {
             case '':
             case false:

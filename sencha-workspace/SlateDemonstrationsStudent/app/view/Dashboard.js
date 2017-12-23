@@ -12,6 +12,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
     config: {
         studentId: null,
+        contentAreaId: null,
 
         popover: {
             pointer: 'none'
@@ -60,6 +61,14 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         }
     },
 
+    updateContentAreaId: function(contentAreaId) {
+        this.getCompetenciesStore().getAllByContentArea(contentAreaId, this.loadCompletions, this);
+    },
+
+    updateStudentId: function() {
+        this.loadCompletions();
+    },
+
     applyCompetenciesStore: function(store) {
         return Ext.StoreMgr.lookup(store);
     },
@@ -74,5 +83,40 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
     applyDemonstrationSkillsStore: function(store) {
         return Ext.StoreMgr.lookup(store);
+    },
+
+    loadCompletions: function() {
+        var me = this,
+            competenciesStore = me.getCompetenciesStore(),
+            studentId = me.getStudentId(),
+            contentAreaId = me.getContentAreaId();
+
+        if (!studentId || !contentAreaId) {
+            return;
+        }
+
+        me.setCompetenciesStatus('loading');
+        me.mask('Loading&hellip;');
+
+        competenciesStore.filter({
+            property: 'ContentAreaID',
+            value: contentAreaId
+        });
+
+        me.removeAll(true);
+        me.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
+            callback: function(completions) {
+                me.add(Ext.Array.map(completions || [], function(completion) {
+                    return {
+                        competency: competenciesStore.getById(completion.get('CompetencyID')),
+                        completion: completion,
+                        autoEl: 'li'
+                    };
+                }));
+
+                me.setCompetenciesStatus('loaded');
+                me.unmask();
+            }
+        });
     }
 });

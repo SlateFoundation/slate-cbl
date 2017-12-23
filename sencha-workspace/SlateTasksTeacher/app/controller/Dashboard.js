@@ -90,14 +90,33 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
     // controller templates method overrides
     onLaunch: function () {
-        var sectionsStore = this.getSectionsStore();
-
-        // configure and load sections store for selector
-        sectionsStore.getProxy().setExtraParam('enrolled_user', 'current');
-        sectionsStore.load();
-
         // render dashboard container to #slateapp-viewport element provided by framing HTML
         this.getDashboardCt().render('slateapp-viewport');
+
+        Slate.API.request({
+            url: '/cbl/dashboards/tasks/teacher/bootstrap',
+            success: function(response) {
+                var data = response.data || Ext.decode(response.responseText),
+                    sectionsStore = this.getSectionsStore(),
+                    googleUtil = Slate.cbl.util.Google;
+
+                if (data.google) {
+                    if (data.google.clientId) {
+                        googleUtil.setClientId(data.google.clientId);
+                    }
+                    if (data.google.developerKey) {
+                        googleUtil.setDeveloperKey(data.google.developerKey);
+                    }
+                    if (data.google.domain) {
+                        googleUtil.setDomain(data.google.domain);
+                    }
+                }
+
+                // configure and load sections store for selector
+                sectionsStore.getProxy().setExtraParam('enrolled_user', 'current');
+                sectionsStore.load();
+            }
+        });
     },
 
 

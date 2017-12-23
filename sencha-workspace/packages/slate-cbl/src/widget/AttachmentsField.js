@@ -19,7 +19,7 @@ Ext.define('Slate.cbl.widget.AttachmentsField', {
         me.callParent(arguments);
 
         googleAttachmentBtn = me.down('button[action=addattachment]');
-        if (googleUtil.getDeveloperKey() && googleUtil.getClientId() && googleUtil.getGoogleAppsDomain()) {
+        if (googleUtil.getDeveloperKey() && googleUtil.getClientId() && googleUtil.getDomain()) {
             googleAttachmentBtn.enable();
         } else {
             googleAttachmentBtn.disable();

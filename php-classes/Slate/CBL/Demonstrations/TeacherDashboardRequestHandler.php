@@ -8,8 +8,12 @@ use Sencha_RequestHandler;
 
 use Slate\People\Student;
 
+use Slate\Courses\Section;
+use Slate\Courses\SectionParticipant;
+
 use Slate\CBL\ContentArea;
 use Slate\CBL\Competency;
+use Slate\CBL\Demonstrations\ExperienceDemonstration;
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
 
@@ -33,6 +37,13 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                 return static::handleCompletionsRequest();
             case 'demonstration-skills':
                 return static::handleDemonstrationSkillsRequest();
+
+            case 'bootstrap':
+                return static::handleBootstrapDataRequest();
+
+            case 'students':
+            case '*students':
+                return static::handleStudentsRequest();
             default:
                 return static::throwNotFoundError();
         }
@@ -162,5 +173,26 @@ class TeacherDashboardRequestHandler extends \RequestHandler
         return static::respond('demonstrationSkills', [
             'data' => $demonstrationSkills
         ]);
+    }
+
+    public static function handleStudentsRequest()
+    {
+        return static::respond('students', [
+            'data' => static::_getRequestedStudents()
+        ]);
+    }
+
+    public static function handleBootstrapDataRequest()
+    {
+        return static::respond('bootstrap', [
+            'experience_types' => ExperienceDemonstration::$experienceTypeOptions,
+            'performance_types' => ExperienceDemonstration::$performanceTypeOptions,
+            'context_options' => ExperienceDemonstration::$contextOptions
+        ]);
+    }
+
+    protected static function _getRequestedStudents()
+    {
+        return Student::getAllByListIdentifier($_REQUEST['students']);
     }
 }

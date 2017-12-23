@@ -4,9 +4,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
     // entry points
     control: {
-        dashboardCt: {
-            render: 'onDashboardCtRender'
-        },
         competencyCard: {
             democellclick: 'onDemoCellClick'
         }
@@ -15,10 +12,16 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
    // controller configuration
     views: [
+        'AppHeader',
         'Dashboard',
         'ContentAreaStatus',
         'RecentProgress',
         'OverviewWindow'
+    ],
+
+    stores: [
+        'ContentAreas',
+        'Students'
     ],
 
 
@@ -41,48 +44,43 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
             xtype: 'slate-demonstrations-student-recentprogress'
         },
-        competencyCard: 'slate-demonstrations-student-competencycard'
+        appHeader: {
+            selector: 'slate-demonstrations-student-appheader',
+            autoCreate: true,
+
+            xtype: 'slate-demonstrations-student-appheader'
+        },
+        competencyCard: 'slate-demonstrations-student-competencycard',
+        studentSelector: 'slate-demonstrations-student-appheader #studentCombo',
+        contentAreaSelector: 'slate-demonstrations-student-appheader #contentAreaCombo'
     },
 
+    routes: {
+        ':queryString': {
+            action: 'syncFilters',
+            conditions: {
+                ':queryString': '.*'
+            }
+        }
+    },
 
     // controller templates method overrides
     onLaunch: function () {
-        var siteEnv = window.SiteEnvironment || {},
-            cblStudentId = (siteEnv.cblStudent || {}).ID,
-            cblContentArea = siteEnv.cblContentArea || {},
-            dashboardCt, contentAreaStatusCmp, recentProgressCmp;
-
-        // fetch component instances
-        dashboardCt = this.getDashboardCt();
-        contentAreaStatusCmp = this.getContentAreaStatusCmp();
-        recentProgressCmp = this.getRecentProgressCmp();
-
-        // configure content area status
-        contentAreaStatusCmp.setContentAreaTitle(cblContentArea.Title);
-
-        // configure recent progress component with any available embedded data
-        if (cblStudentId) {
-            recentProgressCmp.setStudentId(cblStudentId);
-        }
-
-        if (cblContentArea) {
-            recentProgressCmp.setContentAreaId(cblContentArea.ID);
-        }
-
-        // configure dashboard with any available embedded data
-        if (cblStudentId) {
-            dashboardCt.setStudentId(cblStudentId);
-        }
-
-        if (siteEnv.cblCompetencies) {
-            dashboardCt.getCompetenciesStore().loadData(siteEnv.cblCompetencies);
-        }
+        var me = this,
+            appHeader = me.getAppHeader(),
+            dashboardCt = me.getDashboardCt(),
+            recentProgressCmp = me.getRecentProgressCmp();
 
         // render components
         Ext.suspendLayouts();
         contentAreaStatusCmp.render('slateapp-viewport');
         recentProgressCmp.render('slateapp-viewport');
         dashboardCt.render('slateapp-viewport');
+        Ext.DomHelper.insertBefore('slateapp-viewport', {
+            tag: 'div',
+            id: 'slateapp-header'
+        });
+        appHeader.render('slateapp-header');
         Ext.resumeLayouts(true);
     },
 
@@ -171,5 +169,71 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             student: this.getDashboardCt().getStudentId(),
             selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
         });
+    },
+
+    syncFilters: function() {
+        var me = this,
+            appHeader = me.getAppHeader(),
+            token = Ext.util.History.getToken(),
+            recentProgressCmp = me.getRecentProgressCmp(),
+            dashboardCt = me.getDashboardCt(),
+            splitToken = [], i = 0,
+            param, value,
+            studentCombo, contentAreaCombo,
+            student, contentArea;
+
+        if (token) {
+            if (dashboardCt.getContentAreaId() && dashboardCt.getStudentId()) {
+                window.location.reload();
+            }
+            splitToken = token.split('&');
+            for (; i < splitToken.length; i++) {
+                param = splitToken[i].split('=', 1)[0];
+                value = splitToken[i].split('=', 2)[1];
+
+                if (param == 'student') {
+                    studentCombo = appHeader.down('#studentCombo');
+                    if (!studentCombo.getStore().isLoaded()) {
+                        dashboardCt.mask('Loading Content Areas&hellip;');
+                        studentCombo.getStore().load({
+                            params: {
+                                q: value
+                            },
+                            callback: function() {
+                                dashboardCt.unmask();
+                                return me.syncFilters();
+                            }
+                        });
+                        return;
+                    }
+
+                    student = studentCombo.getStore().findRecord('Username', window.decodeURI(value));
+                    studentCombo.setValue(student);
+                    if (student) {
+                        // configure recent progress component with any available embedded data
+                        recentProgressCmp.setStudentId(student.getId());
+                        // configure dashboard with any available embedded data
+                        dashboardCt.setStudentId(student.getId());
+                    }
+                } else if (param == 'contentarea') {
+                    contentAreaCombo = appHeader.down('#contentAreaCombo');
+                    if (!contentAreaCombo.getStore().isLoaded()) {
+                        dashboardCt.mask('Loading Content Areas&hellip;');
+                        contentAreaCombo.getStore().getSource().load(function() {
+                            dashboardCt.unmask();
+                            return me.syncFilters();
+                        });
+                        return;
+                    }
+
+                    contentArea = contentAreaCombo.getStore().findRecord('Code', window.decodeURI(value));
+                    contentAreaCombo.setValue(contentArea);
+                    if (contentArea) {
+                        recentProgressCmp.setContentAreaId(contentArea.getId());
+                        dashboardCt.setContentAreaId(contentArea.getId());
+                    }
+                }
+            }
+        }
     }
 });

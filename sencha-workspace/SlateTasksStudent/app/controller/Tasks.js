@@ -78,6 +78,30 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
 
+    // controller templates method overrides
+    onLaunch: function () {
+        var googleUtil = Slate.cbl.util.Google;
+
+        Slate.API.request({
+            url: '/cbl/dashboards/tasks/student/bootstrap',
+            success: function(response) {
+                var data = response.data || Ext.decode(response.responseText);
+
+                if (data.google) {
+                    if (data.google.clientId) {
+                        googleUtil.setClientId(data.google.clientId);
+                    }
+                    if (data.google.developerKey) {
+                        googleUtil.setDeveloperKey(data.google.developerKey);
+                    }
+                    if (data.google.domain) {
+                        googleUtil.setDomain(data.google.domain);
+                    }
+                }
+            }
+        });
+    },
+
     // event handlers
     onStudentChange: function(dashboard, studentUsername) {
         var tasksStore = this.getTasksStore();
@@ -297,7 +321,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                             }
 
                             return new Ext.Promise(function(resolve) {
-                                Ext.Msg.confirm('Clone File', 'This google drive file is currently owned by someone outside of the '+googleUtil.getGoogleAppsDomain() + ' domain. Would you like to clone this document instead?', function(answer) {
+                                Ext.Msg.confirm('Clone File', 'This google drive file is currently owned by someone outside of the '+googleUtil.getDomain() + ' domain. Would you like to clone this document instead?', function(answer) {
                                     if (answer === 'yes') {
                                         resolve(googleUtil.cloneGoogleFile(fileData));
                                     }

@@ -17,18 +17,6 @@
     </div>
 {/block}
 
-{block js-data}
-    {$dwoo.parent}
-
-    <script type="text/javascript">
-        var SiteEnvironment = SiteEnvironment || { };
-
-        SiteEnvironment.googleAppsDomain = '{\Google\API::$domain}';
-        SiteEnvironment.googleAppsDeveloperKey = '{\Google\API::$developerKey}';
-        SiteEnvironment.googleAppsClientId = '{\Google\API::$clientId}';
-    </script>
-{/block}
-
 {block base}
     {$dwoo.parent}
     <script type="text/javascript" src="//apis.google.com/js/api.js"></script>

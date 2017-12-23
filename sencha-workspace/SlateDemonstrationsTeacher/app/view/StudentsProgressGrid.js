@@ -51,88 +51,109 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
     componentCls: 'cbl-grid-cmp',
 
     tpl: [
-        '{%var studentsCount = values.students.length%}',
-        '<div class="cbl-grid-ct">',
-            '<table class="cbl-grid cbl-grid-competencies">',
-                '<colgroup class="cbl-grid-competency-col"></colgroup>',
-
-                '<thead>',
-                    '<tr>',
-                        '<td class="cbl-grid-corner-cell">&nbsp;</td>',
-                    '</tr>',
-                '</thead>',
-
-                '<tbody>',
-                    '<tpl for="competencies">',
-                        '<tpl for="competency">',
-                            '<tr class="cbl-grid-progress-row" data-competency="{ID}">',
-                                '<th class="cbl-grid-competency-name"><div class="ellipsis">{Descriptor}</div></th>',
-                            '</tr>',
-                            '<tr class="cbl-grid-skills-row" data-competency="{ID}">',
-                                '<td class="cbl-grid-skills-cell">',
-                                    '<div class="cbl-grid-skills-ct">',
-                                        '<table class="cbl-grid-skills-grid">',
-                                            '<colgroup class="cbl-grid-skill-col"></colgroup>',
-                                            '<tbody></tbody>',
-                                        '</table>',
-                                    '</div>',
-                                '</td>',
-                            '</tr>',
-                        '</tpl>',
-                    '</tpl>',
-                '</tbody>',
-            '</table>',
-
-            '<div class="cbl-grid-scroll-ct">',
-                '<table class="cbl-grid cbl-grid-main">',
-                    '<colgroup span="{[studentsCount]}" class="cbl-grid-progress-col"></colgroup>',
+        '{%var studentsCount = values.studentsCount%}',
+        '{%var competenciesCount = values.competenciesCount%}',
+        '<tpl if="competenciesCount === 0 || studentsCount === 0">',
+            '<div class="cbl-grid-ct">',
+                '<table class="cbl-grid cbl-grid-competencies"></table>',
+            '</div>',
+            '<div class="cbl-grid-ct">',
+                '<table class="cbl-grid cbl-grid-main"></table>',
+            '</div>',
+            '<span class="empty">',
+                '<tpl if="studentsStoreLoaded === false || competenciesStoreLoaded === false">',
+                    'Select a student group and content area above to begin',
+                '<tpl elseif="studentsCount === 0">',
+                    'There are currently no students enrolled in the selected group',
+                '<tpl elseif="competenciesCount === 0">',
+                    'There are currently no competencies assigned to the selected Content Area',
+                '</tpl>',
+            '</span>',
+        '<tpl else>',
+            '<div class="cbl-grid-ct">',
+                '<table class="cbl-grid cbl-grid-competencies">',
+                    '<colgroup class="cbl-grid-competency-col"></colgroup>',
 
                     '<thead>',
                         '<tr>',
-                            '<tpl for="students">',
-                                '<th class="cbl-grid-student-name" data-student="{student.ID}">',
-                                    '<tpl if="dashboardUrl"><a href="{dashboardUrl}"></tpl>',
-                                        '{student.FirstName} {student.LastName}',
-                                    '<tpl if="dashboardUrl"></a></tpl>',
-                                '</th>',
-                            '</tpl>',
+                            '<td class="cbl-grid-corner-cell">&nbsp;</td>',
                         '</tr>',
                     '</thead>',
 
                     '<tbody>',
                         '<tpl for="competencies">',
-                            '<tr class="cbl-grid-progress-row" data-competency="{competency.ID}">',
-                                '<tpl for="students">',
-                                    '<td class="cbl-grid-progress-cell" data-student="{student.ID}">',
-                                        '<span class="cbl-grid-progress-bar" style="width: 0%"></span>',
-                                        '<span class="cbl-grid-progress-level"></span>',
-                                        '<span class="cbl-grid-progress-percent"></span>',
-                                        '<span class="cbl-grid-progress-average"></span>',
+                            '<tpl for="competency">',
+                                '<tr class="cbl-grid-progress-row" data-competency="{ID}">',
+                                    '<th class="cbl-grid-competency-name"><div class="ellipsis">{Descriptor}</div></th>',
+                                '</tr>',
+                                '<tr class="cbl-grid-skills-row" data-competency="{ID}">',
+                                    '<td class="cbl-grid-skills-cell">',
+                                        '<div class="cbl-grid-skills-ct">',
+                                            '<table class="cbl-grid-skills-grid">',
+                                                '<colgroup class="cbl-grid-skill-col"></colgroup>',
+                                                '<tbody></tbody>',
+                                            '</table>',
+                                        '</div>',
                                     '</td>',
-                                '</tpl>',
-                            '</tr>',
-                            '<tr class="cbl-grid-skills-row" data-competency="{competency.ID}">',
-                                '<td class="cbl-grid-skills-cell" colspan="{[studentsCount]}"">',
-                                    '<div class="cbl-grid-skills-ct">',
-                                        '<table class="cbl-grid-skills-grid">',
-                                            '<colgroup span="{[studentsCount]}"" class="cbl-grid-demos-col"></colgroup>',
-                                            '<tbody></tbody>',
-                                        '</table>',
-                                    '</div>',
-                                '</td>',
-                            '</tr>',
+                                '</tr>',
+                            '</tpl>',
                         '</tpl>',
                     '</tbody>',
                 '</table>',
+
+                '<div class="cbl-grid-scroll-ct">',
+                    '<table class="cbl-grid cbl-grid-main">',
+                        '<colgroup span="{[studentsCount]}" class="cbl-grid-progress-col"></colgroup>',
+
+                        '<thead>',
+                            '<tr>',
+                                '<tpl for="students">',
+                                    '<th class="cbl-grid-student-name" data-student="{student.ID}">',
+                                        '<tpl if="dashboardUrl"><a href="{dashboardUrl}" target="_blank"></tpl>',
+                                            '{student.FirstName} {student.LastName}',
+                                        '<tpl if="dashboardUrl"></a></tpl>',
+                                    '</th>',
+                                '</tpl>',
+                            '</tr>',
+                        '</thead>',
+
+                        '<tbody>',
+                            '<tpl for="competencies">',
+                                '<tr class="cbl-grid-progress-row" data-competency="{competency.ID}">',
+                                    '<tpl for="students">',
+                                        '<td class="cbl-grid-progress-cell" data-student="{student.ID}">',
+                                            '<span class="cbl-grid-progress-bar" style="width: 0%"></span>',
+                                            '<span class="cbl-grid-progress-level"></span>',
+                                            '<span class="cbl-grid-progress-percent"></span>',
+                                            '<span class="cbl-grid-progress-average"></span>',
+                                        '</td>',
+                                    '</tpl>',
+                                '</tr>',
+                                '<tr class="cbl-grid-skills-row" data-competency="{competency.ID}">',
+                                    '<td class="cbl-grid-skills-cell" colspan="{[studentsCount]}"">',
+                                        '<div class="cbl-grid-skills-ct">',
+                                            '<table class="cbl-grid-skills-grid">',
+                                                '<colgroup span="{[studentsCount]}"" class="cbl-grid-demos-col"></colgroup>',
+                                                '<tbody></tbody>',
+                                            '</table>',
+                                        '</div>',
+                                    '</td>',
+                                '</tr>',
+                            '</tpl>',
+                        '</tbody>',
+                    '</table>',
+                '</div>',
             '</div>',
-        '</div>',
-        '<div class="cbl-grid-legend">',
-            '<span class="cbl-grid-legend-label">Portfolios:&ensp;</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-9">Y1</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-10">Y2</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-11">Y3</span>',
-            '<span class="cbl-grid-legend-item level-color cbl-level-12">Y4</span>',
-        '</div>'
+            '<div class="cbl-grid-legend">',
+                '<span class="cbl-grid-legend-label">Portfolios:&ensp;</span>',
+                '<span class="cbl-grid-legend-item level-color cbl-level-9">Y1</span>',
+                '<span class="cbl-grid-legend-item level-color cbl-level-10">Y2</span>',
+                '<span class="cbl-grid-legend-item level-color cbl-level-11">Y3</span>',
+                '<span class="cbl-grid-legend-item level-color cbl-level-12">Y4</span>',
+            '</div>',
+
+        '</tpl>'
+
     ],
 
     listeners: {
@@ -552,6 +573,12 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             competenciesStore = me.getCompetenciesStore();
 
         if (!studentsStore.isLoaded() || !competenciesStore.isLoaded()) {
+            me.setData({
+                studentsCount: studentsStore.getTotalCount(),
+                studentsStoreLoaded: studentsStore.isLoaded(),
+                competenciesCount: competenciesStore.getTotalCount(),
+                competenciesStoreLoaded: competenciesStore.isLoaded()
+            });
             return;
         }
 
@@ -605,7 +632,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             student = students[studentIndex];
             studentsData.push({
                 student: student.data,
-                dashboardUrl: studentDashboardLink && Ext.String.urlAppend(studentDashboardLink, 'student=' + window.escape(student.get('Username')))
+                dashboardUrl: studentDashboardLink && Slate.API.buildUrl(Ext.String.urlAppend(studentDashboardLink, 'student=' + window.escape(student.get('Username'))))
             });
         }
 
@@ -630,7 +657,9 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
         return {
             students: studentsData,
-            competencies: competenciesData
+            studentsCount: studentsLength,
+            competencies: competenciesData,
+            competenciesCount: competenciesLength
         };
     },
 
