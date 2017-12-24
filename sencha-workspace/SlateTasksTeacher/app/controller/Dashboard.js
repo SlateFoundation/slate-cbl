@@ -142,9 +142,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     onSectionCohortsLoad: function(store, records, success) {
-        if (success) {
-            this.getCohortSelector().enable();
-        }
+        this.getCohortSelector().setHidden(!success || records.length == 0);
     },
 
     onSelectedSectionChange: function(dashboardCt, sectionCode) {

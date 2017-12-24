@@ -112,7 +112,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
                 {
                     xtype: 'slate-cbl-cohortselector',
                     lazyAutoLoad: false,
-                    disabled: true,
+                    hidden: true,
                     store: 'SectionCohorts',
                     queryMode: 'local',
                     emptyText: 'All Students'
