@@ -28,7 +28,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // component factories and selectors
     refs: {
-        dashboard: {
+        dashboardCt: {
             selector: 'slate-tasks-student-dashboard',
             autoCreate: true,
 
@@ -70,7 +70,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     control: {
-        dashboard: {
+        dashboardCt: {
             studentchange: 'onStudentChange',
             sectionchange: 'onSectionChange'
         },
@@ -89,7 +89,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         var me = this;
 
         // instantiate and render viewport
-        me.getDashboard().render('slateapp-viewport');
+        me.getDashboardCt().render('slateapp-viewport');
 
         // load bootstrap data
         Slate.API.request({
@@ -114,7 +114,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // route handlers
     showDashboard: function(studentUsername, sectionCode) {
-        var dashboard = this.getDashboard();
+        var dashboard = this.getDashboardCt();
 
         // use false instead of null, to indicate selecting *nothing* vs having no selection
         dashboard.setStudent(studentUsername == 'me' ? false : studentUsername);
@@ -124,7 +124,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // event handlers
     onBrowserResize: function() {
-        this.getDashboard().updateLayout();
+        this.getDashboardCt().updateLayout();
     },
 
     onUnmatchedRoute: function() {
