@@ -13,6 +13,7 @@ use Slate\CBL\Demonstrations\DemonstrationSkill;
 class StudentCompetency extends \ActiveRecord
 {
     public static $autoGraduate = true;
+    public static $positiveDemonstrationReporting = false; //only reports positive demonstrations AND reports all demonstrations regardless of target
     public static $isLevelComplete;
     public static $minimumRatingOffset;
 
@@ -174,8 +175,11 @@ class StudentCompetency extends \ActiveRecord
                           FROM `%s` DemonstrationSkill
                           JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration
                             ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-                         WHERE DemonstrationSkill.SkillID IN (%s)
-                           AND DemonstrationSkill.TargetLevel = %u
+                         WHERE DemonstrationSkill.SkillID IN (%s) AND ' .
+                          ($positiveDemonstrationReporting ?
+                            'DemonstrationSkill.DemonstratedLevel >= %u ' :
+                            'DemonstrationSkill.TargetLevel = %u '
+                          ) . '
                          ORDER BY SkillID, DemonstrationDate, DemonstrationID
                         ',
                         [
@@ -186,6 +190,7 @@ class StudentCompetency extends \ActiveRecord
                             $this->Level
                         ]
                     );
+                    
                 } else {
                     $this->demonstrationData = [];
                 }

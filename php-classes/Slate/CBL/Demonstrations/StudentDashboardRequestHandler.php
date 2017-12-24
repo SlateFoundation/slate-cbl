@@ -123,7 +123,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
         $lowestLevel = null;
         $completions = [];
-
+                
         // fetch completion for current level of each competency
         foreach ($competencies as $Competency) {
             $StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
@@ -191,8 +191,11 @@ class StudentDashboardRequestHandler extends \RequestHandler
                            FROM `%4$s`
                           WHERE StudentID = %6$u AND CompetencyID IN (%5$s)
                           GROUP BY StudentID) StudentCompetency
-                     ON StudentCompetency.StudentID = Demonstration.StudentID
-                    AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
+                     ON StudentCompetency.StudentID = Demonstration.StudentID AND ' .
+                     (StudentCompetency::$positiveDemonstrationReporting ?
+                        'StudentCompetency.CurrentLevel <= DemonstrationSkill.DemonstratedLevel' :
+                        'StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
+                     )                                     
                 ,[
                     Skill::$tableName                   // 1
                     ,DemonstrationSkill::$tableName     // 2
@@ -219,6 +222,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
             $demonstrationSkill['Override'] = boolval($demonstrationSkill['Override']);
             $demonstrationSkill['ID'] = intval($demonstrationSkill['ID']);
         }
+
 
         return static::respond('demonstrationSkills', [
             'data' => $demonstrationSkills
