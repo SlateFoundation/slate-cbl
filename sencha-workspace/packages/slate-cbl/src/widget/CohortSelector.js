@@ -1,21 +1,18 @@
 Ext.define('Slate.cbl.widget.CohortSelector', {
-    extend: 'Ext.form.field.ComboBox',
+    extend: 'Slate.cbl.widget.ClearableSelector',
+    xtype: 'slate-cbl-cohortselector',
 
-    xtype: 'slate-cohort-selector',
-    componentCls: 'slate-cohort-selector',
 
-    fieldLabel: 'Section Cohort',
-    labelWidth: 120,
+    config: {
+        componentCls: 'slate-cohort-selector',
 
-    displayField: 'Cohort',
-    valueField: 'Cohort',
+        fieldLabel: 'Section Cohort',
+        labelWidth: 120,
 
-    forceSelection: true,
-    editable: false,
-
-    matchFieldWidth: false,
-    listConfig: {
-        maxWidth: 512,
-        minWidth: 256
+        displayField: 'Cohort',
+        valueField: 'Cohort',
+        forceSelection: true,
+        editable: false,
+        matchFieldWidth: false
     }
 });

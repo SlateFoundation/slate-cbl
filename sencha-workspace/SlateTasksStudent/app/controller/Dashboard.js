@@ -35,8 +35,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             xtype: 'slate-tasks-student-dashboard'
         },
         appHeader: 'slate-tasks-student-appheader',
-        studentSelector: 'combobox#studentSelector',
-        sectionSelector: 'combobox#sectionSelector',
+        studentSelector: 'slate-tasks-student-appheader slate-cbl-studentselector',
+        sectionSelector: 'slate-tasks-student-appheader slate-cbl-sectionselector',
         taskTree: 'slate-tasks-student-tasktree',
         todoList: 'slate-tasks-student-todolist'
     },

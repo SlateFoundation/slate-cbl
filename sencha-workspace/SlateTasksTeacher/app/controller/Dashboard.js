@@ -51,8 +51,8 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
             xtype: 'slate-tasks-teacher-dashboard'
         },
-        sectionSelector: 'slate-tasks-teacher-appheader slate-section-selector',
-        cohortSelector: 'slate-tasks-teacher-appheader slate-cohort-selector'
+        sectionSelector: 'slate-tasks-teacher-appheader slate-cbl-sectionselector',
+        cohortSelector: 'slate-tasks-teacher-appheader slate-cbl-cohortselector'
     },
 
 
