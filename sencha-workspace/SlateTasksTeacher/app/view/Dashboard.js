@@ -113,12 +113,13 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
 
     // config handlers
     updateSelectedSection: function(section, oldSection) {
-        var me = this;
+        var me = this,
+            sectionSet = Boolean(section);
 
         Ext.suspendLayouts();
-        me.setPlaceholderCmp(!section);
-        me.setStudentsGrid(Boolean(section));
-        me.setGridLegend(Boolean(section));
+        me.setPlaceholderCmp(!sectionSet);
+        me.setStudentsGrid(sectionSet);
+        me.setGridLegend(sectionSet);
         Ext.resumeLayouts();
 
         me.fireEvent('selectedsectionchange', me, section, oldSection);
