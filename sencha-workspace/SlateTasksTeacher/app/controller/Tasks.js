@@ -39,7 +39,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     // component factories and selectors
     refs: {
         dashboardCt: 'slate-tasks-teacher-dashboard',
-        createBtn: 'slate-tasks-teacher-appheader button[action=create]',
+        createBtn: 'slate-tasks-teacher-dashboard slate-appheader button[action=create]',
         // studentsGrid: 'slate-studentsgrid',
 
         taskEditor: {

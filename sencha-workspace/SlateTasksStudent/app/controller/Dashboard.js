@@ -33,8 +33,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
             xtype: 'slate-tasks-student-dashboard'
         },
-        studentSelector: 'slate-tasks-student-appheader slate-cbl-studentselector',
-        sectionSelector: 'slate-tasks-student-appheader slate-cbl-sectionselector',
+        studentSelector: 'slate-tasks-student-dashboard slate-appheader slate-cbl-studentselector',
+        sectionSelector: 'slate-tasks-student-dashboard slate-appheader slate-cbl-sectionselector',
         taskTree: 'slate-tasks-student-tasktree',
         todoList: 'slate-tasks-student-todolist'
     },
