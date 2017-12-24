@@ -112,11 +112,11 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     // route handlers
     showDashboard: function(studentUsername, sectionCode) {
-        var dashboard = this.getDashboardCt();
+        var dashboardCt = this.getDashboardCt();
 
         // use false instead of null, to indicate selecting *nothing* vs having no selection
-        dashboard.setStudent(studentUsername == 'me' ? false : studentUsername);
-        dashboard.setSection(sectionCode == 'all' ? false : sectionCode);
+        dashboardCt.setStudent(studentUsername == 'me' ? false : studentUsername);
+        dashboardCt.setSection(sectionCode == 'all' ? false : sectionCode);
     },
 
 
@@ -133,7 +133,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.getSectionSelector().enable();
     },
 
-    onStudentChange: function(dashboard, studentUsername) {
+    onStudentChange: function(dashboardCt, studentUsername) {
         var me = this,
             studentCombo = me.getStudentSelector(),
             sectionsStore = me.getSectionsStore();
@@ -155,7 +155,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         }
     },
 
-    onSectionChange: function(dashboard, sectionCode) {
+    onSectionChange: function(dashboardCt, sectionCode) {
         var me = this;
 
         me.getSectionSelector().setValue(sectionCode);

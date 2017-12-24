@@ -44,7 +44,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
 
     // event handlers
-    onStudentChange: function(dashboard, studentUsername) {
+    onStudentChange: function(dashboardCt, studentUsername) {
         var todosStore = this.getTodosStore();
 
         this.getTodoList().setReadOnly(studentUsername !== false);
@@ -53,7 +53,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         todosStore.loadIfDirty();
     },
 
-    onSectionChange: function(dashboard, sectionCode) {
+    onSectionChange: function(dashboardCt, sectionCode) {
         var todosStore = this.getTodosStore();
 
         todosStore.setSection(sectionCode);

@@ -79,7 +79,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     // event handlers
-    onStudentChange: function(dashboard, studentUsername) {
+    onStudentChange: function(dashboardCt, studentUsername) {
         var tasksStore = this.getTasksStore();
 
         this.getTaskTree().setReadOnly(studentUsername !== false);
@@ -88,7 +88,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         tasksStore.loadIfDirty();
     },
 
-    onSectionChange: function(dashboard, sectionCode) {
+    onSectionChange: function(dashboardCt, sectionCode) {
         var tasksStore = this.getTasksStore();
 
         tasksStore.setSection(sectionCode);
