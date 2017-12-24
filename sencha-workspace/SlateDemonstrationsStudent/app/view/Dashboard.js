@@ -1,5 +1,5 @@
 Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
-    extend: 'Ext.Container',
+    extend: 'Slate.ui.app.Container',
     xtype: 'slate-demonstrations-student-dashboard',
     requires: [
         // 'Slate.cbl.widget.Popover',
@@ -9,9 +9,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'SlateDemonstrationsStudent.view.AppHeader',
         'SlateDemonstrationsStudent.view.ContentAreaStatus',
         'SlateDemonstrationsStudent.view.RecentProgress',
-        'SlateDemonstrationsStudent.view.CardsContainer',
-
-        'Slate.cbl.widget.Placeholder'
+        'SlateDemonstrationsStudent.view.CardsContainer'
     ],
 
 
@@ -75,15 +73,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
          */
         loadedContentArea: null,
 
-        /**
-         * @cfg {Slate.cbl.widget.Placeholder|Object|boolean}
-         * Instance or configuration for placeholder component.
-         *
-         * Setting boolean values change visibility.
-         */
-        placeholderCmp: {
-            html: 'Select a content area to load tasks dashboard'
-        },
 
         /**
          * @cfg {SlateDemonstrationsStudent.view.ContentAreaStatus|Object|boolean}
@@ -112,7 +101,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
             hidden: true
         },
 
-        componentCls: 'slate-demonstrations-student-dashboard',
+        // componentCls: 'slate-demonstrations-student-dashboard',
         // bodyStyle: {
         //     padding: '1.5em 7.5%'
         // }
@@ -135,17 +124,14 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         // demonstrationSkillsStore: {
         //     xclass: 'Slate.cbl.store.DemonstrationSkills'
         // }
-    },
 
-    items: [
-        {
+        // appcontainer config
+        fullWidth: false,
+        header: {
             xtype: 'slate-demonstrations-student-appheader',
-            style: {
-                border: 'none',
-                padding: '1em 7.5%'
-            }
-        }
-    ],
+        },
+        placeholder: 'Select a content area to load tasks dashboard',
+    },
 
 
     // config handlers
@@ -159,11 +145,11 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
             contentAreaSet = Boolean(contentArea);
 
         Ext.suspendLayouts();
-        me.setPlaceholderCmp(!contentAreaSet);
+        me.setPlaceholder(!contentAreaSet);
         me.setContentAreaStatus(contentAreaSet);
         me.setRecentProgress(contentAreaSet);
         me.setCardsCt(contentAreaSet);
-        Ext.resumeLayouts();
+        Ext.resumeLayouts(true);
 
         console.info('updateSelectedContentArea(%o, %o)', contentArea, oldContentArea);
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
@@ -172,16 +158,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     updateContentArea: function(contentArea, oldContentArea) {
         console.info('updateContentArea(%o, %o)', contentArea, oldContentArea);
         this.fireEvent('loadedcontentareachange', this, contentArea, oldContentArea);
-    },
-
-    applyPlaceholderCmp: function(placeholderCmp, oldPlaceholderCmp) {
-        if (typeof placeholderCmp === 'boolean') {
-            placeholderCmp = {
-                hidden: !placeholderCmp
-            };
-        }
-
-        return Ext.factory(placeholderCmp, 'Slate.cbl.widget.Placeholder', oldPlaceholderCmp);
     },
 
     applyContentAreaStatus: function(contentAreaStatus, oldContentAreaStatus) {
@@ -291,13 +267,12 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
 
     // component lifecycle
-    initComponent: function() {
+    initItems: function() {
         var me = this;
 
-        me.callParent(arguments);
+        me.callParent();
 
         me.add([
-            me.getPlaceholderCmp(),
             me.getContentAreaStatus(),
             me.getRecentProgress(),
             me.getCardsCt()
