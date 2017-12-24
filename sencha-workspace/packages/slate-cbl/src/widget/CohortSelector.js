@@ -4,7 +4,7 @@ Ext.define('Slate.cbl.widget.CohortSelector', {
 
 
     config: {
-        componentCls: 'slate-cohort-selector',
+        componentCls: 'slate-cbl-cohortselector',
 
         fieldLabel: 'Section Cohort',
         labelWidth: 120,
