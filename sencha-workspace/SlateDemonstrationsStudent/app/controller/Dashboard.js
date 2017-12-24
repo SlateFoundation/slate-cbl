@@ -195,24 +195,35 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     },
 
     onStudentSelectorSelect: function(studentCombo, student) {
-        this.redirectTo([
-            student.get('Username'),
-            this.getDashboardCt().getSelectedContentArea()
-        ]);
+        var path = [student.get('Username')],
+            contentArea = this.getDashboardCt().getSelectedContentArea();
+
+        if (contentArea) {
+            path.push(contentArea);
+        }
+
+        this.redirectTo(path);
     },
 
     onStudentSelectorClear: function() {
-        this.redirectTo([
-            'me',
-            this.getDashboardCt().getSelectedContentArea()
-        ]);
+        var path = ['me'],
+            contentArea = this.getDashboardCt().getSelectedContentArea();
+
+        if (contentArea) {
+            path.push(contentArea);
+        }
+
+        this.redirectTo(path);
     },
 
-    onContentAreaSelectorChange: function(contentAreaCombo, contentAreaCode) {
-        this.redirectTo([
-            this.getDashboardCt().getSelectedStudent() || 'me',
-            contentAreaCode
-        ]);
+    onContentAreaSelectorChange: function(contentAreaCombo, contentArea) {
+        var path = [this.getDashboardCt().getSelectedStudent() || 'me'];
+
+        if (contentArea) {
+            path.push(contentArea);
+        }
+
+        this.redirectTo(path);
     }
 
 
