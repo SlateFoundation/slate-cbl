@@ -1,7 +1,24 @@
 Ext.define('Slate.cbl.widget.StudentSelector', {
     extend: 'Slate.cbl.widget.ClearableSelector',
     xtype: 'slate-cbl-studentselector',
+    requires: [
+        'Slate.model.person.Person'
+    ],
 
+
+    store: {
+        model: 'Slate.model.person.Person',
+        pageSize: 0,
+        remoteSort: false,
+        sorters: [{
+            property: 'SortName',
+            direction: 'ASC'
+        }],
+        proxy: {
+            type: 'slate-people',
+            summary: true
+        }
+    },
 
     config: {
         componentCls: 'slate-cbl-studentselector',
@@ -23,6 +40,8 @@ Ext.define('Slate.cbl.widget.StudentSelector', {
                 }
 
                 queryPlan.query += ' class:student';
+
+                return true;
             }
         }
     }

@@ -16,7 +16,6 @@ Ext.define('SlateTasksStudent.view.AppHeader', {
             {
                 xtype: 'slate-cbl-studentselector',
                 hidden: true,
-                store: 'Students',
                 emptyText: 'Me'
             },
             {

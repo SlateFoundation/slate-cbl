@@ -21,7 +21,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     ],
 
     stores: [
-        'Students@Slate.cbl.store',
         'Sections@Slate.store.courses'
     ],
 
@@ -34,7 +33,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
             xtype: 'slate-tasks-student-dashboard'
         },
-        appHeader: 'slate-tasks-student-appheader',
         studentSelector: 'slate-tasks-student-appheader slate-cbl-studentselector',
         sectionSelector: 'slate-tasks-student-appheader slate-cbl-sectionselector',
         taskTree: 'slate-tasks-student-tasktree',
@@ -138,7 +136,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     onStudentChange: function(dashboard, studentUsername) {
         var me = this,
             studentCombo = me.getStudentSelector(),
-            studentsStore = me.getStudentsStore(),
             sectionsStore = me.getSectionsStore();
 
         // (re)load sections list
@@ -150,7 +147,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
         // reload students store with just selected student if they're not in the current result set
         if (studentUsername && !studentCombo.getSelectedRecord()) {
-            studentsStore.load({
+            studentCombo.getStore().load({
                 params: {
                     q: 'username:'+studentUsername
                 }
