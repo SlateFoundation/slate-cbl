@@ -35,6 +35,10 @@ Ext.define('Slate.cbl.widget.StudentSelector', {
 
         listeners: {
             beforequery: function (queryPlan) {
+                if (queryPlan.combo.queryMode == 'local') {
+                    return true;
+                }
+
                 if (queryPlan.query.length < 2 && !queryPlan.forceAll) {
                     return false;
                 }
