@@ -24,52 +24,52 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
 
     renderTpl: [
         '<header class="panel-header">',
-            '<h3 class="header-title">Recent Progress</h3>',
+        '    <h3 class="header-title">Recent Progress</h3>',
         '</header>',
 
         '<div class="table-ct">',
-            '<table class="panel-body" id="{id}-tableEl" data-ref="tableEl"></table>',
+        '    <table class="panel-body" id="{id}-tableEl" data-ref="tableEl"></table>',
         '</div>'
     ],
     childEls: [
         'tableEl'
     ],
 
-    uninitializedTpl: [
-        '<span>Please select a student and content area to begin.</span>'
-    ],
+    // uninitializedTpl: [
+    //     '<span>Please select a student and content area to begin.</span>'
+    // ],
 
     progressTpl: [
         '<tpl if="values.progress.length !== 0">',
-            '<thead>',
-                '<tr>',
-                    '<th class="col-header scoring-domain-col">Scoring Domain</th>',
-                    '<th class="col-header level-col">Rating</th>',
-                '</tr>',
-            '</thead>',
+        '    <thead>',
+        '        <tr>',
+        '            <th class="col-header scoring-domain-col">Scoring Domain</th>',
+        '            <th class="col-header level-col">Rating</th>',
+        '        </tr>',
+        '    </thead>',
         '</tpl>',
         '<tbody>',
-            '<tpl for="progress">',
-                '<tr>',
-                    '<td class="scoring-domain-col">',
-                        '<span class="domain-skill">{skillDescriptor:htmlEncode}</span>',
-                        '<div class="meta">',
-                            '<span class="domain-competency">{competencyDescriptor:htmlEncode}<tpl if="teacherTitle">, </tpl></span>',
-                            '<span class="domain-teacher">{teacherTitle:htmlEncode}</span>',
-                        '</div>',
-                    '</td>',
-                    '<td class="level-col">',
-                        '<div class="cbl-level-colored cbl-level-{demonstratedLevel}">', // TODO color with target level, not demo. level
-                           '<tpl if="demonstratedLevel != 0">{demonstratedLevel}<tpl else>M</tpl>',
-                       '</div>',
-                    '</td>',
-                '</tr>',
-            '</tpl>',
-            '<tpl if="values.progress.length == 0">',
-                '<tr>',
-                    '<td>No demonstrations have been logged in this content area.</td>',
-                '</tr>',
-            '</tpl>',
+        '    <tpl for="progress">',
+        '        <tr>',
+        '            <td class="scoring-domain-col">',
+        '                <span class="domain-skill">{skillDescriptor:htmlEncode}</span>',
+        '                <div class="meta">',
+        '                    <span class="domain-competency">{competencyDescriptor:htmlEncode}<tpl if="teacherTitle">, </tpl></span>',
+        '                    <span class="domain-teacher">{teacherTitle:htmlEncode}</span>',
+        '                </div>',
+        '            </td>',
+        '            <td class="level-col">',
+        '                <div class="cbl-level-colored cbl-level-{demonstratedLevel}">', // TODO color with target level, not demo. level
+        '                   <tpl if="demonstratedLevel != 0">{demonstratedLevel}<tpl else>M</tpl>',
+        '               </div>',
+        '            </td>',
+        '        </tr>',
+        '    </tpl>',
+        '    <tpl if="values.progress.length == 0">',
+        '        <tr>',
+        '            <td>No demonstrations have been logged in this content area.</td>',
+        '        </tr>',
+        '    </tpl>',
         '</tbody>'
     ],
 
@@ -105,13 +105,13 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
 
 
     // template methods
-    onRender: function() {
-        var me = this;
+    // onRender: function() {
+    //     var me = this;
 
-        me.callParent(arguments);
+    //     me.callParent(arguments);
 
-        me.loadProgress();
-    },
+    //     me.loadProgress();
+    // },
 
 
     // public methods
@@ -120,10 +120,10 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
             studentId = me.getStudentId(),
             contentAreaId = me.getContentAreaId();
 
-        if (!studentId || !contentAreaId) {
-            me.getTpl('uninitializedTpl').overwrite(me.tableEl);
-            return;
-        }
+        // if (!studentId || !contentAreaId) {
+        //     me.lookupTpl('uninitializedTpl').overwrite(me.tableEl);
+        //     return;
+        // }
 
         me.setLoadStatus('loading');
 

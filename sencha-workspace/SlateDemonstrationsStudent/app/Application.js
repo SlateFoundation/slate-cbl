@@ -9,7 +9,9 @@ Ext.define('SlateDemonstrationsStudent.Application', {
         'Ext.window.MessageBox'
     ],
 
+
     name: 'SlateDemonstrationsStudent',
+    defaultToken: 'me',
 
     controllers: [
         'Dashboard'

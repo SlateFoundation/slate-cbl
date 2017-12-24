@@ -1,122 +1,306 @@
 Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     extend: 'Ext.Container',
     xtype: 'slate-demonstrations-student-dashboard',
-    requires:[
-        'Slate.cbl.widget.Popover',
-        'Slate.cbl.store.Competencies',
-        'Slate.cbl.store.Completions',
-        'Slate.cbl.store.DemonstrationSkills',
+    requires: [
+        // 'Slate.cbl.widget.Popover',
+        // 'Slate.cbl.store.Competencies',
+        // 'Slate.cbl.store.Completions',
+        // 'Slate.cbl.store.DemonstrationSkills',
+        'SlateDemonstrationsStudent.view.AppHeader',
+        'SlateDemonstrationsStudent.view.ContentAreaStatus',
+        'SlateDemonstrationsStudent.view.RecentProgress',
+        'SlateDemonstrationsStudent.view.CardsContainer',
 
-        'SlateDemonstrationsStudent.view.CompetencyCard'
+        'Slate.cbl.widget.Placeholder'
     ],
 
+
+    /**
+     * @event selectedstudentchange
+     * Fires when a new student is selected via browser navigation or a menu
+     * @param {SlateDemonstrationsStudent.view.Dashboard} dashboardCt
+     * @param {String|null} student
+     * @param {String|null} oldStudent
+     */
+
+    /**
+     * @event selectedcontentareachange
+     * Fires when a new content area is selected via browser navigation or a menu
+     * @param {SlateDemonstrationsStudent.view.Dashboard} dashboardCt
+     * @param {String|null} contentArea
+     * @param {String|null} oldContentArea
+     */
+
+    /**
+     * @event loadedcontentareachange
+     * Fires when the populated record for the last selected section becomes available
+     * or is cleared pending a new section loading
+     * @param {SlateDemonstrationsStudent.view.Dashboard} dashboardCt
+     * @param {Slate.cbl.model.ContentArea|null} section
+     * @param {Slate.cbl.model.ContentArea|null} oldSection
+     */
+
+
     config: {
-        studentId: null,
-        contentAreaId: null,
 
-        popover: {
-            pointer: 'none'
+        /**
+         * @cfg {String|null}
+         * The username for the student selected for loading by the user. This config gets
+         * set first when the user indicates their intent to navigate to a given student,
+         * and it may not necessarily reflect a valid or available student.
+         *
+         * The {@link #event-selectedstudentchange} event is fired when this config changes,
+         * which should trigger all student selection UI to update immediately and new data to
+         * begin loading.
+         */
+        selectedStudent: null,
+
+        /**
+         * @cfg {String}
+         * The code for the content area selected for loading by the user. This config gets
+         * set first when the user indicates their intent to navigate to a given content area,
+         * and it may not necessarily reflect a valid or available content area.
+         *
+         * The {@link #event-selectedcontentareachange} event is fired when this config changes,
+         * which should trigger all content area selection UI to update immediately and new data to
+         * begin loading.
+         */
+        selectedContentArea: null,
+
+        /**
+         * @cfg {Slate.cbl.model.ContentArea|null}
+         * The loaded content area model instance for the application. This config gets
+         * set following a change in {@link #cfg-selectedContentArea} and successful load
+         * of the indicated content area.
+         */
+        loadedContentArea: null,
+
+        /**
+         * @cfg {Slate.cbl.widget.Placeholder|Object|boolean}
+         * Instance or configuration for placeholder component.
+         *
+         * Setting boolean values change visibility.
+         */
+        placeholderCmp: {
+            html: 'Select a content area to load tasks dashboard'
         },
 
-        competenciesStatus: 'unloaded',
+        /**
+         * @cfg {SlateDemonstrationsStudent.view.ContentAreaStatus|Object|boolean}
+         * Instance or configuration for content area status component.
+         *
+         * Setting boolean values change visibility.
+         */
+        contentAreaStatus: false,
 
-        competenciesStore: {
-            xclass: 'Slate.cbl.store.Competencies'
+        /**
+         * @cfg {SlateDemonstrationsStudent.view.RecentProgress|Object|boolean}
+         * Instance or configuration for recent progress component.
+         *
+         * Setting boolean values change visibility.
+         */
+        recentProgress: false,
+
+        /**
+         * @cfg {Ext.container.Container|Object|boolean}
+         * Instance or configuration for cards container.
+         *
+         * Setting boolean values change visibility.
+         */
+        cardsCt: {
+            xtype: 'slate-demonstrations-student-cardsct',
+            hidden: true
         },
 
-        skillsStore: 'cbl-skills',
+        componentCls: 'slate-demonstrations-student-dashboard',
+        // bodyStyle: {
+        //     padding: '1.5em 7.5%'
+        // }
+        // popover: {
+        //     pointer: 'none'
+        // },
 
-        completionsStore: {
-            xclass: 'Slate.cbl.store.Completions'
-        },
+        // competenciesStatus: 'unloaded',
 
-        demonstrationSkillsStore: {
-            xclass: 'Slate.cbl.store.DemonstrationSkills'
+        // competenciesStore: {
+        //     xclass: 'Slate.cbl.store.Competencies'
+        // },
+
+        // skillsStore: 'cbl-skills',
+
+        // completionsStore: {
+        //     xclass: 'Slate.cbl.store.Completions'
+        // },
+
+        // demonstrationSkillsStore: {
+        //     xclass: 'Slate.cbl.store.DemonstrationSkills'
+        // }
+    },
+
+    items: [
+        {
+            xtype: 'slate-demonstrations-student-appheader',
+            style: {
+                border: 'none',
+                padding: '1em 7.5%'
+            }
         }
-    },
-
-    autoEl: {
-        tag: 'ul',
-        cls: 'cbl-competency-panels'
-    },
-    defaults: {
-        xtype: 'slate-demonstrations-student-competencycard',
-        autoEl: 'li'
-    },
-    layout: 'container',
+    ],
 
 
     // config handlers
-    applyPopover: function(newPopover, oldPopover) {
-        return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
+    updateSelectedStudent: function(student, oldStudent) {
+        console.info('updateSelectedStudent(%o, %o)', student, oldStudent);
+        this.fireEvent('selectedstudentchange', this, student, oldStudent);
     },
 
-    updateCompetenciesStatus: function(newStatus, oldStatus) {
-        if (oldStatus) {
-            this.removeCls('competencies-' + oldStatus);
-        }
-
-        if (newStatus) {
-            this.addCls('competencies-' + newStatus);
-        }
-    },
-
-    updateContentAreaId: function(contentAreaId) {
-        this.getCompetenciesStore().getAllByContentArea(contentAreaId, this.loadCompletions, this);
-    },
-
-    updateStudentId: function() {
-        this.loadCompletions();
-    },
-
-    applyCompetenciesStore: function(store) {
-        return Ext.StoreMgr.lookup(store);
-    },
-
-    applySkillsStore: function(store) {
-        return Ext.StoreMgr.lookup(store);
-    },
-
-    applyCompletionsStore: function(store) {
-        return Ext.StoreMgr.lookup(store);
-    },
-
-    applyDemonstrationSkillsStore: function(store) {
-        return Ext.StoreMgr.lookup(store);
-    },
-
-    loadCompletions: function() {
+    updateSelectedContentArea: function(contentArea, oldContentArea) {
         var me = this,
-            competenciesStore = me.getCompetenciesStore(),
-            studentId = me.getStudentId(),
-            contentAreaId = me.getContentAreaId();
+            contentAreaSet = Boolean(contentArea);
 
-        if (!studentId || !contentAreaId) {
-            return;
+        Ext.suspendLayouts();
+        me.setPlaceholderCmp(!contentAreaSet);
+        me.setContentAreaStatus(contentAreaSet);
+        me.setRecentProgress(contentAreaSet);
+        me.setCardsCt(contentAreaSet);
+        Ext.resumeLayouts();
+
+        console.info('updateSelectedContentArea(%o, %o)', contentArea, oldContentArea);
+        me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
+    },
+
+    updateContentArea: function(contentArea, oldContentArea) {
+        console.info('updateContentArea(%o, %o)', contentArea, oldContentArea);
+        this.fireEvent('loadedcontentareachange', this, contentArea, oldContentArea);
+    },
+
+    applyPlaceholderCmp: function(placeholderCmp, oldPlaceholderCmp) {
+        if (typeof placeholderCmp === 'boolean') {
+            placeholderCmp = {
+                hidden: !placeholderCmp
+            };
         }
 
-        me.setCompetenciesStatus('loading');
-        me.mask('Loading&hellip;');
+        return Ext.factory(placeholderCmp, 'Slate.cbl.widget.Placeholder', oldPlaceholderCmp);
+    },
 
-        competenciesStore.filter({
-            property: 'ContentAreaID',
-            value: contentAreaId
-        });
+    applyContentAreaStatus: function(contentAreaStatus, oldContentAreaStatus) {
+        if (typeof contentAreaStatus === 'boolean') {
+            contentAreaStatus = {
+                hidden: !contentAreaStatus
+            };
+        }
 
-        me.removeAll(true);
-        me.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
-            callback: function(completions) {
-                me.add(Ext.Array.map(completions || [], function(completion) {
-                    return {
-                        competency: competenciesStore.getById(completion.get('CompetencyID')),
-                        completion: completion,
-                        autoEl: 'li'
-                    };
-                }));
+        return Ext.factory(contentAreaStatus, 'SlateDemonstrationsStudent.view.ContentAreaStatus', oldContentAreaStatus);
+    },
 
-                me.setCompetenciesStatus('loaded');
-                me.unmask();
-            }
-        });
+    applyRecentProgress: function(recentProgress, oldRecentProgress) {
+        if (typeof recentProgress === 'boolean') {
+            recentProgress = {
+                hidden: !recentProgress
+            };
+        }
+
+        return Ext.factory(recentProgress, 'SlateDemonstrationsStudent.view.RecentProgress', oldRecentProgress);
+    },
+
+    applyCardsCt: function(cardsCt, oldCardsCt) {
+        if (typeof cardsCt === 'boolean') {
+            cardsCt = {
+                hidden: !cardsCt
+            };
+        }
+
+        return Ext.factory(cardsCt, 'SlateDemonstrationsStudent.view.CardsContainer', oldCardsCt);
+    },
+
+
+    // config handlers
+    // applyPopover: function(newPopover, oldPopover) {
+    //     return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
+    // },
+
+    // updateCompetenciesStatus: function(newStatus, oldStatus) {
+    //     if (oldStatus) {
+    //         this.removeCls('competencies-' + oldStatus);
+    //     }
+
+    //     if (newStatus) {
+    //         this.addCls('competencies-' + newStatus);
+    //     }
+    // },
+
+    // updateContentAreaId: function(contentAreaId) {
+    //     this.getCompetenciesStore().getAllByContentArea(contentAreaId, this.loadCompletions, this);
+    // },
+
+    // updateStudentId: function() {
+    //     this.loadCompletions();
+    // },
+
+    // applyCompetenciesStore: function(store) {
+    //     return Ext.StoreMgr.lookup(store);
+    // },
+
+    // applySkillsStore: function(store) {
+    //     return Ext.StoreMgr.lookup(store);
+    // },
+
+    // applyCompletionsStore: function(store) {
+    //     return Ext.StoreMgr.lookup(store);
+    // },
+
+    // applyDemonstrationSkillsStore: function(store) {
+    //     return Ext.StoreMgr.lookup(store);
+    // },
+
+    // loadCompletions: function() {
+    //     var me = this,
+    //         competenciesStore = me.getCompetenciesStore(),
+    //         studentId = me.getStudentId(),
+    //         contentAreaId = me.getContentAreaId();
+
+    //     if (!studentId || !contentAreaId) {
+    //         return;
+    //     }
+
+    //     me.setCompetenciesStatus('loading');
+    //     me.mask('Loading&hellip;');
+
+    //     competenciesStore.filter({
+    //         property: 'ContentAreaID',
+    //         value: contentAreaId
+    //     });
+
+    //     me.removeAll(true);
+    //     me.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
+    //         callback: function(completions) {
+    //             me.add(Ext.Array.map(completions || [], function(completion) {
+    //                 return {
+    //                     competency: competenciesStore.getById(completion.get('CompetencyID')),
+    //                     completion: completion,
+    //                     autoEl: 'li'
+    //                 };
+    //             }));
+
+    //             me.setCompetenciesStatus('loaded');
+    //             me.unmask();
+    //         }
+    //     });
+    // },
+
+
+    // component lifecycle
+    initComponent: function() {
+        var me = this;
+
+        me.callParent(arguments);
+
+        me.add([
+            me.getPlaceholderCmp(),
+            me.getContentAreaStatus(),
+            me.getRecentProgress(),
+            me.getCardsCt()
+        ]);
     }
 });

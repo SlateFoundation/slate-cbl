@@ -18,7 +18,8 @@
     "requires": [
         "jarvus-hotfixes",
         "font-awesome",
-        "slate-cbl"
+        "slate-cbl",
+        "jarvus-routing"
     ],
 
     /**
