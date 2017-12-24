@@ -128,7 +128,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         // }
 
         // appcontainer config
-        fullWidth: false,
         header: {
             title: 'Student Demonstrations Dashboard',
 
