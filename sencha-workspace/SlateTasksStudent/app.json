@@ -1,61 +1,10 @@
 {
-    /**
-     * The application's namespace.
-     */
     "name": "SlateTasksStudent",
-
-    /**
-     * The version of the application.
-     */
+    "namespace": "SlateTasksStudent",
     "version": "1.0.0.2",
-
-    /**
-     * The relative path to the application's markup file (html, jsp, asp, etc.).
-     */
-    "indexHtmlPath": "index.html",
-
-    /**
-     * Comma-separated string with the paths of directories or files to search. Any classes
-     * declared in these locations will be available in your class "requires" or in calls
-     * to "Ext.require". The "app.dir" variable below is expanded to the path where the
-     * application resides (the same folder in which this file is located).
-     */
-    "classpath": [
-        "app",
-        "${toolkit.name}/src"
-    ],
-
-    /**
-     * Comma-separated string with the paths of directories or files to search. Any classes
-     * declared in these locations will be automatically required and included in the build.
-     * If any file defines an Ext JS override (using Ext.define with an "override" property),
-     * that override will in fact only be included in the build if the target class specified
-     * in the "override" property is also included.
-     */
-    "overrides": [
-        "overrides",
-        "${toolkit.name}/overrides"
-    ],
-
-    /**
-     * The Sencha Framework for this application: "ext" or "touch".
-     */
     "framework": "ext",
-
-    /**
-     * The toolkit to use. Select either "classic" or "modern".
-     */
-
     "toolkit": "classic",
-
-
-    /**
-     * The name of the theme for this application.
-     */
-
-
     "theme": "slate-theme",
-
 
     /**
      * The list of required packages (with optional versions; default is "latest").
@@ -74,9 +23,36 @@
     ],
 
     /**
+     * The relative path to the application's markup file (html, jsp, asp, etc.).
+     */
+    "indexHtmlPath": "index.html",
+
+    /**
+     * Comma-separated string with the paths of directories or files to search. Any classes
+     * declared in these locations will be available in your class "requires" or in calls
+     * to "Ext.require". The "app.dir" variable below is expanded to the path where the
+     * application resides (the same folder in which this file is located).
+     */
+    "classpath": [
+        "app"
+    ],
+
+    /**
+     * Comma-separated string with the paths of directories or files to search. Any classes
+     * declared in these locations will be automatically required and included in the build.
+     * If any file defines an Ext JS override (using Ext.define with an "override" property),
+     * that override will in fact only be included in the build if the target class specified
+     * in the "override" property is also included.
+     */
+    "overrides": [
+        "overrides"
+    ],
+
+    /**
      * Fashion build configuration properties.
      */
     "fashion": {
+        "missingParameters": "error",
         "inliner": {
             /**
              * Disable resource inliner. Production builds enable this by default.
@@ -100,14 +76,24 @@
         "namespace": "SlateTasksStudent",
 
         /**
-         * File used to save sass variables edited via Sencha Inspector. This file
-         * will automatically be applied to the end of the scss build.
+         * Generated sass source settings
          *
-         *      "save": "sass/save.scss"
+         *      "generated": {
+         *         // The file used to save sass variables edited via Sencha Inspector and Sencha Themer.
+         *         // This file will automatically be applied to the end of the scss build.
+         *         "var": "sass/save.scss",
+         *
+         *         // The directory used to save generated sass sources.
+         *         // This directory will automatically be applied to the end of the scss build.
+         *         "src": "sass/save"
+         *      }
          *
          */
 
-        // "save": "sass/save.scss",
+         "generated": {
+            "var": "sass/save.scss",
+            "src": "sass/save"
+        },
 
         /**
          * Comma-separated list of files or folders containing extra Sass. These
@@ -129,8 +115,7 @@
          *      +-----------------+
          */
         "etc": [
-            "sass/etc/all.scss",
-            "${toolkit.name}/sass/etc/all.scss"
+            "sass/etc/all.scss"
         ],
 
         /**
@@ -156,7 +141,6 @@
         "var": [
             "sass/var/all.scss",
             "sass/var",
-            "${toolkit.name}/sass/var",
             "resources/slate-frame/sass/_variables-all.scss"
         ],
 
@@ -177,8 +161,7 @@
          *      +-----------------+
          */
         "src": [
-            "sass/src",
-            "${toolkit.name}/sass/src"
+            "sass/src"
         ]
     },
 
@@ -225,34 +208,13 @@
      */
     "js": [
         {
+            "path": "${framework.dir}/build/ext-all-rtl-debug.js"
+        },
+        {
             "path": "app.js",
             "bundle": true
         }
     ],
-
-    /**
-     * Settings specific to classic toolkit builds.
-     */
-    "classic": {
-        "js": [
-            // Remove this entry to individually load sources from the framework.
-            {
-                "path": "${framework.dir}/build/ext-all-rtl-debug.js"
-            }
-        ]
-    },
-
-    /**
-     * Settings specific to modern toolkit builds.
-     */
-    "modern": {
-        "js": [
-            // Remove this entry to individually load sources from the framework.
-            {
-                "path": "${framework.dir}/build/ext-modern-all-debug.js"
-            }
-        ]
-    },
 
     /**
      * List of all CSS assets in the right inclusion order.
@@ -317,7 +279,7 @@
     "production": {
         "output": {
             "appCache": {
-                "enable": true,
+                "enable": false,
                 "path": "cache.appcache"
             }
         },
@@ -325,7 +287,7 @@
             "cache": "${build.timestamp}"
         },
         "cache": {
-            "enable": true
+            "enable": false
         },
         "compressor": {
             "type": "yui"
@@ -341,14 +303,10 @@
     /**
      * Settings specific to development builds.
      */
-    "development": {
-        "tags": [
-            // You can add this tag to enable Fashion when using app watch or
-            // you can add "?platformTags=fashion:1" to the URL to enable Fashion
-            // without changing this file.
-            //
-            "fashion"
-        ]
+     "development": {
+        "watch": {
+            "delay": 250
+        }
     },
 
     /**
@@ -361,7 +319,7 @@
      * form:
      *
      *      "bootstrap": {
-     *          "base": "${app.dir},
+     *          "base": "${app.dir}",
      *          "manifest": "bootstrap.json",
      *          "microloader": "bootstrap.js",
      *          "css": "bootstrap.css"
@@ -400,7 +358,12 @@
      *              "enable": false
      *          },
      *          "css": "${app.output.resources}/${app.name}-all.css",
-     *          "js": "app.js",
+     *          "js": {
+     *              "path": "app.js",
+     *              // This setting constrols the output language level.  Set to 'ES6' to
+     *              // disable the transpiler
+     *              "version": "ES5"
+     *          },
      *          "microloader": {
      *              "path": "microloader.js",
      *              "embed": true,
@@ -433,7 +396,6 @@
         }
     },
 
-
     /**
     * Controls for localStorage caching
     *   "cache": {
@@ -454,7 +416,6 @@
         "enable": false,
         "deltas": true
     },
-
 
     /**
      * Used to automatically generate cache.manifest (HTML 5 application cache manifest)
@@ -487,21 +448,7 @@
         {
             "path": "resources",
             "output": "shared"
-        },
-        {
-            "path": "${toolkit.name}/resources"
-        },
-        {
-            "path": "${build.id}/resources"
         }
-    ],
-
-    /**
-     * File / directory name patttern to ignore when copying to the builds. Must be a
-     * valid regular expression.
-     */
-    "ignore": [
-        "(^|/)CVS(/?$|/.*?$)"
     ],
 
     /**
@@ -512,29 +459,10 @@
 
     "archivePath": "archive",
 
-
-
     /**
-     * The space config object is used by the "sencha app publish" command to publish
-     * a version of this application to Sencha Web Application Manager:
-     *
-     *      "manager": {
-     *          // the space id for this application
-     *          "id": 12345,
-     *
-     *          // space host
-     *          "host": "https://api.space.sencha.com/json.rpc",
-     *
-     *          // Either a zip file path or a folder to be zipped
-     *          // this example shows how to publish the root folder for all build profiles
-     *          "file": "${app.output.base}/../",
-     *
-     *          // These may be specified here, but are best specified in your user
-     *          // ~/.sencha/cmd/sencha.cfg file
-     *          "apiKey": "",
-     *          "secret": ""
-     *      }
+     * Additional resources used during theme slicing operations
      */
+     "slicer": null,
 
     /**
      * Build Profiles. This object's properties are each a "build profile". You can
@@ -543,20 +471,15 @@
      * selecting the desired build profile by setting "Ext.manifest" to one of these
      * names.
      *
-     *     "builds": {
-     *         "classic": {
-     *             "toolkit": "classic",
-     *             "theme": "theme-neptune"
-     *         },
-     *
-     *         "modern": {
-     *             "toolkit": "modern",
-     *             "theme": "theme-neptune"
-     *         }
-     *     }
-     *
      */
 
+         /**
+     * File / directory name patttern to ignore when copying to the builds. Must be a
+     * valid regular expression.
+     */
+    "ignore": [
+        "(^|/)CVS(/?$|/.*?$)"
+    ],
 
     /**
      * Uniquely generated id for this application, used as prefix for localStorage keys.
