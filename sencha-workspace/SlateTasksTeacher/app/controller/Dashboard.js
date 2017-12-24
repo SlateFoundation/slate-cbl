@@ -183,14 +183,23 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
     },
 
     onSectionSelectorSelect: function(sectionSelector, section) {
-        this.redirectTo([section.get('Code'), 'all']);
+        this.redirectTo([
+            section.get('Code'),
+            'all'
+        ]);
     },
 
     onCohortSelectorSelect: function(cohortSelector, cohort) {
-        this.redirectTo([this.getDashboardCt().getSelectedSection(), cohort.get('Cohort') || 'all']);
+        this.redirectTo([
+            this.getDashboardCt().getSelectedSection(),
+            cohort.get('Cohort') || 'all'
+        ]);
     },
 
     onCohortSelectorClear: function() {
-        this.redirectTo([this.getDashboardCt().getSelectedSection(), 'all']);
+        this.redirectTo([
+            this.getDashboardCt().getSelectedSection(),
+            'all'
+        ]);
     }
 });

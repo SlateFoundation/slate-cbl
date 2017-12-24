@@ -77,7 +77,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             clear: 'onStudentSelectorClear'
         },
         sectionSelector: {
-            change: 'onSectionSelectorChange'
+            select: 'onSectionSelectorSelect',
+            clear: 'onSectionSelectorClear'
         }
     },
 
@@ -125,8 +126,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.getDashboardCt().updateLayout();
     },
 
-    onUnmatchedRoute: function() {
-        this.redirectTo('me/all');
+    onUnmatchedRoute: function(token) {
+        Ext.Logger.warn('Unmatched route: '+token);
     },
 
     onSectionsLoad: function() {
@@ -169,7 +170,11 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         this.redirectTo(['me', 'all']);
     },
 
-    onSectionSelectorChange: function(sectionCombo, sectionCode) {
-        this.redirectTo([this.getDashboardCt().getStudent() || 'me', sectionCode || 'all']);
+    onSectionSelectorSelect: function(sectionCombo, section) {
+        this.redirectTo([this.getDashboardCt().getStudent() || 'me', section.get('Code')]);
+    },
+
+    onSectionSelectorClear: function() {
+        this.redirectTo([this.getDashboardCt().getStudent() || 'me', 'all']);
     }
 });

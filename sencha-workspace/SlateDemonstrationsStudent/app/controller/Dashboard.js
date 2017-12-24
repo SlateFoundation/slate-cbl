@@ -88,7 +88,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             clear: 'onStudentSelectorClear'
         },
         contentAreaSelector: {
-            change: 'onContentAreaSelectorChange'
+            select: 'onContentAreaSelectorSelect',
+            clear: 'onContentAreaSelectorClear'
         }
     //     competencyCard: {
     //         democellclick: 'onDemoCellClick'
@@ -162,8 +163,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
 
     // event handlers
-    onUnmatchedRoute: function() {
-        this.redirectTo('me');
+    onUnmatchedRoute: function(token) {
+        Ext.Logger.warn('Unmatched route: '+token);
     },
 
     onStudentChange: function(dashboardCt, studentUsername) {
@@ -216,14 +217,17 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         this.redirectTo(path);
     },
 
-    onContentAreaSelectorChange: function(contentAreaCombo, contentArea) {
-        var path = [this.getDashboardCt().getSelectedStudent() || 'me'];
+    onContentAreaSelectorSelect: function(contentAreaCombo, contentArea) {
+        this.redirectTo([
+            this.getDashboardCt().getSelectedStudent() || 'me',
+            contentArea.get('Code')
+        ]);
+    },
 
-        if (contentArea) {
-            path.push(contentArea);
-        }
-
-        this.redirectTo(path);
+    onContentAreaSelectorClear: function() {
+        this.redirectTo([
+            this.getDashboardCt().getSelectedStudent() || 'me'
+        ]);
     }
 
 
