@@ -16,10 +16,10 @@
      *      ]
      */
     "requires": [
-        "jarvus-hotfixes",
         "font-awesome",
-        "slate-cbl",
-        "saki-grid-multisearch-5"
+        "jarvus-hotfixes",
+        "saki-grid-multisearch-5",
+        "slate-cbl"
     ],
 
     /**

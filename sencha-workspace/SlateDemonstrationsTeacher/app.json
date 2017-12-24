@@ -16,8 +16,8 @@
      *      ]
      */
     "requires": [
-        "jarvus-hotfixes",
         "font-awesome",
+        "jarvus-hotfixes",
         "slate-cbl"
     ],
 

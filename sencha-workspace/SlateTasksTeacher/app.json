@@ -16,12 +16,12 @@
      *      ]
      */
     "requires": [
-        "jarvus-hotfixes",
         "font-awesome",
-        "slate-cbl",
-        "jarvus-aggregrid",
+        "jarvus-hotfixes",
         "jarvus-routing",
-        "jarvus-lazydata"
+        "jarvus-lazydata",
+        "jarvus-aggregrid",
+        "slate-cbl"
     ],
 
     /**

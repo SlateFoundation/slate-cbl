@@ -16,10 +16,10 @@
      *      ]
      */
     "requires": [
-        "jarvus-hotfixes",
         "font-awesome",
-        "slate-cbl",
-        "jarvus-routing"
+        "jarvus-hotfixes",
+        "jarvus-routing",
+        "slate-cbl"
     ],
 
     /**
