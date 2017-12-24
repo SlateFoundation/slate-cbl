@@ -1,5 +1,5 @@
 Ext.define('SlateTasksManager.view.AppHeader', {
-    extend: 'Slate.cbl.view.AppHeader',
+    extend: 'Slate.cbl.view.app.Header',
 
     xtype: 'slate-tasks-manager-appheader',
 

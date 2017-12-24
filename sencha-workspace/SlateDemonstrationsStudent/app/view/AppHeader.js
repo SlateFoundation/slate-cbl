@@ -1,5 +1,5 @@
 Ext.define('SlateDemonstrationsStudent.view.AppHeader', {
-    extend: 'Slate.cbl.view.AppHeader',
+    extend: 'Slate.cbl.view.app.Header',
     requires: [
         'SlateDemonstrationsStudent.store.ContentAreas',
         'SlateDemonstrationsStudent.store.Students',

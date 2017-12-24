@@ -1,5 +1,5 @@
 Ext.define('SlateDemonstrationsTeacher.view.AppHeader', {
-    extend: 'Slate.cbl.view.AppHeader',
+    extend: 'Slate.cbl.view.app.Header',
     requires: [
         'SlateDemonstrationsTeacher.store.ContentAreas',
         'SlateDemonstrationsTeacher.view.AppHeaderController',
