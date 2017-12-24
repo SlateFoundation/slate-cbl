@@ -50,3 +50,7 @@
 	path = sencha-workspace/packages/jarvus-lazydata
 	url = https://github.com/JarvusInnovations/jarvus-lazydata.git
 	branch = ext/6/2/0/981
+[submodule "slate-ui-classic"]
+	path = sencha-workspace/packages/slate-ui-classic
+	url = https://github.com/SlateFoundation/slate-ui-classic.git
+	branch = master
