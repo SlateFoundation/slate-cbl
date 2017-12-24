@@ -169,8 +169,10 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
 
         me.callParent(arguments);
 
-        me.add(me.getPlaceholderCmp());
-        me.add(me.getStudentsGrid());
-        me.add(me.getGridLegend());
+        me.add([
+            me.getPlaceholderCmp(),
+            me.getStudentsGrid(),
+            me.getGridLegend()
+        ]);
     }
 });
