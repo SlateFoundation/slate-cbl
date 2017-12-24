@@ -25,8 +25,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
             xtype: 'slate-demonstrations-student-dashboard'
         },
-        studentSelector: 'slate-demonstrations-student-appheader slate-cbl-studentselector',
-        contentAreaSelector: 'slate-demonstrations-student-appheader slate-cbl-contentareaselector'
+        studentSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-studentselector',
+        contentAreaSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-contentareaselector'
 
         // contentAreaStatusCmp: {
         //     selector: 'slate-demonstrations-student-contentareastatus',

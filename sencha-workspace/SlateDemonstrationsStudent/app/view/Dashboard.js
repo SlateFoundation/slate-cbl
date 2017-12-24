@@ -6,10 +6,12 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         // 'Slate.cbl.store.Competencies',
         // 'Slate.cbl.store.Completions',
         // 'Slate.cbl.store.DemonstrationSkills',
-        'SlateDemonstrationsStudent.view.AppHeader',
         'SlateDemonstrationsStudent.view.ContentAreaStatus',
         'SlateDemonstrationsStudent.view.RecentProgress',
-        'SlateDemonstrationsStudent.view.CardsContainer'
+        'SlateDemonstrationsStudent.view.CardsContainer',
+
+        'Slate.cbl.widget.StudentSelector',
+        'Slate.cbl.widget.ContentAreaSelector'
     ],
 
 
@@ -128,7 +130,21 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         // appcontainer config
         fullWidth: false,
         header: {
-            xtype: 'slate-demonstrations-student-appheader',
+            title: 'Student Demonstrations Dashboard',
+
+            items: [
+                {
+                    xtype: 'slate-cbl-studentselector',
+                    hidden: true,
+                    emptyText: 'Me'
+                },
+                {
+                    xtype: 'slate-cbl-contentareaselector',
+                    emptyText: 'Select',
+                    store: 'ContentAreas',
+                    queryMode: 'local'
+                }
+            ]
         },
         placeholder: 'Select a content area to load tasks dashboard',
     },
