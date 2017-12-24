@@ -173,6 +173,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     onSectionSelectorChange: function(sectionCombo, sectionCode) {
-        this.redirectTo([this.getDashboard().getStudent() || 'me', sectionCode || 'all']);
+        this.redirectTo([this.getDashboardCt().getStudent() || 'me', sectionCode || 'all']);
     }
 });
