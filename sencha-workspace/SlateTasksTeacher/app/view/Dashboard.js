@@ -8,14 +8,14 @@
  * transitions  out to all controllers in the application.
  */
 Ext.define('SlateTasksTeacher.view.Dashboard', {
-    extend: 'Ext.Container',
+    extend: 'Slate.ui.app.Container',
     xtype: 'slate-tasks-teacher-dashboard',
     requires: [
-        'SlateTasksTeacher.view.AppHeader',
         'SlateTasksTeacher.view.StudentsGrid',
         'SlateTasksTeacher.view.GridLegend',
 
-        'Slate.cbl.widget.Placeholder'
+        'Slate.cbl.widget.SectionSelector',
+        'Slate.cbl.widget.CohortSelector',
     ],
 
 
@@ -80,16 +80,6 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
         loadedSection: null,
 
         /**
-         * @cfg {Slate.cbl.widget.Placeholder|Object|boolean}
-         * Instance or configuration for placeholder component.
-         *
-         * Setting boolean values change visibility.
-         */
-        placeholderCmp: {
-            html: 'Select a section to load tasks dashboard'
-        },
-
-        /**
          * @cfg {SlateTasksTeacher.view.StudentsGrid|Object|boolean}
          * Instance or configuration for students grid component.
          *
@@ -103,12 +93,41 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
          *
          * Setting boolean values change visibility.
          */
-        gridLegend: false
-    },
+        gridLegend: false,
 
-    items: [{
-        xtype: 'slate-tasks-teacher-appheader'
-    }],
+
+        fullWidth: true,
+        header: {
+            title: 'Teacher Task Dashboard',
+
+            items: [
+                {
+                    xtype: 'slate-cbl-sectionselector',
+                    lazyAutoLoad: false,
+                    store: 'Sections',
+                    queryMode: 'local',
+                    emptyText: 'Select',
+                    allowBlank: false
+                },
+                {
+                    xtype: 'slate-cbl-cohortselector',
+                    lazyAutoLoad: false,
+                    disabled: true,
+                    store: 'SectionCohorts',
+                    queryMode: 'local',
+                    emptyText: 'All Students'
+                },
+                '->',
+                {
+                    cls: 'primary',
+                    iconCls: 'x-fa fa-plus',
+                    action: 'create',
+                    hidden: true
+                }
+            ]
+        },
+        placeholder: 'Select a section to load tasks dashboard'
+    },
 
 
     // config handlers
@@ -117,10 +136,10 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
             sectionSet = Boolean(section);
 
         Ext.suspendLayouts();
-        me.setPlaceholderCmp(!sectionSet);
+        me.setPlaceholder(!sectionSet);
         me.setStudentsGrid(sectionSet);
         me.setGridLegend(sectionSet);
-        Ext.resumeLayouts();
+        Ext.resumeLayouts(true);
 
         me.fireEvent('selectedsectionchange', me, section, oldSection);
     },
@@ -131,16 +150,6 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
 
     updateLoadedSection: function(section, oldSection) {
         this.fireEvent('loadedsectionchange', this, section, oldSection);
-    },
-
-    applyPlaceholderCmp: function(placeholderCmp, oldPlaceholderCmp) {
-        if (typeof placeholderCmp === 'boolean') {
-            placeholderCmp = {
-                hidden: !placeholderCmp
-            };
-        }
-
-        return Ext.factory(placeholderCmp, 'Slate.cbl.widget.Placeholder', oldPlaceholderCmp);
     },
 
     applyStudentsGrid: function(studentsGrid, oldStudentsGrid) {
@@ -165,13 +174,12 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
 
 
     // component lifecycle
-    initComponent: function() {
+    initItems: function() {
         var me = this;
 
-        me.callParent(arguments);
+        me.callParent();
 
         me.add([
-            me.getPlaceholderCmp(),
             me.getStudentsGrid(),
             me.getGridLegend()
         ]);

@@ -3,57 +3,70 @@
  * specific pre-painted container in the design
  */
 Ext.define('SlateTasksStudent.view.Dashboard', {
-    extend: 'Ext.container.Container',
+    extend: 'Slate.ui.app.Container',
     xtype: 'slate-tasks-student-dashboard',
     requires: [
         'Ext.layout.container.Column',
 
-        'SlateTasksStudent.view.AppHeader',
         'SlateTasksStudent.view.TaskTree',
-        'SlateTasksStudent.view.TodoList'
+        'SlateTasksStudent.view.TodoList',
+
+        'Slate.cbl.widget.StudentSelector',
+        'Slate.cbl.widget.SectionSelector'
     ],
 
 
     config: {
         student: null,
-        section: null
-    },
+        section: null,
 
-    items: [
-        {
-            xtype: 'slate-tasks-student-appheader',
-            style: {
-                border: 'none',
-                padding: '1em 7.5%'
-            }
-        },
-        {
-            // like .site > .inner
-            xtype: 'container',
-            style: {
-                padding: '2em 7.5%'
-            },
+        header: {
+            title: 'Student Task Dashboard',
+
             items: [
                 {
-                    xtype: 'container',
-                    layout: 'column',
-                    defaults: {
-                        columnWidth: 0.5
-                    },
-                    items: [
-                        {
-                            xtype: 'slate-tasks-student-tasktree',
-                            margin: '0 32 0 0',
-                            store: 'Tasks'
-                        }, {
-                            xtype: 'slate-tasks-student-todolist',
-                            store: 'Todos'
-                        }
-                    ]
+                    xtype: 'slate-cbl-studentselector',
+                    hidden: true,
+                    emptyText: 'Me'
+                },
+                {
+                    xtype: 'slate-cbl-sectionselector',
+                    disabled: true,
+                    store: 'Sections',
+                    queryMode: 'local',
+                    emptyText: 'All'
                 }
+
+                // TODO: Unide recent activity toggle once the RecentActivity.js
+                // view is populated with real data.
+                // '->',
+                // {
+                //     xtype: 'button',
+                //     iconCls: 'x-fa fa-clock-o',
+                //     enableToggle: true,
+                //     action: 'show-recent'
+                // }
             ]
         }
-    ],
+    },
+
+    // TODO: remove nesting once appcontainer reports correct width
+    items: [{
+        layout: 'column',
+        defaults: {
+            columnWidth: 0.5
+        },
+        items: [
+            {
+                xtype: 'slate-tasks-student-tasktree',
+                margin: '0 32 0 0',
+                store: 'Tasks'
+            }, {
+                xtype: 'slate-tasks-student-todolist',
+                store: 'Todos'
+            }
+        ]
+    }],
 
 
     // config handlers

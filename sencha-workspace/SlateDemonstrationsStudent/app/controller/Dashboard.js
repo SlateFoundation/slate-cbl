@@ -131,7 +131,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
                         studentsStore.loadRawData(wards);
                         studentSelector.setValueOnData();
                     }
-
                 }
             }
         });
