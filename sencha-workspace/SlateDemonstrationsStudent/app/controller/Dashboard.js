@@ -13,8 +13,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     ],
 
     stores: [
-        'ContentAreas',
-        // 'Students'
         'StudentCompetencies'
     ],
 

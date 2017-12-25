@@ -141,9 +141,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
                 },
                 {
                     xtype: 'slate-cbl-contentareaselector',
-                    emptyText: 'Select',
-                    store: 'ContentAreas',
-                    queryMode: 'local'
+                    emptyText: 'Select'
                 }
             ]
         },
