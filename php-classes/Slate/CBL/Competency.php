@@ -5,6 +5,7 @@ namespace Slate\CBL;
 use DB, Cache, TableNotFoundException;
 use Slate\People\Student;
 
+
 class Competency extends \VersionedRecord
 {
     public static $minimumAverageOffset = -0.5;
@@ -54,7 +55,12 @@ class Competency extends \VersionedRecord
 
     public static $dynamicFields = [
         'ContentArea',
-        'Skills',
+        'Skills' => [
+            'getter' => 'getSkills'
+        ],
+        'skillIds' => [
+            'getter' => 'getSkillIds'
+        ],
         'totalDemonstrationsRequired' => [
             'getter' => 'getTotalDemonstrationsRequired'
         ],
@@ -129,7 +135,7 @@ class Competency extends \VersionedRecord
         try {
             $skillIds = array_map('intval', DB::allValues(
                 'ID',
-                'SELECT Skill.ID FROM `%s` Skill WHERE Skill.CompetencyID = %u',
+                'SELECT ID FROM `%s` WHERE CompetencyID = %u',
                 [
                     Skill::$tableName,
                     $this->ID
@@ -142,6 +148,17 @@ class Competency extends \VersionedRecord
         Cache::store($cacheKey, $skillIds);
 
         return $skillIds;
+    }
+    
+    public function getSkills($forceRefresh = false)
+    {
+        $skills = [];
+
+        foreach (static::getSkillIds($forceRefresh) as $skillId) {
+            $skills[] = Skill::getByID($skillId);
+        }
+
+        return $skills;
     }
 
     private $totalSkills;
@@ -157,6 +174,7 @@ class Competency extends \VersionedRecord
     public function getTotalDemonstrationsRequired($level = null, $forceRefresh = false)
     {
         $cacheKey = "cbl-competency/$this->ID/total-demonstrations-required";
+
         if ($forceRefresh || false === ($levelTotals = Cache::fetch($cacheKey))) {
             try {
                 $levelTotals = [];
