@@ -52,7 +52,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     },
 
 
-
     // entry points
     routes: {
         ':studentUsername': {
@@ -135,20 +134,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
                 }
             }
         });
-
-        // render components
-        /*
-        Ext.suspendLayouts();
-        contentAreaStatusCmp.render('slateapp-viewport');
-        recentProgressCmp.render('slateapp-viewport');
-        dashboardCt.render('slateapp-viewport');
-        Ext.DomHelper.insertBefore('slateapp-viewport', {
-            tag: 'div',
-            id: 'slateapp-header'
-        });
-        appHeader.render('slateapp-header');
-        Ext.resumeLayouts(true);
-        */
     },
 
 
