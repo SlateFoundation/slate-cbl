@@ -9,6 +9,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Summary', {
 
 
     refs: {
+        dashboardCt: 'slate-demonstrations-student-dashboard',
         competenciesSummary: 'slate-demonstrations-student-competenciessummary'
     },
 
@@ -17,13 +18,24 @@ Ext.define('SlateDemonstrationsStudent.controller.Summary', {
     listen: {
         store: {
             '#StudentCompetencies': {
+                beforeload: 'onStudentCompetenciesStoreBeforeLoad',
                 load: 'onStudentCompetenciesStoreLoad'
             }
         }
     },
 
+    control: {
+        dashboardCt: {
+            loadedcontentareachange: 'onLoadedContentAreaChange'
+        }
+    },
+
 
     // event handlers
+    onStudentCompetenciesStoreBeforeLoad: function(store) {
+        this.getCompetenciesSummary().setLoading('Loading content area: '+store.getContentArea());
+    },
+
     onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
         if (!success) {
             return;
@@ -81,5 +93,11 @@ Ext.define('SlateDemonstrationsStudent.controller.Summary', {
             average: Ext.Array.sum(averageValues) / averageValues.length,
             growth: Ext.Array.sum(growthValues) / growthValues.length
         });
+
+        competenciesSummary.setLoading(false);
+    },
+
+    onLoadedContentAreaChange: function(dashboardCt, contentArea) {
+        this.getCompetenciesSummary().setContentAreaTitle(contentArea.get('Title'));
     }
 });
