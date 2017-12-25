@@ -9,8 +9,7 @@ Ext.define('Slate.cbl.store.RecentProgress', {
         student: null,
         contentArea: null,
 
-        pageSize: 20,
-        remoteFilter: false,
+        remoteFilter: true,
         remoteSort: true,
 
         fields: [

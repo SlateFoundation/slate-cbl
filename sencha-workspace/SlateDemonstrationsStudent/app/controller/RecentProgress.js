@@ -4,7 +4,7 @@ Ext.define('SlateDemonstrationsStudent.controller.RecentProgress', {
 
     // controller configuration
     stores: [
-        'RecentProgress@Slate.cbl.store'
+        'RecentProgress'
     ],
 
 
@@ -28,19 +28,13 @@ Ext.define('SlateDemonstrationsStudent.controller.RecentProgress', {
         var recentProgressStore = this.getRecentProgressStore();
 
         recentProgressStore.setStudent(studentUsername);
-
-        if (recentProgressStore.getContentArea()) {
-            recentProgressStore.loadIfDirty();
-        }
+        recentProgressStore.loadIfDirty();
     },
 
     onContentAreaChange: function(dashboardCt, contentAreaCode) {
         var recentProgressStore = this.getRecentProgressStore();
 
         recentProgressStore.setContentArea(contentAreaCode);
-
-        if (recentProgressStore.getStudent()) {
-            recentProgressStore.loadIfDirty();
-        }
+        recentProgressStore.loadIfDirty();
     }
 });
