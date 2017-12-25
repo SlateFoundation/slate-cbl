@@ -165,72 +165,6 @@
     }
 }
 
-.cbl-competency-panels {
-    clear: both;
-    list-style: none;
-    margin: 0 -1.5%;
-    padding: 0;
-}
-
-.cbl-competency-panel {
-    background: none;
-    display: inline-block;
-    margin: 0 1.5% 3%;
-    vertical-align: top;
-    width: 47%;
-
-    .header-title {
-        float: none;
-    }
-
-    .cbl-progress-meter {
-        margin: -1em -1em 0;
-    }
-
-    .stats-ct {
-        margin: 0 -1em;
-    }
-
-    .stats {
-        background-color: rgba(mix($base-color, white), .25);
-        box-shadow:
-            0 -1px 0 rgba(black, .1),
-            inset 0 -1px 0 rgba(black, .1);
-        line-height: (4/3);
-        margin: 0;
-        position: relative;
-        table-layout: fixed;
-        width: 100%;
-
-        td, th {
-            text-align: center;
-        }
-
-        th {
-            background: none;
-            border: 0;
-            color: $muted-color;
-            font-size: .75em;
-            font-weight: normal;
-            letter-spacing: .05em;
-            padding: .75em 0 0;
-            text-transform: uppercase;
-        }
-
-        td {
-            padding: 0 0 .5em;
-        }
-    }
-
-    .panel-body {
-        color: $text-color;
-        font: $body-font;
-        font-size: $font-size;
-        text-align: left;
-        text-shadow: none;
-    }
-}
-
 .cbl-skill-meter {
     list-style: none;
     margin: 0;
@@ -355,13 +289,4 @@
 
 .cbl-skill-demo-overridden {
     display: none;
-}
-
-.cbl-contentarea-status {
-    margin: 1em 1.5% 3% 0;
-    width: percentage(2/3) - 1.5;
-
-    .cbl-progress-meter {
-        height: 3em;
-    }
 }

@@ -6,7 +6,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         // 'Slate.cbl.store.Competencies',
         // 'Slate.cbl.store.Completions',
         // 'Slate.cbl.store.DemonstrationSkills',
-        'SlateDemonstrationsStudent.view.ContentAreaStatus',
+        'SlateDemonstrationsStudent.view.CompetenciesSummary',
         'SlateDemonstrationsStudent.view.RecentProgress',
         'SlateDemonstrationsStudent.view.CardsContainer',
 
@@ -77,12 +77,12 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
 
         /**
-         * @cfg {SlateDemonstrationsStudent.view.ContentAreaStatus|Object|boolean}
-         * Instance or configuration for content area status component.
+         * @cfg {SlateDemonstrationsStudent.view.CompetenciesSummary|Object|boolean}
+         * Instance or configuration for competencies summary component.
          *
          * Setting boolean values change visibility.
          */
-        contentAreaStatus: false,
+        competenciesSummary: false,
 
         /**
          * @cfg {SlateDemonstrationsStudent.view.RecentProgress|Object|boolean}
@@ -161,7 +161,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
         Ext.suspendLayouts();
         me.setPlaceholder(!contentAreaSet);
-        me.setContentAreaStatus(contentAreaSet);
+        me.setCompetenciesSummary(contentAreaSet);
         me.setRecentProgress(contentAreaSet);
         me.setCardsCt(contentAreaSet);
         Ext.resumeLayouts(true);
@@ -170,19 +170,19 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
     },
 
-    updateContentArea: function(contentArea, oldContentArea) {
+    updateLoadedContentArea: function(contentArea, oldContentArea) {
         console.info('updateContentArea(%o, %o)', contentArea, oldContentArea);
         this.fireEvent('loadedcontentareachange', this, contentArea, oldContentArea);
     },
 
-    applyContentAreaStatus: function(contentAreaStatus, oldContentAreaStatus) {
-        if (typeof contentAreaStatus === 'boolean') {
-            contentAreaStatus = {
-                hidden: !contentAreaStatus
+    applyCompetenciesSummary: function(competenciesSummary, oldCompetenciesSummary) {
+        if (typeof competenciesSummary === 'boolean') {
+            competenciesSummary = {
+                hidden: !competenciesSummary
             };
         }
 
-        return Ext.factory(contentAreaStatus, 'SlateDemonstrationsStudent.view.ContentAreaStatus', oldContentAreaStatus);
+        return Ext.factory(competenciesSummary, 'SlateDemonstrationsStudent.view.CompetenciesSummary', oldCompetenciesSummary);
     },
 
     applyRecentProgress: function(recentProgress, oldRecentProgress) {
@@ -288,7 +288,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.callParent();
 
         me.add([
-            me.getContentAreaStatus(),
+            me.getCompetenciesSummary(),
             me.getRecentProgress(),
             me.getCardsCt()
         ]);

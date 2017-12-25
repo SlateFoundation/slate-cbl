@@ -1,8 +1,11 @@
-Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
+Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
     extend: 'Ext.Component',
-    xtype: 'slate-demonstrations-student-contentareastatus',
+    xtype: 'slate-demonstrations-student-competenciessummary',
     requires: [
+        'SlateDemonstrationsStudent.view.CompetencyCard', // using its CSS classes
+        'Slate.cbl.widget.SimplePanel' // using its CSS classes
     ],
+
 
     config: {
         // required inputs
@@ -17,56 +20,55 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
         // optional config
         percentFormat: '0%',
         averageFormat: '0.##',
-        growthFormat: '0.# yr'
+        growthFormat: '0.# yr',
     },
 
-    cls: ['cbl-competency-panel', 'cbl-contentarea-status'],
+
+    cls: ['slate-demonstrations-student-competencycard'],
+    componentCls: 'slate-demonstrations-student-competenciessummary',
     renderTpl: [
-        '<header class="panel-header">',
-            '<h3 class="header-title">My <span id="{id}-contentAreaTitleEl" data-ref="contentAreaTitleEl">{contentAreaTitle}</span> Competencies</h3>',
+        '<header class="slate-simplepanel-header">',
+        '    <div class="slate-simplepanel-title">My <span id="{id}-contentAreaTitleEl" data-ref="contentAreaTitleEl">{contentAreaTitle}</span> Competencies</div>',
         '</header>',
 
-        '<div class="panel-body">',
-            '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter">',
-                '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
-                '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">Y{level - 8}</tpl></div>',
-                '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
-            '</div>',
+        '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter">',
+        '    <div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
+        '    <div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
+        '    <div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">Y{level - 8}</tpl></div>',
+        '    <div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
+        '</div>',
 
-            '<div class="stats-ct">',
-                '<table class="stats">',
-                    '<thead>',
-                        '<th>Missed Skills</th>',
-                        '<th>Overall Performance Level</th>',
-                        '<th>Overall Growth</th>',
-                    '</thead>',
-
-                    '<tbody>',
-                        '<td id="{id}-missedEl" data-ref="missedEl">',
-                            '<tpl if="missed !== null">',
-                                '{missed}',
-                            '<tpl else>',
-                                '&mdash;',
-                            '</tpl>',
-                        '</td>',
-                        '<td id="{id}-averageEl" data-ref="averageEl">',
-                            '<tpl if="average">',
-                                '{average:number(values.averageFormat)}',
-                            '<tpl else>',
-                                '&mdash;',
-                            '</tpl>',
-                        '</td>',
-                        '<td id="{id}-growthEl" data-ref="growthEl">',
-                            '<tpl if="growth">',
-                                '{growth:number(values.growthFormat)}',
-                            '<tpl else>',
-                                '&mdash;',
-                            '</tpl>',
-                        '</td>',
-                    '</tbody>',
-                '</table>',
-            '</div>',
+        '<div class="stats-ct">',
+        '    <table class="stats">',
+        '        <thead>',
+        '            <th>Missed Skills</th>',
+        '            <th>Overall Performance Level</th>',
+        '            <th>Overall Growth</th>',
+        '        </thead>',
+        '        <tbody>',
+        '            <td id="{id}-missedEl" data-ref="missedEl">',
+        '                <tpl if="missed !== null">',
+        '                    {missed}',
+        '                <tpl else>',
+        '                    &mdash;',
+        '                </tpl>',
+        '            </td>',
+        '            <td id="{id}-averageEl" data-ref="averageEl">',
+        '                <tpl if="average">',
+        '                    {average:number(values.averageFormat)}',
+        '                <tpl else>',
+        '                    &mdash;',
+        '                </tpl>',
+        '            </td>',
+        '            <td id="{id}-growthEl" data-ref="growthEl">',
+        '                <tpl if="growth">',
+        '                    {growth:number(values.growthFormat)}',
+        '                <tpl else>',
+        '                    &mdash;',
+        '                </tpl>',
+        '            </td>',
+        '        </tbody>',
+        '    </table>',
         '</div>'
     ],
     childEls: [
@@ -82,7 +84,7 @@ Ext.define('SlateDemonstrationsStudent.view.ContentAreaStatus', {
     ],
 
 
-    // component template methods
+    // component lifecycle
     initRenderData: function() {
         var me = this;
 

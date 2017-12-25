@@ -6,15 +6,11 @@ Ext.define('SlateDemonstrationsStudent.view.CardsContainer', {
     ],
 
 
-    config: {
-        autoEl: {
-            tag: 'ul',
-            cls: 'cbl-competency-panels'
-        },
-        defaults: {
-            xtype: 'slate-demonstrations-student-competencycard',
-            autoEl: 'li'
-        },
-        layout: 'container'
-    }
+    autoEl: 'ul',
+    componentCls: 'slate-demonstrations-student-cardsct',
+    defaults: {
+        xtype: 'slate-demonstrations-student-competencycard',
+        autoEl: 'li'
+    },
+    layout: 'container'
 });
