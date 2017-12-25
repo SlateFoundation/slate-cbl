@@ -6,20 +6,6 @@ Ext.define('Slate.cbl.widget.StudentSelector', {
     ],
 
 
-    store: {
-        model: 'Slate.model.person.Person',
-        pageSize: 0,
-        remoteSort: false,
-        sorters: [{
-            property: 'SortName',
-            direction: 'ASC'
-        }],
-        proxy: {
-            type: 'slate-people',
-            summary: true
-        }
-    },
-
     config: {
         componentCls: 'slate-cbl-studentselector',
 
@@ -47,6 +33,21 @@ Ext.define('Slate.cbl.widget.StudentSelector', {
 
                 return true;
             }
+        }
+    },
+
+
+    store: {
+        model: 'Slate.model.person.Person',
+        pageSize: 0,
+        remoteSort: false,
+        sorters: [{
+            property: 'SortName',
+            direction: 'ASC'
+        }],
+        proxy: {
+            type: 'slate-people',
+            summary: true
         }
     }
 });
