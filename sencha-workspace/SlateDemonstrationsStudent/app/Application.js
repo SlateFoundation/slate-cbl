@@ -14,7 +14,8 @@ Ext.define('SlateDemonstrationsStudent.Application', {
     defaultToken: 'me',
 
     controllers: [
-        'Dashboard'
+        'Dashboard',
+        'RecentProgress'
     ],
 
     onAppUpdate: function () {
