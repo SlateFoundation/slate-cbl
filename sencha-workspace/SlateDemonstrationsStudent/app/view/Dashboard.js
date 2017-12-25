@@ -10,8 +10,10 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'SlateDemonstrationsStudent.view.RecentProgress',
         'SlateDemonstrationsStudent.view.CardsContainer',
 
+        /* global Slate */
         'Slate.cbl.widget.StudentSelector',
-        'Slate.cbl.widget.ContentAreaSelector'
+        'Slate.cbl.widget.ContentAreaSelector',
+        'Slate.cbl.model.ContentArea'
     ],
 
 
@@ -170,8 +172,26 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
     },
 
+    applyLoadedContentArea: function(contentArea, oldContentArea) {
+
+        if (!contentArea) {
+            return null;
+        }
+
+        if (!contentArea.isModel) {
+            if (oldContentArea && contentArea.ID == oldContentArea.getId()) {
+                oldContentArea.set(contentArea, { dirty: false });
+                return oldContentArea;
+            }
+
+            contentArea = Slate.cbl.model.ContentArea.create(contentArea);
+        }
+
+        return contentArea;
+    },
+
     updateLoadedContentArea: function(contentArea, oldContentArea) {
-        console.info('updateContentArea(%o, %o)', contentArea, oldContentArea);
+        console.info('updateLoadedContentArea(%o, %o)', contentArea, oldContentArea);
         this.fireEvent('loadedcontentareachange', this, contentArea, oldContentArea);
     },
 

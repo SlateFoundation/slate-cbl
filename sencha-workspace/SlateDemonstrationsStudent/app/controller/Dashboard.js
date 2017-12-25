@@ -75,6 +75,11 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             '#': {
                 unmatchedroute: 'onUnmatchedRoute'
             }
+        },
+        store: {
+            '#StudentCompetencies': {
+                load: 'onStudentCompetenciesStoreLoad'
+            }
         }
     },
 
@@ -151,6 +156,20 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     // event handlers
     onUnmatchedRoute: function(token) {
         Ext.Logger.warn('Unmatched route: '+token);
+    },
+
+    onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
+        if (!success) {
+            return;
+        }
+
+        // eslint-disable-next-line vars-on-top
+        var rawData = store.getProxy().getReader().rawData || {},
+            contentAreaData = rawData.ContentArea;
+
+        if (contentAreaData) {
+            this.getDashboardCt().setLoadedContentArea(contentAreaData);
+        }
     },
 
     onStudentChange: function(dashboardCt, studentUsername) {
