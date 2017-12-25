@@ -85,7 +85,7 @@ Ext.define('Slate.cbl.model.Skill', {
             return total;
         }
 
-        return requirements['default']; // eslint-disable-dot-notation
+        return requirements['default']; // eslint-disable-line dot-notation
     },
 
     proxy: 'slate-cbl-skills'
