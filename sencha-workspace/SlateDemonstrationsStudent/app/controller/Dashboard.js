@@ -15,6 +15,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     stores: [
         'ContentAreas',
         // 'Students'
+        'StudentCompetencies'
     ],
 
 
@@ -154,12 +155,12 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
     onStudentChange: function(dashboardCt, studentUsername) {
         var me = this,
-            studentCombo = me.getStudentSelector();
-            // sectionsStore = me.getSectionsStore();
+            studentCombo = me.getStudentSelector(),
+            studentCompetenciesStore = me.getStudentCompetenciesStore();
 
-        // (re)load content areas list
-        // sectionsStore.getProxy().setExtraParam('enrolled_user', studentUsername || 'current');
-        // sectionsStore.load();
+        // (re)load student competencies store
+        studentCompetenciesStore.setStudent(studentUsername);
+        studentCompetenciesStore.loadIfDirty();
 
         // push value to selector
         studentCombo.setValue(studentUsername);
@@ -175,8 +176,14 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     },
 
     onContentAreaChange: function(dashboardCt, contentAreaCode) {
-        var me = this;
+        var me = this,
+            studentCompetenciesStore = me.getStudentCompetenciesStore();
 
+        // (re)load student competencies store
+        studentCompetenciesStore.setContentArea(contentAreaCode);
+        studentCompetenciesStore.loadIfDirty();
+
+        // push value to selector
         me.getContentAreaSelector().setValue(contentAreaCode);
     },
 
