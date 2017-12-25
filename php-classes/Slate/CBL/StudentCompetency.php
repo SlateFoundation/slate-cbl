@@ -67,6 +67,8 @@ class StudentCompetency extends \ActiveRecord
     ];
 
     public static $dynamicFields = [
+        'Student',
+        'Competency',
         'completion' => [
             'getter' => 'getCompletion'
         ],

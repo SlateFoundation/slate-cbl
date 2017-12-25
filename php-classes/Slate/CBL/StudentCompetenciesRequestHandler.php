@@ -71,10 +71,17 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
 
             $conditions['CompetencyID'] = $Competency->ID;
             $responseData['Competency'] = $Competency;
+        } elseif (!empty($_GET['content_area'])) {
+            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content_area'])) {
+                return static::throwNotFoundError('Content area not found');
+            }
+
+            $conditions['CompetencyID'] = [ 'values' => $ContentArea->getCompetencyIds() ];
+            $responseData['ContentArea'] = $ContentArea;
         }
 
 
-        // apply competency filter
+        // apply level filter
         if (!empty($_GET['level'])) {
             if (!ctype_digit($_GET['level'])) {
                 return static::throwInvalidRequestError('Level must be numeric');
@@ -84,13 +91,13 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
         }
 
 
-        // apply competency filter
-        if (!empty($_GET['entered-via'])) {
-            if (!in_array($_GET['entered-via'], StudentCompetency::getFieldOptions('EnteredVia', 'values'))) {
+        // apply entered_via filter
+        if (!empty($_GET['entered_via'])) {
+            if (!in_array($_GET['entered_via'], StudentCompetency::getFieldOptions('EnteredVia', 'values'))) {
                 return static::throwInvalidRequestError('Entered Via must be numeric');
             }
 
-            $conditions['EnteredVia'] = $_GET['entered-via'];
+            $conditions['EnteredVia'] = $_GET['entered_via'];
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);

@@ -35,6 +35,13 @@
                 placeholder='ABC.2'
             }
 
+            {field
+                inputName=content_area
+                default=$.get.content_area
+                label='Content area'
+                placeholder='ABC'
+            }
+
             {selectField
                 inputName=level
                 default=$.get.level
@@ -45,8 +52,8 @@
             }
 
             {selectField
-                inputName=entered-via
-                default=$.get.entered-via
+                inputName=entered_via
+                default=$.get.entered_via
                 label='Entered Via'
                 options=Slate\CBL\StudentCompetency::getFieldOptions(EnteredVia, values)
                 useKeyAsValue=no
