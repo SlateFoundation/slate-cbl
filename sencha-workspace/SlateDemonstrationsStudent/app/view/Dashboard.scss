@@ -1,3 +1,5 @@
+$cbl-progress-missed-color: dynamic(red);
+
 .cbl-level-colored {
     background-color: #666;
     color: white;
@@ -152,16 +154,6 @@
     .is-average-low & {
         background: red;
         padding: 0 .3em;
-    }
-}
-
-.explainer {
-    color: #888;
-    font-style: italic;
-    margin: 1em 0;
-
-    p {
-        margin: 0 0 1em;
     }
 }
 
