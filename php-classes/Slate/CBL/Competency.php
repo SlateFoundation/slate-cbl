@@ -177,29 +177,28 @@ class Competency extends \VersionedRecord
 
         if ($forceRefresh || false === ($levelTotals = Cache::fetch($cacheKey))) {
             try {
-                $levelTotals = [];
-                $totals = DB::allValues('DemonstrationsRequired',
-                    'SELECT Skill.DemonstrationsRequired FROM `%s` Skill WHERE Skill.CompetencyID = %u',
-                    [
-                        Skill::$tableName,
-                        $this->ID
-                    ]
-                );
+                $skills = $this->getSkills();
 
-                $uniqueLevels = [];
-                foreach ($totals as &$total) {
-                    $total = json_decode($total, true);
-                    $uniqueLevels = array_unique(array_merge($uniqueLevels, array_keys($total)));
+                // accumulate available levels
+                $collectedLevel = [];
+                foreach ($skills as $Skill) {
+                    $collectedLevel = array_merge($collectedLevel, array_keys($Skill->DemonstrationsRequired));
                 }
+                $collectedLevel = array_unique($collectedLevel);
 
-                foreach ($uniqueLevels as $uniqueLevel) {
+                // sum required demonstrations
+                $levelTotals = [];
+                foreach ($collectedLevel as $collectedLeve) {
+                    $levelTotals[$collectedLeve] = 0;
 
-                    $levelTotals[$uniqueLevel] = 0;
-                    foreach ($totals as $values) {
-                        $levelTotals[$uniqueLevel] += isset($values[$uniqueLevel]) ? $values[$uniqueLevel] : $values['default'];
+                    foreach ($skills as $Skill) {
+                        if (isset($Skill->DemonstrationsRequired[$collectedLeve])) {
+                            $levelTotals[$collectedLeve] += $Skill->DemonstrationsRequired[$collectedLeve];
+                        } else {
+                            $levelTotals[$collectedLeve] += $Skill->DemonstrationsRequired['default'];
+                        }
                     }
                 }
-
             } catch (TableNotFoundException $e) {
                 $levelTotals = [];
             }
