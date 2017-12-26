@@ -93,6 +93,9 @@ class StudentCompetency extends \ActiveRecord
         'effectiveDemonstrationsData' => [
             'getter' => 'getEffectiveDemonstrationsData'
         ],
+        'isLevelComplete' => [
+            'getter' => 'isLevelComplete'
+        ],
         'growth' => [
             'getter' => 'getGrowth'
         ]
