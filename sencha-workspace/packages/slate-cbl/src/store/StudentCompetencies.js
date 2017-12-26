@@ -1,8 +1,5 @@
 Ext.define('Slate.cbl.store.StudentCompetencies', {
     extend: 'Ext.data.Store',
-    requires: [
-        'Slate.cbl.proxy.StudentCompetencies'
-    ],
 
 
     model: 'Slate.cbl.model.StudentCompetency',
@@ -11,8 +8,7 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
         contentArea: null,
 
         remoteFilter: false,
-        remoteSort: false,
-        proxy: 'slate-cbl-studentcompetencies'
+        remoteSort: false
     },
 
 

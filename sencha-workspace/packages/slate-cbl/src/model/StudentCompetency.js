@@ -1,9 +1,44 @@
 Ext.define('Slate.cbl.model.StudentCompetency', {
     extend: 'Ext.data.Model',
+    requires: [
+        'Slate.cbl.proxy.StudentCompetencies',
+        'Ext.data.identifier.Negative',
+        'Ext.data.validator.Range'
+    ],
 
 
     // model config
+    idProperty: 'ID',
+    identifier: 'negative',
+
     fields: [
+
+        // ActiveRecord fields
+        {
+            name: 'ID',
+            type: 'int',
+            allowNull: true
+        },
+        {
+            name: 'Class',
+            type: 'string',
+            defaultValue: 'Slate\\CBL\\StudentCompetency'
+        },
+        {
+            name: 'Created',
+            type: 'date',
+            dateFormat: 'timestamp',
+            allowNull: true,
+            persist: false
+        },
+        {
+            name: 'CreatorID',
+            type: 'int',
+            allowNull: true,
+            persist: false
+        },
+
+        // StudentCompetency fields
         {
             name: 'StudentID',
             type: 'int'
@@ -22,44 +57,25 @@ Ext.define('Slate.cbl.model.StudentCompetency', {
         },
         {
             name: 'BaselineRating',
-            type: 'int',
-            allowNull: true
-        },
-
-
-        // virtual fields
-        {
-            name: 'demonstrationsLogged',
-            type: 'int',
-            allowNull: true
-        },
-        {
-            name: 'demonstrationsComplete',
-            type: 'int',
-            allowNull: true
-        },
-        {
-            name: 'demonstrationsAverage',
-            type: 'float',
-            allowNull: true
-        },
-        {
-            name: 'growth',
             type: 'float',
             allowNull: true
         }
     ],
 
+    proxy: 'slate-cbl-studentcompetencies',
 
-    // generate compound IDs
-    statics: {
-        getIdFromData: function (data) {
-            return data.StudentID + '-' + data.CompetencyID;
+    validators: [
+        {
+            field: 'StudentID',
+            type: 'min',
+            min: 1,
+            emptyMessage: 'StudentID is required'
+        },
+        {
+            field: 'CompetencyID',
+            type: 'min',
+            min: 1,
+            emptyMessage: 'CompetencyID is required'
         }
-    },
-
-    constructor: function (data) {
-        data.id = data.id || this.self.getIdFromData(data);
-        this.callParent(arguments);
-    }
+    ]
 });
