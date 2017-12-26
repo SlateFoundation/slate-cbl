@@ -42,7 +42,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     componentCls: 'slate-demonstrations-student-competencycard',
     renderTpl: [
         '<header class="panel-header">',
-        '    <h3 id="{id}-descriptorEl" data-ref="descriptorEl" class="header-title">{competency.Descriptor:htmlEncode}</h3>',
+        '    <h3 id="{id}-descriptorEl" data-ref="descriptorEl" class="header-title">{competency.Code} <small>{competency.Descriptor:htmlEncode}</small></h3>',
         '</header>',
 
         '<div class="panel-body">',
