@@ -5,6 +5,15 @@
     vertical-align: top;
     width: 47%;
 
+    .explainer {
+        font-style: italic;
+        margin: 1em 0;
+
+        p {
+            margin: 0 0 1em;
+        }
+    }
+
     .stats {
         background-color: rgba(mix($base-color, white), .25);
         box-shadow:
@@ -34,13 +43,5 @@
         td {
             padding: 0 0 .5em;
         }
-    }
-
-    .panel-body {
-        color: $text-color;
-        font: $body-font;
-        font-size: $font-size;
-        text-align: left;
-        text-shadow: none;
     }
 }

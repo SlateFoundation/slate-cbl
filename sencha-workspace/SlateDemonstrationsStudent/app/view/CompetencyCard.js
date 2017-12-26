@@ -39,61 +39,68 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     },
 
 
+    cls: 'slate-simplepanel',
     componentCls: 'slate-demonstrations-student-competencycard',
     renderTpl: [
-        '<header class="panel-header">',
-        '    <h3 id="{id}-descriptorEl" data-ref="descriptorEl" class="header-title">{competency.Code} <small>{competency.Descriptor:htmlEncode}</small></h3>',
+        '<header class="slate-simplepanel-header">',
+        '    <div  class="slate-simplepanel-title">',
+        '        <span id="{id}-codeEl" data-ref="codeEl">{competency.Code:htmlEncode}</span>',
+        '        <small id="{id}-descriptorEl" data-ref="descriptorEl">{competency.Descriptor:htmlEncode}</small>',
+        '    </div>',
         '</header>',
 
-        '<div class="panel-body">',
-        '    <div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
-        '        <div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
-        '        <div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-        '        <div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{level - 8}</div>',
-        '        <div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
-        '    </div>',
+        '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
+        '    <div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
+        '    <div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
+        '    <div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{level - 8}</div>',
+        '    <div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
+        '</div>',
 
-        '    <div class="stats-ct">',
-        '        <table class="stats">',
-        '            <thead>',
-        '                <th>Baseline Score</th>',
-        '                <th>Performance Level</th>',
-        '                <th>My Growth</th>',
-        '            </thead>',
-        '            <tbody>',
-        '                <td id="{id}-baselineRatingEl" data-ref="baselineRatingEl">',
-        '                    <tpl if="baselineRating">',
-        '                        {baselineRating:number(values.averageFormat)}',
-        '                    <tpl else>',
-        '                        &mdash;',
-        '                    </tpl>',
-        '                </td>',
-        '                <td id="{id}-averageEl" data-ref="averageEl">',
-        '                    <tpl if="demonstrationsAverage">',
-        '                        {demonstrationsAverage:number(values.averageFormat)}',
-        '                    <tpl else>',
-        '                        &mdash;',
-        '                    </tpl>',
-        '                </td>',
-        '                <td id="{id}-growthEl" data-ref="growthEl">',
-        '                    <tpl if="growth">',
-        '                        {growth:number(values.growthFormat)}',
-        '                    <tpl else>',
-        '                        &mdash;',
-        '                    </tpl>',
-        '                </td>',
-        '            </tbody>',
-        '        </table>',
-        '    </div>',
+        '<div class="stats-ct">',
+        '    <table class="stats">',
+        '        <thead>',
+        '            <th>Baseline Score</th>',
+        '            <th>Performance Level</th>',
+        '            <th>My Growth</th>',
+        '        </thead>',
+        '        <tbody>',
+        '            <td id="{id}-baselineRatingEl" data-ref="baselineRatingEl">',
+        '                <tpl if="baselineRating">',
+        '                    {baselineRating:number(values.averageFormat)}',
+        '                <tpl else>',
+        '                    &mdash;',
+        '                </tpl>',
+        '            </td>',
+        '            <td id="{id}-averageEl" data-ref="averageEl">',
+        '                <tpl if="demonstrationsAverage">',
+        '                    {demonstrationsAverage:number(values.averageFormat)}',
+        '                <tpl else>',
+        '                    &mdash;',
+        '                </tpl>',
+        '            </td>',
+        '            <td id="{id}-growthEl" data-ref="growthEl">',
+        '                <tpl if="growth">',
+        '                    {growth:number(values.growthFormat)}',
+        '                <tpl else>',
+        '                    &mdash;',
+        '                </tpl>',
+        '            </td>',
+        '        </tbody>',
+        '    </table>',
+        '</div>',
 
-        '    <div class="explainer">',
-        '        <p id="{id}-statementEl" data-ref="statementEl">{competency.Statement:htmlEncode}</p>',
-        '    </div>',
+        '<div class="slate-simplepanel-body explainer">',
+        '    <p id="{id}-statementEl" data-ref="statementEl">{competency.Statement:htmlEncode}</p>',
+        '</div>',
 
-        '    <ul id="{id}-skillsCt" data-ref="skillsCt" class="cbl-skill-meter"></ul>',
-        '</div>'
+        '<ul id="{id}-skillsCt" data-ref="skillsCt" class="cbl-skill-meter">',
+        '    <tpl if="skills">',
+        '        {% values.skillsTpl.applyOut(values.skills, out); %}',
+        '    </tpl>',
+        '</ul>'
     ],
     childEls: [
+        'codeEl',
         'descriptorEl',
         'meterEl',
         'meterBarEl',
@@ -119,14 +126,16 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
     // local subtemplates
     skillsTpl: [
-        '<tpl foreach=".">',
+        '<tpl for=".">',
         '    <li class="cbl-skill">',
-        '        <h5 class="cbl-skill-name">{skill.Descriptor:htmlEncode}</h5>',
+        '        <h5 class="cbl-skill-name">{Descriptor:htmlEncode}</h5>',
 
-        '        <ul class="cbl-skill-demos" data-skill="{skill.ID}">',
+        '        <ul class="cbl-skill-demos" data-skill="{ID}">',
+
+                        // TODO: get overrides into data and test all this out, maybe don't use this.
         '            {% this.standardOverridden = false %}',
 
-        '            <tpl for="demonstrations">',
+        '            <tpl for="demonstrations">{%debugger%}',
         '                <li ',
         '                    class="',
         '                        cbl-skill-demo',
@@ -153,7 +162,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         '            </li>',
         '        </ul>',
 
-        '        <div class="cbl-skill-description"><p>{skill.Statement}</p></div>',
+        '        <div class="cbl-skill-description"><p>{Statement}</p></div>',
         '    </li>',
         '</tpl>'
     ],
@@ -169,10 +178,11 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     },
 
     initRenderData: function() {
-        var me = this;
+        var me = this,
+            competency = me.getCompetency();
 
         return Ext.apply(this.callParent(), {
-            competency: me.getCompetency().getData(),
+            competency: competency.getData(),
 
             percentFormat: me.getPercentFormat(),
             averageFormat: me.getAverageFormat(),
@@ -184,7 +194,10 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             demonstrationsAverage: me.getDemonstrationsAverage(),
             isAverageLow: me.getIsAverageLow(),
             baselineRating: me.getBaselineRating(),
-            growth: me.getGrowth()
+            growth: me.getGrowth(),
+
+            skillsTpl: me.lookupTpl('skillsTpl'),
+            skills: competency ? me.buildSkillsTplData(competency) : null
         });
     },
 
@@ -192,31 +205,31 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     // config handlers
     updateCompetency: function(competency) {
         var me = this,
-            htmlEncode = Ext.util.Format.htmlEncode;
+            htmlEncode = Ext.util.Format.htmlEncode,
+            studentCompetency = competency.get('currentStudentCompetency'),
+            demonstrationsAverage = studentCompetency.get('demonstrationsAverage'),
+            level = studentCompetency.get('Level'),
+            demonstrationsRequired = competency.getTotalDemonstrationsRequired(level),
+            percentComplete = 100 * studentCompetency.get('demonstrationsComplete') / demonstrationsRequired;
+
+        Ext.suspendLayouts();
+
+        me.setLevel(level);
+        me.setPercentComplete(percentComplete);
+        me.setPercentMissed(100 * studentCompetency.get('demonstrationsMissed') / demonstrationsRequired);
+        me.setDemonstrationsAverage(demonstrationsAverage);
+        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (level + competency.get('minimumAverageOffset')));
+        me.setBaselineRating(studentCompetency.get('BaselineRating'));
+        me.setGrowth(studentCompetency.get('growth'));
 
         if (me.rendered) {
+            me.codeEl.update(htmlEncode(competency.get('Code')));
             me.descriptorEl.update(htmlEncode(competency.get('Descriptor')));
             me.statementEl.update(htmlEncode(competency.get('Statement')));
+            me.lookupTpl('skillsTpl').overwrite(me.skillsCt, me.buildSkillsTplData(competency));
         }
-    },
 
-    updateCompletion: function(completion) {
-        var me = this,
-            competency = me.getCompetency(),
-            demonstrationsAverage = completion.get('demonstrationsAverage'),
-            currentLevel = completion.get('currentLevel'),
-            demonstrationsRequired = competency.getTotalDemonstrationsRequired(currentLevel),
-            percentComplete = 100 * completion.get('demonstrationsComplete') / demonstrationsRequired;
-
-        me.setLevel(currentLevel);
-        me.setPercentComplete(percentComplete);
-        me.setPercentMissed(100 * completion.get('demonstrationsMissed') / demonstrationsRequired);
-        me.setDemonstrationsAverage(demonstrationsAverage);
-        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (currentLevel + competency.get('minimumAverageOffset')));
-        me.setBaselineRating(completion.get('baselineRating'));
-        me.setGrowth(completion.get('growth'));
-
-        me.loadSkills();
+        Ext.resumeLayouts(true);
     },
 
     updateLevel: function(newLevel, oldLevel) {
@@ -316,70 +329,29 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
 
     // public methods
-    loadSkills: function() {
-        var me = this,
-            competency = me.getCompetency(),
-            demoSkillsStore = me.getDemonstrationSkillsStore();
+    buildSkillsTplData: function(competency) {
+        var studentCompetency = competency.get('currentStudentCompetency'),
+            level = studentCompetency && studentCompetency.get('Level'),
+            demonstrationsBySkill = studentCompetency && studentCompetency.get('effectiveDemonstrationsData'),
 
-        me.setSkillsStatus('loading');
+            skills = competency.get('Skills'),
+            skillsLength = skills.length,
+            skillIndex = 0, skill,
+            demonstrationsRequired, demonstrations,
+            tplData = [];
 
-        demoSkillsStore.loadByStudentsAndCompetencies(me.getCompletion().get('StudentID'), competency.getId(), {
-            callback: function(demoSkills) {
-                me.refreshSkills();
-            }
-        });
+        for (; skillIndex < skillsLength; skillIndex++) {
+            skill = skills[skillIndex];
+            demonstrationsRequired = skill.DemonstrationsRequired;
 
-        Slate.cbl.data.Skills.getAllByCompetency(competency, function(skills) {
-            me.loadedSkills = skills;
-            me.refreshSkills();
-        });
-    },
+            demonstrations = Ext.Array.clone(demonstrationsBySkill && demonstrationsBySkill[skill.ID] || []);
+            demonstrations.length = level && demonstrationsRequired[level] || demonstrationsRequired.default || 1;
 
-    refreshSkills: function() {
-        var me = this;
-
-        if (!me.loadedSkills || !me.getDemonstrationSkillsStore().isLoaded() || !me.rendered) {
-            return;
+            tplData.push(Ext.applyIf({
+                demonstrations: demonstrations
+            }, skill));
         }
 
-        me.lookupTpl('skillsTpl').overwrite(me.skillsCt, me.getSkillsData());
-
-        me.setSkillsStatus('loaded');
-    },
-
-    getSkillsData: function() {
-        var me = this,
-            skills = me.loadedSkills,
-            skillsLen = skills.getCount(), skillIndex = 0, skill,
-            demoSkillsStore = me.getDemonstrationSkillsStore(),
-            demoSkillsLen = demoSkillsStore.getCount(), demoSkillIndex = 0, demoSkill,
-            skillsData = {}, skillData, demonstrationsRequired;
-
-        // index skills by ID and create empty demonstrations array
-        for (; skillIndex < skillsLen; skillIndex++) {
-            skill = skills.getAt(skillIndex);
-            skillsData[skill.getId()] = {
-                skill: skill.getData(),
-                demonstrations: []
-            };
-        }
-
-        // group demonstrations by skill
-        for (; demoSkillIndex < demoSkillsLen; demoSkillIndex++) {
-            demoSkill = demoSkillsStore.getAt(demoSkillIndex);
-            skillsData[demoSkill.get('SkillID')].demonstrations.push(demoSkill.getData());
-        }
-
-        // sort and pad demonstrations arrays
-        for (skillIndex in skillsData) {
-            skillData = skillsData[skillIndex];
-            demonstrationsRequired = skills.getByKey(skillIndex).getTotalDemonstrationsRequired(me.getLevel());
-
-            skillData.demonstrations = Slate.cbl.Util.sortDemonstrations(skillData.demonstrations, demonstrationsRequired);
-            Slate.cbl.Util.padArray(skillData.demonstrations, demonstrationsRequired);
-            skillData.isComplete = skillData.demonstrations.length == demonstrationsRequired && (skillData.demonstrations.length === 0 || skillData.demonstrations[demonstrationsRequired - 1].DemonstratedLevel);
-        }
-
-        return skillsData;
+        return tplData;
     }
 });
