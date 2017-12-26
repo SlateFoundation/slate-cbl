@@ -46,6 +46,12 @@ class ContentArea extends \ActiveRecord
         ],
     ];
 
+    public static $summaryFields = [
+        'ID' => true,
+        'Code' => true,
+        'Title' => true
+    ];
+
     public function getHandle()
     {
         return $this->Code;
