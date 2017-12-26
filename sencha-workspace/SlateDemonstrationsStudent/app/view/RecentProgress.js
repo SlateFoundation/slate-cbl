@@ -1,5 +1,5 @@
 Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
-    extend: 'Slate.cbl.widget.SimplePanel',
+    extend: 'Slate.ui.SimplePanel',
     xtype: 'slate-demonstrations-student-recentprogress',
     requires: [
         'Slate.cbl.store.RecentProgress'

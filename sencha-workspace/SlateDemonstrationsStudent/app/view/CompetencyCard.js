@@ -4,10 +4,10 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     requires: [
         'Ext.util.Format',
 
-        'Slate.cbl.widget.SimplePanel', // using its CSS classes
-        'Slate.cbl.Util',
-        'Slate.cbl.data.Skills',
-        'Slate.cbl.store.DemonstrationSkills'
+        'Slate.ui.SimplePanel', // using its CSS classes
+        // 'Slate.cbl.Util',
+        // 'Slate.cbl.data.Skills',
+        // 'Slate.cbl.store.DemonstrationSkills'
     ],
 
 

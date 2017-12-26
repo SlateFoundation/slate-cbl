@@ -1,6 +1,6 @@
 // TODO: move into SlateTasksStudent app
 Ext.define('Slate.cbl.view.student.TaskHistory', {
-    extend: 'Slate.cbl.widget.SimplePanel',
+    extend: 'Slate.ui.SimplePanel',
     xtype: 'slate-taskhistory',
 
 

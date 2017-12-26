@@ -1,5 +1,5 @@
 Ext.define('SlateTasksStudent.view.TaskTree', {
-    extend: 'Slate.cbl.widget.SimplePanel',
+    extend: 'Slate.ui.SimplePanel',
     xtype: 'slate-tasks-student-tasktree',
     requires: [
         'SlateTasksStudent.view.TaskFiltersMenu',

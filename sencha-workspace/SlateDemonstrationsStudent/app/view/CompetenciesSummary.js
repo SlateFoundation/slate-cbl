@@ -3,7 +3,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
     xtype: 'slate-demonstrations-student-competenciessummary',
     requires: [
         'SlateDemonstrationsStudent.view.CompetencyCard', // using its CSS classes
-        'Slate.cbl.widget.SimplePanel' // using its CSS classes
+        'Slate.ui.SimplePanel' // using its CSS classes
     ],
 
 
@@ -24,7 +24,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
     },
 
 
-    cls: ['slate-demonstrations-student-competencycard'],
+    cls: ['slate-demonstrations-student-competencycard', 'slate-simplepanel'],
     componentCls: 'slate-demonstrations-student-competenciessummary',
     renderTpl: [
         '<header class="slate-simplepanel-header">',
