@@ -54,7 +54,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         'ContentAreas',
         'CourseSections',
         'Groups',
-        'StudentGroups'
+        'StudentGroups',
+        'Students'
     ],
 
     refs: {

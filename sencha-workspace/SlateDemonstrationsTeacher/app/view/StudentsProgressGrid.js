@@ -9,7 +9,6 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
         'Slate.cbl.widget.Popover',
 
-        'Slate.cbl.store.Students',
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.Completions',
         'Slate.cbl.store.DemonstrationSkills',
@@ -25,13 +24,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
         popover: true,
 
-        studentsStore: {
-            xclass: 'Slate.cbl.store.Students',
-            sorters: [{
-                property: 'LastName',
-                direction: 'ASC'
-            }]
-        },
+        studentsStore: 'Students',
 
         competenciesStore: {
             xclass: 'Slate.cbl.store.Competencies'
