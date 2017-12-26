@@ -61,6 +61,7 @@ parameter `apiHost` when loading the page.
 
 ### Current release
 
+- [ ] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php
 - [ ] Merge Ext JS code generator upstream
 - [ ] Merge JSON override upstream
   - [ ] add HTTP header support
