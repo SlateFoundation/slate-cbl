@@ -15,8 +15,7 @@ Ext.define('SlateDemonstrationsStudent.Application', {
 
     controllers: [
         'Dashboard',
-        'RecentProgress',
-        'Summary'
+        'RecentProgress'
     ],
 
     onAppUpdate: function () {

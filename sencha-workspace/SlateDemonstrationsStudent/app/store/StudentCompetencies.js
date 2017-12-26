@@ -11,10 +11,13 @@ Ext.define('SlateDemonstrationsStudent.store.StudentCompetencies', {
             type: 'slate-cbl-studentcompetencies',
             include: [
                 'Competencies.Skills',
+                'Competencies.totalDemonstrationsRequired',
+                'Competencies.minimumAverageOffset',
                 'demonstrationsRequired',
                 'demonstrationsMissed',
                 'demonstrationsComplete',
                 'demonstrationsAverage',
+                'isLevelComplete',
                 'growth'
             ],
             extraParams: {

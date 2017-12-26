@@ -13,7 +13,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     ],
 
     stores: [
-        'StudentCompetencies'
+        'StudentCompetencies',
+        'Competencies@Slate.cbl.store'
     ],
 
 
@@ -25,7 +26,9 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             xtype: 'slate-demonstrations-student-dashboard'
         },
         studentSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-studentselector',
-        contentAreaSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-contentareaselector'
+        contentAreaSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-contentareaselector',
+        competenciesSummary: 'slate-demonstrations-student-competenciessummary',
+        cardsCt: 'slate-demonstrations-student-cardsct'
 
         // contentAreaStatusCmp: {
         //     selector: 'slate-demonstrations-student-contentareastatus',
@@ -76,6 +79,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         },
         store: {
             '#StudentCompetencies': {
+                beforeload: 'onStudentCompetenciesStoreBeforeLoad',
                 load: 'onStudentCompetenciesStoreLoad'
             }
         }
@@ -84,7 +88,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     control: {
         dashboardCt: {
             selectedstudentchange: 'onStudentChange',
-            selectedcontentareachange: 'onContentAreaChange'
+            selectedcontentareachange: 'onContentAreaChange',
+            loadedcontentareachange: 'onLoadedContentAreaChange'
         },
         studentSelector: {
             select: 'onStudentSelectorSelect',
@@ -156,18 +161,129 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         Ext.Logger.warn('Unmatched route: '+token);
     },
 
+    onStudentCompetenciesStoreBeforeLoad: function(store) {
+        this.getCompetenciesSummary().setLoading('Loading content area: '+store.getContentArea());
+    },
+
     onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
         if (!success) {
             return;
         }
 
-        // eslint-disable-next-line vars-on-top
-        var rawData = store.getProxy().getReader().rawData || {},
-            contentAreaData = rawData.ContentArea;
 
-        if (contentAreaData) {
-            this.getDashboardCt().setLoadedContentArea(contentAreaData);
+        // eslint-disable-next-line vars-on-top
+        var me = this,
+            competenciesSummary = me.getCompetenciesSummary(),
+            cardsCt = me.getCardsCt(),
+
+            rawData = store.getProxy().getReader().rawData,
+            contentAreaData = rawData.ContentArea,
+            competenciesData = contentAreaData.Competencies,
+
+            competenciesStore = me.getCompetenciesStore(),
+            competenciesCount, competencyIndex,
+
+            studentCompetenciesStore = me.getStudentCompetenciesStore(),
+            studentCompetenciesCount = studentCompetenciesStore.getCount(),
+            studentCompetencyIndex, studentCompetency, level, competency, competencyCurrent, average, growth,
+
+
+            lowestIncompleteLevel = Infinity,
+            totalRequired = 0,
+            totalMissed = 0,
+            totalComplete = 0,
+            averageValues = [],
+            growthValues = [],
+
+            cardConfigs = [];
+
+
+        // load content area and competencies
+        delete contentAreaData.Competencies;
+        me.getDashboardCt().setLoadedContentArea(contentAreaData);
+        competenciesStore.loadRawData(competenciesData);
+
+
+        // find lowest incomplete level
+        for (studentCompetencyIndex = 0; studentCompetencyIndex < studentCompetenciesCount; studentCompetencyIndex++) {
+            studentCompetency = studentCompetenciesStore.getAt(studentCompetencyIndex);
+            level = studentCompetency.get('Level');
+            competency = competenciesStore.getById(studentCompetency.get('CompetencyID'));
+
+            if (!competency) {
+                Ext.Logger.warn('Encountered CompetencyID not in loaded content area, skipping...');
+                continue;
+            }
+
+            competencyCurrent = competency.get('currentStudentCompetency');
+
+            if (!studentCompetency.get('isLevelComplete') && level < lowestIncompleteLevel) {
+                lowestIncompleteLevel = level;
+            }
+
+            if (!competencyCurrent || competencyCurrent.get('Level') < level) {
+                competency.set('currentStudentCompetency', studentCompetency, { dirty: false });
+            }
         }
+
+
+        // aggregate data for lowest incomplete level
+        for (studentCompetencyIndex = 0; studentCompetencyIndex < studentCompetenciesCount; studentCompetencyIndex++) {
+            studentCompetency = studentCompetenciesStore.getAt(studentCompetencyIndex);
+
+            // process only the lowest incomplete level
+            if (studentCompetency.get('Level') !== lowestIncompleteLevel) {
+                continue;
+            }
+
+            // update aggregate values
+            totalRequired += studentCompetency.get('demonstrationsRequired');
+            totalMissed += studentCompetency.get('demonstrationsMissed');
+            totalComplete += studentCompetency.get('demonstrationsComplete');
+
+            average = studentCompetency.get('demonstrationsAverage');
+            if (average !== null) {
+                averageValues.push(average);
+            }
+
+            growth = studentCompetency.get('growth');
+            if (growth !== null) {
+                growthValues.push(growth);
+            }
+        }
+
+
+        // build cards
+        competenciesCount = competenciesStore.getCount();
+        competencyIndex = 0;
+
+        for (; competencyIndex < competenciesCount; competencyIndex++) {
+            cardConfigs.push({
+                competency: competenciesStore.getAt(competencyIndex)
+            });
+        }
+
+
+        // update interface
+        Ext.suspendLayouts();
+
+        competenciesSummary.setConfig({
+            level: lowestIncompleteLevel,
+            percentComplete: 100 * totalComplete / totalRequired,
+            percentMissed: 100 * totalMissed / totalRequired,
+            missed: totalMissed,
+            average: Ext.Array.sum(averageValues) / averageValues.length,
+            growth: Ext.Array.sum(growthValues) / growthValues.length
+        });
+
+        cardsCt.removeAll(true);
+        cardsCt.add(cardConfigs);
+
+        Ext.resumeLayouts(true);
+
+
+        // finish load
+        competenciesSummary.setLoading(false);
     },
 
     onStudentChange: function(dashboardCt, studentUsername) {
@@ -202,6 +318,10 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
         // push value to selector
         me.getContentAreaSelector().setValue(contentAreaCode);
+    },
+
+    onLoadedContentAreaChange: function(dashboardCt, contentArea) {
+        this.getCompetenciesSummary().setContentAreaTitle(contentArea.get('Title'));
     },
 
     onStudentSelectorSelect: function(studentCombo, student) {
