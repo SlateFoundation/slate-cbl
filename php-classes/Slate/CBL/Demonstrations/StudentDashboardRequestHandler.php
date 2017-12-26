@@ -28,24 +28,26 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleRequest()
     {
-        $GLOBALS['Session']->requireAuthentication();
-
         switch ($action = static::shiftPath()) {
-            case 'recent-progress':
-                return static::handleRecentProgressRequest();
-            case 'completions':
-                return static::handleCompletionsRequest();
-            case 'demonstration-skills':
-                return static::handleDemonstrationSkillsRequest();
-            case 'students':
-            case '*students':
-                return static::handleStudentsRequest();
-            case 'content-areas':
-            case '*content-areas':
-                return static::handleContentAreasRequest();
             case '':
             case false:
                 return static::handleDashboardRequest();
+
+            case 'bootstrap':
+                return static::handleBootstrapRequest();
+
+            case 'content-areas':
+                return static::handleContentAreasRequest();
+
+            case 'recent-progress':
+                return static::handleRecentProgressRequest();
+
+            case 'completions':
+                return static::handleCompletionsRequest();
+
+            case 'demonstration-skills':
+                return static::handleDemonstrationSkillsRequest();
+
             default:
                 return static::throwNotFoundError();
         }
@@ -53,14 +55,27 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleDashboardRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
+
         return Sencha_RequestHandler::respond('app/SlateDemonstrationsStudent/ext', [
             'App' => Sencha_App::getByName('SlateDemonstrationsStudent'),
             'mode' => 'production'
         ]);
     }
 
+    public static function handleBootstrapRequest()
+    {
+        $GLOBALS['Session']->requireAuthentication();
+
+        return static::respond('bootstrap', [
+            'user' => $GLOBALS['Session']->Person
+        ]);
+    }
+
     public static function handleContentAreasRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
+
         $conditions = [];
 
         if ($GLOBALS['Session']->Person->isA(Student::class)) {
@@ -82,6 +97,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
                         Competency::$tableName,
                         Competency::getTableAlias(),
 
+                        // TODO: use requested student
                         $GLOBALS['Session']->PersonID
                     ]
                 )
@@ -94,71 +110,39 @@ class StudentDashboardRequestHandler extends \RequestHandler
         ]);
     }
 
-    public static function handleStudentsRequest()
-    {
-        $User = $GLOBALS['Session']->Person;
-
-        if ($User->isA(Student::class)) {
-            return static::respond('students', [
-                'data' => [
-                    $User
-                ],
-                'total' => 1,
-                'success' => true
-            ]);
-        } else {
-            if (!$User->hasAccountLevel('Teacher')) {
-                $conditions['ID'] = [
-                    'operator' => 'IN',
-                    'values' => DB::allValues(
-                        'UserID',
-                        '
-                        SELECT DISTINCT %4$s.ID AS UserID
-                          FROM `%1$s` %2$s
-                          JOIN `%3$s` %4$s
-                            ON %4$s.ID = %2$s.PersonID
-                         WHERE %2$s.Class = "%5$s"
-                           AND %4$s.Class = "%6$s"
-                        ',
-                        [
-                            GuardianRelationship::$tableName, // 1
-                            GuardianRelationship::getTableAlias(), // 2
-                            Person::$tableName, // 3
-                            Person::getTableAlias(), // 4
-                            DB::escape(GuardianRelationship::class), // 5
-                            DB::escape(Student::class) // 6
-                        ]
-                    )
-                ];
-            }
-
-            PeopleRequestHandler::$accountLevelBrowse = 'User';
-            return PeopleRequestHandler::handleBrowseRequest([], $conditions);
-        }
-    }
-
     public static function handleRecentProgressRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
         $Student = static::_getRequestedStudent();
         $ContentArea = static::_getRequestedContentArea();
 
-        if (!$ContentArea) {
-            return static::throwInvalidRequestError('Content area required');
+
+        $where = [
+            'd.StudentID = ' . $Student->ID
+        ];
+
+        if ($ContentArea) {
+            $where[] = 'c.ContentAreaID = ' . $ContentArea->ID;
         }
 
+
         $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+
 
         try {
             // TODO: do name formatting on the client-side
             $progress = DB::allRecords('
-                SELECT ds.DemonstratedLevel AS demonstratedLevel,
+                SELECT ds.TargetLevel AS targetLevel,
+                       ds.DemonstratedLevel AS demonstratedLevel,
                        d.Created AS demonstrationCreated,
                        CONCAT(CASE p.Gender
                          WHEN "Male"   THEN "Mr. "
                          WHEN "Female" THEN "Ms. "
                           END, p.lastName) AS teacherTitle,
                        c.Descriptor AS competencyDescriptor,
-                       s.Descriptor AS skillDescriptor
+                       s.Descriptor AS skillDescriptor,
+                       d.StudentID,
+                       c.ContentAreaID
                   FROM %s AS ds
                   JOIN %s AS p
                     ON ds.CreatorID = p.ID
@@ -168,18 +152,16 @@ class StudentDashboardRequestHandler extends \RequestHandler
                     ON s.ID = ds.SkillID
                   JOIN %s AS c
                     ON c.ID = s.CompetencyID
-                  WHERE d.StudentID = %s
-                    AND c.ContentAreaID = %s
-                  ORDER BY d.Created DESC
+                  WHERE (%s)
+                  ORDER BY d.ID DESC
                   LIMIT %d',
                 [
                     DemonstrationSkill::$tableName,
-                    \Emergence\People\Person::$tableName,
+                    Person::$tableName,
                     Demonstration::$tableName,
                     Skill::$tableName,
                     Competency::$tableName,
-                    $Student->ID,
-                    $ContentArea->ID,
+                    count($where) ? implode(') AND (', $where) : 'TRUE',
                     $limit
                 ]
             );
@@ -188,10 +170,23 @@ class StudentDashboardRequestHandler extends \RequestHandler
         }
 
         // cast strings to integers
-        foreach ($progress AS &$progressRecord) {
+        foreach ($progress as &$progressRecord) {
             $progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
             $progressRecord['demonstrationCreated'] = strtotime($progressRecord['demonstrationCreated']);
+
+            if ($Student) {
+                unset($progressRecord['StudentID']);
+            } else {
+                $progressRecord['StudentID'] = intval($progressRecord['StudentID']);
+            }
+
+            if ($ContentArea) {
+                unset($progressRecord['ContentAreaID']);
+            } else {
+                $progressRecord['ContentAreaID'] = intval($progressRecord['ContentAreaID']);
+            }
         }
+
 
         return static::respond('progress', [
             'data' => $progress
@@ -200,6 +195,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleCompletionsRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
         $Student = static::_getRequestedStudent();
 
         if (empty($_GET['competencies']) || !($competencies = Competency::getAllByListIdentifier($_GET['competencies']))) {
@@ -246,6 +242,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleDemonstrationSkillsRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
         $Student = static::_getRequestedStudent();
 
         if (empty($_GET['competencies']) || !($competencies = Competency::getAllByListIdentifier($_GET['competencies']))) {
@@ -332,10 +329,6 @@ class StudentDashboardRequestHandler extends \RequestHandler
             $Student = $GLOBALS['Session']->Person;
         }
 
-        if (!$Student->isA(Student::class)) {
-            return static::throwInvalidRequestError('Requested user is not a student');
-        }
-
         return $Student;
     }
 
@@ -343,8 +336,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
     {
         $ContentArea = null;
 
-        if (!empty($_GET['content-area'])) {
-            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content-area'])) {
+        if (!empty($_GET['content_area'])) {
+            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content_area'])) {
                 return static::throwNotFoundError('Content area not found');
             }
         }
