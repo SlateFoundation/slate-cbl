@@ -57,9 +57,16 @@ parameter `apiHost` when loading the page.
 4. Push sencha builds to instance, logging in with a developer account when prompted: `http://cbl.projects.jarv.us/push-builds?ref=releases/v2&host=SITE_HOSTNAME`
   - Alternatively, builds may be created locally and uploaded to `sencha-build/APP_NAME/production`
 
-## TODO
+## Roadmap
 
+### Current release
+
+- [ ] Merge Ext JS code generator upstream
 - [ ] Merge JSON override upstream
   - [ ] add HTTP header support
   - [ ] write blog post documenting $sql_queries option
   - [ ] Add `<debug> ... </debug>`-wrapped support to emergence-apikit to report on requests in console
+
+### Next release
+
+- [ ] Refactor TargetLevel -> Level and DemonstratedLevel -> Rating

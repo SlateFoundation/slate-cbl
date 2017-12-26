@@ -5,9 +5,10 @@ Provides a view of multiple students' progress along a list of competencies, typ
 ## TODO
 
 - [X] Load all core data in single, preferably standard request
-- [ ] Extract loaded content area and update summary
+- [X] Extract loaded content area and update summary
 - [ ] Generaty competency cards
 - [ ] Filter content areas by current/selected student, remove logic from Demonstrations\StudentDashboardRequestHandler
+- [ ] Enable loading recent progress / competencies for current user
 
 ## Application Structure
 
