@@ -52,7 +52,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
         '    <div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
         '    <div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-        '    <div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">Y{level - 8}</div>',
+        '    <div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">Y{level - 8}</tpl></div>',
         '    <div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
         '</div>',
 
@@ -212,20 +212,26 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this,
             htmlEncode = Ext.util.Format.htmlEncode,
             studentCompetency = competency.get('currentStudentCompetency'),
-            demonstrationsAverage = studentCompetency.get('demonstrationsAverage'),
-            level = studentCompetency.get('Level'),
-            demonstrationsRequired = competency.getTotalDemonstrationsRequired(level),
+            demonstrationsAverage, level, demonstrationsRequired, percentComplete;
+
+        if (studentCompetency) {
+            demonstrationsAverage = studentCompetency.get('demonstrationsAverage');
+            level = studentCompetency.get('Level');
+            demonstrationsRequired = competency.getTotalDemonstrationsRequired(level);
             percentComplete = 100 * studentCompetency.get('demonstrationsComplete') / demonstrationsRequired;
+        }
 
         Ext.suspendLayouts();
 
-        me.setLevel(level);
-        me.setPercentComplete(percentComplete);
-        me.setPercentMissed(100 * studentCompetency.get('demonstrationsMissed') / demonstrationsRequired);
-        me.setDemonstrationsAverage(demonstrationsAverage);
-        me.setIsAverageLow(percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < (level + competency.get('minimumAverageOffset')));
-        me.setBaselineRating(studentCompetency.get('BaselineRating'));
-        me.setGrowth(studentCompetency.get('growth'));
+        me.setConfig({
+            level: studentCompetency ? level : null,
+            percentComplete: studentCompetency ? percentComplete : null,
+            percentMissed: studentCompetency ? 100 * studentCompetency.get('demonstrationsMissed') / demonstrationsRequired : null,
+            demonstrationsAverage: studentCompetency ? demonstrationsAverage : null,
+            isAverageLow: studentCompetency ? percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < level + competency.get('minimumAverageOffset') : null,
+            baselineRating: studentCompetency ? studentCompetency.get('BaselineRating') : null,
+            growth: studentCompetency ? studentCompetency.get('growth') : null
+        });
 
         if (me.rendered) {
             me.codeEl.update(htmlEncode(competency.get('Code')));
