@@ -127,35 +127,40 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     // local subtemplates
     skillsTpl: [
         '<tpl for=".">',
-        '    <li class="cbl-skill">',
+        '    <li class="cbl-skill" data-skill="{ID}">',
         '        <h5 class="cbl-skill-name">{Descriptor:htmlEncode}</h5>',
 
         '        <ul class="cbl-skill-demos" data-skill="{ID}">',
-
-                        // TODO: get overrides into data and test all this out, maybe don't use this.
-        '            {% this.standardOverridden = false %}',
-
-        '            <tpl for="demonstrations">{%debugger%}',
-        '                <li ',
-        '                    class="',
-        '                        cbl-skill-demo',
-        '                        <tpl if="values.DemonstratedLevel==0 && !Override"> cbl-skill-demo-uncounted</tpl>',
-        '                        <tpl if="this.standardOverridden"> cbl-skill-demo-overridden</tpl>',
-        '                        <tpl if="Override"> cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}</tpl>',
-        '                    "',
-        '                    <tpl if="DemonstrationID">data-demonstration="{DemonstrationID}"</tpl>',
-        '                >',
-        '                    <tpl if="Override">',
-        '                        O',
-        '                    <tpl elseif="values.DemonstratedLevel &gt;= 0">',
-        '                        {[values.DemonstratedLevel == 0 ? "M" : values.DemonstratedLevel]}',
-        '                    <tpl else>',
-        '                        &nbsp;',
-        '                    </tpl>',
-        '                </li>',
+        '            <tpl for="demonstrations">',
+        '                <tpl if=".">',
+        '                    <li ',
+        '                        data-demonstration="{DemonstrationID}"',
+        '                        class="',
+        '                            cbl-skill-demo',
+        '                            <tpl if="Override">',
+        '                                cbl-skill-override',
+        '                                cbl-skill-span-{[xcount - xindex + 1]}',
+        '                            </tpl>',
+        '                            <tpl if="DemonstratedLevel == 0">',
+        '                                cbl-skill-demo-uncounted',
+        '                            </tpl>',
+        '                        "',
+        '                    >',
+        '                        <tpl if="Override">',
+        '                            O',
+        '                        <tpl elseif="DemonstratedLevel == 0">',
+        '                            M',
+        '                        <tpl else>',
+        '                            {DemonstratedLevel}',
+        '                        </tpl>',
+        '                    </li>',
+        '                    {% if (values.Override) break; %}', // don't print any more blocks after override
+        '                <tpl else>',
+        '                    <li class="cbl-skill-demo cbl-skill-demo-uncounted">&nbsp;</li>',
+        '                </tpl>',
         '            </tpl>',
 
-        '            <li class="cbl-skill-complete-indicator <tpl if="isComplete">is-checked</tpl>">',
+        '            <li class="cbl-skill-complete-indicator <tpl if="isLevelComplete">is-checked</tpl>">',
         '                <svg class="check-mark-image" width="16" height="16">',
         '                    <polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
         '                </svg>',
@@ -337,17 +342,34 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             skills = competency.get('Skills'),
             skillsLength = skills.length,
             skillIndex = 0, skill,
-            demonstrationsRequired, demonstrations,
+            demonstrationsRequired, demonstrations, demonstrationsCount, lastDemonstration, isSkillComplete,
             tplData = [];
 
         for (; skillIndex < skillsLength; skillIndex++) {
             skill = skills[skillIndex];
             demonstrationsRequired = skill.DemonstrationsRequired;
+            demonstrationsRequired = level && demonstrationsRequired[level] || demonstrationsRequired.default || 1;
 
             demonstrations = Ext.Array.clone(demonstrationsBySkill && demonstrationsBySkill[skill.ID] || []);
-            demonstrations.length = level && demonstrationsRequired[level] || demonstrationsRequired.default || 1;
+            demonstrationsCount = demonstrations.length;
+            lastDemonstration = demonstrationsCount && demonstrations[demonstrationsCount - 1];
+
+            isSkillComplete = (
+                // skill is overridden
+                lastDemonstration && lastDemonstration.Override
+
+                // skill is filled and last demonstration isn't missed
+                || (
+                    demonstrationsCount >= demonstrationsRequired
+                    && (!lastDemonstration || lastDemonstration.DemonstratedLevel)
+                )
+            );
+
+            // fill demonstrations array with undefined items
+            demonstrations.length = demonstrationsRequired;
 
             tplData.push(Ext.applyIf({
+                isLevelComplete: isSkillComplete,
                 demonstrations: demonstrations
             }, skill));
         }
