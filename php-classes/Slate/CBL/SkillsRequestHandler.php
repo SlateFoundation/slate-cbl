@@ -5,8 +5,8 @@ namespace Slate\CBL;
 class SkillsRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass = Skill::class;
-    public static $accountLevelBrowse = false;
     public static $browseOrder = false;
+    public static $accountLevelBrowse = 'User';
 
     public static function __classLoaded()
     {
