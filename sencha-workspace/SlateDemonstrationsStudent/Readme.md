@@ -10,6 +10,7 @@ Provides a view of multiple students' progress along a list of competencies, typ
 - [ ] Filter content areas by current/selected student
   - [ ] remove logic from Demonstrations\StudentDashboardRequestHandler
 - [ ] Enable loading recent progress / competencies for current user
+  - [ ] Add backend support for `*current`
 - [ ] Reimplement opening details modal
 
 ## Application Structure

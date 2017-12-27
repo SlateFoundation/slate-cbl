@@ -72,3 +72,4 @@ parameter `apiHost` when loading the page.
 ### Next release
 
 - [ ] Refactor TargetLevel -> Level and DemonstratedLevel -> Rating
+- [ ] Remove hardcoded subtraction of 8 to go from grade to level
