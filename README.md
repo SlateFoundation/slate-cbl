@@ -68,8 +68,10 @@ parameter `apiHost` when loading the page.
   - [ ] add HTTP header support
   - [ ] write blog post documenting $sql_queries option
   - [ ] Add `<debug> ... </debug>`-wrapped support to emergence-apikit to report on requests in console
+- [ ] Merge slate-cbl-admin and repair
 
 ### Next release
 
 - [ ] Refactor TargetLevel -> Level and DemonstratedLevel -> Rating
+- [ ] Rename "Skill" to "Standard" ?
 - [ ] Remove hardcoded subtraction of 8 to go from grade to level
