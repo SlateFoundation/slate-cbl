@@ -313,8 +313,19 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
 
     // event handlers
-    onDemoCellClick: function(ev, t) {
-        this.fireEvent('democellclick', this, ev, Ext.get(t));
+    onDemoCellClick: function(ev, target) {
+        target = Ext.get(target);
+
+        this.fireEvent(
+            'democellclick',
+            this,
+            {
+                targetEl: target,
+                demonstrationId: parseInt(target.getAttribute('data-demonstration'), 10),
+                skillId: parseInt(target.up('.cbl-skill').getAttribute('data-skill'), 10)
+            },
+            ev
+        );
     },
 
 
@@ -350,6 +361,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                     && (!lastDemonstration || lastDemonstration.DemonstratedLevel)
                 )
             );
+            /* eslint-enable no-extra-parens */
 
             // fill demonstrations array with undefined items
             demonstrations.length = demonstrationsRequired;
