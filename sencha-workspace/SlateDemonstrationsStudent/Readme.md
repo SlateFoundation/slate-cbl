@@ -7,7 +7,8 @@ Provides a view of multiple students' progress along a list of competencies, typ
 - [X] Load all core data in single, preferably standard request
 - [X] Extract loaded content area and update summary
 - [X] Generaty competency cards
-- [ ] Filter content areas by current/selected student, remove logic from Demonstrations\StudentDashboardRequestHandler
+- [ ] Filter content areas by current/selected student
+  - [ ] remove logic from Demonstrations\StudentDashboardRequestHandler
 - [ ] Enable loading recent progress / competencies for current user
 - [ ] Reimplement opening details modal
 
