@@ -268,12 +268,12 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         Ext.suspendLayouts();
 
         competenciesSummary.setConfig({
-            level: lowestIncompleteLevel,
-            percentComplete: 100 * totalComplete / totalRequired,
-            percentMissed: 100 * totalMissed / totalRequired,
-            missed: totalMissed,
-            average: Ext.Array.sum(averageValues) / averageValues.length,
-            growth: Ext.Array.sum(growthValues) / growthValues.length
+            level: isFinite(lowestIncompleteLevel) ? lowestIncompleteLevel : null,
+            percentComplete: totalRequired ? 100 * totalComplete / totalRequired : null,
+            percentMissed: totalRequired ? 100 * totalMissed / totalRequired : null,
+            missed: totalRequired ? totalMissed : null,
+            average: averageValues.length ? Ext.Array.sum(averageValues) / averageValues.length : null,
+            growth: averageValues.length ? Ext.Array.sum(growthValues) / growthValues.length : null
         });
 
         cardsCt.removeAll(true);
