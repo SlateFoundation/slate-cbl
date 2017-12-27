@@ -2,10 +2,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     extend: 'Slate.ui.app.Container',
     xtype: 'slate-demonstrations-student-dashboard',
     requires: [
-        // 'Slate.cbl.widget.Popover',
-        // 'Slate.cbl.store.Competencies',
-        // 'Slate.cbl.store.Completions',
-        // 'Slate.cbl.store.DemonstrationSkills',
         'SlateDemonstrationsStudent.view.CompetenciesSummary',
         'SlateDemonstrationsStudent.view.RecentProgress',
         'SlateDemonstrationsStudent.view.CardsContainer',
@@ -77,7 +73,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
          */
         loadedContentArea: null,
 
-
         /**
          * @cfg {SlateDemonstrationsStudent.view.CompetenciesSummary|Object|boolean}
          * Instance or configuration for competencies summary component.
@@ -105,29 +100,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
             hidden: true
         },
 
-        // componentCls: 'slate-demonstrations-student-dashboard',
-        // bodyStyle: {
-        //     padding: '1.5em 7.5%'
-        // }
-        // popover: {
-        //     pointer: 'none'
-        // },
-
-        // competenciesStatus: 'unloaded',
-
-        // competenciesStore: {
-        //     xclass: 'Slate.cbl.store.Competencies'
-        // },
-
-        // skillsStore: 'cbl-skills',
-
-        // completionsStore: {
-        //     xclass: 'Slate.cbl.store.Completions'
-        // },
-
-        // demonstrationSkillsStore: {
-        //     xclass: 'Slate.cbl.store.DemonstrationSkills'
-        // }
 
         // appcontainer config
         header: {
@@ -151,7 +123,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
     // config handlers
     updateSelectedStudent: function(student, oldStudent) {
-        console.info('updateSelectedStudent(%o, %o)', student, oldStudent);
         this.fireEvent('selectedstudentchange', this, student, oldStudent);
     },
 
@@ -166,7 +137,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.setCardsCt(contentAreaSet);
         Ext.resumeLayouts(true);
 
-        console.info('updateSelectedContentArea(%o, %o)', contentArea, oldContentArea);
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
     },
 
@@ -189,7 +159,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     },
 
     updateLoadedContentArea: function(contentArea, oldContentArea) {
-        console.info('updateLoadedContentArea(%o, %o)', contentArea, oldContentArea);
         this.fireEvent('loadedcontentareachange', this, contentArea, oldContentArea);
     },
 
@@ -222,81 +191,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
         return Ext.factory(cardsCt, 'SlateDemonstrationsStudent.view.CardsContainer', oldCardsCt);
     },
-
-
-    // config handlers
-    // applyPopover: function(newPopover, oldPopover) {
-    //     return Ext.factory(newPopover, 'Slate.cbl.widget.Popover', oldPopover);
-    // },
-
-    // updateCompetenciesStatus: function(newStatus, oldStatus) {
-    //     if (oldStatus) {
-    //         this.removeCls('competencies-' + oldStatus);
-    //     }
-
-    //     if (newStatus) {
-    //         this.addCls('competencies-' + newStatus);
-    //     }
-    // },
-
-    // updateContentAreaId: function(contentAreaId) {
-    //     this.getCompetenciesStore().getAllByContentArea(contentAreaId, this.loadCompletions, this);
-    // },
-
-    // updateStudentId: function() {
-    //     this.loadCompletions();
-    // },
-
-    // applyCompetenciesStore: function(store) {
-    //     return Ext.StoreMgr.lookup(store);
-    // },
-
-    // applySkillsStore: function(store) {
-    //     return Ext.StoreMgr.lookup(store);
-    // },
-
-    // applyCompletionsStore: function(store) {
-    //     return Ext.StoreMgr.lookup(store);
-    // },
-
-    // applyDemonstrationSkillsStore: function(store) {
-    //     return Ext.StoreMgr.lookup(store);
-    // },
-
-    // loadCompletions: function() {
-    //     var me = this,
-    //         competenciesStore = me.getCompetenciesStore(),
-    //         studentId = me.getStudentId(),
-    //         contentAreaId = me.getContentAreaId();
-
-    //     if (!studentId || !contentAreaId) {
-    //         return;
-    //     }
-
-    //     me.setCompetenciesStatus('loading');
-    //     me.mask('Loading&hellip;');
-
-    //     competenciesStore.filter({
-    //         property: 'ContentAreaID',
-    //         value: contentAreaId
-    //     });
-
-    //     me.removeAll(true);
-    //     me.getCompletionsStore().loadByStudentsAndCompetencies(studentId, competenciesStore.collect('ID'), {
-    //         callback: function(completions) {
-    //             me.add(Ext.Array.map(completions || [], function(completion) {
-    //                 return {
-    //                     competency: competenciesStore.getById(completion.get('CompetencyID')),
-    //                     completion: completion,
-    //                     autoEl: 'li'
-    //                 };
-    //             }));
-
-    //             me.setCompetenciesStatus('loaded');
-    //             me.unmask();
-    //         }
-    //     });
-    // },
 
 
     // component lifecycle
