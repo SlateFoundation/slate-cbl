@@ -5,7 +5,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Skills', {
     // controller configuration
     views: [
         'Window@Slate.ui',
-        'StudentSkillPanel@Slate.cbl.view'
+        'StudentSkillPanel@Slate.cbl.view.demonstrations'
     ],
 
     stores: [
@@ -20,7 +20,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Skills', {
 
             xtype: 'slate-window',
             modal: true,
-            defaultType: 'slate-cbl-studentskillpanel',
+            defaultType: 'slate-cbl-demonstrations-studentskillpanel',
             width: 500,
             height: 400
         }

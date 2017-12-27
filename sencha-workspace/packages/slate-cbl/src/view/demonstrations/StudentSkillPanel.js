@@ -1,9 +1,9 @@
 /**
  * Provides for a panel displaying a student's progress in a given skill
  */
-Ext.define('Slate.cbl.view.StudentSkillPanel', {
+Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     extend: 'Ext.panel.Panel',
-    xtype: 'slate-cbl-studentskillpanel',
+    xtype: 'slate-cbl-demonstrations-studentskillpanel',
 
 
     config: {
