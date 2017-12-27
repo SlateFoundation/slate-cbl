@@ -148,7 +148,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     protected static function _getRequestedStudent()
     {
-        if (!empty($_GET['student'])) {
+        if (!empty($_GET['student']) && $_GET['student'] != '*current') {
             $Student = PeopleRequestHandler::getRecordByHandle($_GET['student']);
             $userIsStaff = $GLOBALS['Session']->hasAccountLevel('Staff');
 
