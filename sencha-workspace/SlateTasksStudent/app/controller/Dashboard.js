@@ -140,7 +140,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
             sectionsStore = me.getSectionsStore();
 
         // (re)load sections list
-        sectionsStore.getProxy().setExtraParam('enrolled_user', studentUsername || 'current');
+        sectionsStore.getProxy().setExtraParam('enrolled_user', studentUsername || '*current');
         sectionsStore.load();
 
         // push value to selector

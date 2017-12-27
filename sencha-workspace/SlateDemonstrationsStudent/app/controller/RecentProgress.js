@@ -27,7 +27,7 @@ Ext.define('SlateDemonstrationsStudent.controller.RecentProgress', {
     onStudentChange: function(dashboardCt, studentUsername) {
         var recentProgressStore = this.getRecentProgressStore();
 
-        recentProgressStore.setStudent(studentUsername);
+        recentProgressStore.setStudent(studentUsername || '*current');
         recentProgressStore.loadIfDirty();
     },
 

@@ -18,7 +18,7 @@ Ext.define('SlateDemonstrationsTeacher.store.CourseSections', {
         // include: 'Term',
 
         extraParams: {
-            'enrolled_user': 'current'
+            'enrolled_user': '*current'
         }
     }
 });

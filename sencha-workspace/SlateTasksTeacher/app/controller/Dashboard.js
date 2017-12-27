@@ -102,7 +102,7 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
         me.getDashboardCt().render('slateapp-viewport');
 
         // configure and load sections store for selector
-        sectionsStore.getProxy().setExtraParam('enrolled_user', 'current');
+        sectionsStore.getProxy().setExtraParam('enrolled_user', '*current');
         sectionsStore.load();
 
         // load bootstrap data

@@ -292,7 +292,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             studentCompetenciesStore = me.getStudentCompetenciesStore();
 
         // (re)load student competencies store
-        studentCompetenciesStore.setStudent(studentUsername);
+        studentCompetenciesStore.setStudent(studentUsername || '*current');
         studentCompetenciesStore.loadIfDirty();
 
         // push value to selector
