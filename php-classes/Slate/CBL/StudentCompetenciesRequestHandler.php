@@ -47,7 +47,9 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
         if (!$User) {
             return static::throwUnauthorizedError('Login required');
         } elseif (!empty($_GET['student'])) {
-            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
+            if ($_GET['student'] == '*current') {
+                $Student = $User;
+            } elseif (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
                 return static::throwNotFoundError('Student not found');
             }
 
@@ -101,5 +103,5 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
-    }  
+    }
 }
