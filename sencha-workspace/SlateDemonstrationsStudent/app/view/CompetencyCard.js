@@ -5,9 +5,6 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         'Ext.util.Format',
 
         'Slate.ui.SimplePanel', // using its CSS classes
-        // 'Slate.cbl.Util',
-        // 'Slate.cbl.data.Skills',
-        // 'Slate.cbl.store.DemonstrationSkills'
     ],
 
 
@@ -28,19 +25,14 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         demonstrationsAverage: null,
         isAverageLow: null,
         baselineRating: null,
-        growth: null,
-
-        // internal state
-        skillsStatus: 'unloaded',
-
-        demonstrationSkillsStore: {
-            xclass: 'Slate.cbl.store.DemonstrationSkills'
-        }
+        growth: null
     },
 
 
     cls: 'slate-simplepanel',
+
     componentCls: 'slate-demonstrations-student-competencycard',
+
     renderTpl: [
         '<header class="slate-simplepanel-header">',
         '    <div  class="slate-simplepanel-title">',
@@ -99,6 +91,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         '    </tpl>',
         '</ul>'
     ],
+
     childEls: [
         'codeEl',
         'descriptorEl',
@@ -318,20 +311,6 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
     },
 
-    updateSkillsStatus: function(newStatus, oldStatus) {
-        if (oldStatus) {
-            this.removeCls('skills-' + oldStatus);
-        }
-
-        if (newStatus) {
-            this.addCls('skills-' + newStatus);
-        }
-    },
-
-    applyDemonstrationSkillsStore: function(store) {
-        return Ext.StoreMgr.lookup(store);
-    },
-
 
     // event handlers
     onDemoCellClick: function(ev, t) {
@@ -339,7 +318,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     },
 
 
-    // public methods
+    // internal methods
     buildSkillsTplData: function(competency) {
         var studentCompetency = competency.get('currentStudentCompetency'),
             level = studentCompetency && studentCompetency.get('Level'),
@@ -360,6 +339,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             demonstrationsCount = demonstrations.length;
             lastDemonstration = demonstrationsCount && demonstrations[demonstrationsCount - 1];
 
+            /* eslint-disable no-extra-parens */
             isSkillComplete = (
                 // skill is overridden
                 lastDemonstration && lastDemonstration.Override

@@ -8,15 +8,13 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
     // controller configuration
     views: [
-        'Dashboard',
-        'OverviewWindow'
+        'Dashboard'
     ],
 
     stores: [
         'StudentCompetencies',
         'Competencies@Slate.cbl.store'
     ],
-
 
     refs: {
         dashboardCt: {
@@ -29,28 +27,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         contentAreaSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-contentareaselector',
         competenciesSummary: 'slate-demonstrations-student-competenciessummary',
         cardsCt: 'slate-demonstrations-student-cardsct'
-
-        // contentAreaStatusCmp: {
-        //     selector: 'slate-demonstrations-student-contentareastatus',
-        //     autoCreate: true,
-
-        //     xtype: 'slate-demonstrations-student-contentareastatus'
-        // },
-        // recentProgressCmp: {
-        //     selector: 'slate-demonstrations-student-recentprogress',
-        //     autoCreate: true,
-
-        //     xtype: 'slate-demonstrations-student-recentprogress'
-        // },
-        // appHeader: {
-        //     selector: 'slate-demonstrations-student-appheader',
-        //     autoCreate: true,
-
-        //     xtype: 'slate-demonstrations-student-appheader'
-        // },
-        // competencyCard: 'slate-demonstrations-student-competencycard',
-        // studentSelector: 'slate-demonstrations-student-appheader #studentCombo',
-        // contentAreaSelector: 'slate-demonstrations-student-appheader #contentAreaCombo'
     },
 
 
@@ -99,10 +75,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             select: 'onContentAreaSelectorSelect',
             clear: 'onContentAreaSelectorClear'
         }
-    //     competencyCard: {
-    //         democellclick: 'onDemoCellClick'
-    //     }
     },
+
 
     // controller templates method overrides
     onLaunch: function () {
@@ -358,17 +332,4 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             this.getDashboardCt().getSelectedStudent() || 'me'
         ]);
     }
-
-    // onDemoCellClick: function(competencyCard, ev, targetEl) {
-    //     this.getOverviewWindowView().create({
-    //         ownerCmp: this.getDashboardCt(),
-    //         autoShow: true,
-    //         animateTarget: targetEl,
-
-    //         competency: parseInt(targetEl.up('ul.cbl-skill-demos').up('li.cbl-competency-panel').getAttribute('data-competency'), 10),
-    //         skill: parseInt(targetEl.up('ul.cbl-skill-demos').getAttribute('data-skill'), 10),
-    //         student: this.getDashboardCt().getStudentId(),
-    //         selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
-    //     });
-    // },
 });
