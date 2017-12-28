@@ -159,6 +159,10 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     },
 
     updateLoadedContentArea: function(contentArea, oldContentArea) {
+        if (contentArea) {
+            this.setSelectedContentArea(contentArea.get('Code'));
+        }
+
         this.fireEvent('loadedcontentareachange', this, contentArea, oldContentArea);
     },
 
