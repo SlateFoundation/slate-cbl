@@ -60,6 +60,16 @@ Ext.define('Slate.cbl.model.demonstrations.DemonstrationSkill', {
             name: 'Override',
             type: 'boolean',
             defaultValue: false
+        },
+
+        // virtual fields
+        {
+            name: 'Demonstrated',
+            mapping: 'Demonstration.Demonstrated',
+            type: 'date',
+            dateFormat: 'timestamp',
+            allowNull: true,
+            persist: false
         }
     ],
 

@@ -19,10 +19,10 @@ Ext.define('SlateDemonstrationsStudent.controller.Skills', {
             forceCreate: true,
 
             xtype: 'slate-window',
-            modal: true,
             defaultType: 'slate-cbl-demonstrations-studentskillpanel',
-            width: 500,
-            height: 400
+            modal: true,
+            minWidth: 700,
+            width: 700
         }
     },
 
