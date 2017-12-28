@@ -59,7 +59,17 @@ module.exports = {
         "id-blacklist": "error",
         "id-length": "off",
         "id-match": "error",
-        "indent": ["error", 4, {"SwitchCase": 1}],
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1,
+                "ignoredNodes": [
+                    // ignore indent of subsequent literals in tpl/renderTpl/itemTpl properties
+                    "Property[value.type=ArrayExpression]:matches([key.name=tpl], [key.name=renderTpl], [key.name=itemTpl]) > ArrayExpression > Literal + Literal"
+                ]
+            }
+        ],
         "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "error",
