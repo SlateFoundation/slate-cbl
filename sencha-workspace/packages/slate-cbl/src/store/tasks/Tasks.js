@@ -1,5 +1,6 @@
 Ext.define('Slate.cbl.store.tasks.Tasks', {
     extend: 'Ext.data.Store',
+    alias: 'store.slate-cbl-tasks',
 
 
     model: 'Slate.cbl.model.tasks.Task',

@@ -1,5 +1,6 @@
 Ext.define('Slate.cbl.store.StudentCompetencies', {
     extend: 'Ext.data.Store',
+    alias: 'store.slate-cbl-studentcompetencies',
 
 
     model: 'Slate.cbl.model.StudentCompetency',

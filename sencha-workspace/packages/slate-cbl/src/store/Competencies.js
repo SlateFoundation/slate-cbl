@@ -1,5 +1,6 @@
 Ext.define('Slate.cbl.store.Competencies', {
     extend: 'Ext.data.Store',
+    alias: 'store.slate-cbl-competencies',
     requires: [
         /* global Slate */
         'Slate.sorter.Code'
