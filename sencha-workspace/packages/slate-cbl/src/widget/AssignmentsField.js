@@ -3,7 +3,7 @@ Ext.define('Slate.cbl.widget.AssignmentsField', {
     requires: [
         'Ext.form.field.Checkbox',
         'Ext.form.field.ComboBox',
-        'Slate.cbl.model.Student'
+        'Slate.model.person.Person'
     ],
 
     xtype: 'slate-tasks-assignmentsfield',
@@ -24,7 +24,7 @@ Ext.define('Slate.cbl.widget.AssignmentsField', {
         displayField: 'FullName',
         valueField: 'ID',
         store: {
-            model: 'Slate.cbl.model.Student'
+            model: 'Slate.model.person.Person'
         }
     }, {
         xtype: 'checkboxfield',
