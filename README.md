@@ -64,9 +64,10 @@ parameter `apiHost` when loading the page.
 - [ ] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php
 - [ ] Investigate baselines getting `NULL`d out: https://github.com/SlateFoundation/slate-fixtures/commit/74b14c13b783afed59463e90fb4770ae67f6745c
 - [ ] Merge Ext JS code generator upstream
+  - [ ] Write forum post documenting
 - [ ] Merge JSON override upstream
   - [ ] add HTTP header support
-  - [ ] write blog post documenting $sql_queries option
+  - [ ] write forum post documenting $profile option
   - [ ] Add `<debug> ... </debug>`-wrapped support to emergence-apikit to report on requests in console
 - [ ] Merge slate-cbl-admin and repair
 
