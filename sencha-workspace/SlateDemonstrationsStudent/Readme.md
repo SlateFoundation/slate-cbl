@@ -12,6 +12,7 @@ Provides a view of multiple students' progress along a list of competencies, typ
 - [X] Enable loading recent progress / competencies for current user
   - [X] Add backend support for `*current`
 - [X] Reimplement opening details modal
+- [X] Load skills list on skill selector change
 
 ## Application Structure
 
