@@ -41,8 +41,8 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
 
         '<tpl if="values && values.length">',
             '<tpl for=".">',
-                '<tbody>',
-                '<tr class="skill-list-demo-row" data-demonstration="{ID}">',
+                '<tbody class="skill-list-demo" data-demonstration="{ID}">',
+                '<tr class="skill-list-demo-row">',
                     '<td class="skill-list-demo-data skill-list-demo-index">{[xindex]}</td>',
                     '<td class="skill-list-demo-data skill-list-demo-date">{Demonstrated:date}</td>',
                     '<td class="skill-list-demo-data skill-list-demo-level"><div class="level-color cbl-level-{TargetLevel}"><tpl if="DemonstratedLevel==0">M<tpl else>{DemonstratedLevel}</tpl></div></td>',
