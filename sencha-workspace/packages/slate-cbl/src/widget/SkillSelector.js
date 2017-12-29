@@ -7,6 +7,8 @@ Ext.define('Slate.cbl.widget.SkillSelector', {
 
 
     config: {
+        loadSummaries: true,
+
         fieldLabel: 'Standard',
         labelWidth: 75,
 
@@ -29,8 +31,25 @@ Ext.define('Slate.cbl.widget.SkillSelector', {
     store: {
         type: 'slate-cbl-skills',
         proxy: {
-            type: 'slate-cbl-skills',
-            summary: true
+            type: 'slate-cbl-skills'
         }
+    },
+
+
+    // config handlers
+    updateLoadSummaries: function(loadSummaries) {
+        var store = this.getStore();
+
+        if (store.isStore) {
+            store.getProxy().setSummary(loadSummaries);
+        }
+    },
+
+
+    // component lifecycle
+    initComponent: function() {
+        this.callParent(arguments);
+
+        this.getStore().getProxy().setSummary(this.getLoadSummaries());
     }
 });

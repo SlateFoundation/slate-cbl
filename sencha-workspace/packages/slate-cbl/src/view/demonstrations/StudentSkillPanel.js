@@ -25,7 +25,12 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         selectedDemonstration: null,
         loadedSkill: null,
 
-        skillSelector: true,
+        skillSelector: {
+            matchFieldWidth: true,
+            lazyAutoLoad: false,
+            allowBlank: false,
+            loadSummaries: false
+        },
         skillStatement: true,
         demonstrationSkillsList: true,
 
@@ -118,13 +123,19 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
     updateSkillSelector: function(skillSelector, oldSkillSelector) {
         if (oldSkillSelector) {
-            oldSkillSelector.un('beforequery', 'onSkillSelectorBeforeQuery', this);
+            oldSkillSelector.un({
+                scope: this,
+                beforequery: 'onSkillSelectorBeforeQuery',
+                select: 'onSkillSelectorSelect'
+            });
         }
 
         if (skillSelector) {
-            skillSelector.setMatchFieldWidth(true);
-            skillSelector.lazyAutoLoad = false;
-            skillSelector.on('beforequery', 'onSkillSelectorBeforeQuery', this);
+            skillSelector.on({
+                scope: this,
+                beforequery: 'onSkillSelectorBeforeQuery',
+                select: 'onSkillSelectorSelect'
+            });
         }
     },
 
@@ -176,6 +187,10 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     onSkillSelectorBeforeQuery: function(queryPlan) {
         // trigger full store load if params have changed since last load
         queryPlan.combo.getStore().loadIfDirty();
+    },
+
+    onSkillSelectorSelect: function(skillSelector, skill) {
+        this.setLoadedSkill(skill);
     },
 
 
