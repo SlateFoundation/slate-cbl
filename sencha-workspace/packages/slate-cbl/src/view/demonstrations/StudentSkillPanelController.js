@@ -8,14 +8,30 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanelController', {
 
     control: {
         '#': {
-            boxready: 'onBoxReady'
+            selectedstudentchange: 'onSelectedStudentChange',
+            selectedskillchange: 'onSelectedSkillChange'
         }
     },
 
 
     // component lifecycle
-    onBoxReady: function(studentSkillPanel) {
-        // TODO: do after params are configured, maybe from view
-        studentSkillPanel.getDemonstrationSkillsList().getStore().load();
+    onSelectedStudentChange: function(view, student) {
+        view.getDemonstrationSkillsList().getStore().setStudent(student);
+        this.loadSkillsIfReady();
+    },
+
+    onSelectedSkillChange: function(view, skill) {
+        view.getDemonstrationSkillsList().getStore().setSkill(skill);
+        this.loadSkillsIfReady();
+    },
+
+
+    // local methods
+    loadSkillsIfReady: function() {
+        var store = this.getView().getDemonstrationSkillsList().getStore();
+
+        if (store.getStudent() && store.getSkill()) {
+            store.loadIfDirty();
+        }
     }
 });

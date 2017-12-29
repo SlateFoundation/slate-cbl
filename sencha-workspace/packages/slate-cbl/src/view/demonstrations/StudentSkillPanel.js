@@ -29,12 +29,17 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     },
 
 
-    tpl: 'Showing skill {selectedSkill} for student {selectedStudent}',
-
-
     // config handlers
     updateSelectedStudent: function(selectedStudent, oldSelectedStudent) {
-        this.fireEvent('selectedsectionchange', this, selectedStudent, oldSelectedStudent);
+        this.fireEvent('selectedstudentchange', this, selectedStudent, oldSelectedStudent);
+    },
+
+    updateSelectedSkill: function(selectedSkill, oldSelectedSkill) {
+        this.fireEvent('selectedskillchange', this, selectedSkill, oldSelectedSkill);
+    },
+
+    updateSelectedDemonstration: function(selectedDemonstration, oldSelectedDemonstration) {
+        this.fireEvent('selecteddemonstrationchange', this, selectedDemonstration, oldSelectedDemonstration);
     },
 
     applyDemonstrationSkillsList: function(demonstrationSkillsList, oldDemonstrationSkillsList) {
@@ -49,17 +54,6 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
 
     // component lifecycle
-    initComponent: function() {
-        var me = this;
-
-        me.callParent();
-
-        me.setData({
-            selectedSkill: me.getSelectedSkill(),
-            selectedStudent: me.getSelectedStudent()
-        });
-    },
-
     initItems: function() {
         var me = this;
 
