@@ -55,6 +55,12 @@ class Skill extends \VersionedRecord
         ]
     ];
 
+    public static $summaryFields = [
+        'ID' => true,
+        'Code' => true,
+        'Descriptor' => true
+    ];
+
     public static $searchConditions = [
         'Code' => [
             'qualifiers' => ['code', 'any'],

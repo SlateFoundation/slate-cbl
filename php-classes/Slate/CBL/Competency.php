@@ -69,6 +69,12 @@ class Competency extends \VersionedRecord
         ]
     ];
 
+    public static $summaryFields = [
+        'ID' => true,
+        'Code' => true,
+        'Descriptor' => true
+    ];
+
     public function getHandle()
     {
         return $this->Code;
@@ -149,7 +155,7 @@ class Competency extends \VersionedRecord
 
         return $skillIds;
     }
-    
+
     public function getSkills($forceRefresh = false)
     {
         $skills = [];
