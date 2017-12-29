@@ -1,4 +1,4 @@
-.skill-grid {
+.skill-list {
     border-bottom: 2px solid $border-color;
     margin: 0;
     table-layout: fixed;
@@ -7,25 +7,29 @@
         padding: 0.5em;
     }
 
-    .skill-grid-demo-detail-data {
+    .skill-list-demo-detail-data {
         padding: 0;
+    }
+
+    .x-view-item-focused {
+        outline: none !important;
     }
 }
 
-.skill-grid-header-row {
+.skill-list-header-row {
 
 }
 
-.skill-grid-header {
+.skill-list-header {
     background: none;
     border-bottom: 2px solid $border-color;
 }
 
-.skill-grid-demo-row {
+.skill-list-demo-row {
     cursor: pointer;
 }
 
-.skill-grid-demo-data {
+.skill-list-demo-data {
     background: #eee;
     @include ellipsis;
 
@@ -34,7 +38,7 @@
     }
 }
 
-.skill-grid-demo-index {
+.skill-list-demo-index {
     text-align: right;
     width: 3.25em;
 
@@ -51,38 +55,38 @@
         -webkit-font-smoothing: antialiased;
     }
 
-    .is-expanded td&::before {
+    .x-item-selected td&::before {
         transform: rotate(90deg);
     }
 }
 
-.skill-grid-demo-date {
+.skill-list-demo-date {
     white-space: nowrap;
     width: 16%;
 }
 
-.skill-grid-demo-level {
+.skill-list-demo-level {
     text-align: center;
     width: 9%;
 }
 
-.skill-grid-demo-experience {
+.skill-list-demo-experience {
 
 }
 
-.skill-grid-demo-context {
+.skill-list-demo-context {
 
 }
 
-.skill-grid-demo-task {
+.skill-list-demo-task {
 
 }
 
-.skill-grid-demo-detail-row {
+.skill-list-demo-detail-row {
 
 }
 
-.skill-grid-demo-detail-ct {
+.skill-list-demo-detail-ct {
     border: 1px solid #ccc;
     border-width: 1px 0;
     border-left: .375em solid rgba($base-color, .4);
@@ -92,7 +96,7 @@
     overflow: hidden;
     padding: 0.75em 1em;
 
-    .skill-grid-demo-detail-row.is-shown & {
+    .x-item-selected & {
         display: block;
     }
 
@@ -102,17 +106,17 @@
     }
 }
 
-.skill-grid-emptytext-row {
+.skill-list-emptytext-row {
 
 }
 
-.skill-grid-emptytext-cell {
+.skill-list-emptytext-cell {
     color: #777;
     font-style: italic;
     text-align: center;
 }
 
-.skill-grid-demo-meta {
+.skill-list-demo-meta {
     color: #777;
     font-size: small;
     font-style: italic;
