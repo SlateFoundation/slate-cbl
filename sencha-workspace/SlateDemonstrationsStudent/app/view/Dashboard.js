@@ -141,7 +141,6 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     },
 
     applyLoadedContentArea: function(contentArea, oldContentArea) {
-
         if (!contentArea) {
             return null;
         }
@@ -159,11 +158,13 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     },
 
     updateLoadedContentArea: function(contentArea, oldContentArea) {
+        var me = this;
+
         if (contentArea) {
-            this.setSelectedContentArea(contentArea.get('Code'));
+            me.setSelectedContentArea(contentArea.get('Code'));
         }
 
-        this.fireEvent('loadedcontentareachange', this, contentArea, oldContentArea);
+        me.fireEvent('loadedcontentareachange', me, contentArea, oldContentArea);
     },
 
     applyCompetenciesSummary: function(competenciesSummary, oldCompetenciesSummary) {
