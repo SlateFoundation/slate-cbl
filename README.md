@@ -76,3 +76,5 @@ parameter `apiHost` when loading the page.
 - [ ] Refactor TargetLevel -> Level and DemonstratedLevel -> Rating
 - [ ] Rename "Skill" to "Standard" ?
 - [ ] Remove hardcoded subtraction of 8 to go from grade to level
+- [ ] Eliminate `Slate.cbl.widget.*` namespace, all classes should be `view.*` or `field.*`
+- [ ] Move common store constructor->dirty=true, loadIfDirty, unload methods to lazydata package, override loadIfDirty where needed
