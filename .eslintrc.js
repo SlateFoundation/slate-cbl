@@ -66,7 +66,7 @@ module.exports = {
                 "SwitchCase": 1,
                 "ignoredNodes": [
                     // ignore indent of subsequent literals in tpl/renderTpl/itemTpl properties
-                    "Property[value.type=ArrayExpression]:matches([key.name=tpl], [key.name=renderTpl], [key.name=itemTpl]) > ArrayExpression > Literal + Literal"
+                    "Property[value.type=ArrayExpression]:matches([key.name=tpl], [key.name=renderTpl], [key.name=itemTpl], [key.name=displayTpl]) > ArrayExpression > Literal + Literal"
                 ]
             }
         ],
