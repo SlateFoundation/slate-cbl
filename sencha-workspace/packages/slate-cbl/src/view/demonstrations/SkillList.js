@@ -12,6 +12,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
     config: {
         store: {
             type: 'slate-cbl-demonstrationskills',
+            pageSize: 0,
             proxy: {
                 type: 'slate-cbl-demonstrationskills',
                 include: ['Creator', 'Demonstration']
