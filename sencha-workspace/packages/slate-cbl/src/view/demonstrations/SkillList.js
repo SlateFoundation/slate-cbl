@@ -11,6 +11,8 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
 
 
     config: {
+        highlightedDemonstration: null,
+
         store: {
             type: 'slate-cbl-demonstrationskills',
             pageSize: 0,
@@ -26,8 +28,16 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
     },
 
 
+    // skilllist properties
+    highlightedRowCls: 'skill-list-demo-highlighted',
+
+
+    // component properties
     autoEl: 'table',
     componentCls: 'skill-list',
+
+
+    // dataview properties
     itemSelector: 'tbody',
     tpl: [
         '<thead>',
@@ -43,7 +53,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
 
         '<tpl if="values && values.length">',
             '<tpl for=".">',
-                '<tbody class="skill-list-demo" data-demonstration="{ID}">',
+                '<tbody class="skill-list-demo <tpl if="highlighted">{[this.owner.highlightedRowCls]}</tpl>" data-demonstration="{Demonstration.ID}" data-demonstration-skill="{ID}">',
                 '<tr class="skill-list-demo-row">',
                     '<td class="skill-list-demo-data skill-list-demo-index">{[xindex]}</td>',
                     '<td class="skill-list-demo-data skill-list-demo-date">{Demonstrated:date}</td>',
@@ -66,7 +76,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                         '<td class="skill-list-demo-data skill-list-demo-task">{Demonstration.PerformanceType:htmlEncode}</td>',
                     '</tpl>',
                 '</tr>',
-                '<tr class="skill-list-demo-detail-row <tpl if="parent.selectedDemonstrationId == values.DemonstrationID">is-expanded</tpl>" data-demonstration="{ID}">',
+                '<tr class="skill-list-demo-detail-row" data-demonstration="{ID}">',
                     '<td class="skill-list-demo-detail-data" colspan="6">',
                         '<div class="skill-list-demo-detail-ct">',
                             '<tpl if="Demonstration.ArtifactURL">',
@@ -109,10 +119,48 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
     ],
 
 
+    // config handlers
+    updateHighlightedDemonstration: function(demonstration, oldDemonstration) {
+        var me = this,
+            highlightedRowCls = me.highlightedRowCls,
+            store = me.getStore();
+
+        if (oldDemonstration) {
+            oldDemonstration = me.getNode(store.findExact('DemonstrationID', oldDemonstration));
+
+            if (oldDemonstration) {
+                Ext.fly(oldDemonstration).removeCls(highlightedRowCls);
+            }
+        }
+
+        if (demonstration) {
+            demonstration = me.getNode(store.findExact('DemonstrationID', demonstration));
+
+            if (demonstration) {
+                Ext.fly(demonstration).addCls(highlightedRowCls);
+            }
+        }
+    },
+
+
+    // event handlers
     listeners: {
         selectionchange: function() {
             // HACK: selection changes height of list content via CSS, this call ensures parent layouts learn about the height change
             this.updateLayout();
         }
+    },
+
+
+    // dataview lifecycle
+    prepareData: function() {
+        var data = this.callParent(arguments);
+
+        if (data.DemonstrationID == this.getHighlightedDemonstration()) {
+            data = Ext.Object.chain(data);
+            data.highlighted = true;
+        }
+
+        return data;
     }
 });

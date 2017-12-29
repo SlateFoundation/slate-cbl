@@ -9,12 +9,8 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     extend: 'Ext.container.Container',
     xtype: 'slate-cbl-demonstrations-studentskillpanel',
     requires: [
-        'Slate.cbl.view.demonstrations.StudentSkillPanelController',
         'Slate.cbl.view.demonstrations.SkillList'
     ],
-
-
-    controller: 'slate-cbl-demonstrations-studentskillpanel',
 
 
     config: {
@@ -31,15 +27,29 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
     // config handlers
     updateSelectedStudent: function(selectedStudent, oldSelectedStudent) {
-        this.fireEvent('selectedstudentchange', this, selectedStudent, oldSelectedStudent);
+        var me = this;
+
+        me.getDemonstrationSkillsList().getStore().setStudent(selectedStudent);
+        me.loadSkillsIfReady();
+
+        me.fireEvent('selectedstudentchange', me, selectedStudent, oldSelectedStudent);
     },
 
     updateSelectedSkill: function(selectedSkill, oldSelectedSkill) {
-        this.fireEvent('selectedskillchange', this, selectedSkill, oldSelectedSkill);
+        var me = this;
+
+        me.getDemonstrationSkillsList().getStore().setSkill(selectedSkill);
+        me.loadSkillsIfReady();
+
+        me.fireEvent('selectedskillchange', me, selectedSkill, oldSelectedSkill);
     },
 
     updateSelectedDemonstration: function(selectedDemonstration, oldSelectedDemonstration) {
-        this.fireEvent('selecteddemonstrationchange', this, selectedDemonstration, oldSelectedDemonstration);
+        var me = this;
+
+        me.getDemonstrationSkillsList().setHighlightedDemonstration(selectedDemonstration);
+
+        me.fireEvent('selecteddemonstrationchange', me, selectedDemonstration, oldSelectedDemonstration);
     },
 
     applyDemonstrationSkillsList: function(demonstrationSkillsList, oldDemonstrationSkillsList) {
@@ -62,5 +72,15 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         me.add([
             me.getDemonstrationSkillsList()
         ]);
+    },
+
+
+    // local methods
+    loadSkillsIfReady: function() {
+        var store = this.getDemonstrationSkillsList().getStore();
+
+        if (store.getStudent() && store.getSkill()) {
+            store.loadIfDirty();
+        }
     }
 });
