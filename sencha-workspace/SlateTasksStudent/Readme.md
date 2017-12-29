@@ -11,11 +11,6 @@
 
 ![State Flow Diagram](docs/state-flow.png)
 
-### Best Practices
-
-- Use `select`/`clear` events instead of `change` to monitor navigation combos for route updates -- they only fire in response to direct user input
-- Ensure blank components aren't appended to paths
-
 ## TODO
 
 - [ ] Review and optimized task detail methods and views
