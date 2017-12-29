@@ -5,7 +5,8 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
     extend: 'Ext.view.View',
     xtype: 'slate-cbl-demonstrations-skilllist',
     requires: [
-        'Slate.cbl.store.demonstrations.DemonstrationSkills'
+        'Slate.cbl.store.demonstrations.DemonstrationSkills',
+        'Slate.API'
     ],
 
 
@@ -82,7 +83,12 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                             '</tpl>',
                             '<div class="skill-list-demo-meta">',
                                 'Demonstration #{DemonstrationID} &middot;&nbsp;',
-                                '<tpl for="Creator"><a href="/people/{Username}">{FirstName} {LastName}</a></tpl> &middot;&nbsp;',
+                                '<tpl for="Creator">',
+                                    '<a href="{[Slate.API.buildUrl("/people/"+values.Username)]}" target="_blank">',
+                                        '{FirstName} {LastName}',
+                                    '</a>',
+                                '</tpl>',
+                                ' &middot;&nbsp;',
                                 '{Created:date("F j, Y, g:i a")}',
                                 '<tpl if="parent.showEditLinks">',
                                     ' &middot;&nbsp;',
