@@ -123,7 +123,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         '    <li class="cbl-skill" data-skill="{ID}">',
         '        <h5 class="cbl-skill-name">{Descriptor:htmlEncode}</h5>',
 
-        '        <ul class="cbl-skill-demos" data-skill="{ID}">',
+        '        <ul class="cbl-skill-demos">',
         '            <tpl for="demonstrations">',
         '                <tpl if=".">',
         '                    <li ',
