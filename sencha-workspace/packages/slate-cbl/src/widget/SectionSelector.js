@@ -4,8 +4,6 @@ Ext.define('Slate.cbl.widget.SectionSelector', {
 
 
     config: {
-        componentCls: 'slate-cbl-sectionselector',
-
         fieldLabel: 'Course Section',
         labelWidth: 120,
 
@@ -23,8 +21,8 @@ Ext.define('Slate.cbl.widget.SectionSelector', {
         tpl: [
             '{% this.currentTerm = null %}',
             '<tpl for=".">',
-            '    {[this.showTermHeader(values)]}',
-            '    <div class="x-boundlist-item">{Title}</div>',
+                '{[this.showTermHeader(values)]}',
+                '<div class="x-boundlist-item">{Title}</div>',
             '</tpl>',
             {
                 showTermHeader: function(section) {
@@ -39,5 +37,8 @@ Ext.define('Slate.cbl.widget.SectionSelector', {
                 }
             }
         ]
-    }
+    },
+
+
+    componentCls: 'slate-cbl-sectionselector'
 });

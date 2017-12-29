@@ -7,8 +7,6 @@ Ext.define('Slate.cbl.widget.ContentAreaSelector', {
 
 
     config: {
-        componentCls: 'slate-cbl-contentareaselector',
-
         fieldLabel: 'Rubric',
         labelWidth: 60,
 
@@ -21,6 +19,7 @@ Ext.define('Slate.cbl.widget.ContentAreaSelector', {
     },
 
 
+    componentCls: 'slate-cbl-contentareaselector',
     store: {
         model: 'Slate.cbl.model.ContentArea',
         pageSize: 0,

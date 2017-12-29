@@ -7,8 +7,6 @@ Ext.define('Slate.cbl.widget.StudentSelector', {
 
 
     config: {
-        componentCls: 'slate-cbl-studentselector',
-
         fieldLabel: 'Student',
         labelWidth: 70,
 
@@ -37,6 +35,7 @@ Ext.define('Slate.cbl.widget.StudentSelector', {
     },
 
 
+    componentCls: 'slate-cbl-studentselector',
     store: {
         model: 'Slate.model.person.Person',
         pageSize: 0,
