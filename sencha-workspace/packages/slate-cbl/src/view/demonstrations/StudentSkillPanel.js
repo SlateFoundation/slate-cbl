@@ -9,9 +9,12 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     extend: 'Ext.container.Container',
     xtype: 'slate-cbl-demonstrations-studentskillpanel',
     requires: [
+        'Ext.util.Format',
+
         /* global Slate */
         'Slate.cbl.model.Skill',
         'Slate.cbl.widget.SkillSelector',
+        'Slate.cbl.view.demonstrations.SkillStatement',
         'Slate.cbl.view.demonstrations.SkillList'
     ],
 
@@ -23,6 +26,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         loadedSkill: null,
 
         skillSelector: true,
+        skillStatement: true,
         demonstrationSkillsList: true,
 
         title: 'Standard Overview'
@@ -88,6 +92,8 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         if (skill) {
             me.setSelectedSkill(skill.get('Code'));
 
+            me.setSkillStatement(skill.get('Statement'));
+
             skillsStore.setCompetency(skill.get('CompetencyID'));
             skillSelector.setValue(skill);
 
@@ -120,6 +126,20 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
             skillSelector.lazyAutoLoad = false;
             skillSelector.on('beforequery', 'onSkillSelectorBeforeQuery', this);
         }
+    },
+
+    applySkillStatement: function(skillStatement, oldSkillStatement) {
+        if (!skillStatement) {
+            skillStatement = {
+                hidden: true
+            };
+        } else if (typeof skillStatement === 'string') {
+            skillStatement = {
+                html: Ext.util.Format.htmlEncode(skillStatement)
+            };
+        }
+
+        return Ext.factory(skillStatement, 'Slate.cbl.view.demonstrations.SkillStatement', oldSkillStatement);
     },
 
     applyDemonstrationSkillsList: function(demonstrationSkillsList, oldDemonstrationSkillsList) {
@@ -167,6 +187,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
         me.add([
             me.getSkillSelector(),
+            me.getSkillStatement(),
             me.getDemonstrationSkillsList()
         ]);
     },
