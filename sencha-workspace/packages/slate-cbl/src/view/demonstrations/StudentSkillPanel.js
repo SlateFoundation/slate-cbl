@@ -9,6 +9,9 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     extend: 'Ext.container.Container',
     xtype: 'slate-cbl-demonstrations-studentskillpanel',
     requires: [
+        /* global Slate */
+        'Slate.cbl.model.Skill',
+        'Slate.cbl.widget.SkillSelector',
         'Slate.cbl.view.demonstrations.SkillList'
     ],
 
@@ -19,9 +22,16 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         selectedDemonstration: null,
         loadedSkill: null,
 
+        skillSelector: true,
         demonstrationSkillsList: true,
 
         title: 'Standard Overview'
+    },
+
+
+    layout: 'anchor',
+    defaults: {
+        anchor: '100%'
     },
 
 
@@ -38,6 +48,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     updateSelectedSkill: function(selectedSkill, oldSelectedSkill) {
         var me = this;
 
+        // me.getSkillSelector().setValue(selectedSkill);
         me.getDemonstrationSkillsList().getStore().setSkill(selectedSkill);
         me.loadSkillsIfReady();
 
@@ -52,6 +63,65 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         me.fireEvent('selecteddemonstrationchange', me, selectedDemonstration, oldSelectedDemonstration);
     },
 
+    applyLoadedSkill: function(skill, oldSkill) {
+        if (!skill) {
+            return null;
+        }
+
+        if (!skill.isModel) {
+            if (oldSkill && skill.ID == oldSkill.getId()) {
+                oldSkill.set(skill, { dirty: false });
+                return oldSkill;
+            }
+
+            skill = Slate.cbl.model.ContentArea.create(skill);
+        }
+
+        return skill;
+    },
+
+    updateLoadedSkill: function(skill, oldSkill) {
+        var me = this,
+            skillSelector = me.getSkillSelector(),
+            skillsStore = skillSelector.getStore();
+
+        if (skill) {
+            me.setSelectedSkill(skill.get('Code'));
+
+            skillsStore.setCompetency(skill.get('CompetencyID'));
+            skillSelector.setValue(skill);
+
+            // reload skills store with just selected skill if its not in the current result set
+            if (!skillSelector.getSelectedRecord()) {
+                skillsStore.loadRecords([skill]);
+            }
+        }
+
+        me.fireEvent('loadedskillchange', me, skill, oldSkill);
+    },
+
+    applySkillSelector: function(skillSelector, oldSkillSelector) {
+        if (typeof skillSelector === 'boolean') {
+            skillSelector = {
+                hidden: !skillSelector
+            };
+        }
+
+        return Ext.factory(skillSelector, 'Slate.cbl.widget.SkillSelector', oldSkillSelector);
+    },
+
+    updateSkillSelector: function(skillSelector, oldSkillSelector) {
+        if (oldSkillSelector) {
+            oldSkillSelector.un('beforequery', 'onSkillSelectorBeforeQuery', this);
+        }
+
+        if (skillSelector) {
+            skillSelector.setMatchFieldWidth(true);
+            skillSelector.lazyAutoLoad = false;
+            skillSelector.on('beforequery', 'onSkillSelectorBeforeQuery', this);
+        }
+    },
+
     applyDemonstrationSkillsList: function(demonstrationSkillsList, oldDemonstrationSkillsList) {
         if (typeof demonstrationSkillsList === 'boolean') {
             demonstrationSkillsList = {
@@ -62,6 +132,32 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         return Ext.factory(demonstrationSkillsList, 'Slate.cbl.view.demonstrations.SkillList', oldDemonstrationSkillsList);
     },
 
+    updateDemonstrationSkillsList: function(demonstrationSkillsList, oldDemonstrationSkillsList) {
+        if (oldDemonstrationSkillsList) {
+            oldDemonstrationSkillsList.getStore().un('load', 'onDemonstrationSkillsStoreLoad', this);
+        }
+
+        if (demonstrationSkillsList) {
+            demonstrationSkillsList.getStore().on('load', 'onDemonstrationSkillsStoreLoad', this);
+        }
+    },
+
+
+    // event handlers
+    onDemonstrationSkillsStoreLoad: function(store, records, success) {
+        if (!success) {
+            return;
+        }
+
+        // eslint-disable-next-line vars-on-top
+        this.setLoadedSkill(store.getProxy().getReader().rawData.Skill || null);
+    },
+
+    onSkillSelectorBeforeQuery: function(queryPlan) {
+        // trigger full store load if params have changed since last load
+        queryPlan.combo.getStore().loadIfDirty();
+    },
+
 
     // component lifecycle
     initItems: function() {
@@ -70,6 +166,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         me.callParent();
 
         me.add([
+            me.getSkillSelector(),
             me.getDemonstrationSkillsList()
         ]);
     },

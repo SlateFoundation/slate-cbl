@@ -9,11 +9,26 @@ Ext.define('Slate.cbl.store.Skills', {
 
     model: 'Slate.cbl.model.Skill',
     config: {
+        competency: null,
+
         pageSize: 0,
         remoteSort: false,
         sorters: true
     },
 
+
+    // model lifecycle
+    constructor: function() {
+        this.callParent(arguments);
+        this.dirty = true;
+    },
+
+
+    // config handlers
+    updateCompetency: function(competency) {
+        this.getProxy().setExtraParam('competency', competency || null);
+        this.dirty = true;
+    },
 
     applySorters: function(sorters) {
         if (sorters === true) {
@@ -21,5 +36,21 @@ Ext.define('Slate.cbl.store.Skills', {
         }
 
         return this.callParent([sorters]);
+    },
+
+
+    // member methods
+    loadIfDirty: function() {
+        if (!this.dirty) {
+            return;
+        }
+
+        this.dirty = false;
+        this.load();
+    },
+
+    unload: function() {
+        this.loadCount = 0;
+        this.removeAll();
     }
 });

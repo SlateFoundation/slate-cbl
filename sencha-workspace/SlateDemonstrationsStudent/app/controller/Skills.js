@@ -8,9 +8,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Skills', {
         'StudentSkillPanel@Slate.cbl.view.demonstrations'
     ],
 
-    stores: [
-    ],
-
 
     refs: {
         dashboardCt: 'slate-demonstrations-student-dashboard',
@@ -37,19 +34,18 @@ Ext.define('SlateDemonstrationsStudent.controller.Skills', {
 
     // event handlers
     onDemoCellClick: function(competencyCard, context) {
-        var dashboardCt = this.getDashboardCt(),
-            skillWindow = this.getSkillWindow({
-                ownerCmp: dashboardCt,
-                autoShow: true,
-                animateTarget: context.targetEl,
+        var dashboardCt = this.getDashboardCt();
 
-                mainView: {
-                    selectedStudent: dashboardCt.getSelectedStudent(),
-                    selectedSkill: context.skillId,
-                    selectedDemonstration: context.demonstrationId
-                }
-            });
+        this.getSkillWindow({
+            ownerCmp: dashboardCt,
+            autoShow: true,
+            animateTarget: context.targetEl,
 
-        console.info('Created skillWindow', window.skillWindow = skillWindow);
+            mainView: {
+                selectedStudent: dashboardCt.getSelectedStudent(),
+                selectedSkill: context.skill,
+                selectedDemonstration: context.demonstration
+            }
+        });
     }
 });

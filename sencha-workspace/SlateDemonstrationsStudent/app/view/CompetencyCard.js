@@ -120,7 +120,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     // local subtemplates
     skillsTpl: [
         '<tpl for=".">',
-        '    <li class="cbl-skill" data-skill="{ID}">',
+        '    <li class="cbl-skill" data-skill="{Code}">',
         '        <h5 class="cbl-skill-name">{Descriptor:htmlEncode}</h5>',
 
         '        <ul class="cbl-skill-demos">',
@@ -321,8 +321,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             this,
             {
                 targetEl: target,
-                demonstrationId: parseInt(target.getAttribute('data-demonstration'), 10),
-                skillId: parseInt(target.up('.cbl-skill').getAttribute('data-skill'), 10)
+                skill: target.up('.cbl-skill').getAttribute('data-skill'),
+                demonstration: parseInt(target.getAttribute('data-demonstration'), 10)
             },
             ev
         );
