@@ -12,6 +12,7 @@ for full end-user and contributor documentation.
   - `sencha-workspace/SlateDemonstrationsStudent`: Demonstrations dashboard for students
   - `sencha-workspace/SlateTasksTeacher`: Tasks dashboard for teachers
   - `sencha-workspace/SlateTasksStudent`: Tasks dashboard for students
+  - `sencha-workspace/SlateTasksManager`: Tasks library for all staff
 - Server-side extensions for slate:
   - `event-handlers/Slate/CBL/`
   - `html-templates/cbl/`
