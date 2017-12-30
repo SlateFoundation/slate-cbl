@@ -3,7 +3,7 @@ pkg_maintainer="Chris Alfano <chris@jarv.us>"
 pkg_license=("MIT")
 pkg_build_deps=(
   core/git
-  jarvus/sencha-cmd
+  jarvus/sencha-cmd/6.5.2.15
 )
 
 # implement git-based dynamic version strings

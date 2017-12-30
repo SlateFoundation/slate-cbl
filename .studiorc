@@ -8,7 +8,7 @@ caddy_root="http://localhost:${caddy_port}"
 # install additional packages
 echo
 echo "--> Installing additional studio packages for slate-cbl development..."
-hab pkg install jarvus/sencha-cmd core/caddy core/git
+hab pkg install jarvus/sencha-cmd/6.5.2.15 core/caddy core/git
 hab pkg binlink jarvus/sencha-cmd sencha
 hab pkg binlink core/caddy caddy
 hab pkg binlink core/git git
