@@ -21,7 +21,7 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
         section: null,
 
         header: {
-            title: 'Student Task Dashboard',
+            title: 'My Tasks',
 
             items: [
                 {

@@ -98,7 +98,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
 
         fullWidth: true,
         header: {
-            title: 'Teacher Task Dashboard',
+            title: 'Classroom Tasks',
 
             items: [
                 {

@@ -12,6 +12,7 @@ Ext.define('SlateDemonstrationsTeacher.view.AppHeader', {
     xtype: 'slate-demonstrations-teacher-appheader',
 
     controller: 'slate-demonstrations-teacher-appheader',
+    title: 'Classroom Progress',
 
     items: [{
         xtype: 'slate-demonstrations-teacher-studentgroupselector',

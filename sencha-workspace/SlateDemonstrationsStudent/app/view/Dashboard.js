@@ -103,7 +103,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
         // appcontainer config
         header: {
-            title: 'Student Demonstrations Dashboard',
+            title: 'My Progress',
 
             items: [
                 {
