@@ -100,11 +100,11 @@ caddy-start
 
 
 ## clean up on exit
-cbl-studio-cleanup() {
+_cbl_studio_cleanup() {
     caddy-stop
 }
 
-trap cbl-studio-cleanup exit
+trap _cbl_studio_cleanup exit
 
 
 
