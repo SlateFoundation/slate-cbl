@@ -26,7 +26,7 @@ for full end-user and contributor documentation.
 
 - [Emergence](http://emergence.sh): Open toolkit for building and running web applications
 - [Slate](http://slate.is): Foundational web application for schools
-- [Sencha Ext JS 6 Classic](http://docs.sencha.com/extjs/6.0/): Web-based UI framework with rich components library
+- [Sencha Ext JS 6 Classic](http://docs.sencha.com/extjs/6.2.0/): Web-based UI framework with rich components library
 - Sencha CMD 6.x: Build tools for web UI applications built with Sencha Ext JS
 - [Habitat](http://habitat.sh): Provides portable and isolated environments for testing and building
 
