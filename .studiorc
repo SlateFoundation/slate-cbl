@@ -79,9 +79,9 @@ caddy-start() {
     caddy-stop
 
     echo
-    echo "--> Setting up web server..."
+    echo "--> Launching the Caddy web server in the background..."
 
-    echo "    Running: caddy"
+    echo "    Running: caddy -port ${caddy_port} -root /src/sencha-workspace browse"
     setsid caddy -port "${caddy_port}" -agree -quiet -root /src/sencha-workspace -pidfile /hab/bin/caddy.pid browse &
     echo "    * Open ${caddy_root} to browse sencha-workspace"
 }
