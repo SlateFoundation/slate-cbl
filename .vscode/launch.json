@@ -5,14 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to Chrome",
-            "type": "chrome",
-            "request": "attach",
-            "port": 9222,
-            "webRoot": "${workspaceFolder}/sencha-workspace",
-            "url": "http://localhost:3901"
-        },
-        {
             "name": "Launch SlateDemonstrationsStudent",
             "type": "chrome",
             "request": "launch",
@@ -46,6 +38,14 @@
             "request": "launch",
             "webRoot": "${workspaceFolder}/sencha-workspace",
             "url": "http://localhost:3901/SlateTasksManager/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
+        },
+        {
+            "name": "Attach to Chrome",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}/sencha-workspace",
+            "url": "http://localhost:3901"
         }
     ]
 }
