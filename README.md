@@ -35,7 +35,7 @@ for full end-user and contributor documentation.
 1. Install habitat
 
     ```bash
-    curl https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | sudo bash
+    curl -s https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | sudo bash
     ```
 
 1. Set up habitat
