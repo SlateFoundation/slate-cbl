@@ -17,35 +17,35 @@
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}",
-            "url": "http://localhost:3901/SlateDemonstrationsStudent/?apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:3901/SlateDemonstrationsStudent/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
         },
         {
             "name": "Launch SlateDemonstrationsTeacher",
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}",
-            "url": "http://localhost:3901/SlateDemonstrationsTeacher/?apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:3901/SlateDemonstrationsTeacher/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
         },
         {
             "name": "Launch SlateTasksStudent",
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}",
-            "url": "http://localhost:3901/SlateTasksStudent/?apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:3901/SlateTasksStudent/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
         },
         {
             "name": "Launch SlateTasksTeacher",
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}",
-            "url": "http://localhost:3901/SlateTasksTeacher/?apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:3901/SlateTasksTeacher/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
         },
         {
             "name": "Launch SlateTasksManager",
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}",
-            "url": "http://localhost:3901/SlateTasksManager/?apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:3901/SlateTasksManager/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
         }
     ]
 }
