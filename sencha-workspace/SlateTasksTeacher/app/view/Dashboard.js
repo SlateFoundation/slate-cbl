@@ -149,7 +149,13 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     },
 
     updateLoadedSection: function(section, oldSection) {
-        this.fireEvent('loadedsectionchange', this, section, oldSection);
+        var me = this;
+
+        if (section) {
+            me.setSelectedSection(section.get('Code'));
+        }
+
+        me.fireEvent('loadedsectionchange', me, section, oldSection);
     },
 
     applyStudentsGrid: function(studentsGrid, oldStudentsGrid) {
