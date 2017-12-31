@@ -144,6 +144,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             '<span class="cbl-grid-legend-item level-color cbl-level-3">GB</span>',
             '<span class="cbl-grid-legend-item level-color cbl-level-4">AD</span>',
             '<span class="cbl-grid-legend-item level-color cbl-level-5">EX</span>',
+            '<span class="cbl-grid-legend-item level-color cbl-level-6">BA</span>',
         '</div>'
     ],
 
@@ -503,6 +504,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
         for(; i < competencyCompletionsLength; i++) {
             competencyCompletionData = competencyCompletions[i];
+            console.log(competencyCompletionData);
             competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
             competencyCompletionRecord = completionsStore.getById(competencyCompletionId);
 
@@ -932,7 +934,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
+                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.DemonstratedLevel) {
                     (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
