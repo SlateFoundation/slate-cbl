@@ -6,6 +6,7 @@ pkg_build_deps=(
   jarvus/sencha-cmd/6.5.2.15
 )
 
+
 # implement git-based dynamic version strings
 pkg_version() {
   if [ -n "${pkg_last_tag}" ]; then
@@ -15,8 +16,6 @@ pkg_version() {
   fi
 }
 
-
-# implement build workflow
 do_before() {
   do_default_before
 
@@ -38,6 +37,8 @@ do_before() {
   update_pkg_version
 }
 
+
+# implement build workflow
 do_build() {
   pushd "${PLAN_CONTEXT}" > /dev/null
 
