@@ -73,7 +73,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                             '<tr class="skill-grid-demo-row" data-demonstration="{ID}">',
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstrated:date}</td>',
-                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{TargetLevel}">',
+                                '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{DemonstratedLevel}">',
                                 '<tpl if="DemonstratedLevel==0">M<tpl else>{[getBaxterLevel(values.DemonstratedLevel)]}',
                                 '</tpl></div></td>',
                                 '<tpl if="Override">',
