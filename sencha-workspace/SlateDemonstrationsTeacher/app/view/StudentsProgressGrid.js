@@ -934,7 +934,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.DemonstratedLevel) {
+                if (skillStudentRenderData.completion.currentLevel <= skillDemonstration.DemonstratedLevel) {
                     (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
@@ -956,7 +956,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                 (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
+                if (skillStudentRenderData.completion.currentLevel <= skillDemonstration.DemonstratedLevel) {
                     (skillStudentRenderData.updatedDemonstrationSkills || (skillStudentRenderData.updatedDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
