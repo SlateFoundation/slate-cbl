@@ -58,6 +58,12 @@ for full end-user and contributor documentation.
     cd ./slate-cbl
     ```
 
+1. Ensure repository and all submodules are initialized and up-to-date
+
+    ```bash
+    ./pull
+    ```
+
 1. Launch habitat studio
 
     On Linux, just run:
