@@ -1,11 +1,14 @@
 var levelLut = {
   0 : "NE",
+  0.5 : "IE",
   1 : "EN",
   2 : "PR",
   3 : "GB",
   4 : "AD",
-  5 : "EX"
+  5 : "EX",
+  6 : "BA"
 }
+
 Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-student-competencycard',

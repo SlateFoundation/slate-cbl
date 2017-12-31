@@ -9,8 +9,10 @@ var levelLut = {
   2 : "PR",
   3 : "GB",
   4 : "AD",
-  5 : "EX"
+  5 : "EX",
+  6 : "BA"
 }
+
 
 Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
     extend: 'Ext.Component',
@@ -177,7 +179,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
         '<tpl for="skills">',
             '<tr class="cbl-grid-skill-row" data-skill="{skill.ID}">',
                 '<tpl for="students">',
-                    '<td class="cbl-grid-demos-cell <tpl if="completion">cbl-level-{completion.currentLevel}</tpl>" data-student="{student.ID}">',
+                    '<td class="cbl-grid-demos-cell <tpl if="completion">level-{completion.currentLevel}</tpl>" data-student="{student.ID}">',
                         '<ul class="cbl-grid-demos">',
                             '<tpl for="demonstrationBlocks">',
                                 '<li class="cbl-grid-demo cbl-grid-demo-empty"></li>',
@@ -811,7 +813,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
                 competencyStudentData.progressLevelEl.update(levelLut[level]);
 
-                competencyStudentData.renderedLevel = levelLut[level];
+                competencyStudentData.renderedLevel = level;
             }
 
             competencyStudentData.completion = completion.data;
@@ -1121,11 +1123,14 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                                 }
                             }
 
+                            //save off level number to generate class
+                            var numericalLevel = skillDemonstrationDemonstratedLevel;
+
                             // normalize level to output code
                             if (skillDemonstrationOverride) {
                                 skillDemonstrationDemonstratedLevel = 'O'; // letter O for override
                             } else if (skillDemonstrationDemonstratedLevel === 0) {
-                                skillDemonstrationDemonstratedLevel = 'M';
+                                skillDemonstrationDemonstratedLevel = 'NE';
                             } else {
                               skillDemonstrationDemonstratedLevel = levelLut[skillDemonstrationDemonstratedLevel];
                             }
@@ -1140,16 +1145,20 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-empty');
                                 }
 
-                                if (renderedDemonstrationLevel === 'M') {
+                                if (renderedDemonstrationLevel === 'NE') {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-uncounted');
-                                } else if (skillDemonstrationDemonstratedLevel === 'M') {
+                                } else if (skillDemonstrationDemonstratedLevel === 'NE') {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-uncounted');
                                 }
 
                                 if (skillDemonstrationDemonstratedLevel && skillDemonstrationDemonstratedLevel != 'M') {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-counted');
+                                    skillDemonstrationBlockEl.addCls('level-color');
+                                    skillDemonstrationBlockEl.addCls('cbl-level-' + numericalLevel);
                                 } else if (renderedDemonstrationLevel) {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-counted');
+                                    skillDemonstrationBlockEl.removeCls('level-color');
+                                    skillDemonstrationBlockEl.removeCls('cbl-level-' + numericalLevel);
                                 }
 
                                 skillDemonstrationBlockEl.update(skillDemonstrationDemonstratedLevel === undefined ? '' : skillDemonstrationDemonstratedLevel);
