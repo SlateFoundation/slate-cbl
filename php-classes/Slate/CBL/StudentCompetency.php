@@ -13,7 +13,7 @@ use Slate\CBL\Demonstrations\DemonstrationSkill;
 class StudentCompetency extends \ActiveRecord
 {
     public static $autoGraduate = true;
-    public static $positiveDemonstrationReporting = false; //only reports positive demonstrations AND reports all demonstrations regardless of target
+    public static $positiveDemonstrationReporting = true; //only reports positive demonstrations AND reports all demonstrations regardless of target
     public static $isLevelComplete;
     public static $minimumRatingOffset;
 
@@ -162,10 +162,11 @@ class StudentCompetency extends \ActiveRecord
     private $demonstrationData;
     public function getDemonstrationData()
     {
+
         if ($this->demonstrationData === null) {
             try {
+                
                 $skillIds = $this->Competency->getSkillIds();
-
                 if (count($skillIds)) {
                     $this->demonstrationData = DB::arrayTable(
                         'SkillID',
@@ -176,7 +177,7 @@ class StudentCompetency extends \ActiveRecord
                           JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration
                             ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                          WHERE DemonstrationSkill.SkillID IN (%s) AND ' .
-                          ($positiveDemonstrationReporting ?
+                          (static::$positiveDemonstrationReporting ?
                             'DemonstrationSkill.DemonstratedLevel >= %u ' :
                             'DemonstrationSkill.TargetLevel = %u '
                           ) . '
@@ -198,7 +199,6 @@ class StudentCompetency extends \ActiveRecord
                 $this->demonstrationData = [];
             }
         }
-
         return $this->demonstrationData;
     }
 
@@ -222,7 +222,6 @@ class StudentCompetency extends \ActiveRecord
 
                 $Skill = Skill::getByID($skillId);
                 $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
-
                 array_splice($demonstrationData, $demonstrationsRequired);
             }
 
@@ -300,7 +299,6 @@ class StudentCompetency extends \ActiveRecord
         if ($this->demonstrationsAtLevel === null) {
             $this->demonstrationsAtLevel = 0;
 
-
             foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
                 $Skill = Skill::getByID($skillId);
                 $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
@@ -310,15 +308,15 @@ class StudentCompetency extends \ActiveRecord
                 foreach ($demonstrationData as $demonstration) {
                     if (!empty($demonstration['Override'])) {
                         $skillCount += $demonstrationsRequired;
-                      } elseif (!empty($demonstration['DemonstratedLevel']) && $demonstration['DemonstratedLevel'] > $level + 1) {
+                    } elseif (!empty($demonstration['DemonstratedLevel']) && $demonstration['DemonstratedLevel'] >= $level) {
                         $skillCount++;
                     }
                 }
 
                 $this->demonstrationsAtLevel += min($demonstrationsRequired, $skillCount);
             }
+            
         }
-
         return $this->demonstrationsAtLevel;
     }
 
