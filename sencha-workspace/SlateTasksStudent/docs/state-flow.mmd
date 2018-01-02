@@ -22,12 +22,20 @@ graph TD
     subgraph User navigates via UI components
         NAV_STUDENT_IN>Student Selector]
         NAV_SECTION_IN>Section Selector]
-        CTRL_MAIN_NAV("Dashboard Controller <code>
- <li>onStudentSelectorSelect</li> <li>onStudentSelectorClear</li> <li>onSectionSelectorChange</li> </code>")
+        CTRL_MAIN_NAV("
+            Dashboard Controller
+            <code>
+                <li>onStudentSelectorSelect</li>
+                <li>onStudentSelectorClear</li>
+                <li>onSectionSelectorSelect</li>
+                <li>onSectionSelectorClear</li>
+            </code>
+        ")
 
         NAV_STUDENT_IN -.-> |select| CTRL_MAIN_NAV
         NAV_STUDENT_IN -.-> |clear| CTRL_MAIN_NAV
-        NAV_SECTION_IN -.-> |change| CTRL_MAIN_NAV
+        NAV_SECTION_IN -.-> |select| CTRL_MAIN_NAV
+        NAV_SECTION_IN -.-> |clear| CTRL_MAIN_NAV
 
         CTRL_MAIN_NAV --> |"redirectTo(...)"| NAV_ROUTER_HASH
     end
@@ -35,17 +43,31 @@ graph TD
     subgraph Route parameters applied to top-level view state
         NAV_ROUTER_HASH>Browser Address Bar]
         ROUTER(Ext.app.route.Router)
-        CTRL_DASH_ROUTER("Dashboard Controller <code>
- <li>showDashboard(studentUsername, sectionCode)</li>
- </code>")
+        CTRL_DASH_ROUTER("
+            Dashboard Controller
+            <code>
+                <li>showDashboard(studentUsername, sectionCode)</li>
+            </code>
+        ")
 
         ROUTER --> |"routes: { ':studentUsername/:sectionCode' }"| CTRL_DASH_ROUTER
     end
 
     subgraph New state propagates throughout application
-        CTRL_TASKS("Tasks Controller <code>
- <li>onStudentChange</li> <li>onSectionChange</li> </code>")
-        CTRL_TODOS("Todos Controller <code> <li>onStudentChange</li> <li>onSectionChange</li> </code>")
+        CTRL_TASKS("
+            Tasks Controller
+            <code>
+                <li>onStudentChange</li>
+                <li>onSectionChange</li>
+            </code>
+        ")
+        CTRL_TODOS("
+            Todos Controller
+            <code>
+                <li>onStudentChange</li>
+                <li>onSectionChange</li>
+            </code>
+        ")
         STORE_TASKS((Tasks Store))
         STORE_TODOS((Todos Store))
         VIEW_TASKS[Tasks View]
@@ -67,7 +89,13 @@ graph TD
     end
 
     subgraph New state reflected back to all navigation UI
-        CTRL_DASH_CHANGE("Dashboard Controller <code><li>onStudentChange</li> <li>onSectionChange</li> </code>")
+        CTRL_DASH_CHANGE("
+            Dashboard Controller
+            <code>
+                <li>onStudentChange</li>
+                <li>onSectionChange</li>
+            </code>
+        ")
         NAV_STUDENT_OUT>Student Selector]
         NAV_SECTION_OUT>Section Selector]
 
