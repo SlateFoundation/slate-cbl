@@ -380,7 +380,9 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         // group demonstrations by skill
         for (; demoSkillIndex < demoSkillsLen; demoSkillIndex++) {
             demoSkill = demoSkillsStore.getAt(demoSkillIndex);
-            skillsData[demoSkill.get('SkillID')].demonstrations.push(demoSkill.getData());
+            if (demoSkill.getData().DemonstratedLevel >= me.getLevel()){
+              skillsData[demoSkill.get('SkillID')].demonstrations.push(demoSkill.getData());
+            }
         }
 
         // sort and pad demonstrations arrays
