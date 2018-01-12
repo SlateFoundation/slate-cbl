@@ -47,6 +47,8 @@ do_build() {
     -Dbuild.temp.dir="/tmp" \
     -Dapp.cache.deltas=false \
     -Dapp.output.microloader.enable=false \
+    -Dbuild.enable.appmanifest=false \
+    -Denable.standalone.manifest=true \
     production \
     build
 
@@ -54,7 +56,7 @@ do_build() {
 }
 
 do_install() {
-  cp -r "${CACHE_PATH}" "${pkg_prefix}/www"
+  cp -r "${CACHE_PATH}" "${pkg_prefix}/app"
 }
 
 do_strip() {
