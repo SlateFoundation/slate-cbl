@@ -3,6 +3,7 @@ pkg_maintainer="Chris Alfano <chris@jarv.us>"
 pkg_license=("MIT")
 pkg_build_deps=(
   core/git
+  jarvus/underscore
   jarvus/sencha-cmd/6.5.2.15
 )
 
@@ -57,6 +58,8 @@ do_build() {
 
 do_install() {
   cp -r "${CACHE_PATH}" "${pkg_prefix}/app"
+
+  underscore extract name --outfmt text --in "${PLAN_CONTEXT}/app.json" > "${pkg_prefix}/APP_NAME"
 }
 
 do_strip() {
