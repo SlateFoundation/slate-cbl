@@ -103,7 +103,6 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
             items: [
                 {
                     xtype: 'slate-cbl-sectionselector',
-                    lazyAutoLoad: false,
                     store: 'Sections',
                     queryMode: 'local',
                     emptyText: 'Select',

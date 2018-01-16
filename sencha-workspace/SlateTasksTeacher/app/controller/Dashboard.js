@@ -103,7 +103,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         // configure and load sections store for selector
         sectionsStore.getProxy().setExtraParam('enrolled_user', '*current');
-        sectionsStore.load();
 
         // load bootstrap data
         Slate.API.request({
