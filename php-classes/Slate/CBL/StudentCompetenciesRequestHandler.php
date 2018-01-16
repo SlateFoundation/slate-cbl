@@ -4,6 +4,7 @@ namespace Slate\CBL;
 
 use ActiveRecord, RecordsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
+use Slate\People\Student;
 
 
 class StudentCompetenciesRequestHandler extends RecordsRequestHandler
@@ -43,7 +44,7 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
             $conditions['StudentID'] = $User->ID;
         }
 
-        // apply student filter
+        // apply student or students filter
         if (!$User) {
             return static::throwUnauthorizedError('Login required');
         } elseif (!empty($_GET['student'])) {
@@ -62,8 +63,17 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
         } elseif (!$User->hasAccountLevel('Staff')) {
             $conditions['StudentID'] = $User->ID;
             $responseData['Student'] = $User;
-        }
+        } elseif (!empty($_GET['students'])) {
+            if (!$students = Student::getAllByListIdentifier($_GET['students'])) {
+                return static::throwNotFoundError('Students list not found');
+            }
 
+            $conditions['StudentID'] = [
+                'values' => array_map(function($Student) {
+                    return $Student->ID;
+                }, $students)
+            ];
+        }
 
         // apply competency filter
         if (!empty($_GET['competency'])) {
