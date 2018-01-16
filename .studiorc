@@ -8,10 +8,11 @@ caddy_root="http://localhost:${caddy_port}"
 # install additional packages
 echo
 echo "--> Installing additional studio packages for slate-cbl development..."
-hab pkg install jarvus/sencha-cmd/6.5.2.15 core/caddy core/git
+hab pkg install jarvus/sencha-cmd/6.5.2.15 core/caddy core/git jarvus/underscore jarvus/cadaver
 hab pkg binlink jarvus/sencha-cmd sencha
 hab pkg binlink core/caddy caddy
 hab pkg binlink core/git git
+hab pkg binlink jarvus/underscore underscore
 
 
 # setup sencha cmd
@@ -71,6 +72,34 @@ build-all() {
     build-tasks-student
     build-tasks-teacher
     build-tasks-manager
+}
+
+echo "    * Use 'config-get AppName key.path' to read a config key from an app"
+config-get() {
+    app_name="$1"
+    config_key="$2"
+    [ -z "$app_name" ] || [ -z "$config_key" ] && { echo >&2 "Usage: config-get AppName key.path"; return 1; }
+
+    underscore \
+        extract "${config_key}" \
+        --outfmt text \
+        --in "/src/sencha-workspace/${app_name}/app.json"
+}
+
+echo "    * Use 'publish-app pkg/ident http://myhost.org' to publish a build to a server"
+publish-app() {
+    pkg_ident="$1"
+    server_host="$2"
+    [ -z "$pkg_ident" ] || [ -z "$server_host" ] && { echo >&2 "Usage: publish-app pkg/ident http://myhost.org"; return 1; }
+
+    pkg_path=$(hab pkg path "${pkg_ident}")
+    app_name=$(cat "${pkg_path}/APP_NAME")
+
+    echo "    Publishing: ${app_name} from ${pkg_path} to ${server_host}"
+
+    pushd "${pkg_path}/app" > /dev/null
+    hab pkg exec jarvus/cadaver cadaver-put-recursive . "${server_host}/develop/sencha-build/${app_name}/production/"
+    popd > /dev/null
 }
 
 
