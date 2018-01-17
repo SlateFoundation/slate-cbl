@@ -21,21 +21,19 @@ Ext.define('Slate.cbl.widget.SectionSelector', {
         tpl: [
             '{% this.currentTerm = null %}',
             '<tpl for=".">',
-                '{[this.showTermHeader(values)]}',
+                '<tpl if="values.TermID != this.currentTerm">',
+                    '{% this.currentTerm = values.TermID %}',
+                    '<div class="group-header">',
+                        '<tpl if="Term">',
+                            '{Term.Title:htmlEncode}',
+                        '<tpl else>',
+                            'Term',
+                        '</tpl>',
+                    '</div>',
+                '</tpl>',
+
                 '<div class="x-boundlist-item">{Title}</div>',
-            '</tpl>',
-            {
-                showTermHeader: function(section) {
-                    var header = '';
-
-                    if (this.currentTerm !== section.TermID) {
-                        header = '<div class="group-header">' + (section.Term ? section.Term.Title : 'Term') + '</div>'
-                    }
-
-                    this.currentTerm = section.TermID;
-                    return header;
-                }
-            }
+            '</tpl>'
         ]
     },
 
