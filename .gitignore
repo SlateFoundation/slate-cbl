@@ -13,3 +13,4 @@
 
 /sencha-workspace/docs/*/build/
 *.log
+results/last_build.env
