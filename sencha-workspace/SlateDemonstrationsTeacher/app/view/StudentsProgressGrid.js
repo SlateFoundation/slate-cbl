@@ -9,11 +9,11 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
 
         'Slate.cbl.widget.Popover',
 
-        'Slate.cbl.store.Competencies',
-        'Slate.cbl.store.Completions',
-        'Slate.cbl.store.DemonstrationSkills',
+        // 'Slate.cbl.store.Competencies',
+        // 'Slate.cbl.store.Completions',
+        // 'Slate.cbl.store.DemonstrationSkills',
 
-        'Slate.cbl.data.Skills'
+        // 'Slate.cbl.data.Skills'
     ],
 
     config: {
@@ -30,9 +30,7 @@ Ext.define('SlateDemonstrationsTeacher.view.StudentsProgressGrid', {
             xclass: 'Slate.cbl.store.Competencies'
         },
 
-        completionsStore: {
-            xclass: 'Slate.cbl.store.Completions'
-        },
+        completionsStore: 'StudentCompetencies',
 
         skillsStore: 'cbl-skills',
 

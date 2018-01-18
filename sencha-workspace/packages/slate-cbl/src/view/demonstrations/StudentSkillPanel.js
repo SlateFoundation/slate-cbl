@@ -13,6 +13,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
         /* global Slate */
         'Slate.cbl.model.Skill',
+        'Slate.cbl.widget.CompetencySelector',
         'Slate.cbl.widget.SkillSelector',
         'Slate.cbl.view.demonstrations.SkillStatement',
         'Slate.cbl.view.demonstrations.SkillList'
@@ -25,6 +26,13 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         selectedDemonstration: null,
         loadedSkill: null,
 
+
+        competencySelector: {
+            matchFieldWidth: true,
+            lazyAutoLoad: false,
+            allowBlank: false,
+            loadSummaries: false
+        },
         skillSelector: {
             matchFieldWidth: true,
             lazyAutoLoad: false,
@@ -109,6 +117,34 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         }
 
         me.fireEvent('loadedskillchange', me, skill, oldSkill);
+    },
+
+    applyCompetencySelector: function(competencySelector, oldCompetencySelector) {
+        if (typeof competencySelector === 'boolean') {
+            competencySelector = {
+                hidden: !competencySelector
+            };
+        }
+
+        return Ext.factory(competencySelector, 'Slate.cbl.widget.CompetencySelector', oldCompetencySelector);
+    },
+
+    updateCompetencySelector: function(competencySelector, oldCompetencySelector) {
+        // if (oldCompetencySelector) {
+        //     oldCompetencySelector.un({
+        //         scope: this,
+        //         beforequery: 'onCompetencySelectorBeforeQuery',
+        //         select: 'onCompetencySelectorSelect'
+        //     });
+        // }
+
+        // if (competencySelector) {
+        //     competencySelector.on({
+        //         scope: this,
+        //         beforequery: 'onCompetencySelectorBeforeQuery',
+        //         select: 'onCompetencySelectorSelect'
+        //     });
+        // }
     },
 
     applySkillSelector: function(skillSelector, oldSkillSelector) {
@@ -201,6 +237,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         me.callParent();
 
         me.add([
+            me.getCompetencySelector(),
             me.getSkillSelector(),
             me.getSkillStatement(),
             me.getDemonstrationSkillsList()

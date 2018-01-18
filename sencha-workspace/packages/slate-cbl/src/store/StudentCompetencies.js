@@ -6,6 +6,7 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
     model: 'Slate.cbl.model.StudentCompetency',
     config: {
         student: null,
+        students: null,
         contentArea: null,
 
         remoteFilter: false,
@@ -21,7 +22,20 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
 
     // config handlers
     updateStudent: function(student) {
+        if (student) {
+            this.setStudents(null);
+        }
+
         this.getProxy().setExtraParam('student', student || null);
+        this.dirty = true;
+    },
+
+    updateStudents: function(students) {
+        if (students) {
+            this.setStudent(null);
+        }
+
+        this.getProxy().setExtraParam('students', students || null);
         this.dirty = true;
     },
 

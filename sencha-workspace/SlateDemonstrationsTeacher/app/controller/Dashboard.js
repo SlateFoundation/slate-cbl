@@ -5,57 +5,36 @@
 Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
-        'Jarvus.util.APIDomain',
+        'Ext.window.MessageBox',
 
+        // 'Jarvus.util.APIDomain',
+
+        /* global Slate */
         'Slate.API',
-
-        'Ext.window.MessageBox'
     ],
-
-
-    // entry points
-    listen: {
-        api: {
-            demonstrationsave: 'onDemonstrationSave',
-            demonstrationdelete: 'onDemonstrationDelete'
-        }
-    },
-
-    control: {
-        studentProgressGrid: {
-            competencyrowclick: 'onCompetencyRowClick',
-            democellclick: 'onDemoCellClick'
-        },
-        'slate-demonstrations-teacher-skill-overviewwindow': {
-            createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
-            editdemonstrationclick: 'onOverviewEditDemonstrationClick',
-            deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
-            createoverrideclick: 'onOverviewCreateOverrideClick'
-        },
-        'slate-demonstrations-teacher-appheader button[action=submitevidence]': {
-            click: 'onSubmitEvidenceClick'
-        }
-    },
 
 
     // controller configuration
     views: [
         'Dashboard',
-        'OverviewWindow',
-        'OverrideWindow',
-        'EditWindow'
+        // 'OverviewWindow',
+        // 'OverrideWindow',
+        // 'EditWindow'
     ],
 
-    models: [
-        'Demonstration@Slate.cbl.model'
-    ],
+    // models: [
+    //     'Demonstration@Slate.cbl.model'
+    // ],
 
     stores: [
-        'ContentAreas',
-        'CourseSections',
-        'Groups',
-        'StudentGroups',
-        'Students'
+        'Students',
+        'ContentAreas@Slate.cbl.store',
+        'Competencies@Slate.cbl.store',
+        'Skills@Slate.cbl.store',
+        'StudentCompetencies'
+    //     'CourseSections',
+    //     'Groups',
+    //     'StudentGroups',
     ],
 
     refs: {
@@ -65,289 +44,442 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
             xtype: 'slate-demonstrations-teacher-dashboard'
         },
-        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
-        appHeader: 'slate-demonstrations-teacher-appheader',
-        studentGroupSelector: 'slate-demonstrations-teacher-appheader slate-demonstrations-teacher-studentgroupselector',
-        contentAreaSelector: 'slate-demonstrations-teacher-appheader #contentAreaSelect'
+        contentAreaSelector: 'slate-demonstrations-teacher-dashboard slate-appheader slate-cbl-contentareaselector',
+        studentsListSelector: 'slate-demonstrations-teacher-dashboard slate-appheader slate-cbl-studentslistselector',
+        // studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
+        // appHeader: 'slate-demonstrations-teacher-appheader',
+        // studentGroupSelector: 'slate-demonstrations-teacher-appheader slate-demonstrations-teacher-studentgroupselector',
+        // contentAreaSelector: 'slate-demonstrations-teacher-appheader #contentAreaSelect'
     },
 
+
+    // entry points
     routes: {
-        ':queryString': {
-            action: 'syncFilters',
+        ':studentsList': {
+            action: 'showDashboard',
             conditions: {
-                ':queryString': '.*'
+                ':studentsList': '([^/]+)'
+            }
+        },
+        ':studentsList/:contentAreaCode': {
+            action: 'showDashboard',
+            conditions: {
+                ':studentsList': '([^/]+)',
+                ':contentAreaCode': '([^/]+)'
             }
         }
     },
 
-    // controller templates method overrides
-    onLaunch: function () {
-        var me = this,
-            dashboardCt = me.getDashboardCt(),
-            studentGroupSelector = me.getStudentGroupSelector(),
-            SiteEnvironment = window.SiteEnvironment;
+    listen: {
+        controller: {
+            '#': {
+                unmatchedroute: 'onUnmatchedRoute'
+            }
+        },
+        // api: {
+        //     demonstrationsave: 'onDemonstrationSave',
+        //     demonstrationdelete: 'onDemonstrationDelete'
+        // }
+    },
 
-        if (SiteEnvironment === undefined) {
-            SiteEnvironment = window.SiteEnvironment = {};
+    control: {
+        dashboardCt: {
+            selectedcontentareachange: 'onContentAreaChange',
+            loadedcontentareachange: 'onLoadedContentAreaChange',
+            selectedstudentchange: 'onStudentsListChange'
+        },
+        contentAreaSelector: {
+            select: 'onContentAreaSelectorSelect',
+            clear: 'onContentAreaSelectorClear'
+        },
+        studentsListSelector: {
+            select: 'onStudentsListSelectorSelect'
         }
+        // studentProgressGrid: {
+        //     competencyrowclick: 'onCompetencyRowClick',
+        //     democellclick: 'onDemoCellClick'
+        // },
+        // 'slate-demonstrations-teacher-skill-overviewwindow': {
+        //     createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
+        //     editdemonstrationclick: 'onOverviewEditDemonstrationClick',
+        //     deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
+        //     createoverrideclick: 'onOverviewCreateOverrideClick'
+        // },
+        // 'slate-demonstrations-teacher-appheader button[action=submitevidence]': {
+        //     click: 'onSubmitEvidenceClick'
+        // }
+    },
+
+
+    // controller lifecycle
+    onLaunch: function () {
+        var me = this;
+
+        // instantiate and render viewport
+        me.getDashboardCt().render('slateapp-viewport');
 
         // load bootstrap data
         Slate.API.request({
+            method: 'GET',
             url: '/cbl/dashboards/demonstrations/teacher/bootstrap',
             success: function(response) {
-                var data = response.data || Ext.decode(response.responseText);
-
-                if (data) {
-                    if (data.experience_types) {
-                        window.SiteEnvironment.cblExperienceTypeOptions = data.experience_types;
-                    }
-
-                    if (data.context_options) {
-                        SiteEnvironment.cblContextOptions = data.context_options;
-                    }
-
-                    if (data.performance_types) {
-                        SiteEnvironment.cblPerformanceTypeOptions = data.performance_types;
-                    }
-
-                    if (data.cblLevels) {
-                        Slate.cbl.data.CBLLevels.loadRawData(data.cblLevels, false);
-                    }
-                }
+                console.log('Loaded bootstrap data', response.data);
             }
         });
 
-        // load current user sections
-        me.getCourseSectionsStore().load(function() {
-            studentGroupSelector.getStore().loadData(Ext.Array.map(this.getRange(), function(cs) {
-                return cs.data;
-            }), true);
-        });
 
-        // load all groups
-        me.getGroupsStore().load(function() {
-            studentGroupSelector.getStore().loadData(Ext.Array.map(this.getRange(), function(g) {
-                return g.data;
-            }), true);
-        });
+        // var me = this,
+        //     dashboardCt = me.getDashboardCt();
+        //     studentGroupSelector = me.getStudentGroupSelector(),
+        //     SiteEnvironment = window.SiteEnvironment;
 
-        // handle any external "Log a Demonstartion" buttons
-        Ext.getBody().on('click', function(ev) {
-            ev.stopEvent();
+        // if (SiteEnvironment === undefined) {
+        //     SiteEnvironment = window.SiteEnvironment = {};
+        // }
 
-            me.showDemonstrationEditWindow();
-        }, me, { delegate: 'button[data-action="demonstration-create"]' });
+        // load bootstrap data
+        // Slate.API.request({
+        //     url: '/cbl/dashboards/demonstrations/teacher/bootstrap',
+        //     success: function(response) {
+        //         var data = response.data || Ext.decode(response.responseText);
+
+        //         if (data) {
+        //             if (data.experience_types) {
+        //                 window.SiteEnvironment.cblExperienceTypeOptions = data.experience_types;
+        //             }
+
+        //             if (data.context_options) {
+        //                 SiteEnvironment.cblContextOptions = data.context_options;
+        //             }
+
+        //             if (data.performance_types) {
+        //                 SiteEnvironment.cblPerformanceTypeOptions = data.performance_types;
+        //             }
+
+        //             if (data.cblLevels) {
+        //                 Slate.cbl.data.CBLLevels.loadRawData(data.cblLevels, false);
+        //             }
+        //         }
+        //     }
+        // });
+
+        // // load current user sections
+        // me.getCourseSectionsStore().load(function() {
+        //     studentGroupSelector.getStore().loadData(Ext.Array.map(this.getRange(), function(cs) {
+        //         return cs.data;
+        //     }), true);
+        // });
+
+        // // load all groups
+        // me.getGroupsStore().load(function() {
+        //     studentGroupSelector.getStore().loadData(Ext.Array.map(this.getRange(), function(g) {
+        //         return g.data;
+        //     }), true);
+        // });
+
+        // // handle any external "Log a Demonstartion" buttons
+        // Ext.getBody().on('click', function(ev) {
+        //     ev.stopEvent();
+
+        //     me.showDemonstrationEditWindow();
+        // }, me, { delegate: 'button[data-action="demonstration-create"]' });
 
         // render dashboard
-        dashboardCt.render('slateapp-viewport');
+        // dashboardCt.render('slateapp-viewport');
+
+        // var studentCompetenciesStore = this.getStudentCompetenciesStore();
+
+        // debugger;
+
+        // studentCompetenciesStore.setStudents('3,4,2,5,6,7,8,10,9,12,14,11,13,15,16,19,17,18,20,21');
+        // studentCompetenciesStore.setContentArea('MIDMATH');
+        // studentCompetenciesStore.loadIfDirty();
     },
+
+
+    // route handlers
+    showDashboard: function(studentsList, contentAreaCode) {
+        var dashboardCt = this.getDashboardCt();
+
+        // use false instead of null, to indicate selecting *nothing* vs having no selection
+        dashboardCt.setSelectedStudentsList(studentsList || false);
+        dashboardCt.setSelectedContentArea(contentAreaCode || false);
+    },
+
+
+    // event handlers
+    onUnmatchedRoute: function(token) {
+        Ext.Logger.warn('Unmatched route: '+token);
+    },
+
+    onStudentsListChange: function(dashboardCt, studentUsername) {
+        var me = this,
+            studentCombo = me.getStudentSelector(),
+            studentCompetenciesStore = me.getStudentCompetenciesStore();
+
+        // (re)load student competencies store
+        studentCompetenciesStore.setStudentsList(studentUsername || '*current');
+        studentCompetenciesStore.loadIfDirty();
+
+        // push value to selector
+        studentCombo.setValue(studentUsername);
+
+        // reload students store with just selected student if they're not in the current result set
+        if (studentUsername && !studentCombo.getSelectedRecord()) {
+            studentCombo.getStore().load({
+                params: {
+                    q: 'username:'+studentUsername
+                }
+            });
+        }
+    },
+
+    onContentAreaChange: function(dashboardCt, contentAreaCode) {
+        var me = this,
+            studentCompetenciesStore = me.getStudentCompetenciesStore();
+
+        // (re)load student competencies store
+        studentCompetenciesStore.setContentArea(contentAreaCode);
+        studentCompetenciesStore.loadIfDirty();
+
+        // push value to selector
+        me.getContentAreaSelector().setValue(contentAreaCode);
+    },
+
+    onLoadedContentAreaChange: function(dashboardCt, contentArea) {
+        this.getCompetenciesSummary().setContentAreaTitle(contentArea.get('Title'));
+    },
+
+    onStudentsListSelectorSelect: function(studentsListCombo, studentsList) {
+        var path = [studentsList.get('value')],
+            contentArea = this.getDashboardCt().getSelectedContentArea();
+
+        if (contentArea) {
+            path.push(contentArea);
+        }
+
+        this.redirectTo(path);
+    },
+
+    onContentAreaSelectorSelect: function(contentAreaCombo, contentArea) {
+        this.redirectTo([
+            this.getDashboardCt().getSelectedStudentsList() || 'me',
+            contentArea.get('Code')
+        ]);
+    },
+
+    onContentAreaSelectorClear: function() {
+        this.redirectTo([
+            this.getDashboardCt().getSelectedStudentsList() || 'me'
+        ]);
+    }
 
 
     // event handers
 
 
-    onSubmitEvidenceClick: function() {
-        this.showDemonstrationEditWindow();
-    },
+    // onSubmitEvidenceClick: function() {
+    //     this.showDemonstrationEditWindow();
+    // },
 
-    onCompetencyRowClick: function(me, competency, ev, targetEl) {
-        me.toggleCompetency(competency);
-    },
+    // onCompetencyRowClick: function(me, competency, ev, targetEl) {
+    //     me.toggleCompetency(competency);
+    // },
 
-    onDemoCellClick: function(progressGrid, ev, targetEl) {
-        this.getOverviewWindowView().create({
-            ownerCmp: this.getDashboardCt(),
-            autoShow: true,
-            animateTarget: targetEl,
+    // onDemoCellClick: function(progressGrid, ev, targetEl) {
+    //     this.getOverviewWindowView().create({
+    //         ownerCmp: this.getDashboardCt(),
+    //         autoShow: true,
+    //         animateTarget: targetEl,
 
-            competency: parseInt(targetEl.up('.cbl-grid-skills-row').getAttribute('data-competency'), 10),
-            studentsStore: progressGrid.getStudentsStore(),
-            competenciesStore: progressGrid.getCompetenciesStore(),
+    //         competency: parseInt(targetEl.up('.cbl-grid-skills-row').getAttribute('data-competency'), 10),
+    //         studentsStore: progressGrid.getStudentsStore(),
+    //         competenciesStore: progressGrid.getCompetenciesStore(),
 
-            skill: parseInt(targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'), 10),
-            student: parseInt(targetEl.up('.cbl-grid-demos-cell').getAttribute('data-student'), 10),
-            selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
-        });
-    },
+    //         skill: parseInt(targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'), 10),
+    //         student: parseInt(targetEl.up('.cbl-grid-demos-cell').getAttribute('data-student'), 10),
+    //         selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
+    //     });
+    // },
 
-    onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {
-        this.showDemonstrationEditWindow({
-            defaultStudent: student,
-            defaultCompetency: competency
-        });
-    },
+    // onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {
+    //     this.showDemonstrationEditWindow({
+    //         defaultStudent: student,
+    //         defaultCompetency: competency
+    //     });
+    // },
 
-    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId) {
-        var me = this,
-            editWindow = me.showDemonstrationEditWindow({
-                title: 'Edit demonstration #' + demonstrationId
-            });
+    // onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId) {
+    //     var me = this,
+    //         editWindow = me.showDemonstrationEditWindow({
+    //             title: 'Edit demonstration #' + demonstrationId
+    //         });
 
-        editWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
-        Slate.cbl.model.Demonstration.load(demonstrationId, {
-            params: {
-                include: 'Skills.Skill'
-            },
-            success: function(demonstration) {
-                editWindow.setDemonstration(demonstration);
-                editWindow.setLoading(false);
-            }
-        });
-    },
+    //     editWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
+    //     Slate.cbl.model.Demonstration.load(demonstrationId, {
+    //         params: {
+    //             include: 'Skills.Skill'
+    //         },
+    //         success: function(demonstration) {
+    //             editWindow.setDemonstration(demonstration);
+    //             editWindow.setLoading(false);
+    //         }
+    //     });
+    // },
 
-    onOverviewDeleteDemonstrationClick: function(overviewWindow, demonstrationId) {
-        overviewWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
+    // onOverviewDeleteDemonstrationClick: function(overviewWindow, demonstrationId) {
+    //     overviewWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
 
-        Slate.cbl.model.Demonstration.load(demonstrationId, {
-            params: {
-                include: 'Skills.Skill'
-            },
-            success: function(demonstration) {
-                Ext.Msg.confirm(
-                    'Delete demonstration #' + demonstrationId,
-                    'Are you sure you want to permenantly delete this demonstration?' +
-                        ' Scores in all the following standards will be removed:' +
-                        '<ul>' +
-                            '<li>' +
-                            Ext.Array.map(demonstration.get('Skills'), function(demoSkill) {
-                                return '<strong>Level ' + demoSkill.DemonstratedLevel + '</strong> demonstrated in <strong>' + demoSkill.Skill.Code + '</strong>: <em>' + demoSkill.Skill.Statement + '</em>';
-                            }).join('</li><li>') +
-                            '</li>' +
-                        '</ul>',
-                    function(btnId) {
-                        if (btnId != 'yes') {
-                            overviewWindow.setLoading(false);
-                            return;
-                        }
+    //     Slate.cbl.model.Demonstration.load(demonstrationId, {
+    //         params: {
+    //             include: 'Skills.Skill'
+    //         },
+    //         success: function(demonstration) {
+    //             Ext.Msg.confirm(
+    //                 'Delete demonstration #' + demonstrationId,
+    //                 'Are you sure you want to permenantly delete this demonstration?' +
+    //                     ' Scores in all the following standards will be removed:' +
+    //                     '<ul>' +
+    //                         '<li>' +
+    //                         Ext.Array.map(demonstration.get('Skills'), function(demoSkill) {
+    //                             return '<strong>Level ' + demoSkill.DemonstratedLevel + '</strong> demonstrated in <strong>' + demoSkill.Skill.Code + '</strong>: <em>' + demoSkill.Skill.Statement + '</em>';
+    //                         }).join('</li><li>') +
+    //                         '</li>' +
+    //                     '</ul>',
+    //                 function(btnId) {
+    //                     if (btnId != 'yes') {
+    //                         overviewWindow.setLoading(false);
+    //                         return;
+    //                     }
 
-                        demonstration.erase({
-                            params: {
-                                include: 'competencyCompletions'
-                            },
-                            success: function(demonstration, operation) {
-                                Slate.API.fireEvent('demonstrationdelete', operation.getResultSet().getRecords()[0]);
-                                overviewWindow.setLoading(false);
-                            }
-                        });
-                    }
-                );
-            }
-        });
-    },
+    //                     demonstration.erase({
+    //                         params: {
+    //                             include: 'competencyCompletions'
+    //                         },
+    //                         success: function(demonstration, operation) {
+    //                             Slate.API.fireEvent('demonstrationdelete', operation.getResultSet().getRecords()[0]);
+    //                             overviewWindow.setLoading(false);
+    //                         }
+    //                     });
+    //                 }
+    //             );
+    //         }
+    //     });
+    // },
 
-    onOverviewCreateOverrideClick: function(overviewWindow, studentId, standardId) {
-        this.getOverrideWindowView().create({
-            ownerCmp: this.getDashboardCt(),
-            autoShow: true,
+    // onOverviewCreateOverrideClick: function(overviewWindow, studentId, standardId) {
+    //     this.getOverrideWindowView().create({
+    //         ownerCmp: this.getDashboardCt(),
+    //         autoShow: true,
 
-            student: studentId,
-            standard: standardId
-        });
-    },
+    //         student: studentId,
+    //         standard: standardId
+    //     });
+    // },
 
-    onDemonstrationSave: function(demonstration) {
-        this.getDashboardCt().progressGrid.loadDemonstration(demonstration);
-    },
+    // onDemonstrationSave: function(demonstration) {
+    //     this.getDashboardCt().progressGrid.loadDemonstration(demonstration);
+    // },
 
-    onDemonstrationDelete: function(demonstration) {
-        this.getDashboardCt().progressGrid.deleteDemonstration(demonstration);
-    },
-
-
-    // public methods
-    showDemonstrationEditWindow: function(options) {
-        var dashboardCt = this.getDashboardCt();
-
-        return this.getEditWindowView().create(Ext.apply({
-            ownerCmp: dashboardCt,
-            autoShow: true,
-
-            studentsStore: dashboardCt.progressGrid.getStudentsStore()
-        }, options));
-    },
-
-    syncFilters: function() {
-        var me = this,
-            token = Ext.util.History.getToken(),
-            splitToken = [], i = 0,
-            param, value,
-
-            dashboardCt = me.getDashboardCt(),
-
-            progressGrid = me.getStudentProgressGrid(),
-            studentsStore = progressGrid.getStudentsStore(),
-            studentGroupCombo = me.getStudentGroupSelector(),
-
-            contentAreaCombo = me.getContentAreaSelector(),
-            competenciesStore = progressGrid.getCompetenciesStore(),
-            studentGroup, contentArea; // = studentGroupCombo.getSelection(),
+    // onDemonstrationDelete: function(demonstration) {
+    //     this.getDashboardCt().progressGrid.deleteDemonstration(demonstration);
+    // },
 
 
-        if (!dashboardCt.rendered) {
-            return dashboardCt.on('render', function() {
-                me.syncFilters();
-            }, null, { single: true });
-        }
-        if (token) {
-            splitToken = token.split('&');
-            for (; i < splitToken.length; i++) {
-                param = splitToken[i].split('=', 1)[0];
-                value = splitToken[i].split('=', 2)[1];
+    // // public methods
+    // showDemonstrationEditWindow: function(options) {
+    //     var dashboardCt = this.getDashboardCt();
 
-                if (param == 'student-group') {
-                    if (!studentGroupCombo.getStore().isLoaded()) {
-                        dashboardCt.mask('Loading Content Areas&hellip;');
-                        studentGroupCombo.getStore().load({
-                            params: {
-                                q: value
-                            },
-                            callback: function() {
-                                dashboardCt.unmask();
-                                return me.syncFilters();
-                            }
-                        });
-                        return false;
-                    }
+    //     return this.getEditWindowView().create(Ext.apply({
+    //         ownerCmp: dashboardCt,
+    //         autoShow: true,
 
-                    studentGroup = studentGroupCombo.getStore().findRecord('Identifier', window.decodeURI(value));
-                    studentGroupCombo.setValue(studentGroup);
-                    if (studentGroup) {
-                        Slate.API.request({
-                            url: '/cbl/dashboards/demonstrations/teacher/*students',
-                            params: {
-                                students: studentGroup.getIdentifier()
-                            },
-                            success: function(response) {
-                                var data = response.data || Ext.decode(response.responseText),
-                                    students = data.data || [];
+    //         studentsStore: dashboardCt.progressGrid.getStudentsStore()
+    //     }, options));
+    // },
 
-                                studentsStore.loadRecords(Ext.Array.map(students, function(s) {
-                                    return studentsStore.getSession().peekRecord(studentsStore.model, s.ID) || studentsStore.createModel(s);
-                                }), { addRecords: false });
-                            }
-                        });
-                    }
-                } else if (param == 'contentarea') {
-                    if (!contentAreaCombo.getStore().isLoaded()) {
-                        dashboardCt.mask('Loading Content Areas&hellip;');
-                        contentAreaCombo.getStore().load(function() {
-                            dashboardCt.unmask();
-                            return me.syncFilters();
-                        });
-                        return false;
-                    }
+    // syncFilters: function() {
+    //     var me = this,
+    //         token = Ext.util.History.getToken(),
+    //         splitToken = [], i = 0,
+    //         param, value,
 
-                    contentArea = contentAreaCombo.getStore().findRecord('Code', window.decodeURI(value));
-                    contentAreaCombo.setValue(contentArea);
+    //         dashboardCt = me.getDashboardCt(),
 
-                    if (contentArea) {
-                        me.getDashboardCt().setContentArea(contentArea);
-                        competenciesStore.getAllByContentArea(contentArea, function(competencies) {
-                            competenciesStore.loadRecords(competencies.getRange(), { addRecords: false });
-                        });
-                    }
-                }
-            }
-        }
-    }
+    //         progressGrid = me.getStudentProgressGrid(),
+    //         studentsStore = progressGrid.getStudentsStore(),
+    //         studentGroupCombo = me.getStudentGroupSelector(),
+
+    //         contentAreaCombo = me.getContentAreaSelector(),
+    //         competenciesStore = progressGrid.getCompetenciesStore(),
+    //         studentGroup, contentArea; // = studentGroupCombo.getSelection(),
+
+
+    //     if (!dashboardCt.rendered) {
+    //         return dashboardCt.on('render', function() {
+    //             me.syncFilters();
+    //         }, null, { single: true });
+    //     }
+    //     if (token) {
+    //         splitToken = token.split('&');
+    //         for (; i < splitToken.length; i++) {
+    //             param = splitToken[i].split('=', 1)[0];
+    //             value = splitToken[i].split('=', 2)[1];
+
+    //             if (param == 'student-group') {
+    //                 if (!studentGroupCombo.getStore().isLoaded()) {
+    //                     dashboardCt.mask('Loading Content Areas&hellip;');
+    //                     studentGroupCombo.getStore().load({
+    //                         params: {
+    //                             q: value
+    //                         },
+    //                         callback: function() {
+    //                             dashboardCt.unmask();
+    //                             return me.syncFilters();
+    //                         }
+    //                     });
+    //                     return false;
+    //                 }
+
+    //                 studentGroup = studentGroupCombo.getStore().findRecord('Identifier', window.decodeURI(value));
+    //                 studentGroupCombo.setValue(studentGroup);
+    //                 if (studentGroup) {
+    //                     Slate.API.request({
+    //                         url: '/cbl/dashboards/demonstrations/teacher/*students',
+    //                         params: {
+    //                             students: studentGroup.getIdentifier()
+    //                         },
+    //                         success: function(response) {
+    //                             var data = response.data || Ext.decode(response.responseText),
+    //                                 students = data.data || [];
+
+    //                             studentsStore.loadRecords(Ext.Array.map(students, function(s) {
+    //                                 return studentsStore.getSession().peekRecord(studentsStore.model, s.ID) || studentsStore.createModel(s);
+    //                             }), { addRecords: false });
+    //                         }
+    //                     });
+    //                 }
+    //             } else if (param == 'contentarea') {
+    //                 if (!contentAreaCombo.getStore().isLoaded()) {
+    //                     dashboardCt.mask('Loading Content Areas&hellip;');
+    //                     contentAreaCombo.getStore().load(function() {
+    //                         dashboardCt.unmask();
+    //                         return me.syncFilters();
+    //                     });
+    //                     return false;
+    //                 }
+
+    //                 contentArea = contentAreaCombo.getStore().findRecord('Code', window.decodeURI(value));
+    //                 contentAreaCombo.setValue(contentArea);
+
+    //                 if (contentArea) {
+    //                     me.getDashboardCt().setContentArea(contentArea);
+    //                     competenciesStore.getAllByContentArea(contentArea, function(competencies) {
+    //                         competenciesStore.loadRecords(competencies.getRange(), { addRecords: false });
+    //                     });
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 });
