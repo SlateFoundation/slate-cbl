@@ -202,7 +202,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     showDashboard: function(contentAreaCode, studentsList) {
         var dashboardCt = this.getDashboardCt();
 
-        dashboardCt.setSelectedContentArea(contentAreaCode || null);
+        dashboardCt.setSelectedContentArea(contentAreaCode != '_' && contentAreaCode || null);
         dashboardCt.setSelectedStudentsList(this.decodeRouteComponent(studentsList) || null);
     },
 

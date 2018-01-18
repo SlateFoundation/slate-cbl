@@ -11,9 +11,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
     extend: 'Slate.ui.app.Container',
     xtype: 'slate-demonstrations-teacher-dashboard',
     requires: [
-        // 'SlateDemonstrationsStudent.view.CompetenciesSummary',
-        // 'SlateDemonstrationsStudent.view.RecentProgress',
-        // 'SlateDemonstrationsStudent.view.CardsContainer',
+        // 'SlateDemonstrationsTeacher.view.ProgressGrid',
 
         /* global Slate */
         'Slate.cbl.widget.StudentsListSelector',
@@ -82,6 +80,14 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
          */
         selectedStudentsList: null,
 
+        /**
+         * @cfg {SlateDemonstrationsTeacher.view.ProgressGrid|Object|boolean}
+         * Instance or configuration for progress grid component.
+         *
+         * Setting boolean values change visibility.
+         */
+        progressGrid: false,
+
 
         // appcontainer config
         header: {
@@ -108,23 +114,14 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
                 }
             ]
         },
-        placeholder: 'Select a list of students and a content area to load progress dashboard',
+        placeholder: 'Select a list of students and a content area to load progress dashboard'
     },
 
 
     // config handlers
     updateSelectedContentArea: function(contentArea, oldContentArea) {
-        var me = this,
-            contentAreaSet = Boolean(contentArea);
-
-        Ext.suspendLayouts();
-        me.setPlaceholder(!contentAreaSet);
-        // me.setCompetenciesSummary(contentAreaSet);
-        // me.setRecentProgress(contentAreaSet);
-        // me.setCardsCt(contentAreaSet);
-        Ext.resumeLayouts(true);
-
-        me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
+        this.syncItems();
+        this.fireEvent('selectedcontentareachange', this, contentArea, oldContentArea);
     },
 
     applyLoadedContentArea: function(contentArea, oldContentArea) {
@@ -155,6 +152,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
     },
 
     updateSelectedStudentsList: function(studentsList, oldStudentsList) {
+        this.syncItems();
         this.fireEvent('selectedstudentslistchange', this, studentsList, oldStudentsList);
     },
 
@@ -167,9 +165,25 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
         me.callParent();
 
         me.add([
-            // me.getCompetenciesSummary(),
-            // me.getRecentProgress(),
-            // me.getCardsCt()
+            // me.getProgressGrid()
         ]);
+    },
+
+
+    // dashboard methods
+    syncItems: function() {
+        var me = this,
+            dashboardVisible = Boolean(me.getSelectedContentArea() && me.getSelectedStudentsList());
+
+        if (dashboardVisible == me._dashboardVisible) {
+            return;
+        }
+
+        me._dashboardVisible = dashboardVisible;
+
+        Ext.suspendLayouts();
+        me.setPlaceholder(!dashboardVisible);
+        me.setProgressGrid(dashboardVisible);
+        Ext.resumeLayouts(true);
     }
 });
