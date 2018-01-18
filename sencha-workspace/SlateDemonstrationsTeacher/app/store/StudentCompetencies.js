@@ -30,7 +30,7 @@ Ext.define('SlateDemonstrationsTeacher.store.StudentCompetencies', {
 
     // member methods
     loadIfDirty: function() {
-        if (!this.getStudents() || !this.getContentArea()) {
+        if (!this.getStudentsList() || !this.getContentArea()) {
             return;
         }
 

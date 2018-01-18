@@ -23,14 +23,6 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
 
 
     /**
-     * @event selectedstudentslistchange
-     * Fires when a new students list is selected via browser navigation or a menu
-     * @param {SlateDemonstrationsTeacher.view.Dashboard} dashboardCt
-     * @param {String|null} studentsList
-     * @param {String|null} oldStudentsList
-     */
-
-    /**
      * @event selectedcontentareachange
      * Fires when a new content area is selected via browser navigation or a menu
      * @param {SlateDemonstrationsTeacher.view.Dashboard} dashboardCt
@@ -47,20 +39,16 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
      * @param {Slate.cbl.model.ContentArea|null} oldSection
      */
 
+    /**
+     * @event selectedstudentslistchange
+     * Fires when a new students list is selected via browser navigation or a menu
+     * @param {SlateDemonstrationsTeacher.view.Dashboard} dashboardCt
+     * @param {String|null} studentsList
+     * @param {String|null} oldStudentsList
+     */
+
 
     config: {
-
-        /**
-         * @cfg {String|null}
-         * The identifier for the students list selected for loading by the user. This config gets
-         * set first when the user indicates their intent to navigate to a given students list,
-         * and it may not necessarily reflect a valid or available students list.
-         *
-         * The {@link #event-selectedstudentslistchange} event is fired when this config changes,
-         * which should trigger all students list selection UI to update immediately and new data to
-         * begin loading.
-         */
-        selectedStudentsList: null,
 
         /**
          * @cfg {String}
@@ -82,6 +70,18 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
          */
         loadedContentArea: null,
 
+        /**
+         * @cfg {String|null}
+         * The identifier for the students list selected for loading by the user. This config gets
+         * set first when the user indicates their intent to navigate to a given students list,
+         * and it may not necessarily reflect a valid or available students list.
+         *
+         * The {@link #event-selectedstudentslistchange} event is fired when this config changes,
+         * which should trigger all students list selection UI to update immediately and new data to
+         * begin loading.
+         */
+        selectedStudentsList: null,
+
 
         // appcontainer config
         header: {
@@ -95,7 +95,6 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
                 {
                     xtype: 'slate-cbl-studentslistselector',
                     emptyText: 'Select',
-                    allowBlank: false,
                     flex: 2
                 },
                 {
@@ -114,10 +113,6 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
 
 
     // config handlers
-    updateSelectedStudent: function(student, oldStudent) {
-        this.fireEvent('selectedstudentchange', this, student, oldStudent);
-    },
-
     updateSelectedContentArea: function(contentArea, oldContentArea) {
         var me = this,
             contentAreaSet = Boolean(contentArea);
@@ -158,6 +153,11 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
 
         me.fireEvent('loadedcontentareachange', me, contentArea, oldContentArea);
     },
+
+    updateSelectedStudentsList: function(studentsList, oldStudentsList) {
+        this.fireEvent('selectedstudentslistchange', this, studentsList, oldStudentsList);
+    },
+
 
 
     // component lifecycle

@@ -10,6 +10,7 @@ Ext.define('SlateDemonstrationsTeacher.Application', {
     ],
 
     name: 'SlateDemonstrationsTeacher',
+    defaultToken: '_',
 
     controllers: [
         'Dashboard'

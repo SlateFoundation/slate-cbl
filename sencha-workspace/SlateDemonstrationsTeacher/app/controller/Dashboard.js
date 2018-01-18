@@ -55,17 +55,17 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     // entry points
     routes: {
-        ':studentsList': {
+        ':contentAreaCode': {
             action: 'showDashboard',
             conditions: {
-                ':studentsList': '([^/]+)'
+                ':contentAreaCode': '([^/]+)'
             }
         },
-        ':studentsList/:contentAreaCode': {
+        ':contentAreaCode/:studentsList': {
             action: 'showDashboard',
             conditions: {
-                ':studentsList': '([^/]+)',
-                ':contentAreaCode': '([^/]+)'
+                ':contentAreaCode': '([^/]+)',
+                ':studentsList': '([^/]+)'
             }
         }
     },
@@ -86,14 +86,15 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         dashboardCt: {
             selectedcontentareachange: 'onContentAreaChange',
             loadedcontentareachange: 'onLoadedContentAreaChange',
-            selectedstudentchange: 'onStudentsListChange'
+            selectedstudentslistchange: 'onStudentsListChange'
         },
         contentAreaSelector: {
             select: 'onContentAreaSelectorSelect',
             clear: 'onContentAreaSelectorClear'
         },
         studentsListSelector: {
-            select: 'onStudentsListSelectorSelect'
+            select: 'onStudentsListSelectorSelect',
+            clear: 'onStudentsListSelectorClear'
         }
         // studentProgressGrid: {
         //     competencyrowclick: 'onCompetencyRowClick',
@@ -198,40 +199,17 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
 
     // route handlers
-    showDashboard: function(studentsList, contentAreaCode) {
+    showDashboard: function(contentAreaCode, studentsList) {
         var dashboardCt = this.getDashboardCt();
 
-        // use false instead of null, to indicate selecting *nothing* vs having no selection
-        dashboardCt.setSelectedStudentsList(studentsList || false);
-        dashboardCt.setSelectedContentArea(contentAreaCode || false);
+        dashboardCt.setSelectedContentArea(contentAreaCode || null);
+        dashboardCt.setSelectedStudentsList(this.decodeRouteComponent(studentsList) || null);
     },
 
 
     // event handlers
     onUnmatchedRoute: function(token) {
         Ext.Logger.warn('Unmatched route: '+token);
-    },
-
-    onStudentsListChange: function(dashboardCt, studentUsername) {
-        var me = this,
-            studentCombo = me.getStudentSelector(),
-            studentCompetenciesStore = me.getStudentCompetenciesStore();
-
-        // (re)load student competencies store
-        studentCompetenciesStore.setStudentsList(studentUsername || '*current');
-        studentCompetenciesStore.loadIfDirty();
-
-        // push value to selector
-        studentCombo.setValue(studentUsername);
-
-        // reload students store with just selected student if they're not in the current result set
-        if (studentUsername && !studentCombo.getSelectedRecord()) {
-            studentCombo.getStore().load({
-                params: {
-                    q: 'username:'+studentUsername
-                }
-            });
-        }
     },
 
     onContentAreaChange: function(dashboardCt, contentAreaCode) {
@@ -250,28 +228,51 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         this.getCompetenciesSummary().setContentAreaTitle(contentArea.get('Title'));
     },
 
-    onStudentsListSelectorSelect: function(studentsListCombo, studentsList) {
-        var path = [studentsList.get('value')],
-            contentArea = this.getDashboardCt().getSelectedContentArea();
+    onStudentsListChange: function(dashboardCt, studentsList) {
+        var me = this,
+            studentCompetenciesStore = me.getStudentCompetenciesStore();
 
-        if (contentArea) {
-            path.push(contentArea);
+        // (re)load student competencies store
+        studentCompetenciesStore.setStudentsList(studentsList || null);
+        studentCompetenciesStore.loadIfDirty();
+
+        // push value to selector
+        me.getStudentsListSelector().setValue(studentsList);
+    },
+
+    onContentAreaSelectorSelect: function(contentAreaCombo, contentArea) {
+        var path = [contentArea.get('Code')],
+            studentsList = this.getDashboardCt().getSelectedStudentsList();
+
+        if (studentsList) {
+            path.push(studentsList);
         }
 
         this.redirectTo(path);
     },
 
-    onContentAreaSelectorSelect: function(contentAreaCombo, contentArea) {
+    onContentAreaSelectorClear: function() {
+        var path = ['_'],
+            studentsList = this.getDashboardCt().getSelectedStudentsList();
+
+        if (studentsList) {
+            path.push(studentsList);
+        }
+
+        this.redirectTo(path);
+    },
+
+    onStudentsListSelectorSelect: function(studentsListCombo, studentsList) {
+        var contentArea = this.getDashboardCt().getSelectedContentArea();
+
         this.redirectTo([
-            this.getDashboardCt().getSelectedStudentsList() || 'me',
-            contentArea.get('Code')
+            contentArea || '_',
+            studentsList.get('value')
         ]);
     },
 
-    onContentAreaSelectorClear: function() {
-        this.redirectTo([
-            this.getDashboardCt().getSelectedStudentsList() || 'me'
-        ]);
+    onStudentsListSelectorClear: function() {
+        this.redirectTo(this.getDashboardCt().getSelectedContentArea() || '_');
     }
 
 
