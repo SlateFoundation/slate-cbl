@@ -50,6 +50,7 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
         }
     },
 
+
     // TODO: remove nesting once appcontainer reports correct width
     items: [{
         layout: 'column',
