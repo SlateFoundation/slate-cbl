@@ -11,7 +11,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
     extend: 'Slate.ui.app.Container',
     xtype: 'slate-demonstrations-teacher-dashboard',
     requires: [
-        // 'SlateDemonstrationsTeacher.view.ProgressGrid',
+        'SlateDemonstrationsTeacher.view.ProgressGrid',
 
         /* global Slate */
         'Slate.cbl.widget.StudentsListSelector',
@@ -156,6 +156,15 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
         this.fireEvent('selectedstudentslistchange', this, studentsList, oldStudentsList);
     },
 
+    applyProgressGrid: function(progressGrid, oldProgressGrid) {
+        if (typeof progressGrid === 'boolean') {
+            progressGrid = {
+                hidden: !progressGrid
+            };
+        }
+
+        return Ext.factory(progressGrid, 'SlateDemonstrationsTeacher.view.ProgressGrid', oldProgressGrid);
+    },
 
 
     // component lifecycle
@@ -165,7 +174,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
         me.callParent();
 
         me.add([
-            // me.getProgressGrid()
+            me.getProgressGrid()
         ]);
     },
 

@@ -31,10 +31,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         'ContentAreas@Slate.cbl.store',
         'Competencies@Slate.cbl.store',
         'Skills@Slate.cbl.store',
-        'StudentCompetencies'
-    //     'CourseSections',
-    //     'Groups',
-    //     'StudentGroups',
+        'StudentCompetencies',
+        'DemonstrationSkills'
     ],
 
     refs: {
@@ -46,10 +44,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         },
         contentAreaSelector: 'slate-demonstrations-teacher-dashboard slate-appheader slate-cbl-contentareaselector',
         studentsListSelector: 'slate-demonstrations-teacher-dashboard slate-appheader slate-cbl-studentslistselector',
-        // studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid',
-        // appHeader: 'slate-demonstrations-teacher-appheader',
-        // studentGroupSelector: 'slate-demonstrations-teacher-appheader slate-demonstrations-teacher-studentgroupselector',
-        // contentAreaSelector: 'slate-demonstrations-teacher-appheader #contentAreaSelect'
+        progressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-progressgrid'
     },
 
 
@@ -76,6 +71,12 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
                 unmatchedroute: 'onUnmatchedRoute'
             }
         },
+        store: {
+            '#StudentCompetencies': {
+                beforeload: 'onStudentCompetenciesStoreBeforeLoad',
+                load: 'onStudentCompetenciesStoreLoad'
+            }
+        }
         // api: {
         //     demonstrationsave: 'onDemonstrationSave',
         //     demonstrationdelete: 'onDemonstrationDelete'
@@ -85,7 +86,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     control: {
         dashboardCt: {
             selectedcontentareachange: 'onContentAreaChange',
-            loadedcontentareachange: 'onLoadedContentAreaChange',
             selectedstudentslistchange: 'onStudentsListChange'
         },
         contentAreaSelector: {
@@ -212,6 +212,47 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         Ext.Logger.warn('Unmatched route: '+token);
     },
 
+    onStudentCompetenciesStoreBeforeLoad: function() {
+        this.getProgressGrid().setLoading('Loading progress...');
+    },
+
+    onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
+        if (!success) {
+            return;
+        }
+
+
+        // eslint-disable-next-line vars-on-top
+        var me = this,
+            skillsStore = me.getSkillsStore(),
+            rawData = store.getProxy().getReader().rawData,
+            contentAreaData = rawData.ContentArea,
+            competenciesData = contentAreaData.Competencies,
+            competenciesLength = competenciesData.length,
+            competencyIndex = 0;
+
+
+        // clear embedded data from contentArea
+        delete contentAreaData.Competencies;
+
+
+        // load content area, competencies, and skills
+        me.getDashboardCt().setLoadedContentArea(contentAreaData);
+
+        me.getCompetenciesStore().loadRawData(competenciesData);
+
+        skillsStore.beginUpdate();
+        skillsStore.removeAll(true);
+        for (; competencyIndex < competenciesLength; competencyIndex++) {
+            skillsStore.loadRawData(competenciesData[competencyIndex].Skills, true);
+        }
+        skillsStore.endUpdate();
+
+
+        // finish load
+        me.getProgressGrid().setLoading(false);
+    },
+
     onContentAreaChange: function(dashboardCt, contentAreaCode) {
         var me = this,
             studentCompetenciesStore = me.getStudentCompetenciesStore();
@@ -222,10 +263,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
         // push value to selector
         me.getContentAreaSelector().setValue(contentAreaCode);
-    },
-
-    onLoadedContentAreaChange: function(dashboardCt, contentArea) {
-        this.getCompetenciesSummary().setContentAreaTitle(contentArea.get('Title'));
     },
 
     onStudentsListChange: function(dashboardCt, studentsList) {
