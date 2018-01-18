@@ -13,8 +13,9 @@ Ext.define('Slate.cbl.widget.StudentsListSelector', {
         displayField: 'label',
         valueField: 'value',
         queryMode: 'local',
+        anyMatch: true,
         forceSelection: true,
-        autoSelect: false,
+        autoSelect: true,
         matchFieldWidth: false,
 
         listConfig: {
