@@ -6,12 +6,13 @@
  * - [ ] Migrade to aggregrid
  *
  */
+/* eslint no-console: "off" */
 Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-teacher-progressgrid',
     requires: [
+        /* global Slate */
         'Slate.cbl.Util',
-
         'Slate.cbl.widget.Popover'
     ],
 
@@ -239,7 +240,9 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         if (store) {
             store.on({
                 scope: this,
-                refresh: function() { console.log('ds->refresh', arguments); },
+                refresh: function() {
+                    console.log('ds->refresh', arguments);
+                },
                 load: 'onDemonstrationSkillsLoad',
                 add: 'onDemonstrationSkillsAdd',
                 update: 'onDemonstrationSkillUpdate',
@@ -266,7 +269,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     onGridClick: function(ev, targetEl) {
         var me = this;
 
-        if (targetEl = ev.getTarget('.cbl-grid-progress-row', me.el, true)) {
+        if (targetEl = ev.getTarget('.cbl-grid-progress-row', me.el, true)) { // eslint-disable-line no-cond-assign
             me.fireEvent(
                 'competencyrowclick',
                 me,
@@ -274,7 +277,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 ev,
                 targetEl
             );
-        } else if (targetEl = ev.getTarget('.cbl-grid-demo', me.el, true)) {
+        } else if (targetEl = ev.getTarget('.cbl-grid-demo', me.el, true)) { // eslint-disable-line no-cond-assign
             me.fireEvent('democellclick', me, ev, targetEl);
         }
     },
@@ -285,7 +288,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             dashboardEl = me.el,
             targetEl;
 
-        if (targetEl = ev.getTarget('.cbl-grid-skill-name', dashboardEl, true)) {
+        if (targetEl = ev.getTarget('.cbl-grid-skill-name', dashboardEl, true)) { // eslint-disable-line no-cond-assign
             if (popover.hidden || popover.alignTarget !== targetEl) {
                 popover.showBy(targetEl);
                 popover.update({
@@ -304,7 +307,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         this.loadCompletions(completionsStore.getRange());
     },
 
-    onCompletionUpdate: function(completionsStore, completion, operation, modifiedFieldNames, details) {
+    onCompletionUpdate: function(completionsStore, completion, operation, modifiedFieldNames) {
         console.log('completion->update', completion, operation, modifiedFieldNames);
 
         this.loadCompletions(completion);
@@ -322,7 +325,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         this.addDemonstrationSkills(demoSkills);
     },
 
-    onDemonstrationSkillUpdate: function(demoSkillsStore, demoSkill, operation, modifiedFieldNames, details) {
+    onDemonstrationSkillUpdate: function(demoSkillsStore, demoSkill, operation, modifiedFieldNames) {
         console.log('ds->update', demoSkill, operation, modifiedFieldNames);
 
         if (modifiedFieldNames.indexOf('DemonstratedLevel') != -1) {
@@ -415,7 +418,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 skillsCount = skillsCollection.getCount(), skillIndex, skill,
 
                 skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl,
-                studentCompletion, demonstrationsRequired;
+                studentCompletion;
 
             // build new skills render tree and update root skill index
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
@@ -492,7 +495,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             competencyCompletionData, competencyCompletionId, competencyCompletionRecord,
             newCompletions = [];
 
-        for(; i < competencyCompletionsLength; i++) {
+        for (; i < competencyCompletionsLength; i++) {
             competencyCompletionData = competencyCompletions[i];
             competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
             competencyCompletionRecord = completionsStore.getById(competencyCompletionId);
@@ -527,7 +530,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             i = 0, competencyCompletionsLength = competencyCompletions.length,
             competencyCompletionData, competencyCompletionId, competencyCompletionRecord;
 
-        for(; i < competencyCompletionsLength; i++) {
+        for (; i < competencyCompletionsLength; i++) {
             competencyCompletionData = competencyCompletions[i];
             competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
             competencyCompletionRecord = completionsStore.getById(competencyCompletionId);
@@ -878,7 +881,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
      *
      * This method must not trigger any reads from the DOM
      */
-    flushDemonstrations: function() {
+    flushDemonstrations: function() { // eslint-disable-line complexity
         var me = this,
             renderData = me.getData(),
             skillsById = renderData.skillsById,
@@ -919,15 +922,15 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         }
 
 
-    	// sort any incoming skill demonstrations that can be into skills->students render objects
+        // sort any incoming skill demonstrations that can be into skills->students render objects
         unsortedDemonstrationSkills = [];
 
         for (skillDemonstrationIndex = 0; skillDemonstrationIndex < incomingDemonstrationSkillsLength; skillDemonstrationIndex++) {
             skillDemonstration = incomingDemonstrationSkills[skillDemonstrationIndex];
 
             if (
-                (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
-                (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
+                (skillRenderData = skillsById[skillDemonstration.SkillID])
+                && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
                 if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
@@ -941,15 +944,15 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         renderData.incomingDemonstrationSkills = unsortedDemonstrationSkills;
 
 
-    	// sort any updated skill demonstrations that can be into skills->students render objects
+        // sort any updated skill demonstrations that can be into skills->students render objects
         unsortedDemonstrationSkills = [];
 
         for (skillDemonstrationIndex = 0; skillDemonstrationIndex < updatedDemonstrationSkillsLength; skillDemonstrationIndex++) {
             skillDemonstration = updatedDemonstrationSkills[skillDemonstrationIndex];
 
             if (
-                (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
-                (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
+                (skillRenderData = skillsById[skillDemonstration.SkillID])
+                && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
                 if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
@@ -963,15 +966,15 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         renderData.updatedDemonstrationSkills = unsortedDemonstrationSkills;
 
 
-    	// sort any removed skill demonstrations that can be into skills->students render objects
+        // sort any removed skill demonstrations that can be into skills->students render objects
         unsortedDemonstrationSkills = [];
 
         for (skillDemonstrationIndex = 0; skillDemonstrationIndex < removedDemonstrationSkillsLength; skillDemonstrationIndex++) {
             skillDemonstration = removedDemonstrationSkills[skillDemonstrationIndex];
 
             if (
-                (skillRenderData = skillsById[skillDemonstration.SkillID]) &&
-                (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
+                (skillRenderData = skillsById[skillDemonstration.SkillID])
+                && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 (skillStudentRenderData.removedDemonstrationSkills || (skillStudentRenderData.removedDemonstrationSkills = [])).push(skillDemonstration);
             } else {
@@ -983,6 +986,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
 
         // consume all pending changes, generate new demonstrationBlocks arrays, and render them
+        /* eslint-disable max-depth */
         for (competencyIndex = 0; competencyIndex < competenciesLength; competencyIndex++) {
             competencyRenderData = competenciesRenderData[competencyIndex];
             skillsRenderData = competencyRenderData.skills;
@@ -1008,10 +1012,10 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     skillDemonstrationsChanged = false;
                     outgoingLevel = competencyStudentData.outgoingLevel;
 
-                    if (skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel] !== undefined) {
-                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel];
-                    } else {
+                    if (typeof skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel] === 'undefined') {
                         studentSkillDemonstrationsRequired = skillDemonstrationsRequired.default;
+                    } else {
+                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel];
                     }
 
                     // apply updated skill demonstrations
@@ -1067,7 +1071,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                             skillDemonstration = skillDemonstrationBlocks[skillDemonstrationIndex];
                             skillDemonstrationDemonstratedLevel = skillDemonstration.DemonstratedLevel;
                             skillDemonstrationOverride = skillDemonstration.Override;
-                            skillDemonstrationOverrideSpan = skillDemonstrationOverride ? studentSkillDemonstrationsRequired - skillDemonstrationIndex : undefined;
+                            skillDemonstrationOverrideSpan = skillDemonstrationOverride ? studentSkillDemonstrationsRequired - skillDemonstrationIndex : undefined; // eslint-disable-line no-undefined
                             skillDemonstrationDemonstrationID = skillDemonstration.DemonstrationID;
 
                             skillDemonstrationBlockEl = skillDemonstrationBlockEls.item(skillDemonstrationIndex);
@@ -1083,13 +1087,13 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                 if (skillDemonstrationsOverridden) {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-overridden cbl-grid-demo-counted');
                                     skillDemonstrationBlockEl.update('O');
-                                    console.log("%o.addCls('cbl-grid-demo-overridden')", skillDemonstrationBlockEl.dom);
+                                    console.log('%o.addCls("cbl-grid-demo-overridden")', skillDemonstrationBlockEl.dom);
 
                                     continue; // an overridden block doesn't need any further updates because it'll be hidden
                                 } else if (renderedOverridden) {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-overridden cbl-grid-demo-counted');
                                     skillDemonstrationBlockEl.update('');
-                                    console.log("%o.removeCls('cbl-grid-demo-overridden')", skillDemonstrationBlockEl.dom);
+                                    console.log('%o.removeCls("cbl-grid-demo-overridden")', skillDemonstrationBlockEl.dom);
                                 }
                             }
 
@@ -1128,9 +1132,9 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                             if (renderedDemonstrationLevel !== skillDemonstrationDemonstratedLevel) {
                                 skillDemonstrationBlockEl.renderedDemonstrationLevel = skillDemonstrationDemonstratedLevel;
 
-                                if (renderedDemonstrationLevel === undefined) {
+                                if (typeof renderedDemonstrationLevel === 'undefined') {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-empty');
-                                } else if (skillDemonstrationDemonstratedLevel === undefined) {
+                                } else if (typeof skillDemonstrationDemonstratedLevel === 'undefined') {
                                     skillDemonstrationBlockEl.addCls('cbl-grid-demo-empty');
                                 }
 
@@ -1146,14 +1150,14 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                     skillDemonstrationBlockEl.removeCls('cbl-grid-demo-counted');
                                 }
 
-                                skillDemonstrationBlockEl.update(skillDemonstrationDemonstratedLevel === undefined ? '' : skillDemonstrationDemonstratedLevel);
+                                skillDemonstrationBlockEl.update(typeof skillDemonstrationDemonstratedLevel === 'undefined' ? '' : skillDemonstrationDemonstratedLevel);
 
                             }
 
                             // apply demo ID change
                             if (skillDemonstrationBlockEl.renderedDemonstrationId != skillDemonstrationDemonstrationID) {
                                 skillDemonstrationBlockEl.renderedDemonstrationId = skillDemonstrationDemonstrationID;
-                                skillDemonstrationBlockEl.set({'data-demonstration': skillDemonstrationDemonstrationID || ''});
+                                skillDemonstrationBlockEl.set({ 'data-demonstration': skillDemonstrationDemonstrationID || '' });
                             }
 
                             // add reference to index
@@ -1169,6 +1173,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 }
             }
         }
+        /* eslint-enable max-depth */
+
 
         // remove outgoingLevel flag on any flushed student competencies and trigger demo reload
         competencyStudentLevelsIndex = 0;
@@ -1182,6 +1188,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         }
     }
 }, function(Class) {
+    /* eslint-disable spaced-comment */
     //<debug>
     var monitoredMethods = ['refresh', 'finishRefresh', 'syncRowHeights', 'buildRenderData', 'flushDemonstrations'];
 
@@ -1192,7 +1199,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             var timeLabel = this.id + '.' + functionName,
                 ret;
 
-            console.groupCollapsed('%o.%s(%o) called from %o', this.id, functionName, arguments, arguments.callee.caller);
+            console.groupCollapsed('%o.%s(%o) called from %o', this.id, functionName, arguments, arguments.callee.caller); // eslint-disable-line no-caller
             console.time(timeLabel);
 
             ret = origFn.apply(this, arguments);
@@ -1204,4 +1211,5 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         };
     });
     //</debug>
+    /* eslint-enable spaced-comment */
 });
