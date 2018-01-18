@@ -120,6 +120,7 @@ parameter `apiHost` when loading the page.
 - [ ] Remove hardcoded subtraction of 8 to go from grade to level
 - [ ] Eliminate `Slate.cbl.widget.*` namespace, all classes should be `view.*` or `field.*`
 - [ ] Move common store constructor->dirty=true, loadIfDirty, unload methods to lazydata package, override loadIfDirty where needed
+- [ ] Move param configs from stores to proxies where both are in slate-cbl package already
 
 ## Best Practices
 
