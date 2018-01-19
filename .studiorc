@@ -113,6 +113,7 @@ caddy-start() {
     echo "    Running: caddy -port ${caddy_port} -root /src/sencha-workspace browse"
     setsid caddy -port "${caddy_port}" -agree -quiet -root /src/sencha-workspace -pidfile /hab/bin/caddy.pid browse &
     echo "    * Open ${caddy_root} to browse sencha-workspace"
+    echo "      (If using Mac or Windows, ensure HAB_DOCKER_OPTS=\"-p ${caddy_port}:${caddy_port}\" was set when entering the studio to expose this port to your host system)"
 }
 
 caddy-stop() {
