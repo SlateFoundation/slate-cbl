@@ -3,6 +3,7 @@
     "namespace": "SlateTasksManager",
     "version": "1.0.0.2",
     "framework": "ext",
+    "framework.version": "6.2.0.981",
     "toolkit": "classic",
     "theme": "slate-theme",
 
