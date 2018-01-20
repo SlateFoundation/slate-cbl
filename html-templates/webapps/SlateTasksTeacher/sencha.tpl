@@ -1,7 +1,7 @@
-{extends app/slate-ext.tpl}
+{extends "webapps/slate-sencha.tpl"}
 
 {block meta}
-    {capture assign=title}Tasks Manager &mdash; {Site::$title|escape}{/capture}
+    {capture assign=title}Tasks Teacher Dashboard &mdash; {Site::$title|escape}{/capture}
     {$dwoo.parent}
 {/block}
 
