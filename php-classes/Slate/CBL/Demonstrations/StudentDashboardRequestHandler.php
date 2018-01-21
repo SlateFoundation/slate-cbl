@@ -8,23 +8,20 @@ use Emergence\People\Person;
 use Emergence\People\GuardianRelationship;
 use Emergence\People\PeopleRequestHandler;
 
-use Sencha_App;
-use Sencha_RequestHandler;
+use Emergence\WebApps\SenchaApp;
 
-use Slate\CBL\ContentArea;
 use Slate\CBL\ContentAreasRequestHandler;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
-use Slate\CBL\StudentCompetency;
-use Slate\People\Student;
 
 
-class StudentDashboardRequestHandler extends \RequestHandler
+class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json',
         'text/csv' => 'csv'
     ];
+
 
     public static function handleRequest()
     {
@@ -48,10 +45,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
     {
         $GLOBALS['Session']->requireAuthentication();
 
-        return Sencha_RequestHandler::respond('app/SlateDemonstrationsStudent/ext', [
-            'App' => Sencha_App::getByName('SlateDemonstrationsStudent'),
-            'mode' => 'production'
-        ]);
+        return static::sendResponse(SenchaApp::load('SlateDemonstrationsStudent')->render(), 'webapps/SlateDemonstrationsStudent');
     }
 
     public static function handleBootstrapRequest()
@@ -153,7 +147,7 @@ class StudentDashboardRequestHandler extends \RequestHandler
             $userIsStaff = $GLOBALS['Session']->hasAccountLevel('Staff');
 
             if ($Student && !$userIsStaff) {
-                $GuardianRelationship = \Emergence\People\GuardianRelationship::getByWhere([
+                $GuardianRelationship = GuardianRelationship::getByWhere([
                     'PersonID' => $Student->ID,
                     'RelatedPersonID' => $GLOBALS['Session']->PersonID
                 ]);

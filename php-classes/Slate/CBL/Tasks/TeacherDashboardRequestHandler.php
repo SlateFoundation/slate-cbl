@@ -2,16 +2,17 @@
 
 namespace Slate\CBL\Tasks;
 
-use Sencha_App;
-use Sencha_RequestHandler;
+use Emergence\WebApps\SenchaApp;
 use Google\API as GoogleAPI;
 
-class TeacherDashboardRequestHandler extends \RequestHandler
+
+class TeacherDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json',
         'text/csv' => 'csv'
     ];
+
 
     public static function handleRequest()
     {
@@ -32,10 +33,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');
 
-        return Sencha_RequestHandler::respond('app/SlateTasksTeacher/ext', [
-            'App' => Sencha_App::getByName('SlateTasksTeacher'),
-            'mode' => 'production'
-        ]);
+        return static::sendResponse(SenchaApp::load('SlateTasksTeacher')->render(), 'webapps/SlateTasksTeacher');
     }
 
     public static function handleBootstrapRequest()

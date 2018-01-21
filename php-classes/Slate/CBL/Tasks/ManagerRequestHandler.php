@@ -6,7 +6,7 @@ use Emergence\WebApps\SenchaApp;
 use Google\API as GoogleAPI;
 
 
-class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
+class ManagerRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json',
@@ -31,14 +31,14 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 
     public static function handleDashboardRequest()
     {
-        $GLOBALS['Session']->requireAuthentication();
+        $GLOBALS['Session']->requireAccountLevel('Staff');
 
-        return static::sendResponse(SenchaApp::load('SlateTasksStudent')->render(), 'webapps/SlateTasksStudent');
+        return static::sendResponse(SenchaApp::load('SlateTasksManager')->render(), 'webapps/SlateTasksManager');
     }
 
     public static function handleBootstrapRequest()
     {
-        $GLOBALS['Session']->requireAuthentication();
+        $GLOBALS['Session']->requireAccountLevel('Staff');
 
         return static::respond('bootstrap', [
             'user' => $GLOBALS['Session']->Person,
