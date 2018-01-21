@@ -159,7 +159,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         '<tpl for="skills">',
             '<tr class="cbl-grid-skill-row" data-skill="{skill.ID}">',
                 '<tpl for="students">',
-                    '<td class="cbl-grid-demos-cell <tpl if="completion">cbl-level-{completion.Level}</tpl>" data-student="{student.ID}">',
+                    '<td class="cbl-grid-demos-cell <tpl if="studentCompetency">cbl-level-{studentCompetency.Level}</tpl>" data-student="{student.ID}">',
                         '<ul class="cbl-grid-demos">',
                             '<tpl for="demonstrationBlocks">',
                                 '<li class="cbl-grid-demo cbl-grid-demo-empty"></li>',
@@ -419,7 +419,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 skillsCount = skillsCollection.getCount(), skillIndex, skill,
 
                 skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl,
-                studentCompletion;
+                studentCompetency;
 
             // build new skills render tree and update root skill index
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
@@ -435,12 +435,12 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     student = studentsStore.getAt(studentIndex);
-                    studentCompletion = competencyRenderData.studentsById[student.getId()].completion;
+                    studentCompetency = competencyRenderData.studentsById[student.getId()].studentCompetency;
 
                     studentRenderData = {
                         student: student.data,
-                        completion: studentCompletion,
-                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.getTotalDemonstrationsRequired(studentCompletion ? studentCompletion.Level : null), true)
+                        studentCompetency: studentCompetency,
+                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.getTotalDemonstrationsRequired(studentCompetency ? studentCompetency.Level : null), true)
                     };
 
                     studentsRenderData.push(studentRenderData);
@@ -491,27 +491,27 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         var me = this,
             studentCompetenciesStore = me.getStudentCompetenciesStoreStore(),
             skillsData = demonstration.get('Skills'),
-            competencyCompletions = demonstration.get('competencyCompletions'),
-            i = 0, competencyCompletionsLength = competencyCompletions.length,
-            competencyCompletionData, competencyCompletionId, competencyCompletionRecord,
-            newCompletions = [];
+            studentCompetencies = demonstration.get('studentCompetencies'),
+            i = 0, studentCompetenciesLength = studentCompetencies.length,
+            studentCompetencyData, studentCompetencyId, studentCompetencyRecord,
+            newStudentCompetencies = [];
 
-        for (; i < competencyCompletionsLength; i++) {
-            competencyCompletionData = competencyCompletions[i];
-            competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
-            competencyCompletionRecord = studentCompetenciesStore.getById(competencyCompletionId);
+        for (; i < studentCompetenciesLength; i++) {
+            studentCompetencyData = studentCompetencies[i];
+            studentCompetencyId = Slate.cbl.model.Completion.getIdFromData(studentCompetencyData);
+            studentCompetencyRecord = studentCompetenciesStore.getById(studentCompetencyId);
 
-            if (competencyCompletionRecord) {
-                competencyCompletionRecord.set(competencyCompletionData, {
+            if (studentCompetencyRecord) {
+                studentCompetencyRecord.set(studentCompetencyData, {
                     dirty: false
                 });
             } else {
-                newCompletions.push(competencyCompletionData);
+                newStudentCompetencies.push(studentCompetencyData);
             }
         }
 
-        if (newCompletions.length) {
-            studentCompetenciesStore.add(newCompletions);
+        if (newStudentCompetencies.length) {
+            studentCompetenciesStore.add(newStudentCompetencies);
         }
 
         if (skillsData) {
@@ -527,17 +527,17 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     deleteDemonstration: function(demonstration) {
         var me = this,
             studentCompetenciesStore = me.getStudentCompetenciesStoreStore(),
-            competencyCompletions = demonstration.get('competencyCompletions'),
-            i = 0, competencyCompletionsLength = competencyCompletions.length,
-            competencyCompletionData, competencyCompletionId, competencyCompletionRecord;
+            studentCompetencies = demonstration.get('studentCompetencies'),
+            i = 0, studentCompetenciesLength = studentCompetencies.length,
+            studentCompetencyData, studentCompetencyId, studentCompetencyRecord;
 
-        for (; i < competencyCompletionsLength; i++) {
-            competencyCompletionData = competencyCompletions[i];
-            competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
-            competencyCompletionRecord = studentCompetenciesStore.getById(competencyCompletionId);
+        for (; i < studentCompetenciesLength; i++) {
+            studentCompetencyData = studentCompetencies[i];
+            studentCompetencyId = Slate.cbl.model.Completion.getIdFromData(studentCompetencyData);
+            studentCompetencyRecord = studentCompetenciesStore.getById(studentCompetencyId);
 
-            if (competencyCompletionRecord) {
-                competencyCompletionRecord.set(competencyCompletionData, {
+            if (studentCompetencyRecord) {
+                studentCompetencyRecord.set(studentCompetencyData, {
                     dirty: false
                 });
             }
@@ -731,9 +731,9 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             demoSkillsStore = me.getDemonstrationSkillsStore(),
             averageFormat = me.getAverageFormat(),
             progressFormat = me.getProgressFormat(),
-            studentCompetenciesLength = studentCompetencies.length, completionIndex,
+            studentCompetenciesLength = studentCompetencies.length, studentCompetencyIndex,
             needsFlush = false,
-            competenciesById, completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
+            competenciesById, studentCompetency, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
             count, average, level, renderedLevel,
             countDirty, averageDirty, levelDirty,
             percentComplete, demonstrationsRequired;
@@ -747,23 +747,23 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
         competenciesById = me.getData().competenciesById;
 
-        for (completionIndex = 0; completionIndex < studentCompetenciesLength; completionIndex++) {
-            completion = studentCompetencies[completionIndex];
-            competencyId = completion.get('CompetencyID');
+        for (studentCompetencyIndex = 0; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
+            studentCompetency = studentCompetencies[studentCompetencyIndex];
+            competencyId = studentCompetency.get('CompetencyID');
             competencyData = competenciesById[competencyId];
-            studentId = completion.get('StudentID');
+            studentId = studentCompetency.get('StudentID');
             competencyStudentData = competencyData.studentsById[studentId];
             progressCellEl = competencyStudentData.progressCellEl;
 
-            count = completion.get('demonstrationsComplete');
-            average = completion.get('demonstrationsAverage');
-            level = completion.get('Level');
+            count = studentCompetency.get('demonstrationsComplete');
+            average = studentCompetency.get('demonstrationsAverage');
+            level = studentCompetency.get('Level');
             renderedLevel = competencyStudentData.renderedLevel;
 
             countDirty = count != competencyStudentData.renderedCount;
             averageDirty = average != competencyStudentData.renderedAverage;
             levelDirty = level != renderedLevel;
-            demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[completion.get('Level')] || competencyData.competency.totalDemonstrationsRequired.default;
+            demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[studentCompetency.get('Level')] || competencyData.competency.totalDemonstrationsRequired.default;
 
             if (countDirty || averageDirty) {
                 percentComplete = 100 * (count || 0) / demonstrationsRequired;
@@ -811,7 +811,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 competencyStudentData.renderedLevel = level;
             }
 
-            competencyStudentData.completion = completion.data;
+            competencyStudentData.studentCompetency = studentCompetency.data;
         }
 
         if (needsFlush) {
@@ -931,7 +931,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.Level == skillDemonstration.TargetLevel) {
+                if (skillStudentRenderData.studentCompetency.Level == skillDemonstration.TargetLevel) {
                     (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
@@ -953,7 +953,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.Level == skillDemonstration.TargetLevel) {
+                if (skillStudentRenderData.studentCompetency.Level == skillDemonstration.TargetLevel) {
                     (skillStudentRenderData.updatedDemonstrationSkills || (skillStudentRenderData.updatedDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
@@ -1010,10 +1010,10 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     skillDemonstrationsChanged = false;
                     outgoingLevel = competencyStudentData.outgoingLevel;
 
-                    if (typeof skillDemonstrationsRequired[skillStudentRenderData.completion.Level] === 'undefined') {
+                    if (typeof skillDemonstrationsRequired[skillStudentRenderData.studentCompetency.Level] === 'undefined') {
                         studentSkillDemonstrationsRequired = skillDemonstrationsRequired.default;
                     } else {
-                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.completion.Level];
+                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.studentCompetency.Level];
                     }
 
                     // apply updated skill demonstrations
@@ -1179,7 +1179,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         competencyStudentLevelsFlushedLength = competencyStudentLevelsFlushed.length;
         for (; competencyStudentLevelsIndex < competencyStudentLevelsFlushedLength; competencyStudentLevelsIndex++) {
             competencyStudentData = competencyStudentLevelsFlushed[competencyStudentLevelsIndex];
-            competencyStudentCompletion = competencyStudentData.completion;
+            competencyStudentCompletion = competencyStudentData.studentCompetency;
             competencyStudentData.outgoingLevel = null;
 
             demoSkillsStore.loadByStudentsAndCompetencies(competencyStudentCompletion.StudentID, competencyStudentCompletion.CompetencyID);
