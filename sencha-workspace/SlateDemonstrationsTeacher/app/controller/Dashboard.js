@@ -213,7 +213,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     },
 
     onStudentCompetenciesStoreBeforeLoad: function() {
-        this.getDashboardCt().setLoading('Loading progress...');
+        var dashboardCt = this.getDashboardCt();
+
+        dashboardCt.setProgressGrid(false);
+        dashboardCt.setLoading('Loading progress...');
     },
 
     onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
@@ -254,7 +257,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
 
         // finish load
-        dashboardCt.setProgressGrid(true); // TODO: defer until students loaded
+        dashboardCt.setProgressGrid(true);
         dashboardCt.setLoading(false);
     },
 
