@@ -55,7 +55,7 @@ do_build() {
     build
 
   build_line "Making app.json readable"
-  underscore --in "${CACHE_PATH}/app.json" --out "${CACHE_PATH}/app.json" print
+  underscore --in "${CACHE_PATH}/app.json" --out "${CACHE_PATH}/app.json" --outfmt stringify print
 
   build_line "Removing absolute path prefixes sometimes saved inappropriately by cmd"
   for file in "${CACHE_PATH}/app.json" "${CACHE_PATH}/index.html"; do
