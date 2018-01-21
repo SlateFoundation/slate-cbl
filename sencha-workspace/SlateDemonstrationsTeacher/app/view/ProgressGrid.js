@@ -735,14 +735,6 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             countDirty, averageDirty, levelDirty,
             percentComplete, demonstrationsRequired;
 
-        debugger;
-        if (!skillsStore.isLoaded()) {
-            skillsStore.on('load', function() {
-                me.loadCompletions(completions);
-            }, me, { single: true });
-            return;
-        }
-
         for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
             completion = completions[completionIndex];
             competencyId = completion.get('CompetencyID');
