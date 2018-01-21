@@ -98,7 +98,7 @@ publish-app() {
     echo "    Publishing: ${app_name} from ${pkg_path} to ${server_host}"
 
     pushd "${pkg_path}/app" > /dev/null
-    hab pkg exec jarvus/cadaver cadaver-put-recursive . "${server_host}/develop/sencha-build/${app_name}/production/"
+    hab pkg exec jarvus/cadaver cadaver-put-recursive . "${server_host}/develop/webapp-builds/${app_name}/"
     popd > /dev/null
 }
 
