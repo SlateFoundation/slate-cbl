@@ -93,7 +93,10 @@ publish-app() {
     [ -z "$pkg_ident" ] || [ -z "$server_host" ] && { echo >&2 "Usage: publish-app pkg/ident http://myhost.org"; return 1; }
 
     pkg_path=$(hab pkg path "${pkg_ident}")
+    [ -z "$pkg_path" ] && { echo >&2 "Path not found for ${pkg_ident}"; return 1; }
+
     app_name=$(cat "${pkg_path}/APP_NAME")
+    [ -z "$app_name" ] && { echo >&2 "Could not read app_name from ${pkg_path}/APP_NAME"; return 1; }
 
     echo "    Publishing: ${app_name} from ${pkg_path} to ${server_host}"
 
