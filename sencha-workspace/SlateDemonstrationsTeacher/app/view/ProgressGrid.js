@@ -27,7 +27,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         studentsStore: 'Students',
         competenciesStore: 'Competencies',
         skillsStore: 'Skills',
-        completionsStore: 'StudentCompetencies',
+        studentCompetenciesStore: 'StudentCompetencies',
         demonstrationSkillsStore: 'DemonstrationSkills'
     },
 
@@ -205,17 +205,21 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         }
     },
 
-    applyCompletionsStore: function(store) {
+    applyStudentCompetenciesStore: function(store) {
         return Ext.StoreMgr.lookup(store);
     },
 
-    updateCompletionsStore: function(store) {
+    updateStudentCompetenciesStore: function(store) {
         if (store) {
             store.on({
                 scope: this,
-                refresh: 'onCompletionsRefresh',
-                update: 'onCompletionUpdate'
+                refresh: 'onStudentCompetenciesStoreRefresh',
+                update: 'onStudentCompetencyUpdate'
             });
+
+            if (store.isLoaded()) {
+                this.loadStudentCompetencies(store.getRange());
+            }
         }
     },
 
@@ -298,16 +302,16 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         }
     },
 
-    onCompletionsRefresh: function(completionsStore) {
-        console.log('completions->refresh', arguments);
+    onStudentCompetenciesStoreRefresh: function(studentCompetenciesStore) {
+        console.log('studentCompetenciesStore->refresh', arguments);
 
-        this.loadCompletions(completionsStore.getRange());
+        this.loadStudentCompetencies(studentCompetenciesStore.getRange());
     },
 
-    onCompletionUpdate: function(completionsStore, completion, operation, modifiedFieldNames) {
-        console.log('completion->update', completion, operation, modifiedFieldNames);
+    onStudentCompetencyUpdate: function(studentCompetenciesStore, studentCompetency, operation, modifiedFieldNames) {
+        console.log('studentCompetency->update', studentCompetency, operation, modifiedFieldNames);
 
-        this.loadCompletions(completion);
+        this.loadStudentCompetencies(studentCompetency);
     },
 
     onDemonstrationSkillsLoad: function(demoSkillsStore, demoSkills) {
@@ -485,7 +489,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
      */
     loadDemonstration: function(demonstration) {
         var me = this,
-            completionsStore = me.getCompletionsStore(),
+            studentCompetenciesStore = me.getStudentCompetenciesStoreStore(),
             skillsData = demonstration.get('Skills'),
             competencyCompletions = demonstration.get('competencyCompletions'),
             i = 0, competencyCompletionsLength = competencyCompletions.length,
@@ -495,7 +499,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         for (; i < competencyCompletionsLength; i++) {
             competencyCompletionData = competencyCompletions[i];
             competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
-            competencyCompletionRecord = completionsStore.getById(competencyCompletionId);
+            competencyCompletionRecord = studentCompetenciesStore.getById(competencyCompletionId);
 
             if (competencyCompletionRecord) {
                 competencyCompletionRecord.set(competencyCompletionData, {
@@ -507,7 +511,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         }
 
         if (newCompletions.length) {
-            completionsStore.add(newCompletions);
+            studentCompetenciesStore.add(newCompletions);
         }
 
         if (skillsData) {
@@ -522,7 +526,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
      */
     deleteDemonstration: function(demonstration) {
         var me = this,
-            completionsStore = me.getCompletionsStore(),
+            studentCompetenciesStore = me.getStudentCompetenciesStoreStore(),
             competencyCompletions = demonstration.get('competencyCompletions'),
             i = 0, competencyCompletionsLength = competencyCompletions.length,
             competencyCompletionData, competencyCompletionId, competencyCompletionRecord;
@@ -530,7 +534,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         for (; i < competencyCompletionsLength; i++) {
             competencyCompletionData = competencyCompletions[i];
             competencyCompletionId = Slate.cbl.model.Completion.getIdFromData(competencyCompletionData);
-            competencyCompletionRecord = completionsStore.getById(competencyCompletionId);
+            competencyCompletionRecord = studentCompetenciesStore.getById(competencyCompletionId);
 
             if (competencyCompletionRecord) {
                 competencyCompletionRecord.set(competencyCompletionData, {
@@ -714,29 +718,37 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
     /**
      * @protected
-     * Reads one or more new or updated completion model and apply them to the existing render
+     * Reads one or more new or updated student competency models and apply them to the existing render
      *
-     * @param {Slate.cbl.model.Completion/Slate.cbl.model.Completion[]} completions A new or updated completion model or array of models
+     * @param {Slate.cbl.model.StudentCompetency/Slate.cbl.model.StudentCompetency[]} studentCompetencies A new or updated student competency model or array of models
      */
-    loadCompletions: function(completions) {
-        completions = Ext.isArray(completions) ? completions : [completions];
+    loadStudentCompetencies: function(studentCompetencies) {
+        studentCompetencies = Ext.isArray(studentCompetencies) ? studentCompetencies : [studentCompetencies];
 
         // eslint-disable-next-line vars-on-top
         var me = this,
             skillsStore = me.getSkillsStore(),
             demoSkillsStore = me.getDemonstrationSkillsStore(),
-            competenciesById = me.getData().competenciesById,
             averageFormat = me.getAverageFormat(),
             progressFormat = me.getProgressFormat(),
-            completionsLength = completions.length, completionIndex,
+            studentCompetenciesLength = studentCompetencies.length, completionIndex,
             needsFlush = false,
-            completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
+            competenciesById, completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
             count, average, level, renderedLevel,
             countDirty, averageDirty, levelDirty,
             percentComplete, demonstrationsRequired;
 
-        for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
-            completion = completions[completionIndex];
+        if (!me.rendered) {
+            me.on('afterrender', function() {
+                me.loadStudentCompetencies(studentCompetencies);
+            }, me, { single: true });
+            return;
+        }
+
+        competenciesById = me.getData().competenciesById;
+
+        for (completionIndex = 0; completionIndex < studentCompetenciesLength; completionIndex++) {
+            completion = studentCompetencies[completionIndex];
             competencyId = completion.get('CompetencyID');
             competencyData = competenciesById[competencyId];
             studentId = completion.get('StudentID');
