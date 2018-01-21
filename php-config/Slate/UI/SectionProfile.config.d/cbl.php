@@ -24,7 +24,7 @@ Slate\UI\SectionProfile::$sources[] = function (Slate\Courses\Section $Section) 
         }
 
         if ($GLOBALS['Session']->hasAccountLevel('Staff')) {
-            $links['Teacher Tasks Dashboard'] =' /cbl/dashboards/tasks/teacher#section/' . $Section->Code;
+            $links['Teacher Tasks Dashboard'] =' /cbl/dashboards/tasks/teacher#' . $Section->Code . '/all';
         }
 
         if ($isParticipant) {

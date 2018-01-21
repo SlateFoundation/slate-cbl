@@ -5,7 +5,7 @@ Slate\UI\UserProfile::$sources[] = function (Emergence\People\Person $Person) {
 
     if (
         $Person->isA(Slate\People\Student::class) &&
-        !empty($GLOBALS['Session']) && 
+        !empty($GLOBALS['Session']) &&
         (
             // viewer is staff
             $GLOBALS['Session']->hasAccountLevel('Staff') ||
@@ -26,9 +26,7 @@ Slate\UI\UserProfile::$sources[] = function (Emergence\People\Person $Person) {
         )
     ) {
         $links['Student Dashboards'] = [
-            'Competencies Dashboard' => '/cbl/dashboards/demonstrations/student?' . http_build_query([
-                'student' => $Person->Username
-            ]),
+            'Competencies Dashboard' => '/cbl/dashboards/demonstrations/student#' . $Person->Username,
             'Tasks Dashboard' => '/cbl/dashboards/tasks/student#' . $Person->Username . '/all'
         ];
     }

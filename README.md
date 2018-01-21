@@ -103,8 +103,8 @@ parameter `apiHost` when loading the page.
 
 ### Current release
 
-- [ ] Update all loaders
-- [ ] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php
+- [X] Update all loaders
+- [X] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php
 - [ ] Investigate baselines getting `NULL`d out: https://github.com/SlateFoundation/slate-fixtures/commit/74b14c13b783afed59463e90fb4770ae67f6745c
 - [X] Merge Ext JS code generator upstream
   - [ ] Write forum post documenting
