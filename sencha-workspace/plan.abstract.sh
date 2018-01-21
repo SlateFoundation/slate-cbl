@@ -43,6 +43,7 @@ do_before() {
 do_build() {
   pushd "${PLAN_CONTEXT}" > /dev/null
 
+  build_line "Running sencha ant production build"
   sencha ant \
     -Dapp.output.base="${CACHE_PATH}" \
     -Dbuild.temp.dir="/tmp" \
@@ -52,6 +53,16 @@ do_build() {
     -Denable.standalone.manifest=true \
     production \
     build
+
+  build_line "Fixing app.json paths that are inappropriately prefixed sometimes by cmd"
+  underscore --in "${CACHE_PATH}/app.json" --out "${CACHE_PATH}/app.json" process "
+    const prefix = '${CACHE_PATH}';
+    const prefixLength = prefix.length;
+    const removePrefix = file => file.path = file.path.indexOf(prefix) === 0 ? file.path.substr(prefixLength+1) : file.path;
+    data.js = each(data.js, removePrefix);
+    data.css = each(data.css, removePrefix);
+    data;
+  "
 
   popd > /dev/null
 }
