@@ -103,6 +103,11 @@ parameter `apiHost` when loading the page.
 
 ### Current release
 
+- [ ] Restore progress loading in SlateDemonstrationsTeacher
+- [ ] Restore opening student-skill details in SlateDemonstrationsTeacher
+- [ ] Restore demonstration creation in SlateDemonstrationsTeacher
+- [ ] Restore task creation in SlateTasksTeacher
+- [ ] Restore building/loading of SlateTasksManager
 - [X] Update all loaders
 - [X] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php
 - [ ] Investigate baselines getting `NULL`d out: https://github.com/SlateFoundation/slate-fixtures/commit/74b14c13b783afed59463e90fb4770ae67f6745c
