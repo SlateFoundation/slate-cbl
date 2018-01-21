@@ -54,15 +54,13 @@ do_build() {
     production \
     build
 
-  build_line "Fixing app.json paths that are inappropriately prefixed sometimes by cmd"
-  underscore --in "${CACHE_PATH}/app.json" --out "${CACHE_PATH}/app.json" process "
-    const prefix = '${CACHE_PATH}';
-    const prefixLength = prefix.length;
-    const removePrefix = file => file.path = file.path.indexOf(prefix) === 0 ? file.path.substr(prefixLength+1) : file.path;
-    data.js = each(data.js, removePrefix);
-    data.css = each(data.css, removePrefix);
-    data;
-  "
+  build_line "Making app.json readable"
+  underscore --in "${CACHE_PATH}/app.json" --out "${CACHE_PATH}/app.json" print
+
+  build_line "Removing absolute path prefixes sometimes saved inappropriately by cmd"
+  for file in "${CACHE_PATH}/app.json" "${CACHE_PATH}/index.html"; do
+    sed -i "s#${CACHE_PATH}/##g" "${file}"
+  done
 
   popd > /dev/null
 }
