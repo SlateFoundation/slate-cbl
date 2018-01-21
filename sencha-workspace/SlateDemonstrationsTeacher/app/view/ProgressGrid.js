@@ -159,7 +159,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         '<tpl for="skills">',
             '<tr class="cbl-grid-skill-row" data-skill="{skill.ID}">',
                 '<tpl for="students">',
-                    '<td class="cbl-grid-demos-cell <tpl if="completion">cbl-level-{completion.currentLevel}</tpl>" data-student="{student.ID}">',
+                    '<td class="cbl-grid-demos-cell <tpl if="completion">cbl-level-{completion.Level}</tpl>" data-student="{student.ID}">',
                         '<ul class="cbl-grid-demos">',
                             '<tpl for="demonstrationBlocks">',
                                 '<li class="cbl-grid-demo cbl-grid-demo-empty"></li>',
@@ -440,7 +440,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     studentRenderData = {
                         student: student.data,
                         completion: studentCompletion,
-                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.getTotalDemonstrationsRequired(studentCompletion ? studentCompletion.currentLevel : null), true)
+                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.getTotalDemonstrationsRequired(studentCompletion ? studentCompletion.Level : null), true)
                     };
 
                     studentsRenderData.push(studentRenderData);
@@ -757,13 +757,13 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
             count = completion.get('demonstrationsComplete');
             average = completion.get('demonstrationsAverage');
-            level = completion.get('currentLevel');
+            level = completion.get('Level');
             renderedLevel = competencyStudentData.renderedLevel;
 
             countDirty = count != competencyStudentData.renderedCount;
             averageDirty = average != competencyStudentData.renderedAverage;
             levelDirty = level != renderedLevel;
-            demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[completion.get('currentLevel')] || competencyData.competency.totalDemonstrationsRequired.default;
+            demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[completion.get('Level')] || competencyData.competency.totalDemonstrationsRequired.default;
 
             if (countDirty || averageDirty) {
                 percentComplete = 100 * (count || 0) / demonstrationsRequired;
@@ -931,7 +931,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
+                if (skillStudentRenderData.completion.Level == skillDemonstration.TargetLevel) {
                     (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
@@ -953,7 +953,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
             ) {
                 // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.completion.currentLevel == skillDemonstration.TargetLevel) {
+                if (skillStudentRenderData.completion.Level == skillDemonstration.TargetLevel) {
                     (skillStudentRenderData.updatedDemonstrationSkills || (skillStudentRenderData.updatedDemonstrationSkills = [])).push(skillDemonstration);
                 }
             } else {
@@ -1010,10 +1010,10 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     skillDemonstrationsChanged = false;
                     outgoingLevel = competencyStudentData.outgoingLevel;
 
-                    if (typeof skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel] === 'undefined') {
+                    if (typeof skillDemonstrationsRequired[skillStudentRenderData.completion.Level] === 'undefined') {
                         studentSkillDemonstrationsRequired = skillDemonstrationsRequired.default;
                     } else {
-                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.completion.currentLevel];
+                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.completion.Level];
                     }
 
                     // apply updated skill demonstrations
