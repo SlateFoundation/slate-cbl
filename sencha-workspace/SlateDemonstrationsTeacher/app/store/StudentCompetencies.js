@@ -21,6 +21,9 @@ Ext.define('SlateDemonstrationsTeacher.store.StudentCompetencies', {
                 'isLevelComplete',
                 'growth'
             ],
+            relatedTable: [
+                'Student'
+            ],
             extraParams: {
                 limit: 0
             }

@@ -213,7 +213,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     },
 
     onStudentCompetenciesStoreBeforeLoad: function() {
-        this.getProgressGrid().setLoading('Loading progress...');
+        this.getDashboardCt().setLoading('Loading progress...');
     },
 
     onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
@@ -224,8 +224,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
         // eslint-disable-next-line vars-on-top
         var me = this,
+            dashboardCt = me.getDashboardCt(),
             skillsStore = me.getSkillsStore(),
             rawData = store.getProxy().getReader().rawData,
+            relatedData = rawData.related || {},
             contentAreaData = rawData.ContentArea,
             competenciesData = contentAreaData.Competencies,
             competenciesLength = competenciesData.length,
@@ -236,7 +238,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         delete contentAreaData.Competencies;
 
 
-        // load content area, competencies, and skills
+        // load content area, competencies, skills, and students
         me.getDashboardCt().setLoadedContentArea(contentAreaData);
 
         me.getCompetenciesStore().loadRawData(competenciesData);
@@ -248,9 +250,12 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         }
         skillsStore.endUpdate();
 
+        me.getStudentsStore().loadRawData(relatedData.Student || []);
+
 
         // finish load
-        me.getProgressGrid().setLoading(false);
+        dashboardCt.setProgressGrid(true); // TODO: defer until students loaded
+        dashboardCt.setLoading(false);
     },
 
     onContentAreaChange: function(dashboardCt, contentAreaCode) {

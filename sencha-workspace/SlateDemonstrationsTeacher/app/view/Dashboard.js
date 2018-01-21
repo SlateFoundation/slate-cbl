@@ -86,7 +86,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
          *
          * Setting boolean values change visibility.
          */
-        progressGrid: false,
+        progressGrid: null,
 
 
         // appcontainer config
@@ -120,7 +120,6 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
 
     // config handlers
     updateSelectedContentArea: function(contentArea, oldContentArea) {
-        this.syncItems();
         this.fireEvent('selectedcontentareachange', this, contentArea, oldContentArea);
     },
 
@@ -152,47 +151,28 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
     },
 
     updateSelectedStudentsList: function(studentsList, oldStudentsList) {
-        this.syncItems();
         this.fireEvent('selectedstudentslistchange', this, studentsList, oldStudentsList);
     },
 
     applyProgressGrid: function(progressGrid, oldProgressGrid) {
-        if (typeof progressGrid === 'boolean') {
-            progressGrid = {
-                hidden: !progressGrid
-            };
-        }
-
-        return Ext.factory(progressGrid, 'SlateDemonstrationsTeacher.view.ProgressGrid', oldProgressGrid);
+        return progressGrid ? Ext.factory(progressGrid, 'SlateDemonstrationsTeacher.view.ProgressGrid', oldProgressGrid) : null;
     },
 
-
-    // component lifecycle
-    initItems: function() {
+    updateProgressGrid: function(progressGrid, oldProgressGrid) {
         var me = this;
 
-        me.callParent();
+        Ext.suspendLayouts();
 
-        me.add([
-            me.getProgressGrid()
-        ]);
-    },
+        me.setPlaceholder(!progressGrid);
 
-
-    // dashboard methods
-    syncItems: function() {
-        var me = this,
-            dashboardVisible = Boolean(me.getSelectedContentArea() && me.getSelectedStudentsList());
-
-        if (dashboardVisible == me._dashboardVisible) {
-            return;
+        if (oldProgressGrid) {
+            me.remove(oldProgressGrid, true);
         }
 
-        me._dashboardVisible = dashboardVisible;
+        if (progressGrid) {
+            me.add(progressGrid);
+        }
 
-        Ext.suspendLayouts();
-        me.setPlaceholder(!dashboardVisible);
-        me.setProgressGrid(dashboardVisible);
         Ext.resumeLayouts(true);
     }
 });

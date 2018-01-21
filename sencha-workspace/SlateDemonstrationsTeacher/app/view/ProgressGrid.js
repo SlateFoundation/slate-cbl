@@ -223,6 +223,12 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         return Ext.StoreMgr.lookup(store);
     },
 
+    updateSkillsStore: function(store) {
+        if (store) {
+            store.on('refresh', 'refresh', this);
+        }
+    },
+
     applyDemonstrationSkillsStore: function(store) {
         return Ext.StoreMgr.lookup(store);
     },
@@ -549,12 +555,6 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             competenciesStore = me.getCompetenciesStore();
 
         if (!studentsStore.isLoaded() || !competenciesStore.isLoaded()) {
-            me.setData({
-                studentsCount: studentsStore.getTotalCount(),
-                studentsStoreLoaded: studentsStore.isLoaded(),
-                competenciesCount: competenciesStore.getTotalCount(),
-                competenciesStoreLoaded: competenciesStore.isLoaded()
-            });
             return;
         }
 
@@ -567,12 +567,6 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         } else {
             me.on('render', 'finishRefresh', me, { single: true });
         }
-
-        // TODO: should this be in finishRefresh instead? what happens if refresh called before render?
-        me.getCompletionsStore().loadByStudentsAndCompetencies(
-            me.getStudentsStore().collect('ID'),
-            me.getCompetenciesStore().collect('ID')
-        );
 
         Ext.resumeLayouts(true);
     },
@@ -727,89 +721,98 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     loadCompletions: function(completions) {
         completions = Ext.isArray(completions) ? completions : [completions];
 
-        // var me = this,
-        //     skillsStore = me.getSkillsStore(),
-        //     demoSkillsStore = me.getDemonstrationSkillsStore(),
-        //     competenciesById = me.getData().competenciesById,
-        //     averageFormat = me.getAverageFormat(),
-        //     progressFormat = me.getProgressFormat(),
-        //     completionsLength = completions.length, completionIndex,
-        //     needsFlush = false,
-        //     completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
-        //     count, average, level, renderedLevel,
-        //     countDirty, averageDirty, levelDirty,
-        //     percentComplete, demonstrationsRequired;
+        // eslint-disable-next-line vars-on-top
+        var me = this,
+            skillsStore = me.getSkillsStore(),
+            demoSkillsStore = me.getDemonstrationSkillsStore(),
+            competenciesById = me.getData().competenciesById,
+            averageFormat = me.getAverageFormat(),
+            progressFormat = me.getProgressFormat(),
+            completionsLength = completions.length, completionIndex,
+            needsFlush = false,
+            completion, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
+            count, average, level, renderedLevel,
+            countDirty, averageDirty, levelDirty,
+            percentComplete, demonstrationsRequired;
 
-        // for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
-        //     completion = completions[completionIndex];
-        //     competencyId = completion.get('CompetencyID');
-        //     competencyData = competenciesById[competencyId];
-        //     studentId = completion.get('StudentID');
-        //     competencyStudentData = competencyData.studentsById[studentId];
-        //     progressCellEl = competencyStudentData.progressCellEl;
+        debugger;
+        if (!skillsStore.isLoaded()) {
+            skillsStore.on('load', function() {
+                me.loadCompletions(completions);
+            }, me, { single: true });
+            return;
+        }
 
-        //     count = completion.get('demonstrationsComplete');
-        //     average = completion.get('demonstrationsAverage');
-        //     level = completion.get('currentLevel');
-        //     renderedLevel = competencyStudentData.renderedLevel;
+        for (completionIndex = 0; completionIndex < completionsLength; completionIndex++) {
+            completion = completions[completionIndex];
+            competencyId = completion.get('CompetencyID');
+            competencyData = competenciesById[competencyId];
+            studentId = completion.get('StudentID');
+            competencyStudentData = competencyData.studentsById[studentId];
+            progressCellEl = competencyStudentData.progressCellEl;
 
-        //     countDirty = count != competencyStudentData.renderedCount;
-        //     averageDirty = average != competencyStudentData.renderedAverage;
-        //     levelDirty = level != renderedLevel;
-        //     demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[completion.get('currentLevel')] || competencyData.competency.totalDemonstrationsRequired.default;
+            count = completion.get('demonstrationsComplete');
+            average = completion.get('demonstrationsAverage');
+            level = completion.get('currentLevel');
+            renderedLevel = competencyStudentData.renderedLevel;
 
-        //     if (countDirty || averageDirty) {
-        //         percentComplete = 100 * (count || 0) / demonstrationsRequired;
-        //         progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competencyData.competency.minimumAverageOffset));
-        //     }
+            countDirty = count != competencyStudentData.renderedCount;
+            averageDirty = average != competencyStudentData.renderedAverage;
+            levelDirty = level != renderedLevel;
+            demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[completion.get('currentLevel')] || competencyData.competency.totalDemonstrationsRequired.default;
 
-        //     if (countDirty) {
-        //         competencyStudentData.progressBarEl.setStyle('width', isNaN(percentComplete) ? '0' : Math.round(percentComplete) + '%');
-        //         competencyStudentData.progressPercentEl.update(isNaN(percentComplete) ? '&mdash;' : progressFormat(percentComplete));
+            if (countDirty || averageDirty) {
+                percentComplete = 100 * (count || 0) / demonstrationsRequired;
+                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competencyData.competency.minimumAverageOffset));
+            }
 
-        //         competencyStudentData.renderedCount = count;
-        //     }
+            if (countDirty) {
+                competencyStudentData.progressBarEl.setStyle('width', isNaN(percentComplete) ? '0' : Math.round(percentComplete) + '%');
+                competencyStudentData.progressPercentEl.update(isNaN(percentComplete) ? '&mdash;' : progressFormat(percentComplete));
 
-        //     if (averageDirty) {
-        //         competencyStudentData.progressAverageEl.update(averageFormat(average));
+                competencyStudentData.renderedCount = count;
+            }
 
-        //         competencyStudentData.renderedAverage = average;
-        //     }
+            if (averageDirty) {
+                competencyStudentData.progressAverageEl.update(averageFormat(average));
 
-        //     if (levelDirty) {
-        //         progressCellEl.addCls('cbl-level-'+level);
+                competencyStudentData.renderedAverage = average;
+            }
 
-        //         if (renderedLevel) {
-        //             progressCellEl.removeCls('cbl-level-'+renderedLevel);
+            if (levelDirty) {
+                progressCellEl.addCls('cbl-level-'+level);
 
-        //             me.removeDemonstrationSkills(demoSkillsStore.query([
-        //                 new Ext.util.Filter({
-        //                     property: 'StudentID',
-        //                     value: studentId
-        //                 }),
-        //                 new Ext.util.Filter({
-        //                     property: 'SkillID',
-        //                     operator: 'in',
-        //                     value: skillsStore.query('CompetencyID', competencyId).collect('ID', 'data')
-        //                 })
-        //             ]).getRange(), false); // false to defer flushing demonstrations, we'll queue it for once at the end
+                if (renderedLevel) {
+                    progressCellEl.removeCls('cbl-level-'+renderedLevel);
 
-        //             needsFlush = true;
+                    me.removeDemonstrationSkills(demoSkillsStore.query([
+                        new Ext.util.Filter({
+                            property: 'StudentID',
+                            value: studentId
+                        }),
+                        new Ext.util.Filter({
+                            property: 'SkillID',
+                            operator: 'in',
+                            value: skillsStore.query('CompetencyID', competencyId).collect('ID', 'data')
+                        })
+                    ]).getRange(), false); // false to defer flushing demonstrations, we'll queue it for once at the end
 
-        //             competencyStudentData.outgoingLevel = renderedLevel;
-        //         }
+                    needsFlush = true;
 
-        //         competencyStudentData.progressLevelEl.update('Y' + level - 8);
+                    competencyStudentData.outgoingLevel = renderedLevel;
+                }
 
-        //         competencyStudentData.renderedLevel = level;
-        //     }
+                competencyStudentData.progressLevelEl.update('Y' + level - 8);
 
-        //     competencyStudentData.completion = completion.data;
-        // }
+                competencyStudentData.renderedLevel = level;
+            }
 
-        // if (needsFlush) {
-        //     me.flushDemonstrations();
-        // }
+            competencyStudentData.completion = completion.data;
+        }
+
+        if (needsFlush) {
+            me.flushDemonstrations();
+        }
     },
 
     /**
