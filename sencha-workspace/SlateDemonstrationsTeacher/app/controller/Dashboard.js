@@ -322,8 +322,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         this.redirectTo(this.getDashboardCt().getSelectedContentArea() || '_');
     },
 
-    onCompetencyRowClick: function(progressGrid, competency) {
-        progressGrid.toggleCompetency(competency);
+    onCompetencyRowClick: function(progressGrid, context) {
+        progressGrid.toggleCompetency(context.competency);
     },
 
 

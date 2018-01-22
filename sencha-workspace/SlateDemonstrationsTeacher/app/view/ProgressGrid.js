@@ -269,19 +269,35 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
 
     // event handlers
-    onGridClick: function(ev, targetEl) {
-        var me = this;
+    onGridClick: function(ev, target) {
+        var me = this,
+            competenciesStore = me.getCompetenciesStore();
 
-        if (targetEl = ev.getTarget('.cbl-grid-progress-row', me.el, true)) { // eslint-disable-line no-cond-assign
+        target = Ext.get(target);
+
+        if (target.is('.cbl-grid-progress-row')) { // eslint-disable-line no-cond-assign
             me.fireEvent(
                 'competencyrowclick',
                 me,
-                me.getCompetenciesStore().getById(targetEl.getAttribute('data-competency'), 10),
-                ev,
-                targetEl
+                {
+                    targetEl: target,
+                    competency: competenciesStore.getById(target.getAttribute('data-competency'))
+                },
+                ev
             );
-        } else if (targetEl = ev.getTarget('.cbl-grid-demo', me.el, true)) { // eslint-disable-line no-cond-assign
-            me.fireEvent('democellclick', me, ev, targetEl);
+        } else if (target.is('.cbl-grid-demo')) { // eslint-disable-line no-cond-assign
+            me.fireEvent(
+                'democellclick',
+                me,
+                {
+                    targetEl: target,
+                    competency: competenciesStore.getById(target.up('.cbl-grid-skills-row').getAttribute('data-competency')),
+                    skill: me.getSkillsStore().getById(target.up('.cbl-grid-skill-row').getAttribute('data-skill')),
+                    student: me.getStudentsStore().getById(target.up('.cbl-grid-demos-cell').getAttribute('data-student')),
+                    demonstrationId: parseInt(target.getAttribute('data-demonstration'), 10)
+                },
+                ev
+            );
         }
     },
 
