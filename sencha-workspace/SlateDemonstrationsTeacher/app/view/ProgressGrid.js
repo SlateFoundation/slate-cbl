@@ -16,9 +16,9 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     ],
 
     config: {
-        studentDashboardLink: null,
         averageFormat: '0.##',
         progressFormat: '0%',
+        contentArea: null,
 
         popover: true,
 
@@ -566,7 +566,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
      */
     buildRenderData: function() {
         var me = this,
-            studentDashboardLink = me.getStudentDashboardLink(),
+            contentArea = me.getContentArea(),
+            studentDashboardLink = location.hostname == 'localhost' ? ('../SlateDemonstrationsStudent/' + location.search) : Slate.API.buildUrl('/cbl/dashboards/demonstrations/student'),
 
             students = me.getStudentsStore().getRange(),
             studentsLength = students.length, studentIndex, student,
@@ -582,7 +583,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             student = students[studentIndex];
             studentsData.push({
                 student: student.data,
-                dashboardUrl: studentDashboardLink && Slate.API.buildUrl(Ext.String.urlAppend(studentDashboardLink, 'student=' + window.escape(student.get('Username'))))
+                dashboardUrl: studentDashboardLink + '#' + student.get('Username') + '/' + contentArea.get('Code')
             });
         }
 

@@ -242,7 +242,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
 
         // load content area, competencies, skills, and students
-        me.getDashboardCt().setLoadedContentArea(contentAreaData);
+        dashboardCt.setLoadedContentArea(contentAreaData);
 
         me.getCompetenciesStore().loadRawData(competenciesData);
 
@@ -257,7 +257,9 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
 
         // finish load
-        dashboardCt.setProgressGrid(true);
+        dashboardCt.setProgressGrid({
+            contentArea: dashboardCt.getLoadedContentArea()
+        });
         dashboardCt.setLoading(false);
     },
 
