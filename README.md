@@ -109,7 +109,9 @@ parameter `apiHost` when loading the page.
   - [ ] review naming of `competencyStudent` objects in light of new `studentCompetency` objects
 - [ ] Restore opening student-skill details in SlateDemonstrationsTeacher
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
+  - [ ] Restore live-updating of grid
 - [ ] Restore task creation in SlateTasksTeacher
+  - [ ] Restore live-updating of grid
 - [ ] Restore building/loading of SlateTasksManager
 - [X] Update all loaders
 - [X] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php
