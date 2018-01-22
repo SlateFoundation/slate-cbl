@@ -53,6 +53,14 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
 
     // config handlers
+    applySelectedStudent: function(selectedStudent) {
+        if (!selectedStudent) {
+            return null;
+        }
+
+        return selectedStudent.isModel ? selectedStudent.getId() : selectedStudent;
+    },
+
     updateSelectedStudent: function(selectedStudent, oldSelectedStudent) {
         var me = this;
 
@@ -60,6 +68,14 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         me.loadSkillsIfReady();
 
         me.fireEvent('selectedstudentchange', me, selectedStudent, oldSelectedStudent);
+    },
+
+    applySelectedSkill: function(selectedSkill) {
+        if (!selectedSkill) {
+            return null;
+        }
+
+        return selectedSkill.isModel ? selectedSkill.get('Code') : selectedSkill;
     },
 
     updateSelectedSkill: function(selectedSkill, oldSelectedSkill) {
