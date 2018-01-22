@@ -11,7 +11,6 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     config: {
         // required inputs
         competency: null,
-        completion: null,
 
         // optional config
         percentFormat: '0%',

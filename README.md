@@ -105,7 +105,7 @@ parameter `apiHost` when loading the page.
 
 - [ ] Restore progress loading in SlateDemonstrationsTeacher
   - [X] Re-render on route change
-  - [~] Purge references to `completion`
+  - [X] Purge references to `completion`
   - [ ] review naming of `competencyStudent` objects in light of new `studentCompetency` objects
 - [ ] Restore opening student-skill details in SlateDemonstrationsTeacher
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
