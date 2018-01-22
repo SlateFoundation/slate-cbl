@@ -59,13 +59,13 @@ Ext.define('SlateTasksStudent.store.Tasks', {
             include: [
                 'Submitted',
                 'Student',
-                'Section',
                 'Comments',
                 'Attachments.File',
                 'Submissions',
                 'TaskSkills',
                 'Task.Attachments.File',
-                'Task.ParentTask'
+                'Task.ParentTask',
+                'Task.Section'
             ]
         }
     },

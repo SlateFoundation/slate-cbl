@@ -70,7 +70,7 @@ Ext.define('SlateTasksStudent.model.Task', {
         {
             name: 'SectionTitle',
             type: 'string',
-            mapping: 'Section.Title',
+            mapping: 'Task.Section.Title',
             persist: false
         },
         {
@@ -236,13 +236,15 @@ Ext.define('SlateTasksStudent.model.Task', {
     proxy: {
         type: 'slate-cbl-studenttasks',
         include: [
+            'Submitted',
             'Student',
-            'Section',
             'Comments',
-            'Attachments',
+            'Attachments.File',
+            'Submissions',
             'TaskSkills',
-            'Task.Attachments',
-            'Task.ParentTask'
+            'Task.Attachments.File',
+            'Task.ParentTask',
+            'Task.Section'
         ]
     },
 

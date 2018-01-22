@@ -34,18 +34,17 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     },
 
     tpl: [
-        '<tpl if="values.length == 0">',
-            '<div class="empty-text">No tasks found</div>',
-        '<tpl else>',
+        '<tpl if="tasks.length">',
             '<ul class="slate-tasktree-list">',
-
-                '<tpl for=".">',
+                '<tpl for="tasks">',
                     '<li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task) ]}" data-id="{task.ID}">',
 
                         '<div class="flex-ct">',
                             '<div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
                             '<div class="slate-tasktree-data">',
-                                '<div class="slate-tasktree-category">{task.SectionTitle}</div>',
+                                '<tpl if="parent.showSection">',
+                                    '<div class="slate-tasktree-category">{task.SectionTitle}</div>',
+                                '</tpl>',
                                 '<div class="slate-tasktree-text">',
                                     '<div class="slate-tasktree-title">{task.Title}</div>',
                                     '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values.task)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.task.TaskStatus) ]}</div>',
@@ -80,6 +79,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                     '</li>',
                 '</tpl>',
             '</ul>',
+        '<tpl else>',
+            '<div class="empty-text">No tasks found</div>',
         '</tpl>',
         {
             getStatusString: function(taskStatus) {
@@ -188,7 +189,10 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         }
 
         // render markup
-        me.setData(items);
+        me.setData({
+            tasks: items,
+            showSection: !store.getSection()
+        });
 
         // sync heights for animated expansion
         me.syncSublistHeights();
