@@ -40,8 +40,8 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
             subRowHeaderField: null,
             rowHeaderTpl: [
                 '<tpl for=".">',
-                '    {Title}',
-                '    <button class="button small edit-row">Edit</button>',
+                    '{Title}',
+                    '<button class="button small edit-row">Edit</button>',
                 '</tpl>'
             ],
 
