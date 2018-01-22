@@ -52,5 +52,13 @@ Ext.define('Slate.cbl.store.Skills', {
     unload: function() {
         this.loadCount = 0;
         this.removeAll();
+    },
+
+    getAllByCompetency: function(competency, callback, scope) {
+        competency = competency.isModel ? competency.getId() : parseInt(competency, 10);
+
+        return Ext.callback(callback, scope, [this.queryBy(function(skill) {
+            return skill.get('CompetencyID') == competency;
+        })]);
     }
 });

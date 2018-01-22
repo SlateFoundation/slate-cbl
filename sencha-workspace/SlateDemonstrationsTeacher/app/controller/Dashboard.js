@@ -95,11 +95,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         studentsListSelector: {
             select: 'onStudentsListSelectorSelect',
             clear: 'onStudentsListSelectorClear'
-        }
-        // studentProgressGrid: {
-        //     competencyrowclick: 'onCompetencyRowClick',
-        //     democellclick: 'onDemoCellClick'
-        // },
+        },
+        progressGrid: {
+            competencyrowclick: 'onCompetencyRowClick',
+            // democellclick: 'onDemoCellClick'
+        },
         // 'slate-demonstrations-teacher-skill-overviewwindow': {
         //     createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
         //     editdemonstrationclick: 'onOverviewEditDemonstrationClick',
@@ -318,7 +318,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     onStudentsListSelectorClear: function() {
         this.redirectTo(this.getDashboardCt().getSelectedContentArea() || '_');
-    }
+    },
+
+    onCompetencyRowClick: function(progressGrid, competency) {
+        progressGrid.toggleCompetency(competency);
+    },
 
 
     // event handers
@@ -326,10 +330,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     // onSubmitEvidenceClick: function() {
     //     this.showDemonstrationEditWindow();
-    // },
-
-    // onCompetencyRowClick: function(me, competency, ev, targetEl) {
-    //     me.toggleCompetency(competency);
     // },
 
     // onDemoCellClick: function(progressGrid, ev, targetEl) {

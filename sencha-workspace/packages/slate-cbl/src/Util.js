@@ -95,42 +95,6 @@ Ext.define('Slate.cbl.Util', function() {
 
             // Scored demonstrations go on the left, missed demonstrations go on the right
             return scored.concat(missed);
-        },
-
-        /**
-         * @protected
-         * Synchronizes the heights of two sets of table rows by setting the height of both to the max of the two
-         *
-         * @param {Ext.dom.CompositeElement/Ext.dom.CompositeElementLite} table1Rows
-         * @param {Ext.dom.CompositeElement/Ext.dom.CompositeElementLite} table2Rows
-         */
-        syncRowHeights: function(table1Rows, table2Rows) {
-
-            Ext.batchLayouts(function() {
-                var table1RowHeights = [],
-                    table2RowHeights = [],
-                    rowCount, rowIndex, maxHeight;
-
-                rowCount = table1Rows.getCount();
-
-                if (table2Rows.getCount() != rowCount) {
-                    Ext.Logger.warn('tables\' row counts don\'t match');
-                }
-
-                // read all the row height in batch first for both tables
-                for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                    table1RowHeights.push(table1Rows.item(rowIndex).getHeight());
-                    table2RowHeights.push(table2Rows.item(rowIndex).getHeight());
-                }
-
-                // write all the max row heights
-                for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                    maxHeight = Math.max(table1RowHeights[rowIndex], table2RowHeights[rowIndex]);
-                    table1Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
-                    table2Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
-                }
-            });
-
         }
     };
 });

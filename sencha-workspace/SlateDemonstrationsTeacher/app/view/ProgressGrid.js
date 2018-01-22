@@ -12,7 +12,6 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     xtype: 'slate-demonstrations-teacher-progressgrid',
     requires: [
         /* global Slate */
-        'Slate.cbl.Util',
         'Slate.cbl.widget.Popover'
     ],
 
@@ -20,15 +19,13 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         studentDashboardLink: null,
         averageFormat: '0.##',
         progressFormat: '0%',
-        flushDemonstrationsBuffer: 10,
 
         popover: true,
 
         studentsStore: 'Students',
         competenciesStore: 'Competencies',
         skillsStore: 'Skills',
-        studentCompetenciesStore: 'StudentCompetencies',
-        demonstrationSkillsStore: 'DemonstrationSkills'
+        studentCompetenciesStore: 'StudentCompetencies'
     },
 
     componentCls: 'cbl-grid-cmp',
@@ -161,8 +158,35 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 '<tpl for="students">',
                     '<td class="cbl-grid-demos-cell <tpl if="studentCompetency">cbl-level-{studentCompetency.Level}</tpl>" data-student="{student.ID}">',
                         '<ul class="cbl-grid-demos">',
-                            '<tpl for="demonstrationBlocks">',
-                                '<li class="cbl-grid-demo cbl-grid-demo-empty"></li>',
+                            '<tpl for="demonstrations">',
+                                '<tpl if=".">',
+                                    '<li ',
+                                        'data-demonstration="{DemonstrationID}"',
+                                        'class="',
+                                            ' cbl-grid-demo',
+                                            '<tpl if="Override">',
+                                                ' cbl-grid-override',
+                                                ' cbl-grid-span-{[xcount - xindex + 1]}',
+                                            '</tpl>',
+                                            '<tpl if="DemonstratedLevel || Override">',
+                                                ' cbl-grid-demo-counted',
+                                            '<tpl else>',
+                                                ' cbl-grid-demo-uncounted',
+                                            '</tpl>',
+                                        '"',
+                                    '>',
+                                        '<tpl if="Override">',
+                                            'O',
+                                        '<tpl elseif="DemonstratedLevel == 0">',
+                                            'M',
+                                        '<tpl else>',
+                                            '{DemonstratedLevel}',
+                                        '</tpl>',
+                                    '</li>',
+                                    '{% if (values.Override) break; %}', // don't print any more blocks after override
+                                '<tpl else>',
+                                    '<li class="cbl-grid-demo cbl-grid-demo-uncounted">&nbsp;</li>',
+                                '</tpl>',
                             '</tpl>',
                         '</ul>',
                     '</td>',
@@ -233,25 +257,6 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         }
     },
 
-    applyDemonstrationSkillsStore: function(store) {
-        return Ext.StoreMgr.lookup(store);
-    },
-
-    updateDemonstrationSkillsStore: function(store) {
-        if (store) {
-            store.on({
-                scope: this,
-                refresh: function() {
-                    console.log('ds->refresh', arguments);
-                },
-                load: 'onDemonstrationSkillsLoad',
-                add: 'onDemonstrationSkillsAdd',
-                update: 'onDemonstrationSkillUpdate',
-                remove: 'onDemonstrationSkillsRemove'
-            });
-        }
-    },
-
 
     // component lifecycle
     afterRender: function() {
@@ -260,9 +265,6 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         me.callParent(arguments);
 
         me.refresh();
-
-        // create an instance-specific buffer for flushing demonstrations
-        me.flushDemonstrations = Ext.Function.createBuffered(me.flushDemonstrations, me.getFlushDemonstrationsBuffer(), me);
     },
 
 
@@ -312,32 +314,6 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         console.log('studentCompetency->update', studentCompetency, operation, modifiedFieldNames);
 
         this.loadStudentCompetencies(studentCompetency);
-    },
-
-    onDemonstrationSkillsLoad: function(demoSkillsStore, demoSkills) {
-        console.log('ds->load', demoSkills);
-
-        this.addDemonstrationSkills(demoSkills);
-    },
-
-    onDemonstrationSkillsAdd: function(demoSkillsStore, demoSkills) {
-        console.log('ds->add', demoSkills);
-
-        this.addDemonstrationSkills(demoSkills);
-    },
-
-    onDemonstrationSkillUpdate: function(demoSkillsStore, demoSkill, operation, modifiedFieldNames) {
-        console.log('ds->update', demoSkill, operation, modifiedFieldNames);
-
-        if (modifiedFieldNames.indexOf('DemonstratedLevel') != -1) {
-            this.updateDemonstrationSkills([demoSkill]);
-        }
-    },
-
-    onDemonstrationSkillsRemove: function(demoSkillsStore, demoSkills) {
-        console.log('ds->remove', demoSkills);
-
-        this.removeDemonstrationSkills(demoSkills);
     },
 
 
@@ -405,8 +381,6 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         skillsRowEl.addCls(loadingCls);
         demonstrationsRowEl.addCls(loadingCls);
 
-        me.getDemonstrationSkillsStore().loadByStudentsAndCompetencies(me.getStudentsStore().collect('ID'), competency.getId());
-
         me.getSkillsStore().getAllByCompetency(competency, function(skillsCollection) {
             var renderData = me.getData(),
                 skillsById = renderData.skillsById || (renderData.skillsById = {}),
@@ -416,14 +390,15 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 studentsStore = me.getStudentsStore(),
                 studentsCount = studentsStore.getCount(), studentIndex, student,
 
-                skillsCount = skillsCollection.getCount(), skillIndex, skill,
+                skillsCount = skillsCollection.getCount(), skillIndex, skill, skillId,
 
                 skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl,
-                studentCompetency;
+                studentCompetency, demonstrations;
 
             // build new skills render tree and update root skill index
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
                 skill = skillsCollection.getAt(skillIndex);
+                skillId = skill.getId();
                 skillRenderData = {
                     skill: skill.data,
                     students: studentsRenderData = [],
@@ -431,16 +406,20 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 };
 
                 competencySkills.push(skillRenderData);
-                skillsById[skill.getId()] = skillRenderData;
+                skillsById[skillId] = skillRenderData;
 
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     student = studentsStore.getAt(studentIndex);
                     studentCompetency = competencyRenderData.studentsById[student.getId()].studentCompetency;
+                    demonstrations = Ext.Array.clone(studentCompetency.effectiveDemonstrationsData[skillId] || []);
+
+                    // fill demonstrations array with undefined items
+                    demonstrations.length = skill.getTotalDemonstrationsRequired(studentCompetency ? studentCompetency.Level : null);
 
                     studentRenderData = {
                         student: student.data,
                         studentCompetency: studentCompetency,
-                        demonstrationBlocks: Slate.cbl.Util.padArray([], skill.getTotalDemonstrationsRequired(studentCompetency ? studentCompetency.Level : null), true)
+                        demonstrations: demonstrations
                     };
 
                     studentsRenderData.push(studentRenderData);
@@ -470,81 +449,78 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             }
 
             // finish expand
-            Slate.cbl.Util.syncRowHeights(
+            me.syncRowHeights(
                 skillsRowEl.select('tr'),
                 demonstrationsRowEl.select('tr')
             );
-
-            // write any pending demonstrations to the DOM
-            me.flushDemonstrations();
 
             _finishExpand();
         });
     },
 
-    /**
-     * Read a new or updated demonstration model and apply it to the existing render
-     *
-     * @param {Slate.cbl.model.Demonstration} demonstration A new or updated demonstration model
-     */
-    loadDemonstration: function(demonstration) {
-        var me = this,
-            studentCompetenciesStore = me.getStudentCompetenciesStoreStore(),
-            skillsData = demonstration.get('Skills'),
-            studentCompetencies = demonstration.get('studentCompetencies'),
-            i = 0, studentCompetenciesLength = studentCompetencies.length,
-            studentCompetencyData, studentCompetencyId, studentCompetencyRecord,
-            newStudentCompetencies = [];
+    // /**
+    //  * Read a new or updated demonstration model and apply it to the existing render
+    //  *
+    //  * @param {Slate.cbl.model.Demonstration} demonstration A new or updated demonstration model
+    //  */
+    // loadDemonstration: function(demonstration) {
+    //     var me = this,
+    //         studentCompetenciesStore = me.getStudentCompetenciesStoreStore(),
+    //         skillsData = demonstration.get('Skills'),
+    //         studentCompetencies = demonstration.get('studentCompetencies'),
+    //         i = 0, studentCompetenciesLength = studentCompetencies.length,
+    //         studentCompetencyData, studentCompetencyId, studentCompetencyRecord,
+    //         newStudentCompetencies = [];
 
-        for (; i < studentCompetenciesLength; i++) {
-            studentCompetencyData = studentCompetencies[i];
-            studentCompetencyId = Slate.cbl.model.Completion.getIdFromData(studentCompetencyData);
-            studentCompetencyRecord = studentCompetenciesStore.getById(studentCompetencyId);
+    //     for (; i < studentCompetenciesLength; i++) {
+    //         studentCompetencyData = studentCompetencies[i];
+    //         studentCompetencyId = Slate.cbl.model.Completion.getIdFromData(studentCompetencyData);
+    //         studentCompetencyRecord = studentCompetenciesStore.getById(studentCompetencyId);
 
-            if (studentCompetencyRecord) {
-                studentCompetencyRecord.set(studentCompetencyData, {
-                    dirty: false
-                });
-            } else {
-                newStudentCompetencies.push(studentCompetencyData);
-            }
-        }
+    //         if (studentCompetencyRecord) {
+    //             studentCompetencyRecord.set(studentCompetencyData, {
+    //                 dirty: false
+    //             });
+    //         } else {
+    //             newStudentCompetencies.push(studentCompetencyData);
+    //         }
+    //     }
 
-        if (newStudentCompetencies.length) {
-            studentCompetenciesStore.add(newStudentCompetencies);
-        }
+    //     if (newStudentCompetencies.length) {
+    //         studentCompetenciesStore.add(newStudentCompetencies);
+    //     }
 
-        if (skillsData) {
-            me.getDemonstrationSkillsStore().mergeRawData(skillsData, demonstration);
-        }
-    },
+    //     if (skillsData) {
+    //         me.getDemonstrationSkillsStore().mergeRawData(skillsData, demonstration);
+    //     }
+    // },
 
-    /**
-     * Delete a demonstration model and apply it to the existing render
-     *
-     * @param {Slate.cbl.model.Demonstration} demonstration The demonstration model that was deleted
-     */
-    deleteDemonstration: function(demonstration) {
-        var me = this,
-            studentCompetenciesStore = me.getStudentCompetenciesStoreStore(),
-            studentCompetencies = demonstration.get('studentCompetencies'),
-            i = 0, studentCompetenciesLength = studentCompetencies.length,
-            studentCompetencyData, studentCompetencyId, studentCompetencyRecord;
+    // /**
+    //  * Delete a demonstration model and apply it to the existing render
+    //  *
+    //  * @param {Slate.cbl.model.Demonstration} demonstration The demonstration model that was deleted
+    //  */
+    // deleteDemonstration: function(demonstration) {
+    //     var me = this,
+    //         studentCompetenciesStore = me.getStudentCompetenciesStoreStore(),
+    //         studentCompetencies = demonstration.get('studentCompetencies'),
+    //         i = 0, studentCompetenciesLength = studentCompetencies.length,
+    //         studentCompetencyData, studentCompetencyId, studentCompetencyRecord;
 
-        for (; i < studentCompetenciesLength; i++) {
-            studentCompetencyData = studentCompetencies[i];
-            studentCompetencyId = Slate.cbl.model.Completion.getIdFromData(studentCompetencyData);
-            studentCompetencyRecord = studentCompetenciesStore.getById(studentCompetencyId);
+    //     for (; i < studentCompetenciesLength; i++) {
+    //         studentCompetencyData = studentCompetencies[i];
+    //         studentCompetencyId = Slate.cbl.model.Completion.getIdFromData(studentCompetencyData);
+    //         studentCompetencyRecord = studentCompetenciesStore.getById(studentCompetencyId);
 
-            if (studentCompetencyRecord) {
-                studentCompetencyRecord.set(studentCompetencyData, {
-                    dirty: false
-                });
-            }
-        }
+    //         if (studentCompetencyRecord) {
+    //             studentCompetencyRecord.set(studentCompetencyData, {
+    //                 dirty: false
+    //             });
+    //         }
+    //     }
 
-        me.getDemonstrationSkillsStore().mergeRawData([], demonstration);
-    },
+    //     me.getDemonstrationSkillsStore().mergeRawData([], demonstration);
+    // },
 
 
     // protected methods
@@ -696,7 +672,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         //
 
         // syncRowHeights does a batch read followed by a batch write so it should remain as the first call in the write phase if possible
-        Slate.cbl.Util.syncRowHeights(
+        me.syncRowHeights(
             competenciesTableEl.select('thead tr, .cbl-grid-progress-row'),
             studentsTableEl.select('thead tr, .cbl-grid-progress-row')
         );
@@ -727,12 +703,10 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
         // eslint-disable-next-line vars-on-top
         var me = this,
-            skillsStore = me.getSkillsStore(),
-            demoSkillsStore = me.getDemonstrationSkillsStore(),
+            // skillsStore = me.getSkillsStore(),
             averageFormat = me.getAverageFormat(),
             progressFormat = me.getProgressFormat(),
             studentCompetenciesLength = studentCompetencies.length, studentCompetencyIndex,
-            needsFlush = false,
             competenciesById, studentCompetency, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
             count, average, level, renderedLevel,
             countDirty, averageDirty, levelDirty,
@@ -787,408 +761,72 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 progressCellEl.addCls('cbl-level-'+level);
 
                 if (renderedLevel) {
-                    progressCellEl.removeCls('cbl-level-'+renderedLevel);
+                    console.warn('TODO: handle transitioning to different level');
+                    // progressCellEl.removeCls('cbl-level-'+renderedLevel);
 
-                    me.removeDemonstrationSkills(demoSkillsStore.query([
-                        new Ext.util.Filter({
-                            property: 'StudentID',
-                            value: studentId
-                        }),
-                        new Ext.util.Filter({
-                            property: 'SkillID',
-                            operator: 'in',
-                            value: skillsStore.query('CompetencyID', competencyId).collect('ID', 'data')
-                        })
-                    ]).getRange(), false); // false to defer flushing demonstrations, we'll queue it for once at the end
+                    // me.removeDemonstrationSkills(demoSkillsStore.query([
+                    //     new Ext.util.Filter({
+                    //         property: 'StudentID',
+                    //         value: studentId
+                    //     }),
+                    //     new Ext.util.Filter({
+                    //         property: 'SkillID',
+                    //         operator: 'in',
+                    //         value: skillsStore.query('CompetencyID', competencyId).collect('ID', 'data')
+                    //     })
+                    // ]).getRange(), false); // false to defer flushing demonstrations, we'll queue it for once at the end
 
-                    needsFlush = true;
-
-                    competencyStudentData.outgoingLevel = renderedLevel;
+                    // competencyStudentData.outgoingLevel = renderedLevel;
                 }
 
-                competencyStudentData.progressLevelEl.update('Y' + level - 8);
+                competencyStudentData.progressLevelEl.update('Y' + (level - 8));
 
                 competencyStudentData.renderedLevel = level;
             }
 
             competencyStudentData.studentCompetency = studentCompetency.data;
         }
-
-        if (needsFlush) {
-            me.flushDemonstrations();
-        }
     },
 
     /**
      * @protected
-     * Adds new demoonstration skills blocks
+     * Synchronizes the heights of two sets of table rows by setting the height of both to the max of the two
      *
-     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
-     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
+     * @param {Ext.dom.CompositeElement/Ext.dom.CompositeElementLite} table1Rows
+     * @param {Ext.dom.CompositeElement/Ext.dom.CompositeElementLite} table2Rows
      */
-    addDemonstrationSkills: function(demoSkills, flush) {
-        var me = this,
-            renderData = me.getData();
+    syncRowHeights: function(table1Rows, table2Rows) {
 
-        renderData.incomingDemonstrationSkills = (renderData.incomingDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
+        Ext.batchLayouts(function() {
+            var table1RowHeights = [],
+                table2RowHeights = [],
+                rowCount, rowIndex, maxHeight;
 
-        if (flush !== false) {
-            me.flushDemonstrations();
-        }
-    },
+            rowCount = table1Rows.getCount();
 
-    /**
-     * @protected
-     * Update already-rendered demonstration skill blocks
-     *
-     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
-     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
-     */
-    updateDemonstrationSkills: function(demoSkills, flush) {
-        var me = this,
-            renderData = me.getData();
-
-        renderData.updatedDemonstrationSkills = (renderData.updatedDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
-
-        if (flush !== false) {
-            me.flushDemonstrations();
-        }
-    },
-
-    /**
-     * @protected
-     * Remove already-rendered demonstration skills blocks
-     *
-     * @param {Slate.cbl.model.DemonstrationSkill[]} demoSkills An array of demonstration skills
-     * @param {Boolean} [flush=true] True to call {@link #method-flushDemonstrations} after queing changes
-     */
-    removeDemonstrationSkills: function(demoSkills, flush) {
-        var me = this,
-            renderData = me.getData();
-
-        renderData.removedDemonstrationSkills = (renderData.removedDemonstrationSkills || []).concat(Ext.pluck(demoSkills, 'data'));
-
-        if (flush !== false) {
-            me.flushDemonstrations();
-        }
-    },
-
-    /**
-     * @protected
-     * Writes any pending changes to demonstrations to the DOM.
-     *
-     * This method must not trigger any reads from the DOM
-     */
-    flushDemonstrations: function() { // eslint-disable-line complexity
-        var me = this,
-            renderData = me.getData(),
-            skillsById = renderData.skillsById,
-            demoSkillsStore = me.getDemonstrationSkillsStore(),
-
-            updatedDemonstrationSkills = renderData.updatedDemonstrationSkills || [],
-            updatedDemonstrationSkillsLength = updatedDemonstrationSkills.length,
-
-            incomingDemonstrationSkills = renderData.incomingDemonstrationSkills || [],
-            incomingDemonstrationSkillsLength = incomingDemonstrationSkills.length,
-
-            removedDemonstrationSkills = renderData.removedDemonstrationSkills || [],
-            removedDemonstrationSkillsLength = removedDemonstrationSkills.length,
-
-            skillDemonstrationIndex, skillDemonstration, unsortedDemonstrationSkills,
-
-            competenciesRenderData = renderData.competencies,
-            competenciesLength = competenciesRenderData.length, competencyIndex, competencyRenderData, competencyStudentsById,
-
-            skillsRenderData, skillsLength, skillIndex, skillRenderData,
-            skillDemonstrationsRequired, studentSkillDemonstrationsRequired,
-            skillStudentsRenderData, skillStudentsLength, skillStudentIndex, skillStudentRenderData,
-            skillDemonstrationBlocks, skillDemonstrationBlocksById, skillDemonstrationsChanged, oldSkillDemonstration, outgoingLevel,
-            competencyStudentData,
-
-            skillDemonstrationBlockEls, skillDemonstrationBlockEl,
-            skillDemonstrationsOverridden, renderedOverridden,
-            skillDemonstrationDemonstratedLevel, renderedDemonstrationLevel,
-            skillDemonstrationOverride, renderedOverride,
-            skillDemonstrationOverrideSpan, renderedOverrideSpan,
-            skillDemonstrationDemonstrationID,
-
-            competencyStudentLevelsFlushed = [], competencyStudentLevelsFlushedLength, competencyStudentLevelsIndex, competencyStudentCompletion;
-
-        // nothing can be flushed if no skills are loaded yet
-        if (!skillsById) {
-            return;
-        }
-
-
-        // sort any incoming skill demonstrations that can be into skills->students render objects
-        unsortedDemonstrationSkills = [];
-
-        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < incomingDemonstrationSkillsLength; skillDemonstrationIndex++) {
-            skillDemonstration = incomingDemonstrationSkills[skillDemonstrationIndex];
-
-            if (
-                (skillRenderData = skillsById[skillDemonstration.SkillID])
-                && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
-            ) {
-                // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.studentCompetency.Level == skillDemonstration.TargetLevel) {
-                    (skillStudentRenderData.incomingDemonstrationSkills || (skillStudentRenderData.incomingDemonstrationSkills = [])).push(skillDemonstration);
-                }
-            } else {
-                unsortedDemonstrationSkills.push(skillDemonstration);
-            }
-        }
-
-        renderData.incomingDemonstrationSkills = unsortedDemonstrationSkills;
-
-
-        // sort any updated skill demonstrations that can be into skills->students render objects
-        unsortedDemonstrationSkills = [];
-
-        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < updatedDemonstrationSkillsLength; skillDemonstrationIndex++) {
-            skillDemonstration = updatedDemonstrationSkills[skillDemonstrationIndex];
-
-            if (
-                (skillRenderData = skillsById[skillDemonstration.SkillID])
-                && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
-            ) {
-                // discard demoSkills that match a loaded skill+student but aren't of the current level
-                if (skillStudentRenderData.studentCompetency.Level == skillDemonstration.TargetLevel) {
-                    (skillStudentRenderData.updatedDemonstrationSkills || (skillStudentRenderData.updatedDemonstrationSkills = [])).push(skillDemonstration);
-                }
-            } else {
-                unsortedDemonstrationSkills.push(skillDemonstration);
-            }
-        }
-
-        renderData.updatedDemonstrationSkills = unsortedDemonstrationSkills;
-
-
-        // sort any removed skill demonstrations that can be into skills->students render objects
-        unsortedDemonstrationSkills = [];
-
-        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < removedDemonstrationSkillsLength; skillDemonstrationIndex++) {
-            skillDemonstration = removedDemonstrationSkills[skillDemonstrationIndex];
-
-            if (
-                (skillRenderData = skillsById[skillDemonstration.SkillID])
-                && (skillStudentRenderData = skillRenderData.studentsById[skillDemonstration.StudentID])
-            ) {
-                (skillStudentRenderData.removedDemonstrationSkills || (skillStudentRenderData.removedDemonstrationSkills = [])).push(skillDemonstration);
-            } else {
-                unsortedDemonstrationSkills.push(skillDemonstration);
-            }
-        }
-
-        renderData.removedDemonstrationSkills = unsortedDemonstrationSkills;
-
-
-        // consume all pending changes, generate new demonstrationBlocks arrays, and render them
-        /* eslint-disable max-depth */
-        for (competencyIndex = 0; competencyIndex < competenciesLength; competencyIndex++) {
-            competencyRenderData = competenciesRenderData[competencyIndex];
-            skillsRenderData = competencyRenderData.skills;
-            competencyStudentsById = competencyRenderData.studentsById;
-
-            if (!skillsRenderData) {
-                continue;
+            if (table2Rows.getCount() != rowCount) {
+                Ext.Logger.warn('tables\' row counts don\'t match');
             }
 
-            for (skillIndex = 0, skillsLength = skillsRenderData.length; skillIndex < skillsLength; skillIndex++) {
-                skillRenderData = skillsRenderData[skillIndex];
-                skillStudentsRenderData = skillRenderData.students;
-                skillDemonstrationsRequired = skillRenderData.skill.DemonstrationsRequired;
-
-                for (skillStudentIndex = 0, skillStudentsLength = skillStudentsRenderData.length; skillStudentIndex < skillStudentsLength; skillStudentIndex++) {
-                    skillStudentRenderData = skillStudentsRenderData[skillStudentIndex];
-                    competencyStudentData = competencyStudentsById[skillStudentRenderData.student.ID];
-                    skillDemonstrationBlocks = skillStudentRenderData.demonstrationBlocks;
-                    skillDemonstrationBlocksById = skillStudentRenderData.demonstrationBlocksById || {};
-                    updatedDemonstrationSkills = skillStudentRenderData.updatedDemonstrationSkills || [];
-                    incomingDemonstrationSkills = skillStudentRenderData.incomingDemonstrationSkills || [];
-                    removedDemonstrationSkills = skillStudentRenderData.removedDemonstrationSkills || [];
-                    skillDemonstrationsChanged = false;
-                    outgoingLevel = competencyStudentData.outgoingLevel;
-
-                    if (typeof skillDemonstrationsRequired[skillStudentRenderData.studentCompetency.Level] === 'undefined') {
-                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired.default;
-                    } else {
-                        studentSkillDemonstrationsRequired = skillDemonstrationsRequired[skillStudentRenderData.studentCompetency.Level];
-                    }
-
-                    // apply updated skill demonstrations
-                    if (updatedDemonstrationSkills.length) {
-                        skillDemonstrationIndex = 0;
-                        updatedDemonstrationSkillsLength = updatedDemonstrationSkills.length;
-                        for (; skillDemonstrationIndex < updatedDemonstrationSkillsLength; skillDemonstrationIndex++) {
-                            skillDemonstration = updatedDemonstrationSkills[skillDemonstrationIndex];
-                            oldSkillDemonstration = skillDemonstrationBlocksById[skillDemonstration.ID];
-
-                            if (oldSkillDemonstration) {
-                                if (oldSkillDemonstration !== skillDemonstration) {
-                                    Ext.apply(oldSkillDemonstration, skillDemonstration);
-                                }
-                                skillDemonstrationsChanged = true;
-                            } else {
-                                incomingDemonstrationSkills.push(skillDemonstration);
-                            }
-                        }
-                        skillStudentRenderData.updatedDemonstrationSkills = null;
-                    }
-
-                    // append any incoming skill demonstrations
-                    if (incomingDemonstrationSkills.length) {
-                        skillDemonstrationBlocks = skillDemonstrationBlocks.concat(skillStudentRenderData.incomingDemonstrationSkills);
-                        skillStudentRenderData.incomingDemonstrationSkills = null;
-                        skillDemonstrationsChanged = true;
-                    }
-
-                    // delete removed skill demonstrations
-                    if (removedDemonstrationSkills.length) {
-                        skillDemonstrationIndex = 0;
-                        removedDemonstrationSkillsLength = removedDemonstrationSkills.length;
-                        for (; skillDemonstrationIndex < removedDemonstrationSkillsLength; skillDemonstrationIndex++) {
-                            Ext.Array.remove(skillDemonstrationBlocks, skillDemonstrationBlocksById[removedDemonstrationSkills[skillDemonstrationIndex].ID]);
-                        }
-                        skillStudentRenderData.removedDemonstrationSkills = null;
-                        skillDemonstrationsChanged = true;
-                    }
-
-                    // if demonstrations have changed, prepare new blocks array and patch the DOM
-                    if (skillDemonstrationsChanged) {
-                        skillDemonstrationBlocks = Slate.cbl.Util.sortDemonstrations(skillDemonstrationBlocks, studentSkillDemonstrationsRequired);
-                        Slate.cbl.Util.padArray(skillDemonstrationBlocks, studentSkillDemonstrationsRequired);
-                        skillStudentRenderData.demonstrationBlocks = skillDemonstrationBlocks;
-                        skillDemonstrationsOverridden = false;
-
-                        // reset block index
-                        skillDemonstrationBlocksById = skillStudentRenderData.demonstrationBlocksById = {};
-
-                        skillDemonstrationBlockEls = skillStudentRenderData.demonstrationBlockEls;
-                        for (skillDemonstrationIndex = 0; skillDemonstrationIndex < studentSkillDemonstrationsRequired; skillDemonstrationIndex++) {
-                            skillDemonstration = skillDemonstrationBlocks[skillDemonstrationIndex];
-                            skillDemonstrationDemonstratedLevel = skillDemonstration.DemonstratedLevel;
-                            skillDemonstrationOverride = skillDemonstration.Override;
-                            skillDemonstrationOverrideSpan = skillDemonstrationOverride ? studentSkillDemonstrationsRequired - skillDemonstrationIndex : undefined; // eslint-disable-line no-undefined
-                            skillDemonstrationDemonstrationID = skillDemonstration.DemonstrationID;
-
-                            skillDemonstrationBlockEl = skillDemonstrationBlockEls.item(skillDemonstrationIndex);
-                            renderedDemonstrationLevel = skillDemonstrationBlockEl.renderedDemonstrationLevel;
-                            renderedOverridden = skillDemonstrationBlockEl.renderedOverridden;
-                            renderedOverride = skillDemonstrationBlockEl.renderedOverride;
-                            renderedOverrideSpan = skillDemonstrationBlockEl.renderedOverrideSpan;
-
-                            // apply overridden class to all blocks following an override block
-                            if (renderedOverridden != skillDemonstrationsOverridden) {
-                                skillDemonstrationBlockEl.renderedOverridden = skillDemonstrationsOverridden;
-
-                                if (skillDemonstrationsOverridden) {
-                                    skillDemonstrationBlockEl.addCls('cbl-grid-demo-overridden cbl-grid-demo-counted');
-                                    skillDemonstrationBlockEl.update('O');
-                                    console.log('%o.addCls("cbl-grid-demo-overridden")', skillDemonstrationBlockEl.dom);
-
-                                    continue; // an overridden block doesn't need any further updates because it'll be hidden
-                                } else if (renderedOverridden) {
-                                    skillDemonstrationBlockEl.removeCls('cbl-grid-demo-overridden cbl-grid-demo-counted');
-                                    skillDemonstrationBlockEl.update('');
-                                    console.log('%o.removeCls("cbl-grid-demo-overridden")', skillDemonstrationBlockEl.dom);
-                                }
-                            }
-
-                            skillDemonstrationsOverridden = skillDemonstrationsOverridden || skillDemonstrationOverride;
-
-                            // apply override class to an override block
-                            if (renderedOverride != skillDemonstrationOverride) {
-                                skillDemonstrationBlockEl.renderedOverride = skillDemonstrationOverride;
-
-                                if (skillDemonstrationOverride) {
-                                    skillDemonstrationBlockEl.addCls('cbl-grid-override');
-                                } else if (renderedOverride) {
-                                    skillDemonstrationBlockEl.removeCls('cbl-grid-override');
-                                }
-                            }
-
-                            // apply override span
-                            if (renderedOverrideSpan != skillDemonstrationOverrideSpan) {
-                                skillDemonstrationBlockEl.renderedOverrideSpan = skillDemonstrationOverrideSpan;
-
-                                if (skillDemonstrationOverrideSpan) {
-                                    skillDemonstrationBlockEl.addCls('cbl-grid-span-' + skillDemonstrationOverrideSpan);
-                                } else if (renderedOverrideSpan) {
-                                    skillDemonstrationBlockEl.removeCls('cbl-grid-span-' + renderedOverrideSpan);
-                                }
-                            }
-
-                            // normalize level to output code
-                            if (skillDemonstrationOverride) {
-                                skillDemonstrationDemonstratedLevel = 'O'; // letter O for override
-                            } else if (skillDemonstrationDemonstratedLevel === 0) {
-                                skillDemonstrationDemonstratedLevel = 'M';
-                            }
-
-                            // apply demonstrated level change
-                            if (renderedDemonstrationLevel !== skillDemonstrationDemonstratedLevel) {
-                                skillDemonstrationBlockEl.renderedDemonstrationLevel = skillDemonstrationDemonstratedLevel;
-
-                                if (typeof renderedDemonstrationLevel === 'undefined') {
-                                    skillDemonstrationBlockEl.removeCls('cbl-grid-demo-empty');
-                                } else if (typeof skillDemonstrationDemonstratedLevel === 'undefined') {
-                                    skillDemonstrationBlockEl.addCls('cbl-grid-demo-empty');
-                                }
-
-                                if (renderedDemonstrationLevel === 'M') {
-                                    skillDemonstrationBlockEl.removeCls('cbl-grid-demo-uncounted');
-                                } else if (skillDemonstrationDemonstratedLevel === 'M') {
-                                    skillDemonstrationBlockEl.addCls('cbl-grid-demo-uncounted');
-                                }
-
-                                if (skillDemonstrationDemonstratedLevel && skillDemonstrationDemonstratedLevel != 'M') {
-                                    skillDemonstrationBlockEl.addCls('cbl-grid-demo-counted');
-                                } else if (renderedDemonstrationLevel) {
-                                    skillDemonstrationBlockEl.removeCls('cbl-grid-demo-counted');
-                                }
-
-                                skillDemonstrationBlockEl.update(typeof skillDemonstrationDemonstratedLevel === 'undefined' ? '' : skillDemonstrationDemonstratedLevel);
-
-                            }
-
-                            // apply demo ID change
-                            if (skillDemonstrationBlockEl.renderedDemonstrationId != skillDemonstrationDemonstrationID) {
-                                skillDemonstrationBlockEl.renderedDemonstrationId = skillDemonstrationDemonstrationID;
-                                skillDemonstrationBlockEl.set({ 'data-demonstration': skillDemonstrationDemonstrationID || '' });
-                            }
-
-                            // add reference to index
-                            skillDemonstrationBlocksById[skillDemonstration.ID] = skillDemonstration;
-                        }
-                    }
-
-                    // apply changed target level
-                    if (outgoingLevel) {
-                        skillStudentRenderData.demonstrationsCellEl.removeCls('cbl-level-'+outgoingLevel).addCls('cbl-level-'+competencyStudentData.renderedLevel);
-                        Ext.Array.include(competencyStudentLevelsFlushed, competencyStudentData);
-                    }
-                }
+            // read all the row height in batch first for both tables
+            for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                table1RowHeights.push(table1Rows.item(rowIndex).getHeight());
+                table2RowHeights.push(table2Rows.item(rowIndex).getHeight());
             }
-        }
-        /* eslint-enable max-depth */
 
+            // write all the max row heights
+            for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                maxHeight = Math.max(table1RowHeights[rowIndex], table2RowHeights[rowIndex]);
+                table1Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
+                table2Rows.item(rowIndex).select('td, th').setHeight(maxHeight);
+            }
+        });
 
-        // remove outgoingLevel flag on any flushed student competencies and trigger demo reload
-        competencyStudentLevelsIndex = 0;
-        competencyStudentLevelsFlushedLength = competencyStudentLevelsFlushed.length;
-        for (; competencyStudentLevelsIndex < competencyStudentLevelsFlushedLength; competencyStudentLevelsIndex++) {
-            competencyStudentData = competencyStudentLevelsFlushed[competencyStudentLevelsIndex];
-            competencyStudentCompletion = competencyStudentData.studentCompetency;
-            competencyStudentData.outgoingLevel = null;
-
-            demoSkillsStore.loadByStudentsAndCompetencies(competencyStudentCompletion.StudentID, competencyStudentCompletion.CompetencyID);
-        }
     }
 }, function(Class) {
     /* eslint-disable spaced-comment */
     //<debug>
-    var monitoredMethods = ['refresh', 'finishRefresh', 'syncRowHeights', 'buildRenderData', 'flushDemonstrations'];
+    var monitoredMethods = ['refresh', 'finishRefresh', 'syncRowHeights', 'buildRenderData'];
 
     Ext.Array.each(monitoredMethods, function(functionName) {
         var origFn = Class.prototype[functionName];
