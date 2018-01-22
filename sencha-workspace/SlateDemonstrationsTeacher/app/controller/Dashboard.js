@@ -97,8 +97,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
             clear: 'onStudentsListSelectorClear'
         },
         progressGrid: {
-            competencyrowclick: 'onCompetencyRowClick',
-            // democellclick: 'onDemoCellClick'
+            competencyrowclick: 'onCompetencyRowClick'
         },
         // 'slate-demonstrations-teacher-skill-overviewwindow': {
         //     createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
@@ -332,22 +331,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
     // onSubmitEvidenceClick: function() {
     //     this.showDemonstrationEditWindow();
-    // },
-
-    // onDemoCellClick: function(progressGrid, ev, targetEl) {
-    //     this.getOverviewWindowView().create({
-    //         ownerCmp: this.getDashboardCt(),
-    //         autoShow: true,
-    //         animateTarget: targetEl,
-
-    //         competency: parseInt(targetEl.up('.cbl-grid-skills-row').getAttribute('data-competency'), 10),
-    //         studentsStore: progressGrid.getStudentsStore(),
-    //         competenciesStore: progressGrid.getCompetenciesStore(),
-
-    //         skill: parseInt(targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'), 10),
-    //         student: parseInt(targetEl.up('.cbl-grid-demos-cell').getAttribute('data-student'), 10),
-    //         selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
-    //     });
     // },
 
     // onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {

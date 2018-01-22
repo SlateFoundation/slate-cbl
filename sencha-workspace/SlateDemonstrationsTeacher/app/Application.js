@@ -13,7 +13,8 @@ Ext.define('SlateDemonstrationsTeacher.Application', {
     defaultToken: '_',
 
     controllers: [
-        'Dashboard'
+        'Dashboard',
+        'Skills'
     ],
 
     onAppUpdate: function () {
