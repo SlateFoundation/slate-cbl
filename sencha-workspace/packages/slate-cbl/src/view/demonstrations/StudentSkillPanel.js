@@ -13,6 +13,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
         /* global Slate */
         'Slate.cbl.model.Skill',
+        'Slate.cbl.model.Competency',
         'Slate.cbl.widget.CompetencySelector',
         'Slate.cbl.widget.SkillSelector',
         'Slate.cbl.view.demonstrations.SkillStatement',
@@ -24,18 +25,23 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         selectedStudent: null,
         selectedSkill: null,
         selectedDemonstration: null,
+
         loadedSkill: null,
+        loadedCompetency: null,
 
 
         competencySelector: {
             matchFieldWidth: true,
+            lazyAutoLoad: false,
             allowBlank: false,
+            loadSummaries: false
         },
         skillSelector: {
             matchFieldWidth: true,
             lazyAutoLoad: false,
             allowBlank: false,
-            loadSummaries: false
+            loadSummaries: false,
+            emptyText: 'Select'
         },
         skillStatement: true,
         demonstrationSkillsList: true,
@@ -79,9 +85,14 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     updateSelectedSkill: function(selectedSkill, oldSelectedSkill) {
         var me = this;
 
-        // me.getSkillSelector().setValue(selectedSkill);
         me.getDemonstrationSkillsList().getStore().setSkill(selectedSkill);
         me.loadSkillsIfReady();
+
+        if (!selectedSkill) {
+            me.setLoadedSkill(null);
+            me.getSkillSelector().clearValue();
+            me.getDemonstrationSkillsList().getStore().unload();
+        }
 
         me.fireEvent('selectedskillchange', me, selectedSkill, oldSelectedSkill);
     },
@@ -105,7 +116,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
                 return oldSkill;
             }
 
-            skill = Slate.cbl.model.ContentArea.create(skill);
+            skill = Slate.cbl.model.Skill.create(skill);
         }
 
         return skill;
@@ -114,10 +125,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     updateLoadedSkill: function(skill, oldSkill) {
         var me = this,
             skillSelector = me.getSkillSelector(),
-            skillsStore = skillSelector.getStore(),
-            competencySelector = me.getCompetencySelector(),
-            competenciesStore = competencySelector.getStore(),
-            competencyData;
+            skillsStore = skillSelector.getStore();
 
         if (skill) {
             me.setSelectedSkill(skill.get('Code'));
@@ -131,16 +139,59 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
             if (!skillSelector.getSelectedRecord()) {
                 skillsStore.loadRecords([skill]);
             }
-
-            competencyData = skill.get('Competency');
-
-            if (competencyData) {
-                competenciesStore.setContentArea(competencyData.ContentAreaID);
-                competencySelector.setValue(competencyData.Code);
-            }
         }
 
         me.fireEvent('loadedskillchange', me, skill, oldSkill);
+    },
+
+    applyLoadedCompetency: function(competency, oldCompetency) {
+        if (!competency) {
+            return null;
+        }
+
+        if (!competency.isModel) {
+            if (oldCompetency && competency.ID == oldCompetency.getId()) {
+                oldCompetency.set(competency, { dirty: false });
+                return oldCompetency;
+            }
+
+            competency = Slate.cbl.model.Competency.create(competency);
+        }
+
+        return competency;
+    },
+
+    updateLoadedCompetency: function(competency, oldCompetency) {
+        var me = this,
+            competencySelector = me.getCompetencySelector(),
+            competenciesStore = competencySelector.getStore(),
+            loadedSkill = me.getLoadedSkill(),
+            skillSelector, skillsStore;
+
+        if (competency) {
+            competenciesStore.setContentArea(competency.get('ContentAreaID'));
+            competencySelector.setValue(competency);
+
+            // reload skills store with just selected skill if its not in the current result set
+            if (!competencySelector.getSelectedRecord()) {
+                competenciesStore.loadRecords([competency]);
+            }
+        }
+
+        if (!competency || !loadedSkill || loadedSkill.get('CompetencyID') != competency.getId()) {
+            skillSelector = me.getSkillSelector();
+            me.setSelectedSkill(null);
+            skillSelector.getStore().unload();
+
+            if (competency) {
+                skillsStore = skillSelector.getStore();
+                skillsStore.setCompetency(competency.getId());
+                skillsStore.loadIfDirty();
+                skillSelector.expand();
+            }
+        }
+
+        me.fireEvent('loadedcompetencychange', me, competency, oldCompetency);
     },
 
     applyCompetencySelector: function(competencySelector, oldCompetencySelector) {
@@ -154,21 +205,21 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     },
 
     updateCompetencySelector: function(competencySelector, oldCompetencySelector) {
-        // if (oldCompetencySelector) {
-        //     oldCompetencySelector.un({
-        //         scope: this,
-        //         beforequery: 'onCompetencySelectorBeforeQuery',
-        //         select: 'onCompetencySelectorSelect'
-        //     });
-        // }
+        if (oldCompetencySelector) {
+            oldCompetencySelector.un({
+                scope: this,
+                beforequery: 'onCompetencySelectorBeforeQuery',
+                select: 'onCompetencySelectorSelect'
+            });
+        }
 
-        // if (competencySelector) {
-        //     competencySelector.on({
-        //         scope: this,
-        //         beforequery: 'onCompetencySelectorBeforeQuery',
-        //         select: 'onCompetencySelectorSelect'
-        //     });
-        // }
+        if (competencySelector) {
+            competencySelector.on({
+                scope: this,
+                beforequery: 'onCompetencySelectorBeforeQuery',
+                select: 'onCompetencySelectorSelect'
+            });
+        }
     },
 
     applySkillSelector: function(skillSelector, oldSkillSelector) {
@@ -241,7 +292,19 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         }
 
         // eslint-disable-next-line vars-on-top
-        this.setLoadedSkill(store.getProxy().getReader().rawData.Skill || null);
+        var skillData = store.getProxy().getReader().rawData.Skill;
+
+        this.setLoadedSkill(skillData || null);
+        this.setLoadedCompetency(skillData && skillData.Competency || null);
+    },
+
+    onCompetencySelectorBeforeQuery: function(queryPlan) {
+        // trigger full store load if params have changed since last load
+        queryPlan.combo.getStore().loadIfDirty();
+    },
+
+    onCompetencySelectorSelect: function(competencySelector, competency) {
+        this.setLoadedCompetency(competency);
     },
 
     onSkillSelectorBeforeQuery: function(queryPlan) {
