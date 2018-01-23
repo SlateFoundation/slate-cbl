@@ -29,9 +29,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
         competencySelector: {
             matchFieldWidth: true,
-            lazyAutoLoad: false,
             allowBlank: false,
-            loadSummaries: false
         },
         skillSelector: {
             matchFieldWidth: true,
@@ -116,7 +114,10 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     updateLoadedSkill: function(skill, oldSkill) {
         var me = this,
             skillSelector = me.getSkillSelector(),
-            skillsStore = skillSelector.getStore();
+            skillsStore = skillSelector.getStore(),
+            competencySelector = me.getCompetencySelector(),
+            competenciesStore = competencySelector.getStore(),
+            competencyData;
 
         if (skill) {
             me.setSelectedSkill(skill.get('Code'));
@@ -129,6 +130,13 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
             // reload skills store with just selected skill if its not in the current result set
             if (!skillSelector.getSelectedRecord()) {
                 skillsStore.loadRecords([skill]);
+            }
+
+            competencyData = skill.get('Competency');
+
+            if (competencyData) {
+                competenciesStore.setContentArea(competencyData.ContentAreaID);
+                competencySelector.setValue(competencyData.Code);
             }
         }
 

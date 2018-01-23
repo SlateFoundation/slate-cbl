@@ -18,7 +18,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
             pageSize: 0,
             proxy: {
                 type: 'slate-cbl-demonstrationskills',
-                include: ['Creator', 'Demonstration']
+                include: ['Creator', 'Demonstration', 'Competency']
             }
         },
         selectionModel: {

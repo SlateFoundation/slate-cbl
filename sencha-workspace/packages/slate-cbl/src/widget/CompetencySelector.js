@@ -10,7 +10,7 @@ Ext.define('Slate.cbl.widget.CompetencySelector', {
         loadSummaries: true,
 
         fieldLabel: 'Competency',
-        labelWidth: 75,
+        labelWidth: 100,
 
         displayField: 'Descriptor',
         valueField: 'Code',
