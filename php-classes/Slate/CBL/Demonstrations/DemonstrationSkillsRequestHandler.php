@@ -28,7 +28,10 @@ class DemonstrationSkillsRequestHandler extends \RecordsRequestHandler
         }
 
         if (!empty($_GET['student'])) {
-            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
+            if ($_GET['student'] == '*current') {
+                $GLOBALS['Session']->requireAuthentication();
+                $Student = $GLOBALS['Session']->Person;
+            } elseif (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
                 return static::throwNotFoundError('Student not found');
             }
 
