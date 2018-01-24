@@ -409,7 +409,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 skillsCount = skillsCollection.getCount(), skillIndex, skill, skillId,
 
                 skillRenderData, studentsRenderData, studentRenderData, studentsById, skillRowEl, demonstrationsCellEl,
-                studentCompetency, demonstrations;
+                node, studentCompetency, demonstrations;
 
             // build new skills render tree and update root skill index
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
@@ -426,15 +426,16 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     student = studentsStore.getAt(studentIndex);
-                    studentCompetency = competencyRenderData.studentsById[student.getId()].studentCompetency;
-                    demonstrations = Ext.Array.clone(studentCompetency.effectiveDemonstrationsData[skillId] || []);
+                    node = competencyRenderData.studentsById[student.getId()];
+                    studentCompetency = node.studentCompetencies[node.maxLevel];
+                    demonstrations = Ext.Array.clone(studentCompetency.get('effectiveDemonstrationsData')[skillId] || []);
 
                     // fill demonstrations array with undefined items
-                    demonstrations.length = skill.getTotalDemonstrationsRequired(studentCompetency ? studentCompetency.Level : null);
+                    demonstrations.length = skill.getTotalDemonstrationsRequired(studentCompetency ? studentCompetency.get('Level') : null);
 
                     studentRenderData = {
                         student: student.data,
-                        studentCompetency: studentCompetency,
+                        studentCompetency: studentCompetency.getData(),
                         demonstrations: demonstrations
                     };
 
@@ -590,7 +591,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             studentsData = [],
 
             competenciesStore = me.getCompetenciesStore(),
-            competenciesLength = competenciesStore.getCount(), competencyIndex, competency, competencyStudentsData,
+            competenciesLength = competenciesStore.getCount(), competencyIndex, competency, competencyNodes,
             competenciesData = [];
 
 
@@ -610,13 +611,15 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
             competenciesData.push({
                 competency: competency.data,
-                students: competencyStudentsData = []
+                students: competencyNodes = []
             });
 
             for (studentIndex = 0; studentIndex < studentsLength; studentIndex++) {
                 student = students[studentIndex];
-                competencyStudentsData.push({
-                    student: student.data
+                competencyNodes.push({
+                    student: student.data,
+                    studentCompetencies: {},
+                    maxLevel: null
                 });
             }
         }
@@ -650,7 +653,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             competenciesLength = competenciesRenderData.length, competencyIndex,
             competencyRenderData, competencyId, studentsById, competencySelector, progressRowEl, progressCellEl,
 
-            competencyStudentsRenderData, studentsLength = renderData.students.length, studentIndex,
+            competencyNodes, studentsLength = renderData.students.length, studentIndex,
             studentRenderData, studentId;
 
 
@@ -661,7 +664,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         for (competencyIndex = 0; competencyIndex < competenciesLength; competencyIndex++) {
             competencyRenderData = competenciesRenderData[competencyIndex];
             competencyId = competencyRenderData.competency.ID;
-            competencyStudentsRenderData = competencyRenderData.students;
+            competencyNodes = competencyRenderData.students;
             studentsById = competencyRenderData.studentsById = {};
             competenciesById[competencyId] = competencyRenderData;
 
@@ -671,7 +674,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             competencyRenderData.demonstrationsRowEl = studentsTableEl.down('.cbl-grid-skills-row' + competencySelector);
 
             for (studentIndex = 0; studentIndex < studentsLength; studentIndex++) {
-                studentRenderData = competencyStudentsRenderData[studentIndex];
+                studentRenderData = competencyNodes[studentIndex];
                 studentId = studentRenderData.student.ID;
                 studentsById[studentId] = studentRenderData;
 
@@ -720,14 +723,20 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
         // eslint-disable-next-line vars-on-top
         var me = this,
-            // skillsStore = me.getSkillsStore(),
-            averageFormat = me.getAverageFormat(),
-            progressFormat = me.getProgressFormat(),
-            studentCompetenciesLength = studentCompetencies.length, studentCompetencyIndex,
-            competenciesById, studentCompetency, competencyData, competencyStudentData, progressCellEl, competencyId, studentId,
-            count, average, level, renderedLevel,
+            competenciesById,
+
+            studentCompetenciesLength = studentCompetencies.length,
+            studentCompetencyIndex, studentCompetency, competencyId, competencyData, studentId, node,
+
+            dirtyNodes = [],
+            dirtyNodesLength, dirtyNodeIndex,
+
+            progressCellEl, count, average, level, renderedLevel,
             countDirty, averageDirty, levelDirty,
-            percentComplete, demonstrationsRequired;
+            percentComplete, demonstrationsRequired,
+
+            averageFormat = me.getAverageFormat(),
+            progressFormat = me.getProgressFormat();
 
         if (!me.rendered) {
             me.on('afterrender', function() {
@@ -736,23 +745,53 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             return;
         }
 
+
+        // reference competencies+students tree from main render tree
         competenciesById = me.getData().competenciesById;
 
+
+        // pass 1: sort StudentCompetency records into competencies+students tree and queue those needing re-render
         for (studentCompetencyIndex = 0; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
             studentCompetency = studentCompetencies[studentCompetencyIndex];
             competencyId = studentCompetency.get('CompetencyID');
             competencyData = competenciesById[competencyId];
             studentId = studentCompetency.get('StudentID');
-            competencyStudentData = competencyData.studentsById[studentId];
-            progressCellEl = competencyStudentData.progressCellEl;
+            node = competencyData.studentsById[studentId];
+            level = studentCompetency.get('Level');
+
+            node.studentCompetencies[level] = studentCompetency;
+
+            if (level > node.maxLevel) {
+                node.maxLevel = level;
+                node.dirty = true;
+                dirtyNodes.push(node);
+            }
+        }
+
+
+        // pass 2: update dirty nodes
+        for (dirtyNodesLength = dirtyNodes.length, dirtyNodeIndex = 0; dirtyNodeIndex < dirtyNodesLength; dirtyNodeIndex++) {
+            node = dirtyNodes[dirtyNodeIndex];
+
+
+            // the same node could be in the queue more than once, but only needs to be processed once
+            if (!node.dirty) {
+                continue;
+            }
+
+            node.dirty = false;
+
+
+            studentCompetency = node.studentCompetencies[node.maxLevel];
+            progressCellEl = node.progressCellEl;
 
             count = studentCompetency.get('demonstrationsComplete');
             average = studentCompetency.get('demonstrationsAverage');
             level = studentCompetency.get('Level');
-            renderedLevel = competencyStudentData.renderedLevel;
+            renderedLevel = node.renderedLevel;
 
-            countDirty = count != competencyStudentData.renderedCount;
-            averageDirty = average != competencyStudentData.renderedAverage;
+            countDirty = count != node.renderedCount;
+            averageDirty = average != node.renderedAverage;
             levelDirty = level != renderedLevel;
             demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[studentCompetency.get('Level')] || competencyData.competency.totalDemonstrationsRequired.default;
 
@@ -762,16 +801,16 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             }
 
             if (countDirty) {
-                competencyStudentData.progressBarEl.setStyle('width', isNaN(percentComplete) ? '0' : Math.round(percentComplete) + '%');
-                competencyStudentData.progressPercentEl.update(isNaN(percentComplete) ? '&mdash;' : progressFormat(percentComplete));
+                node.progressBarEl.setStyle('width', isNaN(percentComplete) ? '0' : Math.round(percentComplete) + '%');
+                node.progressPercentEl.update(isNaN(percentComplete) ? '&mdash;' : progressFormat(percentComplete));
 
-                competencyStudentData.renderedCount = count;
+                node.renderedCount = count;
             }
 
             if (averageDirty) {
-                competencyStudentData.progressAverageEl.update(averageFormat(average));
+                node.progressAverageEl.update(averageFormat(average));
 
-                competencyStudentData.renderedAverage = average;
+                node.renderedAverage = average;
             }
 
             if (levelDirty) {
@@ -793,15 +832,13 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     //     })
                     // ]).getRange(), false); // false to defer flushing demonstrations, we'll queue it for once at the end
 
-                    // competencyStudentData.outgoingLevel = renderedLevel;
+                    // node.outgoingLevel = renderedLevel;
                 }
 
-                competencyStudentData.progressLevelEl.update('Y' + (level - 8));
+                node.progressLevelEl.update('Y' + (level - 8));
 
-                competencyStudentData.renderedLevel = level;
+                node.renderedLevel = level;
             }
-
-            competencyStudentData.studentCompetency = studentCompetency.data;
         }
     },
 
