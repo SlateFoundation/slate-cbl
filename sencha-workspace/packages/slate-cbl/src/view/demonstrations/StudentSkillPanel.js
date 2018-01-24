@@ -58,17 +58,13 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
     // config handlers
     applySelectedStudent: function(selectedStudent) {
-        if (!selectedStudent) {
-            return null;
-        }
-
-        return selectedStudent.isModel ? selectedStudent.getId() : selectedStudent;
+        return selectedStudent && selectedStudent.isModel ? selectedStudent.getId() : selectedStudent;
     },
 
     updateSelectedStudent: function(selectedStudent, oldSelectedStudent) {
         var me = this;
 
-        me.getDemonstrationSkillsList().getStore().setStudent(selectedStudent);
+        me.getDemonstrationSkillsList().getStore().setStudent(selectedStudent || '*current');
         me.loadSkillsIfReady();
 
         me.fireEvent('selectedstudentchange', me, selectedStudent, oldSelectedStudent);
@@ -336,7 +332,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     loadSkillsIfReady: function() {
         var store = this.getDemonstrationSkillsList().getStore();
 
-        if (store.getStudent() && store.getSkill()) {
+        if (store.getStudent() !== null && store.getSkill()) {
             store.loadIfDirty();
         }
     }
