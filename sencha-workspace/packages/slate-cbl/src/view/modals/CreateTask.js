@@ -1,5 +1,5 @@
 Ext.define('Slate.cbl.view.modals.CreateTask', {
-    extend: 'Slate.cbl.view.modals.Modal',
+    extend: 'Slate.ui.Window',
     xtype: 'slate-createtaskwindow',
     requires: [
         'Slate.cbl.view.AttachmentsList',

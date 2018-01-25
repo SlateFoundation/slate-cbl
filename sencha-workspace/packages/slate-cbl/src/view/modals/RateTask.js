@@ -1,5 +1,5 @@
 Ext.define('Slate.cbl.view.modals.RateTask', {
-    extend: 'Slate.cbl.view.modals.Modal',
+    extend: 'Slate.ui.Window',
     xtype: 'slate-ratetaskwindow',
     requires: [
         'Slate.cbl.view.AttachmentsList',

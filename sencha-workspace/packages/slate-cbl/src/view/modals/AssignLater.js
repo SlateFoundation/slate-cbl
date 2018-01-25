@@ -1,5 +1,5 @@
 Ext.define('Slate.cbl.view.modals.AssignLater', {
-    extend: 'Slate.cbl.view.modals.Modal',
+    extend: 'Slate.ui.Window',
     xtype: 'slate-assignlaterwindow',
     requires: [
         'Slate.cbl.view.AttachmentsList',

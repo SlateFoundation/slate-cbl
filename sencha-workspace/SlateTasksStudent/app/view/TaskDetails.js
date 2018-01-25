@@ -1,5 +1,5 @@
 Ext.define('SlateTasksStudent.view.TaskDetails', {
-    extend: 'Slate.cbl.view.modals.Modal',
+    extend: 'Slate.ui.Window',
     xtype: 'slate-tasks-student-taskdetails',
     requires: [
         'Slate.cbl.view.AttachmentsList',
