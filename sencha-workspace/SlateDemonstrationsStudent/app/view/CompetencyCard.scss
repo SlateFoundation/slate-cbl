@@ -150,22 +150,18 @@
         -moz-appearance: none;
         appearance: none;
 
-        border: 2px solid;
-        border-color: rgba(black, .1);
-        border-radius: 100%;
         box-shadow: none;
         height: 1.5em;
         list-style: none;
-        margin: .25em 0 0 1em;
+        margin-left: 1em;
         text-align: center;
         width: 1.5em;
 
-        .check-mark-image {
+        i {
             display: none;
-            margin-top: 4px;
         }
 
-        &.is-checked .check-mark-image {
+        &.is-checked i {
             display: inline-block;
         }
     }

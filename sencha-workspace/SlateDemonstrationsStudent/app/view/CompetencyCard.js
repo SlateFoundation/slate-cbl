@@ -141,7 +141,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                                 '"',
                             '>',
                                 '<tpl if="Override">',
-                                    'O',
+                                    '<i class="fa fa-lg fa-check-circle-o"></i>',
                                 '<tpl elseif="DemonstratedLevel == 0">',
                                     'M',
                                 '<tpl else>',
@@ -155,9 +155,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                     '</tpl>',
 
                     '<li class="cbl-skill-complete-indicator <tpl if="isLevelComplete">is-checked</tpl>">',
-                        '<svg class="check-mark-image" width="16" height="16">',
-                            '<polygon class="check-mark" points="13.824,2.043 5.869,9.997 1.975,6.104 0,8.079 5.922,14.001 15.852,4.07"/>',
-                        '</svg>',
+                        '<i class="fa fa-2x fa-check-circle-o"></i>',
                     '</li>',
                 '</ul>',
 
