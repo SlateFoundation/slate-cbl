@@ -98,16 +98,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         },
         progressGrid: {
             competencyrowclick: 'onCompetencyRowClick'
-        },
-        // 'slate-demonstrations-teacher-skill-overviewwindow': {
-        //     createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
-        //     editdemonstrationclick: 'onOverviewEditDemonstrationClick',
-        //     deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
-        //     createoverrideclick: 'onOverviewCreateOverrideClick'
-        // },
-        // 'slate-demonstrations-teacher-appheader button[action=submitevidence]': {
-        //     click: 'onSubmitEvidenceClick'
-        // }
+        }
     },
 
 

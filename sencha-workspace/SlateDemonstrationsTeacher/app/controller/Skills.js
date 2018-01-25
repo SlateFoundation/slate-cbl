@@ -28,7 +28,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
     control: {
         progressGrid: {
             democellclick: 'onDemoCellClick'
-        },
+        }
+        // 'slate-demonstrations-teacher-skill-overviewwindow': {
+        //     createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
+        //     editdemonstrationclick: 'onOverviewEditDemonstrationClick',
+        //     deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
+        //     createoverrideclick: 'onOverviewCreateOverrideClick'
+        // },
     },
 
 
