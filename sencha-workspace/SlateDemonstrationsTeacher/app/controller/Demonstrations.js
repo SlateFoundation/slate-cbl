@@ -8,6 +8,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         'DemonstrationForm@Slate.cbl.view.demonstrations'
     ],
 
+    stores: [
+        'Students'
+    ],
+
     models: [
         'Demonstration@Slate.cbl.model.demonstrations'
     ],
@@ -78,12 +82,19 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     },
 
     onCreateDemonstrationClick: function(createBtn) {
-        this.getDemonstrationWindow({
-            ownerCmp: this.getDashboardCt(),
+        var me = this;
+
+        me.getDemonstrationWindow({
+            ownerCmp: me.getDashboardCt(),
             autoShow: true,
             animateTarget: createBtn,
 
             mainView: {
+                studentSelector: {
+                    store: me.getStudentsStore(),
+                    queryMode: 'local',
+                    matchFieldWidth: true
+                }
                 // selectedStudent: context.student,
                 // selectedSkill: context.skill,
                 // selectedDemonstration: context.demonstrationId

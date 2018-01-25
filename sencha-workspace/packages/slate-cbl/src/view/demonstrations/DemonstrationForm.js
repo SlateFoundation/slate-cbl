@@ -10,6 +10,11 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     ],
 
 
+    config: {
+        studentSelector: true
+    },
+
+
     trackResetOnLoad: true,
 
     layout: {
@@ -26,12 +31,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     },
 
     items: [
-        {
-            xtype: 'slate-cbl-studentselector',
-            name: 'StudentID',
-            fieldLabel: 'Student',
-            autoSelect: true
-        },
         {
             xtype: 'datefield',
             name: 'Demonstrated',
@@ -192,5 +191,36 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
                 }
             ]
         }
-    ]
+    ],
+
+
+    // config handlers
+    applyStudentSelector: function(studentSelector, oldStudentSelector) {
+        if (typeof studentSelector === 'boolean') {
+            studentSelector = {
+                hidden: !studentSelector
+            };
+        }
+
+        if (typeof studentSelector == 'object' && !studentSelector.isComponent) {
+            studentSelector = Ext.apply({
+                name: 'StudentID',
+                autoSelect: true
+            }, studentSelector);
+        }
+
+        return Ext.factory(studentSelector, 'Slate.cbl.widget.StudentSelector', oldStudentSelector);
+    },
+
+
+    // component lifecycle
+    initItems: function() {
+        var me = this;
+
+        me.callParent();
+
+        me.insert(0, [
+            me.getStudentSelector()
+        ]);
+    }
 });
