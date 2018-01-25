@@ -81,18 +81,20 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
             $progress = DB::allRecords('
                 SELECT ds.TargetLevel AS targetLevel,
                        ds.DemonstratedLevel AS demonstratedLevel,
+                       ds.Override AS override,
                        d.Created AS demonstrationCreated,
                        CONCAT(CASE p.Gender
                          WHEN "Male"   THEN "Mr. "
                          WHEN "Female" THEN "Ms. "
-                          END, p.lastName) AS teacherTitle,
+                         ELSE CONCAT(p.FirstName, " ")
+                          END, p.LastName) AS teacherTitle,
                        c.Descriptor AS competencyDescriptor,
                        s.Descriptor AS skillDescriptor,
                        d.StudentID,
                        c.ContentAreaID
                   FROM %s AS ds
                   JOIN %s AS p
-                    ON ds.CreatorID = p.ID
+                    ON p.ID = ds.CreatorID
                   JOIN %s AS d
                     ON d.ID = ds.DemonstrationID
                   JOIN %s AS s
@@ -118,7 +120,9 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 
         // cast strings to integers
         foreach ($progress as &$progressRecord) {
+            $progressRecord['targetLevel'] = intval($progressRecord['targetLevel']);
             $progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
+            $progressRecord['override'] = (bool)$progressRecord['override'];
             $progressRecord['demonstrationCreated'] = strtotime($progressRecord['demonstrationCreated']);
 
             if ($Student) {
