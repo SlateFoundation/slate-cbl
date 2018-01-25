@@ -39,6 +39,19 @@ class TeacherDashboardRequestHandler extends \Emergence\Site\RequestHandler
     public static function handleBootstrapRequest()
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');
+        
+        $taskDefaults = [];
+        foreach (Task::aggregateStackedConfig('fields') as $field => $config) {
+            if (!isset($config['default'])) {
+                continue;
+            }
+
+            if ($config['type'] == 'timestamp' && $config['default'] == 'CURRENT_TIMESTAMP') {
+                continue;
+            }
+
+            $taskDefaults[$field] = $config['default'];
+        }
 
         return static::respond('bootstrap', [
             'user' => $GLOBALS['Session']->Person,
@@ -46,7 +59,8 @@ class TeacherDashboardRequestHandler extends \Emergence\Site\RequestHandler
                  'domain' => GoogleAPI::$domain,
                  'developerKey' => GoogleAPI::$developerKey,
                  'clientId' => GoogleAPI::$clientId
-            ]
+            ],
+            'taskDefaults' => $taskDefaults
         ]);
     }
 }

@@ -25,6 +25,7 @@ Git::$repositories['slate-cbl'] = [
         'php-classes/Google/ResponseProcessor.php',
         'php-classes/Slate/CBL',
         'php-config/Git.config.d/slate-cbl.php',
+        'php-config/Slate/CBL',
         'php-config/Slate/UI/Tools.config.d/cbl.php',
         'php-config/Slate/UI/UserProfile.config.d/cbl.php',
         'php-config/Slate/UI/SectionProfile.config.d/cbl.php',
