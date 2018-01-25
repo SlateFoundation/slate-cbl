@@ -103,11 +103,11 @@ parameter `apiHost` when loading the page.
 
 ### Current release
 
-- [ ] Restore progress loading in SlateDemonstrationsTeacher
+- [X] Restore progress loading in SlateDemonstrationsTeacher
   - [X] Re-render on route change
   - [X] Purge references to `completion`
-  - [ ] review naming of `competencyStudent` objects in light of new `studentCompetency` objects
-- [ ] Restore opening student-skill details in SlateDemonstrationsTeacher
+  - [X] review naming of `competencyStudent` objects in light of new `studentCompetency` objects
+- [X] Restore opening student-skill details in SlateDemonstrationsTeacher
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
   - [ ] Restore live-updating of grid
 - [ ] Restore task creation in SlateTasksTeacher
@@ -125,6 +125,9 @@ parameter `apiHost` when loading the page.
 
 ### Next release
 
+- [ ] Reorganize slate-cbl package
+  - [ ] Merge things to slate-core-data and slate-ui-classic
+  - [ ] Move widget.* fields to field.*
 - [ ] Merge slate-cbl-admin and repair
 - [ ] Restore google drive integration
 - [ ] Refactor TargetLevel -> Level and DemonstratedLevel -> Rating

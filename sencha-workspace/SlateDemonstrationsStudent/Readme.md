@@ -2,18 +2,6 @@
 
 Provides a view of multiple students' progress along a list of competencies, typically those of an entire content area.
 
-## TODO
-
-- [X] Load all core data in single, preferably standard request
-- [X] Extract loaded content area and update summary
-- [X] Generaty competency cards
-- [ ] ~~Filter content areas by current/selected student~~
-  - [X] remove logic from Demonstrations\StudentDashboardRequestHandler
-- [X] Enable loading recent progress / competencies for current user
-  - [X] Add backend support for `*current`
-- [X] Reimplement opening details modal
-- [X] Load skills list on skill selector change
-
 ## Application Structure
 
 The following files are all needed to build and load the application.
