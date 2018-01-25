@@ -24,11 +24,6 @@
  */
 Ext.define('SlateTasksTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
-    requires: [
-        /* global Slate */
-        'Slate.API',
-        'Slate.cbl.util.Google'
-    ],
 
 
     // dependencies
@@ -103,19 +98,6 @@ Ext.define('SlateTasksTeacher.controller.Dashboard', {
 
         // configure and load sections store for selector
         sectionsStore.getProxy().setExtraParam('enrolled_user', '*current');
-
-        // load bootstrap data
-        Slate.API.request({
-            url: '/cbl/dashboards/tasks/teacher/bootstrap',
-            success: function(response) {
-                var googleApiConfig = response.data.googleApiConfig || {};
-
-                // configure Google API
-                if (googleApiConfig) {
-                    Slate.cbl.util.Google.setConfig(googleApiConfig);
-                }
-            }
-        });
     },
 
 

@@ -6,15 +6,31 @@
 Ext.define('SlateTasksTeacher.Application', {
     extend: 'Ext.app.Application',
     requires: [
-        'Ext.window.MessageBox'
+        'Ext.window.MessageBox',
+
+        /* global Slate */
+        'Slate.API'
     ],
 
     name: 'SlateTasksTeacher',
 
     controllers: [
         'Dashboard',
-        'Tasks'
+        'Tasks',
+        'GoogleDrive'
     ],
+
+    launch: function() {
+        var me = this;
+
+        // load bootstrap data
+        Slate.API.request({
+            url: '/cbl/dashboards/tasks/teacher/bootstrap',
+            success: function(response) {
+                me.fireEvent('bootstrapdataload', me, response.data);
+            }
+        });
+    },
 
     onAppUpdate: function () {
         Ext.Msg.confirm('Application Update', 'This application has an update, reload?',
