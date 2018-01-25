@@ -1,5 +1,5 @@
 Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.form.Panel',
     xtype: 'slate-cbl-demonstrations-demonstrationform',
     requires: [
         'Jarvus.store.FieldValuesStore',
@@ -11,8 +11,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
 
     trackResetOnLoad: true,
-
-    layout: 'anchor',
 
     defaults: {
         anchor: '100%',
