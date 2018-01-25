@@ -129,15 +129,13 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         },
         {
             name: 'Status',
-            type: 'string',
-            defaultValue: 'shared'
+            type: 'string'
         },
 
         // ExperienceTask fields
         {
             name: 'ExperienceType',
-            type: 'string',
-            defaultValue: 'Studio'
+            type: 'string'
         },
 
         // writable dynamic fields

@@ -79,6 +79,11 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     // entry points
     listen: {
+        controller: {
+            '#': {
+                bootstrapdataload: 'onBootstrapDataLoad'
+            }
+        },
         store: {
             '#StudentTasks': {
                 load: 'onStudentTasksLoad',
@@ -146,6 +151,27 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
 
     // event handlers
+    onBootstrapDataLoad: function(app, bootstrapData) {
+        var Task = this.getTaskModel(),
+            taskDefaults = bootstrapData.taskDefaults,
+            fieldName, field;
+
+        // configure Google API
+        if (taskDefaults) {
+            for (fieldName in taskDefaults) {
+                if (!taskDefaults.hasOwnProperty(fieldName)) {
+                    continue;
+                }
+
+                field = Task.getField(fieldName);
+
+                if (field) {
+                    field.defaultValue = taskDefaults[fieldName];
+                }
+            }
+        }
+    },
+
     onStudentTasksLoad: function(store, records, success) {
         if (!success) {
             return;
