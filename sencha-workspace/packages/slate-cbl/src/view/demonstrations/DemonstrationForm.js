@@ -12,8 +12,12 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
     trackResetOnLoad: true,
 
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+
     defaults: {
-        anchor: '100%',
         allowBlank: false,
         msgTarget: 'side',
         selectOnFocus: true,
@@ -23,15 +27,12 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
     items: [
         {
-            anchor: '75%',
-
             xtype: 'slate-cbl-studentselector',
             name: 'StudentID',
             fieldLabel: 'Student',
             autoSelect: true
         },
         {
-            anchor: '50%',
             xtype: 'datefield',
             name: 'Demonstrated',
             fieldLabel: 'Demonstrated',
@@ -83,8 +84,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             regexText: 'Artifact must be a complete URL (starting with http:// or https://)'
         },
         {
-            anchor: '100%',
-
+            flex: 2,
             // competencyTipTitleTpl: '{Descriptor}',
             // competencyTipBodyTpl: '{Statement}',
 
@@ -92,7 +92,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             tabBar: {
                 hidden: true
             },
-            margin: '10 -16',
+            // margin: '10 -16',
             // bodyPadding: '16 75',
             bodyStyle: {
                 backgroundColor: '#ddd'
@@ -163,7 +163,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             ]
         },
         {
-            anchor: '-59', // add " -350" to make stretch with window
+            flex: 1,
             xtype: 'textarea',
             name: 'Comments',
             fieldLabel: 'Comments',
@@ -172,8 +172,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             selectOnFocus: false
         },
         {
-            anchor: '100%',
-
             xtype: 'container',
             layout: {
                 type: 'hbox',

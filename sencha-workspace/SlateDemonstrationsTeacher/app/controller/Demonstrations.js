@@ -22,8 +22,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             xtype: 'slate-window',
             defaultType: 'slate-cbl-demonstrations-demonstrationform',
             modal: true,
+            layout: 'fit',
             minWidth: 300,
-            width: 600
+            width: 600,
+            minHeight: 600
         }
     },
 
@@ -82,7 +84,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             animateTarget: createBtn,
 
             mainView: {
-                html: 'form goes here'
                 // selectedStudent: context.student,
                 // selectedSkill: context.skill,
                 // selectedDemonstration: context.demonstrationId
