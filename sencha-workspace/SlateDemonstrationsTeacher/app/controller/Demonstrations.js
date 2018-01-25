@@ -8,6 +8,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         'DemonstrationForm@Slate.cbl.view.demonstrations'
     ],
 
+    models: [
+        'Demonstration@Slate.cbl.model.demonstrations'
+    ],
+
 
     refs: {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
@@ -25,6 +29,14 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
 
     // entry points
+    listen: {
+        controller: {
+            '#': {
+                bootstrapdataload: 'onBootstrapDataLoad'
+            }
+        }
+    },
+
     control: {
         'slate-demonstrations-teacher-dashboard slate-appheader button[action=create-demonstration]': {
             click: 'onCreateDemonstrationClick'
@@ -33,6 +45,36 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
 
     // event handlers
+    onBootstrapDataLoad: function(app, bootstrapData) {
+        var Model = this.getDemonstrationModel(),
+            fieldsConfig = bootstrapData.demonstrationFields,
+            fieldName, fieldConfig, field;
+
+        // configure model defaults from server configuration
+        if (fieldsConfig) {
+            for (fieldName in fieldsConfig) {
+                if (!fieldsConfig.hasOwnProperty(fieldName)) {
+                    continue;
+                }
+
+                fieldConfig = fieldsConfig[fieldName];
+                field = Model.getField(fieldName);
+
+                if (!field) {
+                    continue;
+                }
+
+                if (fieldConfig.default) {
+                    field.defaultValue = fieldConfig.default;
+                }
+
+                if (fieldConfig.values) {
+                    field.values = fieldConfig.values;
+                }
+            }
+        }
+    },
+
     onCreateDemonstrationClick: function(createBtn) {
         this.getDemonstrationWindow({
             ownerCmp: this.getDashboardCt(),

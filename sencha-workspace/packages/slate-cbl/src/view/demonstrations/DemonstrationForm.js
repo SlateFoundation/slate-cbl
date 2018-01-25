@@ -2,8 +2,11 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     extend: 'Ext.container.Container',
     xtype: 'slate-cbl-demonstrations-demonstrationform',
     requires: [
+        'Jarvus.store.FieldValuesStore',
+
         'Slate.cbl.widget.StudentSelector',
-        'Slate.cbl.store.Competencies'
+        'Slate.cbl.store.Competencies',
+        'Slate.cbl.model.demonstrations.Demonstration'
     ],
 
 
@@ -42,20 +45,35 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         {
             xtype: 'combobox',
             name: 'ExperienceType',
-            itemId: 'experience-types',
-            fieldLabel: 'Type of Experience'
+            fieldLabel: 'Type of Experience',
+            queryMode: 'local',
+            store: {
+                type: 'fieldvalues',
+                valuesModel: 'Slate.cbl.model.demonstrations.Demonstration',
+                valuesField: 'ExperienceType'
+            }
         },
         {
             xtype: 'combobox',
             name: 'Context',
-            itemId: 'context-options',
-            fieldLabel: 'Name of Experience'
+            fieldLabel: 'Name of Experience',
+            queryMode: 'local',
+            store: {
+                type: 'fieldvalues',
+                valuesModel: 'Slate.cbl.model.demonstrations.Demonstration',
+                valuesField: 'Context'
+            }
         },
         {
             xtype: 'combobox',
             name: 'PerformanceType',
-            itemId: 'performance-types',
-            fieldLabel: 'Performance Task'
+            fieldLabel: 'Performance Task',
+            queryMode: 'local',
+            store: {
+                type: 'fieldvalues',
+                valuesModel: 'Slate.cbl.model.demonstrations.Demonstration',
+                valuesField: 'PerformanceType'
+            }
         },
         {
             xtype: 'textfield',

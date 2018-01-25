@@ -25,6 +25,7 @@ Ext.define('SlateTasksTeacher.Application', {
 
         // load bootstrap data
         Slate.API.request({
+            method: 'GET',
             url: '/cbl/dashboards/tasks/teacher/bootstrap',
             success: function(response) {
                 me.fireEvent('bootstrapdataload', me, response.data);

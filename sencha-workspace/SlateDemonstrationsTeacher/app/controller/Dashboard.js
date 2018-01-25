@@ -109,16 +109,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         // instantiate and render viewport
         me.getDashboardCt().render('slateapp-viewport');
 
-        // load bootstrap data
-        Slate.API.request({
-            method: 'GET',
-            url: '/cbl/dashboards/demonstrations/teacher/bootstrap',
-            success: function(response) {
-                console.log('Loaded bootstrap data', response.data);
-            }
-        });
-
-
         // var me = this,
         //     dashboardCt = me.getDashboardCt();
         //     studentGroupSelector = me.getStudentGroupSelector(),

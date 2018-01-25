@@ -156,7 +156,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             taskDefaults = bootstrapData.taskDefaults,
             fieldName, field;
 
-        // configure Google API
+        // configure model defaults from server configuration
         if (taskDefaults) {
             for (fieldName in taskDefaults) {
                 if (!taskDefaults.hasOwnProperty(fieldName)) {
