@@ -39,10 +39,27 @@ class TeacherDashboardRequestHandler extends \Emergence\Site\RequestHandler
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');
 
+        $demonstrationFields = [];
+
+        foreach (Demonstration::aggregateStackedConfig('fields') as $field => $config) {
+            if (
+                isset($config['default'])
+                && !(
+                    $config['type'] == 'timestamp'
+                    && $config['default'] == 'CURRENT_TIMESTAMP'
+                )
+            ) {
+                $demonstrationFields[$field]['default'] = $config['default'];
+            }
+
+            if (!empty($config['values'])) {
+                $demonstrationFields[$field]['values'] = $config['values'];
+            }
+        }
+
         return static::respond('bootstrap', [
-            'experience_types' => ExperienceDemonstration::$experienceTypeOptions,
-            'performance_types' => ExperienceDemonstration::$performanceTypeOptions,
-            'context_options' => ExperienceDemonstration::$contextOptions
+            'user' => $GLOBALS['Session']->Person,
+            'demonstrationFields' => $demonstrationFields
         ]);
     }
 }
