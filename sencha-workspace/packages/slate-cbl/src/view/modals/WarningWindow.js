@@ -1,3 +1,6 @@
+/**
+ * TODO: figure out if we want to use this error template and implement it
+ */
 Ext.define('Slate.cbl.view.modals.WarningWindow', {
     extend: 'Ext.Window',
     requires: [],

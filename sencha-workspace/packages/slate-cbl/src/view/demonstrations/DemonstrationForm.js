@@ -1,5 +1,5 @@
 Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
-    extend: 'Ext.form.Panel',
+    extend: 'Slate.ui.FormPanel',
     xtype: 'slate-cbl-demonstrations-demonstrationform',
     requires: [
         'Jarvus.store.FieldValuesStore',
@@ -18,21 +18,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         title: 'Log Demonstration'
     },
 
-
-    trackResetOnLoad: true,
-
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
-
-    defaults: {
-        allowBlank: false,
-        msgTarget: 'side',
-        selectOnFocus: true,
-        labelAlign: 'right',
-        labelWidth: 150
-    },
 
     items: [
         {

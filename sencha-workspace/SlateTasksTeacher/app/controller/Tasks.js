@@ -14,10 +14,8 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     // dependencies
     views: [
-        'TaskEditor'
-    //     'tasks.AttachmentConfirmation',
-    //     'TaskAssigner',
-    //     'TaskRater'
+        'Window@Slate.ui',
+        'TaskForm@Slate.cbl.view.tasks'
     ],
 
     stores: [
@@ -38,12 +36,17 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         createBtn: 'slate-tasks-teacher-dashboard slate-appheader button[action=create]',
         // studentsGrid: 'slate-studentsgrid',
 
-        taskEditor: {
-            selector: 'slate-tasks-teacher-taskeditor',
-            autoCreate: true,
+        taskWindow: {
+            forceCreate: true,
 
-            xtype: 'slate-tasks-teacher-taskeditor'
-        },
+            xtype: 'slate-window',
+            defaultType: 'slate-cbl-tasks-taskform',
+            modal: true,
+            layout: 'fit',
+            minWidth: 300,
+            width: 600,
+            minHeight: 600
+        }
 
     //     taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
     //     skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
@@ -201,15 +204,29 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         this.getCreateBtn().setHidden(!section);
     },
 
-    onCreateClick: function() {
+    onCreateClick: function(createBtn) {
         var me = this,
-            taskCreator = me.getTaskEditor(),
             task = me.getTaskModel().create({
                 SectionID: me.getDashboardCt().getLoadedSection().getId()
+            }),
+            taskWindow = me.getTaskWindow({
+                ownerCmp: me.getDashboardCt(),
+                animateTarget: createBtn,
+
+                mainView: {
+                    // studentSelector: {
+                    //     store: me.getStudentsStore(),
+                    //     queryMode: 'local',
+                    //     matchFieldWidth: true
+                    // }
+                    // selectedStudent: context.student,
+                    // selectedSkill: context.skill,
+                    // selectedDemonstration: context.demonstrationId
+                }
             });
 
-        taskCreator.setTask(task);
-        taskCreator.show();
+        taskWindow.getMainView().loadRecord(task);
+        taskWindow.show();
     }
 
     // onTasksGridCellClick: function(grid, taskId, studentId) {
