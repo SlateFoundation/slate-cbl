@@ -15,6 +15,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     config: {
         studentSelector: true,
 
+        title: 'Log Demonstration'
     },
 
 
