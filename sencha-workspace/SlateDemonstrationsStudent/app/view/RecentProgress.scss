@@ -13,11 +13,22 @@
         margin: 0;
     }
 
+    td, th {
+        padding-bottom: .375em;
+        padding-top: .375em;
+    }
+
+    td {
+        border-bottom: 1px solid $border-color;
+    }
+
     .scoring-domain-col {
+        padding-left: 1em;
         white-space: normal;
     }
 
     .level-col {
+        padding-right: 1em;
         text-align: center;
         width: 2.75em;
 

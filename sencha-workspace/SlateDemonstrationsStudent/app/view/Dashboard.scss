@@ -18,8 +18,8 @@ $cbl-progress-missed-color: dynamic(red);
         $level-color-dark:   nth($level-colors-dark,   ($n - 8));
 
         &.level-color {
+            @extend .cbl-level-colored;
             background-color: nth($level-colors, ($n - 8));
-            color: white;
         }
 
         .cbl-progress-meter {
