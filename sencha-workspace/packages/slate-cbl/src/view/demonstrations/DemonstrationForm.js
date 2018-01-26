@@ -36,8 +36,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             name: 'Demonstrated',
             fieldLabel: 'Demonstrated',
             displayField: 'Demonstrated',
-            valueField: 'Demonstrated',
-            value: new Date().toLocaleDateString() // TODO: use model default
+            valueField: 'Demonstrated'
         },
 
         {

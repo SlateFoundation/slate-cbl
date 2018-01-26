@@ -82,23 +82,27 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     },
 
     onCreateDemonstrationClick: function(createBtn) {
-        var me = this;
+        var me = this,
+            demonstration = me.getDemonstrationModel().create({
+                Demonstrated: new Date()
+            }),
+            demonstrationWindow = me.getDemonstrationWindow({
+                ownerCmp: me.getDashboardCt(),
+                animateTarget: createBtn,
 
-        me.getDemonstrationWindow({
-            ownerCmp: me.getDashboardCt(),
-            autoShow: true,
-            animateTarget: createBtn,
-
-            mainView: {
-                studentSelector: {
-                    store: me.getStudentsStore(),
-                    queryMode: 'local',
-                    matchFieldWidth: true
+                mainView: {
+                    studentSelector: {
+                        store: me.getStudentsStore(),
+                        queryMode: 'local',
+                        matchFieldWidth: true
+                    }
+                    // selectedStudent: context.student,
+                    // selectedSkill: context.skill,
+                    // selectedDemonstration: context.demonstrationId
                 }
-                // selectedStudent: context.student,
-                // selectedSkill: context.skill,
-                // selectedDemonstration: context.demonstrationId
-            }
-        });
+            });
+
+        demonstrationWindow.getMainView().loadRecord(demonstration);
+        demonstrationWindow.show();
     }
 });
