@@ -141,7 +141,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                                 '"',
                             '>',
                                 '<tpl if="Override">',
-                                    '<i class="fa fa-lg fa-check-circle-o"></i>',
+                                    '<i class="fa fa-check"></i>',
                                 '<tpl elseif="DemonstratedLevel == 0">',
                                     'M',
                                 '<tpl else>',

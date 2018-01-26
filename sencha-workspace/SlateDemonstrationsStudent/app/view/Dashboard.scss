@@ -6,8 +6,6 @@ $cbl-progress-missed-color: dynamic(red);
     font-weight: bold;
     text-align: center;
     text-shadow: 0 1px 1px rgba(black, .8);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 @for $n from 9 through 12 {

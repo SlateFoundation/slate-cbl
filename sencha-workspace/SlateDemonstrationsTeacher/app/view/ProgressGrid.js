@@ -178,7 +178,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                         '"',
                                     '>',
                                         '<tpl if="Override">',
-                                            '<i class="fa fa-lg fa-check-circle-o"></i>',
+                                            '<i class="fa fa-check"></i>',
                                         '<tpl elseif="DemonstratedLevel == 0">',
                                             'M',
                                         '<tpl else>',

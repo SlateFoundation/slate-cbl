@@ -76,13 +76,11 @@ $level-colors-dark:
     width: 16px;
 }
 
-.level-n { // ideally would be %level-n but Sencha Cmd has some outdated ish
+.level-n { // switch to %level-n when placeholders supported
     color: white;
     font-weight: bold;
     text-align: center;
     text-shadow: 0 1px 1px black;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 @for $n from 8 through 13 {

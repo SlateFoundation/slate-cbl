@@ -82,7 +82,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
                 // write completed change
                 if (taskStatus == 'completed') {
                     if (group.taskStatus != 'completed') {
-                        cellEl.setHtml('<i class="fa fa-lg fa-check-circle-o"></i>');
+                        cellEl.setHtml('<i class="fa fa-check"></i>');
                     }
                 } else if (dueDate) {
                     dueDate = me.getDateRenderer()(dueDate);

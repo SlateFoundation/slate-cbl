@@ -38,7 +38,7 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
                             '<td class="level-col">',
                                 '<div class="level-color cbl-level-{targetLevel}">',
                                    '<tpl if="override">',
-                                       '<i class="fa fa-lg fa-check-circle-o"></i>',
+                                       '<i class="fa fa-check"></i>',
                                    '<tpl elseif="demonstratedLevel == 0">',
                                        'M',
                                    '<tpl else>',

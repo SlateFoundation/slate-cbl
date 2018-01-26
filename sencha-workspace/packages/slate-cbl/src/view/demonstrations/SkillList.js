@@ -60,7 +60,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                     '<td class="skill-list-demo-data skill-list-demo-level">',
                         '<div class="level-color cbl-level-{TargetLevel}">',
                             '<tpl if="Override">',
-                                '<i class="fa fa-lg fa-check-circle-o"></i>',
+                                '<i class="fa fa-check"></i>',
                             '<tpl elseif="DemonstratedLevel==0">',
                                 'M',
                             '<tpl else>',
