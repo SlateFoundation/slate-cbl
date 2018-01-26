@@ -14,7 +14,28 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
 
     title: 'Create Task',
     config: {
-        enableAssignments: true
+        enableAssignments: true,
+
+        // TODO: move form to a form class and move this to a docked item within it
+        footer: {
+            items: [
+                {
+                    xtype: 'checkboxfield',
+                    name: 'Status',
+                    itemId: 'status',
+                    uncheckedValue: 'private',
+                    inputValue: 'shared',
+                    boxLabel: 'Share with other teachers'
+                },
+                {
+                    xtype: 'button',
+                    scale: 'large',
+                    text: 'Create',
+                    margin: '0 0 0 16',
+                    action: 'save'
+                }
+            ]
+        }
     },
 
     initComponent: function() {
@@ -57,36 +78,6 @@ Ext.define('Slate.cbl.view.modals.CreateTask', {
             delegate: '.slate-field-warning'
         });
     },
-
-    dockedItems: [
-        {
-            dock: 'bottom',
-            xtype: 'container',
-            cls: 'slate-modalfooter',
-            layout: {
-                align: 'center',
-                type: 'hbox',
-                pack: 'end'
-            },
-            items: [
-                {
-                    xtype: 'checkboxfield',
-                    name: 'Status',
-                    itemId: 'status',
-                    uncheckedValue: 'private',
-                    inputValue: 'shared',
-                    boxLabel: 'Share with other teachers'
-                },
-                {
-                    xtype: 'button',
-                    scale: 'large',
-                    text: 'Create',
-                    margin: '0 0 0 16',
-                    action: 'save'
-                }
-            ]
-        }
-    ],
 
     items: [
         {

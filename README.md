@@ -110,8 +110,10 @@ parameter `apiHost` when loading the page.
 - [X] Restore opening student-skill details in SlateDemonstrationsTeacher
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
   - [ ] Restore live-updating of grid
+  - [ ] Audit requires and inheritance chain
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Restore live-updating of grid
+  - [ ] Audit requires and inheritance chain
 - [ ] Restore building/loading of SlateTasksManager
 - [X] Update all loaders
 - [X] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php

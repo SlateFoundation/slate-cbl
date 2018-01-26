@@ -4,6 +4,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     requires: [
         'Jarvus.store.FieldValuesStore',
 
+        'Slate.ui.PanelFooter',
+
         'Slate.cbl.widget.StudentSelector',
         'Slate.cbl.store.Competencies',
         'Slate.cbl.model.demonstrations.Demonstration'
@@ -11,7 +13,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
 
     config: {
-        studentSelector: true
+        studentSelector: true,
+
     },
 
 
@@ -90,7 +93,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             tabBar: {
                 hidden: true
             },
-            // margin: '10 -16',
+            margin: '10 -16',
             // bodyPadding: '16 75',
             bodyStyle: {
                 backgroundColor: '#ddd'
@@ -168,13 +171,12 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
             allowBlank: true,
             selectOnFocus: false
-        },
+        }
+    ],
+
+    dockedItems: [
         {
-            xtype: 'container',
-            layout: {
-                type: 'hbox',
-                align: 'center'
-            },
+            xtype: 'slate-panelfooter',
             items: [
                 {
                     xtype: 'button',
