@@ -170,6 +170,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                             '</tpl>',
                                             '<tpl if="DemonstratedLevel || Override">',
                                                 ' cbl-grid-demo-counted',
+                                            '<tpl elseif="DemonstratedLevel == 0">',
+                                                ' cbl-grid-demo-missing',
                                             '<tpl else>',
                                                 ' cbl-grid-demo-uncounted',
                                             '</tpl>',
