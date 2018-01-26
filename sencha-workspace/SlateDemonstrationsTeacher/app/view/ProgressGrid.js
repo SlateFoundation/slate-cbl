@@ -620,6 +620,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 student = students[studentIndex];
                 competencyNodes.push({
                     student: student.data,
+                    competency: competency.data,
                     studentCompetencies: {},
                     maxLevel: null
                 });
@@ -728,7 +729,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             competenciesById,
 
             studentCompetenciesLength = studentCompetencies.length,
-            studentCompetencyIndex, studentCompetency, competencyId, competencyData, studentId, node,
+            studentCompetencyIndex, studentCompetency, competencyId, competencyData, studentId, node, competency,
 
             dirtyNodes = [],
             dirtyNodesLength, dirtyNodeIndex,
@@ -774,6 +775,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         // pass 2: update dirty nodes
         for (dirtyNodesLength = dirtyNodes.length, dirtyNodeIndex = 0; dirtyNodeIndex < dirtyNodesLength; dirtyNodeIndex++) {
             node = dirtyNodes[dirtyNodeIndex];
+            competency = node.competency;
 
 
             // the same node could be in the queue more than once, but only needs to be processed once
@@ -795,11 +797,11 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             countDirty = count != node.renderedCount;
             averageDirty = average != node.renderedAverage;
             levelDirty = level != renderedLevel;
-            demonstrationsRequired = competencyData.competency.totalDemonstrationsRequired[studentCompetency.get('Level')] || competencyData.competency.totalDemonstrationsRequired.default;
+            demonstrationsRequired = competency.totalDemonstrationsRequired[level] || competency.totalDemonstrationsRequired.default;
 
             if (countDirty || averageDirty) {
                 percentComplete = 100 * (count || 0) / demonstrationsRequired;
-                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competencyData.competency.minimumAverageOffset));
+                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competency.minimumAverageOffset));
             }
 
             if (countDirty) {
