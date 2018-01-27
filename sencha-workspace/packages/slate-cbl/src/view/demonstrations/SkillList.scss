@@ -3,6 +3,10 @@
     margin: 0;
     table-layout: fixed;
 
+    .slate-window & {
+        margin: 0 -16px;
+    }
+
     th, td {
         padding: 0.5em;
     }
