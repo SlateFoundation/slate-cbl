@@ -68,7 +68,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
             allowBlank: true,
             regex: /^https?:\/\/.+/i,
-            regexText: 'Artifact must be a complete URL (starting with http:// or https://)'
+            regexText: 'Artifact must be a complete URL (starting with http:// or https://)',
+            emptyText: 'http://...'
         },
         {
             flex: 2,
