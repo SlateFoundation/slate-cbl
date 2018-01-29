@@ -7,14 +7,15 @@ class ExperienceTask extends Task
     public static $fields = [
         'ExperienceType' => [
             'type' => 'string',
+            'values' => [],
             'default' => null
         ]
     ];
 
     public static $validators = [
-#        'ExperienceType' => [ // add to config file
-#            'validator' =>
-#        ]
+        'ExperienceType' => [
+            'required' => false
+        ]
     ];
 
     public static $searchConditions = [

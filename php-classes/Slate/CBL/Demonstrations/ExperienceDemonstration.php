@@ -7,14 +7,20 @@ class ExperienceDemonstration extends Demonstration
 {
     public static $fields = [
         'ExperienceType' => [
-            'values' => ['Core Studio', 'Choice Studio', 'Workshop', 'Health and Wellness', 'PE/Fitness', 'Online Courseware', 'Situated Learning', 'Work-based Learning', 'Advisory']
+            'type' => 'string',
+            'values' => [],
+            'default' => null
         ],
         'Context' => [
-            'values' => ['Journalism', 'Mythbusters', 'Personal Finance', 'Math Workshop', 'Literacy Workshop', 'Culinary Arts', 'Entrepreneurship', 'Performing Arts', 'Help Desk']
+            'type' => 'string',
+            'values' => [],
+            'default' => null
         ],
         'PerformanceType' => [
-            'values' => ['Position paper', 'Lab report', 'Media presentation', 'Argumentative essay', 'Speech']
-        ]
+            'type' => 'string',
+            'values' => [],
+            'default' => null
+        ],
     ];
 
     public static $validators = [
