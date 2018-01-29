@@ -1,3 +1,14 @@
+var levelLut = {
+  0 : "NE",
+  0.5 : "IE",
+  1 : "EN",
+  2 : "PR",
+  3 : "GB",
+  4 : "AD",
+  5 : "EX",
+  6 : "BA"
+}
+
 Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-student-recentprogress',
@@ -40,7 +51,6 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
             '<thead>',
                 '<tr>',
                     '<th class="col-header scoring-domain-col">Scoring Domain</th>',
-                    '<th class="col-header level-col">Rating</th>',
                 '</tr>',
             '</thead>',
         '</tpl>',
@@ -48,16 +58,12 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
             '<tpl for="progress">',
                 '<tr>',
                     '<td class="scoring-domain-col">',
-                        '<span class="domain-skill">{skillDescriptor:htmlEncode}</span>',
+                        '<span class="domain-competency">{sectionTitle:htmlEncode}',
+                        '<tpl if="teacherTitle">, </tpl>',
+                        '{teacherTitle:htmlEncode}</span>',               
                         '<div class="meta">',
-                            '<span class="domain-competency">{competencyDescriptor:htmlEncode}<tpl if="teacherTitle">, </tpl></span>',
-                            '<span class="domain-teacher">{teacherTitle:htmlEncode}</span>',
+                            '<span class="domain-skill">{competencies:htmlEncode}</span>',                            
                         '</div>',
-                    '</td>',
-                    '<td class="level-col">',
-                        '<div class="cbl-level-colored cbl-level-{targetLevel}">',
-                           '<tpl if="demonstratedLevel != 0 || typeof(demonstratedLevel == \'undefined\')">{[ ["M","EN","PR","GB","AD","EX","BA"][demonstratedLevel] ]}<tpl else>M</tpl>',
-                       '</div>',
                     '</td>',
                 '</tr>',
             '</tpl>',

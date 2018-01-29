@@ -7,6 +7,7 @@ Ext.define('Slate.cbl.model.RecentProgress', {
         { name: 'demonstratedLevel', type: 'int' },
         { name: 'demonstrationCreated', type: 'date', dateFormat: 'timestamp' },
         { name: 'teacherTitle', type: 'string' },
+        { name: 'assignmentContext', type: 'string' },        
         { name: 'competencyDescriptor', type: 'string' },
         { name: 'skillDescriptor', type: 'string' }
     ]

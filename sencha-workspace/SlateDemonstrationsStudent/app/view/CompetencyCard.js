@@ -9,6 +9,18 @@ var levelLut = {
   6 : "BA"
 }
 
+
+var verboseLevelLut = {
+  0 : "No Evidence",
+  0.5 : "IE",
+  1 : "Entering",
+  2 : "Progressing",
+  3 : "Graduation Benchmark",
+  4 : "Advancing",
+  5 : "Excelling",
+  6 : "Beyond Assessment"
+}
+
 Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-student-competencycard',
@@ -58,10 +70,10 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
         '<div class="panel-body">',
             '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
-                '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
-                '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-                '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">{[ levelLut[values.level] ]}</div>',
-                '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
+            //    '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
+            //    '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
+               '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select">working on: {[ verboseLevelLut[values.level] ]}</div>',
+            //    '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
             '</div>',
             /*
             '<div class="stats-ct">',
@@ -244,7 +256,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? levelLut[newLevel] : '');
+            me.meterLevelEl.update(newLevel ? "working on: " + erboseLevelLut[newLevel] : '');
         }
     },
 
@@ -258,9 +270,9 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         if (me.rendered) {
             percentComplete = Ext.util.Format.number(percentComplete, me.getPercentFormat());
 
-            me.meterBarEl.setStyle('width', percentComplete);
-            me.meterBarMissedEl.setStyle('left', percentComplete);
-            me.meterPercentEl.update(percentComplete);
+            //me.meterBarEl.setStyle('width', percentComplete);
+            //me.meterBarMissedEl.setStyle('left', percentComplete);
+            //me.meterPercentEl.update(percentComplete);
         }
     },
 
@@ -272,8 +284,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this;
 
         if (me.rendered) {
-            percentMissed = Ext.util.Format.number(percentMissed, me.getPercentFormat());
-            me.meterBarMissedEl.setStyle('width', percentMissed);
+            //percentMissed = Ext.util.Format.number(percentMissed, me.getPercentFormat());
+            //me.meterBarMissedEl.setStyle('width', percentMissed);
         }
     },
 
@@ -281,13 +293,13 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this;
 
         if (me.rendered) {
-            me.averageEl.update(Ext.util.Format.number(demonstrationsAverage, me.getAverageFormat()));
+            //me.averageEl.update(Ext.util.Format.number(demonstrationsAverage, me.getAverageFormat()));
         }
     },
 
     updateIsAverageLow: function(isAverageLow) {
         if (this.rendered) {
-            this.meterEl.toggleCls('is-average-low', isAverageLow);
+            //this.meterEl.toggleCls('is-average-low', isAverageLow);
         }
     },
 
@@ -295,7 +307,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this;
 
         if (me.rendered) {
-            me.baselineRatingEl.update(Ext.util.Format.number(baselineRating, me.getAverageFormat()));
+            //me.baselineRatingEl.update(Ext.util.Format.number(baselineRating, me.getAverageFormat()));
         }
     },
 
@@ -303,7 +315,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this;
 
         if (me.rendered) {
-            me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
+            //me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
         }
     },
 
