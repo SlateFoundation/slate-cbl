@@ -1,5 +1,5 @@
 Ext.define('Slate.cbl.view.tasks.TaskForm', {
-    extend: 'Slate.ui.FormPanel',
+    extend: 'Slate.ui.form.Panel',
     xtype: 'slate-cbl-tasks-taskform',
     requires: [
         'Jarvus.store.FieldValuesStore',

@@ -1,5 +1,5 @@
 Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
-    extend: 'Slate.ui.FormPanel',
+    extend: 'Slate.ui.form.Panel',
     xtype: 'slate-cbl-demonstrations-demonstrationform',
     requires: [
         'Jarvus.store.FieldValuesStore',
