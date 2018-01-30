@@ -21,9 +21,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
 
         demonstrationWindow: {
-            forceCreate: true,
+            autoCreate: true,
 
             xtype: 'slate-window',
+            closeAction: 'hide',
             defaultType: 'slate-cbl-demonstrations-demonstrationform',
             modal: true,
             layout: 'fit',
@@ -100,9 +101,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                     // selectedSkill: context.skill,
                     // selectedDemonstration: context.demonstrationId
                 }
-            });
+            }),
+            formPanel = demonstrationWindow.getMainView();
 
-        demonstrationWindow.getMainView().loadRecord(demonstration);
+        formPanel.loadRecord(demonstration);
+        formPanel.reset();
         demonstrationWindow.show();
     }
 });
