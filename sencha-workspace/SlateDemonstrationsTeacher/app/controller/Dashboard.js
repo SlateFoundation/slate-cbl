@@ -209,8 +209,9 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         var me = this,
             dashboardCt = me.getDashboardCt(),
             skillsStore = me.getSkillsStore(),
-            rawData = store.getProxy().getReader().rawData,
-            relatedData = rawData.related || {},
+            proxy = store.getProxy(),
+            studentsCollection = proxy.relatedCollections.Student,
+            rawData = proxy.getReader().rawData,
             contentAreaData = rawData.ContentArea,
             competenciesData = contentAreaData.Competencies,
             competenciesLength = competenciesData.length,
@@ -233,7 +234,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         }
         skillsStore.endUpdate();
 
-        me.getStudentsStore().loadRawData(relatedData.Student || []);
+        me.getStudentsStore().loadRawData(studentsCollection.getRange());
 
 
         // finish load

@@ -181,9 +181,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         }
 
         // eslint-disable-next-line vars-on-top
-        var relatedData = store.getProxy().getReader().rawData.related || {};
+        var tasksCollection = store.getProxy().relatedCollections.Task;
 
-        this.getTasksStore().loadRawData(relatedData.Task || []);
+        this.getTasksStore().loadRawData(tasksCollection ? tasksCollection.getRange() : []);
     },
 
     onStudentTasksClear: function() {
