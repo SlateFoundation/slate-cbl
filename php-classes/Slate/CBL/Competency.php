@@ -72,7 +72,8 @@ class Competency extends \VersionedRecord
     public static $summaryFields = [
         'ID' => true,
         'Code' => true,
-        'Descriptor' => true
+        'Descriptor' => true,
+        'ContentAreaID' => true
     ];
 
     public function getHandle()
