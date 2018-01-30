@@ -2,13 +2,19 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     extend: 'Slate.ui.form.Panel',
     xtype: 'slate-cbl-demonstrations-demonstrationform',
     requires: [
+        'Ext.form.field.ComboBox',
+        'Ext.form.field.Date',
+        'Ext.form.field.Text',
+        'Ext.form.field.TextArea',
+        'Ext.form.field.Checkbox',
+
         'Jarvus.store.FieldValuesStore',
 
         'Slate.ui.PanelFooter',
 
+        'Slate.cbl.model.demonstrations.Demonstration',
         'Slate.cbl.widget.StudentSelector',
-        'Slate.cbl.store.Competencies',
-        'Slate.cbl.model.demonstrations.Demonstration'
+        'Slate.cbl.field.Ratings'
     ],
 
 
@@ -73,83 +79,11 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             inputType: 'url'
         },
         {
-            flex: 2,
-            // competencyTipTitleTpl: '{Descriptor}',
-            // competencyTipBodyTpl: '{Statement}',
+            height: 300,
 
-            xtype: 'tabpanel',
-            tabBar: {
-                hidden: true
-            },
-            margin: '10 -16',
-            // bodyPadding: '16 75',
-            bodyStyle: {
-                backgroundColor: '#ddd'
-            },
-            // title: 'Competencies',
-            defaultType: 'slate-demonstrations-teacher-demonstration-competencycard',
-            defaults: {
-                closable: true
-            },
-            items: [
-                {
-                    title: 'Add competency',
-                    glyph: 0xf0fe + '@FontAwesome',
-                    closable: false,
-
-                    xtype: 'gridpanel',
-                    height: 300,
-                    hideHeaders: true,
-                    viewConfig: {
-                        emptyText: 'No competencies match your search.',
-                        loadingText: false,
-                        stripeRows: false
-                    },
-                    store: {
-                        type: 'slate-cbl-competencies',
-                        groupField: 'ContentAreaID'
-                    },
-                    columns: [
-                        {
-                            text: 'Code',
-                            dataIndex: 'Code'
-                        },
-                        {
-                            text: 'Descriptor',
-                            dataIndex: 'Descriptor',
-                            flex: 1
-                        }
-                    ],
-                    features: [
-                        {
-                            id: 'grouping',
-                            ftype: 'grouping',
-                            groupHeaderTpl: [
-                                '<tpl for="this.getContentAreaData(values.groupValue)">',
-                                    '<span class="title">{Title}</span>',
-                                    // '<span class="count">{[parent.children.length]}</span>',
-                                '</tpl>',
-                                {
-                                    getContentAreaData: function(contentAreaId) {
-                                        return Slate.cbl.data.ContentAreas.getById(contentAreaId).getData();
-                                    }
-                                }
-                            ],
-                            enableGroupingMenu: false,
-                            startCollapsed: true
-                        }
-                    ],
-                    dockedItems: [
-                        {
-                            dock: 'top',
-
-                            xtype: 'textfield',
-                            margin: '6 12',
-                            emptyText: 'Type competency code or statement&hellip;'
-                        }
-                    ]
-                }
-            ]
+            xtype: 'slate-cbl-ratingsfield',
+            fieldLabel: 'Demonstrated Skills',
+            labelAlign: 'top'
         },
         {
             flex: 1,
@@ -194,6 +128,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         if (typeof studentSelector == 'object' && !studentSelector.isComponent) {
             studentSelector = Ext.apply({
                 name: 'StudentID',
+                valueField: 'ID',
                 autoSelect: true
             }, studentSelector);
         }

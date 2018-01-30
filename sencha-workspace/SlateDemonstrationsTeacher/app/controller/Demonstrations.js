@@ -114,5 +114,14 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         formPanel.loadRecord(demonstration);
         formPanel.reset();
         demonstrationWindow.show();
+    },
+
+    onSubmitDemonstrationClick: function(submitBtn) {
+        var formPanel = submitBtn.up('window').getMainView(),
+            demonstration = formPanel.getRecord();
+
+        formPanel.updateRecord(demonstration);
+
+        console.table([formPanel.getValues(), demonstration.getData()]);
     }
 });

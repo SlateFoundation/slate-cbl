@@ -85,6 +85,11 @@ Ext.define('Slate.cbl.model.demonstrations.Demonstration', {
         {
             name: 'PerformanceType',
             type: 'string'
+        },
+
+        // writable dynamic fields
+        {
+            name: 'Skills'
         }
     ],
 
