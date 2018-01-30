@@ -173,6 +173,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 }
             }
         }
+
+        // enable create button now that model is initialized
+        this.getCreateBtn().enable();
     },
 
     onStudentTasksLoad: function(store, records, success) {

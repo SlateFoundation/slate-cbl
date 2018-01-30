@@ -19,6 +19,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
     refs: {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
+        createBtn: 'slate-demonstrations-teacher-dashboard slate-appheader button[action=create-demonstration]',
 
         demonstrationWindow: {
             autoCreate: true,
@@ -45,8 +46,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     },
 
     control: {
-        'slate-demonstrations-teacher-dashboard slate-appheader button[action=create-demonstration]': {
+        createBtn: {
             click: 'onCreateDemonstrationClick'
+        },
+        'slate-cbl-demonstrations-demonstrationform ^ window button[action=submit]': {
+            click: 'onSubmitDemonstrationClick'
         }
     },
 
@@ -80,6 +84,9 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 }
             }
         }
+
+        // enable create button now that model is initialized
+        this.getCreateBtn().enable();
     },
 
     onCreateDemonstrationClick: function(createBtn) {

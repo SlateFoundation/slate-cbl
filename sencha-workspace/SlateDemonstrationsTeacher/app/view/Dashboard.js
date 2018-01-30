@@ -110,7 +110,8 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
                 {
                     cls: 'primary',
                     iconCls: 'x-fa fa-plus',
-                    action: 'create-demonstration'
+                    action: 'create-demonstration',
+                    disabled: true
                 }
             ]
         },

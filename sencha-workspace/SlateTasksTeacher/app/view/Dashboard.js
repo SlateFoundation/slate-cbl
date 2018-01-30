@@ -121,7 +121,8 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
                     cls: 'primary',
                     iconCls: 'x-fa fa-plus',
                     action: 'create',
-                    hidden: true
+                    hidden: true,
+                    disabled: true
                 }
             ]
         },
