@@ -91,6 +91,11 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // containerfield lifecycle
+    beforeReset: function() {
+        this.callParent();
+        this.getCompetenciesGrid().getSearchField().reset();
+    },
+
     // getValue: function() {
     //     return [
     //         {
