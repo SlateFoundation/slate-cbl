@@ -107,8 +107,8 @@ Ext.define('Slate.cbl.field.Ratings', {
         tabPanel.items.setSorters([
             {
                 sorterFn: function(a, b) {
-                    a = a.isCompetencyRatings;
-                    b = b.isCompetencyRatings;
+                    a = a.isCompetencyCard;
+                    b = b.isCompetencyCard;
 
                     if (a == b) {
                         return 0;
@@ -119,7 +119,7 @@ Ext.define('Slate.cbl.field.Ratings', {
             },
             new Slate.sorter.Code({
                 codeFn: function(item) {
-                    return item.title;
+                    return item.selectedCompetency;
                 }
             })
         ]);
@@ -135,6 +135,11 @@ Ext.define('Slate.cbl.field.Ratings', {
         this.getCompetenciesGrid().getSearchField().reset();
     },
 
+    // reset: function() {
+    //     debugger;
+    //     this.callParent();
+    //     // TODO: clear selected competencies
+    // }
     // getValue: function() {
     //     return [
     //         {
@@ -158,9 +163,8 @@ Ext.define('Slate.cbl.field.Ratings', {
     onCompetencySelect: function(competenciesGrid, competency) {
         var tabPanel = this.getTabPanel(),
             cardConfig = {
-                isCompetencyRatings: true,
-                title: competency.get('Code'),
-                data: competency.getData()
+                isCompetencyCard: true,
+                selectedCompetency: competency.get('Code')
             },
             cardIndex = tabPanel.items.findInsertionIndex(cardConfig);
 
