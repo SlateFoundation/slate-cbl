@@ -66,6 +66,7 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
         }
     ],
     listeners: {
+        activate: 'onActivate',
         rowclick: 'onRowClick'
     },
 
@@ -112,6 +113,15 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
 
 
     // event handlers
+    onActivate: function() {
+        // only direct focus on subsequent activations
+        if (this.activated) {
+            this.getSearchField().focus();
+        }
+
+        this.activated = true;
+    },
+
     onSearchFieldChange: function() {
         this.syncFilter();
     },

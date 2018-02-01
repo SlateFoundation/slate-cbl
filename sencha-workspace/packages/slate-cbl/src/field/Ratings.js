@@ -166,6 +166,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
         tabPanel.insert(cardIndex, cardConfig);
         tabPanel.setActiveItem(cardIndex);
+        competenciesGrid.getSearchField().reset();
         // me.setLoading('Loading skills&hellip;');
         // me.addCompetency(selectionModel.getLastSelected(), function() {
         //     me.setLoading(false);
