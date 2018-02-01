@@ -102,9 +102,26 @@ Ext.define('Slate.cbl.model.Competency', {
     ],
 
 
+    // local methods
     getTotalDemonstrationsRequired: function(level) {
         var totalDemonstrationsRequired = this.get('totalDemonstrationsRequired');
 
         return totalDemonstrationsRequired[level] || totalDemonstrationsRequired.default;
+    },
+
+
+    // static methods
+    inheritableStatics: {
+        handleProperty: 'Code',
+        loadByCode: function(code, options, session) {
+            var record = new this({ Code: code }, session);
+
+            options = Ext.Object.chain(options);
+            options.recordHandle = code;
+
+            record.load(options);
+
+            return record;
+        }
     }
 });
