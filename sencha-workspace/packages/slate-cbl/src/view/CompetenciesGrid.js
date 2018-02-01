@@ -10,6 +10,14 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
     ],
 
 
+    /**
+     * @event competencyselect
+     * Fires when a competency is selected
+     * @param {Slate.cbl.view.CompetenciesGrid} competenciesGrid
+     * @param {Slate.cbl.model.Competency} competency
+     */
+
+
     config: {
         searchField: true
     },
@@ -57,6 +65,9 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
             startCollapsed: true
         }
     ],
+    listeners: {
+        rowclick: 'onRowClick'
+    },
 
 
     // config handlers
@@ -108,30 +119,35 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
     onSearchFieldSpecialKey: function(searchField, ev) {
         var me = this,
             selectionModel = me.getSelectionModel(),
-            selectMethod = 'selectPrevious';
+            selectMethod = 'selectPrevious',
+            selectedCompetency;
 
         switch (ev.getKey()) {
             case ev.ENTER:
-                if (selectionModel.getCount()) {
-                    ev.stopEvent();
-                    // me.setLoading('Loading skills&hellip;');
-                    // me.addCompetency(selectionModel.getLastSelected(), function() {
-                    //     me.setLoading(false);
-                    // });
+                ev.stopEvent();
+                selectedCompetency = selectionModel.getLastSelected();
+                if (selectedCompetency) {
+                    selectionModel.deselectAll();
+                    me.fireEvent('competencyselect', me, selectedCompetency);
                 }
                 break;
             case ev.DOWN:
                 selectMethod = 'selectNext';
                 // eslint-disable-next-line no-fallthrough
             case ev.UP:
-                if (selectionModel[selectMethod](false, true)) {
-                    me.ensureVisible(selectionModel.getSelection()[0]);
-                }
                 ev.stopEvent();
+                if (selectionModel[selectMethod](false, true)) {
+                    me.ensureVisible(selectionModel.getLastSelected());
+                }
                 break;
             default:
                 return;
         }
+    },
+
+    onRowClick: function(view, competency) {
+        this.getSelectionModel().deselectAll();
+        this.fireEvent('competencyselect', this, competency);
     },
 
 
