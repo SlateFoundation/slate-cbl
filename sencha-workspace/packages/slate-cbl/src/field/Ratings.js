@@ -130,10 +130,10 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // containerfield lifecycle
-    beforeReset: function() {
-        this.callParent();
-        this.getCompetenciesGrid().getSearchField().reset();
-    },
+    // beforeReset: function() {
+    //     this.callParent();
+    //     this.getCompetenciesGrid().getSearchField().reset();
+    // },
 
     // reset: function() {
     //     debugger;
@@ -170,11 +170,8 @@ Ext.define('Slate.cbl.field.Ratings', {
 
         tabPanel.insert(cardIndex, cardConfig);
         tabPanel.setActiveItem(cardIndex);
-        competenciesGrid.getSearchField().reset();
-        // me.setLoading('Loading skills&hellip;');
-        // me.addCompetency(selectionModel.getLastSelected(), function() {
-        //     me.setLoading(false);
-        // });
+        competenciesGrid.setQueryFilter(null);
+        competenciesGrid.setExcludeFilter(tabPanel.items.collect('selectedCompetency'));
     },
 
 

@@ -2,6 +2,7 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
     extend: 'Ext.grid.Panel',
     xtype: 'slate-cbl-competenciesgrid',
     requires: [
+        'Ext.util.Filter',
         'Ext.grid.column.Template',
         'Ext.grid.feature.Grouping',
         'Ext.form.field.Text',
@@ -19,7 +20,9 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
 
 
     config: {
-        searchField: true
+        searchField: true,
+        queryFilter: null,
+        excludeFilter: null
     },
 
 
@@ -98,8 +101,100 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
         });
     },
 
+    applyQueryFilter: function(query, oldFilter) {
+        var filter = Ext.String.trim(query);
+
+        if (!filter) {
+            return null;
+        }
+
+        if (oldFilter && oldFilter.query == query) {
+            return oldFilter;
+        }
+
+        filter = Ext.String.createRegex(filter, false, false);
+
+        return new Ext.util.Filter({
+            query: query,
+            filterFn: function(competency) {
+                return (
+                    filter.test(competency.get('Code'))
+                    || filter.test(competency.get('Descriptor'))
+                );
+            }
+        });
+    },
+
+    updateQueryFilter: function(filter, oldFilter) {
+        var me = this,
+            store = me.getStore(),
+            groupingFeature;
+
+        me.getSearchField().setValue(filter ? filter.query : null);
+
+        if (!store.isStore) {
+            return;
+        }
+
+        groupingFeature = me.getView().getFeature('grouping');
+
+        if (oldFilter) {
+            store.removeFilter(oldFilter, Boolean(filter));
+        }
+
+        if (filter) {
+            store.addFilter(filter);
+
+            if (store.getCount()) {
+                groupingFeature.expandAll();
+                me.getSelectionModel().select(store.getAt(0), false, true);
+            }
+        } else {
+            groupingFeature.collapseAll();
+        }
+    },
+
+    applyExcludeFilter: function(filter, oldFilter) {
+        if (!filter) {
+            return null;
+        }
+
+        return new Ext.util.Filter({
+            property: 'Code',
+            operator: 'notin',
+            value: filter
+        });
+    },
+
+    updateExcludeFilter: function(filter, oldFilter) {
+        var store = this.getStore();
+
+        if (!store.isStore) {
+            return;
+        }
+
+        if (oldFilter) {
+            store.removeFilter(oldFilter, Boolean(filter));
+        }
+
+        if (filter) {
+            store.addFilter(filter);
+        }
+    },
+
 
     // container lifecycle
+    initComponent: function() {
+        var me = this;
+
+        me.callParent(arguments);
+
+        me.getStore().setFilters(Ext.Array.clean([
+            me.getExcludeFilter(),
+            me.getQueryFilter()
+        ]));
+    },
+
     initItems: function() {
         var me = this,
             searchField = me.getSearchField();
@@ -122,8 +217,8 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
         this.activated = true;
     },
 
-    onSearchFieldChange: function() {
-        this.syncFilter();
+    onSearchFieldChange: function(searchField, query) {
+        this.setQueryFilter(query);
     },
 
     onSearchFieldSpecialKey: function(searchField, ev) {
@@ -158,42 +253,5 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
     onRowClick: function(view, competency) {
         this.getSelectionModel().deselectAll();
         this.fireEvent('competencyselect', this, competency);
-    },
-
-
-    // local methods
-    syncFilter: function() {
-        var me = this,
-            store = me.getStore(),
-            groupingFeature = me.getView().getFeature('grouping'),
-            query = Ext.String.trim(me.getSearchField().getValue()),
-            regex = query && Ext.String.createRegex(query, false, false);
-
-
-        Ext.suspendLayouts();
-
-
-        store.clearFilter(false);
-        if (query) {
-            store.filterBy(function(competency) {
-                return (
-                    // isCompetencyAvailable(competency) && (
-                        regex.test(competency.get('Code')) ||
-                        regex.test(competency.get('Descriptor'))
-                    // )
-                );
-            });
-
-            if (store.getCount()) {
-                groupingFeature.expandAll();
-                me.getSelectionModel().select(store.getAt(0), false, true);
-            }
-        } else {
-            // store.filterBy(isCompetencyAvailable);
-            groupingFeature.collapseAll();
-        }
-
-
-        Ext.resumeLayouts(true);
     }
 });
