@@ -161,10 +161,11 @@ Ext.define('Slate.cbl.field.Ratings', {
                 isCompetencyRatings: true,
                 title: competency.get('Code'),
                 data: competency.getData()
-            };
+            },
+            cardIndex = tabPanel.items.findInsertionIndex(cardConfig);
 
-        // TODO: get insert index
-        tabPanel.insert(tabPanel.items.findInsertionIndex(cardConfig), cardConfig);
+        tabPanel.insert(cardIndex, cardConfig);
+        tabPanel.setActiveItem(cardIndex);
         // me.setLoading('Loading skills&hellip;');
         // me.addCompetency(selectionModel.getLastSelected(), function() {
         //     me.setLoading(false);
