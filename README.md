@@ -130,6 +130,7 @@ parameter `apiHost` when loading the page.
 - [ ] Reorganize slate-cbl package
   - [ ] Merge things to slate-core-data and slate-ui-classic
   - [ ] Move widget.* fields to field.*
+- [ ] Ryon: Stop components like SkillsList from picking up cbl coloring classes from the unscoped styles of unrelated components like ProgressGrid
 - [ ] Merge slate-cbl-admin and repair
 - [ ] Restore google drive integration
 - [ ] Refactor TargetLevel -> Level and DemonstratedLevel -> Rating

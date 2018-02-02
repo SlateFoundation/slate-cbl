@@ -1,13 +1,11 @@
-@for $n from 9 through 12 {
-    $n-offset: 8;
-
+@for $n from 1 through length($level-colors) {
     .slate-progress-color-#{$n} {
         &.slate-progress-meter {
-            background-color: nth($level-colors-light, ($n - $n-offset));
+            background-color: nth($level-colors-light, $n);
         }
 
         .slate-progress-bar {
-            background-color: nth($level-colors-dark, ($n - $n-offset));
+            background-color: nth($level-colors-dark, $n);
         }
     }
 }

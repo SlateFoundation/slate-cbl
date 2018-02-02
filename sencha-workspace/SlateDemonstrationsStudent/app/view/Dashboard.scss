@@ -8,12 +8,12 @@ $cbl-progress-missed-color: dynamic(red);
     text-shadow: 0 1px 1px rgba(black, .8);
 }
 
-@for $n from 9 through 12 {
+@for $n from 1 through length($level-colors) {
     .cbl-level-#{$n} {
-        $level-color:        nth($level-colors,        ($n - 8));
-        $level-color-light:  nth($level-colors-light,  ($n - 8));
-        $level-color-medium: nth($level-colors-medium, ($n - 8));
-        $level-color-dark:   nth($level-colors-dark,   ($n - 8));
+        $level-color:        nth($level-colors,        $n);
+        $level-color-light:  nth($level-colors-light,  $n);
+        $level-color-medium: nth($level-colors-medium, $n);
+        $level-color-dark:   nth($level-colors-dark,   $n);
 
         &.level-color {
             @extend .cbl-level-colored;

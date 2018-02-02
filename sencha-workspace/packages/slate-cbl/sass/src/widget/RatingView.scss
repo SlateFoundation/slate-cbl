@@ -100,10 +100,10 @@
     flex: 1;
 }
 
-@include slate-ratingview-skill-level(9, $level-9-color);
-@include slate-ratingview-skill-level(10, $level-10-color);
-@include slate-ratingview-skill-level(11, $level-11-color);
-@include slate-ratingview-skill-level(12, $level-12-color);
+@include slate-ratingview-skill-level( 9, nth($level-colors,  9));
+@include slate-ratingview-skill-level(10, nth($level-colors, 10));
+@include slate-ratingview-skill-level(11, nth($level-colors, 11));
+@include slate-ratingview-skill-level(12, nth($level-colors, 12));
 
 .slate-ratingview-rating-bubble {
     align-items: center;
