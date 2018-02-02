@@ -79,8 +79,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             inputType: 'url'
         },
         {
-            height: 300,
-
             xtype: 'slate-cbl-ratingsfield',
             fieldLabel: 'Demonstrated Skills',
             labelAlign: 'top'

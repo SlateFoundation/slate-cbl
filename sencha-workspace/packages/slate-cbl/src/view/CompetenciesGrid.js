@@ -27,6 +27,7 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
 
 
     componentCls: 'slate-cbl-ratingsfield-competenciesgrid',
+    height: 300,
     hideHeaders: true,
     viewConfig: {
         emptyText: 'No competencies match your search.',
