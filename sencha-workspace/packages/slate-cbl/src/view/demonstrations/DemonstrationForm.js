@@ -85,6 +85,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         },
         {
             flex: 1,
+
             xtype: 'textarea',
             name: 'Comments',
             fieldLabel: 'Comments',

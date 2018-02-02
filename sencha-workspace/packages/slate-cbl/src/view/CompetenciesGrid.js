@@ -155,7 +155,7 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
         }
     },
 
-    applyExcludeFilter: function(filter, oldFilter) {
+    applyExcludeFilter: function(filter) {
         if (!filter) {
             return null;
         }
