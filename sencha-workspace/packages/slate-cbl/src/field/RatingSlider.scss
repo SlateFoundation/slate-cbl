@@ -1,4 +1,9 @@
-.cbl-level-slider-field {
+.slate-cbl-ratingslider {
+    .x-slider-inner {
+        height: 10px;
+        margin: 10px 0;
+    }
+
     .x-slider-ct-horz {
         background: none;
         cursor: pointer;
@@ -25,28 +30,15 @@
     }
 
     .x-slider-horz,
-    .x-slider-horz .x-slider-end {
-        @include background(linear-gradient(left, transparent 50%, $cbl-level-13-color 50% ));
+    .x-slider-horz .x-slider-end,
+    .x-slider-horz .x-slider-inner {
+        background-image: none;
     }
 
-    .x-slider-inner {
-        @include background-image(linear-gradient(left,
-                    transparent percentage(1/12),
-             $cbl-level-8-color percentage(1/12),
-             $cbl-level-8-color percentage(3/12),
-             $cbl-level-9-color percentage(3/12),
-             $cbl-level-9-color percentage(5/12),
-            $cbl-level-10-color percentage(5/12),
-            $cbl-level-10-color percentage(7/12),
-            $cbl-level-11-color percentage(7/12),
-            $cbl-level-11-color percentage(9/12),
-            $cbl-level-12-color percentage(9/12),
-            $cbl-level-12-color percentage(11/12),
-            $cbl-level-13-color percentage(11/12)
-        ));
-
-        height: 10px;
-        margin: 10px 0;
+    @for $level from 1 through length($level-colors) {
+        &.cbl-level-#{$level} .x-slider-inner {
+            background-color: nth($level-colors, $level);
+        }
     }
 
     .x-slider-thumb {
@@ -61,17 +53,8 @@
         margin-left: -16px;
         margin-top: -9px;
         width: 28px;
-    }
 
-    .thumb-parked:hover {
-        border: 1px dashed #666;
-        cursor: pointer;
-        cursor: context-menu;
-    }
-
-    .value {
         color: $color;
-        display: block;
         font-weight: bold;
         line-height: 25px;
         text-align: center;
@@ -81,8 +64,19 @@
             letter-spacing: .5px;
             vertical-align: 1px;
         }
+
+        &.x-item-disabled {
+            opacity: 0.5;
+        }
+    }
+
+    .thumb-parked:hover {
+        border: 1px dashed #666;
+        cursor: pointer;
+        cursor: context-menu;
     }
 }
+
 
 .special-grade-tip {
     padding: 0;

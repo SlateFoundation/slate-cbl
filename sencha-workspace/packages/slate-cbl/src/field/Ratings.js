@@ -2,6 +2,9 @@
  * Implements a custom field for looking up skills and inputting ratings
  *
  * Modeled after a combination of FieldContainer and field.Base
+ *
+ * TODO:
+ * - [ ] Update exclude filter on competency tab close
  */
 Ext.define('Slate.cbl.field.Ratings', {
     extend: 'Slate.ui.form.ContainerField',

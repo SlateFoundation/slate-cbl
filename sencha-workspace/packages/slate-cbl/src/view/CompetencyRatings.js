@@ -3,7 +3,8 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
     xtype: 'slate-cbl-competencyratings',
     requires: [
         /* global Slate */
-        'Slate.cbl.model.Competency'
+        'Slate.cbl.model.Competency',
+        'Slate.cbl.field.RatingSlider'
     ],
 
 
@@ -18,6 +19,11 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
 
     // container configuration
+    defaultType: 'slate-cbl-ratingslider',
+    layout: 'anchor',
+    defaults: {
+        anchor: '100%'
+    },
     dockedItems: [
         {
             dock: 'top',
@@ -50,6 +56,15 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
             skills = competency.get('Skills') || [];
 
             me.removeAll();
+            me.add(Ext.Array.map(skills, function(skill) {
+                return {
+                    skill: skill,
+
+                    // TODO: provide real values
+                    level: 9,
+                    value: 11
+                };
+            }));
         }
     },
 
