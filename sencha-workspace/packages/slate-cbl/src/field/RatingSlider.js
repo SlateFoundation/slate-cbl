@@ -44,11 +44,22 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
     // slider lifecycle
     getNearest: function() {
-        return this.thumbs[0];
+        return this.primaryThumb;
     },
 
     calculateThumbPosition: function(value) {
         return this.callParent([Math.max(value, this.minValue)]);
+    },
+
+    onClickChange: function(trackPoint) {
+        var me = this,
+            value = me.reversePixelValue(trackPoint);
+
+        if (Math.round(value) == me.minValue) {
+            value = null;
+        }
+
+        me.setValue(0, value, true, true);
     },
 
 
@@ -58,28 +69,37 @@ Ext.define('Slate.cbl.field.RatingSlider', {
             thumbs = me.thumbs,
             minValue = me.minValue,
             maxValue = me.maxValue,
-            i = minValue,
-            value = me.value || i || null;
+            i = minValue + 1,
+            value = me.value || null;
 
         me.originalValue = value;
 
         // add primary thumb for current value
-        thumbs.push(new Slate.cbl.field.RatingThumb({
+        thumbs.push(me.primaryThumb = new Slate.cbl.field.RatingThumb({
+            index: thumbs.length,
             ownerCt: me,
             slider: me,
             value: value,
-            index: thumbs.length,
             constrain: false
+        }));
+
+        // add misc thumb for menu values
+        thumbs.push(me.miscThumb = new Slate.cbl.field.RatingThumb({
+            index: thumbs.length,
+            ownerCt: me,
+            slider: me,
+            value: null,
+            disabled: true
         }));
 
         // add disabled thumbs for each available value
         for (; i <= maxValue; i++) {
             thumbs.push(new Slate.cbl.field.RatingThumb({
+                index: thumbs.length,
                 ownerCt: me,
                 slider: me,
-                value: i == minValue ? null : i,
-                index: thumbs.length,
-                disabled: true,
+                value: i,
+                disabled: true
             }));
         }
     },
@@ -90,14 +110,14 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
     setValue: function() {
         var me = this,
+            primaryThumb = me.primaryThumb,
             oldValue = me.value,
             args = arguments,
             argsLength = args.length,
             thumbIndex = 0,
             value = null,
             animate = true,
-            changeComplete = false,
-            thumb;
+            changeComplete = false;
 
         // support various argument formats of sliders and fields
         if (argsLength == 1) {
@@ -127,21 +147,20 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
 
         // apply value
-        thumb = me.thumbs[thumbIndex];
         value = me.normalizeValue(value);
 
-        if (value !== oldValue && me.fireEvent('beforechange', me, value, oldValue, thumb) !== false) {
+        if (value !== oldValue && me.fireEvent('beforechange', me, value, oldValue, primaryThumb) !== false) {
             me.value = value;
-            thumb.setValue(value);
+            primaryThumb.setValue(value);
 
             if (me.rendered) {
-                thumb.move(me.calculateThumbPosition(value), animate);
+                primaryThumb.move(me.calculateThumbPosition(value), animate);
 
-                me.fireEvent('change', me, value, thumb);
+                me.fireEvent('change', me, value, primaryThumb);
                 me.checkDirty();
 
                 if (changeComplete) {
-                    me.fireEvent('changecomplete', me, value, thumb);
+                    me.fireEvent('changecomplete', me, value, primaryThumb);
                 }
             }
         }
@@ -161,9 +180,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
         if (value >= maxValue) {
             value = maxValue;
-        } else if (value >= me.minValue) {
-            value = value;
-        } else if (me.getMenuRatings().indexOf(value) == -1) {
+        } else if (value < me.minValue && me.getMenuRatings().indexOf(value) == -1) {
             value = null;
         }
 
@@ -174,13 +191,13 @@ Ext.define('Slate.cbl.field.RatingSlider', {
     // component lifecycle
     onRender: function() {
         var me = this,
-            primaryThumb = me.thumbs[0];
+            primaryThumb = me.primaryThumb;
 
         me.callParent(arguments);
 
         me.promoteThumb(primaryThumb);
 
-        primaryThumb.el.on('click', 'onThumbClick', me);
+        me.primaryThumb.el.on('click', 'onPrimaryThumbClick', me);
     },
 
 
@@ -239,15 +256,14 @@ Ext.define('Slate.cbl.field.RatingSlider', {
         }
     },
 
-    onThumbClick: function() {
-        var me = this,
-            specialGradeTip, thumbEl, menuItems;
+    onPrimaryThumbClick: function() {
+        // specialGradeTip, thumbEl, menuItems;
 
-        if (me.getValue() != me.minValue) {
+        if (this.getValue() > this.minValue) {
             return;
         }
 
-        console.info('onThumbClick', arguments);
+        console.info('showMiscMenu');
 
     //     thumbEl = me.thumbs[0].el;
 

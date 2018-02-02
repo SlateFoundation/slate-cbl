@@ -62,7 +62,7 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
                     // TODO: provide real values
                     level: 9,
-                    value: 11
+                    value: null
                 };
             }));
         }
