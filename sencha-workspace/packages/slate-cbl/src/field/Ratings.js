@@ -37,6 +37,15 @@ Ext.define('Slate.cbl.field.Ratings', {
     layout: 'fit',
 
 
+    constructor: function() {
+        var me = this;
+
+        me.syncCards = Ext.Function.createBuffered(me.syncCards, 100, me);
+
+        me.callParent(arguments);
+    },
+
+
     // config handlers
     updateSelectedStudent: function(selectedStudent) {
         var tabPanel = this.tabPanel,
@@ -77,9 +86,9 @@ Ext.define('Slate.cbl.field.Ratings', {
     updateTabPanel: function(tabPanel) {
         tabPanel.on({
             scope: this,
-            buffer: 100,
-            add: 'syncTabBar',
-            remove: 'syncTabBar'
+            add: 'syncCards',
+            beforeremove: 'onBeforeCardRemove',
+            remove: 'syncCards'
         });
     },
 
@@ -195,6 +204,32 @@ Ext.define('Slate.cbl.field.Ratings', {
         competenciesGrid.setQueryFilter(null);
     },
 
+    onBeforeCardRemove: function(tabPanel, card) {
+        var me = this,
+            value = me.value,
+            valueSkillsMap = me.valueSkillsMap,
+            fields = card.isCompetencyCard ? card.query('[isRatingField]') : [],
+            length = fields.length,
+            i = 0, skill, skillId, skillData;
+
+        for (; i < length; i++) {
+            skill = card.query('field')[i].getSkill();
+
+            if (!skill) {
+                continue;
+            }
+
+            skillId = skill.getId();
+            skillData = valueSkillsMap[skillId];
+
+            delete valueSkillsMap[skillId];
+
+            if (skillData) {
+                Ext.Array.remove(value, skillData);
+            }
+        }
+    },
+
     onRatingChange: function(competencyCard, rating, level, skill, ratingSlider) {
         var me = this,
             value = me.value,
@@ -223,7 +258,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // local methods
-    syncTabBar: function() {
+    syncCards: function() {
         var tabPanel = this.getTabPanel(),
             tabPanelItems = tabPanel.items;
 

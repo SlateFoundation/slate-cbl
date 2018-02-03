@@ -15,6 +15,9 @@ Ext.define('Slate.cbl.field.RatingSlider', {
     ],
 
 
+    isRatingField: true,
+
+
     config: {
         skill: null,
         level: null,
