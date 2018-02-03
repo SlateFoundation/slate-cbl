@@ -20,6 +20,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
     config: {
         studentSelector: true,
+        ratingsField: true,
+        commentsField: true,
 
         title: 'Log Demonstration'
     },
@@ -77,21 +79,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             regexText: 'Artifact must be a complete URL (starting with http:// or https://)',
             emptyText: 'http://…',
             inputType: 'url'
-        },
-        {
-            xtype: 'slate-cbl-ratingsfield',
-            fieldLabel: 'Demonstrated Skills',
-            labelAlign: 'top'
-        },
-        {
-            flex: 1,
-
-            xtype: 'textarea',
-            name: 'Comments',
-            fieldLabel: 'Comments',
-
-            allowBlank: true,
-            selectOnFocus: false
         }
     ],
 
@@ -136,6 +123,44 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         return Ext.factory(studentSelector, 'Slate.cbl.widget.StudentSelector', oldStudentSelector);
     },
 
+    applyRatingsField: function(ratingsField, oldRatingsField) {
+        if (typeof ratingsField === 'boolean') {
+            ratingsField = {
+                hidden: !ratingsField
+            };
+        }
+
+        if (typeof ratingsField == 'object' && !ratingsField.isComponent) {
+            ratingsField = Ext.apply({
+                fieldLabel: 'Demonstrated Skills',
+                labelAlign: 'top'
+            }, ratingsField);
+        }
+
+        return Ext.factory(ratingsField, 'Slate.cbl.field.Ratings', oldRatingsField);
+    },
+
+    applyCommentsField: function(commentsField, oldCommentsField) {
+        if (typeof commentsField === 'boolean') {
+            commentsField = {
+                hidden: !commentsField
+            };
+        }
+
+        if (typeof commentsField == 'object' && !commentsField.isComponent) {
+            commentsField = Ext.apply({
+                flex: 1,
+
+                name: 'Comments',
+                fieldLabel: 'Comments',
+                allowBlank: true,
+                selectOnFocus: false
+            }, commentsField);
+        }
+
+        return Ext.factory(commentsField, 'Ext.form.field.TextArea', oldCommentsField);
+    },
+
 
     // component lifecycle
     initItems: function() {
@@ -145,6 +170,11 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
         me.insert(0, [
             me.getStudentSelector()
+        ]);
+
+        me.add([
+            me.getRatingsField(),
+            me.getCommentsField()
         ]);
     }
 });
