@@ -7,6 +7,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
     requires: [
         'Ext.tip.ToolTip',
         'Ext.menu.Menu',
+        'Ext.menu.CheckItem',
 
         /* global Slate */
         'Slate.cbl.field.RatingThumb',
@@ -113,6 +114,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
     setValue: function() {
         var me = this,
             primaryThumb = me.primaryThumb,
+            miscRatingsTip = me.miscRatingsTip,
             oldValue = me.value,
             args = arguments,
             argsLength = args.length,
@@ -158,6 +160,10 @@ Ext.define('Slate.cbl.field.RatingSlider', {
             if (me.rendered) {
                 primaryThumb.move(me.calculateThumbPosition(value), animate);
                 primaryThumb.el.toggleCls('slate-cbl-ratingthumb-parked', value <= me.minValue);
+
+                if (miscRatingsTip && miscRatingsTip.isVisible()) {
+                    miscRatingsTip.setValue(value);
+                }
 
                 me.fireEvent('change', me, value, primaryThumb);
                 me.checkDirty();
@@ -259,41 +265,45 @@ Ext.define('Slate.cbl.field.RatingSlider', {
         }
     },
 
-    updateMenuRatings: function(menuRatings) {
-        var miscRatingsTip = this.miscRatingsTip;
+    updateMenuRatings: function() {
+        var me = this,
+            miscRatingsTip = me.miscRatingsTip;
 
         if (!miscRatingsTip) {
             return;
         }
 
-        debugger;
+        Ext.suspendLayouts();
+        miscRatingsTip.menu.removeAll();
+        miscRatingsTip.menu.add(me.buildMiscRatingsMenuItems());
+
+        // re-apply value in case current value was removed from list
+        me.setValue(me.getValue());
+
+        Ext.resumeLayouts(true);
     },
 
 
     // event handlers
     onPrimaryThumbClick: function() {
         var me = this,
+            value = me.getValue(),
             miscRatingsTip;
-        // specialGradeTip, thumbEl, menuItems;
 
-        if (me.getValue() > me.minValue) {
+        if (value > me.minValue) {
             return;
         }
 
         miscRatingsTip = me.buildMiscRatingsTip();
+
+        if (miscRatingsTip.isVisible()) {
+            miscRatingsTip.hide();
+            return;
+        }
+
         miscRatingsTip.setTarget(me.primaryThumb.el);
-        // TODO: set checked
+        miscRatingsTip.setValue(value);
         miscRatingsTip.show();
-
-    //     menuItems = specialGradeTip.down('menu').items;
-
-    //     (
-    //         menuItems.findBy(function(item) {
-    //             return item.value === me.getParkedValue();
-    //         }) ||
-    //         menuItems.last()
-    //     ).setChecked(true, true);
-
     },
 
 
@@ -305,15 +315,14 @@ Ext.define('Slate.cbl.field.RatingSlider', {
         if (!miscRatingsTip) {
             miscRatingsTip = Ext.create('Ext.tip.ToolTip', {
                 anchor: 'left',
-                // target: me.primaryThumb.el,
                 autoHide: false,
-                cls: 'special-grade-tip',
+                cls: 'slate-cbl-ratingslider-miscratingstip',
                 items: {
                     xtype: 'menu',
                     floating: false,
                     plain: true,
+                    defaultType: 'menucheckitem',
                     defaults: {
-                        checked: false,
                         group: 'level',
                         listeners: {
                             checkchange: function(menuItem, checked) {
@@ -322,52 +331,64 @@ Ext.define('Slate.cbl.field.RatingSlider', {
                                 }
 
                                 me.setValue(menuItem.value);
-
-                                Ext.defer(miscRatingsTip.hide, 100, miscRatingsTip);
+                                miscRatingsTip.hide();
                             }
                         }
                     },
-                    // TODO: initialize from menuRatings and update in updateMenuRatings
-                    items: [{
-                        text: '7',
-                        value: 7
-                    },{
-                        text: '6',
-                        value: 6
-                    },{
-                        text: '5',
-                        value: 5
-                    },{
-                        text: '4',
-                        value: 4
-                    },{
-                        text: '3',
-                        value: 3
-                    },{
-                        text: '2',
-                        value: 2
-                    },{
-                        text: '1',
-                        value: 1
-                    },{
-                        text: 'M',
-                        value: 0
-                    },{
-                        text: 'N/A',
-                        value: null
-                    }]
+                    items: me.buildMiscRatingsMenuItems()
                 },
-                listeners: {
-                    hide: function() {
-                        // remove target on hide so that it does not open again on mouse hover
-                        miscRatingsTip.setTarget(null);
+                setValue: function(value) {
+                    var menu = miscRatingsTip.menu,
+                        valueItem = menu.items.findBy(function(menuItem) {
+                            return menuItem.value === value;
+                        }),
+                        checkedItem;
+
+                    if (valueItem) {
+                        valueItem.setChecked(true, true);
+                    } else {
+                        checkedItem = menu.down('[checked]');
+
+                        if (checkedItem) {
+                            checkedItem.setChecked(false, true);
+                        }
                     }
                 }
+            });
+
+            miscRatingsTip.menu = miscRatingsTip.down('menu');
+
+            // remove target on hide so that it does not open again on mouse hover
+            miscRatingsTip.on('hide', function() {
+                miscRatingsTip.setTarget(null);
             });
 
             me.miscRatingsTip = miscRatingsTip;
         }
 
         return miscRatingsTip;
+    },
+
+    buildMiscRatingsMenuItems: function() {
+        var me = this,
+            primaryThumb = me.primaryThumb,
+            ratings = Ext.Array.clone(me.getMenuRatings() || []),
+            length = ratings.length,
+            i = 0, rating,
+            itemsCfg = [];
+
+        ratings.push(null);
+        length++;
+
+        for (; i < length; i++) {
+            rating = ratings[i];
+
+            itemsCfg.push({
+                value: rating,
+                text: primaryThumb.buildValueHtml(rating)
+            });
+        }
+
+        return itemsCfg;
     }
 });

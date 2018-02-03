@@ -20,7 +20,7 @@ Ext.define('Slate.cbl.field.RatingThumb', {
             thumbCls = me.thumbCls,
             config = me.callParent();
 
-        config.html = me.buildContentHtml();
+        config.html = me.buildValueHtml(me.value);
 
         if (thumbCls) {
             config.cls += ' ' + thumbCls;
@@ -29,14 +29,8 @@ Ext.define('Slate.cbl.field.RatingThumb', {
         return config;
     },
 
-    buildContentTplData: function() {
-        return {
-            value: this.value
-        };
-    },
-
-    buildContentHtml: function() {
-        return Ext.XTemplate.getTpl(this, 'contentTpl').apply(this.buildContentTplData());
+    buildValueHtml: function(value) {
+        return Ext.XTemplate.getTpl(this, 'contentTpl').apply({ value: value });
     },
 
     setValue: function(value) {
@@ -46,7 +40,7 @@ Ext.define('Slate.cbl.field.RatingThumb', {
         me.value = value;
 
         if (el) {
-            el.setHtml(me.buildContentHtml());
+            el.setHtml(me.buildValueHtml(value));
         }
     }
 });
