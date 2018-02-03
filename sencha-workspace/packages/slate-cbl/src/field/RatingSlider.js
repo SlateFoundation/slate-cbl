@@ -38,7 +38,6 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
     listeners: {
         change: function(me, value, thumb) {
-            console.info('change', me.id, value, thumb.el.dom);
             thumb.setValue(value);
         }
     },

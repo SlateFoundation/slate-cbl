@@ -2,9 +2,6 @@
  * Implements a custom field for looking up skills and inputting ratings
  *
  * Modeled after a combination of FieldContainer and field.Base
- *
- * TODO:
- * - [ ] Update exclude filter on competency tab close
  */
 Ext.define('Slate.cbl.field.Ratings', {
     extend: 'Slate.ui.form.ContainerField',
@@ -52,9 +49,6 @@ Ext.define('Slate.cbl.field.Ratings', {
                 tabBar: {
                     hidden: true
                 },
-                // margin: '10 -16',
-                // bodyPadding: '16 75',
-                // title: 'Competencies',
                 defaultType: 'slate-cbl-competencyratings',
                 defaults: {
                     closable: true
@@ -174,14 +168,15 @@ Ext.define('Slate.cbl.field.Ratings', {
         tabPanel.insert(cardIndex, cardConfig);
         tabPanel.setActiveItem(cardIndex);
         competenciesGrid.setQueryFilter(null);
-        competenciesGrid.setExcludeFilter(tabPanel.items.collect('selectedCompetency'));
     },
 
 
     // local methods
     syncTabBar: function() {
-        var tabPanel = this.getTabPanel();
+        var tabPanel = this.getTabPanel(),
+            tabPanelItems = tabPanel.items;
 
-        tabPanel.getTabBar().setHidden(tabPanel.items.getCount() <= 1);
+        tabPanel.getTabBar().setHidden(tabPanelItems.getCount() <= 1);
+        this.getCompetenciesGrid().setExcludeFilter(tabPanelItems.collect('selectedCompetency'));
     }
 });
