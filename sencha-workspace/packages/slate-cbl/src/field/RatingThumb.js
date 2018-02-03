@@ -16,9 +16,15 @@ Ext.define('Slate.cbl.field.RatingThumb', {
     ],
 
     getElConfig: function() {
-        var config = this.callParent();
+        var me = this,
+            thumbCls = me.thumbCls,
+            config = me.callParent();
 
-        config.html = this.buildContentHtml();
+        config.html = me.buildContentHtml();
+
+        if (thumbCls) {
+            config.cls += ' ' + thumbCls;
+        }
 
         return config;
     },
