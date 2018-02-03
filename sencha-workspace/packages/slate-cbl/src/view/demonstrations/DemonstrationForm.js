@@ -123,6 +123,10 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         return Ext.factory(studentSelector, 'Slate.cbl.widget.StudentSelector', oldStudentSelector);
     },
 
+    updateStudentSelector: function(studentSelector) {
+        studentSelector.on('change', 'onStudentChange', this);
+    },
+
     applyRatingsField: function(ratingsField, oldRatingsField) {
         if (typeof ratingsField === 'boolean') {
             ratingsField = {
@@ -176,5 +180,14 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             me.getRatingsField(),
             me.getCommentsField()
         ]);
+    },
+
+
+    // event handlers
+    onStudentChange: function(studentSelector) {
+        var student = studentSelector.getSelectedRecord();
+
+        this.getRatingsField().setSelectedStudent(student ? student.get('Username') : null);
+
     }
 });

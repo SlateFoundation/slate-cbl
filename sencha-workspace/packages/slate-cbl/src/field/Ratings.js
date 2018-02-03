@@ -18,6 +18,8 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     config: {
+        selectedStudent: null,
+
         skillStore: null,
         competenciesStore: null,
 
@@ -36,6 +38,19 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // config handlers
+    updateSelectedStudent: function(selectedStudent) {
+        var tabPanel = this.tabPanel,
+            items = tabPanel ? tabPanel.query('[setSelectedStudent]') : [],
+            itemsLength = items.length,
+            i = 0;
+
+        for (; i < itemsLength; i++) {
+            items[i].setSelectedStudent(selectedStudent);
+        }
+
+        this.setValue(null);
+    },
+
     applyTabPanel: function(tabPanel, oldTabPanel) {
         if (!tabPanel || typeof tabPanel == 'boolean') {
             tabPanel = {
@@ -143,6 +158,10 @@ Ext.define('Slate.cbl.field.Ratings', {
         return this.callParent([value || []]);
     },
 
+    isEqual: function(value1, value2) {
+        return value1 === value2;
+    },
+
     onChange: function(value) {
         var length = value ? value.length : 0,
             i = 0, skillData,
@@ -158,12 +177,14 @@ Ext.define('Slate.cbl.field.Ratings', {
 
     // event handlers
     onCompetencySelect: function(competenciesGrid, competency) {
-        var tabPanel = this.getTabPanel(),
+        var me = this,
+            tabPanel = me.getTabPanel(),
             cardConfig = {
                 isCompetencyCard: true,
+                selectedStudent: me.getSelectedStudent(),
                 selectedCompetency: competency.get('Code'),
                 listeners: {
-                    scope: this,
+                    scope: me,
                     ratingchange: 'onRatingChange'
                 }
             },
