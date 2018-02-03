@@ -128,7 +128,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             studentSelector = Ext.apply({
                 name: 'StudentID',
                 valueField: 'ID',
-                autoSelect: true
+                autoSelect: true,
+                matchFieldWidth: true
             }, studentSelector);
         }
 

@@ -101,8 +101,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                     xtype: 'slate-cbl-demonstrations-demonstrationform',
                     studentSelector: {
                         store: me.getStudentsStore(),
-                        queryMode: 'local',
-                        matchFieldWidth: true
+                        queryMode: 'local'
                     }
                     // selectedStudent: context.student,
                     // selectedSkill: context.skill,
