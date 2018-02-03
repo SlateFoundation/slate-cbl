@@ -70,6 +70,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
     applyCompetenciesGrid: function(competenciesGrid, oldCompetenciesGrid) {
         if (!competenciesGrid || typeof competenciesGrid == 'boolean') {
+            // TODO: remove from tabpanel when hidden so ratings field can be shown with single sheets
             competenciesGrid = {
                 hidden: !competenciesGrid
             };
