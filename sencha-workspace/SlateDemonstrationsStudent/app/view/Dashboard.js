@@ -117,7 +117,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
                 }
             ]
         },
-        placeholder: 'Select a content area to load demonstrations dashboard',
+        placeholderItem: 'Select a content area to load demonstrations dashboard',
     },
 
 
@@ -131,7 +131,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
             contentAreaSet = Boolean(contentArea);
 
         Ext.suspendLayouts();
-        me.setPlaceholder(!contentAreaSet);
+        me.setPlaceholderItem(!contentAreaSet);
         me.setCompetenciesSummary(contentAreaSet);
         me.setRecentProgress(contentAreaSet);
         me.setCardsCt(contentAreaSet);

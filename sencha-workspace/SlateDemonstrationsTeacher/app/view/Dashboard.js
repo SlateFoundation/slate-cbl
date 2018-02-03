@@ -115,7 +115,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
                 }
             ]
         },
-        placeholder: 'Select a list of students and a content area to load progress dashboard'
+        placeholderItem: 'Select a list of students and a content area to load progress dashboard'
     },
 
 
@@ -164,7 +164,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
 
         Ext.suspendLayouts();
 
-        me.setPlaceholder(!progressGrid);
+        me.setPlaceholderItem(!progressGrid);
 
         if (oldProgressGrid) {
             me.remove(oldProgressGrid, true);

@@ -126,7 +126,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
                 }
             ]
         },
-        placeholder: 'Select a section to load tasks dashboard'
+        placeholderItem: 'Select a section to load tasks dashboard'
     },
 
 
@@ -136,7 +136,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
             sectionSet = Boolean(section);
 
         Ext.suspendLayouts();
-        me.setPlaceholder(!sectionSet);
+        me.setPlaceholderItem(!sectionSet);
         me.setStudentsGrid(sectionSet);
         me.setGridLegend(sectionSet);
         Ext.resumeLayouts(true);
