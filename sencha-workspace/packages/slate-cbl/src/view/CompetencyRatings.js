@@ -22,7 +22,8 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
     defaultType: 'slate-cbl-ratingslider',
     layout: 'anchor',
     defaults: {
-        anchor: '100%'
+        anchor: '100%',
+        excludeForm: true // exclude from any parent forms
     },
     dockedItems: [
         {
@@ -62,7 +63,12 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
                     // TODO: provide real values
                     level: 9,
-                    value: null
+                    value: null,
+
+                    listeners: {
+                        scope: me,
+                        changecomplete: 'onRatingChange'
+                    }
                 };
             }));
         }
@@ -73,6 +79,12 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
     afterRender: function() {
         this.callParent(arguments);
         this.loadIfNeeded();
+    },
+
+
+    // event handlers
+    onRatingChange: function(ratingSlider, value) {
+        this.fireEvent('ratingchange', this, value, ratingSlider.getLevel(), ratingSlider.getSkill(), ratingSlider);
     },
 
 

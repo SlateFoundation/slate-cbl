@@ -21,7 +21,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
         minRating: 8,
         maxRating: 13,
-        menuRatings: [6, 5, 4, 3, 2, 1, 0]
+        menuRatings: [7, 6, 5, 4, 3, 2, 1, 0]
     },
 
 
@@ -329,7 +329,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
                                     return; // ignore uncheck events
                                 }
 
-                                me.setValue(menuItem.value);
+                                me.setValue(0, menuItem.value, true, true);
                                 miscRatingsTip.hide();
                             }
                         }

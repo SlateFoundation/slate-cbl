@@ -137,23 +137,22 @@ Ext.define('Slate.cbl.field.Ratings', {
     //     this.callParent();
     //     // TODO: clear selected competencies
     // }
-    // getValue: function() {
-    //     return [
-    //         {
-    //             SkillID: 9,
-    //             DemonstratedLevel: 10
-    //         },
-    //         {
-    //             SkillID: 10,
-    //             DemonstratedLevel: 10
-    //         }
-    //     ];
-    // },
 
-    // setValue: function(value) {
-    //     debugger;
-    //     return this.callParent(arguments);
-    // }
+    setValue: function(value) {
+        return this.callParent([value || []]);
+    },
+
+    onChange: function(value) {
+        var length = value ? value.length : 0,
+            i = 0, skillData,
+            valueSkillsMap = this.valueSkillsMap = {};
+
+        for (; i < length; i++) {
+            skillData = value[i];
+            valueSkillsMap[skillData.SkillID] = skillData;
+            // TODO: load
+        }
+    },
 
 
     // event handlers
@@ -161,13 +160,43 @@ Ext.define('Slate.cbl.field.Ratings', {
         var tabPanel = this.getTabPanel(),
             cardConfig = {
                 isCompetencyCard: true,
-                selectedCompetency: competency.get('Code')
+                selectedCompetency: competency.get('Code'),
+                listeners: {
+                    scope: this,
+                    ratingchange: 'onRatingChange'
+                }
             },
             cardIndex = tabPanel.items.findInsertionIndex(cardConfig);
 
         tabPanel.insert(cardIndex, cardConfig);
         tabPanel.setActiveItem(cardIndex);
         competenciesGrid.setQueryFilter(null);
+    },
+
+    onRatingChange: function(competencyCard, rating, level, skill, ratingSlider) {
+        var me = this,
+            value = me.value,
+            valueSkillsMap = me.valueSkillsMap,
+            skillId = skill.getId(),
+            skillData = valueSkillsMap[skillId];
+
+        if (rating === null) {
+            delete valueSkillsMap[skillId];
+
+            if (skillData) {
+                Ext.Array.remove(value, skillData);
+            }
+        } else {
+            if (!skillData) {
+                skillData = valueSkillsMap[skillId] = { SkillID: skillId };
+                value.push(skillData);
+            }
+
+            skillData.TargetLevel = level;
+            skillData.DemonstratedLevel = rating;
+        }
+
+        me.fireEvent('ratingchange', me, rating, level, skill, ratingSlider, competencyCard);
     },
 
 
