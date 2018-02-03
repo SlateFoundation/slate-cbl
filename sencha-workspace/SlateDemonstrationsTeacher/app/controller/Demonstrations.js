@@ -26,7 +26,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
             xtype: 'slate-window',
             closeAction: 'hide',
-            defaultType: 'slate-cbl-demonstrations-demonstrationform',
             modal: true,
             layout: 'fit',
             minWidth: 300,
@@ -99,6 +98,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 animateTarget: createBtn,
 
                 mainView: {
+                    xtype: 'slate-cbl-demonstrations-demonstrationform',
                     studentSelector: {
                         store: me.getStudentsStore(),
                         queryMode: 'local',

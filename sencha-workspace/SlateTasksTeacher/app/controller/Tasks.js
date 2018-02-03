@@ -40,7 +40,6 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             forceCreate: true,
 
             xtype: 'slate-window',
-            defaultType: 'slate-cbl-tasks-taskform',
             modal: true,
             layout: 'fit',
             minWidth: 300,
@@ -217,6 +216,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 animateTarget: createBtn,
 
                 mainView: {
+                    xtype: 'slate-cbl-tasks-taskform',
                     // studentSelector: {
                     //     store: me.getStudentsStore(),
                     //     queryMode: 'local',
