@@ -88,6 +88,16 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             items: [
                 {
                     xtype: 'button',
+                    text: 'Reset',
+                    scale: 'large',
+                    action: 'reset',
+                    margin: '0 16 0 155',
+                    handler: function() {
+                        this.up('window').down('form').reset();
+                    }
+                },
+                {
+                    xtype: 'button',
                     text: 'Submit',
                     scale: 'large',
                     action: 'submit',

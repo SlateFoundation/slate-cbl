@@ -37,6 +37,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         // studentsGrid: 'slate-studentsgrid',
 
         taskWindow: {
+            // TODO: use autoCreate+closeAction+reset like demo form
             forceCreate: true,
 
             xtype: 'slate-window',

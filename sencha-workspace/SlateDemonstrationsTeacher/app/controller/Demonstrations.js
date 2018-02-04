@@ -122,5 +122,27 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         formPanel.updateRecord(demonstration);
 
         console.table([formPanel.getValues(), demonstration.getData()]);
+        console.table(demonstration.get('Skills'));
+
+        if (!demonstration.dirty) {
+            return;
+        }
+
+        formPanel.setLoading('Saving demonstration&hellip;');
+
+        demonstration.save({
+            success: function() {
+                debugger;
+                // TODO: load into grid
+                // TODO: show toast
+                // TODO: ensure sent target level is used
+                formPanel.setLoading(false);
+            },
+            failure: function() {
+                debugger;
+                // TODO: show errors
+                formPanel.setLoading(false);
+            }
+        });
     }
 });
