@@ -74,7 +74,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         store: {
             '#StudentCompetencies': {
                 beforeload: 'onStudentCompetenciesStoreBeforeLoad',
-                load: 'onStudentCompetenciesStoreLoad'
+                load: 'onStudentCompetenciesStoreLoad',
+                // update: 'onStudentCompetenciesStoreUpdate'
             }
         }
         // api: {
@@ -243,6 +244,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
         });
         dashboardCt.setLoading(false);
     },
+
+    // onStudentCompetenciesStoreUpdate: function(store, studentyCompetency, operation, modifiedFieldNames) {
+    //     debugger;
+    //     if (operation == 'edit') {
+    //         debugger;
+    //     }
+    // },
 
     onContentAreaChange: function(dashboardCt, contentAreaCode) {
         var me = this,

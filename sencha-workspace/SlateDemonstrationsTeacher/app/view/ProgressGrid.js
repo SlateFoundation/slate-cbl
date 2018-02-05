@@ -331,7 +331,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     onStudentCompetencyUpdate: function(studentCompetenciesStore, studentCompetency, operation, modifiedFieldNames) {
         console.log('studentCompetency->update', studentCompetency, operation, modifiedFieldNames);
 
-        this.loadStudentCompetencies(studentCompetency);
+        this.loadStudentCompetencies(studentCompetency, true);
     },
 
 
@@ -400,9 +400,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         demonstrationsRowEl.addCls(loadingCls);
 
         me.getSkillsStore().getAllByCompetency(competency, function(skillsCollection) {
-            var renderData = me.getData(),
-                skillsById = renderData.skillsById || (renderData.skillsById = {}),
-                competencySkills = competencyRenderData.skills = [],
+            var competencySkills = competencyRenderData.skills = [],
                 demonstrationsBodyEl = demonstrationsRowEl.down('tbody'),
 
                 studentsStore = me.getStudentsStore(),
@@ -424,17 +422,17 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 };
 
                 competencySkills.push(skillRenderData);
-                skillsById[skillId] = skillRenderData;
 
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     student = studentsStore.getAt(studentIndex);
                     node = competencyRenderData.studentsById[student.getId()];
                     studentCompetency = node.studentCompetencies[node.maxLevel];
-                    demonstrations = Ext.Array.clone(studentCompetency.get('effectiveDemonstrationsData')[skillId] || []);
+                    node.demonstrations = demonstrations = Ext.Array.clone(studentCompetency.get('effectiveDemonstrationsData')[skillId] || []);
 
                     // fill demonstrations array with undefined items
                     demonstrations.length = skill.getTotalDemonstrationsRequired(studentCompetency ? studentCompetency.get('Level') : null);
 
+                    // format render data for skills sub-table
                     studentRenderData = {
                         student: student.data,
                         studentCompetency: studentCompetency.getData(),
@@ -721,7 +719,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
      *
      * @param {Slate.cbl.model.StudentCompetency/Slate.cbl.model.StudentCompetency[]} studentCompetencies A new or updated student competency model or array of models
      */
-    loadStudentCompetencies: function(studentCompetencies) {
+    loadStudentCompetencies: function(studentCompetencies, forceDirty) {
         studentCompetencies = Ext.isArray(studentCompetencies) ? studentCompetencies : [studentCompetencies];
 
         // eslint-disable-next-line vars-on-top
@@ -764,7 +762,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
             node.studentCompetencies[level] = studentCompetency;
 
-            if (level > node.maxLevel) {
+            if (level > node.maxLevel || forceDirty) {
                 node.maxLevel = level;
                 node.dirty = true;
                 dirtyNodes.push(node);
@@ -842,6 +840,11 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 node.progressLevelEl.update('Y' + (level - 8));
 
                 node.renderedLevel = level;
+            }
+
+            // TODO: write demonstration blocks
+            if (node.skills) {
+                debugger;
             }
         }
     },

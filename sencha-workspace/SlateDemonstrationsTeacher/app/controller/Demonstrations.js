@@ -9,7 +9,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     ],
 
     stores: [
-        'Students'
+        'Students',
+        'StudentCompetencies',
     ],
 
     models: [
@@ -116,8 +117,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     },
 
     onSubmitDemonstrationClick: function(submitBtn) {
-        var formPanel = submitBtn.up('window').getMainView(),
-            demonstration = formPanel.getRecord();
+        var me = this,
+            formPanel = submitBtn.up('window').getMainView(),
+            demonstration = formPanel.getRecord(),
+            studentCompetenciesStore = me.getStudentCompetenciesStore(),
+            studentCompetenciesInclude = studentCompetenciesStore.getProxy().getInclude();
 
         formPanel.updateRecord(demonstration);
 
@@ -131,15 +135,22 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         formPanel.setLoading('Saving demonstration&hellip;');
 
         demonstration.save({
+            include: Ext.Array.map(studentCompetenciesInclude, function(include) {
+                return 'StudentCompetencies.'+include;
+            }),
             success: function() {
-                // debugger;
+                debugger;
+                studentCompetenciesStore.mergeData(demonstration.get('StudentCompetencies'));
+                // studentCompetenciesStore.mergeData(demonstration.get('StudentCompetencies').map(d => new Slate.cbl.model.StudentCompetency(d)));
                 // TODO: load into grid
                 // TODO: show toast
                 // TODO: ensure sent target level is used
+                // TODO: implement continue to next student
+                // TODO: update correctly after skills get deleted during edit
                 formPanel.setLoading(false);
             },
             failure: function() {
-                // debugger;
+                debugger;
                 // TODO: show errors
                 formPanel.setLoading(false);
             }

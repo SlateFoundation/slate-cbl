@@ -124,6 +124,7 @@ parameter `apiHost` when loading the page.
   - [X] add HTTP header support
   - [ ] write forum post documenting $profile option
   - [ ] Add `<debug> ... </debug>`-wrapped support to emergence-apikit to report on requests in console
+- Fix switching between cohorts leaving empty columns in SlateDemonstrationsTeacher
 
 ### Next release
 
@@ -140,6 +141,7 @@ parameter `apiHost` when loading the page.
 - [ ] Move common store constructor->dirty=true, loadIfDirty, unload methods to lazydata package, override loadIfDirty where needed
 - [ ] Move param configs from stores to proxies where both are in slate-cbl package already
 - [ ] Re-implement `slate-theme` extending `theme-triton` and strip images
+- [ ] Re-implement SlateDemonstrationsTeacher.view.ProgressGrid as an Aggregrid
 
 ## Best Practices
 
