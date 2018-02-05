@@ -132,14 +132,14 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
         demonstration.save({
             success: function() {
-                debugger;
+                // debugger;
                 // TODO: load into grid
                 // TODO: show toast
                 // TODO: ensure sent target level is used
                 formPanel.setLoading(false);
             },
             failure: function() {
-                debugger;
+                // debugger;
                 // TODO: show errors
                 formPanel.setLoading(false);
             }
