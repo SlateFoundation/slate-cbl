@@ -19,6 +19,10 @@ Ext.define('SlateDemonstrationsTeacher.Application', {
         'Dashboard',
         'Skills',
         'Demonstrations'
+
+        //<debug>
+        ,'Debug'
+        //</debug>
     ],
 
     launch: function() {
