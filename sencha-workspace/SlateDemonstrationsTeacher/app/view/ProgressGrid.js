@@ -933,7 +933,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 }, function(Class) {
     /* eslint-disable spaced-comment */
     //<debug>
-    var monitoredMethods = ['refresh', 'finishRefresh', 'syncRowHeights', 'buildRenderData'];
+    var monitoredMethods = ['refresh', 'finishRefresh', 'syncRowHeights', 'buildRenderData', 'loadStudentCompetencies'];
 
     Ext.Array.each(monitoredMethods, function(functionName) {
         var origFn = Class.prototype[functionName];
