@@ -402,9 +402,11 @@ $data-cell-padding: dynamic(.5em);
     }
 }
 
-@for $n from 2 through 10 {
-    .#{$g}-span-#{$n} {
-        @include box-flex($n);
+.cbl-grid-demo-override {
+    @for $n from 2 through 10 {
+        &[data-span="#{$n}"] {
+            @include box-flex($n);
+        }
     }
 }
 

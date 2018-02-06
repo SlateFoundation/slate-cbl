@@ -142,6 +142,9 @@ parameter `apiHost` when loading the page.
 - [ ] Move param configs from stores to proxies where both are in slate-cbl package already
 - [ ] Re-implement `slate-theme` extending `theme-triton` and strip images
 - [ ] Re-implement SlateDemonstrationsTeacher.view.ProgressGrid as an Aggregrid
+- [ ] Create a central singleton in slate-cbl package for storing a ratingTpl template and getRatingCls function, use in all apps for student-skill-demo cells.
+  - [ ] Park other global rating configuration here.
+  - [ ] Create another such class for levels config.
 
 ## Best Practices
 
