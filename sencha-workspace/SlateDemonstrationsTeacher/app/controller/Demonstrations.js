@@ -149,10 +149,15 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 // TODO: update correctly after skills get deleted during edit
                 formPanel.setLoading(false);
             },
-            failure: function() {
-                debugger;
-                // TODO: show errors
+            failure: function(savedDemonstration, operation) {
                 formPanel.setLoading(false);
+
+                Ext.Msg.show({
+                    title: 'Failed to log demonstration',
+                    message: operation.getError(),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
             }
         });
     }
