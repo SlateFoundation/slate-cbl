@@ -71,7 +71,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             minWidth: 300,
             width: 600,
             minHeight: 600
-        }
+        },
+        continueField: 'slate-cbl-demonstrations-demonstrationform ^ window field#continueField'
     },
 
 
@@ -154,7 +155,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
     onSubmitDemonstrationClick: function(submitBtn) {
         var me = this,
-            formPanel = submitBtn.up('window').getMainView(),
+            formWindow = submitBtn.up('window'),
+            formPanel = formWindow.getMainView(),
             demonstration = formPanel.getRecord(),
             wasPhantom = demonstration.phantom,
             studentCompetenciesStore = me.getStudentCompetenciesStore(),
@@ -179,7 +181,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 })
             ),
             success: function(savedDemonstration) {
-                var student = me.getStudentsStore().getById(savedDemonstration.get('StudentID')),
+                var studentField = formPanel.getForm().findField('StudentID'),
+                    continueField = me.getContinueField(),
+                    studentsStore = me.getStudentsStore(),
+                    student = studentsStore.getById(savedDemonstration.get('StudentID')),
                     studentCompetencies = savedDemonstration.get('StudentCompetencies') || [],
                     studentCompetenciesLength = studentCompetencies.length,
                     studentCompetencyIndex = 0, nextStudentCompetency,
@@ -187,7 +192,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                         wasPhantom: wasPhantom,
                         student: student ? student.getData() : null,
                         skills: savedDemonstration.get('Skills')
-                    };
+                    },
+                    nextStudent;
 
 
                 // collapse any embedded "next" records into main array
@@ -210,9 +216,20 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                     Ext.XTemplate.getTpl(me, 'toastTitleTpl').apply(tplData)
                 );
 
-                // TODO: implement continue to next student
+
                 // TODO: update correctly after skills get deleted during edit
-                // TODO: return and transition to new enrollment when a log results in promotion
+
+
+                // select next student or close
+                if (continueField.getValue()) {
+                    nextStudent = studentsStore.getAt(studentsStore.indexOf(student) + 1);
+                    formPanel.loadRecord(me.getDemonstrationModel().create({
+                        Demonstrated: new Date(),
+                        StudentID: nextStudent ? nextStudent.getId() : null
+                    }));
+                } else {
+                    formWindow.hide();
+                }
 
                 formPanel.setLoading(false);
             },
