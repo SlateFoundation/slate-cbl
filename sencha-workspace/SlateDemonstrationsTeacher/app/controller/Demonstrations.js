@@ -143,9 +143,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                         store: me.getStudentsStore(),
                         queryMode: 'local'
                     }
-                    // selectedStudent: context.student,
-                    // selectedSkill: context.skill,
-                    // selectedDemonstration: context.demonstrationId
                 }
             }),
             formPanel = demonstrationWindow.getMainView();
@@ -165,9 +162,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
         formPanel.updateRecord(demonstration);
 
-        console.table([formPanel.getValues(), demonstration.getData()]);
-        console.table(demonstration.get('Skills'));
-
+        // ensure demonstration doesn't become dirty when no changes are made to the form
         if (!demonstration.dirty) {
             return;
         }
@@ -175,11 +170,19 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         formPanel.setLoading('Saving demonstration&hellip;');
 
         demonstration.save({
-            include: Ext.Array.map(studentCompetenciesInclude, function(include) {
-                return 'StudentCompetencies.'+include;
-            }),
+            include: Ext.Array.merge(
+                Ext.Array.map(studentCompetenciesInclude, function(include) {
+                    return 'StudentCompetencies.'+include;
+                }),
+                Ext.Array.map(studentCompetenciesInclude, function(include) {
+                    return 'StudentCompetencies.next.'+include;
+                })
+            ),
             success: function(savedDemonstration) {
                 var student = me.getStudentsStore().getById(savedDemonstration.get('StudentID')),
+                    studentCompetencies = savedDemonstration.get('StudentCompetencies') || [],
+                    studentCompetenciesLength = studentCompetencies.length,
+                    studentCompetencyIndex = 0, nextStudentCompetency,
                     tplData = {
                         wasPhantom: wasPhantom,
                         student: student ? student.getData() : null,
@@ -187,8 +190,18 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                     };
 
 
+                // collapse any embedded "next" records into main array
+                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
+                    nextStudentCompetency = studentCompetencies[studentCompetencyIndex].next;
+
+                    if (nextStudentCompetency) {
+                        studentCompetencies.push(nextStudentCompetency);
+                    }
+                }
+
+
                 // update grid
-                studentCompetenciesStore.mergeData(savedDemonstration.get('StudentCompetencies'));
+                studentCompetenciesStore.mergeData(studentCompetencies);
 
 
                 // show notification to user
