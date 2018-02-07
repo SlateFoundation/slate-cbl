@@ -111,6 +111,7 @@ parameter `apiHost` when loading the page.
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
   - [X] Restore live-updating of grid
   - [ ] Audit requires and inheritance chain
+  - [ ] Review required fields and server-driven enforcement in UI
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Restore live-updating of grid

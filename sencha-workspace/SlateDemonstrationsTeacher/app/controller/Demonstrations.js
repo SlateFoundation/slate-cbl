@@ -1,5 +1,44 @@
 Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     extend: 'Ext.app.Controller',
+    requires: [
+        'Ext.window.Toast'
+    ],
+
+
+    toastTitleTpl: [
+        '<tpl if="wasPhantom">',
+            'Demonstration Logged',
+        '<tpl else>',
+            'Demonstration Edited',
+        '</tpl>'
+    ],
+
+    toastBodyTpl: [
+        '<tpl if="wasPhantom">',
+            '<tpl for="student">',
+                '<strong>{FirstName} {LastName}</strong>',
+            '</tpl>',
+            ' demonstrated',
+            ' <strong>',
+                '{skills.length}',
+                ' <tpl if="skills.length == 1">skill<tpl else>skills</tpl>',
+                '.',
+            '</strong>',
+        '<tpl else>',
+            'Updated',
+            ' <strong>',
+                '{skills.length}',
+                ' <tpl if="skills.length == 1">skill<tpl else>skills</tpl>',
+            '</strong>',
+            ' demonstrated by',
+            '<tpl for="student">',
+                ' <strong>',
+                    '{FirstName} {LastName}',
+                    '.',
+                '</strong>',
+            '</tpl>',
+        '</tpl>'
+    ],
 
 
     // controller configuration
@@ -120,6 +159,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         var me = this,
             formPanel = submitBtn.up('window').getMainView(),
             demonstration = formPanel.getRecord(),
+            wasPhantom = demonstration.phantom,
             studentCompetenciesStore = me.getStudentCompetenciesStore(),
             studentCompetenciesInclude = studentCompetenciesStore.getProxy().getInclude();
 
@@ -138,15 +178,29 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             include: Ext.Array.map(studentCompetenciesInclude, function(include) {
                 return 'StudentCompetencies.'+include;
             }),
-            success: function() {
-                debugger;
-                studentCompetenciesStore.mergeData(demonstration.get('StudentCompetencies'));
-                // studentCompetenciesStore.mergeData(demonstration.get('StudentCompetencies').map(d => new Slate.cbl.model.StudentCompetency(d)));
-                // TODO: load into grid
-                // TODO: show toast
+            success: function(savedDemonstration, operation) {
+                var student = me.getStudentsStore().getById(savedDemonstration.get('StudentID')),
+                    tplData = {
+                        wasPhantom: wasPhantom,
+                        student: student ? student.getData() : null,
+                        skills: savedDemonstration.get('Skills')
+                    };
+
+
+                // update grid
+                studentCompetenciesStore.mergeData(savedDemonstration.get('StudentCompetencies'));
+
+
+                // show notification to user
+                Ext.toast(
+                    Ext.XTemplate.getTpl(me, 'toastBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'toastTitleTpl').apply(tplData)
+                );
+
                 // TODO: ensure sent target level is used
                 // TODO: implement continue to next student
                 // TODO: update correctly after skills get deleted during edit
+
                 formPanel.setLoading(false);
             },
             failure: function(savedDemonstration, operation) {
