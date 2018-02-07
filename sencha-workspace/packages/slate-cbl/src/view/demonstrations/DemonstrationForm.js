@@ -105,6 +105,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
                     margin: '0 16 0 155'
                 },
                 {
+                    itemId: 'continueField',
+
                     xtype: 'checkboxfield',
                     boxLabel: 'Continue with next student'
                 }
