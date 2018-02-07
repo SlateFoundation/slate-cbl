@@ -109,9 +109,10 @@ parameter `apiHost` when loading the page.
   - [X] review naming of `competencyStudent` objects in light of new `studentCompetency` objects
 - [X] Restore opening student-skill details in SlateDemonstrationsTeacher
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
-  - [ ] Restore live-updating of grid
+  - [X] Restore live-updating of grid
   - [ ] Audit requires and inheritance chain
 - [ ] Restore task creation in SlateTasksTeacher
+  - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Restore live-updating of grid
   - [ ] Audit requires and inheritance chain
 - [ ] Restore building/loading of SlateTasksManager
@@ -124,7 +125,8 @@ parameter `apiHost` when loading the page.
   - [X] add HTTP header support
   - [ ] write forum post documenting $profile option
   - [ ] Add `<debug> ... </debug>`-wrapped support to emergence-apikit to report on requests in console
-- Fix switching between cohorts leaving empty columns in SlateDemonstrationsTeacher
+- [ ] Fix switching between cohorts leaving empty columns in SlateDemonstrationsTeacher
+- [ ] Review and update exports as needed
 
 ### Next release
 

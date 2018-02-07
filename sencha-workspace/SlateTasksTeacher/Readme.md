@@ -2,10 +2,6 @@
 
 Provides a view of multiple students' progress along a list of competencies, typically those of an entire content area.
 
-## TODO
-
-- [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
-
 ## Application Structure
 
 The following files are all needed to build and load the application.

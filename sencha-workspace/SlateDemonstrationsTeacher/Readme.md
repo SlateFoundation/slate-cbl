@@ -2,10 +2,6 @@
 
 Provides a view of multiple students' progress along a list of competencies, typically those of an entire content area.
 
-## TODO
-
-- [ ] Bug in current release: Demonstration skill blocks logged before a competency is expanded get duplicate when it is expanded
-
 ## Application Structure
 
 The following files are all needed to build and load the application.
