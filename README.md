@@ -110,6 +110,7 @@ parameter `apiHost` when loading the page.
 - [X] Restore opening student-skill details in SlateDemonstrationsTeacher
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
   - [X] Restore live-updating of grid
+  - [ ] Prevent dirty state when form isn't changed on edit
   - [ ] Audit requires and inheritance chain
   - [ ] Review required fields and server-driven enforcement in UI
 - [ ] Restore task creation in SlateTasksTeacher

@@ -178,7 +178,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             include: Ext.Array.map(studentCompetenciesInclude, function(include) {
                 return 'StudentCompetencies.'+include;
             }),
-            success: function(savedDemonstration, operation) {
+            success: function(savedDemonstration) {
                 var student = me.getStudentsStore().getById(savedDemonstration.get('StudentID')),
                     tplData = {
                         wasPhantom: wasPhantom,
@@ -197,9 +197,9 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                     Ext.XTemplate.getTpl(me, 'toastTitleTpl').apply(tplData)
                 );
 
-                // TODO: ensure sent target level is used
                 // TODO: implement continue to next student
                 // TODO: update correctly after skills get deleted during edit
+                // TODO: return and transition to new enrollment when a log results in promotion
 
                 formPanel.setLoading(false);
             },
