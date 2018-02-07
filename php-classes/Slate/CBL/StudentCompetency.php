@@ -98,6 +98,9 @@ class StudentCompetency extends \ActiveRecord
         ],
         'growth' => [
             'getter' => 'getGrowth'
+        ],
+        'next' => [
+            'getter' => 'getNext'
         ]
     ];
 
@@ -416,6 +419,23 @@ class StudentCompetency extends \ActiveRecord
         }
 
         return $this->competencyGrowth === false ? null : $this->competencyGrowth;
+    }
+
+    private $next;
+    public function getNext()
+    {
+        if ($this->next === null) {
+            $this->next = static::getByWhere([
+                'StudentID' => $this->StudentID,
+                'CompetencyID' => $this->CompetencyID,
+                'Level' => [
+                    'operator' => '>',
+                    'value' => $this->Level
+                ]
+            ], [ 'order' => ['Level' => 'ASC'] ]);
+        }
+
+        return $this->next;
     }
 
 
