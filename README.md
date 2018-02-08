@@ -117,12 +117,12 @@ parameter `apiHost` when loading the page.
   - [X] Implement log demo btn within skills window
   - [ ] Implement override button
   - [ ] Implement edit
-  - [ ] Audit requires and inheritance chain
+  - [ ] Add student selector to teacher version of skill window
   - [ ] Review required fields and server-driven enforcement in UI
   - [ ] Fix empty student columns remaining after switching cohorts
   - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels
   - [ ] Fix condition where value / valueSkillsMap gets out of sync when continuing to second student
-  - [ ] Add student selector to teacher version of skill window
+  - [ ] Audit requires and inheritance chain
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Restore live-updating of grid

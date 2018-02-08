@@ -11,7 +11,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
 
 
     refs: {
-        progressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-progressgrid',
+        dashboardCt: 'slate-demonstrations-teacher-dashboard',
 
         skillWindow: {
             forceCreate: true,
@@ -28,11 +28,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
 
     // entry points
     control: {
-        progressGrid: {
+        'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-progressgrid': {
             democellclick: 'onDemoCellClick'
-        },
-        'slate-demonstrations-teacher-skillfooter button[action=create-override]': {
-            click: 'onCreateOverrideClick'
         }
         // 'slate-demonstrations-teacher-skill-overviewwindow': {
         //     createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
@@ -46,7 +43,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
     // event handlers
     onDemoCellClick: function(progressGrid, context) {
         this.getSkillWindow({
-            ownerCmp: progressGrid,
+            ownerCmp: this.getDashboardCt(),
             autoShow: true,
             animateTarget: context.targetEl,
 
@@ -58,13 +55,5 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
                 selectedDemonstration: context.demonstrationId
             }
         });
-    },
-
-    onCreateOverrideClick: function(createBtn) {
-        var skillPanel = createBtn.up('window').getMainView(),
-            selectedStudent = skillPanel.getSelectedStudent(),
-            selectedSkill = skillPanel.getSelectedSkill();
-
-        console.info('onCreateOverrideClick\n\tstudent=%o\n\tskill=%o', selectedStudent, selectedSkill);
     }
 });

@@ -18,7 +18,8 @@ Ext.define('SlateDemonstrationsTeacher.Application', {
     controllers: [
         'Dashboard',
         'Skills',
-        'Demonstrations'
+        'Demonstrations',
+        'Overrides'
 
         //<debug>
         ,'Debug'
