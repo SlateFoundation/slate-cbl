@@ -12,6 +12,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
 
     config: {
         highlightedDemonstration: null,
+        showEditLinks: false,
 
         store: {
             type: 'slate-cbl-demonstrationskills',
@@ -100,10 +101,10 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                 '</tpl>',
                                 ' &middot;&nbsp;',
                                 '{Created:date("F j, Y, g:i a")}',
-                                '<tpl if="parent.showEditLinks">',
+                                '<tpl if="showEditLinks">',
                                     ' &middot;&nbsp;',
-                                    '<a href="#demonstration-edit" data-demonstration="{DemonstrationID}">Edit</a> | ',
-                                    '<a href="#demonstration-delete" data-demonstration="{DemonstrationID}">Delete</a>',
+                                    '<a href="#edit">Edit</a> | ',
+                                    '<a href="#delete">Delete</a>',
                                 '</tpl>',
                             '</div>',
                         '</div>',
@@ -154,13 +155,37 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
 
     // dataview lifecycle
     prepareData: function() {
-        var data = this.callParent(arguments);
+        var me = this,
+            data = Ext.Object.chain(me.callParent(arguments));
 
-        if (data.DemonstrationID == this.getHighlightedDemonstration()) {
-            data = Ext.Object.chain(data);
+        if (data.DemonstrationID == me.getHighlightedDemonstration()) {
             data.highlighted = true;
         }
 
+        data.showEditLinks = me.getShowEditLinks();
+
         return data;
+    },
+
+    onBeforeItemClick: function(demonstrationSkill, item, index, ev) {
+        var me = this,
+            demonstrationId = demonstrationSkill.get('DemonstrationID');
+
+        if (ev.getTarget('.skill-list-demo-row')) {
+            return true; // allow selection
+        }
+
+        if (ev.getTarget('a[href="#edit"]')) {
+            ev.stopEvent();
+
+            me.fireEvent('editclick', me, demonstrationId, demonstrationSkill);
+        } else if (ev.getTarget('a[href="#delete"]')) {
+            ev.stopEvent();
+
+            me.fireEvent('deleteclick', me, demonstrationId, demonstrationSkill);
+        }
+
+        // cancel selection
+        return false;
     }
 });

@@ -91,6 +91,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         createBtn: {
             click: 'onCreateDemonstrationClick'
         },
+        'slate-demonstrations-teacher-skillfooter button[action=create-demonstration]': {
+            click: 'onStudentSkillCreateDemonstrationClick'
+        },
+        'slate-cbl-demonstrations-studentskillpanel': {
+            editclick: 'onEditDemonstrationClick',
+            deleteclick: 'onDeleteDemonstrationClick'
+        },
         demonstrationForm: {
             dirtychange: 'onFormDirtyChange',
             validitychange: 'onFormValidityChange'
@@ -157,6 +164,22 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         formPanel.loadRecord(demonstration);
         formPanel.reset();
         demonstrationWindow.show();
+    },
+
+    onStudentSkillCreateDemonstrationClick: function(createBtn) {
+        var skillPanel = createBtn.up('window').getMainView(),
+            selectedStudent = skillPanel.getSelectedStudent(),
+            competency = skillPanel.getLoadedCompetency();
+
+        console.info('onStudentSkillCreateDemonstrationClick\n\tstudent=%o\n\tcompetency=%o', selectedStudent, competency && competency.get('Code'));
+    },
+
+    onEditDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill) {
+        console.info('onEditDemonstrationClick\n\tdemonstration=%o\n\tdemonstrationSkill=%o', demonstrationId, demonstrationSkill.getId());
+    },
+
+    onDeleteDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill) {
+        console.info('onDeleteDemonstrationClick\n\tdemonstration=%o\n\tdemonstrationSkill=%o', demonstrationId, demonstrationSkill.getId());
     },
 
     onFormDirtyChange: function(form, dirty) {

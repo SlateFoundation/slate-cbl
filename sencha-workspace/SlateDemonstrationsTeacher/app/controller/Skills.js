@@ -5,7 +5,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
     // controller configuration
     views: [
         'Window@Slate.ui',
-        'StudentSkillPanel@Slate.cbl.view.demonstrations'
+        'StudentSkillPanel@Slate.cbl.view.demonstrations',
+        'SkillFooter'
     ],
 
 
@@ -19,7 +20,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
             defaultType: 'slate-cbl-demonstrations-studentskillpanel',
             modal: true,
             minWidth: 700,
-            width: 700
+            width: 700,
+            footer: 'slate-demonstrations-teacher-skillfooter'
         }
     },
 
@@ -28,6 +30,9 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
     control: {
         progressGrid: {
             democellclick: 'onDemoCellClick'
+        },
+        'slate-demonstrations-teacher-skillfooter button[action=create-override]': {
+            click: 'onCreateOverrideClick'
         }
         // 'slate-demonstrations-teacher-skill-overviewwindow': {
         //     createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
@@ -46,10 +51,20 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
             animateTarget: context.targetEl,
 
             mainView: {
+                showEditLinks: true,
+
                 selectedStudent: context.student,
                 selectedSkill: context.skill,
                 selectedDemonstration: context.demonstrationId
             }
         });
+    },
+
+    onCreateOverrideClick: function(createBtn) {
+        var skillPanel = createBtn.up('window').getMainView(),
+            selectedStudent = skillPanel.getSelectedStudent(),
+            selectedSkill = skillPanel.getSelectedSkill();
+
+        console.info('onCreateOverrideClick\n\tstudent=%o\n\tskill=%o', selectedStudent, selectedSkill);
     }
 });

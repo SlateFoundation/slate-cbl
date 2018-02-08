@@ -119,6 +119,7 @@ parameter `apiHost` when loading the page.
   - [ ] Implement override button
   - [ ] Implement log demo btn within skills window
   - [ ] Implement edit
+  - [ ] Add student selector to teacher version of skill window
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Restore live-updating of grid

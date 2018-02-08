@@ -22,6 +22,8 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
 
     config: {
+        showEditLinks: false,
+
         selectedStudent: null,
         selectedSkill: null,
         selectedDemonstration: null,
@@ -57,6 +59,10 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
 
     // config handlers
+    updateShowEditLinks: function(showEditLinks) {
+        this.getDemonstrationSkillsList().setShowEditLinks(showEditLinks);
+    },
+
     applySelectedStudent: function(selectedStudent) {
         return selectedStudent && selectedStudent.isModel ? selectedStudent.getId() : selectedStudent;
     },
@@ -271,12 +277,24 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
     },
 
     updateDemonstrationSkillsList: function(demonstrationSkillsList, oldDemonstrationSkillsList) {
+        var me = this;
+
         if (oldDemonstrationSkillsList) {
-            oldDemonstrationSkillsList.getStore().un('load', 'onDemonstrationSkillsStoreLoad', this);
+            oldDemonstrationSkillsList.getStore().un('load', 'onDemonstrationSkillsStoreLoad', me);
+            oldDemonstrationSkillsList.un({
+                scope: me,
+                editclick: 'onDemonstrationSkillEditClick',
+                deleteclick: 'onDemonstrationSkillDeleteClick'
+            });
         }
 
         if (demonstrationSkillsList) {
-            demonstrationSkillsList.getStore().on('load', 'onDemonstrationSkillsStoreLoad', this);
+            demonstrationSkillsList.getStore().on('load', 'onDemonstrationSkillsStoreLoad', me);
+            demonstrationSkillsList.on({
+                scope: me,
+                editclick: 'onDemonstrationSkillEditClick',
+                deleteclick: 'onDemonstrationSkillDeleteClick'
+            });
         }
     },
 
@@ -292,6 +310,14 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
         this.setLoadedSkill(skillData || null);
         this.setLoadedCompetency(skillData && skillData.Competency || null);
+    },
+
+    onDemonstrationSkillEditClick: function(demonstrationSkillsList, demonstrationId, demonstrationSkill) {
+        this.fireEvent('editclick', this, demonstrationId, demonstrationSkill);
+    },
+
+    onDemonstrationSkillDeleteClick: function(demonstrationSkillsList, demonstrationId, demonstrationSkill) {
+        this.fireEvent('deleteclick', this, demonstrationId, demonstrationSkill);
     },
 
     onCompetencySelectorBeforeQuery: function(queryPlan) {
