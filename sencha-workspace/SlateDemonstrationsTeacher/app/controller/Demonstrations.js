@@ -163,7 +163,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         this.openDemonstrationWindow({
             animateTarget: createBtn,
             selectedCompetencies: competency ? [competency.get('Code')] : null,
-            data: {
+            demonstration: {
                 StudentID: skillPanel.getSelectedStudent()
             }
         });
@@ -257,19 +257,28 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
         // eslint-disable-next-line vars-on-top
         var me = this,
-            demonstration = me.getDemonstrationModel().create(Ext.apply({
-                Demonstrated: new Date()
-            }, options.data || null)),
             demonstrationWindow = me.getDemonstrationWindow({
                 ownerCmp: me.getDashboardCt()
             }),
-            formPanel = demonstrationWindow.getMainView();
+            formPanel = demonstrationWindow.getMainView(),
+            demonstration = options.demonstration;
 
+
+        // initially configure form and window
         formPanel.getRatingsField().setSelectedCompetencies(options.selectedCompetencies || null);
-        formPanel.loadRecord(demonstration);
-        formPanel.reset();
-
         demonstrationWindow.animateTarget = options.animateTarget || null;
-        demonstrationWindow.show();
+
+
+        // fetch demonstration and show window
+        if (!demonstration || (typeof demonstration == 'object' && !demonstration.isModel)) {
+            demonstration = me.getDemonstrationModel().create(Ext.apply({
+                Demonstrated: new Date()
+            }, options.demonstration || null));
+
+            formPanel.loadRecord(demonstration);
+            demonstrationWindow.show();
+        } else {
+            Ext.Logger.error('Invalid demonstration option');
+        }
     }
 });
