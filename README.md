@@ -115,7 +115,7 @@ parameter `apiHost` when loading the page.
   - [X] Prevent dirty state when form isn't changed on edit
   - [X] Fix crash when saving ratings to competencies not loaded in current grid
   - [X] Implement log demo btn within skills window
-  - [ ] Implement override button
+  - [X] Implement override button
   - [ ] Implement edit
   - [ ] Add student selector to teacher version of skill window
   - [ ] Review required fields and server-driven enforcement in UI
