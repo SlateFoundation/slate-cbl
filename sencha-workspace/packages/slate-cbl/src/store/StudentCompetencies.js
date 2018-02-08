@@ -69,6 +69,7 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
 
         demonstration.save(Ext.applyIf({
             include: Ext.Array.merge(
+                demonstration.getProxy().getInclude(),
                 Ext.Array.map(proxyInclude, function(include) {
                     return 'StudentCompetencies.'+include;
                 }),
