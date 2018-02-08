@@ -542,7 +542,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     buildRenderData: function() {
         var me = this,
             contentArea = me.getContentArea(),
-            studentDashboardLink = location.hostname == 'localhost' ? ('../SlateDemonstrationsStudent/' + location.search) : Slate.API.buildUrl('/cbl/dashboards/demonstrations/student'),
+            studentDashboardLink = location.hostname == 'localhost' ? ('../SlateDemonstrationsStudent/' + location.search) : Slate.API.buildUrl('/cbl/dashboards/demonstrations/student'), // eslint-disable-line no-extra-parens
 
             students = me.getStudentsStore().getRange(),
             studentsLength = students.length, studentIndex, student,
@@ -775,7 +775,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
             if (countDirty || averageDirty) {
                 percentComplete = 100 * (count || 0) / demonstrationsRequired;
-                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competency.minimumAverageOffset));
+                progressCellEl.toggleCls('is-average-low', percentComplete >= 50 && average !== null && average < (level + competency.minimumAverageOffset)); // eslint-disable-line no-extra-parens
             }
 
             if (countDirty) {

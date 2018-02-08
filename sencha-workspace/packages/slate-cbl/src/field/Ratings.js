@@ -21,9 +21,6 @@ Ext.define('Slate.cbl.field.Ratings', {
         selectedStudent: null,
         selectedCompetencies: true,
 
-        skillStore: null,
-        competenciesStore: null,
-
         tabPanel: true,
         competenciesGrid: true
     },
@@ -211,7 +208,7 @@ Ext.define('Slate.cbl.field.Ratings', {
     isEqual: function(value1, value2) {
         return (
             value1 === value2
-            || (value1 && value1.length == 0 && value2 && value2.length == 0)
+            || (value1 && value1.length == 0 && value2 && value2.length == 0) // eslint-disable-line no-extra-parens
         );
     },
 
