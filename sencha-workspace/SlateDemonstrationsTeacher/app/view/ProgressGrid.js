@@ -293,7 +293,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 'democellclick',
                 me,
                 {
-                    targetEl: target,
+                    blockEl: target,
+                    cellEl: target.up('.cbl-grid-demos-cell'),
                     competency: competenciesStore.getById(target.up('.cbl-grid-skills-row').getAttribute('data-competency')),
                     skill: me.getSkillsStore().getById(target.up('.cbl-grid-skill-row').getAttribute('data-skill')),
                     student: me.getStudentsStore().getById(target.up('.cbl-grid-demos-cell').getAttribute('data-student')),

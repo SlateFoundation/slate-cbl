@@ -53,7 +53,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
             selectedDemonstration: context.demonstrationId
         });
 
-        skillWindow.animateTarget = context.targetEl;
+        skillWindow.animateTarget = context.cellEl;
         skillWindow.show();
     }
 });

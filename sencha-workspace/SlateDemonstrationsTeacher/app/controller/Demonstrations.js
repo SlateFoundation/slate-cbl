@@ -171,6 +171,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
     onEditDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill, ev) {
         console.info('onEditDemonstrationClick\n\tdemonstration=%o\n\tdemonstrationSkill=%o', demonstrationId, demonstrationSkill.getId());
+
+        this.openDemonstrationWindow({
+            animateTarget: ev.target,
+            demonstration: demonstrationId
+        });
     },
 
     onDeleteDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill) {
@@ -257,6 +262,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
         // eslint-disable-next-line vars-on-top
         var me = this,
+            DemonstrationModel = me.getDemonstrationModel(),
             demonstrationWindow = me.getDemonstrationWindow({
                 ownerCmp: me.getDashboardCt()
             }),
@@ -271,12 +277,35 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
         // fetch demonstration and show window
         if (!demonstration || (typeof demonstration == 'object' && !demonstration.isModel)) {
-            demonstration = me.getDemonstrationModel().create(Ext.apply({
+            demonstration = DemonstrationModel.create(Ext.apply({
+                Class: 'Slate\\CBL\\Demonstrations\\ExperienceDemonstration',
                 Demonstrated: new Date()
             }, options.demonstration || null));
 
             formPanel.loadRecord(demonstration);
             demonstrationWindow.show();
+        } else if (typeof demonstration == 'number') {
+            formPanel.reset();
+            demonstrationWindow.show();
+            formPanel.setLoading('Loading demonstration&hellip;');
+
+            DemonstrationModel.load(demonstration, {
+                success: function(loadedDemonstration) {
+                    formPanel.loadRecord(loadedDemonstration);
+                    formPanel.setLoading(false);
+                },
+                failure: function(savedDemonstration, operation) {
+                    demonstrationWindow.hide();
+                    formPanel.setLoading(false);
+
+                    Ext.Msg.show({
+                        title: 'Failed to load demonstration #'+demonstration,
+                        message: operation.getError(),
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                }
+            });
         } else {
             Ext.Logger.error('Invalid demonstration option');
         }
