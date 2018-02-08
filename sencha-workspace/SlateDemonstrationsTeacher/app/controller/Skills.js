@@ -14,13 +14,19 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
 
         skillWindow: {
-            forceCreate: true,
+            autoCreate: true,
 
             xtype: 'slate-window',
-            defaultType: 'slate-cbl-demonstrations-studentskillpanel',
+            closeAction: 'hide',
             modal: true,
             minWidth: 700,
             width: 700,
+
+            mainView: {
+                xtype: 'slate-cbl-demonstrations-studentskillpanel',
+                showEditLinks: true
+            },
+
             footer: 'slate-demonstrations-teacher-skillfooter'
         }
     },
@@ -42,18 +48,18 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
 
     // event handlers
     onDemoCellClick: function(progressGrid, context) {
-        this.getSkillWindow({
-            ownerCmp: this.getDashboardCt(),
-            autoShow: true,
-            animateTarget: context.targetEl,
+        var skillWindow = this.getSkillWindow({
+                ownerCmp: this.getDashboardCt()
+            }),
+            skillPanel = skillWindow.getMainView();
 
-            mainView: {
-                showEditLinks: true,
-
-                selectedStudent: context.student,
-                selectedSkill: context.skill,
-                selectedDemonstration: context.demonstrationId
-            }
+        skillPanel.setConfig({
+            selectedStudent: context.student,
+            selectedSkill: context.skill,
+            selectedDemonstration: context.demonstrationId
         });
+
+        skillWindow.animateTarget = context.targetEl;
+        skillWindow.show();
     }
 });
