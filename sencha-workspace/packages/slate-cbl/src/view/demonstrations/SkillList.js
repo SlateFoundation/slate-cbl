@@ -178,11 +178,11 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
         if (ev.getTarget('a[href="#edit"]')) {
             ev.stopEvent();
 
-            me.fireEvent('editclick', me, demonstrationId, demonstrationSkill);
+            me.fireEvent('editclick', me, demonstrationId, demonstrationSkill, ev);
         } else if (ev.getTarget('a[href="#delete"]')) {
             ev.stopEvent();
 
-            me.fireEvent('deleteclick', me, demonstrationId, demonstrationSkill);
+            me.fireEvent('deleteclick', me, demonstrationId, demonstrationSkill, ev);
         }
 
         // cancel selection

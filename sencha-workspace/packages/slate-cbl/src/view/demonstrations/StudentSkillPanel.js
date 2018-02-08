@@ -312,12 +312,12 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         this.setLoadedCompetency(skillData && skillData.Competency || null);
     },
 
-    onDemonstrationSkillEditClick: function(demonstrationSkillsList, demonstrationId, demonstrationSkill) {
-        this.fireEvent('editclick', this, demonstrationId, demonstrationSkill);
+    onDemonstrationSkillEditClick: function(demonstrationSkillsList, demonstrationId, demonstrationSkill, ev) {
+        this.fireEvent('editclick', this, demonstrationId, demonstrationSkill, ev);
     },
 
-    onDemonstrationSkillDeleteClick: function(demonstrationSkillsList, demonstrationId, demonstrationSkill) {
-        this.fireEvent('deleteclick', this, demonstrationId, demonstrationSkill);
+    onDemonstrationSkillDeleteClick: function(demonstrationSkillsList, demonstrationId, demonstrationSkill, ev) {
+        this.fireEvent('deleteclick', this, demonstrationId, demonstrationSkill, ev);
     },
 
     onCompetencySelectorBeforeQuery: function(queryPlan) {

@@ -169,7 +169,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         });
     },
 
-    onEditDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill) {
+    onEditDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill, ev) {
         console.info('onEditDemonstrationClick\n\tdemonstration=%o\n\tdemonstrationSkill=%o', demonstrationId, demonstrationSkill.getId());
     },
 
