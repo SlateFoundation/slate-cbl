@@ -7,7 +7,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         'Ext.form.field.Text',
         'Ext.form.field.TextArea',
         'Ext.form.field.Checkbox',
-        'Ext.toolbar.Fill',
 
         'Jarvus.store.FieldValuesStore',
 
@@ -87,18 +86,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         {
             xtype: 'slate-panelfooter',
             items: [
-                {
-                    xtype: 'button',
-                    text: 'Reset',
-                    scale: 'large',
-                    action: 'reset',
-                    handler: function() {
-                        this.up('window').down('form').reset();
-                    }
-                },
-                {
-                    xtype: 'tbfill'
-                },
                 {
                     xtype: 'button',
                     text: 'Submit',
