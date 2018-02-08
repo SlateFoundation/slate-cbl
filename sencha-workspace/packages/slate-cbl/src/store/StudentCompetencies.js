@@ -58,5 +58,47 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
     unload: function() {
         this.loadCount = 0;
         this.removeAll();
+    },
+
+    saveDemonstration: function(demonstration, options) {
+        options = options || {};
+
+        // eslint-disable-next-line vars-on-top
+        var me = this,
+            proxyInclude = me.getProxy().getInclude();
+
+        demonstration.save(Ext.applyIf({
+            include: Ext.Array.merge(
+                Ext.Array.map(proxyInclude, function(include) {
+                    return 'StudentCompetencies.'+include;
+                }),
+                Ext.Array.map(proxyInclude, function(include) {
+                    return 'StudentCompetencies.next.'+include;
+                })
+            ),
+            success: function(savedDemonstration) {
+                var studentCompetencies = savedDemonstration.get('StudentCompetencies') || [],
+                    studentCompetenciesLength = studentCompetencies.length,
+                    studentCompetencyIndex = 0, nextStudentCompetency;
+
+
+                // collapse any embedded "next" records into main array
+                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
+                    nextStudentCompetency = studentCompetencies[studentCompetencyIndex].next;
+
+                    if (nextStudentCompetency) {
+                        studentCompetencies.push(nextStudentCompetency);
+                    }
+                }
+
+
+                // update grid
+                me.mergeData(studentCompetencies);
+
+
+                // call original callback
+                Ext.callback(options.success, options.scope, arguments);
+            }
+        }, options));
     }
 });

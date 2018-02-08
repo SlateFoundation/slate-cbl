@@ -97,48 +97,20 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
         var me = this,
             formWindow = submitBtn.up('window'),
             formPanel = formWindow.getMainView(),
-            demonstration = formPanel.getRecord(),
-            studentCompetenciesStore = me.getStudentCompetenciesStore(),
-            studentCompetenciesInclude = studentCompetenciesStore.getProxy().getInclude();
+            demonstration = formPanel.getRecord();
 
         formPanel.updateRecord(demonstration);
 
         formPanel.setLoading('Saving override&hellip;');
 
-        demonstration.save({
-            include: Ext.Array.merge(
-                Ext.Array.map(studentCompetenciesInclude, function(include) {
-                    return 'StudentCompetencies.'+include;
-                }),
-                Ext.Array.map(studentCompetenciesInclude, function(include) {
-                    return 'StudentCompetencies.next.'+include;
-                })
-            ),
-            success: function(savedDemonstration) {
+        me.getStudentCompetenciesStore().saveDemonstration(demonstration, {
+            success: function() {
                 var student = formPanel.getStudent(),
                     skill = formPanel.getSkill(),
-                    studentCompetencies = savedDemonstration.get('StudentCompetencies') || [],
-                    studentCompetenciesLength = studentCompetencies.length,
-                    studentCompetencyIndex = 0, nextStudentCompetency,
                     tplData = {
                         student: student ? student.getData() : null,
                         skill: skill ? skill.getData() : null
                     };
-
-
-                // collapse any embedded "next" records into main array
-                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
-                    nextStudentCompetency = studentCompetencies[studentCompetencyIndex].next;
-
-                    if (nextStudentCompetency) {
-                        studentCompetencies.push(nextStudentCompetency);
-                    }
-                }
-
-
-                // update grid
-                studentCompetenciesStore.mergeData(studentCompetencies);
-
 
                 // show notification to user
                 Ext.toast(

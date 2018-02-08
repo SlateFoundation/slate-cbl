@@ -190,9 +190,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             formWindow = submitBtn.up('window'),
             formPanel = formWindow.getMainView(),
             demonstration = formPanel.getRecord(),
-            wasPhantom = demonstration.phantom,
-            studentCompetenciesStore = me.getStudentCompetenciesStore(),
-            studentCompetenciesInclude = studentCompetenciesStore.getProxy().getInclude();
+            wasPhantom = demonstration.phantom;
 
         formPanel.updateRecord(demonstration);
 
@@ -203,42 +201,17 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
         formPanel.setLoading('Saving demonstration&hellip;');
 
-        demonstration.save({
-            include: Ext.Array.merge(
-                Ext.Array.map(studentCompetenciesInclude, function(include) {
-                    return 'StudentCompetencies.'+include;
-                }),
-                Ext.Array.map(studentCompetenciesInclude, function(include) {
-                    return 'StudentCompetencies.next.'+include;
-                })
-            ),
+        me.getStudentCompetenciesStore().saveDemonstration(demonstration, {
             success: function(savedDemonstration) {
                 var continueField = me.getContinueField(),
                     studentsStore = me.getStudentsStore(),
                     student = studentsStore.getById(savedDemonstration.get('StudentID')),
-                    studentCompetencies = savedDemonstration.get('StudentCompetencies') || [],
-                    studentCompetenciesLength = studentCompetencies.length,
-                    studentCompetencyIndex = 0, nextStudentCompetency,
                     tplData = {
                         wasPhantom: wasPhantom,
                         student: student ? student.getData() : null,
                         skills: savedDemonstration.get('Skills')
                     },
                     nextStudent;
-
-
-                // collapse any embedded "next" records into main array
-                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
-                    nextStudentCompetency = studentCompetencies[studentCompetencyIndex].next;
-
-                    if (nextStudentCompetency) {
-                        studentCompetencies.push(nextStudentCompetency);
-                    }
-                }
-
-
-                // update grid
-                studentCompetenciesStore.mergeData(studentCompetencies);
 
 
                 // show notification to user
