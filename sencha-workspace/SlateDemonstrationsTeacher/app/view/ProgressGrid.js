@@ -451,7 +451,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     // format render data for skills sub-table
                     studentSkillRenderData = {
                         student: student.data,
-                        studentCompetency: studentCompetency.data,
+                        studentCompetency: studentCompetency ? studentCompetency.data : null,
                         skill: skill,
                         demonstrations: demonstrations
                     };
