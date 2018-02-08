@@ -30,7 +30,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // containerfield configuration
-    name: 'Skills',
+    name: 'DemonstrationSkills',
     allowBlank: false,
     blankText: 'At least one rating must be selected',
 

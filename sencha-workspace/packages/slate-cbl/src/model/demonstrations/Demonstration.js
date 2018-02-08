@@ -87,12 +87,15 @@ Ext.define('Slate.cbl.model.demonstrations.Demonstration', {
 
         // writable dynamic fields
         {
-            name: 'Skills',
+            name: 'DemonstrationSkills',
             defaultValue: []
         }
     ],
 
-    proxy: 'slate-cbl-demonstrations',
+    proxy: {
+        type: 'slate-cbl-demonstrations',
+        include: 'DemonstrationSkills'
+    },
 
     validators: [
         {

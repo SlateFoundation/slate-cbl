@@ -69,7 +69,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
                 Class: 'Slate\\CBL\\Demonstrations\\OverrideDemonstration',
                 Demonstrated: new Date(),
                 StudentID: skillPanel.getSelectedStudent(),
-                Skills: skill && [
+                DemonstrationSkills: skill && [
                     {
                         SkillID: skill.getId(),
                         Override: true

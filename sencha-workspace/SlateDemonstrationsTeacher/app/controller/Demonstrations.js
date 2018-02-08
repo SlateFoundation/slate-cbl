@@ -214,7 +214,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                     tplData = {
                         wasPhantom: wasPhantom,
                         student: student ? student.getData() : null,
-                        skills: savedDemonstration.get('Skills')
+                        skills: savedDemonstration.get('DemonstrationSkills')
                     },
                     nextStudent;
 
