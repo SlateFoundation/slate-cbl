@@ -836,7 +836,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     demonstration = demonstrations[demonstrationIndex];
                     demonstrationRating = demonstration ? demonstration.DemonstratedLevel : null;
                     demonstrationOverride = demonstration ? demonstration.Override : null;
-                    demonstrationId = demonstration ? demonstration.ID : null;
+                    demonstrationId = demonstration ? demonstration.DemonstrationID : null;
 
                     // gather information about previous render
                     if (demonstrationIndex <= renderedDemonstrationsLength) {
@@ -893,7 +893,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                         });
                     }
 
-                    if (!renderedDemonstration || renderedDemonstration.ID != demonstrationId) {
+                    if (!renderedDemonstration || renderedDemonstration.DemonstrationID != demonstrationId) {
                         demonstrationBlockEl.set({
                             'data-demonstration': demonstrationId || ''
                         });
