@@ -417,7 +417,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 skillsCount = skillsCollection.getCount(), skillIndex, skill, skillId,
 
                 skillRenderData, studentsRenderData, studentSkillRenderData, studentsById, skillRowEl, demonstrationsCellEl,
-                node, studentCompetency, demonstrations;
+                node, level, studentCompetency, demonstrations;
 
             // build new skills render tree and update root skill index
             for (skillIndex = 0; skillIndex < skillsCount; skillIndex++) {
@@ -434,11 +434,18 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     student = studentsStore.getAt(studentIndex);
                     node = competencyRenderData.studentsById[student.getId()];
-                    studentCompetency = node.studentCompetencies[node.maxLevel];
-                    demonstrations = Ext.Array.clone(studentCompetency.get('effectiveDemonstrationsData')[skillId] || []);
+                    level = node.maxLevel;
+
+                    if (level) {
+                        studentCompetency = node.studentCompetencies[level];
+                        demonstrations = Ext.Array.clone(studentCompetency.get('effectiveDemonstrationsData')[skillId] || []);
+                    } else {
+                        studentCompetency = null;
+                        demonstrations = [];
+                    }
 
                     // fill demonstrations array with undefined items
-                    demonstrations.length = skill.getTotalDemonstrationsRequired(studentCompetency ? studentCompetency.get('Level') : null);
+                    demonstrations.length = skill.getTotalDemonstrationsRequired(level);
 
                     // format render data for skills sub-table
                     studentSkillRenderData = {
