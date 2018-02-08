@@ -7,6 +7,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         'Ext.form.field.Text',
         'Ext.form.field.TextArea',
         'Ext.form.field.Checkbox',
+        'Ext.toolbar.Fill',
 
         'Jarvus.store.FieldValuesStore',
 
@@ -91,18 +92,19 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
                     text: 'Reset',
                     scale: 'large',
                     action: 'reset',
-                    margin: '0 16 0 155',
                     handler: function() {
                         this.up('window').down('form').reset();
                     }
+                },
+                {
+                    xtype: 'tbfill'
                 },
                 {
                     xtype: 'button',
                     text: 'Submit',
                     scale: 'large',
                     action: 'submit',
-                    formBind: true,
-                    margin: '0 16 0 155'
+                    margin: '0 16'
                 },
                 {
                     itemId: 'continueField',
@@ -149,7 +151,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         if (typeof ratingsField == 'object' && !ratingsField.isComponent) {
             ratingsField = Ext.apply({
                 fieldLabel: 'Demonstrated Skills',
-                labelAlign: 'top'
+                labelAlign: 'top',
+                msgTarget: 'under'
             }, ratingsField);
         }
 

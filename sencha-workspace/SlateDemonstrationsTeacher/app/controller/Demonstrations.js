@@ -72,6 +72,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             width: 600,
             minHeight: 600
         },
+        demonstrationForm: 'slate-cbl-demonstrations-demonstrationform',
+        submitBtn: 'slate-cbl-demonstrations-demonstrationform ^ window button[action=submit]',
         continueField: 'slate-cbl-demonstrations-demonstrationform ^ window field#continueField'
     },
 
@@ -89,7 +91,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         createBtn: {
             click: 'onCreateDemonstrationClick'
         },
-        'slate-cbl-demonstrations-demonstrationform ^ window button[action=submit]': {
+        demonstrationForm: {
+            dirtychange: 'onFormDirtyChange',
+            validitychange: 'onFormValidityChange'
+        },
+        submitBtn: {
             click: 'onSubmitDemonstrationClick'
         }
     },
@@ -153,6 +159,14 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         demonstrationWindow.show();
     },
 
+    onFormDirtyChange: function(form, dirty) {
+        this.getSubmitBtn().setDisabled(!dirty || !form.isValid());
+    },
+
+    onFormValidityChange: function(form, valid) {
+        this.getSubmitBtn().setDisabled(!valid || !form.isDirty());
+    },
+
     onSubmitDemonstrationClick: function(submitBtn) {
         var me = this,
             formWindow = submitBtn.up('window'),
@@ -181,8 +195,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 })
             ),
             success: function(savedDemonstration) {
-                var studentField = formPanel.getForm().findField('StudentID'),
-                    continueField = me.getContinueField(),
+                var continueField = me.getContinueField(),
                     studentsStore = me.getStudentsStore(),
                     student = studentsStore.getById(savedDemonstration.get('StudentID')),
                     studentCompetencies = savedDemonstration.get('StudentCompetencies') || [],

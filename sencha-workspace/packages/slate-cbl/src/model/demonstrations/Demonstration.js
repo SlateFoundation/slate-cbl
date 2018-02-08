@@ -66,13 +66,11 @@ Ext.define('Slate.cbl.model.demonstrations.Demonstration', {
         },
         {
             name: 'ArtifactURL',
-            type: 'string',
-            allowNull: true
+            type: 'string'
         },
         {
             name: 'Comments',
-            type: 'string',
-            allowNull: true
+            type: 'string'
         },
         {
             name: 'ExperienceType',
@@ -89,7 +87,8 @@ Ext.define('Slate.cbl.model.demonstrations.Demonstration', {
 
         // writable dynamic fields
         {
-            name: 'Skills'
+            name: 'Skills',
+            defaultValue: []
         }
     ],
 

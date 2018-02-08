@@ -30,6 +30,8 @@ Ext.define('Slate.cbl.field.Ratings', {
 
     // containerfield configuration
     name: 'Skills',
+    allowBlank: false,
+    blankText: 'At least one rating must be selected',
 
 
     // container/component configuration
@@ -168,7 +170,10 @@ Ext.define('Slate.cbl.field.Ratings', {
     },
 
     isEqual: function(value1, value2) {
-        return value1 === value2;
+        return (
+            value1 === value2
+            || (value1 && value1.length == 0 && value2 && value2.length == 0)
+        );
     },
 
     onChange: function(value) {
@@ -181,6 +186,20 @@ Ext.define('Slate.cbl.field.Ratings', {
             valueSkillsMap[skillData.SkillID] = skillData;
             // TODO: load
         }
+    },
+
+    getErrors: function(value) {
+        var me = this,
+            errors;
+
+        value = value || me.getValue();
+        errors = me.callParent([value]);
+
+        if (!me.allowBlank && value.length == 0) {
+            errors.push(me.blankText);
+        }
+
+        return errors;
     },
 
 
@@ -235,7 +254,8 @@ Ext.define('Slate.cbl.field.Ratings', {
             value = me.value,
             valueSkillsMap = me.valueSkillsMap,
             skillId = skill.getId(),
-            skillData = valueSkillsMap[skillId];
+            skillData = valueSkillsMap[skillId],
+            errors;
 
         if (rating === null) {
             delete valueSkillsMap[skillId];
@@ -254,6 +274,8 @@ Ext.define('Slate.cbl.field.Ratings', {
         }
 
         me.fireEvent('ratingchange', me, rating, level, skill, ratingSlider, competencyCard);
+
+        me.validate();
     },
 
 

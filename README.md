@@ -115,6 +115,7 @@ parameter `apiHost` when loading the page.
   - [ ] Review required fields and server-driven enforcement in UI
   - [ ] Fix empty student columns remaining after switching cohorts
   - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels
+  - [ ] Fix crash when saving ratings to competencies not loaded in current grid
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Restore live-updating of grid
