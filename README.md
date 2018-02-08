@@ -110,12 +110,12 @@ parameter `apiHost` when loading the page.
 - [X] Restore opening student-skill details in SlateDemonstrationsTeacher
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
   - [X] Restore live-updating of grid
-  - [ ] Prevent dirty state when form isn't changed on edit
+  - [X] Prevent dirty state when form isn't changed on edit
   - [ ] Audit requires and inheritance chain
   - [ ] Review required fields and server-driven enforcement in UI
   - [ ] Fix empty student columns remaining after switching cohorts
   - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels
-  - [ ] Fix crash when saving ratings to competencies not loaded in current grid
+  - [X] Fix crash when saving ratings to competencies not loaded in current grid
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Restore live-updating of grid

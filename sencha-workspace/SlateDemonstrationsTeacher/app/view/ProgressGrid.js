@@ -717,6 +717,12 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             studentCompetency = studentCompetencies[studentCompetencyIndex];
             competencyId = studentCompetency.get('CompetencyID');
             competencyData = competenciesById[competencyId];
+
+            // skip StudentCompetency if not found in loaded competencies
+            if (!competencyData) {
+                continue;
+            }
+
             studentId = studentCompetency.get('StudentID');
             node = competencyData.studentsById[studentId];
             level = studentCompetency.get('Level');
