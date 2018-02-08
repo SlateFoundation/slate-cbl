@@ -108,40 +108,41 @@ parameter `apiHost` when loading the page.
   - [X] Purge references to `completion`
   - [X] review naming of `competencyStudent` objects in light of new `studentCompetency` objects
 - [X] Restore opening student-skill details in SlateDemonstrationsTeacher
+- [X] Update all loaders
+- [X] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php
 - [ ] Restore demonstration creation in SlateDemonstrationsTeacher
   - [X] Restore live-updating of grid
   - [X] Prevent dirty state when form isn't changed on edit
+  - [X] Fix crash when saving ratings to competencies not loaded in current grid
+  - [X] Implement log demo btn within skills window
+  - [ ] Implement override button
+  - [ ] Implement edit
   - [ ] Audit requires and inheritance chain
   - [ ] Review required fields and server-driven enforcement in UI
   - [ ] Fix empty student columns remaining after switching cohorts
   - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels
-  - [X] Fix crash when saving ratings to competencies not loaded in current grid
-  - [ ] Implement override button
-  - [ ] Implement log demo btn within skills window
-  - [ ] Implement edit
-  - [ ] Fix condition where value / valueSkillsMap gets out of sync when continueing to second student
+  - [ ] Fix condition where value / valueSkillsMap gets out of sync when continuing to second student
   - [ ] Add student selector to teacher version of skill window
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Restore live-updating of grid
   - [ ] Audit requires and inheritance chain
+- [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does
 - [ ] Restore building/loading of SlateTasksManager
-- [X] Update all loaders
-- [X] Update tool URLs in php-config/Slate/UI/Tools.config.d/cbl.php
 - [ ] Investigate baselines getting `NULL`d out: https://github.com/SlateFoundation/slate-fixtures/commit/74b14c13b783afed59463e90fb4770ae67f6745c
+
+
 - [X] Merge Ext JS code generator upstream
   - [ ] Write forum post documenting
 - [X] Merge JSON override upstream
   - [X] add HTTP header support
   - [ ] write forum post documenting $profile option
   - [ ] Add `<debug> ... </debug>`-wrapped support to emergence-apikit to report on requests in console
-- [ ] Fix switching between cohorts leaving empty columns in SlateDemonstrationsTeacher
 - [ ] Review and update exports as needed
-- [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does
-- [ ] Expand current content area by default when demo window opened
 
 ### Next release
 
+- [ ] Expand current content area by default when demo window opened
 - [ ] Reorganize slate-cbl package
   - [ ] Merge things to slate-core-data and slate-ui-classic
   - [ ] Move widget.* fields to field.*
