@@ -37,12 +37,6 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
         'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-progressgrid': {
             democellclick: 'onDemoCellClick'
         }
-        // 'slate-demonstrations-teacher-skill-overviewwindow': {
-        //     createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
-        //     editdemonstrationclick: 'onOverviewEditDemonstrationClick',
-        //     deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
-        //     createoverrideclick: 'onOverviewCreateOverrideClick'
-        // },
     },
 
 

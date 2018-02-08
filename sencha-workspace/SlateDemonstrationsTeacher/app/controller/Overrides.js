@@ -2,6 +2,18 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
     extend: 'Ext.app.Controller',
 
 
+    toastTitleTpl: [
+        'Standard Override Saved'
+    ],
+
+    toastBodyTpl: [
+        'Overrode',
+        ' <strong>{skill.Code}</strong>',
+        ' for',
+        ' <strong>{student.FullName}.</strong>'
+    ],
+
+
     // controller configuration
     views: [
         'Window@Slate.ui',
@@ -10,7 +22,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
     ],
 
     stores: [
-        'Students'
+        'Students',
+        'StudentCompetencies',
     ],
 
     models: [
@@ -40,6 +53,9 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
     control: {
         'slate-demonstrations-teacher-skillfooter button[action=create-override]': {
             click: 'onCreateOverrideClick'
+        },
+        'slate-cbl-demonstrations-overrideform ^window button[action=submit]': {
+            click: 'onSubmitClick'
         }
     },
 
@@ -75,5 +91,75 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
 
         overrideWindow.animateTarget = createBtn;
         overrideWindow.show();
+    },
+
+    onSubmitClick: function(submitBtn) {
+        var me = this,
+            formWindow = submitBtn.up('window'),
+            formPanel = formWindow.getMainView(),
+            demonstration = formPanel.getRecord(),
+            studentCompetenciesStore = me.getStudentCompetenciesStore(),
+            studentCompetenciesInclude = studentCompetenciesStore.getProxy().getInclude();
+
+        formPanel.updateRecord(demonstration);
+
+        formPanel.setLoading('Saving override&hellip;');
+
+        demonstration.save({
+            include: Ext.Array.merge(
+                Ext.Array.map(studentCompetenciesInclude, function(include) {
+                    return 'StudentCompetencies.'+include;
+                }),
+                Ext.Array.map(studentCompetenciesInclude, function(include) {
+                    return 'StudentCompetencies.next.'+include;
+                })
+            ),
+            success: function(savedDemonstration) {
+                var student = formPanel.getStudent(),
+                    skill = formPanel.getSkill(),
+                    studentCompetencies = savedDemonstration.get('StudentCompetencies') || [],
+                    studentCompetenciesLength = studentCompetencies.length,
+                    studentCompetencyIndex = 0, nextStudentCompetency,
+                    tplData = {
+                        student: student ? student.getData() : null,
+                        skill: skill ? skill.getData() : null
+                    };
+
+
+                // collapse any embedded "next" records into main array
+                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
+                    nextStudentCompetency = studentCompetencies[studentCompetencyIndex].next;
+
+                    if (nextStudentCompetency) {
+                        studentCompetencies.push(nextStudentCompetency);
+                    }
+                }
+
+
+                // update grid
+                studentCompetenciesStore.mergeData(studentCompetencies);
+
+
+                // show notification to user
+                Ext.toast(
+                    Ext.XTemplate.getTpl(me, 'toastBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'toastTitleTpl').apply(tplData)
+                );
+
+                formWindow.hide();
+
+                formPanel.setLoading(false);
+            },
+            failure: function(savedDemonstration, operation) {
+                formPanel.setLoading(false);
+
+                Ext.Msg.show({
+                    title: 'Failed to save override',
+                    message: operation.getError(),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
     }
 });
