@@ -63,7 +63,7 @@ class Demonstration extends \VersionedRecord
         'Student',
         'Competencies' => ['getter' => 'getCompetencies'],
         'StudentCompetencies' => ['getter' => 'getStudentCompetencies'],
-        'Skills'
+        'DemonstrationSkills'
     ];
 
 #    public static function getAllBySkill(Skill $Skill)

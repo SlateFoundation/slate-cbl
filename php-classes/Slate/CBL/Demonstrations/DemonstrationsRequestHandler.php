@@ -47,12 +47,12 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
     protected static function onBeforeRecordSaved(ActiveRecord $Demonstration, $requestData)
     {
         // validate skills list
-        if (array_key_exists('Skills', $requestData)) {
-            if (!is_array($requestData['Skills']) || !count($requestData['Skills'])) {
+        if (array_key_exists('DemonstrationSkills', $requestData)) {
+            if (!is_array($requestData['DemonstrationSkills']) || !count($requestData['DemonstrationSkills'])) {
                 return static::throwInvalidRequestError('At least one performance level must be logged');
             }
 
-            foreach ($requestData['Skills'] AS $index => $skill) {
+            foreach ($requestData['DemonstrationSkills'] AS $index => $skill) {
                 if (empty($skill['SkillID']) || !is_numeric($skill['SkillID']) || $skill['SkillID'] < 1) {
                     return static::throwInvalidRequestError("Skill at index $index is missing SkillID");
                 }
@@ -73,7 +73,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
 
     protected static function onRecordSaved(ActiveRecord $Demonstration, $requestData)
     {
-        if (array_key_exists('Skills', $requestData)) {
+        if (array_key_exists('DemonstrationSkills', $requestData)) {
             // get existing skill records and index by SkillID
             if (!$Demonstration->isNew) {
                 try {
@@ -96,7 +96,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             $touchedSkillIds = [];
             $competencyLevels = []; // cache current competency levels so all skills saved in this request target the same level, even if it advances during
 
-            foreach ($requestData['Skills'] AS $skill) {
+            foreach ($requestData['DemonstrationSkills'] AS $skill) {
                 $touchedSkillIds[] = $skill['SkillID'];
 
                 if (!array_key_exists($skill['SkillID'], $existingSkills)) {
@@ -143,7 +143,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
                 );
             }
 
-            $Demonstration->clearRelatedObject('Skills');
+            $Demonstration->clearRelatedObject('DemonstrationSkills');
         }
     }
 }
