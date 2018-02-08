@@ -19,6 +19,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
     config: {
         selectedStudent: null,
+        selectedCompetencies: true,
 
         skillStore: null,
         competenciesStore: null,
@@ -60,6 +61,44 @@ Ext.define('Slate.cbl.field.Ratings', {
         }
 
         this.setValue(null);
+    },
+
+    applySelectedCompetencies: function(competencies) {
+        return competencies ? Ext.Array.clone(competencies) : [];
+    },
+
+    updateSelectedCompetencies: function(competencies, oldCompetencies) {
+        var me = this,
+            length = competencies.length,
+            i = 0, competencyCode;
+
+        Ext.suspendLayouts();
+
+        // add any newly selected competencies
+        for (; i < length; i++) {
+            competencyCode = competencies[i];
+
+            if (!oldCompetencies || oldCompetencies.indexOf(competencyCode) == -1) {
+                me.addCompetencyCard(competencyCode);
+            }
+        }
+
+        // remove any no-longer-selected competencies
+        if (oldCompetencies) {
+            length = oldCompetencies.length;
+            i = 0;
+
+            for (; i < length; i++) {
+                competencyCode = oldCompetencies[i];
+                if (competencies.indexOf(competencyCode) == -1) {
+                    me.removeCompetencyCard(competencyCode);
+                }
+            }
+        }
+
+        me.getTabPanel().setActiveTab(0);
+
+        Ext.resumeLayouts(true);
     },
 
     applyTabPanel: function(tabPanel, oldTabPanel) {
@@ -148,7 +187,7 @@ Ext.define('Slate.cbl.field.Ratings', {
             })
         ]);
 
-        tabPanel.insert(0, competenciesGrid);
+        tabPanel.add(competenciesGrid);
         me.insert(0, tabPanel);
     },
 
@@ -205,21 +244,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
     // event handlers
     onCompetencySelect: function(competenciesGrid, competency) {
-        var me = this,
-            tabPanel = me.getTabPanel(),
-            cardConfig = {
-                isCompetencyCard: true,
-                selectedStudent: me.getSelectedStudent(),
-                selectedCompetency: competency.get('Code'),
-                listeners: {
-                    scope: me,
-                    ratingchange: 'onRatingChange'
-                }
-            },
-            cardIndex = tabPanel.items.findInsertionIndex(cardConfig);
-
-        tabPanel.insert(cardIndex, cardConfig);
-        tabPanel.setActiveItem(cardIndex);
+        this.addCompetencyCard(competency.get('Code'), true);
         competenciesGrid.setQueryFilter(null);
     },
 
@@ -254,8 +279,7 @@ Ext.define('Slate.cbl.field.Ratings', {
             value = me.value,
             valueSkillsMap = me.valueSkillsMap,
             skillId = skill.getId(),
-            skillData = valueSkillsMap[skillId],
-            errors;
+            skillData = valueSkillsMap[skillId];
 
         if (rating === null) {
             delete valueSkillsMap[skillId];
@@ -286,5 +310,50 @@ Ext.define('Slate.cbl.field.Ratings', {
 
         tabPanel.getTabBar().setHidden(tabPanelItems.getCount() <= 1);
         this.getCompetenciesGrid().setExcludeFilter(tabPanelItems.collect('selectedCompetency'));
+    },
+
+    addCompetencyCard: function(competencyCode, activate) {
+        var me = this,
+            selectedCompetencies = me.getSelectedCompetencies(),
+            tabPanel = me.getTabPanel(),
+            tabPanelItems = tabPanel.items,
+            cardConfig, cardIndex;
+
+        if (selectedCompetencies.indexOf(competencyCode) == -1) {
+            selectedCompetencies.push(competencyCode);
+        }
+
+        if (tabPanelItems.findIndex('selectedCompetency', competencyCode) != -1) {
+            return;
+        }
+
+        cardConfig = {
+            isCompetencyCard: true,
+            selectedStudent: me.getSelectedStudent(),
+            selectedCompetency: competencyCode,
+            listeners: {
+                scope: me,
+                ratingchange: 'onRatingChange'
+            }
+        };
+
+        cardIndex = tabPanelItems.getSorters() ? tabPanelItems.findInsertionIndex(cardConfig) : 0;
+
+        tabPanel.insert(cardIndex, cardConfig);
+
+        if (activate) {
+            tabPanel.setActiveItem(cardIndex);
+        }
+    },
+
+    removeCompetencyCard: function(competencyCode) {
+        var tabPanel = this.getTabPanel(),
+            cardIndex = tabPanel.items.findIndex('selectedCompetency', competencyCode);
+
+        Ext.Array.remove(this.getSelectedCompetencies(), competencyCode);
+
+        if (cardIndex != -1) {
+            tabPanel.remove(cardIndex);
+        }
     }
 });

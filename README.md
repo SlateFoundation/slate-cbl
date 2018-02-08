@@ -119,6 +119,7 @@ parameter `apiHost` when loading the page.
   - [ ] Implement override button
   - [ ] Implement log demo btn within skills window
   - [ ] Implement edit
+  - [ ] Fix condition where value / valueSkillsMap gets out of sync when continueing to second student
   - [ ] Add student selector to teacher version of skill window
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
@@ -136,6 +137,8 @@ parameter `apiHost` when loading the page.
   - [ ] Add `<debug> ... </debug>`-wrapped support to emergence-apikit to report on requests in console
 - [ ] Fix switching between cohorts leaving empty columns in SlateDemonstrationsTeacher
 - [ ] Review and update exports as needed
+- [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does
+- [ ] Expand current content area by default when demo window opened
 
 ### Next release
 

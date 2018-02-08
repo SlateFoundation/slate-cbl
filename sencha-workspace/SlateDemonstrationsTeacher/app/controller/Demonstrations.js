@@ -70,7 +70,15 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             layout: 'fit',
             minWidth: 300,
             width: 600,
-            minHeight: 600
+            minHeight: 600,
+
+            mainView: {
+                xtype: 'slate-cbl-demonstrations-demonstrationform',
+                studentSelector: {
+                    store: 'Students',
+                    queryMode: 'local'
+                }
+            }
         },
         demonstrationForm: 'slate-cbl-demonstrations-demonstrationform',
         submitBtn: 'slate-cbl-demonstrations-demonstrationform ^ window button[action=submit]',
@@ -143,35 +151,22 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     },
 
     onCreateDemonstrationClick: function(createBtn) {
-        var me = this,
-            demonstration = me.getDemonstrationModel().create({
-                Demonstrated: new Date()
-            }),
-            demonstrationWindow = me.getDemonstrationWindow({
-                ownerCmp: me.getDashboardCt(),
-                animateTarget: createBtn,
-
-                mainView: {
-                    xtype: 'slate-cbl-demonstrations-demonstrationform',
-                    studentSelector: {
-                        store: me.getStudentsStore(),
-                        queryMode: 'local'
-                    }
-                }
-            }),
-            formPanel = demonstrationWindow.getMainView();
-
-        formPanel.loadRecord(demonstration);
-        formPanel.reset();
-        demonstrationWindow.show();
+        this.openDemonstrationWindow({
+            animateTarget: createBtn
+        });
     },
 
     onStudentSkillCreateDemonstrationClick: function(createBtn) {
         var skillPanel = createBtn.up('window').getMainView(),
-            selectedStudent = skillPanel.getSelectedStudent(),
             competency = skillPanel.getLoadedCompetency();
 
-        console.info('onStudentSkillCreateDemonstrationClick\n\tstudent=%o\n\tcompetency=%o', selectedStudent, competency && competency.get('Code'));
+        this.openDemonstrationWindow({
+            animateTarget: createBtn,
+            selectedCompetencies: competency ? [competency.get('Code')] : null,
+            data: {
+                StudentID: skillPanel.getSelectedStudent()
+            }
+        });
     },
 
     onEditDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill) {
@@ -280,5 +275,28 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 });
             }
         });
+    },
+
+
+    // local methods
+    openDemonstrationWindow: function(options) {
+        options = options || {};
+
+        // eslint-disable-next-line vars-on-top
+        var me = this,
+            demonstration = me.getDemonstrationModel().create(Ext.apply({
+                Demonstrated: new Date()
+            }, options.data || null)),
+            demonstrationWindow = me.getDemonstrationWindow({
+                ownerCmp: me.getDashboardCt()
+            }),
+            formPanel = demonstrationWindow.getMainView();
+
+        formPanel.getRatingsField().setSelectedCompetencies(options.selectedCompetencies || null);
+        formPanel.loadRecord(demonstration);
+        formPanel.reset();
+
+        demonstrationWindow.animateTarget = options.animateTarget || null;
+        demonstrationWindow.show();
     }
 });
