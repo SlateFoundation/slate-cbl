@@ -17,7 +17,25 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
     config: {
         // TODO: add slotted components for optional fields
 
-        title: 'Create Task'
+        title: 'Create Task',
+
+        footer: [
+            {
+                xtype: 'checkboxfield',
+                name: 'Status',
+                itemId: 'status',
+                uncheckedValue: 'private',
+                inputValue: 'shared',
+                boxLabel: 'Share with other teachers'
+            },
+            {
+                xtype: 'button',
+                scale: 'large',
+                text: 'Create',
+                margin: '0 0 0 16',
+                action: 'save'
+            }
+        ]
     },
 
 
@@ -73,29 +91,6 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
             fieldLabel: 'Instructions',
             grow: true,
             growMin: 200
-        }
-    ],
-
-    dockedItems: [
-        {
-            xtype: 'slate-panelfooter',
-            items: [
-                {
-                    xtype: 'checkboxfield',
-                    name: 'Status',
-                    itemId: 'status',
-                    uncheckedValue: 'private',
-                    inputValue: 'shared',
-                    boxLabel: 'Share with other teachers'
-                },
-                {
-                    xtype: 'button',
-                    scale: 'large',
-                    text: 'Create',
-                    margin: '0 0 0 16',
-                    action: 'save'
-                }
-            ]
         }
     ],
 

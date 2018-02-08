@@ -23,7 +23,23 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         ratingsField: true,
         commentsField: true,
 
-        title: 'Log Demonstration'
+        title: 'Log Demonstration',
+
+        footer: [
+            {
+                xtype: 'button',
+                text: 'Submit',
+                scale: 'large',
+                action: 'submit',
+                margin: '0 16'
+            },
+            {
+                itemId: 'continueField',
+
+                xtype: 'checkboxfield',
+                boxLabel: 'Continue with next student'
+            }
+        ]
     },
 
 
@@ -79,27 +95,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             regexText: 'Artifact must be a complete URL (starting with http:// or https://)',
             emptyText: 'http://…',
             inputType: 'url'
-        }
-    ],
-
-    dockedItems: [
-        {
-            xtype: 'slate-panelfooter',
-            items: [
-                {
-                    xtype: 'button',
-                    text: 'Submit',
-                    scale: 'large',
-                    action: 'submit',
-                    margin: '0 16'
-                },
-                {
-                    itemId: 'continueField',
-
-                    xtype: 'checkboxfield',
-                    boxLabel: 'Continue with next student'
-                }
-            ]
         }
     ],
 
