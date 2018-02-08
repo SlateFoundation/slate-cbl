@@ -117,6 +117,7 @@ parameter `apiHost` when loading the page.
   - [X] Implement log demo btn within skills window
   - [X] Implement override button
   - [ ] Implement edit
+  - [ ] Update skill window after demonstration save
   - [ ] Add student selector to teacher version of skill window
   - [ ] Review required fields and server-driven enforcement in UI
   - [ ] Fix empty student columns remaining after switching cohorts
