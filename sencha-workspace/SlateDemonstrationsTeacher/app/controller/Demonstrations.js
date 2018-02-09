@@ -5,7 +5,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     ],
 
 
-    toastTitleTpl: [
+    saveNotificationTitleTpl: [
         '<tpl if="wasPhantom">',
             'Demonstration Logged',
         '<tpl else>',
@@ -13,7 +13,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         '</tpl>'
     ],
 
-    toastBodyTpl: [
+    saveNotificationBodyTpl: [
         '<tpl if="wasPhantom">',
             '<tpl for="student">',
                 '<strong>{FirstName} {LastName}</strong>',
@@ -283,8 +283,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
                 // show notification to user
                 Ext.toast(
-                    Ext.XTemplate.getTpl(me, 'toastBodyTpl').apply(tplData),
-                    Ext.XTemplate.getTpl(me, 'toastTitleTpl').apply(tplData)
+                    Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
                 );
 
 

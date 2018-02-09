@@ -2,11 +2,11 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
     extend: 'Ext.app.Controller',
 
 
-    toastTitleTpl: [
+    overrideNotificationTitleTpl: [
         'Standard Override Saved'
     ],
 
-    toastBodyTpl: [
+    overrideNotificationBodyTpl: [
         'Overrode',
         ' <strong>{skill.Code}</strong>',
         ' for',
@@ -114,8 +114,8 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
 
                 // show notification to user
                 Ext.toast(
-                    Ext.XTemplate.getTpl(me, 'toastBodyTpl').apply(tplData),
-                    Ext.XTemplate.getTpl(me, 'toastTitleTpl').apply(tplData)
+                    Ext.XTemplate.getTpl(me, 'overrideNotificationBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'overrideNotificationTitleTpl').apply(tplData)
                 );
 
                 formWindow.hide();
