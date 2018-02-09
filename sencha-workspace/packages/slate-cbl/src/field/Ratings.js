@@ -190,38 +190,93 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // containerfield lifecycle
-    // beforeReset: function() {
-    //     this.callParent();
-    //     this.getCompetenciesGrid().getSearchField().reset();
-    // },
+    normalizeValue: function(value) {
+        var normalValue = [],
+            length = value ? value.length : 0,
+            i = 0, demonstrationSkill;
 
-    // reset: function() {
-    //     debugger;
-    //     this.callParent();
-    //     // TODO: clear selected competencies
-    // }
+        for (; i < length; i++) {
+            demonstrationSkill = value[i];
+
+            normalValue.push({
+                ID: demonstrationSkill.ID,
+                SkillID: demonstrationSkill.SkillID,
+                TargetLevel: demonstrationSkill.TargetLevel,
+                DemonstratedLevel: demonstrationSkill.DemonstratedLevel,
+                Override: demonstrationSkill.Override
+            });
+        }
+
+        return normalValue;
+    },
 
     setValue: function(value) {
-        return this.callParent([value || []]);
+        return this.callParent([this.normalizeValue(value)]);
     },
 
     isEqual: function(value1, value2) {
-        return (
-            value1 === value2
-            || (value1 && value1.length == 0 && value2 && value2.length == 0) // eslint-disable-line no-extra-parens
-        );
+        var skillId, skill1, skill2;
+
+        if (value1 === value2) {
+            return true;
+        }
+
+        if (!value1 && !value2) {
+            return true;
+        }
+
+        if (!value1 || !value2) {
+            return false;
+        }
+
+        if (value1.length !== value2.length) {
+            return false;
+        }
+
+        value1 = Ext.Array.toValueMap(value1, 'SkillID');
+        value2 = Ext.Array.toValueMap(value2, 'SkillID');
+
+        for (skillId in value1) {
+            if (!value1.hasOwnProperty(skillId)) {
+                continue;
+            }
+
+            skill2 = value2[skillId];
+
+            if (!skill2) {
+                return false;
+            }
+
+            skill1 = value1[skillId];
+
+            if (skill1.DemonstratedLevel !== skill2.DemonstratedLevel) {
+                return false;
+            }
+
+            if (skill1.Override !== skill2.Override) {
+                return false;
+            }
+
+            if (skill1.TargetLevel !== skill2.TargetLevel) {
+                return false;
+            }
+        }
+
+        return true;
     },
 
     onChange: function(value) {
-        var length = value ? value.length : 0,
+        var me = this,
+            length = value ? value.length : 0,
             i = 0, skillData,
-            valueSkillsMap = this.valueSkillsMap = {};
+            valueSkillsMap = me.valueSkillsMap = {};
 
         for (; i < length; i++) {
             skillData = value[i];
             valueSkillsMap[skillData.SkillID] = skillData;
-            // TODO: load
         }
+
+        this.syncValueToCards();
     },
 
     getErrors: function(value) {
