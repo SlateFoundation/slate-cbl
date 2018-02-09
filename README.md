@@ -116,7 +116,7 @@ parameter `apiHost` when loading the page.
   - [X] Fix crash when saving ratings to competencies not loaded in current grid
   - [X] Implement log demo btn within skills window
   - [X] Implement override button
-  - [ ] Implement edit
+  - [X] Implement edit
   - [ ] Implement delete
   - [ ] Update skill window after demonstration save
   - [ ] Add student selector to teacher version of skill window

@@ -331,14 +331,10 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     },
 
     onStudentCompetencyAdd: function(studentCompetenciesStore, studentCompetencies) {
-        console.log('studentCompetency->add', studentCompetencies);
-
         this.loadStudentCompetencies(studentCompetencies);
     },
 
     onStudentCompetencyUpdate: function(studentCompetenciesStore, studentCompetency, operation, modifiedFieldNames) {
-        console.log('studentCompetency->update', studentCompetency, operation, modifiedFieldNames);
-
         this.loadStudentCompetencies(studentCompetency, true);
     },
 
