@@ -132,6 +132,11 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
 
     // component lifecycle
+    constructor: function() {
+        this.skillValueQueue = {};
+        this.callParent(arguments);
+    },
+
     afterRender: function() {
         this.callParent(arguments);
         this.loadIfNeeded();
@@ -145,36 +150,60 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
 
     // local functions
-    loadIfNeeded: function() {
+    /**
+     * Return true if StudentCompetency for selected student+competency is loaded
+     */
+    isStudentCompetencyLoaded: function() {
         var me = this,
             selectedStudent = me.getSelectedStudent(),
             selectedCompetency = me.getSelectedCompetency(),
             studentCompetency = me.getStudentCompetency();
 
-        if (
-            !me.rendered // don't load if not rendered yet
-            || (!selectedStudent && selectedStudent !== false) // don't load until a student is selected (false means current is selected)
-            || !selectedCompetency // don't load until a competency is selected
-            // don't load if selected student+competency is already leaded
-            || (
-                studentCompetency
-                && (!selectedStudent || studentCompetency.get('Student').Username == selectedStudent)
-                && studentCompetency.get('Competency').Code == selectedCompetency
-            )
-        ) {
+        return (
+            (selectedStudent || selectedStudent === false)
+            && selectedCompetency
+            && studentCompetency
+            && (!selectedStudent || studentCompetency.get('Student').Username == selectedStudent)
+            && studentCompetency.get('Competency').Code == selectedCompetency
+        );
+    },
+
+    loadIfNeeded: function() {
+        var me = this,
+            selectedStudent = me.getSelectedStudent(),
+            selectedCompetency = me.getSelectedCompetency();
+
+        // don't load if not rendered yet
+        if (!me.rendered) {
             return;
         }
 
+        // don't load until a student is selected (false means current is selected)
+        if (!selectedStudent && selectedStudent !== false) {
+            return;
+        }
+
+        // don't load until a competency is selected
+        if (!selectedCompetency) {
+            return;
+        }
+
+        // don't load if selected student+competency is already leaded
+        if (me.isStudentCompetencyLoaded()) {
+            return;
+        }
+
+        // load StudentCompetency model
         me.setLoading('Loading '+selectedCompetency+'&hellip;');
         Slate.cbl.model.StudentCompetency.loadHighestLevel({
             student: selectedStudent,
             competency: selectedCompetency,
             include: ['Student', 'Competency.Skills'],
-            success: function(loadedStudentCompetency) {
-                me.setStudentCompetency(loadedStudentCompetency);
+            success: function(studentCompetency) {
+                me.setStudentCompetency(studentCompetency);
                 me.setLoading(false);
             },
-            failure: function(loadedStudentCompetency, operation) {
+            failure: function(studentCompetency, operation) {
                 var response = operation.getResponse(),
                     data = response && response.data,
                     competencyData = data && data.Competency;
@@ -192,5 +221,17 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
                 Ext.resumeLayouts(true);
             }
         });
+    },
+
+    setSkillValue: function(skillId, value) {
+        var me = this,
+            skillFieldsMap = me.skillFieldsMap,
+            skillField = skillFieldsMap && skillFieldsMap[skillId];
+
+        if (skillField && me.isStudentCompetencyLoaded()) {
+            skillField.setValue(value);
+        } else {
+            me.skillValueQueue[skillId] = value;
+        }
     }
 });

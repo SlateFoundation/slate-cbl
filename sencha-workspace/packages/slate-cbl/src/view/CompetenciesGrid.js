@@ -39,7 +39,7 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
         autoLoad: true,
         proxy: {
             type: 'slate-cbl-competencies',
-            include: null,
+            include: 'skillIds',
             relatedTable: 'ContentArea'
         }
     },

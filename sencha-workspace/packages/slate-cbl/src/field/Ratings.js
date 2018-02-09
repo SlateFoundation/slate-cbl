@@ -41,6 +41,7 @@ Ext.define('Slate.cbl.field.Ratings', {
         var me = this;
 
         me.syncCards = Ext.Function.createBuffered(me.syncCards, 100, me);
+        me.syncValueToCards = Ext.Function.createBuffered(me.syncValueToCards, 100, me);
 
         me.callParent(arguments);
     },
@@ -214,6 +215,14 @@ Ext.define('Slate.cbl.field.Ratings', {
         return this.callParent([this.normalizeValue(value)]);
     },
 
+    resetOriginalValue: function() {
+        var me = this;
+
+        // use clone from normalizeValue to isolate from updates
+        me.originalValue = me.normalizeValue(me.getValue());
+        me.checkDirty();
+    },
+
     isEqual: function(value1, value2) {
         var skillId, skill1, skill2;
 
@@ -276,7 +285,10 @@ Ext.define('Slate.cbl.field.Ratings', {
             valueSkillsMap[skillData.SkillID] = skillData;
         }
 
-        this.syncValueToCards();
+        me.syncValueToCards();
+
+        me.validate();
+        me.checkDirty();
     },
 
     getErrors: function(value) {
@@ -352,6 +364,7 @@ Ext.define('Slate.cbl.field.Ratings', {
         me.fireEvent('ratingchange', me, rating, level, skill, ratingSlider, competencyCard);
 
         me.validate();
+        me.checkDirty();
     },
 
 
@@ -364,19 +377,78 @@ Ext.define('Slate.cbl.field.Ratings', {
         this.getCompetenciesGrid().setExcludeFilter(tabPanelItems.collect('selectedCompetency'));
     },
 
+    syncValueToCards: function() {
+        var me = this,
+            tabPanel = me.getTabPanel(),
+            value = me.getValue(),
+            length = value ? value.length : 0,
+            i = 0, skillData, competency, competencyId,
+            competenciesStore = me.getCompetenciesGrid().getStore(),
+            competencyCardsMap = {}, card;
+
+
+        // just remove all cards if value is empty
+        if (!value || !value.length) {
+            this.setSelectedCompetencies([]);
+            return;
+        }
+
+
+        // defer until competencies store is loaded
+        if (!competenciesStore.isLoaded()) {
+            competenciesStore.on('load', me.syncValueToCards, me, { single: true });
+            return;
+        }
+
+
+        // collect competencies
+        for (; i < length; i++) {
+            skillData = value[i];
+            competency = competenciesStore.getBySkillId(skillData.SkillID);
+
+            if (!competency) {
+                Ext.Logger.warn('Value loaded with competency not found in competencies store, skipping');
+                continue;
+            }
+
+            competencyId = competency.getId();
+
+            card = competencyCardsMap[competencyId];
+            if (!card) {
+                card = competencyCardsMap[competencyId] = me.addCompetencyCard(competency.get('Code'));
+            }
+
+            card.setSkillValue(skillData.SkillID, skillData.DemonstratedLevel);
+        }
+
+
+        // activate first card if grid is active
+        if (tabPanel.getActiveTab() === me.getCompetenciesGrid()) {
+            tabPanel.setActiveTab(0);
+        }
+    },
+
+    getCompetencyCard: function(competencyCode) {
+        var tabPanelItems = this.getTabPanel().items,
+            cardIndex = tabPanelItems.findIndex('selectedCompetency', competencyCode);
+
+        return cardIndex == -1 ? null : tabPanelItems.getAt(cardIndex);
+    },
+
     addCompetencyCard: function(competencyCode, activate) {
         var me = this,
             selectedCompetencies = me.getSelectedCompetencies(),
             tabPanel = me.getTabPanel(),
             tabPanelItems = tabPanel.items,
-            cardConfig, cardIndex;
+            cardConfig, cardIndex, card;
 
         if (selectedCompetencies.indexOf(competencyCode) == -1) {
             selectedCompetencies.push(competencyCode);
         }
 
-        if (tabPanelItems.findIndex('selectedCompetency', competencyCode) != -1) {
-            return;
+        card = me.getCompetencyCard(competencyCode);
+        if (card) {
+            return card;
         }
 
         cardConfig = {
@@ -390,12 +462,13 @@ Ext.define('Slate.cbl.field.Ratings', {
         };
 
         cardIndex = tabPanelItems.getSorters() ? tabPanelItems.findInsertionIndex(cardConfig) : 0;
-
-        tabPanel.insert(cardIndex, cardConfig);
+        card = tabPanel.insert(cardIndex, cardConfig);
 
         if (activate) {
-            tabPanel.setActiveItem(cardIndex);
+            tabPanel.setActiveItem(card);
         }
+
+        return card;
     },
 
     removeCompetencyCard: function(competencyCode) {
