@@ -44,34 +44,28 @@ class DemonstrationSkill extends \ActiveRecord
 
     public static $relationships = [
         'Demonstration' => [
-            'type' => 'one-one'
-            ,'class' => Demonstration::class
+            'type' => 'one-one',
+            'class' => Demonstration::class
         ],
         'Skill' => [
-            'type' => 'one-one'
-            ,'class' => Skill::class
+            'type' => 'one-one',
+            'class' => Skill::class
         ]
     ];
 
     public static $validators = [
-        'DemonstrationID' => [
-            'validator' => 'number'
-            ,'min' => 1
-        ]
-        ,'SkillID' => [
-            'validator' => 'number'
-            ,'min' => 1
-        ]
-        ,'TargetLevel' => [
-            'validator' => 'number'
-            ,'min' => 1
-            ,'max' => 13
-            ,'required' => false
-        ]
-        ,'DemonstratedLevel' => [
-            'validator' => 'number'
-            ,'min' => 0
-            ,'max' => 13
+        'Demonstration' => 'require-relationship',
+        'Skill' => 'require-relationship',
+        'TargetLevel' => [
+            'validator' => 'number',
+            'min' => 1,
+            'max' => 13,
+            'required' => false
+        ],
+        'DemonstratedLevel' => [
+            'validator' => 'number',
+            'min' => 0,
+            'max' => 13
         ]
     ];
 

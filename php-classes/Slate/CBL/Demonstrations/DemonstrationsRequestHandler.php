@@ -43,107 +43,78 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
 
-
-    protected static function onBeforeRecordSaved(ActiveRecord $Demonstration, $requestData)
+    protected static function applyRecordDelta(ActiveRecord $Demonstration, $requestData)
     {
-        // validate skills list
         if (array_key_exists('DemonstrationSkills', $requestData)) {
-            if (!is_array($requestData['DemonstrationSkills']) || !count($requestData['DemonstrationSkills'])) {
-                return static::throwInvalidRequestError('At least one performance level must be logged');
+            $demonstrationSkillsData = $requestData['DemonstrationSkills'];
+            unset($requestData['DemonstrationSkills']);
+        }
+
+
+        parent::applyRecordDelta($Demonstration, $requestData);
+
+
+        if (isset($demonstrationSkillsData)) {
+            $Demonstration->recordAffectedStudentCompetencies();
+
+            // index existing DemonstrationSkill records by SkillID
+            $existingDemonstrationSkills = [];
+
+            foreach ($Demonstration->DemonstrationSkills as $DemonstrationSkill) {
+                $existingDemonstrationSkills[$DemonstrationSkill->SkillID] = $DemonstrationSkill;
             }
 
-            foreach ($requestData['DemonstrationSkills'] AS $index => $skill) {
-                if (empty($skill['SkillID']) || !is_numeric($skill['SkillID']) || $skill['SkillID'] < 1) {
-                    return static::throwInvalidRequestError("Skill at index $index is missing SkillID");
+
+            // cache current competency levels so all skills saved in this request target the same level, even if it advances during
+            $competencyLevels = [];
+
+
+            // create new and update existing skills
+            $demonstrationSkills = [];
+            foreach ($demonstrationSkillsData as $demonstrationSkillData) {
+                // skip if DemonstratedLevel is unset or null -- these will be deleted
+                if (!isset($demonstrationSkillData['DemonstratedLevel'])) {
+                    continue;
                 }
 
-                if (
-                    empty($skill['Override']) &&
-                    (
-                        !isset($skill['DemonstratedLevel']) ||
-                        !is_numeric($skill['DemonstratedLevel']) ||
-                        $skill['DemonstratedLevel'] < 0
-                    )
-                ) {
-                    return static::throwInvalidRequestError("Skill at index $index is missing DemonstratedLevel");
+                if ($DemonstrationSkill = $existingDemonstrationSkills[$demonstrationSkillData['SkillID']]) {
+                    if (!empty($demonstrationSkillData['TargetLevel'])) {
+                        $DemonstrationSkill->TargetLevel = $demonstrationSkillData['TargetLevel'];
+                    }
+
+                    $DemonstrationSkill->DemonstratedLevel = $demonstrationSkillData['DemonstratedLevel'];
+                    $DemonstrationSkill->Override = !empty($demonstrationSkillData['Override']);
+                } else {
+                    $DemonstrationSkill = DemonstrationSkill::create([
+                        'SkillID' => $demonstrationSkillData['SkillID'],
+                        'DemonstratedLevel' => $demonstrationSkillData['DemonstratedLevel'],
+                        'Override' => !empty($demonstrationSkillData['Override'])
+                    ]);
+
+                    if (!empty($demonstrationSkillData['TargetLevel'])) {
+                        $DemonstrationSkill->TargetLevel = $demonstrationSkillData['TargetLevel'];
+                    } elseif(array_key_exists($DemonstrationSkill->Skill->CompetencyID, $competencyLevels)) {
+                        $DemonstrationSkill->TargetLevel = $competencyLevels[$DemonstrationSkill->Skill->CompetencyID];
+                    } else {
+                        $StudentCompetency = StudentCompetency::getCurrentForStudent($Demonstration->Student, $DemonstrationSkill->Skill->Competency);
+                        $DemonstrationSkill->TargetLevel = $competencyLevels[$DemonstrationSkill->Skill->CompetencyID] = $StudentCompetency ? $StudentCompetency->Level : null;
+                    }
+
+                    // append to existing map to prevent issues if data contains multiple entries for same SkillID
+                    $existingDemonstrationSkills[$demonstrationSkillData['SkillID']] = $DemonstrationSkill;
                 }
+
+                $demonstrationSkills[] = $DemonstrationSkill;
             }
+
+
+            // write new list to relationship
+            $Demonstration->DemonstrationSkills = $demonstrationSkills;
         }
     }
 
-    protected static function onRecordSaved(ActiveRecord $Demonstration, $requestData)
+    protected static function onBeforeRecordDestroyed(ActiveRecord $Demonstration)
     {
-        if (array_key_exists('DemonstrationSkills', $requestData)) {
-            // get existing skill records and index by SkillID
-            if (!$Demonstration->isNew) {
-                try {
-                    $existingSkills = DB::table(
-                        'SkillID'
-                        ,'SELECT ID, SkillID, DemonstratedLevel FROM `%s` WHERE DemonstrationID = %u'
-                        ,[
-                            DemonstrationSkill::$tableName
-                            ,$Demonstration->ID
-                        ]
-                    );
-                } catch (TableNotFoundException $e) {
-                    $existingSkills = [];
-                }
-            } else {
-                $existingSkills = [];
-            }
-
-            // save new and update existing skills
-            $touchedSkillIds = [];
-            $competencyLevels = []; // cache current competency levels so all skills saved in this request target the same level, even if it advances during
-
-            foreach ($requestData['DemonstrationSkills'] AS $skill) {
-                $touchedSkillIds[] = $skill['SkillID'];
-
-                if (!array_key_exists($skill['SkillID'], $existingSkills)) {
-                    $Skill = Skill::getByID($skill['SkillID']);
-
-                    if (!empty($skill['TargetLevel'])) {
-                        $targetLevel = $skill['TargetLevel'];
-                    } elseif(array_key_exists($Skill->CompetencyID, $competencyLevels)) {
-                        $targetLevel = $competencyLevels[$Skill->CompetencyID];
-                    } else {
-                        $targetLevel = $competencyLevels[$Skill->CompetencyID] = $StudentCompetency = StudentCompetency::getCurrentForStudent($Demonstration->Student, $Skill->Competency) ? $StudentCompetency->Level : null;
-                    }
-
-                    $DemoSkill = DemonstrationSkill::create([
-                        'Demonstration' => $Demonstration
-                        ,'Skill' => $Skill
-                        ,'TargetLevel' => $targetLevel
-                        ,'DemonstratedLevel' => empty($skill['DemonstratedLevel']) && !empty($skill['Override']) ? $targetLevel : $skill['DemonstratedLevel']
-                        ,'Override' => !empty($skill['Override'])
-                    ], true);
-                } elseif ($existingSkills[$skill['SkillID']]['DemonstratedLevel'] != $skill['DemonstratedLevel']) {
-                    DB::nonQuery(
-                        'UPDATE `%s` SET DemonstratedLevel = "%s" WHERE ID = %u'
-                        ,[
-                            DemonstrationSkill::$tableName
-                            ,DB::escape($skill['DemonstratedLevel'])
-                            ,$existingSkills[$skill['SkillID']]['ID']
-                        ]
-                    );
-                }
-            }
-
-            // delete any existing skills that weren't touched in this save
-            $removedSkillIds = array_diff(array_keys($existingSkills), $touchedSkillIds);
-
-            if (count($removedSkillIds)) {
-                DB::nonQuery(
-                    'DELETE FROM `%s` WHERE DemonstrationID = %u AND SkillID IN (%s)'
-                    ,[
-                        DemonstrationSkill::$tableName
-                        ,$Demonstration->ID
-                        ,implode(',', $removedSkillIds)
-                    ]
-                );
-            }
-
-            $Demonstration->clearRelatedObject('DemonstrationSkills');
-        }
+        $Demonstration->recordAffectedStudentCompetencies();
     }
 }

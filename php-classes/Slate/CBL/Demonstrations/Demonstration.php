@@ -24,17 +24,17 @@ class Demonstration extends \VersionedRecord
 
     public static $fields = [
         'StudentID' => [
-            'type' => 'uint'
-            ,'index' => true
-        ]
-        ,'Demonstrated' => [
-            'type' => 'timestamp'
-            ,'default' => null
-        ]
-        ,'ArtifactURL' => [
+            'type' => 'uint',
+            'index' => true
+        ],
+        'Demonstrated' => [
+            'type' => 'timestamp',
+            'default' => null
+        ],
+        'ArtifactURL' => [
             'notnull' => false
-        ]
-        ,'Comments' => [
+        ],
+        'Comments' => [
             'type' => 'clob',
             'notnull' => false
         ]
@@ -42,27 +42,26 @@ class Demonstration extends \VersionedRecord
 
     public static $relationships = [
         'Student' => [
-            'type' => 'one-one'
-            ,'class' => Student::class
+            'type' => 'one-one',
+            'class' => Student::class
         ],
         'DemonstrationSkills' => [
-            'type' => 'one-many'
-            ,'class' => DemonstrationSkill::class
-            ,'foreign' => 'DemonstrationID'
+            'type' => 'one-many',
+            'class' => DemonstrationSkill::class,
+            'foreign' => 'DemonstrationID',
+            'prune' => 'delete'
         ]
     ];
 
     public static $validators = [
-        'StudentID' => [
-            'validator' => 'number'
-            ,'min' => 1
-        ]
+        'Student' => 'require-relationship'
     ];
 
     public static $dynamicFields = [
         'Student',
         'Competencies' => ['getter' => 'getCompetencies'],
         'StudentCompetencies' => ['getter' => 'getStudentCompetencies'],
+        'AffectedStudentCompetencies' => ['getter' => 'getAffectedStudentCompetencies'],
         'DemonstrationSkills'
     ];
 
@@ -82,8 +81,8 @@ class Demonstration extends \VersionedRecord
 
     public function destroy()
     {
-        foreach ($this->DemonstrationSkills AS $Skill) {
-            $Skill->destroy();
+        foreach ($this->DemonstrationSkills as $DemonstrationSkill) {
+            $DemonstrationSkill->destroy();
         }
 
         return parent::destroy();
@@ -115,37 +114,78 @@ class Demonstration extends \VersionedRecord
     }
 
     /**
-     * Returns list of StudentCompetency records affected by this demonstration
+     * Returns list of StudentCompetency records affected by this demonstration in its present state
      */
-    private $studentCompetencies;
     public function getStudentCompetencies()
     {
-        if ($this->studentCompetencies === null) {
-            $this->studentCompetencies = [];
+        $studentCompetencies = [];
 
-            // use cached $this->DemonstrationSkills array to include skills that may have been destroyed in this session
+        foreach ($this->captureAffectedStudentCompetencies(true) as $levelStudentCompetencies) {
+            foreach ($levelStudentCompetencies as $StudentCompetency) {
+                $studentCompetencies[] = $StudentCompetency;
+            }
+        }
+
+        return $studentCompetencies;
+    }
+
+    /**
+     * Returns list of StudentCompetency records affected by this demonstration in its present state
+     */
+    public function getAffectedStudentCompetencies()
+    {
+        $studentCompetencies = [];
+
+        foreach ($this->captureAffectedStudentCompetencies() as $levelStudentCompetencies) {
+            foreach ($levelStudentCompetencies as $StudentCompetency) {
+                $studentCompetencies[] = $StudentCompetency;
+            }
+        }
+
+        return $studentCompetencies;
+    }
+
+    /**
+     * Enable recording affected student competencies throughout
+     */
+    private $recordAffectedStudentCompetencies = false;
+    public function recordAffectedStudentCompetencies($enable = true)
+    {
+        $this->recordAffectedStudentCompetencies = $enable;
+
+        if ($enable) {
+            $this->captureAffectedStudentCompetencies();
+        }
+    }
+
+    private $affectedStudentCompetenciesByLevel = [];
+    public function captureAffectedStudentCompetencies($currentOnly = false)
+    {
+        if ($this->recordAffectedStudentCompetencies && !$currentOnly) {
+            $studentCompetenciesByLevel = &$this->affectedStudentCompetenciesByLevel;
+        } else {
             $studentCompetenciesByLevel = [];
-            foreach ($this->DemonstrationSkills as $DemonstrationSkill) {
-                $competencyId = $DemonstrationSkill->Skill->CompetencyID;
+        }
 
-                if (
-                    !isset($studentCompetenciesByLevel[$competencyId])
-                    || !isset($studentCompetenciesByLevel[$competencyId][$DemonstrationSkill->TargetLevel])
-                ) {
-                    $StudentCompetency = StudentCompetency::getByWhere([
-                        'StudentID' => $this->StudentID,
-                        'CompetencyID' => $competencyId,
-                        'Level' => $DemonstrationSkill->TargetLevel
-                    ]);
+        foreach ($this->DemonstrationSkills as $DemonstrationSkill) {
+            $competencyId = $DemonstrationSkill->Skill->CompetencyID;
 
-                    if ($StudentCompetency) {
-                        $studentCompetenciesByLevel[$competencyId][$DemonstrationSkill->TargetLevel] = $StudentCompetency;
-                        $this->studentCompetencies[] = $StudentCompetency;
-                    }
+            if (
+                !isset($studentCompetenciesByLevel[$competencyId])
+                || !isset($studentCompetenciesByLevel[$competencyId][$DemonstrationSkill->TargetLevel])
+            ) {
+                $StudentCompetency = StudentCompetency::getByWhere([
+                    'StudentID' => $this->StudentID,
+                    'CompetencyID' => $competencyId,
+                    'Level' => $DemonstrationSkill->TargetLevel
+                ]);
+
+                if ($StudentCompetency) {
+                    $studentCompetenciesByLevel[$competencyId][$DemonstrationSkill->TargetLevel] = $StudentCompetency;
                 }
             }
         }
 
-        return $this->studentCompetencies;
+        return $studentCompetenciesByLevel;
     }
 }
