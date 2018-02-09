@@ -60,5 +60,30 @@ Ext.define('Slate.cbl.store.Competencies', {
         return Ext.callback(callback, scope, [this.queryBy(function(competency) {
             return competency.get('ContentAreaId') == contentArea;
         })]);
+    },
+
+    getBySkillId: function(skillId) {
+        var me = this,
+            skillIdMap = me.skillIdMap,
+            competenciesCount, competencyIndex = 0, competency,
+            skills, skillsLength, skillIndex;
+
+        if (!skillIdMap) {
+            skillIdMap = me.skillIdMap = {};
+            competenciesCount = me.getCount();
+
+            for (; competencyIndex < competenciesCount; competencyIndex++) {
+                competency = me.getAt(competencyIndex);
+                skills = competency.get('skillIds') || [];
+                skillsLength = skills.length;
+                skillIndex = 0;
+
+                for (; skillIndex < skillsLength; skillIndex++) {
+                    skillIdMap[skills[skillIndex]] = competency;
+                }
+            }
+        }
+
+        return skillIdMap[skillId] || null;
     }
 });
