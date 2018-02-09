@@ -57,8 +57,6 @@ Ext.define('Slate.cbl.field.Ratings', {
         for (; i < itemsLength; i++) {
             items[i].setSelectedStudent(selectedStudent);
         }
-
-        this.setValue(null);
     },
 
     applySelectedCompetencies: function(competencies) {
@@ -385,13 +383,6 @@ Ext.define('Slate.cbl.field.Ratings', {
             i = 0, skillData, competency, competencyId,
             competenciesStore = me.getCompetenciesGrid().getStore(),
             competencyCardsMap = {}, card;
-
-
-        // just remove all cards if value is empty
-        if (!value || !value.length) {
-            this.setSelectedCompetencies([]);
-            return;
-        }
 
 
         // defer until competencies store is loaded
