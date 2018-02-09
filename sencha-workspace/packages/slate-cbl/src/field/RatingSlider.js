@@ -74,7 +74,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
             minValue = me.minValue,
             maxValue = me.maxValue,
             i = minValue + 1,
-            value = me.value || null;
+            value = me.normalizeValue(me.value);
 
         me.originalValue = value;
 
@@ -184,8 +184,8 @@ Ext.define('Slate.cbl.field.RatingSlider', {
         var me = this,
             maxValue = me.maxValue;
 
-        if (value === null) {
-            return value;
+        if (!value && value !== 0) {
+            return null;
         }
 
         value = Math.round(value);
