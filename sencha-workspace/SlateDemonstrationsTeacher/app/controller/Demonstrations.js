@@ -231,6 +231,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 if (continueField.getValue()) {
                     nextStudent = studentsStore.getAt(studentsStore.indexOf(student) + 1);
                     formPanel.loadRecord(me.getDemonstrationModel().create({
+                        Class: savedDemonstration.get('Class'),
                         Demonstrated: new Date(),
                         StudentID: nextStudent ? nextStudent.getId() : null
                     }));
