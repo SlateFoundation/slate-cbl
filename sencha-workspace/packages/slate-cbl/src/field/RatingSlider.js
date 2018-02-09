@@ -63,7 +63,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
             value = null;
         }
 
-        me.setValue(0, value, true, true);
+        me.setValue(value);
     },
 
 
@@ -128,6 +128,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
         // support various argument formats of sliders and fields
         if (argsLength == 1) {
             value = args[0];
+            changeComplete = true;
         } else if (argsLength == 2) {
             if (typeof args[1] == 'number') {
                 thumbIndex = args[0];
@@ -332,7 +333,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
                                     return; // ignore uncheck events
                                 }
 
-                                me.setValue(0, menuItem.value, true, true);
+                                me.setValue(menuItem.value);
                                 miscRatingsTip.hide();
                             }
                         }
