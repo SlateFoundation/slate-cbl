@@ -40,6 +40,22 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         '</tpl>'
     ],
 
+    deleteConfirmationTitleTpl: [
+        'Delete demonstration #{ID}'
+    ],
+
+    deleteConfirmationBodyTpl: [
+        '<p>Are you sure you want to permanently delete this demonstration?</p>',
+        '<p>Scores in all the following standards will be lost:</p>',
+        '<ul>',
+            '<tpl for="DemonstrationSkills">',
+                '<li>',
+                    '<strong>Level {DemonstratedLevel}</strong> demonstrated in <strong>{Skill.Code}</strong>: <em>{Skill.Statement}</em>',
+                '</li>',
+            '</tpl>',
+        '</ul>',
+    ],
+
 
     // controller configuration
     views: [
@@ -177,7 +193,55 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     },
 
     onDeleteDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill) {
-        console.info('onDeleteDemonstrationClick\n\tdemonstration=%o\n\tdemonstrationSkill=%o', demonstrationId, demonstrationSkill.getId());
+        var me = this;
+
+        skillPanel.setLoading('Reviewing demonstration #' + demonstrationId + '&hellip;');
+
+        me.getDemonstrationModel().load(demonstrationId, {
+            include: 'DemonstrationSkills.Skill',
+            success: function(loadedDemonstration) {
+                var tplData = loadedDemonstration.getData();
+
+                Ext.Msg.confirm(
+                    Ext.XTemplate.getTpl(me, 'deleteConfirmationTitleTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'deleteConfirmationBodyTpl').apply(tplData),
+                    function(btnId) {
+                        if (btnId != 'yes') {
+                            skillPanel.setLoading(false);
+                            return;
+                        }
+
+                        skillPanel.setLoading('Erasing demonstration #'+demonstrationId+'&hellip;');
+
+                        me.getStudentCompetenciesStore().eraseDemonstration(loadedDemonstration, {
+                            success: function() {
+                                skillPanel.setLoading(false);
+                            },
+                            failure: function(erasedDemonstration, operation) {
+                                skillPanel.setLoading(false);
+
+                                Ext.Msg.show({
+                                    title: 'Failed to delete demonstration',
+                                    message: operation.getError(),
+                                    buttons: Ext.Msg.OK,
+                                    icon: Ext.Msg.ERROR
+                                });
+                            }
+                        });
+                    }
+                );
+            },
+            failure: function(loadedDemonstration, operation) {
+                skillPanel.setLoading(false);
+
+                Ext.Msg.show({
+                    title: 'Failed to load demonstration',
+                    message: operation.getError(),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
     },
 
     onFormDirtyChange: function(form, dirty) {

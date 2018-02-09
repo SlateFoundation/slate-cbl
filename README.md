@@ -117,7 +117,9 @@ parameter `apiHost` when loading the page.
   - [X] Implement log demo btn within skills window
   - [X] Implement override button
   - [X] Implement edit
-  - [ ] Implement delete
+  - [X] Implement delete
+  - [X] Ensure that when editing a demonstration to remove all skill ratings within a given competency, that competency is updated via affected
+  - [ ] When editing a demonstartion, current level is shown behind raters rather than rated levels
   - [ ] Update skill window after demonstration save
   - [ ] Add student selector to teacher version of skill window
   - [ ] Review required fields and server-driven enforcement in UI

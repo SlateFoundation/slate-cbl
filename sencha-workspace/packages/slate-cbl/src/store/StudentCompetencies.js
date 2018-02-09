@@ -1,6 +1,10 @@
 Ext.define('Slate.cbl.store.StudentCompetencies', {
     extend: 'Ext.data.Store',
     alias: 'store.slate-cbl-studentcompetencies',
+    requires: [
+        /* global Slate */
+        'Slate.cbl.model.demonstrations.Demonstration'
+    ],
 
 
     model: 'Slate.cbl.model.StudentCompetency',
@@ -60,46 +64,108 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
         this.removeAll();
     },
 
+    buildDemonstrationInclude: function(demonstrationProxy) {
+        var proxyInclude = this.getProxy().getInclude();
+
+        if (!demonstrationProxy) {
+            demonstrationProxy = Slate.cbl.model.demonstrations.Demonstration.getProxy();
+        }
+
+        return Ext.Array.merge(
+            demonstrationProxy.getInclude(),
+            Ext.Array.map(proxyInclude, function(include) {
+                return 'AffectedStudentCompetencies.'+include;
+            }),
+            Ext.Array.map(proxyInclude, function(include) {
+                return 'AffectedStudentCompetencies.next.'+include;
+            })
+        );
+    },
+
+    mergeDemonstration: function(demonstration) {
+        var studentCompetencies = demonstration.get('AffectedStudentCompetencies') || [],
+            studentCompetenciesLength = studentCompetencies.length,
+            studentCompetencyIndex = 0, nextStudentCompetency;
+
+
+        // collapse any embedded "next" records into main array
+        for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
+            nextStudentCompetency = studentCompetencies[studentCompetencyIndex].next;
+
+            if (nextStudentCompetency) {
+                studentCompetencies.push(nextStudentCompetency);
+            }
+        }
+
+        // merge combined raw data
+        this.mergeData(studentCompetencies);
+    },
+
     saveDemonstration: function(demonstration, options) {
+        var me = this;
+
         options = options || {};
 
-        // eslint-disable-next-line vars-on-top
-        var me = this,
-            proxyInclude = me.getProxy().getInclude();
-
         demonstration.save(Ext.applyIf({
-            include: Ext.Array.merge(
-                demonstration.getProxy().getInclude(),
-                Ext.Array.map(proxyInclude, function(include) {
-                    return 'StudentCompetencies.'+include;
-                }),
-                Ext.Array.map(proxyInclude, function(include) {
-                    return 'StudentCompetencies.next.'+include;
-                })
-            ),
+            include: me.buildDemonstrationInclude(demonstration.getProxy()),
             success: function(savedDemonstration) {
-                var studentCompetencies = savedDemonstration.get('StudentCompetencies') || [],
-                    studentCompetenciesLength = studentCompetencies.length,
-                    studentCompetencyIndex = 0, nextStudentCompetency;
-
-
-                // collapse any embedded "next" records into main array
-                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
-                    nextStudentCompetency = studentCompetencies[studentCompetencyIndex].next;
-
-                    if (nextStudentCompetency) {
-                        studentCompetencies.push(nextStudentCompetency);
-                    }
-                }
-
-
-                // update grid
-                me.mergeData(studentCompetencies);
-
+                me.mergeDemonstration(savedDemonstration);
 
                 // call original callback
                 Ext.callback(options.success, options.scope, arguments);
             }
         }, options));
+    },
+
+    eraseDemonstration: function(demonstration, options) {
+        var me = this,
+            originalCallback,
+            scope;
+
+
+        // initialize common options
+        options = Ext.applyIf({
+            include: me.buildDemonstrationInclude(demonstration.isModel ? demonstration.getProxy() : null)
+        }, options);
+
+        scope = options.scope || me;
+
+
+        // erase model or id
+        if (demonstration.isModel) {
+            originalCallback = options.success;
+
+            options.success = function(erasedDemonstration, operation) {
+                var responseDemonstration = operation.getResultSet().getRecords()[0];
+
+                me.mergeDemonstration(responseDemonstration || erasedDemonstration);
+
+                // call original callback
+                Ext.callback(originalCallback, scope, arguments);
+            };
+
+            demonstration.erase(options);
+        } else {
+            originalCallback = options.callback;
+
+            options.id = demonstration;
+            options.callback = function(records, operation, success) {
+                var responseDemonstration = records && records[0] || null;
+
+                if (success) {
+                    debugger;
+                    me.mergeDemonstration(responseDemonstration);
+                    Ext.callback(options.success, scope, [responseDemonstration, operation]);
+                } else {
+                    debugger;
+                    Ext.callback(options.failure, scope, [responseDemonstration, operation]);
+                }
+
+                // call original callback
+                Ext.callback(originalCallback, options.scope, arguments);
+            };
+
+            Slate.cbl.model.demonstrations.Demonstration.getProxy().createOperation('destroy', options).execute();
+        }
     }
 });
