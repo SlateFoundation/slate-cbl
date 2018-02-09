@@ -87,7 +87,12 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
     updateStudentCompetency: function(studentCompetency) {
         var me = this,
-            competencyData, skills;
+            skillValueQueue = me.skillValueQueue,
+            skillFieldsMap = me.skillFieldsMap = {},
+            competencyData, skills,
+            skillsLength, skillIndex, skill, skillId, value;
+
+        Ext.suspendLayouts();
 
         me.removeAll();
 
@@ -97,24 +102,32 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
             me.getDockedComponent('competencyInfo').setData(competencyData);
 
             skills = competencyData.Skills || [];
+            skillsLength = skills.length;
+            skillIndex = 0;
 
-            me.add(Ext.Array.map(skills, function(skill) {
-                return {
+            for (; skillIndex < skillsLength; skillIndex++) {
+                skill = skills[skillIndex];
+                skillId = skill.ID;
+                value = skillValueQueue[skillId]
+
+                delete skillValueQueue[skillId];
+
+                skillFieldsMap[skillId] = me.add({
                     skill: skill,
-
-                    // TODO: provide real values
                     level: studentCompetency.get('Level'),
-                    value: null,
+                    value: value,
 
                     listeners: {
                         scope: me,
                         changecomplete: 'onRatingChange'
                     }
-                };
-            }));
+                });
+            }
         } else {
             me.setPlaceholderItem('Selected student not enrolled in selected competency');
         }
+
+        Ext.resumeLayouts(true);
     },
 
 
