@@ -14,8 +14,8 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
         'SlateDemonstrationsTeacher.view.ProgressGrid',
 
         /* global Slate */
-        'Slate.cbl.widget.StudentsListSelector',
         'Slate.cbl.widget.ContentAreaSelector',
+        'Slate.cbl.widget.StudentsListSelector',
         'Slate.cbl.model.ContentArea'
     ],
 

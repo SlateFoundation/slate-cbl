@@ -1,6 +1,7 @@
 Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
     extend: 'Ext.app.Controller',
     requires: [
+        'Ext.window.MessageBox',
         'Ext.window.Toast'
     ],
 

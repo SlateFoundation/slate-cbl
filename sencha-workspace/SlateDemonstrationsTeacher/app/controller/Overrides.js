@@ -1,5 +1,9 @@
 Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
     extend: 'Ext.app.Controller',
+    requires: [
+        'Ext.window.MessageBox',
+        'Ext.window.Toast'
+    ],
 
 
     overrideNotificationTitleTpl: [

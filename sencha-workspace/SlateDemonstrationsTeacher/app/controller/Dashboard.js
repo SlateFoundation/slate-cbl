@@ -4,9 +4,6 @@
  */
 Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
-    requires: [
-        'Ext.window.MessageBox'
-    ],
 
 
     // controller configuration
