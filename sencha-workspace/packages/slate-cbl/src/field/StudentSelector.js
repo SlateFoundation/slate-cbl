@@ -1,5 +1,5 @@
-Ext.define('Slate.cbl.widget.StudentSelector', {
-    extend: 'Slate.cbl.widget.ClearableSelector',
+Ext.define('Slate.cbl.field.StudentSelector', {
+    extend: 'Slate.cbl.field.ClearableSelector',
     xtype: 'slate-cbl-studentselector',
     requires: [
         'Slate.model.person.Person'

@@ -1,5 +1,5 @@
-Ext.define('Slate.cbl.widget.StudentsListSelector', {
-    extend: 'Slate.cbl.widget.ClearableSelector',
+Ext.define('Slate.cbl.field.StudentsListSelector', {
+    extend: 'Slate.cbl.field.ClearableSelector',
     xtype: 'slate-cbl-studentslistselector',
     requires: [
         'Slate.proxy.API'

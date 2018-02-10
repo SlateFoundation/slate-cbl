@@ -1,5 +1,5 @@
-Ext.define('Slate.cbl.widget.CohortSelector', {
-    extend: 'Slate.cbl.widget.ClearableSelector',
+Ext.define('Slate.cbl.field.CohortSelector', {
+    extend: 'Slate.cbl.field.ClearableSelector',
     xtype: 'slate-cbl-cohortselector',
 
 

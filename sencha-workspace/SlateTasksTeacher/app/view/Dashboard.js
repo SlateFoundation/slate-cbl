@@ -14,8 +14,8 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
         'SlateTasksTeacher.view.StudentsGrid',
         'SlateTasksTeacher.view.GridLegend',
 
-        'Slate.cbl.widget.SectionSelector',
-        'Slate.cbl.widget.CohortSelector',
+        'Slate.cbl.field.SectionSelector',
+        'Slate.cbl.field.CohortSelector',
     ],
 
 

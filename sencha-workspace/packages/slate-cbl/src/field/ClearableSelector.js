@@ -1,4 +1,4 @@
-Ext.define('Slate.cbl.widget.ClearableSelector', {
+Ext.define('Slate.cbl.field.ClearableSelector', {
     extend: 'Ext.form.field.ComboBox',
     xtype: 'slate-cbl-clearableselector',
 

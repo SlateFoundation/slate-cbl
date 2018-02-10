@@ -7,8 +7,8 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'SlateDemonstrationsStudent.view.CardsContainer',
 
         /* global Slate */
-        'Slate.cbl.widget.StudentSelector',
-        'Slate.cbl.widget.ContentAreaSelector',
+        'Slate.cbl.field.StudentSelector',
+        'Slate.cbl.field.ContentAreaSelector',
         'Slate.cbl.model.ContentArea'
     ],
 

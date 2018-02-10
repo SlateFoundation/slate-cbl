@@ -14,8 +14,8 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         /* global Slate */
         'Slate.cbl.model.Skill',
         'Slate.cbl.model.Competency',
-        'Slate.cbl.widget.CompetencySelector',
-        'Slate.cbl.widget.SkillSelector',
+        'Slate.cbl.field.CompetencySelector',
+        'Slate.cbl.field.SkillSelector',
         'Slate.cbl.view.demonstrations.SkillStatement',
         'Slate.cbl.view.demonstrations.SkillList'
     ],
@@ -203,7 +203,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
             };
         }
 
-        return Ext.factory(competencySelector, 'Slate.cbl.widget.CompetencySelector', oldCompetencySelector);
+        return Ext.factory(competencySelector, 'Slate.cbl.field.CompetencySelector', oldCompetencySelector);
     },
 
     updateCompetencySelector: function(competencySelector, oldCompetencySelector) {
@@ -231,7 +231,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
             };
         }
 
-        return Ext.factory(skillSelector, 'Slate.cbl.widget.SkillSelector', oldSkillSelector);
+        return Ext.factory(skillSelector, 'Slate.cbl.field.SkillSelector', oldSkillSelector);
     },
 
     updateSkillSelector: function(skillSelector, oldSkillSelector) {

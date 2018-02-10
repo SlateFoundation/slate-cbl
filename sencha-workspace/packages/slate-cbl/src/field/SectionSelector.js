@@ -1,5 +1,5 @@
-Ext.define('Slate.cbl.widget.SectionSelector', {
-    extend: 'Slate.cbl.widget.ClearableSelector',
+Ext.define('Slate.cbl.field.SectionSelector', {
+    extend: 'Slate.cbl.field.ClearableSelector',
     xtype: 'slate-cbl-sectionselector',
 
 

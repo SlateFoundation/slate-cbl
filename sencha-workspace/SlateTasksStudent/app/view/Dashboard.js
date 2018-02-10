@@ -11,8 +11,8 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
         'SlateTasksStudent.view.TaskTree',
         'SlateTasksStudent.view.TodoList',
 
-        'Slate.cbl.widget.StudentSelector',
-        'Slate.cbl.widget.SectionSelector'
+        'Slate.cbl.field.StudentSelector',
+        'Slate.cbl.field.SectionSelector'
     ],
 
 

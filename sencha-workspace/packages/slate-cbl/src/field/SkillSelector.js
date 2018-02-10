@@ -1,6 +1,6 @@
-Ext.define('Slate.cbl.widget.CompetencySelector', {
-    extend: 'Slate.cbl.widget.ClearableSelector',
-    xtype: 'slate-cbl-competencyselector',
+Ext.define('Slate.cbl.field.SkillSelector', {
+    extend: 'Slate.cbl.field.ClearableSelector',
+    xtype: 'slate-cbl-skillselector',
     requires: [
         'Slate.cbl.store.Skills'
     ],
@@ -9,8 +9,8 @@ Ext.define('Slate.cbl.widget.CompetencySelector', {
     config: {
         loadSummaries: true,
 
-        fieldLabel: 'Competency',
-        labelWidth: 100,
+        fieldLabel: 'Standard',
+        labelWidth: 75,
 
         displayField: 'Descriptor',
         valueField: 'Code',
@@ -21,16 +21,16 @@ Ext.define('Slate.cbl.widget.CompetencySelector', {
     },
 
 
-    componentCls: 'slate-cbl-competencyselector',
+    componentCls: 'slate-cbl-skillselector',
     store: {
-        type: 'slate-cbl-competencies',
+        type: 'slate-cbl-skills',
         proxy: {
-            type: 'slate-cbl-competencies'
+            type: 'slate-cbl-skills'
         }
     },
 
     listConfig: {
-        cls: 'slate-cbl-competencyselector-list'
+        cls: 'slate-cbl-skillselector-list'
     },
 
     tpl: [

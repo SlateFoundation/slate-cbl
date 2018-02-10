@@ -1,5 +1,5 @@
-Ext.define('Slate.cbl.widget.ContentAreaSelector', {
-    extend: 'Slate.cbl.widget.ClearableSelector',
+Ext.define('Slate.cbl.field.ContentAreaSelector', {
+    extend: 'Slate.cbl.field.ClearableSelector',
     xtype: 'slate-cbl-contentareaselector',
     requires: [
         'Slate.cbl.model.ContentArea'

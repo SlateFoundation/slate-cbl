@@ -13,7 +13,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         'Slate.ui.PanelFooter',
 
         'Slate.cbl.model.demonstrations.Demonstration',
-        'Slate.cbl.widget.StudentSelector',
+        'Slate.cbl.field.StudentSelector',
         'Slate.cbl.field.Ratings'
     ],
 
@@ -116,7 +116,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             }, studentSelector);
         }
 
-        return Ext.factory(studentSelector, 'Slate.cbl.widget.StudentSelector', oldStudentSelector);
+        return Ext.factory(studentSelector, 'Slate.cbl.field.StudentSelector', oldStudentSelector);
     },
 
     updateStudentSelector: function(studentSelector) {
