@@ -333,7 +333,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             demonstration = options.demonstration;
 
 
-        // initially configure form and window
+        // reconfigure form and window
         formPanel.getRatingsField().setSelectedCompetencies(options.selectedCompetencies || null);
         demonstrationWindow.animateTarget = options.animateTarget || null;
 
