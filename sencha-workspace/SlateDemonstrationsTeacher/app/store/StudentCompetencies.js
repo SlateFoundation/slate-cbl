@@ -22,7 +22,10 @@ Ext.define('SlateDemonstrationsTeacher.store.StudentCompetencies', {
                 'growth'
             ],
             relatedTable: [
-                'Student'
+                {
+                    relationship: 'Student',
+                    clearOnLoad: true
+                }
             ],
             extraParams: {
                 limit: 0

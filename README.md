@@ -123,7 +123,7 @@ parameter `apiHost` when loading the page.
   - [ ] Update skill window after demonstration save
   - [ ] Add student selector to teacher version of skill window
   - [ ] Review required fields and server-driven enforcement in UI
-  - [ ] Fix empty student columns remaining after switching cohorts
+  - [X] Fix empty student columns remaining after switching cohorts
   - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels
   - [ ] Fix condition where value / valueSkillsMap gets out of sync when continuing to second student
   - [ ] Audit requires and inheritance chain
