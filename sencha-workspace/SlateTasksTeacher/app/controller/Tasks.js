@@ -37,15 +37,19 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         // studentsGrid: 'slate-studentsgrid',
 
         taskWindow: {
-            // TODO: use autoCreate+closeAction+reset like demo form
-            forceCreate: true,
+            autoCreate: true,
 
             xtype: 'slate-window',
+            closeAction: 'hide',
             modal: true,
             layout: 'fit',
             minWidth: 300,
             width: 600,
-            minHeight: 600
+            minHeight: 600,
+
+            mainView: {
+                xtype: 'slate-cbl-tasks-taskform'
+            }
         }
 
     //     taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
@@ -209,27 +213,24 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     onCreateClick: function(createBtn) {
         var me = this,
+            dashboardCt = me.getDashboardCt(),
+            section = dashboardCt.getLoadedSection(),
             task = me.getTaskModel().create({
-                SectionID: me.getDashboardCt().getLoadedSection().getId()
+                SectionID: section.getId(),
+                Section: section.getData()
             }),
             taskWindow = me.getTaskWindow({
-                ownerCmp: me.getDashboardCt(),
-                animateTarget: createBtn,
+                ownerCmp: dashboardCt
+            }),
+            formPanel = taskWindow.getMainView();
 
-                mainView: {
-                    xtype: 'slate-cbl-tasks-taskform',
-                    // studentSelector: {
-                    //     store: me.getStudentsStore(),
-                    //     queryMode: 'local',
-                    //     matchFieldWidth: true
-                    // }
-                    // selectedStudent: context.student,
-                    // selectedSkill: context.skill,
-                    // selectedDemonstration: context.demonstrationId
-                }
-            });
 
-        taskWindow.getMainView().loadRecord(task);
+        // reconfigure form and window
+        formPanel.loadRecord(task);
+        taskWindow.animateTarget = createBtn;
+
+
+        // show window
         taskWindow.show();
     }
 

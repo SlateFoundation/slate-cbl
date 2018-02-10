@@ -2,6 +2,11 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
     extend: 'Slate.ui.form.Panel',
     xtype: 'slate-cbl-tasks-taskform',
     requires: [
+        'Ext.form.field.Display',
+        'Ext.form.field.Checkbox',
+        'Ext.form.field.ComboBox',
+        'Ext.form.field.TextArea',
+
         'Jarvus.store.FieldValuesStore',
 
         'Slate.ui.PanelFooter',
@@ -41,6 +46,14 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
 
     items: [
         {
+            xtype: 'displayfield',
+            fieldLabel: 'Section',
+            name: 'Section',
+            renderer: function(value) {
+                return value && value.Title || '&mdash;';
+            }
+        },
+        {
             xtype: 'slate-tasks-titlefield'
         },
         {
@@ -61,6 +74,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
             }
         },
         {
+            xtype: 'combobox',
             itemId: 'experience-type',
             name: 'ExperienceType',
             fieldLabel: 'Type of Experience',
