@@ -42,7 +42,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
     {
         switch ($action = ($action ?: static::shiftPath())) {
             case '*experience-types':
-                return static::handleFieldValuesRequest('ExperienceType', ExperienceDemonstration::$experienceTypeOptions);
+                return static::handleFieldValuesRequest('ExperienceType', ExperienceTask::$fields['ExperienceType']['values']);
 
             default:
                 return parent::handleRecordsRequest($action);
