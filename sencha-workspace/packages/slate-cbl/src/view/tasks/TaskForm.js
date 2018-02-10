@@ -4,7 +4,6 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
     requires: [
         'Ext.form.field.Display',
         'Ext.form.field.Checkbox',
-        'Ext.form.field.ComboBox',
         'Ext.form.field.TextArea',
 
         'Jarvus.store.FieldValuesStore',
@@ -12,6 +11,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
         'Slate.ui.PanelFooter',
 
         'Slate.cbl.field.TaskSelector',
+        'Slate.cbl.field.ClearableSelector',
         'Slate.cbl.widget.SkillsField',
         'Slate.cbl.widget.AssignmentsField',
         'Slate.cbl.widget.AttachmentsField'
@@ -68,6 +68,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
             emptyText: '(Optional)',
             queryMode: 'local',
             anyMatch: true,
+            allowBlank: true,
             store: {
                 type: 'chained',
                 source: 'Tasks',
@@ -79,9 +80,9 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
             }
         },
         {
-            xtype: 'combobox',
-            itemId: 'experience-type',
             name: 'ExperienceType',
+
+            xtype: 'slate-cbl-clearableselector',
             fieldLabel: 'Type of Experience',
             displayField: 'value',
             valueField: 'value',
