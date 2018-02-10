@@ -12,6 +12,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Skills', {
     refs: {
         dashboardCt: 'slate-demonstrations-student-dashboard',
 
+        // TODO: update to reuse workflow
         skillWindow: {
             forceCreate: true,
 

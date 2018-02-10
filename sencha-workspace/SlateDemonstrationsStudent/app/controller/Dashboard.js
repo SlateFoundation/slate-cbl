@@ -86,6 +86,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         me.getDashboardCt().render('slateapp-viewport');
 
         // load bootstrap data
+        // TOOD: move to app
         Slate.API.request({
             method: 'GET',
             url: '/cbl/dashboards/demonstrations/student/bootstrap',
