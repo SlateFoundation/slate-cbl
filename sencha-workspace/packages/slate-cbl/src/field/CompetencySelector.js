@@ -24,9 +24,7 @@ Ext.define('Slate.cbl.field.CompetencySelector', {
     componentCls: 'slate-cbl-competencyselector',
     store: {
         type: 'slate-cbl-competencies',
-        proxy: {
-            type: 'slate-cbl-competencies'
-        }
+        proxy: 'slate-cbl-competencies'
     },
 
     listConfig: {
