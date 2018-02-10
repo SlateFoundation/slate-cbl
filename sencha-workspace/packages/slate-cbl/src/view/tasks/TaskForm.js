@@ -11,8 +11,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
 
         'Slate.ui.PanelFooter',
 
-        'Slate.cbl.model.tasks.Task',
-        'Slate.cbl.widget.TaskTitleField',
+        'Slate.cbl.field.TaskSelector',
         'Slate.cbl.widget.SkillsField',
         'Slate.cbl.widget.AssignmentsField',
         'Slate.cbl.widget.AttachmentsField'
@@ -46,23 +45,29 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
 
     items: [
         {
+            name: 'Section',
+
             xtype: 'displayfield',
             fieldLabel: 'Section',
-            name: 'Section',
             renderer: function(value) {
                 return value && value.Title || '&mdash;';
             }
         },
         {
-            xtype: 'slate-tasks-titlefield'
+            name: 'Title',
+
+            xtype: 'slate-cbl-taskselector',
+            fieldLabel: 'Title',
+            valueField: 'Title'
         },
         {
-            xtype: 'slate-tasks-titlefield',
+            name: 'ParentTaskID',
+
+            xtype: 'slate-cbl-taskselector',
             fieldLabel: 'Subtask of',
             emptyText: '(Optional)',
-            name: 'ParentTaskID',
-            valueField: 'ID',
             queryMode: 'local',
+            anyMatch: true,
             store: {
                 type: 'chained',
                 source: 'Tasks',
@@ -124,7 +129,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
     //         }, studentSelector);
     //     }
 
-    //     return Ext.factory(studentSelector, 'Slate.cbl.widget.StudentSelector', oldStudentSelector);
+    //     return Ext.factory(studentSelector, 'Slate.cbl.field.StudentSelector', oldStudentSelector);
     // },
 
 
