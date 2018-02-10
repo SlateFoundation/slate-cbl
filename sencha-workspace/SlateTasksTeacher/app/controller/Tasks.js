@@ -159,24 +159,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     // event handlers
     onBootstrapDataLoad: function(app, bootstrapData) {
-        var Task = this.getTaskModel(),
-            taskDefaults = bootstrapData.taskDefaults,
-            fieldName, field;
 
         // configure model defaults from server configuration
-        if (taskDefaults) {
-            for (fieldName in taskDefaults) {
-                if (!taskDefaults.hasOwnProperty(fieldName)) {
-                    continue;
-                }
-
-                field = Task.getField(fieldName);
-
-                if (field) {
-                    field.defaultValue = taskDefaults[fieldName];
-                }
-            }
-        }
+        this.getTaskModel().loadFieldsConfig(bootstrapData.taskFields);
 
         // enable create button now that model is initialized
         this.getCreateBtn().enable();

@@ -5,7 +5,6 @@ Ext.define('SlateTasksTeacher.controller.GoogleDrive', {
     extend: 'Ext.app.Controller',
     requires: [
         /* global Slate */
-        'Slate.API',
         'Slate.cbl.util.Google'
     ],
 

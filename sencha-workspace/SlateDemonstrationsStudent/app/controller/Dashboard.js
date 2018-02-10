@@ -1,9 +1,5 @@
 Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
-    requires: [
-        /* global Slate */
-        'Slate.API'
-    ],
 
 
     // controller configuration
@@ -50,7 +46,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     listen: {
         controller: {
             '#': {
-                unmatchedroute: 'onUnmatchedRoute'
+                unmatchedroute: 'onUnmatchedRoute',
+                bootstrapdataload: 'onBootstrapDataLoad'
             }
         },
         store: {
@@ -80,44 +77,9 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
     // controller templates method overrides
     onLaunch: function () {
-        var me = this;
 
         // instantiate and render viewport
-        me.getDashboardCt().render('slateapp-viewport');
-
-        // load bootstrap data
-        // TOOD: move to app
-        Slate.API.request({
-            method: 'GET',
-            url: '/cbl/dashboards/demonstrations/student/bootstrap',
-            params: {
-                include: 'Wards'
-            },
-            success: function(response) {
-                var studentSelector = me.getStudentSelector(),
-                    studentsStore = studentSelector.getStore(),
-                    userData = response.data.user,
-                    isStaff = userData.AccountLevel != 'User',
-                    wards = userData.Wards || [];
-
-                // show and load student selector for priveleged users
-                if (isStaff || wards.length) {
-                    studentSelector.show();
-
-                    if (!isStaff) {
-                        studentSelector.queryMode = 'local';
-                        studentSelector.setEditable(false);
-
-                        if (studentsStore.isLoading()) {
-                            studentsStore.getProxy().abortLastRequest();
-                        }
-
-                        studentsStore.loadRawData(wards);
-                        studentSelector.setValueOnData();
-                    }
-                }
-            }
-        });
+        this.getDashboardCt().render('slateapp-viewport');
     },
 
 
@@ -134,6 +96,31 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
     // event handlers
     onUnmatchedRoute: function(token) {
         Ext.Logger.warn('Unmatched route: '+token);
+    },
+
+    onBootstrapDataLoad: function(app, bootstrapData) {
+        var studentSelector = this.getStudentSelector(),
+            studentsStore = studentSelector.getStore(),
+            userData = bootstrapData.user,
+            isStaff = userData.AccountLevel != 'User',
+            wards = userData.Wards || [];
+
+        // show and load student selector for privileged users
+        if (isStaff || wards.length) {
+            studentSelector.show();
+
+            if (!isStaff) {
+                studentSelector.queryMode = 'local';
+                studentSelector.setEditable(false);
+
+                if (studentsStore.isLoading()) {
+                    studentsStore.getProxy().abortLastRequest();
+                }
+
+                studentsStore.loadRawData(wards);
+                studentSelector.setValueOnData();
+            }
+        }
     },
 
     onStudentCompetenciesStoreBeforeLoad: function(store) {

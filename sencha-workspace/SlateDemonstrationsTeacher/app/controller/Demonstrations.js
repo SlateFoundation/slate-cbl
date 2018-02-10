@@ -135,33 +135,9 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
     // event handlers
     onBootstrapDataLoad: function(app, bootstrapData) {
-        var Model = this.getDemonstrationModel(),
-            fieldsConfig = bootstrapData.demonstrationFields,
-            fieldName, fieldConfig, field;
 
         // configure model defaults from server configuration
-        if (fieldsConfig) {
-            for (fieldName in fieldsConfig) {
-                if (!fieldsConfig.hasOwnProperty(fieldName)) {
-                    continue;
-                }
-
-                fieldConfig = fieldsConfig[fieldName];
-                field = Model.getField(fieldName);
-
-                if (!field) {
-                    continue;
-                }
-
-                if (fieldConfig.default) {
-                    field.defaultValue = fieldConfig.default;
-                }
-
-                if (fieldConfig.values) {
-                    field.values = fieldConfig.values;
-                }
-            }
-        }
+        this.getDemonstrationModel().loadFieldsConfig(bootstrapData.demonstrationFields);
 
         // enable create button now that model is initialized
         this.getCreateBtn().enable();

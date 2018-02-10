@@ -8,11 +8,6 @@
  */
 Ext.define('SlateTasksStudent.controller.Dashboard', {
     extend: 'Ext.app.Controller',
-    requires: [
-        /* global Slate */
-        'Slate.API',
-        'Slate.cbl.util.Google'
-    ],
 
 
     // dependencies
@@ -57,7 +52,8 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         },
         controller: {
             '#': {
-                unmatchedroute: 'onUnmatchedRoute'
+                unmatchedroute: 'onUnmatchedRoute',
+                bootstrapdataload: 'onBootstrapDataLoad'
             }
         },
         store: {
@@ -83,34 +79,6 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
 
-    // controller templates method overrides
-    onLaunch: function () {
-        var me = this;
-
-        // instantiate and render viewport
-        me.getDashboardCt().render('slateapp-viewport');
-
-        // load bootstrap data
-        Slate.API.request({
-            url: '/cbl/dashboards/tasks/student/bootstrap',
-            success: function(response) {
-                var userData = response.data.user,
-                    googleApiConfig = response.data.googleApiConfig || {};
-
-                // show and load student selector for priveleged users
-                if (!userData || userData.AccountLevel != 'User') {
-                    me.getStudentSelector().show();
-                }
-
-                // configure Google API
-                if (googleApiConfig) {
-                    Slate.cbl.util.Google.setConfig(googleApiConfig);
-                }
-            }
-        });
-    },
-
-
     // route handlers
     showDashboard: function(studentUsername, sectionCode) {
         var dashboardCt = this.getDashboardCt();
@@ -128,6 +96,15 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
 
     onUnmatchedRoute: function(token) {
         Ext.Logger.warn('Unmatched route: '+token);
+    },
+
+    onBootstrapDataLoad: function(app, bootstrapData) {
+        var userData = bootstrapData.user;
+
+        // show and load student selector for priveleged users
+        if (!userData || userData.AccountLevel != 'User') {
+            this.getStudentSelector().show();
+        }
     },
 
     onSectionsLoad: function() {
