@@ -16,38 +16,7 @@ Ext.define('Slate.cbl.widget.StudentsListSelector', {
         anyMatch: true,
         forceSelection: true,
         autoSelect: true,
-        matchFieldWidth: false,
-
-        listConfig: {
-            cls: 'slate-cbl-studentslistselector-picker',
-            collectData: function() {
-                var rawData = this.pickerField.getStore().getProxy().getReader().rawData || {};
-
-                return {
-                    records: this.superclass.collectData.apply(this, arguments),
-                    groupOptions: rawData.groupOptions || {}
-                };
-            }
-        },
-
-        tpl: [
-            '{% this.currentGroup = null %}',
-            '<tpl for="records">',
-                '<tpl if="values.groupId != this.currentGroup">',
-                    '{% this.currentGroup = values.groupId %}',
-                    '<div class="group-header">',
-                        '{groupLabel:htmlEncode}',
-                        '<tpl for="parent.groupOptions[values.groupId]">',
-                            '<button data-query="{[ fm.htmlEncode(Ext.Object.toQueryString(values.query)) ]}">',
-                                '{label:htmlEncode}',
-                            '</button>',
-                        '</tpl>',
-                    '</div>',
-                '</tpl>',
-
-                '<div class="x-boundlist-item">{label}</div>',
-            '</tpl>'
-        ]
+        matchFieldWidth: false
     },
 
 
@@ -71,6 +40,37 @@ Ext.define('Slate.cbl.widget.StudentsListSelector', {
             }
         }
     },
+
+    listConfig: {
+        cls: 'slate-cbl-studentslistselector-picker',
+        collectData: function() {
+            var rawData = this.pickerField.getStore().getProxy().getReader().rawData || {};
+
+            return {
+                records: this.superclass.collectData.apply(this, arguments),
+                groupOptions: rawData.groupOptions || {}
+            };
+        }
+    },
+
+    tpl: [
+        '{% this.currentGroup = null %}',
+        '<tpl for="records">',
+            '<tpl if="values.groupId != this.currentGroup">',
+                '{% this.currentGroup = values.groupId %}',
+                '<div class="group-header">',
+                    '{groupLabel:htmlEncode}',
+                    '<tpl for="parent.groupOptions[values.groupId]">',
+                        '<button data-query="{[ fm.htmlEncode(Ext.Object.toQueryString(values.query)) ]}">',
+                            '{label:htmlEncode}',
+                        '</button>',
+                    '</tpl>',
+                '</div>',
+            '</tpl>',
+
+            '<div class="x-boundlist-item">{label}</div>',
+        '</tpl>'
+    ],
 
 
     // combo lifecycle

@@ -17,17 +17,7 @@ Ext.define('Slate.cbl.widget.CompetencySelector', {
         forceSelection: true,
         editable: false,
         matchFieldWidth: false,
-        queryMode: 'local',
-
-        listConfig: {
-            cls: 'slate-cbl-competencyselector-list'
-        },
-
-        tpl: [
-            '<tpl for=".">',
-                '<div class="x-boundlist-item"><small class="code">{Code}</small> {Descriptor}</div>',
-            '</tpl>'
-        ]
+        queryMode: 'local'
     },
 
 
@@ -38,6 +28,16 @@ Ext.define('Slate.cbl.widget.CompetencySelector', {
             type: 'slate-cbl-competencies'
         }
     },
+
+    listConfig: {
+        cls: 'slate-cbl-competencyselector-list'
+    },
+
+    tpl: [
+        '<tpl for=".">',
+            '<div class="x-boundlist-item"><small class="code">{Code}</small> {Descriptor}</div>',
+        '</tpl>'
+    ],
 
 
     // config handlers

@@ -17,17 +17,7 @@ Ext.define('Slate.cbl.widget.SkillSelector', {
         forceSelection: true,
         editable: false,
         matchFieldWidth: false,
-        queryMode: 'local',
-
-        listConfig: {
-            cls: 'slate-cbl-skillselector-list'
-        },
-
-        tpl: [
-            '<tpl for=".">',
-                '<div class="x-boundlist-item"><small class="code">{Code}</small> {Descriptor}</div>',
-            '</tpl>'
-        ]
+        queryMode: 'local'
     },
 
 
@@ -38,6 +28,16 @@ Ext.define('Slate.cbl.widget.SkillSelector', {
             type: 'slate-cbl-skills'
         }
     },
+
+    listConfig: {
+        cls: 'slate-cbl-skillselector-list'
+    },
+
+    tpl: [
+        '<tpl for=".">',
+            '<div class="x-boundlist-item"><small class="code">{Code}</small> {Descriptor}</div>',
+        '</tpl>'
+    ],
 
 
     // config handlers

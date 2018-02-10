@@ -12,31 +12,32 @@ Ext.define('Slate.cbl.widget.SectionSelector', {
         forceSelection: true,
         editable: false,
         autoSelect: false,
-        matchFieldWidth: false,
-        listConfig: {
-            maxWidth: 512,
-            minWidth: 256
-        },
-
-        tpl: [
-            '{% this.currentTerm = null %}',
-            '<tpl for=".">',
-                '<tpl if="values.TermID != this.currentTerm">',
-                    '{% this.currentTerm = values.TermID %}',
-                    '<div class="group-header">',
-                        '<tpl if="Term">',
-                            '{Term.Title:htmlEncode}',
-                        '<tpl else>',
-                            'Term',
-                        '</tpl>',
-                    '</div>',
-                '</tpl>',
-
-                '<div class="x-boundlist-item">{Title}</div>',
-            '</tpl>'
-        ]
+        matchFieldWidth: false
     },
 
 
-    componentCls: 'slate-cbl-sectionselector'
+    componentCls: 'slate-cbl-sectionselector',
+
+    listConfig: {
+        maxWidth: 512,
+        minWidth: 256
+    },
+
+    tpl: [
+        '{% this.currentTerm = null %}',
+        '<tpl for=".">',
+            '<tpl if="values.TermID != this.currentTerm">',
+                '{% this.currentTerm = values.TermID %}',
+                '<div class="group-header">',
+                    '<tpl if="Term">',
+                        '{Term.Title:htmlEncode}',
+                    '<tpl else>',
+                        'Term',
+                    '</tpl>',
+                '</div>',
+            '</tpl>',
+
+            '<div class="x-boundlist-item">{Title}</div>',
+        '</tpl>'
+    ]
 });
