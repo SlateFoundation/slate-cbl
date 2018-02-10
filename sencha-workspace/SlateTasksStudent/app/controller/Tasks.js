@@ -8,6 +8,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         'Ext.window.Toast',
 
         /* global Slate */
+        'Slate.API',
         'Slate.cbl.util.Google'
     ],
 
@@ -156,7 +157,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 return true;
             });
 
-        taskDetails.mask('Submitting&hellip;');
+        taskDetails.setLoading('Submitting&hellip;');
         Slate.API.request({
             url: '/cbl/student-tasks/submit',
             jsonData: {
@@ -169,7 +170,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 taskDetails.close();
             },
             failure: function() {
-                taskDetails.unmask();
+                taskDetails.setLoading(false);
                 Ext.toast('Task could not be submitted.');
             }
         });

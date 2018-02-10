@@ -79,6 +79,14 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
 
+    // controller lifecycle
+    onLaunch: function () {
+
+        // instantiate and render viewport
+        this.getDashboardCt().render('slateapp-viewport');
+    },
+
+
     // route handlers
     showDashboard: function(studentUsername, sectionCode) {
         var dashboardCt = this.getDashboardCt();

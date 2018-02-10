@@ -143,13 +143,13 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     // event handlers
     onBeforeStoreLoad: function() {
         this.addCls('is-loading');
-        this.mask('Loading Todos');
+        this.setLoading('Loading Todos&hellip;');
     },
 
     onStoreLoad: function() {
         this.refresh();
         this.removeCls('is-loading');
-        this.unmask();
+        this.setLoading(false);
     },
 
     onElClick: function(ev, el) {

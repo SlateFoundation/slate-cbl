@@ -132,13 +132,13 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     // event handlers
     onBeforeStoreLoad: function() {
         this.addCls('is-loading');
-        this.mask('Loading Tasks');
+        this.setLoading('Loading Tasks&hellip;');
     },
 
     onStoreLoad: function() {
         this.refresh();
         this.removeCls('is-loading');
-        this.unmask();
+        this.setLoading(false);
     },
 
     onTreeClick: function(ev, t) {
@@ -199,12 +199,18 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     },
 
     syncSublistHeights: function() {
-        var sublistEls, sublistElsLength, sublistElIndex = 0, sublistEl, sublistHeight,
+        var me = this,
+            sublistEls, sublistElsLength, sublistElIndex = 0, sublistEl, sublistHeight,
             listItemEls, listItemElsLength, listItemElIndex,
             sublistHeights = [], sublistHeightsLength, sublistHeightIndex = 0;
 
+        if (!me.rendered) {
+            me.on('render', 'syncSublistHeights', me, { single: true });
+            return;
+        }
+
         // READ PHASE: sum heights of items in each sublist
-        sublistEls = this.el.query('.slate-tasktree-sublist', false);
+        sublistEls = me.el.query('.slate-tasktree-sublist', false);
         sublistElsLength = sublistEls.length;
 
         for (; sublistElIndex < sublistElsLength; sublistElIndex++) {
