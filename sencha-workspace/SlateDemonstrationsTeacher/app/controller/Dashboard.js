@@ -358,7 +358,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     //         success: function(demonstration) {
     //             Ext.Msg.confirm(
     //                 'Delete demonstration #' + demonstrationId,
-    //                 'Are you sure you want to permenantly delete this demonstration?' +
+    //                 'Are you sure you want to permanently delete this demonstration?' +
     //                     ' Scores in all the following standards will be removed:' +
     //                     '<ul>' +
     //                         '<li>' +
