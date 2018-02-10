@@ -1,0 +1,23 @@
+.slate-cbl-skillsselector-list {
+    .x-list-plain {
+        display: table;
+    }
+
+    .x-boundlist-item {
+        display: table-row;
+
+        & > * {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        &:not(:last-child) > * {
+            border-bottom: 1px dotted #aaa;
+        }
+    }
+
+    .code {
+        font-family: $mono-font;
+        padding-right: 1em;
+    }
+}

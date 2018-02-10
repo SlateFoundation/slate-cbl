@@ -12,7 +12,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
 
         'Slate.cbl.field.TaskSelector',
         'Slate.cbl.field.ClearableSelector',
-        'Slate.cbl.widget.SkillsField',
+        'Slate.cbl.field.SkillsSelector',
         'Slate.cbl.widget.AssignmentsField',
         'Slate.cbl.widget.AttachmentsField'
     ],
@@ -99,7 +99,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', {
             }
         },
         {
-            xtype: 'slate-skillsfield'
+            xtype: 'slate-cbl-skillsselector',
+            selectOnFocus: false
         },
         {
             xtype: 'slate-tasks-attachmentsfield'
