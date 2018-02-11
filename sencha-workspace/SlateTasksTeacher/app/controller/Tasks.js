@@ -48,7 +48,18 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             minHeight: 600,
 
             mainView: {
-                xtype: 'slate-cbl-tasks-taskform'
+                xtype: 'slate-cbl-tasks-taskform',
+                parentTaskField: {
+                    store: {
+                        type: 'chained',
+                        source: 'Tasks',
+                        filters: [{
+                            filterFn: function(task) {
+                                return !task.get('ParentTaskID');
+                            }
+                        }]
+                    }
+                }
             }
         }
 
