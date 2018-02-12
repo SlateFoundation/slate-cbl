@@ -8,10 +8,14 @@ use Sencha_RequestHandler;
 use Emergence\People\PeopleRequestHandler;
 
 use Slate\People\Student;
+use Slate\Courses\Section;
 
 use Slate\CBL\ContentAreasRequestHandler;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
+use Slate\CBL\Tasks\TaskSkill;
+use Slate\CBL\Tasks\Task;
+use Slate\CBL\Tasks\StudentTask;
 use Slate\CBL\StudentCompetency;
 
 
@@ -29,6 +33,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
         switch ($action = static::shiftPath()) {
             case 'recent-progress':
                 return static::handleRecentProgressRequest();
+            case 'recent-sections':
+                return static::handleRecentSectionsRequest();
             case 'completions':
                 return static::handleCompletionsRequest();
             case 'demonstration-skills':
@@ -106,6 +112,63 @@ class StudentDashboardRequestHandler extends \RequestHandler
             $progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
             $progressRecord['targetLevel'] = intval($progressRecord['targetLevel']);
             $progressRecord['demonstrationCreated'] = strtotime($progressRecord['demonstrationCreated']);
+        }
+
+        return static::respond('progress', [
+            'data' => $progress
+        ]);
+    }
+    
+    public static function handleRecentSectionsRequest() {
+        $Student = static::_getRequestedStudent();
+        $ContentArea = static::_getRequestedContentArea();
+
+        if (!$ContentArea) {
+            return static::throwInvalidRequestError('Content area required');
+        }
+
+        $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+
+        try {
+            // TODO: do name formatting on the client-side
+            $progress = DB::allRecords('
+                SELECT section.Title sectionTitle, 
+                CONCAT(teacher.firstName, " ", teacher.lastName) teacherTitle, 
+                GROUP_CONCAT(DISTINCT competency.Descriptor, " ") competencies,
+                MAX( student_task.Created) taskCreated
+                FROM %s task_skill
+                JOIN %s skill ON skill.ID = task_skill.SkillID
+                JOIN %s task ON task.ID = task_skill.TaskID
+                JOIN %s competency ON skill.CompetencyID = competency.ID
+                JOIN %s student_task ON student_task.TaskID = task.ID
+                JOIN %s section ON student_task.SectionID = section.ID
+                JOIN %s teacher ON task_skill.CreatorID = teacher.ID
+                WHERE student_task.StudentID = "%s" AND competency.ContentAreaID = "%s"
+                GROUP BY section.ID, teacherTitle, student_task.StudentID            
+                ORDER BY taskCreated DESC
+                LIMIT %d',
+                [
+                    TaskSkill::$tableName,
+                    Skill::$tableName,
+                    Task::$tableName,
+                    Competency::$tableName,
+                    StudentTask::$tableName,
+                    Section::$tableName,
+                    \Emergence\People\Person::$tableName,
+                    $Student->ID,
+                    $ContentArea->ID,
+                    $limit
+                ]
+            );
+        } catch (TableNotFoundException $e) {
+            $progress = [];
+        }
+
+        // cast strings to integers
+        foreach ($progress AS &$progressRecord) {
+            //$progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
+            //$progressRecord['targetLevel'] = intval($progressRecord['targetLevel']);
+            $progressRecord['taskCreated'] = strtotime($progressRecord['taskCreated']);
         }
 
         return static::respond('progress', [
@@ -191,10 +254,10 @@ class StudentDashboardRequestHandler extends \RequestHandler
                            FROM `%4$s`
                           WHERE StudentID = %6$u AND CompetencyID IN (%5$s)
                           GROUP BY StudentID) StudentCompetency
-                     ON StudentCompetency.StudentID = Demonstration.StudentID AND ' .
+                     ON StudentCompetency.StudentID = Demonstration.StudentID' .
                      (StudentCompetency::$positiveDemonstrationReporting ?
-                        'StudentCompetency.CurrentLevel <= DemonstrationSkill.DemonstratedLevel' :
-                        'StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
+                        '' :
+                        'AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
                      )                                     
                 ,[
                     Skill::$tableName                   // 1
