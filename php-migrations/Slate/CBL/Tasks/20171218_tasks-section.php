@@ -57,6 +57,7 @@ foreach ($taskSectionIds as $taskId => $studentTaskSections) {
 
 // add SectionID column to Task table
 static::addColumn(Task::$tableName, 'SectionID', 'int unsigned NULL default NULL', 'AFTER `ModifierID`');
+static::addColumn(Task::getHistoryTableName(), 'SectionID', 'int unsigned NULL default NULL', 'AFTER `ModifierID`');
 static::addIndex(Task::$tableName, 'SectionID');
 
 

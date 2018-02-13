@@ -17,6 +17,7 @@ if (static::columnExists(Task::$tableName, 'ClonedTaskID')) {
 
 // add ClonedTaskID column to Task table
 static::addColumn(Task::$tableName, 'ClonedTaskID', 'int unsigned NULL default NULL', 'AFTER `ParentTaskID`');
+static::addColumn(Task::getHistoryTableName(), 'ClonedTaskID', 'int unsigned NULL default NULL', 'AFTER `ParentTaskID`');
 
 
 // finish
