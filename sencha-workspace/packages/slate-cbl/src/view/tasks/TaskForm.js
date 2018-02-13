@@ -22,6 +22,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
             'Jarvus.store.FieldValuesStore',
 
+            'Emergence.proxy.Values',
+
             'Slate.ui.PanelFooter',
 
             'Slate.cbl.field.TaskSelector',
