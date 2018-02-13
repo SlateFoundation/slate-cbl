@@ -94,6 +94,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         {
             name: 'Handle',
             type: 'string',
+            allowNull: true,
             persist: false
         },
         {
@@ -125,7 +126,8 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         },
         {
             name: 'Shared',
-            type: 'string'
+            type: 'string',
+            allowNull: true
         },
         {
             name: 'Status',
@@ -138,13 +140,22 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             type: 'string'
         },
 
+        // optional includes
+        {
+            name: 'Section',
+            persist: false
+        },
+
         // writable dynamic fields
+        {
+            name: 'Assignees'
+        },
         {
             name: 'Attachments'
         },
         {
-            name: 'Assignees'
-        },
+            name: 'Skills'
+        }
 
         // virtual fields
         // TODO: review if still needed
