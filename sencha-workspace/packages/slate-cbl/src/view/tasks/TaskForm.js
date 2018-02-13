@@ -124,12 +124,16 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             assignmentsField: {
                 merge: mergeFn,
                 $value: {
+                    name: 'Assignees',
+
                     xtype: 'slate-cbl-assigneesfield'
                 }
             },
             skillsSelectorField: {
                 merge: mergeFn,
                 $value: {
+                    name: 'Skills',
+
                     xtype: 'slate-cbl-skillsselector',
                     selectOnFocus: false
                 }
@@ -137,6 +141,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             attachmentsField: {
                 merge: mergeFn,
                 $value: {
+                    name: 'Attachments',
+
                     xtype: 'slate-tasks-attachmentsfield'
                 }
             },

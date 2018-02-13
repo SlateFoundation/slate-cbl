@@ -27,6 +27,9 @@ Ext.define('Slate.cbl.field.AssigneesField', {
     },
 
 
+    // field configuration
+    name: 'Assignees',
+
     store: {
         model: 'Slate.model.person.Person'
     },
