@@ -49,46 +49,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
         }
     }
 
-    public static function handleRecordRequest(ActiveRecord $Record, $action = false)
-    {
-        switch ($action = $action ?: static::shiftPath()) {
-            case 'assignees':
-                return static::handleTaskAssigneesRequest($Record);
-
-            default:
-                return parent::handleRecordRequest($Record, $action);
-        }
-    }
-
-    public static function handleTaskAssigneesRequest(ActiveRecord $Record)
-    {
-        // replace with $Task->Assignees?
-        try {
-            $assignees = DB::allRecords('
-                SELECT %4$s.* FROM `%1$s` %2$s'.
-                ' JOIN `%3$s` %4$s ON (%2$s.StudentID = %4$s.ID)'.
-                ' WHERE %2$s.TaskID = %5$u',
-                [
-                    StudentTask::$tableName,
-                    StudentTask::getTableAlias(),
-
-                    Person::$tableName,
-                    Person::getTableAlias(),
-
-                    $Record->ID
-                ]
-            );
-        } catch (\TableNotFoundException $e) {
-            $assignees = [];
-        }
-
-        return static::respond('task/assignees', [
-            'data' => $assignees,
-            'total' => DB::foundRows()
-        ]);
-    }
-
-
     public static function applyRecordDelta(\ActiveRecord $Record, $requestData)
     {
         parent::applyRecordDelta($Record, $requestData);
