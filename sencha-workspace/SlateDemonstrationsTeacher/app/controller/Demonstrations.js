@@ -97,7 +97,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 }
             }
         },
-        demonstrationForm: 'slate-cbl-demonstrations-demonstrationform',
+        formPanel: 'slate-cbl-demonstrations-demonstrationform',
         submitBtn: 'slate-cbl-demonstrations-demonstrationform ^ window button[action=submit]',
         continueField: 'slate-cbl-demonstrations-demonstrationform ^ window field#continueField'
     },
@@ -123,7 +123,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             editclick: 'onEditClick',
             deleteclick: 'onDeleteClick'
         },
-        demonstrationForm: {
+        formPanel: {
             dirtychange: 'onFormDirtyChange',
             validitychange: 'onFormValidityChange'
         },
