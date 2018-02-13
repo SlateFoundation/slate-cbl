@@ -11,10 +11,6 @@ use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
 class Task extends \VersionedRecord
 {
-    //VersionedRecord configuration
-    public static $historyTable = 'history_cbl_tasks';
-
-
     // ActiveRecord configuration
     public static $useCache = true;
 
@@ -101,6 +97,11 @@ class Task extends \VersionedRecord
         'Context' => [
             'type' => 'context-parent'
         ],
+        'TaskSkills' => [
+            'type' => 'one-many',
+            'class' => TaskSkill::class,
+            'prune' => 'delete'
+        ],
         'Skills' => [
             'type' => 'many-many',
             'class' => Skill::class,
@@ -115,7 +116,6 @@ class Task extends \VersionedRecord
         'StudentTasks' => [
             'type' => 'one-many',
             'class' => StudentTask::class,
-            'foreign' => 'TaskID',
             'prune' => 'delete'
         ],
         'Assignees' => [
@@ -131,15 +131,15 @@ class Task extends \VersionedRecord
         'Section',
         'Skills',
         'Creator',
-        'CreatorFullName' => 'Creator.FullName',
+        // 'CreatorFullName' => 'Creator.FullName',
         'ParentTask',
         'SubTasks',
         'Context',
         'Attachments',
         'StudentTasks',
-        'ParentTaskTitle' => [
-            'getter' => 'getParenTaskTitle'
-        ],
+        // 'ParentTaskTitle' => [
+        //     'getter' => 'getParenTaskTitle'
+        // ],
         'Assignees'
     ];
 
@@ -161,38 +161,38 @@ class Task extends \VersionedRecord
             'points' => 1,
             'sql' => 'CAST(Created AS Date) = "%s"'
         ],
-        'ParentTaskTitle' => [
-            'qualifiers' => ['parenttasktitle', 'parenttask'],
-            'points' => 1,
-            'join' => [
-                'className' => __CLASS__,
-                'localField' => 'ParentTaskID',
-                'foreignField' => 'ID',
-                'aliasName' => 'ParentTask'
-            ],
-            'sql' => 'ParentTask.Title LIKE "%%%s%%"'
-        ],
-        'Skills' => [
-            'qualifiers' => ['skills', 'skill'],
-            'points' => 1,
-            'callback' => [__CLASS__, 'getSkillsSearchConditionSql']
-        ]
+        // 'ParentTaskTitle' => [
+        //     'qualifiers' => ['parenttasktitle', 'parenttask'],
+        //     'points' => 1,
+        //     'join' => [
+        //         'className' => __CLASS__,
+        //         'localField' => 'ParentTaskID',
+        //         'foreignField' => 'ID',
+        //         'aliasName' => 'ParentTask'
+        //     ],
+        //     'sql' => 'ParentTask.Title LIKE "%%%s%%"'
+        // ],
+        // 'Skills' => [
+        //     'qualifiers' => ['skills', 'skill'],
+        //     'points' => 1,
+        //     'callback' => [__CLASS__, 'getSkillsSearchConditionSql']
+        // ]
     ];
 
-    public static function __classLoaded()
-    {
-        static::$searchConditions['Creator'] = [
-            'qualifiers' => ['creatorfullname', 'creator'],
-            'points' => 1,
-            'join' => [
-                'className' => Person::class,
-                'localField' => 'CreatorID',
-                'foreignField' => 'ID',
-                'aliasName' => Person::getTableAlias() // todo: remove when ActiveRecord can set this automatically.
-            ],
-            'callback' => [__CLASS__, 'getCreatorSearchConditionsSql']
-        ];
-    }
+    // public static function __classLoaded()
+    // {
+    //     static::$searchConditions['Creator'] = [
+    //         'qualifiers' => ['creatorfullname', 'creator'],
+    //         'points' => 1,
+    //         'join' => [
+    //             'className' => Person::class,
+    //             'localField' => 'CreatorID',
+    //             'foreignField' => 'ID',
+    //             'aliasName' => Person::getTableAlias() // todo: remove when ActiveRecord can set this automatically.
+    //         ],
+    //         'callback' => [__CLASS__, 'getCreatorSearchConditionsSql']
+    //     ];
+    // }
 
     public function save($deep = true)
     {
@@ -229,48 +229,48 @@ class Task extends \VersionedRecord
         return DB::affectedRows() > 0;
     }
 
-    public function getParenTaskTitle()
-    {
-        return $this->ParentTask ? $this->ParentTask->Title : null;
-    }
+    // public function getParenTaskTitle()
+    // {
+    //     return $this->ParentTask ? $this->ParentTask->Title : null;
+    // }
 
-    public static function getCreatorSearchConditionsSql($term, $condition)
-    {
-        $personTableAlias = Person::getTableAlias();
-        return 'CONCAT('.$personTableAlias.'.FirstName, " ", '.$personTableAlias.'.LastName) LIKE "%'.$term.'%"';
-    }
+    // public static function getCreatorSearchConditionsSql($term, $condition)
+    // {
+    //     $personTableAlias = Person::getTableAlias();
+    //     return 'CONCAT('.$personTableAlias.'.FirstName, " ", '.$personTableAlias.'.LastName) LIKE "%'.$term.'%"';
+    // }
 
-    public static function getSkillsSearchConditionSql($term, $condition)
-    {
-        $skills = DB::allValues(
-            'ID',
+    // public static function getSkillsSearchConditionSql($term, $condition)
+    // {
+    //     $skills = DB::allValues(
+    //         'ID',
 
-            'SELECT * FROM `%s` %s '.
-            'WHERE Code LIKE "%%%s%%" OR Descriptor LIKE "%%%s%%" '.
-            'ORDER BY %s',
+    //         'SELECT * FROM `%s` %s '.
+    //         'WHERE Code LIKE "%%%s%%" OR Descriptor LIKE "%%%s%%" '.
+    //         'ORDER BY %s',
 
-            [
-                Skill::$tableName,
-                Skill::getTableAlias(),
-                $term,
-                $term,
-                \Slate\CBL\SkillsRequestHandler::$browseOrder
-            ]
-        );
+    //         [
+    //             Skill::$tableName,
+    //             Skill::getTableAlias(),
+    //             $term,
+    //             $term,
+    //             \Slate\CBL\SkillsRequestHandler::$browseOrder
+    //         ]
+    //     );
 
-        $matchedTaskIds = DB::allValues(
-            'TaskID',
+    //     $matchedTaskIds = DB::allValues(
+    //         'TaskID',
 
-            'SELECT TaskID FROM `%s` %s '.
-            'WHERE SkillID IN ("%s")',
+    //         'SELECT TaskID FROM `%s` %s '.
+    //         'WHERE SkillID IN ("%s")',
 
-            [
-                TaskSkill::$tableName,
-                TaskSkill::getTableAlias(),
-                join('", "', $skills)
-            ]
-        );
+    //         [
+    //             TaskSkill::$tableName,
+    //             TaskSkill::getTableAlias(),
+    //             join('", "', $skills)
+    //         ]
+    //     );
 
-        return sprintf('ID IN ("%s")', join('", "', $matchedTaskIds));
-    }
+    //     return sprintf('ID IN ("%s")', join('", "', $matchedTaskIds));
+    // }
 }

@@ -6,9 +6,6 @@ use Slate\CBL\Skill;
 
 class TaskSkill extends \VersionedRecord
 {
-    //VersionedRecord configuration
-    public static $historyTable = 'history_cbl_task_skills';
-
     // ActiveRecord configuration
     public static $tableName = 'cbl_task_skills';
     public static $singularNoun = 'task skill';
@@ -17,14 +14,8 @@ class TaskSkill extends \VersionedRecord
     public static $useCache = true;
 
     public static $fields = [
-        'TaskID' => [
-            'type' => 'uint',
-            'default' => null
-        ],
-        'SkillID' => [
-            'type' => 'uint',
-            'default' => null
-        ]
+        'TaskID' => 'uint',
+        'SkillID' => 'uint'
     ];
 
     public static $relationships = [
@@ -43,5 +34,10 @@ class TaskSkill extends \VersionedRecord
             'fields' => ['TaskID', 'SkillID'],
             'unique' => true
         ]
+    ];
+
+    public static $validators = [
+        'Task' => 'require-relationship',
+        'Skill' => 'require-relationship'
     ];
 }
