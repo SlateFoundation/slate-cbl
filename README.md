@@ -150,6 +150,7 @@ parameter `apiHost` when loading the page.
 ### Next release
 
 - [ ] Audit reflows
+- [ ] Handle editing overrides better
 - [ ] Expand current content area by default when demo window opened
 - [ ] Reorganize slate-cbl package
   - [ ] Merge things to slate-core-data and slate-ui-classic
