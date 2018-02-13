@@ -27,7 +27,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             'Slate.cbl.field.TaskSelector',
             'Slate.cbl.field.ClearableSelector',
             'Slate.cbl.field.SkillsSelector',
-            'Slate.cbl.field.AssignmentsField',
+            'Slate.cbl.field.AssigneesField',
             'Slate.cbl.widget.AttachmentsField'
         ],
 
@@ -112,7 +112,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             assignmentsField: {
                 merge: mergeFn,
                 $value: {
-                    xtype: 'slate-cbl-assignmentsfield'
+                    xtype: 'slate-cbl-assigneesfield'
                 }
             },
             skillsSelectorField: {

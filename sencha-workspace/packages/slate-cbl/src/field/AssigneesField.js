@@ -1,6 +1,6 @@
-Ext.define('Slate.cbl.field.AssignmentsField', {
+Ext.define('Slate.cbl.field.AssigneesField', {
     extend: 'Ext.form.field.Tag',
-    xtype: 'slate-cbl-assignmentsfield',
+    xtype: 'slate-cbl-assigneesfield',
     requires: [
         'Slate.model.person.Person'
     ],
@@ -15,7 +15,7 @@ Ext.define('Slate.cbl.field.AssignmentsField', {
         valueField: 'ID',
         queryMode: 'local',
 
-        emptyText: 'select some students',
+        emptyText: 'Select one or more students',
         triggers: {
             clear: {
                 cls: 'x-form-clear-trigger',
@@ -89,6 +89,16 @@ Ext.define('Slate.cbl.field.AssignmentsField', {
         data.tagPostSubTpl = Ext.XTemplate.getTpl(this.superclass, 'postSubTpl');
 
         return data;
+    },
+
+    setValue: function(value) {
+        // TODO: convert from { ID: state } map
+        return this.callParent(arguments);
+    },
+
+    getValue: function() {
+        // TODO: convert to { ID: state } map
+        return this.callParent(arguments);
     },
 
 
