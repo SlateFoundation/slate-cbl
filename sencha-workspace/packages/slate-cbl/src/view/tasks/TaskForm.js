@@ -18,6 +18,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
         requires: [
             'Ext.form.field.Display',
             'Ext.form.field.Checkbox',
+            'Ext.form.field.Text',
             'Ext.form.field.TextArea',
 
             'Jarvus.store.FieldValuesStore',
@@ -35,6 +36,17 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
 
         config: {
+            clonedTaskField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'ClonedTaskID',
+
+                    xtype: 'slate-cbl-taskselector',
+                    fieldLabel: 'Cloned Task',
+                    emptyText: 'Select an existing task to copy from it',
+                    allowBlank: true
+                }
+            },
             sectionField: {
                 merge: mergeFn,
                 $value: {
@@ -52,10 +64,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 $value: {
                     name: 'Title',
 
-                    xtype: 'slate-cbl-taskselector',
-                    fieldLabel: 'Title',
-                    valueField: 'Title',
-                    emptyText: 'title 2'
+                    xtype: 'textfield',
+                    fieldLabel: 'Title'
                 }
             },
             parentTaskField: {
@@ -159,13 +169,14 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                     text: 'Create Task',
                     scale: 'large',
                     action: 'submit',
-                    margin: '0 16'
+                    margin: '0 0 0 16'
                 }
             ]
         },
 
 
         // config handlers
+        applyClonedTaskField: applyFn,
         applySectionField: applyFn,
         applyTitleField: applyFn,
         applyParentTaskField: applyFn,
@@ -185,6 +196,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             me.callParent();
 
             me.insert(0, [
+                me.getClonedTaskField(),
                 me.getSectionField(),
                 me.getTitleField(),
                 me.getParentTaskField(),
