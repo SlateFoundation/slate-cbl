@@ -129,6 +129,7 @@ parameter `apiHost` when loading the page.
   - [ ] Review required fields and server-driven enforcement in UI
   - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels
   - [ ] Fix condition where value / valueSkillsMap gets out of sync when continuing to second student
+  - [ ] Improve confirmation text when deleting an override
 - [ ] Restore task creation in SlateTasksTeacher
   - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Restore live-updating of grid
