@@ -62,11 +62,11 @@ Ext.define('Slate.cbl.field.AssigneesField', {
         allowBlank = me.allowBlank;
         clearTrigger = me.getTrigger('clear');
 
-        clearTrigger.setHidden(!allowBlank || !me.getValue().length);
+        clearTrigger.setHidden(!allowBlank || !me.value.length);
 
         if (allowBlank) {
             me.on('change', function(combo, value) {
-                clearTrigger.setHidden(!value.length || me.allStudentsCheckbox.dom.checked);
+                clearTrigger.setHidden(me.allStudentsCheckbox.dom.checked || me.isEmpty(value));
             });
         }
     },
@@ -92,13 +92,57 @@ Ext.define('Slate.cbl.field.AssigneesField', {
     },
 
     setValue: function(value) {
-        // TODO: convert from { ID: state } map
-        return this.callParent(arguments);
+        var id, ids = [];
+
+        if (!Ext.isObject(value)) {
+            return this.callParent(arguments);
+        }
+
+        for (id in value) {
+            if (value.hasOwnProperty(id) && value[id]) {
+                ids.push(id);
+            }
+        }
+
+        return this.callParent([ids]);
     },
 
     getValue: function() {
-        // TODO: convert to { ID: state } map
-        return this.callParent(arguments);
+        var me = this,
+            value = me.callParent(arguments),
+            valueField = me.valueField,
+            store = me.getStore(),
+            length = store.getCount(), i = 0,
+            id, map = {};
+
+        for (; i < length; i++) {
+            id = store.getAt(i).get(valueField);
+            map[id] = value.indexOf(id) != -1;
+        }
+
+        return map;
+    },
+
+    isEqual: function(value1, value2) {
+        return Ext.Object.equals(value1, value2);
+    },
+
+    isEmpty: function(value) {
+        return !Ext.Array.contains(Ext.Object.getValues(value), true);
+    },
+
+    refreshEmptyText: function() {
+        var me = this,
+            emptyClsElements = me.emptyClsElements,
+            isEmpty, i;
+
+        if (me.rendered) {
+            isEmpty = me.isEmpty(me.getValue());
+            me.placeholderLabel.setDisplayed(isEmpty);
+            for (i = 0; i < emptyClsElements.length; i++) {
+                emptyClsElements[i].toggleCls(me.emptyUICls, isEmpty);
+            }
+        }
     },
 
 
