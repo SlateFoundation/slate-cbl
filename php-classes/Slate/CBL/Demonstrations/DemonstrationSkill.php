@@ -5,7 +5,7 @@ namespace Slate\CBL\Demonstrations;
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
 
-class DemonstrationSkill extends \ActiveRecord
+class DemonstrationSkill extends \VersionedRecord
 {
     // ActiveRecord configuration
     public static $tableName = 'cbl_demonstration_skills';
