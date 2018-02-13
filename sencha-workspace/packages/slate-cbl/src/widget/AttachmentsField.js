@@ -1,3 +1,7 @@
+/**
+ * TODO: migrate to proper field
+ */
+
 Ext.define('Slate.cbl.widget.AttachmentsField', {
     extend: 'Ext.form.FieldContainer',
     requires: [

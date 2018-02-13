@@ -67,7 +67,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                     displayField: 'PersonFullName'
                 }
             }
-        }
+        },
+        formPanel: 'slate-cbl-tasks-taskform',
+        submitBtn: 'slate-cbl-tasks-taskform ^ window button[action=submit]'
 
     //     taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
     //     skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
@@ -123,6 +125,13 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         },
         createBtn: {
             click: 'onCreateClick'
+        },
+        formPanel: {
+            dirtychange: 'onFormDirtyChange',
+            validitychange: 'onFormValidityChange'
+        },
+        submitBtn: {
+            click: 'onSubmitClick'
         }
     //     tasksGrid: {
     //         cellclick: 'onTasksGridCellClick',
@@ -234,6 +243,64 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
         // show window
         taskWindow.show();
+    },
+
+    onFormDirtyChange: function(form, dirty) {
+        console.info('onFormDirtyChange', dirty);
+        this.getSubmitBtn().setDisabled(!dirty || !form.isValid());
+    },
+
+    onFormValidityChange: function(form, valid) {
+        console.info('onFormValidityChange', valid);
+        this.getSubmitBtn().setDisabled(!valid || !form.isDirty());
+    },
+
+    onSubmitClick: function(submitBtn) {
+        var me = this,
+            formWindow = submitBtn.up('window'),
+            formPanel = formWindow.getMainView(),
+            task = formPanel.getRecord(),
+            wasPhantom = task.phantom;
+
+        formPanel.updateRecord(task);
+
+        // ensure task doesn't become dirty when no changes are made to the form
+        if (!task.dirty) {
+            return;
+        }
+
+        formPanel.setLoading('Saving task&hellip;');
+
+        task.save({
+            success: function(savedTask) {
+                // var tplData = {
+                //         wasPhantom: wasPhantom,
+                //         student: student ? student.getData() : null,
+                //         skills: savedDemonstration.get('DemonstrationSkills')
+                //     };
+
+                // // show notification to user
+                // Ext.toast(
+                //     Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
+                //     Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+                // );
+
+                debugger;
+
+                formWindow.hide();
+                formPanel.setLoading(false);
+            },
+            failure: function(savedDemonstration, operation) {
+                formPanel.setLoading(false);
+
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: operation.getError(),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
     }
 
     // onTasksGridCellClick: function(grid, taskId, studentId) {
