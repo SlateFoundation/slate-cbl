@@ -6,8 +6,6 @@ namespace Slate\CBL\Tasks;
 use Emergence\People\Person;
 use Emergence\Comments\Comment;
 
-use Slate\People\Student;
-
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Demonstrations\Demonstration;
@@ -125,9 +123,7 @@ class StudentTask extends \VersionedRecord
 
     public static $validators = [
         'Task' => 'require-relationship',
-        'Student' => [
-            'validator' => [__CLASS__, 'validateStudent']
-        ]
+        'Student' => 'require-relationship'
     ];
 
     public static $searchConditions = [
@@ -151,17 +147,6 @@ class StudentTask extends \VersionedRecord
 
             default:
                 return parent::getValue($name);
-        }
-    }
-
-    protected static function validateStudent(\RecordValidator $RecordValidator, StudentTask $StudentTask, $options, $validator)
-    {
-        if (!$RecordValidator->hasErrors('Student')) {
-            if (!$StudentTask->Student) {
-                $RecordValidator->addError('Student', 'Tasks must be assigned to a student.');
-            } elseif (!$StudentTask->Student instanceof \Slate\People\Student) {
-                $RecordValidator->addError('Student', 'Tasks can only be assigned to students.');
-            }
         }
     }
 
