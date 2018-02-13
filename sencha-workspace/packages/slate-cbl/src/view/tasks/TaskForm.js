@@ -126,7 +126,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 $value: {
                     name: 'Assignees',
 
-                    xtype: 'slate-cbl-assigneesfield'
+                    xtype: 'slate-cbl-assigneesfield',
+                    allowBlank: false
                 }
             },
             skillsSelectorField: {

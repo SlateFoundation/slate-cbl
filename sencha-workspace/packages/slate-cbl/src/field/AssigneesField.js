@@ -148,6 +148,20 @@ Ext.define('Slate.cbl.field.AssigneesField', {
         }
     },
 
+    getErrors: function(value) {
+        var me = this,
+            errors;
+
+        value = value || me.getValue();
+        errors = me.callParent([value]);
+
+        if (!me.allowBlank && me.isEmpty(value)) {
+            errors.push(me.blankText);
+        }
+
+        return errors;
+    },
+
 
     // config handlers
     updateShowAllStudents: function(showAllStudents) {
