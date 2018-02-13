@@ -114,21 +114,21 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
     control: {
         createBtn: {
-            click: 'onCreateDemonstrationClick'
+            click: 'onCreateClick'
         },
         'slate-demonstrations-teacher-skillfooter button[action=create-demonstration]': {
             click: 'onStudentSkillCreateDemonstrationClick'
         },
         'slate-cbl-demonstrations-studentskillpanel': {
-            editclick: 'onEditDemonstrationClick',
-            deleteclick: 'onDeleteDemonstrationClick'
+            editclick: 'onEditClick',
+            deleteclick: 'onDeleteClick'
         },
         demonstrationForm: {
             dirtychange: 'onFormDirtyChange',
             validitychange: 'onFormValidityChange'
         },
         submitBtn: {
-            click: 'onSubmitDemonstrationClick'
+            click: 'onSubmitClick'
         }
     },
 
@@ -143,7 +143,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         this.getCreateBtn().enable();
     },
 
-    onCreateDemonstrationClick: function(createBtn) {
+    onCreateClick: function(createBtn) {
         this.openDemonstrationWindow({
             animateTarget: createBtn
         });
@@ -162,14 +162,14 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         });
     },
 
-    onEditDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill, ev) {
+    onEditClick: function(skillPanel, demonstrationId, demonstrationSkill, ev) {
         this.openDemonstrationWindow({
             animateTarget: ev.target,
             demonstration: demonstrationId
         });
     },
 
-    onDeleteDemonstrationClick: function(skillPanel, demonstrationId, demonstrationSkill) {
+    onDeleteClick: function(skillPanel, demonstrationId, demonstrationSkill) {
         var me = this;
 
         skillPanel.setLoading('Reviewing demonstration #' + demonstrationId + '&hellip;');
@@ -229,7 +229,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         this.getSubmitBtn().setDisabled(!valid || !form.isDirty());
     },
 
-    onSubmitDemonstrationClick: function(submitBtn) {
+    onSubmitClick: function(submitBtn) {
         var me = this,
             formWindow = submitBtn.up('window'),
             formPanel = formWindow.getMainView(),
