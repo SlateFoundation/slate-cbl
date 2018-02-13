@@ -2,11 +2,14 @@
 
 namespace Slate\CBL\Tasks;
 
+
 use Emergence\People\Person;
 use Emergence\Comments\Comment;
+
 use Slate\People\Student;
-use Slate\CBL\StudentCompetency;
+
 use Slate\CBL\Skill;
+use Slate\CBL\StudentCompetency;
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\ExperienceDemonstration;
 
@@ -14,18 +17,34 @@ class StudentTask extends \VersionedRecord
 {
     public static $rateExpiredMissing = false;
 
+
+    //VersionedRecord configuration
     public static $historyTable = 'history_cbl_student_tasks';
 
-    public static $tableName = 'cbl_student_tasks';
 
+    // ActiveRecord configuration
+    public static $tableName = 'cbl_student_tasks';
     public static $singularNoun = 'student task';
     public static $pluralNoun = 'student tasks';
-
     public static $collectionRoute = '/cbl/student-tasks';
+
 
     public static $fields = [
         'TaskID' => 'uint',
         'StudentID' => 'uint',
+
+        'TaskStatus' => [
+            'type' => 'enum',
+            'notnull' => true,
+            'values' => ['assigned', 're-assigned', 'submitted', 're-submitted', 'completed'],
+            'default' => 'assigned'
+        ],
+        'DemonstrationID' => [
+            'type' => 'uint',
+            'default' => null
+        ],
+
+        // Task fields that can be overridden
         'ExperienceType' => [
             'default' => null
         ],
@@ -35,16 +54,6 @@ class StudentTask extends \VersionedRecord
         ],
         'ExpirationDate' => [
             'type' => 'timestamp',
-            'default' => null
-        ],
-        'TaskStatus' => [
-            'type' => 'enum',
-            'notnull' => true,
-            'values' => ['assigned', 're-assigned', 'submitted', 're-submitted', 'completed'],
-            'default' => 'assigned'
-        ],
-        'DemonstrationID' => [
-            'type' => 'uint',
             'default' => null
         ]
     ];
@@ -115,10 +124,7 @@ class StudentTask extends \VersionedRecord
     ];
 
     public static $validators = [
-        'Task' => [
-            'validator' => 'require-relationship'
-        ],
-
+        'Task' => 'require-relationship',
         'Student' => [
             'validator' => [__CLASS__, 'validateStudent']
         ]

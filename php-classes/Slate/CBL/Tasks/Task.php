@@ -14,16 +14,20 @@ class Task extends \VersionedRecord
     //VersionedRecord configuration
     public static $historyTable = 'history_cbl_tasks';
 
+
     // ActiveRecord configuration
+    public static $useCache = true;
+
     public static $tableName = 'cbl_tasks';
     public static $singularNoun = 'task';
     public static $pluralNoun = 'tasks';
     public static $collectionRoute = '/cbl/tasks';
-    public static $useCache = true;
+
     public static $subClasses = [
         __CLASS__,
         ExperienceTask::class,
     ];
+
 
     public static $fields = [
         'SectionID' => [
@@ -43,18 +47,6 @@ class Task extends \VersionedRecord
             'type' => 'uint',
             'default' => null,
         ],
-        'DueDate' => [
-            'type' => 'timestamp',
-            'default' => null,
-        ],
-        'ExpirationDate' => [
-            'type' => 'timestamp',
-            'default' => null,
-        ],
-        'Instructions' => [
-            'type' => 'clob',
-            'default' => null,
-        ],
         'Shared' => [
             'type' => 'enum',
             'values' => ['course', 'school', 'public'],
@@ -65,13 +57,25 @@ class Task extends \VersionedRecord
             'notnull' => true,
             'values' => ['private', 'shared', 'deleted'],
             'default' => 'private'
+        ],
+        'Instructions' => [
+            'type' => 'clob',
+            'default' => null,
+        ],
+
+        // overridable by StudentTasks
+        'DueDate' => [
+            'type' => 'timestamp',
+            'default' => null
+        ],
+        'ExpirationDate' => [
+            'type' => 'timestamp',
+            'default' => null
         ]
     ];
 
     public static $validators = [
-        'Section' => [
-            'validator' => 'require-relationship'
-        ],
+        'Section' => 'require-relationship',
         'Title'
     ];
 
