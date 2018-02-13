@@ -134,7 +134,7 @@ parameter `apiHost` when loading the page.
   - [X] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [ ] Fully reset assignees/skills via model load when re-opening create form
   - [X] Implement task cloning via clonable option of data fields
-  - [ ] Warn before overwriting dirty form with cloned data
+  - [X] Warn before overwriting dirty form with cloned data
   - [ ] Restore live-updating of grid
   - [ ] Audit requires and inheritance chain
 - [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does

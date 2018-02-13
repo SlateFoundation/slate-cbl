@@ -6,10 +6,10 @@
  */
 Ext.define('SlateTasksTeacher.controller.Tasks', {
     extend: 'Ext.app.Controller',
-    // requires: [
-    //     'Ext.window.Toast',
-    //     'Ext.window.MessageBox'
-    // ],
+    requires: [
+        'Ext.window.Toast',
+        'Ext.window.MessageBox'
+    ],
 
 
     // dependencies
@@ -133,6 +133,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             validitychange: 'onFormValidityChange'
         },
         clonedTaskField: {
+            beforeselect: 'onBeforeClonedTaskSelect',
             select: 'onClonedTaskSelect'
         },
         submitBtn: {
@@ -258,6 +259,29 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     onFormValidityChange: function(form, valid) {
         console.info('onFormValidityChange', valid);
         this.getSubmitBtn().setDisabled(!valid || !form.isDirty());
+    },
+
+    onBeforeClonedTaskSelect: function(clonedTaskField, clonedTask) {
+        if (
+            clonedTaskField.confirmedOverwrite === clonedTask
+            || !this.getFormPanel().isDirty()
+        ) {
+            delete clonedTaskField.confirmedOverwrite;
+            return true;
+        }
+
+        Ext.Msg.confirm(
+            'Are you sure?',
+            'Selecting a task to clone may overwrite what you have input already, proceed?',
+            function(btnId) {
+                if (btnId == 'yes') {
+                    clonedTaskField.confirmedOverwrite = clonedTask;
+                    clonedTaskField.setSelection(clonedTask);
+                }
+            }
+        );
+
+        return false;
     },
 
     onClonedTaskSelect: function(clonedTaskField, clonedTask) {
