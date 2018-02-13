@@ -148,17 +148,16 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 {
                     xtype: 'checkboxfield',
                     name: 'Status',
-                    itemId: 'status',
                     uncheckedValue: 'private',
                     inputValue: 'shared',
                     boxLabel: 'Share with other teachers'
                 },
                 {
                     xtype: 'button',
+                    text: 'Create Task',
                     scale: 'large',
-                    text: 'Create',
-                    margin: '0 0 0 16',
-                    action: 'save'
+                    action: 'submit',
+                    margin: '0 16'
                 }
             ]
         },
