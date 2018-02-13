@@ -133,8 +133,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         if (typeof ratingsField == 'object' && !ratingsField.isComponent) {
             ratingsField = Ext.apply({
                 fieldLabel: 'Demonstrated Skills',
-                labelAlign: 'top',
-                msgTarget: 'under'
+                labelAlign: 'top'
             }, ratingsField);
         }
 
