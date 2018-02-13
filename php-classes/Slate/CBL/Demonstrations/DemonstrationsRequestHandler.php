@@ -2,6 +2,9 @@
 
 namespace Slate\CBL\Demonstrations;
 
+
+use Exception;
+
 use ActiveRecord;
 use DB;
 use SpreadsheetWriter;
@@ -72,23 +75,30 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
             // create new and update existing skills
             $demonstrationSkills = [];
             foreach ($demonstrationSkillsData as $demonstrationSkillData) {
-                // skip if DemonstratedLevel is unset or null -- these will be deleted
-                if (!isset($demonstrationSkillData['DemonstratedLevel'])) {
+                // skip if DemonstratedLevel and Override is unset or null -- these will be deleted
+                if (!isset($demonstrationSkillData['DemonstratedLevel']) && !isset($demonstrationSkillData['Override'])) {
                     continue;
                 }
+
+                if (!isset($demonstrationSkillData['SkillID'])) {
+                    throw new Exception('demonstration skill requires SkillID be set');
+                }
+
+                $override = !empty($demonstrationSkillData['Override']);
+                $rating = $override ? null : $demonstrationSkillData['DemonstratedLevel'];
 
                 if ($DemonstrationSkill = $existingDemonstrationSkills[$demonstrationSkillData['SkillID']]) {
                     if (!empty($demonstrationSkillData['TargetLevel'])) {
                         $DemonstrationSkill->TargetLevel = $demonstrationSkillData['TargetLevel'];
                     }
 
-                    $DemonstrationSkill->DemonstratedLevel = $demonstrationSkillData['DemonstratedLevel'];
-                    $DemonstrationSkill->Override = !empty($demonstrationSkillData['Override']);
+                    $DemonstrationSkill->DemonstratedLevel = $rating;
+                    $DemonstrationSkill->Override = $override;
                 } else {
                     $DemonstrationSkill = DemonstrationSkill::create([
                         'SkillID' => $demonstrationSkillData['SkillID'],
-                        'DemonstratedLevel' => $demonstrationSkillData['DemonstratedLevel'],
-                        'Override' => !empty($demonstrationSkillData['Override'])
+                        'DemonstratedLevel' => $rating,
+                        'Override' => $override
                     ]);
 
                     if (!empty($demonstrationSkillData['TargetLevel'])) {
