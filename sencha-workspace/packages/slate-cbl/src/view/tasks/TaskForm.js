@@ -165,8 +165,9 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
             footer: [
                 {
-                    xtype: 'checkboxfield',
                     name: 'Status',
+
+                    xtype: 'checkboxfield',
                     uncheckedValue: 'private',
                     inputValue: 'shared',
                     boxLabel: 'Share with other teachers'

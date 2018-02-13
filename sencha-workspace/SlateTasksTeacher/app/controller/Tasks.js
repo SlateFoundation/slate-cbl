@@ -69,6 +69,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             }
         },
         formPanel: 'slate-cbl-tasks-taskform',
+        statusField: 'slate-cbl-tasks-taskform ^ window field[name=Status]',
         submitBtn: 'slate-cbl-tasks-taskform ^ window button[action=submit]'
 
     //     taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
@@ -263,6 +264,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             wasPhantom = task.phantom;
 
         formPanel.updateRecord(task);
+        task.set(me.getStatusField().getModelData());
 
         // ensure task doesn't become dirty when no changes are made to the form
         if (!task.dirty) {
