@@ -69,6 +69,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             }
         },
         formPanel: 'slate-cbl-tasks-taskform',
+        clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
         statusField: 'slate-cbl-tasks-taskform ^ window field[name=Status]',
         submitBtn: 'slate-cbl-tasks-taskform ^ window button[action=submit]'
 
@@ -130,6 +131,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         formPanel: {
             dirtychange: 'onFormDirtyChange',
             validitychange: 'onFormValidityChange'
+        },
+        clonedTaskField: {
+            select: 'onClonedTaskSelect'
         },
         submitBtn: {
             click: 'onSubmitClick'
@@ -254,6 +258,48 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     onFormValidityChange: function(form, valid) {
         console.info('onFormValidityChange', valid);
         this.getSubmitBtn().setDisabled(!valid || !form.isDirty());
+    },
+
+    onClonedTaskSelect: function(clonedTaskField, clonedTask) {
+        var formPanel = this.getFormPanel(),
+            form = formPanel.getForm(),
+            fields = clonedTask.getFields(),
+            fieldsLength = fields.length, fieldIndex = 0, field, fieldName, formField;
+
+        formPanel.setLoading('Cloning task&hellip;');
+
+        clonedTask.load({
+            success: function(loadedTask, operation) {
+                for (; fieldIndex < fieldsLength; fieldIndex++) {
+                    field = fields[fieldIndex];
+
+                    if (!field.clonable) {
+                        continue;
+                    }
+
+                    fieldName = field.name;
+                    formField = form.findField(fieldName);
+
+                    if (formField) {
+                        formField.setValue(loadedTask.get(fieldName));
+                    } else {
+                        Ext.Logger.warn('Could not find form field for clonable task model field: '+fieldName);
+                    }
+                }
+
+                formPanel.setLoading(false);
+            },
+            failure: function() {
+                formPanel.setLoading(false);
+
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: operation.getError(),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
     },
 
     onSubmitClick: function(submitBtn) {

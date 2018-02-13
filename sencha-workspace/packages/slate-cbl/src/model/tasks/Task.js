@@ -89,7 +89,9 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         },
         {
             name: 'Title',
-            type: 'string'
+            type: 'string',
+
+            clonable: true
         },
         {
             name: 'Handle',
@@ -111,18 +113,24 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             name: 'DueDate',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+
+            clonable: true
         },
         {
             name: 'ExpirationDate',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+
+            clonable: true
         },
         {
             name: 'Instructions',
             type: 'string',
-            allowNull: true
+            allowNull: true,
+
+            clonable: true
         },
         {
             name: 'Shared',
@@ -137,7 +145,9 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         // ExperienceTask fields
         {
             name: 'ExperienceType',
-            type: 'string'
+            type: 'string',
+
+            clonable: true
         },
 
         // optional includes
@@ -151,10 +161,14 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             name: 'Assignees'
         },
         {
-            name: 'Attachments'
+            name: 'Attachments',
+
+            clonable: true
         },
         {
-            name: 'Skills'
+            name: 'Skills',
+
+            clonable: true
         }
 
         // virtual fields
