@@ -62,11 +62,6 @@ class DemonstrationSkill extends \ActiveRecord
             'min' => 1,
             'max' => 13,
             'required' => false
-        ],
-        'DemonstratedLevel' => [
-            'validator' => 'number',
-            'min' => 0,
-            'max' => 13
         ]
     ];
 
@@ -74,6 +69,22 @@ class DemonstrationSkill extends \ActiveRecord
         'Demonstration',
         'Skill'
     ];
+
+    public function validate($deep = true)
+    {
+        // call parent
+        parent::validate($deep);
+
+        // demonstrated level
+        if ($this->Override && $this->DemonstratedLevel !== null) {
+            $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must be null for override');
+        } elseif (!$this->Override && $this->DemonstratedLevel === null) {
+            $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must not be null for non-override');
+        }
+
+        // save results
+        return $this->finishValidation();
+    }
 
     public function save($deep = true)
     {
