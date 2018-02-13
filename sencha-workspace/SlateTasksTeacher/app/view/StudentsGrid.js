@@ -34,7 +34,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
             dataStore: 'StudentTasks',
             subDataStore: 'StudentTasks',
 
-            columnHeaderTpl: '{Person.FirstName} {Person.LastName}',
+            columnHeaderField: 'PersonFullName',
 
             rowHeaderField: null,
             subRowHeaderField: null,

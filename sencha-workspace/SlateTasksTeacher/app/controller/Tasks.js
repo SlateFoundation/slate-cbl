@@ -20,7 +20,8 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     stores: [
         'StudentTasks',
-        'Tasks'
+        'Tasks',
+        'SectionParticipants'
     ],
 
     models: [
@@ -59,6 +60,11 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                             }
                         }]
                     }
+                },
+                assignmentsField: {
+                    store: 'SectionParticipants',
+                    valueField: 'PersonID',
+                    displayField: 'PersonFullName'
                 }
             }
         }
