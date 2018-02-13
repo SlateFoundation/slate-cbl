@@ -7,7 +7,7 @@ Ext.define('Slate.cbl.field.AssignmentsField', {
 
 
     config: {
-        showAllStudents: false,
+        showAllStudents: true,
 
         fieldLabel: 'Assigned To',
 
