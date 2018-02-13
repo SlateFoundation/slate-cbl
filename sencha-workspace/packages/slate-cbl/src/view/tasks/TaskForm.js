@@ -20,6 +20,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             'Ext.form.field.Checkbox',
             'Ext.form.field.Text',
             'Ext.form.field.TextArea',
+            'Ext.form.FieldSet',
 
             'Jarvus.store.FieldValuesStore',
 
@@ -204,7 +205,13 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             me.callParent();
 
             me.insert(0, [
-                me.getClonedTaskField(),
+                {
+                    xtype: 'fieldset',
+                    defaults: Ext.applyIf({
+                        anchor: '100%'
+                    }, me.defaults),
+                    items: me.getClonedTaskField()
+                },
                 me.getSectionField(),
                 me.getTitleField(),
                 me.getParentTaskField(),
