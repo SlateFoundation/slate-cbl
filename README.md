@@ -131,7 +131,9 @@ parameter `apiHost` when loading the page.
   - [ ] Fix condition where value / valueSkillsMap gets out of sync when continuing to second student
   - [ ] Improve confirmation text when deleting an override
 - [ ] Restore task creation in SlateTasksTeacher
-  - [ ] Use /bootstrap call to get server-provided task defaults like "Studio"
+  - [X] Use /bootstrap call to get server-provided task defaults like "Studio"
+  - [ ] Fully reset assignees/skills via model load when re-opening create form
+  - [ ] Implement task cloning via clonable option of data fields
   - [ ] Restore live-updating of grid
   - [ ] Audit requires and inheritance chain
 - [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does
