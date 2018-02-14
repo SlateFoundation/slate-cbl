@@ -150,6 +150,7 @@ parameter `apiHost` when loading the page.
   - [ ] Add `<debug> ... </debug>`-wrapped support to emergence-apikit to report on requests in console
 - [ ] Review and update exports as needed
 - [ ] Review TODO notes and comments; fix things or turn into issues
+- [ ] Purge sass folders
 
 ### Next release
 

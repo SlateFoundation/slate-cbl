@@ -1,0 +1,63 @@
+@mixin slate-cbl-attachments-filetype($type, $image: null) {
+    @if $image == null {
+        $image: '#{$type}.svg';
+    }
+
+    .slate-cbl-attachments-#{$type} {
+        .slate-cbl-attachments-attachment-title {
+            &::before {
+                content: url( get-resource-path('images/attachment-types/#{$image}', $packageName: 'slate-cbl') );
+            }
+        }
+    }
+}
+
+.slate-cbl-attachments-attachment {
+    display: flex;
+
+    button.plain {
+        background: none;
+        border: none;
+        box-shadow: none;
+        margin-bottom: 0;
+        margin-left: .5em;
+        opacity: .6;
+        padding: 0;
+
+        &:hover,
+        &:focus {
+            opacity: .8;
+        }
+
+        &:active {
+            opacity: 1;
+        }
+    }
+
+    &:hover {
+        background-color: rgba($base-color, .1);
+    }
+}
+
+.slate-cbl-attachments-attachment-title {
+    flex: 1;
+
+    @include ellipsis;
+
+    &::before {
+        content: url( get-resource-path('images/attachment-types/generic.svg', $packageName: 'slate-cbl') );
+        display: inline-block;
+        height: 16px;
+        margin-right: .375em;
+        vertical-align: -.125em;
+        width: 16px;
+    }
+}
+
+.slate-cbl-attachments-attachment-status {
+    font-style: italic;
+}
+
+@include slate-cbl-attachments-filetype('doc');
+@include slate-cbl-attachments-filetype('folder');
+@include slate-cbl-attachments-filetype('image');

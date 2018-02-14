@@ -32,7 +32,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             'Slate.cbl.field.ClearableSelector',
             'Slate.cbl.field.SkillsSelector',
             'Slate.cbl.field.AssigneesField',
-            'Slate.cbl.widget.AttachmentsField'
+            'Slate.cbl.field.attachments.Field'
         ],
 
 
@@ -145,7 +145,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 $value: {
                     name: 'Attachments',
 
-                    xtype: 'slate-tasks-attachmentsfield'
+                    xtype: 'slate-cbl-attachments-field'
                 }
             },
             instructionsField: {
