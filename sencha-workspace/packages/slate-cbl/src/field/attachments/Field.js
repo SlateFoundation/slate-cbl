@@ -15,7 +15,11 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
 
     config: {
-        fieldLabel: 'Attachments'
+        fieldLabel: 'Attachments',
+
+        attachmentTypes: [
+            'Slate.cbl.field.attachments.Link'
+        ]
     },
 
 
@@ -57,6 +61,26 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     ],
 
 
+    // config handlers
+    applyAttachmentTypes: function(types) {
+        var length, i = 0, type;
+
+        types = Ext.Array.from(types);
+        length = types.length;
+
+        for (; i < length; i++) {
+            type = types[i];
+
+            if (typeof type == 'string') {
+                types[i] = Ext.ClassManager.get(type);
+            }
+        }
+
+        return types;
+    },
+
+
+    // component lifecycle
     initEvents: function() {
         var me = this,
             listCt = me.getComponent('list');
@@ -74,6 +98,8 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         });
     },
 
+
+    // event handers
     onListAdd: function(listCt, listItem) {
         // listItem.on({
         //     scope: this,
