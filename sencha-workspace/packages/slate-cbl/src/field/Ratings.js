@@ -285,8 +285,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
         me.syncValueToCards();
 
-        me.validate();
-        me.checkDirty();
+        return me.callParent([value]);
     },
 
     getErrors: function(value) {
