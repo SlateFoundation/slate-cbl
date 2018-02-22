@@ -214,9 +214,14 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             },
 
             clonable: true
-        }
+        },
 
         // virtual fields
+        {
+            name: 'ChildTasks',
+            defaultValue: [],
+            persist: true
+        }
         // TODO: review if still needed
         // {
         //     name: 'ParentTaskTitle',

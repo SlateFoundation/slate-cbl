@@ -32,8 +32,8 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         '</tpl>',
         ' and assigneed to',
         ' <strong>',
-            ' {assignees.length}',
-            ' <tpl if="assignees.length == 1">student<tpl else>students</tpl>',
+            ' {assigneesCount}',
+            ' <tpl if="assigneesCount == 1">student<tpl else>students</tpl>',
             '.',
         '</strong>'
     ],
@@ -372,11 +372,12 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         formPanel.setLoading('Saving task&hellip;');
 
         task.save({
+            include: 'StudentTasks',
             success: function(savedTask) {
                 var tplData = {
                     wasPhantom: wasPhantom,
                     task: savedTask.getData(),
-                    assignees: Ext.Object.getKeys(savedTask.get('Assignees'))
+                    assigneesCount: Ext.Array.filter(Ext.Object.getValues(savedTask.get('Assignees')), Ext.identityFn).length
                 };
 
                 // show notification to user
@@ -384,6 +385,11 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                     Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
                     Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
                 );
+
+                // update loaded data
+                me.getTasksStore().add(savedTask);
+                // TODO: in same update, update parent tasks ChildTasks property
+                me.getStudentTasksStore().add(savedTask.get('StudentTasks'));
 
                 formWindow.hide();
                 formPanel.setLoading(false);
