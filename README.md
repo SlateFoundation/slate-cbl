@@ -132,10 +132,11 @@ parameter `apiHost` when loading the page.
   - [ ] Improve confirmation text when deleting an override
 - [ ] Restore task creation in SlateTasksTeacher
   - [X] Use /bootstrap call to get server-provided task defaults like "Studio"
-  - [ ] Fully reset assignees/skills via model load when re-opening create form
+  - [X] Fully reset assignees/skills via model load when re-opening create form
   - [X] Implement task cloning via clonable option of data fields
   - [X] Warn before overwriting dirty form with cloned data
-  - [ ] Restore live-updating of grid
+  - [X] Restore live-updating of grid
+  - [ ] Update grid correctly when new task has a parent task that may or may not have already had child tasks
   - [ ] Audit requires and inheritance chain
 - [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does
 - [ ] Restore building/loading of SlateTasksManager
