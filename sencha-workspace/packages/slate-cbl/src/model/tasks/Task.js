@@ -159,7 +159,29 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         // writable dynamic fields
         {
             name: 'Assignees',
-            defaultValue: {}
+            defaultValue: {},
+
+            convert: function(v) {
+                var length = Ext.isArray(v) && v.length,
+                    i = 0, assigneeData,
+                    map = {};
+
+                if (Ext.isObject(v)) {
+                    return v;
+                }
+
+                for (; i < length; i++) {
+                    assigneeData = v[i];
+
+                    if (Ext.isObject(assigneeData)) {
+                        assigneeData = assigneeData.ID;
+                    }
+
+                    map[assigneeData] = true;
+                }
+
+                return map;
+            }
         },
         {
             name: 'Attachments',
@@ -170,6 +192,26 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         {
             name: 'Skills',
             defaultValue: [],
+
+            convert: function(v) {
+                var length = Ext.isArray(v) && v.length,
+                    i = 0, skillData,
+                    skills = [];
+
+                for (; i < length; i++) {
+                    skillData = v[i];
+
+                    if (typeof skillData != 'string') {
+                        skillData = skillData.Code;
+                    }
+
+                    if (skillData) {
+                        skills.push(skillData);
+                    }
+                }
+
+                return skills;
+            },
 
             clonable: true
         }
@@ -208,7 +250,10 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         // }
     ],
 
-    proxy: 'slate-cbl-tasks',
+    proxy: {
+        type: 'slate-cbl-tasks',
+        include: ['Assignees', 'Attachments', 'Skills']
+    },
 
     // TODO: review if still needed
     // proxy: {
