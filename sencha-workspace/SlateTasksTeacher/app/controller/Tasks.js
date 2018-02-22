@@ -271,6 +271,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
         // reconfigure form and window
         formPanel.loadRecord(task);
+        formPanel.reset();
         taskWindow.animateTarget = createBtn;
 
 
