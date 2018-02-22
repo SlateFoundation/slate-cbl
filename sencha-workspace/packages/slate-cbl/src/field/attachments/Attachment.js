@@ -104,11 +104,11 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
 
     // event handlers
     onEditClick: function() {
-        this.fireEventedAction('edit', [this], 'doEdit', this);
+        this.edit();
     },
 
     onRemoveClick: function() {
-        this.fireEventedAction('remove', [this], 'doRemove', this);
+        this.remove();
     },
 
 
@@ -129,6 +129,10 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
         renderData.removeTpl.overwrite(me.removeEl, renderData);
     },
 
+    edit: function() {
+        this.fireEventedAction('edit', [this], 'doEdit', this);
+    },
+
     doEdit: function() {
         var me = this;
 
@@ -146,7 +150,18 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
         );
     },
 
+    remove: function() {
+        this.fireEventedAction('remove', [this], 'doRemove', this);
+    },
+
     doRemove: function() {
         this.setStatus(this.getStatus() == 'removed' ? 'normal' : 'removed');
+    },
+
+
+    inheritableStatics: {
+        buildButtonConfig: function() {
+            return false;
+        }
     }
 });

@@ -27,14 +27,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         {
             itemId: 'toolbar',
 
-            xtype: 'toolbar',
-            items: [
-                {
-                    xtype: 'button',
-                    action: 'add-link',
-                    text: 'Add Link'
-                }
-            ]
+            xtype: 'toolbar'
         },
         {
             itemId: 'list',
@@ -46,17 +39,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
                 xtype: 'slate-cbl-attachments-attachment',
                 autoEl: 'li'
             },
-            layout: 'container',
-            items: [
-                {
-                    title: 'Attachment 1'
-                },
-                {
-                    xtype: 'slate-cbl-attachments-link',
-                    title: 'Attachment 2',
-                    url: 'http://example.org/whatever2'
-                }
-            ]
+            layout: 'container'
         }
     ],
 
@@ -79,8 +62,38 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         return types;
     },
 
+    updateAttachmentTypes: function(types) {
+        var me = this,
+            length = types.length,
+            i = 0, buttonConfig, toolbar;
+
+        if (!me.rendered) {
+            return;
+        }
+
+        toolbar = me.getComponent('toolbar');
+
+        Ext.suspendLayouts();
+        toolbar.removeAll();
+
+        for (; i < length; i++) {
+            buttonConfig = types[i].buildButtonConfig(me);
+
+            if (buttonConfig) {
+                toolbar.add(buttonConfig);
+            }
+        }
+
+        Ext.resumeLayouts(true);
+    },
+
 
     // component lifecycle
+    initItems: function() {
+        this.callParent();
+        this.getComponent('toolbar').add(this.buildToolbarItemConfigs());
+    },
+
     initEvents: function() {
         var me = this,
             listCt = me.getComponent('list');
@@ -121,4 +134,28 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
     // onItemRemoveClick: function(listItem) {
     // }
+
+
+    // attachments-field methods
+    buildToolbarItemConfigs: function() {
+        var types = this.getAttachmentTypes(),
+            length = types.length,
+            i = 0,
+            buttonConfigs = [],
+            buttonConfig;
+
+        for (; i < length; i++) {
+            buttonConfig = types[i].buildButtonConfig(this);
+
+            if (buttonConfig) {
+                buttonConfigs.push(buttonConfig);
+            }
+        }
+
+        return buttonConfigs;
+    },
+
+    addAttachment: function(attachment) {
+        return this.getComponent('list').add(attachment);
+    }
 });

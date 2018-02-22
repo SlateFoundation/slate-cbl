@@ -77,5 +77,20 @@ Ext.define('Slate.cbl.field.attachments.Link', {
             false,
             me.getUrl()
         );
+    },
+
+
+    inheritableStatics: {
+        buildButtonConfig: function(field) {
+            var LinkAttachment = this;
+
+            return {
+                xtype: 'button',
+                text: 'Add Link',
+                handler: function() {
+                    field.add(new LinkAttachment()).edit();
+                }
+            };
+        }
     }
 });
