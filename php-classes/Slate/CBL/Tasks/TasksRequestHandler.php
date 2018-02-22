@@ -101,7 +101,22 @@ class TasksRequestHandler extends \RecordsRequestHandler
         if (isset($attachmentsData)) {
             // \Debug::dumpVar($attachmentsData, false, '$attachmentsData');
 
-            // TODO: handle attachments
+            $attachments = [];
+
+            foreach ($attachmentsData as $attachmentData) {
+                if (!empty($attachmentData['ID'])) {
+                    $Attachment = Attachments\AbstractTaskAttachment::getById($attachmentData['ID']);
+                } elseif (!empty($attachmentData['Class'])) {
+                    $attachmentClass = $attachmentData['Class'];
+                    $Attachment = $attachmentClass::create($attachmentData);
+                } else {
+                    throw new Exception('Attachment data must have ID or Class set');
+                }
+
+                $attachments[] = $Attachment;
+            }
+
+            $Task->Attachments = $attachments;
         }
 
         if (isset($skillsData)) {
