@@ -158,15 +158,18 @@ Ext.define('Slate.cbl.model.tasks.Task', {
 
         // writable dynamic fields
         {
-            name: 'Assignees'
+            name: 'Assignees',
+            defaultValue: {}
         },
         {
             name: 'Attachments',
+            defaultValue: [],
 
             clonable: true
         },
         {
             name: 'Skills',
+            defaultValue: [],
 
             clonable: true
         }
