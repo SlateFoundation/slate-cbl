@@ -86,6 +86,7 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
         me.callParent();
 
         me.refresh = Ext.Function.createBuffered(me.refresh, 100);
+        me.fireChange = Ext.Function.createBuffered(me.fireChange, 100);
 
         me.mon(me.editEl, 'click', 'onEditClick', me, { delegate: 'button[action=edit]' });
         me.mon(me.removeEl, 'click', 'onRemoveClick', me, { delegate: 'button[action=toggle-status]' });
@@ -95,10 +96,12 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
     // config handlers
     updateTitle: function() {
         this.refresh();
+        this.fireChange();
     },
 
     updateStatus: function() {
         this.refresh();
+        this.fireChange();
     },
 
 
@@ -158,8 +161,29 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
         this.setStatus(this.getStatus() == 'removed' ? 'normal' : 'removed');
     },
 
+    getValue: function() {
+        return {
+            Class: this.self.recordClass,
+            Title: this.getTitle(),
+            Status: this.getStatus()
+        };
+    },
+
+    setValue: function(value) {
+        this.setConfig({
+            title: value.Title || null,
+            status: value.Status || null
+        });
+    },
+
+    fireChange: function() {
+        this.fireEvent('change', this);
+    },
+
 
     inheritableStatics: {
+        recordClass: 'Slate\\CBL\\Tasks\\Attachments\\AbstractTaskAttachment',
+
         buildButtonConfig: function() {
             return false;
         }

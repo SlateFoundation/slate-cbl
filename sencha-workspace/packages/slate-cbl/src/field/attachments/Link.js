@@ -35,6 +35,7 @@ Ext.define('Slate.cbl.field.attachments.Link', {
     // config handlers
     updateUrl: function() {
         this.refresh();
+        this.fireChange();
     },
 
 
@@ -79,8 +80,23 @@ Ext.define('Slate.cbl.field.attachments.Link', {
         );
     },
 
+    getValue: function() {
+        var value = this.callParent();
+
+        value.URL = this.getUrl();
+
+        return value;
+    },
+
+    setValue: function(value) {
+        this.callParent(arguments);
+        this.setUrl(value.URL || null);
+    },
+
 
     inheritableStatics: {
+        recordClass: 'Slate\\CBL\\Tasks\\Attachments\\Link',
+
         buildButtonConfig: function(field) {
             var LinkAttachment = this;
 
@@ -88,7 +104,7 @@ Ext.define('Slate.cbl.field.attachments.Link', {
                 xtype: 'button',
                 text: 'Add Link',
                 handler: function() {
-                    field.add(new LinkAttachment()).edit();
+                    field.addAttachment(new LinkAttachment()).edit();
                 }
             };
         }
