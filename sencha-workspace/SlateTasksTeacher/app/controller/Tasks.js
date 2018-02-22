@@ -12,6 +12,33 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     ],
 
 
+    saveNotificationTitleTpl: [
+        '<tpl if="wasPhantom">',
+            'Task Saved',
+        '<tpl else>',
+            'Task Updated',
+        '</tpl>'
+    ],
+
+    saveNotificationBodyTpl: [
+        '<tpl if="wasPhantom">',
+            'Created',
+        '<tpl else>',
+            'Updated',
+        '</tpl>',
+        ' task',
+        '<tpl for="task">',
+            ' <strong>{Title}</strong>',
+        '</tpl>',
+        ' and assigneed to',
+        ' <strong>',
+            ' {assignees.length}',
+            ' <tpl if="assignees.length == 1">student<tpl else>students</tpl>',
+            '.',
+        '</strong>'
+    ],
+
+
     // dependencies
     views: [
         'Window@Slate.ui',
@@ -345,19 +372,17 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
         task.save({
             success: function(savedTask) {
-                // var tplData = {
-                //         wasPhantom: wasPhantom,
-                //         student: student ? student.getData() : null,
-                //         skills: savedDemonstration.get('DemonstrationSkills')
-                //     };
+                var tplData = {
+                    wasPhantom: wasPhantom,
+                    task: savedTask.getData(),
+                    assignees: Ext.Object.getKeys(savedTask.get('Assignees'))
+                };
 
-                // // show notification to user
-                // Ext.toast(
-                //     Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
-                //     Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
-                // );
-
-                debugger;
+                // show notification to user
+                Ext.toast(
+                    Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+                );
 
                 formWindow.hide();
                 formPanel.setLoading(false);
