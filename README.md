@@ -130,6 +130,7 @@ parameter `apiHost` when loading the page.
   - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels
   - [ ] Fix condition where value / valueSkillsMap gets out of sync when continuing to second student
   - [ ] Improve confirmation text when deleting an override
+  - [ ] Show placeholder when no cells are enrolled
 - [ ] Restore task creation in SlateTasksTeacher
   - [X] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [X] Fully reset assignees/skills via model load when re-opening create form

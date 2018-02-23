@@ -62,7 +62,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     refs: {
         dashboardCt: 'slate-tasks-teacher-dashboard',
         createBtn: 'slate-tasks-teacher-dashboard slate-appheader button[action=create]',
-        // studentsGrid: 'slate-studentsgrid',
+        studentsGrid: 'slate-studentsgrid',
 
         taskWindow: {
             autoCreate: true,
@@ -165,6 +165,10 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         },
         submitBtn: {
             click: 'onSubmitClick'
+        },
+        studentsGrid: {
+            rowheaderclick: 'onRowHeaderClick',
+            subrowheaderclick: 'onRowHeaderClick'
         }
     //     tasksGrid: {
     //         cellclick: 'onTasksGridCellClick',
@@ -256,27 +260,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     },
 
     onCreateClick: function(createBtn) {
-        var me = this,
-            dashboardCt = me.getDashboardCt(),
-            section = dashboardCt.getLoadedSection(),
-            task = me.getTaskModel().create({
-                SectionID: section.getId(),
-                Section: section.getData()
-            }),
-            taskWindow = me.getTaskWindow({
-                ownerCmp: dashboardCt
-            }),
-            formPanel = taskWindow.getMainView();
-
-
-        // reconfigure form and window
-        formPanel.loadRecord(task);
-        formPanel.reset();
-        taskWindow.animateTarget = createBtn;
-
-
-        // show window
-        taskWindow.show();
+        this.openTaskWindow({
+            animateTarget: createBtn
+        });
     },
 
     onFormDirtyChange: function(form, dirty) {
@@ -414,7 +400,20 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 });
             }
         });
-    }
+    },
+
+    onRowHeaderClick: function(studentsGrid, taskId, el, ev) {
+        if (!ev.getTarget('.edit-row')) {
+            return true;
+        }
+
+        this.openTaskWindow({
+            animateTarget: ev.target,
+            task: taskId
+        });
+
+        return false;
+    },
 
     // onTasksGridCellClick: function(grid, taskId, studentId) {
     //     var me = this,
@@ -976,4 +975,62 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     //     me.doEditTask(taskCopy);
     // }
+
+
+    // local methods
+    openTaskWindow: function(options) {
+        options = options || {};
+
+        // eslint-disable-next-line vars-on-top
+        var me = this,
+            dashboardCt = me.getDashboardCt(),
+            section = dashboardCt.getLoadedSection(),
+            TaskModel = me.getTaskModel(),
+            taskWindow = me.getTaskWindow({
+                ownerCmp: dashboardCt
+            }),
+            formPanel = taskWindow.getMainView(),
+            task = options.task;
+
+
+        // reconfigure form and window
+        taskWindow.animateTarget = options.animateTarget || null;
+
+
+        // fetch task and show window
+        if (!task || (typeof task == 'object' && !task.isModel)) {
+            task = TaskModel.create(Ext.apply({
+                SectionID: section.getId(),
+                Section: section.getData()
+            }, task || null));
+
+            formPanel.loadRecord(task);
+            formPanel.reset();
+            taskWindow.show();
+        } else if (typeof task == 'number') {
+            formPanel.reset();
+            taskWindow.show();
+            formPanel.setLoading('Loading demonstration&hellip;');
+
+            TaskModel.load(task, {
+                success: function(loadedTask) {
+                    formPanel.loadRecord(loadedTask);
+                    formPanel.setLoading(false);
+                },
+                failure: function(savedTask, operation) {
+                    taskWindow.hide();
+                    formPanel.setLoading(false);
+
+                    Ext.Msg.show({
+                        title: 'Failed to load task #'+task,
+                        message: operation.getError(),
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                }
+            });
+        } else {
+            Ext.Logger.error('Invalid task option');
+        }
+    }
 });
