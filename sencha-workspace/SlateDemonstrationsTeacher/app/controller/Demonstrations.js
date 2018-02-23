@@ -320,9 +320,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             demonstration = DemonstrationModel.create(Ext.apply({
                 Class: 'Slate\\CBL\\Demonstrations\\ExperienceDemonstration',
                 Demonstrated: new Date()
-            }, options.demonstration || null));
+            }, demonstration || null));
 
             formPanel.loadRecord(demonstration);
+            formPanel.reset();
             demonstrationWindow.show();
         } else if (typeof demonstration == 'number') {
             formPanel.reset();
