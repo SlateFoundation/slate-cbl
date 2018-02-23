@@ -136,7 +136,7 @@ parameter `apiHost` when loading the page.
   - [X] Implement task cloning via clonable option of data fields
   - [X] Warn before overwriting dirty form with cloned data
   - [X] Restore live-updating of grid
-  - [ ] Update grid correctly when new task has a parent task that may or may not have already had child tasks
+  - [X] Update grid correctly when new task has a parent task that may or may not have already had child tasks
   - [ ] Audit requires and inheritance chain
 - [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does
 - [ ] Restore building/loading of SlateTasksManager

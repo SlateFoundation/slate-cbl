@@ -374,11 +374,13 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         task.save({
             include: 'StudentTasks',
             success: function(savedTask) {
-                var tplData = {
-                    wasPhantom: wasPhantom,
-                    task: savedTask.getData(),
-                    assigneesCount: Ext.Array.filter(Ext.Object.getValues(savedTask.get('Assignees')), Ext.identityFn).length
-                };
+                var tasksStore = me.getTasksStore(),
+                    parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+                    tplData = {
+                        wasPhantom: wasPhantom,
+                        task: savedTask.getData(),
+                        assigneesCount: Ext.Array.filter(Ext.Object.getValues(savedTask.get('Assignees')), Ext.identityFn).length
+                    };
 
                 // show notification to user
                 Ext.toast(
@@ -387,8 +389,15 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 );
 
                 // update loaded data
-                me.getTasksStore().add(savedTask);
-                // TODO: in same update, update parent tasks ChildTasks property
+                tasksStore.beginUpdate();
+                tasksStore.add(savedTask);
+
+                if (parentTask) {
+                    parentTask.get('ChildTasks').push(savedTask);
+                }
+
+                tasksStore.endUpdate();
+
                 me.getStudentTasksStore().add(savedTask.get('StudentTasks'));
 
                 formWindow.hide();
