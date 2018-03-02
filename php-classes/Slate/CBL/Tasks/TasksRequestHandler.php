@@ -75,32 +75,45 @@ class TasksRequestHandler extends \RecordsRequestHandler
         parent::applyRecordDelta($Task, $requestData);
 
 
-        // apply related data
+        // apply related assignees
         if (isset($assigneesData)) {
-            // \Debug::dumpVar($assigneesData, false, '$assigneesData');
+            // fetch all existing StudentTask records indexed by StudentID
+            $existingStudentTasks = $Task->isPhantom ? [] : StudentTask::getAllByField('TaskID', $Task->ID, [ 'indexField' => 'StudentID' ]);
 
-            // TODO: apply delta to existing assignees list
 
+            // create new or passthrough existing StudentTask records, removing any matched students from list of existing
             $studentTasks = [];
-
             foreach ($assigneesData as $studentId => $isAssigned) {
-                if ($isAssigned) {
-                    if (!$Student = PeopleRequestHandler::getRecordbyHandle($studentId)) {
-                        throw new Exception("Student '$studentId' not found");
-                    }
+                $StudentTask = $existingStudentTasks[$studentId];
+                unset($existingStudentTasks[$studentId]);
 
-                    $studentTasks[] = StudentTask::create([
-                        'Student' => $Student
-                    ]);
+                if ($isAssigned) {
+                    if ($StudentTask) {
+                        $studentTasks[] = $StudentTask;
+                    } elseif (!$Student = PeopleRequestHandler::getRecordbyHandle($studentId)) {
+                        throw new Exception("Student '$studentId' not found");
+                    } else {
+                        $studentTasks[] = StudentTask::create([
+                            'Student' => $Student
+                        ]);
+                    }
                 }
             }
 
+
+            // restore any remaining existing StudentTask records that weren't described in this update
+            while ($StudentTask = array_shift($existingStudentTasks)) {
+                $studentTasks[] = $StudentTask;
+            }
+
+
+            // apply new list to model, prune configuration will remove any existing records excluded from new array
             $Task->StudentTasks = $studentTasks;
         }
 
-        if (isset($attachmentsData)) {
-            // \Debug::dumpVar($attachmentsData, false, '$attachmentsData');
 
+        // apply related attachments
+        if (isset($attachmentsData)) {
             $attachments = [];
 
             foreach ($attachmentsData as $attachmentData) {
@@ -119,18 +132,22 @@ class TasksRequestHandler extends \RecordsRequestHandler
             $Task->Attachments = $attachments;
         }
 
+
+        // apply related skills
         if (isset($skillsData)) {
-            // \Debug::dumpVar($skillsData, false, '$skillsData');
+            // fetch all existing StudentTask records indexed by StudentID
+            $existingTaskSkills = $Task->isPhantom ? [] : TaskSkill::getAllByField('TaskID', $Task->ID, [ 'indexField' => 'SkillID' ]);
 
+
+            // create new or passthrough existing TaskSkill records
             $taskSkills = [];
-
             foreach ($skillsData as $skillData) {
                 if (is_string($skillData) || is_int($skillData)) {
                     if (!$Skill = SkillsRequestHandler::getRecordByHandle($skillData)) {
                         throw new Exception("Skill '$skillData' not found");
                     }
 
-                    $taskSkills[] = TaskSkill::create([
+                    $taskSkills[] = $existingTaskSkills[$Skill->ID] ?: TaskSkill::create([
                         'Skill' => $Skill
                     ]);
                 } else {
@@ -140,100 +157,5 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
             $Task->TaskSkills = $taskSkills;
         }
-
-
-        // \Debug::dumpVar($Task, true, '$Task');
-
-
-        // $defaultAttachmentClass = Attachments\AbstractTaskAttachment::$defaultClass;
-
-        // if (isset($requestData['Attachments'])) {
-        //     $attachments = [];
-        //     foreach ($requestData['Attachments'] as $attachmentData) {
-        //         $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
-        //         if ($attachmentData['ID'] >= 1) {
-        //             if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
-        //                 $failed[] = $attachmentData;
-        //                 continue;
-        //             }
-
-        //             if (!empty($attachmentData['Status']) && in_array($attachmentData['Status'], $defaultAttachmentClass::getFieldOptions('Status', 'values'))) {
-        //                 $Attachment->Status = $attachmentData['Status'];
-        //             }
-        //         } else {
-        //             $Attachment = $attachmentClass::create($attachmentData);
-        //         }
-
-
-        //         if ($Attachment instanceof Attachments\GoogleDriveFile) {
-        //             if (!$Attachment->File) {
-        //                 if (!$File = DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
-        //                     $File = DriveFile::create($attachmentData['File']);
-        //                     if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
-        //                         $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
-        //                     }
-        //                 }
-        //                 $Attachment->File = $File;
-        //             } else if ($Attachment->File->isPhantom && $File = DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
-        //                 $Attachment->File = $File;
-        //             }
-        //         }
-
-        //         $attachments[] = $Attachment;
-        //     }
-
-        //     $Record->Attachments = $attachments;
-        // }
-        // // update student tasks
-        // if (isset($requestData['Assignees'])) {
-        //     $studentTasks = [];
-        //     foreach ($requestData['Assignees'] as $assigneeId) {
-        //         if (!$StudentTask = StudentTask::getByWhere(['StudentID' => $assigneeId, 'TaskID' => $Record->ID])) {
-        //             $StudentTask = StudentTask::create([
-        //                 'StudentID' => $assigneeId,
-        //                 'SectionID' => $requestData['SectionID'],
-        //                 'DueDate' => $Record->DueDate,
-        //                 'ExperienceType' => $Record->ExperienceType,
-        //                 'ExpirationDate' => $Record->ExpirationDate
-        //             ]);
-        //         }
-        //         $studentTasks[] = $StudentTask;
-        //     }
-
-        //     $Record->StudentTasks = $studentTasks;
-        // }
     }
-
-    /*
-    *   Responsibilities:
-    *       - Update relationships for Skills, Attachments, and StudentTasks.
-    */
-    // protected static function onRecordSaved(\ActiveRecord $Record, $data)
-    // {
-    //     //update skills
-    //     if (isset($data['SkillIDs'])) {
-    //         $originalSkills = $Record->Skills;
-    //         $originalSkillIds = array_map(function($s) {
-    //             return $s->ID;
-    //         }, $originalSkills);
-
-    //         $oldSkillIds = array_diff($originalSkillIds, $data['SkillIDs']);
-    //         $newSkillIds = array_diff($data['SkillIDs'], $originalSkillIds);
-
-    //         foreach ($newSkillIds as $newSkill) {
-    //             TaskSkill::create([
-    //                 'TaskID' => $Record->ID,
-    //                 'SkillID' => $newSkill
-    //             ], true);
-    //         }
-
-    //         if (!empty($oldSkillIds)) {
-    //             DB::nonQuery('DELETE FROM `%s` WHERE TaskID = %u AND SkillID IN ("%s")', [
-    //                 TaskSkill::$tableName,
-    //                 $Record->ID,
-    //                 join('", "', $oldSkillIds)
-    //             ]);
-    //         }
-    //     }
-    // }
 }
