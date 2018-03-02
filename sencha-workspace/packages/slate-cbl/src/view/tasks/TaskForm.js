@@ -37,6 +37,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
 
         config: {
+            task: null,
+
             clonedTaskField: {
                 merge: mergeFn,
                 $value: {
@@ -175,7 +177,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 },
                 {
                     xtype: 'button',
-                    text: 'Create Task',
+                    text: 'Save Task',
                     scale: 'large',
                     action: 'submit',
                     margin: '0 0 0 16'
@@ -185,6 +187,15 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
 
         // config handlers
+        updateTask: function(task) {
+            var me = this;
+
+            me.loadRecord(task);
+            me.reset();
+
+            me.setTitle(task.phantom ? 'Create Task' : 'Edit Task: '+task.get('Title'));
+        },
+
         applyClonedTaskField: applyFn,
         applySectionField: applyFn,
         applyTitleField: applyFn,

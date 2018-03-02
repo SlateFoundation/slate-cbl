@@ -1004,17 +1004,17 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 Section: section.getData()
             }, task || null));
 
-            formPanel.loadRecord(task);
-            formPanel.reset();
+            formPanel.setTask(task);
             taskWindow.show();
         } else if (typeof task == 'number') {
+            formPanel.setTitle(null);
             formPanel.reset();
             taskWindow.show();
             formPanel.setLoading('Loading demonstration&hellip;');
 
             TaskModel.load(task, {
                 success: function(loadedTask) {
-                    formPanel.loadRecord(loadedTask);
+                    formPanel.setTask(loadedTask);
                     formPanel.setLoading(false);
                 },
                 failure: function(savedTask, operation) {
