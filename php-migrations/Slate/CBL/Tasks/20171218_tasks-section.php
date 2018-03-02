@@ -74,6 +74,7 @@ foreach ($taskSectionId as $taskId => $sectionId) {
 
 // remove SectionID column from StudentTask table
 static::dropColumn(StudentTask::$tableName, 'SectionID');
+static::dropColumn(StudentTask::getHistoryTableName(), 'SectionID');
 
 
 // finish
