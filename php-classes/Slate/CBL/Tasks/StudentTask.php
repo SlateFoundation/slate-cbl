@@ -43,9 +43,6 @@ class StudentTask extends \VersionedRecord
         ],
 
         // Task fields that can be overridden
-        'ExperienceType' => [
-            'default' => null
-        ],
         'DueDate' => [
             'type' => 'timestamp',
             'default' => null
