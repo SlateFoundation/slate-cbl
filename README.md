@@ -127,10 +127,10 @@ parameter `apiHost` when loading the page.
   - [ ] When editing a demonstration, current level is shown behind raters rather than rated level-s (#434)
   - [ ] Add student selector to teacher version of skill window (#427)
   - [ ] Review required fields and server-driven enforcement in UI (#435)
-  - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels
-  - [ ] Fix condition where value / valueSkillsMap gets out of sync when continuing to second student
-  - [ ] Improve confirmation text when deleting an override
-  - [ ] Show placeholder when no cells are enrolled
+  - [ ] Fix showing "select student" text when log demo window is re-opened with existing panels (#438)
+  - [ ] Fix condition where value / valueSkillsMap gets out of sync when continuing to second student (#439)
+  - [ ] Improve confirmation text when deleting an override (#436)
+  - [ ] Show placeholder when no cells are enrolled (#437)
 - [ ] Restore task creation in SlateTasksTeacher
   - [X] Use /bootstrap call to get server-provided task defaults like "Studio"
   - [X] Fully reset assignees/skills via model load when re-opening create form
@@ -139,10 +139,10 @@ parameter `apiHost` when loading the page.
   - [X] Restore live-updating of grid
   - [X] Update grid correctly when new task has a parent task that may or may not have already had child tasks
   - [ ] Audit requires and inheritance chain
-- [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does
-- [ ] Restore building/loading of SlateTasksManager
-- [ ] Investigate baselines getting `NULL`d out: https://github.com/SlateFoundation/slate-fixtures/commit/74b14c13b783afed59463e90fb4770ae67f6745c
+- [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does (#441)
+- [ ] Restore building/loading of SlateTasksManager (#440)
 
+- [ ] Investigate baselines getting `NULL`d out: https://github.com/SlateFoundation/slate-fixtures/commit/74b14c13b783afed59463e90fb4770ae67f6745c
 
 - [X] Merge Ext JS code generator upstream
   - [ ] Write forum post documenting
