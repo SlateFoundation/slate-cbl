@@ -88,9 +88,10 @@ Ext.define('Slate.cbl.field.attachments.Link', {
         return value;
     },
 
-    setValue: function(value) {
-        this.callParent(arguments);
-        this.setUrl(value.URL || null);
+    applyValueToConfig: function(value) {
+        return Ext.apply(this.callParent(arguments), {
+            url: value.URL || null
+        });
     },
 
 

@@ -16,6 +16,7 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
         status: 'normal'
     },
 
+
     titleTpl: [
         '{title:htmlEncode}'
     ],
@@ -35,6 +36,11 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
             '<button class="plain" action="toggle-status" data-status="normal"><i class="fa fa-undo" title="Restore"></i></button>',
         '</tpl>'
     ],
+
+    /**
+     * @private
+     */
+    suspendFireChange: 0,
 
 
     // component configuration
@@ -170,14 +176,26 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
     },
 
     setValue: function(value) {
-        this.setConfig({
+        var me = this;
+
+        ++me.suspendFireChange;
+        me.setConfig(me.applyValueToConfig(value));
+        --me.suspendFireChange;
+
+        me.fireChange();
+    },
+
+    applyValueToConfig: function(value) {
+        return {
             title: value.Title || null,
             status: value.Status || null
-        });
+        };
     },
 
     fireChange: function() {
-        this.fireEvent('change', this);
+        if (!this.suspendFireChange) {
+            this.fireEvent('change', this);
+        }
     },
 
 

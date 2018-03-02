@@ -1,7 +1,6 @@
 /**
- * TODO: migrate to proper field
+ * A pluggable field for managing a list of attachments
  */
-
 Ext.define('Slate.cbl.field.attachments.Field', {
     extend: 'Slate.ui.form.ContainerField',
     xtype: 'slate-cbl-attachments-field',
@@ -116,10 +115,13 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     normalizeValue: function(value) {
         var normalValue = [],
             length = value ? value.length : 0,
-            i = 0;
+            i = 0, itemValue;
 
         for (; i < length; i++) {
-            normalValue.push(Ext.apply({}, value[i]));
+            itemValue = Ext.apply({}, value[i]);
+            delete itemValue.Created;
+            delete itemValue.CreatorID;
+            normalValue.push(itemValue);
         }
 
         return normalValue;
@@ -174,9 +176,9 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             i = 0, itemValue, itemClass, Attachment, attachmentItem;
 
         Ext.suspendLayouts();
+        ++me.suspendCheckChange;
         listCt.removeAll();
 
-        // TODO: remove all attachments in list and rebuild
         for (; i < length; i++) {
             itemValue = value[i];
             itemClass = itemValue.Class;
@@ -191,6 +193,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             }
         }
 
+        --me.suspendCheckChange;
         Ext.resumeLayouts(true);
 
         return me.callParent([value]);
@@ -243,6 +246,9 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             valueItemsMap[itemId] = itemValue;
             me.value.push(itemValue);
         }
+
+        me.validate();
+        me.checkDirty();
     },
 
 

@@ -191,7 +191,10 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             var me = this;
 
             me.loadRecord(task);
-            me.reset();
+
+            if (task.phantom) {
+                me.reset();
+            }
 
             me.setTitle(task.phantom ? 'Create Task' : 'Edit Task: '+task.get('Title'));
         },
