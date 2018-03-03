@@ -47,10 +47,12 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
             }
         }
 
+        me.beginUpdate();
         for (index = 0; index < count; index++) {
             task = me.getAt(index);
             task.set('ChildTasks', childTasks[task.getId()] || []);
         }
+        me.endUpdate();
     },
 
 
