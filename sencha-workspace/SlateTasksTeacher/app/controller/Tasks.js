@@ -380,7 +380,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
                 // update loaded tasks data
                 tasksStore.beginUpdate();
-                tasksStore.add(savedTask);
+                tasksStore.mergeData([savedTask]);
 
                 if (parentTask) {
                     parentTask.get('ChildTasks').push(savedTask);
@@ -390,7 +390,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
                 // update loaded student-tasks data
                 studentTasksStore.beginUpdate();
-                studentTasksStore.add(studentTasks);
+                studentTasksStore.mergeData(studentTasks);
                 studentTasksStore.remove(studentTasksStore.queryBy(function(studentTask) {
                     // remove any StudentTask records that are associated with the updated task but missing from new list
                     return (
