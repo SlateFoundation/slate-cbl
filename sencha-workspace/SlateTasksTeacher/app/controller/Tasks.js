@@ -408,7 +408,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         }
 
         this.openTaskWindow({
-            animateTarget: ev.target,
+            animateTarget: el,
             task: taskId
         });
 
