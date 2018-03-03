@@ -361,7 +361,11 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             include: 'StudentTasks',
             success: function(savedTask) {
                 var tasksStore = me.getTasksStore(),
+                    studentTasksStore = me.getStudentTasksStore(),
                     parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+                    taskId = savedTask.getId(),
+                    studentTasks = savedTask.get('StudentTasks') || [],
+                    studentTaskIds = Ext.Array.pluck(studentTasks, 'ID'),
                     tplData = {
                         wasPhantom: wasPhantom,
                         task: savedTask.getData(),
@@ -374,7 +378,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                     Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
                 );
 
-                // update loaded data
+                // update loaded tasks data
                 tasksStore.beginUpdate();
                 tasksStore.add(savedTask);
 
@@ -384,7 +388,17 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
                 tasksStore.endUpdate();
 
-                me.getStudentTasksStore().add(savedTask.get('StudentTasks'));
+                // update loaded student-tasks data
+                studentTasksStore.beginUpdate();
+                studentTasksStore.add(studentTasks);
+                studentTasksStore.remove(studentTasksStore.queryBy(function(studentTask) {
+                    // remove any StudentTask records that are associated with the updated task but missing from new list
+                    return (
+                        studentTask.get('TaskID') == taskId
+                        && studentTaskIds.indexOf(studentTask.getId()) == -1
+                    );
+                }).getRange());
+                studentTasksStore.endUpdate();
 
                 formWindow.hide();
                 formPanel.setLoading(false);
