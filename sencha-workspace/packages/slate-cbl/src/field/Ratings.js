@@ -391,6 +391,9 @@ Ext.define('Slate.cbl.field.Ratings', {
         }
 
 
+        Ext.suspendLayouts();
+
+
         // collect competencies
         for (; i < length; i++) {
             skillData = value[i];
@@ -416,6 +419,9 @@ Ext.define('Slate.cbl.field.Ratings', {
         if (tabPanel.getActiveTab() === me.getCompetenciesGrid()) {
             tabPanel.setActiveTab(0);
         }
+
+
+        Ext.resumeLayouts(true);
     },
 
     getCompetencyCard: function(competencyCode) {
