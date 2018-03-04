@@ -210,7 +210,19 @@ Ext.define('Slate.cbl.field.Ratings', {
     },
 
     setValue: function(value) {
-        return this.callParent([this.normalizeValue(value)]);
+        var me = this;
+
+        // clone value to normalized array
+        value = me.normalizeValue(value);
+
+        // normal field behavior
+        me.value = value;
+        me.checkChange();
+
+        // ensure lastValue and value always reference same instance
+        me.lastValue = value;
+
+        return me;
     },
 
     resetOriginalValue: function() {
