@@ -377,12 +377,16 @@ Ext.define('Slate.cbl.field.Ratings', {
     syncValueToCards: function() {
         var me = this,
             tabPanel = me.getTabPanel(),
-            value = me.getValue(),
-            length = value ? value.length : 0,
-            i = 0, skillData, competency, competencyId,
             competenciesStore = me.getCompetenciesGrid().getStore(),
-            competencyCardsMap = {}, card;
-
+            skills = me.value,
+            skillsLength = skills ? skills.length : 0,
+            skillIndex = 0, skillData, competency, competencyId, skillId,
+            skillIds = [],
+            competencyCardsMap = {},
+            cards = tabPanel.query('slate-cbl-competencyratings'),
+            cardsLength = cards.length,
+            cardIndex = 0,
+            card;
 
         // defer until competencies store is loaded
         if (!competenciesStore.isLoaded()) {
@@ -395,9 +399,10 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
         // collect competencies
-        for (; i < length; i++) {
-            skillData = value[i];
-            competency = competenciesStore.getBySkillId(skillData.SkillID);
+        for (; skillIndex < skillsLength; skillIndex++) {
+            skillData = skills[skillIndex];
+            skillId = skillData.SkillID;
+            competency = competenciesStore.getBySkillId(skillId);
 
             if (!competency) {
                 Ext.Logger.warn('Value loaded with competency not found in competencies store, skipping');
@@ -411,7 +416,14 @@ Ext.define('Slate.cbl.field.Ratings', {
                 card = competencyCardsMap[competencyId] = me.addCompetencyCard(competency.get('Code'));
             }
 
-            card.setSkillValue(skillData.SkillID, skillData.DemonstratedLevel);
+            card.setSkillValue(skillId, skillData.DemonstratedLevel);
+            skillIds.push(skillId);
+        }
+
+
+        // reset rating fields for skills not in value
+        for (; cardIndex < cardsLength; cardIndex++) {
+            cards[cardIndex].resetSkills(skillIds);
         }
 
 

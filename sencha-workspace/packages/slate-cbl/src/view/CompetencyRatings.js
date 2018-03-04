@@ -233,5 +233,22 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
         } else {
             me.skillValueQueue[skillId] = value;
         }
+    },
+
+    resetSkills: function (excludeIds) {
+        var skillFieldsMap = this.skillFieldsMap,
+            skillId;
+
+        for (skillId in skillFieldsMap) {
+            if (
+                skillFieldsMap.hasOwnProperty(skillId)
+                && (
+                    !excludeIds
+                    || excludeIds.indexOf(skillId) == -1
+                )
+            ) {
+                skillFieldsMap[skillId].setValue(null);
+            }
+        }
     }
 });
