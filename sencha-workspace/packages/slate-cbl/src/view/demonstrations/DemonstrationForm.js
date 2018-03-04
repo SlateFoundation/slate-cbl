@@ -128,7 +128,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
                 name: 'StudentID',
                 valueField: 'ID',
                 autoSelect: true,
-                matchFieldWidth: true
+                matchFieldWidth: true,
+                allowBlank: false
             }, studentSelector);
         }
 
@@ -200,6 +201,5 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         var student = studentSelector.getSelectedRecord();
 
         this.getRatingsField().setSelectedStudent(student ? student.get('Username') : null);
-
     }
 });
