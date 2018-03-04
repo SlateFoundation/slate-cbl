@@ -18,15 +18,18 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
         studentCompetency: null,
 
         placeholderItem: {
+            dock: 'bottom',
             tpl: [
+                '{% console.log("placeholder.update", values) %}',
                 '<tpl if="!values.student || !values.competency">',
                     'Select ',
                     '<tpl if="!values.student">student</tpl>',
                     '<tpl if="!values.student && !values.competency"> and </tpl>',
                     '<tpl if="!values.competency">competency</tpl>',
+                '<tpl elseif="studentCompetency === false">',
+                    'Selected student not enrolled in selected competency',
                 '</tpl>'
-            ],
-            data: {}
+            ]
         }
     },
 
@@ -47,6 +50,7 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
             xtype: 'component',
             itemId: 'competencyInfo',
+            hidden: true,
             tpl: [
                 '<h4 class="competency-descriptor">{Descriptor}</h4>',
                 '<blockquote class="competency-statement">{Statement}</blockquote>'
@@ -56,37 +60,27 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
 
     // config handlers
-    updateSelectedStudent: function(selectedStudent) {
+    updateSelectedStudent: function() {
         var me = this;
 
         me.setStudentCompetency(null);
-
-        me.getPlaceholderItem().setData({
-            student: selectedStudent || selectedStudent === false,
-            competency: me.selectedCompetency
-        });
-
+        me.refreshPlaceholder();
         me.loadIfNeeded();
     },
 
     updateSelectedCompetency: function(competencyCode) {
-        var me = this,
-            selectedStudent = me.selectedStudent;
+        var me = this;
 
         me.title = competencyCode;
 
         me.setStudentCompetency(null);
-
-        me.getPlaceholderItem().setData({
-            student: selectedStudent || selectedStudent === false,
-            competency: competencyCode
-        });
-
+        me.refreshPlaceholder();
         me.loadIfNeeded();
     },
 
     updateStudentCompetency: function(studentCompetency) {
         var me = this,
+            competencyInfoCmp = me.getDockedComponent('competencyInfo'),
             skillValueQueue = me.skillValueQueue,
             skillFieldsMap = me.skillFieldsMap = {},
             competencyData, skills,
@@ -99,7 +93,8 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
         if (studentCompetency) {
             competencyData = studentCompetency.get('Competency');
             me.setSelectedCompetency(competencyData.Code);
-            me.getDockedComponent('competencyInfo').setData(competencyData);
+            competencyInfoCmp.setData(competencyData);
+            competencyInfoCmp.show();
 
             skills = competencyData.Skills || [];
             skillsLength = skills.length;
@@ -124,8 +119,10 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
                 });
             }
         } else {
-            me.setPlaceholderItem('Selected student not enrolled in selected competency');
+            competencyInfoCmp.hide();
         }
+
+        me.refreshPlaceholder();
 
         Ext.resumeLayouts(true);
     },
@@ -133,8 +130,13 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
     // component lifecycle
     constructor: function() {
-        this.skillValueQueue = {};
-        this.callParent(arguments);
+        var me = this;
+
+        me.skillValueQueue = {};
+
+        me.refreshPlaceholder = Ext.Function.createBuffered(me.refreshPlaceholder, 50);
+
+        me.callParent(arguments);
     },
 
     afterRender: function() {
@@ -166,6 +168,17 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
             && (!selectedStudent || studentCompetency.get('Student').Username == selectedStudent)
             && studentCompetency.get('Competency').Code == selectedCompetency
         );
+    },
+
+    refreshPlaceholder: function() {
+        var me = this,
+            selectedStudent = me.getSelectedStudent();
+
+        me.getPlaceholderItem().setData({
+            student: selectedStudent || selectedStudent === false,
+            competency: me.getSelectedCompetency(),
+            studentCompetency: me.getStudentCompetency()
+        });
     },
 
     loadIfNeeded: function() {
