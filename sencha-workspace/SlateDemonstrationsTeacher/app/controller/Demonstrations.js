@@ -271,7 +271,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 // select next student or close
                 if (continueField.getValue()) {
                     nextStudent = studentsStore.getAt(studentsStore.indexOf(student) + 1);
-                    formPanel.loadRecord(me.getDemonstrationModel().create({
+                    formPanel.setDemonstration(me.getDemonstrationModel().create({
                         Class: savedDemonstration.get('Class'),
                         Demonstrated: new Date(),
                         StudentID: nextStudent ? nextStudent.getId() : null
@@ -322,8 +322,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                 Demonstrated: new Date()
             }, demonstration || null));
 
-            formPanel.loadRecord(demonstration);
-            formPanel.reset();
+            formPanel.setDemonstration(demonstration);
             demonstrationWindow.show();
         } else if (typeof demonstration == 'number') {
             formPanel.reset();
@@ -332,7 +331,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
             DemonstrationModel.load(demonstration, {
                 success: function(loadedDemonstration) {
-                    formPanel.loadRecord(loadedDemonstration);
+                    formPanel.setDemonstration(loadedDemonstration);
                     formPanel.setLoading(false);
                 },
                 failure: function(savedDemonstration, operation) {

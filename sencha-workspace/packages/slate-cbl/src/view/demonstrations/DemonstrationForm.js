@@ -19,6 +19,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
 
     config: {
+        demonstration: null,
+
         studentSelector: true,
         ratingsField: true,
         commentsField: true,
@@ -28,16 +30,16 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         footer: [
             {
                 xtype: 'button',
-                text: 'Submit',
+                text: 'Save Demonstration',
                 scale: 'large',
-                action: 'submit',
-                margin: '0 16'
+                action: 'submit'
             },
             {
                 itemId: 'continueField',
 
                 xtype: 'checkboxfield',
-                boxLabel: 'Continue with next student'
+                boxLabel: 'Continue with next student',
+                margin: '0 16'
             }
         ]
     },
@@ -100,10 +102,24 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
 
     // config handlers
+    updateDemonstration: function(demonstration) {
+        var me = this;
+
+        me.loadRecord(demonstration);
+
+        if (demonstration.phantom) {
+            me.reset();
+        }
+
+        me.setTitle(demonstration.phantom ? 'Log Demonstration' : 'Edit Demonstration #'+demonstration.getId());
+        me.setStudentSelector(demonstration.phantom);
+        me.getFooter().getComponent('continueField').setHidden(!demonstration.phantom);
+    },
+
     applyStudentSelector: function(studentSelector, oldStudentSelector) {
         if (typeof studentSelector === 'boolean') {
             studentSelector = {
-                hidden: !studentSelector
+                disabled: !studentSelector
             };
         }
 
