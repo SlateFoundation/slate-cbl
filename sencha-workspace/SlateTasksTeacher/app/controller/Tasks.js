@@ -355,7 +355,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             return;
         }
 
-        formPanel.setLoading('Saving task&hellip;');
+        formWindow.setLoading('Saving task&hellip;');
 
         task.save({
             include: 'StudentTasks',
@@ -401,10 +401,10 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 studentTasksStore.endUpdate();
 
                 formWindow.hide();
-                formPanel.setLoading(false);
+                formWindow.setLoading(false);
             },
             failure: function(savedDemonstration, operation) {
-                formPanel.setLoading(false);
+                formWindow.setLoading(false);
 
                 Ext.Msg.show({
                     title: 'Failed to save task',
@@ -1000,15 +1000,15 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             dashboardCt = me.getDashboardCt(),
             section = dashboardCt.getLoadedSection(),
             TaskModel = me.getTaskModel(),
-            taskWindow = me.getTaskWindow({
+            formWindow = me.getTaskWindow({
                 ownerCmp: dashboardCt
             }),
-            formPanel = taskWindow.getMainView(),
+            formPanel = formWindow.getMainView(),
             task = options.task;
 
 
         // reconfigure form and window
-        taskWindow.animateTarget = options.animateTarget || null;
+        formWindow.animateTarget = options.animateTarget || null;
 
 
         // fetch task and show window
@@ -1019,21 +1019,22 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             }, task || null));
 
             formPanel.setTask(task);
-            taskWindow.show();
+            formWindow.show();
         } else if (typeof task == 'number') {
             formPanel.setTitle(null);
-            formPanel.reset();
-            taskWindow.show();
-            formPanel.setLoading('Loading demonstration&hellip;');
+            formPanel.hide();
+            formWindow.show();
+            formWindow.setLoading('Loading demonstration&hellip;');
 
             TaskModel.load(task, {
                 success: function(loadedTask) {
                     formPanel.setTask(loadedTask);
-                    formPanel.setLoading(false);
+                    formPanel.show();
+                    formWindow.setLoading(false);
                 },
                 failure: function(savedTask, operation) {
-                    taskWindow.hide();
-                    formPanel.setLoading(false);
+                    formWindow.hide();
+                    formWindow.setLoading(false);
 
                     Ext.Msg.show({
                         title: 'Failed to load task #'+task,

@@ -243,7 +243,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             return;
         }
 
-        formPanel.setLoading('Saving demonstration&hellip;');
+        formWindow.setLoading('Saving demonstration&hellip;');
 
         me.getStudentCompetenciesStore().saveDemonstration(demonstration, {
             success: function(savedDemonstration) {
@@ -280,10 +280,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
                     formWindow.hide();
                 }
 
-                formPanel.setLoading(false);
+                formWindow.setLoading(false);
             },
             failure: function(savedDemonstration, operation) {
-                formPanel.setLoading(false);
+                formWindow.setLoading(false);
 
                 Ext.Msg.show({
                     title: 'Failed to log demonstration',
@@ -303,16 +303,16 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
         // eslint-disable-next-line vars-on-top
         var me = this,
             DemonstrationModel = me.getDemonstrationModel(),
-            demonstrationWindow = me.getDemonstrationWindow({
+            formWindow = me.getDemonstrationWindow({
                 ownerCmp: me.getDashboardCt()
             }),
-            formPanel = demonstrationWindow.getMainView(),
+            formPanel = formWindow.getMainView(),
             demonstration = options.demonstration;
 
 
         // reconfigure form and window
         formPanel.getRatingsField().setSelectedCompetencies(options.selectedCompetencies || null);
-        demonstrationWindow.animateTarget = options.animateTarget || null;
+        formWindow.animateTarget = options.animateTarget || null;
 
 
         // fetch demonstration and show window
@@ -323,20 +323,21 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             }, demonstration || null));
 
             formPanel.setDemonstration(demonstration);
-            demonstrationWindow.show();
+            formWindow.show();
         } else if (typeof demonstration == 'number') {
-            formPanel.reset();
-            demonstrationWindow.show();
-            formPanel.setLoading('Loading demonstration&hellip;');
+            formPanel.hide();
+            formWindow.show();
+            formWindow.setLoading('Loading demonstration&hellip;');
 
             DemonstrationModel.load(demonstration, {
                 success: function(loadedDemonstration) {
                     formPanel.setDemonstration(loadedDemonstration);
-                    formPanel.setLoading(false);
+                    formPanel.show();
+                    formWindow.setLoading(false);
                 },
                 failure: function(savedDemonstration, operation) {
-                    demonstrationWindow.hide();
-                    formPanel.setLoading(false);
+                    formWindow.hide();
+                    formWindow.setLoading(false);
 
                     Ext.Msg.show({
                         title: 'Failed to load demonstration #'+demonstration,
