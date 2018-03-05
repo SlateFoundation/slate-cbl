@@ -9,6 +9,10 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
         'SkillFooter'
     ],
 
+    stores: [
+        'StudentCompetencies',
+    ],
+
 
     refs: {
         dashboardCt: 'slate-demonstrations-teacher-dashboard',
@@ -33,6 +37,14 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
 
 
     // entry points
+    listen: {
+        store: {
+            '#StudentCompetencies': {
+                update: 'onStudentCompetencyUpdate'
+            }
+        }
+    },
+
     control: {
         'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-progressgrid': {
             democellclick: 'onDemoCellClick'
@@ -55,5 +67,18 @@ Ext.define('SlateDemonstrationsTeacher.controller.Skills', {
 
         skillWindow.animateTarget = context.cellEl;
         skillWindow.show();
+    },
+
+    onStudentCompetencyUpdate: function(store, studentCompetency) {
+        var skillPanel = this.getSkillWindow().getMainView(),
+            loadedCompetency = skillPanel.getLoadedCompetency();
+
+        if (
+            loadedCompetency
+            && loadedCompetency.getId() == studentCompetency.get('CompetencyID')
+            && studentCompetency.get('StudentID') == skillPanel.getSelectedStudent()
+        ) {
+            skillPanel.loadSkillsIfReady(true);
+        }
     }
 });

@@ -355,11 +355,11 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
 
 
     // local methods
-    loadSkillsIfReady: function() {
+    loadSkillsIfReady: function(forceRefresh) {
         var store = this.getDemonstrationSkillsList().getStore();
 
         if (store.getStudent() !== null && store.getSkill()) {
-            store.loadIfDirty();
+            store[forceRefresh ? 'load' : 'loadIfDirty']();
         }
     }
 });
