@@ -428,7 +428,7 @@ Ext.define('Slate.cbl.field.Ratings', {
                 card = competencyCardsMap[competencyId] = me.addCompetencyCard(competency.get('Code'));
             }
 
-            card.setSkillValue(skillId, skillData.DemonstratedLevel);
+            card.setSkillValue(skillId, skillData.DemonstratedLevel, skillData.TargetLevel);
             skillIds.push(skillId);
         }
 

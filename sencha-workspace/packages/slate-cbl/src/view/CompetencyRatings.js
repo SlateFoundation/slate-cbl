@@ -83,7 +83,7 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
             competencyInfoCmp = me.getDockedComponent('competencyInfo'),
             skillValueQueue = me.skillValueQueue,
             skillFieldsMap = me.skillFieldsMap = {},
-            competencyData, skills,
+            currentLevel, competencyData, skills,
             skillsLength, skillIndex, skill, skillId, value;
 
         Ext.suspendLayouts();
@@ -91,6 +91,7 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
         me.removeAll();
 
         if (studentCompetency) {
+            currentLevel = studentCompetency.get('Level');
             competencyData = studentCompetency.get('Competency');
             me.setSelectedCompetency(competencyData.Code);
             competencyInfoCmp.setData(competencyData);
@@ -103,14 +104,14 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
             for (; skillIndex < skillsLength; skillIndex++) {
                 skill = skills[skillIndex];
                 skillId = skill.ID;
-                value = skillValueQueue[skillId]
+                value = skillValueQueue[skillId];
 
                 delete skillValueQueue[skillId];
 
                 skillFieldsMap[skillId] = me.add({
                     skill: skill,
-                    level: studentCompetency.get('Level'),
-                    value: value,
+                    level: value ? value.Level : currentLevel,
+                    value: value ? value.Rating : null,
 
                     listeners: {
                         scope: me,
@@ -236,15 +237,19 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
         });
     },
 
-    setSkillValue: function(skillId, value) {
+    setSkillValue: function(skillId, rating, level) {
         var me = this,
             skillFieldsMap = me.skillFieldsMap,
             skillField = skillFieldsMap && skillFieldsMap[skillId];
 
         if (skillField && me.isStudentCompetencyLoaded()) {
-            skillField.setValue(value);
+            skillField.setLevel(level);
+            skillField.setValue(rating);
         } else {
-            me.skillValueQueue[skillId] = value;
+            me.skillValueQueue[skillId] = {
+                Rating: rating,
+                Level: level
+            };
         }
     },
 
