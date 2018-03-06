@@ -140,7 +140,8 @@ class Task extends \VersionedRecord
         // 'ParentTaskTitle' => [
         //     'getter' => 'getParenTaskTitle'
         // ],
-        'Assignees'
+        'Assignees',
+        'ClonedTask'
     ];
 
     public static $summaryFields = [
