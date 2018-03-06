@@ -58,7 +58,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                     xtype: 'displayfield',
                     fieldLabel: 'Cloned From',
                     renderer: function(value) {
-                        return value && value.Title || '&mdash;';
+                        return value ? Ext.String.format('#{0}: {1}', value.ID, value.Title) : '&mdash;';
                     }
                 }
             },
@@ -177,7 +177,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
 
             title: 'Create Task',
-            editTitle: 'Edit Task: {0}',
+            editTitle: 'Edit Task #{0}: {1}',
 
             footer: [
                 {
@@ -214,7 +214,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             me.setTitle(
                 task.phantom
                     ? me.getInitialConfig('title')
-                    : Ext.String.format(me.getInitialConfig('editTitle'), task.get('Title'))
+                    : Ext.String.format(me.getInitialConfig('editTitle'), task.getId(), task.get('Title'))
             );
 
             me.getClonedTaskField().setHidden(!task.phantom);
