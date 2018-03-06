@@ -119,7 +119,6 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     control: {
         dashboardCt: {
-            selectedsectionchange: 'onSelectedSectionChange',
             loadedsectionchange: 'onLoadedSectionChange'
         },
         createBtn: {
@@ -166,15 +165,6 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     onStudentTasksClear: function() {
         this.getTasksStore().unload();
-    },
-
-    onSelectedSectionChange: function(dashboardCt, sectionCode) {
-        var me = this,
-            studentTasksStore = me.getStudentTasksStore();
-
-        // (re)load StudentTask list
-        studentTasksStore.setSection(sectionCode);
-        studentTasksStore.loadIfDirty(true);
     },
 
     onLoadedSectionChange: function(dashboardCt, section) {
