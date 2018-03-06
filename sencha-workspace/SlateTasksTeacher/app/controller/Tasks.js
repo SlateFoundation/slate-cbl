@@ -276,9 +276,15 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     },
 
     onBeforeClonedTaskSelect: function(clonedTaskField, clonedTask) {
+        var formPanel = this.getFormPanel();
+
+        if (!formPanel.getTask().phantom) {
+            return true;
+        }
+
         if (
             clonedTaskField.confirmedOverwrite === clonedTask
-            || !this.getFormPanel().isDirty()
+            || !formPanel.isDirty()
         ) {
             delete clonedTaskField.confirmedOverwrite;
             return true;

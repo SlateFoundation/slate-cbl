@@ -50,6 +50,18 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                     allowBlank: true
                 }
             },
+            clonedTaskDisplayField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'ClonedTask',
+
+                    xtype: 'displayfield',
+                    fieldLabel: 'Cloned From',
+                    renderer: function(value) {
+                        return value && value.Title || '&mdash;';
+                    }
+                }
+            },
             sectionField: {
                 merge: mergeFn,
                 $value: {
@@ -165,6 +177,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
 
             title: 'Create Task',
+            editTitle: 'Edit Task: {0}',
 
             footer: [
                 {
@@ -190,16 +203,28 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
         updateTask: function(task) {
             var me = this;
 
+            Ext.suspendLayouts();
+
             me.loadRecord(task);
 
             if (task.phantom) {
                 me.getForm().clearInvalid();
             }
 
-            me.setTitle(task.phantom ? 'Create Task' : 'Edit Task: '+task.get('Title'));
+            me.setTitle(
+                task.phantom
+                    ? me.getInitialConfig('title')
+                    : Ext.String.format(me.getInitialConfig('editTitle'), task.get('Title'))
+            );
+
+            me.getClonedTaskField().setHidden(!task.phantom);
+            me.getClonedTaskDisplayField().setHidden(task.phantom);
+
+            Ext.resumeLayouts(true);
         },
 
         applyClonedTaskField: applyFn,
+        applyClonedTaskDisplayField: applyFn,
         applySectionField: applyFn,
         applyTitleField: applyFn,
         applyParentTaskField: applyFn,
@@ -224,7 +249,10 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                     defaults: Ext.applyIf({
                         anchor: '100%'
                     }, me.defaults),
-                    items: me.getClonedTaskField()
+                    items: [
+                        me.getClonedTaskField(),
+                        me.getClonedTaskDisplayField()
+                    ]
                 },
                 me.getSectionField(),
                 me.getTitleField(),
