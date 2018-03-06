@@ -322,7 +322,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 formWindow.hide();
                 formWindow.setLoading(false);
             },
-            failure: function(savedDemonstration, operation) {
+            failure: function(savedTask, operation) {
                 formWindow.setLoading(false);
 
                 Ext.Msg.show({
@@ -382,7 +382,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             formPanel.setTitle(null);
             formPanel.hide();
             formWindow.show();
-            formWindow.setLoading('Loading demonstration&hellip;');
+            formWindow.setLoading('Loading task&hellip;');
 
             TaskModel.load(task, {
                 success: function(loadedTask) {
@@ -390,7 +390,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                     formPanel.show();
                     formWindow.setLoading(false);
                 },
-                failure: function(savedTask, operation) {
+                failure: function(loadedTask, operation) {
                     formWindow.hide();
                     formWindow.setLoading(false);
 
