@@ -108,7 +108,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         me.loadRecord(demonstration);
 
         if (demonstration.phantom) {
-            me.reset();
+            me.getForm().clearInvalid();
         }
 
         me.setTitle(demonstration.phantom ? 'Log Demonstration' : 'Edit Demonstration #'+demonstration.getId());
