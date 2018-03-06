@@ -137,7 +137,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     },
 
     updateStudentSelector: function(studentSelector) {
-        studentSelector.on('change', 'onStudentChange', this);
+        studentSelector.on('select', 'onStudentSelect', this);
     },
 
     applyRatingsField: function(ratingsField, oldRatingsField) {
@@ -197,9 +197,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
 
     // event handlers
-    onStudentChange: function(studentSelector) {
-        var student = studentSelector.getSelectedRecord();
-
+    onStudentSelect: function(studentSelector, student) {
         this.getRatingsField().setSelectedStudent(student ? student.get('Username') : null);
     }
 });
