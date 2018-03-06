@@ -139,6 +139,7 @@ parameter `apiHost` when loading the page.
   - [X] Restore live-updating of grid
   - [X] Update grid correctly when new task has a parent task that may or may not have already had child tasks
   - [ ] Audit requires and inheritance chain
+  - [ ] Review old tasks controller for any unimplemented workflows and stash/tag
 - [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does (#441)
 - [ ] Restore building/loading of SlateTasksManager (#440)
 
