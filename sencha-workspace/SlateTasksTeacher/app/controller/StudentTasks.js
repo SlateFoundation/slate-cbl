@@ -165,6 +165,9 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             //         console.info('#Tasks.datachanged', arguments);
             //     }
             // }
+            '#Tasks': {
+                update: 'onTaskUpdate'
+            }
         }
     },
 
@@ -234,6 +237,32 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
 
     // event handlers
+    onTaskUpdate: function(tasksStore, task, operation, modifiedFieldNames) {
+        if (operation != 'edit' || modifiedFieldNames.indexOf('StudentTasks') == -1) {
+            return;
+        }
+
+        // eslint-disable-next-line vars-on-top
+        var taskId = task.getId(),
+            studentTasksStore = this.getStudentTasksStore(),
+            studentTasks = task.get('StudentTasks') || [],
+            studentTaskIds = Ext.Array.pluck(studentTasks, 'ID');
+
+        studentTasksStore.beginUpdate();
+
+        studentTasksStore.mergeData(studentTasks);
+
+        studentTasksStore.remove(studentTasksStore.queryBy(function(studentTask) {
+            // remove any StudentTask records that are associated with the updated task but missing from new list
+            return (
+                studentTask.get('TaskID') == taskId
+                && studentTaskIds.indexOf(studentTask.getId()) == -1
+            );
+        }).getRange());
+
+        studentTasksStore.endUpdate();
+    },
+
     onSelectedSectionChange: function(dashboardCt, sectionCode) {
         var me = this,
             studentTasksStore = me.getStudentTasksStore();

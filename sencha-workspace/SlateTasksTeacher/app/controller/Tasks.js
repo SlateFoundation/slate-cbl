@@ -280,11 +280,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             include: 'StudentTasks',
             success: function(savedTask) {
                 var tasksStore = me.getTasksStore(),
-                    studentTasksStore = me.getStudentTasksStore(),
                     parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
-                    taskId = savedTask.getId(),
-                    studentTasks = savedTask.get('StudentTasks') || [],
-                    studentTaskIds = Ext.Array.pluck(studentTasks, 'ID'),
                     tplData = {
                         wasPhantom: wasPhantom,
                         task: savedTask.getData(),
@@ -307,18 +303,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
                 tasksStore.endUpdate();
 
-                // update loaded student-tasks data
-                studentTasksStore.beginUpdate();
-                studentTasksStore.mergeData(studentTasks);
-                studentTasksStore.remove(studentTasksStore.queryBy(function(studentTask) {
-                    // remove any StudentTask records that are associated with the updated task but missing from new list
-                    return (
-                        studentTask.get('TaskID') == taskId
-                        && studentTaskIds.indexOf(studentTask.getId()) == -1
-                    );
-                }).getRange());
-                studentTasksStore.endUpdate();
-
+                // close window
                 formWindow.hide();
                 formWindow.setLoading(false);
             },
