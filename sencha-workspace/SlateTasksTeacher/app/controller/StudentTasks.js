@@ -47,7 +47,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
     stores: [
         'StudentTasks',
-        // 'Tasks',
+        'Tasks',
         'SectionParticipants'
     ],
 
@@ -165,6 +165,9 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             //         console.info('#Tasks.datachanged', arguments);
             //     }
             // }
+            '#StudentTasks': {
+                load: 'onStudentTasksLoad'
+            },
             '#Tasks': {
                 update: 'onTaskUpdate'
             }
@@ -237,6 +240,27 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
 
     // event handlers
+    onStudentTasksLoad: function(store, records, success) {
+        if (!success) {
+            return;
+        }
+
+        // eslint-disable-next-line vars-on-top
+        var participantsStore = this.getSectionParticipantsStore(),
+            recordsLength = records.length,
+            recordIndex = 0, record, studentId, participant;
+
+        // decorate StudentTask models with Student data from participants store
+        for (; recordIndex < recordsLength; recordIndex++) {
+            record = records[recordIndex];
+
+            if (!record.get('Student') && (studentId = record.get('StudentID'))) {
+                participant = participantsStore.getByPersonId(studentId);
+                record.set('Student', participant && participant.get('Person') || null);
+            }
+        }
+    },
+
     onTaskUpdate: function(tasksStore, task, operation, modifiedFieldNames) {
         if (operation != 'edit' || modifiedFieldNames.indexOf('StudentTasks') == -1) {
             return;
@@ -275,7 +299,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
     onCellClick: function(grid, taskId, participantId, cellEl) {
         var me = this,
             studentTasksStore = me.getStudentTasksStore(),
-            studentId = me.getSectionParticipantsStore().getById(participantId).get('PersonID'),
+            studentData = me.getSectionParticipantsStore().getById(participantId).get('Person'),
+            studentId = studentData.ID,
             studentTask = studentTasksStore.getAt(studentTasksStore.findBy(function(r) {
                 return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
             }));
@@ -283,7 +308,9 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         if (!studentTask) {
             studentTask = {
                 StudentID: studentId,
-                TaskID: taskId
+                Student: studentData,
+                TaskID: taskId,
+                Task: me.getTasksStore().getById(taskId).getData()
             };
         }
 
