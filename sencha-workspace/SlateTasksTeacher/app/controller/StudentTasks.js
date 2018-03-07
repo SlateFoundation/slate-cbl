@@ -247,16 +247,26 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
         // eslint-disable-next-line vars-on-top
         var participantsStore = this.getSectionParticipantsStore(),
+            tasksStore = this.getTasksStore(),
             recordsLength = records.length,
-            recordIndex = 0, record, studentId, participant;
+            recordIndex = 0, record, studentId, participant, taskData, parentTaskId, parentTask;
 
-        // decorate StudentTask models with Student data from participants store
+        // decorate StudentTask models with Student and ParentTask data
         for (; recordIndex < recordsLength; recordIndex++) {
             record = records[recordIndex];
 
             if (!record.get('Student') && (studentId = record.get('StudentID'))) {
                 participant = participantsStore.getByPersonId(studentId);
                 record.set('Student', participant && participant.get('Person') || null);
+            }
+
+            if (
+                !record.get('ParentTask')
+                && (taskData = record.get('Task'))
+            ) {
+                parentTaskId = taskData.ParentTaskID;
+                parentTask = parentTaskId && tasksStore.getById(parentTaskId);
+                record.set('ParentTask', parentTask ? parentTask.getData() : null, { dirty: false });
             }
         }
     },
@@ -303,14 +313,17 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             studentId = studentData.ID,
             studentTask = studentTasksStore.getAt(studentTasksStore.findBy(function(r) {
                 return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
-            }));
+            })),
+            taskData;
 
         if (!studentTask) {
+            taskData = me.getTasksStore().getById(taskId).getData();
             studentTask = {
                 StudentID: studentId,
                 Student: studentData,
                 TaskID: taskId,
-                Task: me.getTasksStore().getById(taskId).getData()
+                Task: taskData,
+                ParentTask: taskData.ParentTask || null
             };
         }
 
