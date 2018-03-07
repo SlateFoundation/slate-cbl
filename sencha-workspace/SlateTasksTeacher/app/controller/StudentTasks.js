@@ -257,7 +257,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
             if (!record.get('Student') && (studentId = record.get('StudentID'))) {
                 participant = participantsStore.getByPersonId(studentId);
-                record.set('Student', participant && participant.get('Person') || null);
+                record.set('Student', participant && participant.get('Person') || null, { dirty: false });
             }
 
             if (

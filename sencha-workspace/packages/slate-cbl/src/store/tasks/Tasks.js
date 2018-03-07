@@ -57,10 +57,10 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
             childTasksLength = childTasks.length;
             childTaskIndex = 0;
 
-            task.set('ChildTasks', childTasks);
+            task.set('ChildTasks', childTasks, { dirty: false });
 
             for (; childTaskIndex < childTasksLength; childTaskIndex++) {
-                childTasks[childTaskIndex].set('ParentTask', taskData);
+                childTasks[childTaskIndex].set('ParentTask', taskData, { dirty: false });
             }
         }
         me.endUpdate();
