@@ -177,6 +177,7 @@ parameter `apiHost` when loading the page.
 - [ ] Create a central singleton in slate-cbl package for storing a ratingTpl template and getRatingCls function, use in all apps for student-skill-demo cells.
   - [ ] Park other global rating configuration here.
   - [ ] Create another such class for levels config.
+- [ ] Rename TaskStatus column to Status
 
 ## Best Practices
 
