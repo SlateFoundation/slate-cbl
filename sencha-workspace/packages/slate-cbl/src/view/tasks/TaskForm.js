@@ -26,8 +26,6 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
             'Emergence.proxy.Values',
 
-            'Slate.ui.PanelFooter',
-
             'Slate.cbl.field.TaskSelector',
             'Slate.cbl.field.ClearableSelector',
             'Slate.cbl.field.SkillsSelector',

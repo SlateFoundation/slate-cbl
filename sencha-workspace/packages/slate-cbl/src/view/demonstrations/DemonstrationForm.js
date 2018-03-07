@@ -10,8 +10,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
         'Jarvus.store.FieldValuesStore',
 
-        'Slate.ui.PanelFooter',
-
         'Slate.cbl.model.demonstrations.Demonstration',
         'Slate.cbl.field.StudentSelector',
         'Slate.cbl.field.Ratings'
