@@ -17,163 +17,174 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         xtype: 'slate-cbl-tasks-studenttaskform',
         requires: [
             'Ext.form.field.Display',
-            'Ext.form.field.Checkbox',
-            'Ext.form.field.Text',
-            'Ext.form.field.TextArea',
-            'Ext.form.FieldSet',
+            // 'Ext.form.field.Checkbox',
+            // 'Ext.form.field.Text',
+            // 'Ext.form.field.TextArea',
+            // 'Ext.form.FieldSet',
 
-            'Jarvus.store.FieldValuesStore',
+            // 'Jarvus.store.FieldValuesStore',
 
             'Emergence.proxy.Values',
 
-            'Slate.ui.PanelFooter',
-
-            'Slate.cbl.field.TaskSelector',
-            'Slate.cbl.field.ClearableSelector',
-            'Slate.cbl.field.SkillsSelector',
-            'Slate.cbl.field.AssigneesField',
-            'Slate.cbl.field.attachments.Field'
+            // 'Slate.cbl.field.TaskSelector',
+            // 'Slate.cbl.field.ClearableSelector',
+            // 'Slate.cbl.field.SkillsSelector',
+            // 'Slate.cbl.field.AssigneesField',
+            // 'Slate.cbl.field.attachments.Field'
         ],
 
 
         config: {
             studentTask: null,
 
-            clonedTaskField: {
+            statusField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'ClonedTaskID',
-
-                    xtype: 'slate-cbl-taskselector',
-                    fieldLabel: 'Cloned Task',
-                    emptyText: 'Select an existing task to copy from it',
-                    allowBlank: true
-                }
-            },
-            clonedTaskDisplayField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'ClonedTask',
+                    name: 'TaskStatus',
 
                     xtype: 'displayfield',
-                    fieldLabel: 'Cloned From',
+                    fieldLabel: 'Status',
                     renderer: function(value) {
-                        return value ? Ext.String.format('#{0}: {1}', value.ID, value.Title) : '&mdash;';
+                        return value || 'not assigned';
                     }
                 }
             },
-            sectionField: {
+            studentField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'Section',
+                    name: 'Student',
 
                     xtype: 'displayfield',
-                    fieldLabel: 'Section',
+                    fieldLabel: 'Student',
                     renderer: function(value) {
-                        return value && value.Title || '&mdash;';
+                        return value ? value.FirstName + ' ' + value.LastName : '&mdash;';
                     }
                 }
             },
-            titleField: {
+            taskField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'Title',
+                    name: 'Task',
 
-                    xtype: 'textfield',
-                    fieldLabel: 'Title'
+                    xtype: 'displayfield',
+                    fieldLabel: 'Task',
+                    renderer: function(value) {
+                        return value ? '#'+value.ID + ': ' + value.Title : '&mdash;';
+                    }
                 }
             },
             parentTaskField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'ParentTaskID',
+                    name: 'ParentTask',
 
-                    xtype: 'slate-cbl-taskselector',
+                    xtype: 'displayfield',
                     fieldLabel: 'Subtask of',
-                    emptyText: '(Optional)',
-                    queryMode: 'local',
-                    anyMatch: true,
-                    allowBlank: true
-                }
-            },
-            experienceTypeField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'ExperienceType',
-
-                    xtype: 'slate-cbl-clearableselector',
-                    fieldLabel: 'Type of Experience',
-                    displayField: 'value',
-                    valueField: 'value',
-                    allowBlank: true,
-                    autoSelect: false,
-                    queryMode: 'local',
-                    store: {
-                        fields: ['value'],
-                        pageSize: 0,
-                        proxy: {
-                            type: 'emergence-values',
-                            url: '/cbl/tasks/*experience-types'
-                        }
+                    renderer: function(value) {
+                        return value ? '#'+value.ID + ': ' + value.Title : '&mdash;';
                     }
                 }
             },
-            dueDateField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'DueDate',
+            // titleField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'Title',
 
-                    xtype: 'datefield',
-                    fieldLabel: 'Due Date'
-                }
-            },
-            expirationDateField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'ExpirationDate',
+            //         xtype: 'textfield',
+            //         fieldLabel: 'Title'
+            //     }
+            // },
+            // parentTaskField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'ParentTaskID',
 
-                    xtype: 'datefield',
-                    fieldLabel: 'Expiration Date'
-                }
-            },
-            assignmentsField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'Assignees',
+            //         xtype: 'slate-cbl-taskselector',
+            //         fieldLabel: 'Subtask of',
+            //         emptyText: '(Optional)',
+            //         queryMode: 'local',
+            //         anyMatch: true,
+            //         allowBlank: true
+            //     }
+            // },
+            // experienceTypeField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'ExperienceType',
 
-                    xtype: 'slate-cbl-assigneesfield',
-                    allowBlank: false
-                }
-            },
-            skillsSelectorField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'Skills',
+            //         xtype: 'slate-cbl-clearableselector',
+            //         fieldLabel: 'Type of Experience',
+            //         displayField: 'value',
+            //         valueField: 'value',
+            //         allowBlank: true,
+            //         autoSelect: false,
+            //         queryMode: 'local',
+            //         store: {
+            //             fields: ['value'],
+            //             pageSize: 0,
+            //             proxy: {
+            //                 type: 'emergence-values',
+            //                 url: '/cbl/tasks/*experience-types'
+            //             }
+            //         }
+            //     }
+            // },
+            // dueDateField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'DueDate',
 
-                    xtype: 'slate-cbl-skillsselector',
-                    selectOnFocus: false
-                }
-            },
-            attachmentsField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'Attachments',
+            //         xtype: 'datefield',
+            //         fieldLabel: 'Due Date'
+            //     }
+            // },
+            // expirationDateField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'ExpirationDate',
 
-                    xtype: 'slate-cbl-attachments-field'
-                }
-            },
-            instructionsField: {
-                merge: mergeFn,
-                $value: {
-                    flex: 1,
-                    name: 'Instructions',
+            //         xtype: 'datefield',
+            //         fieldLabel: 'Expiration Date'
+            //     }
+            // },
+            // assignmentsField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'Assignees',
 
-                    xtype: 'textareafield',
-                    fieldLabel: 'Instructions',
-                    // grow: true,
-                    // growMin: 200
-                }
-            },
+            //         xtype: 'slate-cbl-assigneesfield',
+            //         allowBlank: false
+            //     }
+            // },
+            // skillsSelectorField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'Skills',
+
+            //         xtype: 'slate-cbl-skillsselector',
+            //         selectOnFocus: false
+            //     }
+            // },
+            // attachmentsField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'Attachments',
+
+            //         xtype: 'slate-cbl-attachments-field'
+            //     }
+            // },
+            // instructionsField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         flex: 1,
+            //         name: 'Instructions',
+
+            //         xtype: 'textareafield',
+            //         fieldLabel: 'Instructions',
+            //         // grow: true,
+            //         // growMin: 200
+            //     }
+            // },
 
 
             title: 'Task Assignment',
@@ -207,6 +218,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
             me.loadRecord(studentTask);
 
+            me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
+
             // if (task.phantom) {
             //     me.getForm().clearInvalid();
             // }
@@ -223,18 +236,20 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             Ext.resumeLayouts(true);
         },
 
-        applyClonedTaskField: applyFn,
-        applyClonedTaskDisplayField: applyFn,
-        applySectionField: applyFn,
-        applyTitleField: applyFn,
+        applyStatusField: applyFn,
+        applyStudentField: applyFn,
+        applyTaskField: applyFn,
         applyParentTaskField: applyFn,
-        applyExperienceTypeField: applyFn,
-        applyDueDateField: applyFn,
-        applyExpirationDateField: applyFn,
-        applyAssignmentsField: applyFn,
-        applySkillsSelectorField: applyFn,
-        applyAttachmentsField: applyFn,
-        applyInstructionsField: applyFn,
+        // applySectionField: applyFn,
+        // applyTitleField: applyFn,
+        // applyParentTaskField: applyFn,
+        // applyExperienceTypeField: applyFn,
+        // applyDueDateField: applyFn,
+        // applyExpirationDateField: applyFn,
+        // applyAssignmentsField: applyFn,
+        // applySkillsSelectorField: applyFn,
+        // applyAttachmentsField: applyFn,
+        // applyInstructionsField: applyFn,
 
 
         // component lifecycle
@@ -244,26 +259,18 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             me.callParent();
 
             me.insert(0, [
-                {
-                    xtype: 'fieldset',
-                    defaults: Ext.applyIf({
-                        anchor: '100%'
-                    }, me.defaults),
-                    items: [
-                        me.getClonedTaskField(),
-                        me.getClonedTaskDisplayField()
-                    ]
-                },
-                me.getSectionField(),
-                me.getTitleField(),
+                me.getStatusField(),
+                me.getStudentField(),
+                me.getTaskField(),
                 me.getParentTaskField(),
-                me.getExperienceTypeField(),
-                me.getDueDateField(),
-                me.getExpirationDateField(),
-                me.getAssignmentsField(),
-                me.getSkillsSelectorField(),
-                me.getAttachmentsField(),
-                me.getInstructionsField()
+                // me.getParentTaskField(),
+                // me.getExperienceTypeField(),
+                // me.getDueDateField(),
+                // me.getExpirationDateField(),
+                // me.getAssignmentsField(),
+                // me.getSkillsSelectorField(),
+                // me.getAttachmentsField(),
+                // me.getInstructionsField()
             ]);
         }
     };
