@@ -11,7 +11,9 @@ use Emergence\People\Person;
 use Google\DriveFile;
 
 use Slate\People\PeopleRequestHandler;
+use Slate\Courses\SectionsRequestHandler;
 use Slate\CBL\SkillsRequestHandler;
+
 
 class TasksRequestHandler extends \RecordsRequestHandler
 {
@@ -28,8 +30,8 @@ class TasksRequestHandler extends \RecordsRequestHandler
         if (isset($_REQUEST['course_section'])) {
             // TODO: only let staff do this?
 
-            if (!$Section = \Slate\Courses\Section::getByHandle($_REQUEST['course_section'])) {
-                return static::throwInvalidRequestError('Course section not found.');
+            if (!$Section = SectionsRequestHandler::getRecordByHandle($_REQUEST['course_section'])) {
+                return static::throwInvalidRequestError('Course section not found');
             }
 
             $conditions['SectionID'] = $Section->ID;
