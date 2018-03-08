@@ -11,6 +11,7 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
 
 
     config: {
+        permanentValues: null,
         loadSummaries: true,
 
         fieldLabel: 'Standards',
@@ -131,7 +132,9 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
     },
 
     isDeselectable: function(record) {
-        return record.getId() % 2 == 0;
+        var permanentValues = this.getPermanentValues();
+
+        return !permanentValues || permanentValues.indexOf(record.get('Code')) == -1;
     },
 
     onBeforeDeselect: function(list, record) {

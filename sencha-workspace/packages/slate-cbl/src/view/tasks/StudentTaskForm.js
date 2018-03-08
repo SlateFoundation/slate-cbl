@@ -260,6 +260,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.loadRecord(studentTask);
 
                 me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
+                me.getSkillsSelectorField().setPermanentValues(studentTask.get('InheritedSkills'));
 
                 // if (task.phantom) {
                 //     me.getForm().clearInvalid();

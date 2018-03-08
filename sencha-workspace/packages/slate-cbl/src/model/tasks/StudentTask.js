@@ -153,12 +153,21 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             }
         },
         {
-            name: 'Skills',
+            name: 'InheritedSkills',
             depends: ['Task'],
             convert: function(v, r) {
                 var taskData = r.get('Task');
 
                 return Slate.cbl.model.tasks.Task.fieldsMap.Skills.convert(taskData && taskData.Skills);
+            }
+        },
+        {
+            name: 'Skills',
+            depends: ['InheritedSkills'],
+            convert: function(v, r) {
+                var inherited = r.get('InheritedSkills');
+
+                return inherited;
             }
         }
     ],
