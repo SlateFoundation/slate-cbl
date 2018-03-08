@@ -174,6 +174,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             },
 
 
+            hidden: true,
             title: 'Create Task',
             editTitle: 'Edit Task #{0}: {1}',
 
@@ -203,20 +204,26 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
             Ext.suspendLayouts();
 
-            me.loadRecord(task);
+            if (task) {
+                me.loadRecord(task);
 
-            if (task.phantom) {
-                me.getForm().clearInvalid();
+                if (task.phantom) {
+                    me.getForm().clearInvalid();
+                }
+
+                me.setTitle(
+                    task.phantom
+                        ? me.getInitialConfig('title')
+                        : Ext.String.format(me.getInitialConfig('editTitle'), task.getId(), task.get('Title'))
+                );
+
+                me.getClonedTaskField().setHidden(!task.phantom);
+                me.getClonedTaskDisplayField().setHidden(task.phantom);
+                me.show();
+            } else {
+                me.setTitle(null);
+                me.hide();
             }
-
-            me.setTitle(
-                task.phantom
-                    ? me.getInitialConfig('title')
-                    : Ext.String.format(me.getInitialConfig('editTitle'), task.getId(), task.get('Title'))
-            );
-
-            me.getClonedTaskField().setHidden(!task.phantom);
-            me.getClonedTaskDisplayField().setHidden(task.phantom);
 
             Ext.resumeLayouts(true);
         },

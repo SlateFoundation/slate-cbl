@@ -23,6 +23,8 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         ratingsField: true,
         commentsField: true,
 
+
+        hidden: true,
         title: 'Log Demonstration',
 
         footer: [
@@ -103,15 +105,26 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     updateDemonstration: function(demonstration) {
         var me = this;
 
-        me.loadRecord(demonstration);
+        Ext.suspendLayouts();
 
-        if (demonstration.phantom) {
-            me.getForm().clearInvalid();
+        if (demonstration) {
+            me.loadRecord(demonstration);
+
+            if (demonstration.phantom) {
+                me.getForm().clearInvalid();
+            }
+
+            me.setTitle(demonstration.phantom ? 'Log Demonstration' : 'Edit Demonstration #'+demonstration.getId());
+            me.setStudentSelector(demonstration.phantom);
+            me.getFooter().getComponent('continueField').setHidden(!demonstration.phantom);
+
+            me.show();
+        } else {
+            me.setTitle(null);
+            me.hide();
         }
 
-        me.setTitle(demonstration.phantom ? 'Log Demonstration' : 'Edit Demonstration #'+demonstration.getId());
-        me.setStudentSelector(demonstration.phantom);
-        me.getFooter().getComponent('continueField').setHidden(!demonstration.phantom);
+        Ext.resumeLayouts(true);
     },
 
     applyStudentSelector: function(studentSelector, oldStudentSelector) {

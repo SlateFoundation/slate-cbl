@@ -364,15 +364,13 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
             formPanel.setTask(task);
             formWindow.show();
         } else if (typeof task == 'number') {
-            formPanel.setTitle(null);
-            formPanel.hide();
+            formPanel.setTask(null);
             formWindow.show();
             formWindow.setLoading('Loading task&hellip;');
 
             TaskModel.load(task, {
                 success: function(loadedTask) {
                     formPanel.setTask(loadedTask);
-                    formPanel.show();
                     formWindow.setLoading(false);
                 },
                 failure: function(loadedTask, operation) {

@@ -325,14 +325,13 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             formPanel.setDemonstration(demonstration);
             formWindow.show();
         } else if (typeof demonstration == 'number') {
-            formPanel.hide();
+            formPanel.setDemonstration(null);
             formWindow.show();
             formWindow.setLoading('Loading demonstration&hellip;');
 
             DemonstrationModel.load(demonstration, {
                 success: function(loadedDemonstration) {
                     formPanel.setDemonstration(loadedDemonstration);
-                    formPanel.show();
                     formWindow.setLoading(false);
                 },
                 failure: function(savedDemonstration, operation) {
