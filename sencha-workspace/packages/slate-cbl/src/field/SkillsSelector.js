@@ -1,3 +1,7 @@
+/**
+ * TODO:
+ * - Move general tagfield enhancements to a base class
+ */
 Ext.define('Slate.cbl.field.SkillsSelector', {
     extend: 'Ext.form.field.Tag',
     xtype: 'slate-cbl-skillsselector',
@@ -29,8 +33,11 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
                 ' class="',
                     ' {parent.tagItemCls}',
                     ' {parent.childElCls}',
-                    '<tpl if="parent.$comp.selectionModel.isSelected(values)">',
+                    '<tpl if="parent.$comp.isSelected(values)">',
                         ' {parent.tagSelectedCls}',
+                    '</tpl>',
+                    '<tpl if="parent.$comp.isDeselectable(values)">',
+                        ' {parent.tagItemDeselectableCls}',
                     '</tpl>',
                 '"',
                 ' data-qtip="{[fm.htmlEncode(parent.tipTpl.apply(values.data))]}"',
@@ -55,14 +62,20 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
     },
 
     tipTpl: '{Descriptor}',
+    tagItemDeselectableCls: Ext.baseCSSPrefix + 'tagfield-item-deselectable',
 
     listConfig: {
-        cls: 'slate-cbl-skillsselector-list'
+        cls: 'slate-cbl-skillsselector-list',
+        prepareData: function(data, index, record) {
+            data = Ext.Object.chain(data);
+            data.$isDeselectable = this.ownerCmp.isDeselectable(record);
+            return data;
+        }
     },
 
     tpl: [
         '<tpl for=".">',
-            '<div class="x-boundlist-item">',
+            '<div class="x-boundlist-item <tpl if="$isDeselectable">x-boundlist-deselectable</tpl>">',
                 '<small class="code">{Code}</small>',
                 '<span class="descriptor">{Descriptor}</span>',
             '</div>',
@@ -107,8 +120,25 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
             tagSelectedCls: me.tagSelectedCls,
             tagItemTextCls: me.tagItemTextCls,
             tagItemCloseCls: me.tagItemCloseCls,
+            tagItemDeselectableCls: me.tagItemDeselectableCls,
 
             items: me.valueCollection.getRange()
         });
+    },
+
+    isSelected: function(record) {
+        return this.selectionModel.isSelected(record);
+    },
+
+    isDeselectable: function(record) {
+        return record.getId() % 2 == 0;
+    },
+
+    onBeforeDeselect: function(list, record) {
+        if (!this.isDeselectable(record)) {
+            return false;
+        }
+
+        return this.callParent(arguments);
     }
 });

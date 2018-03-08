@@ -1,3 +1,13 @@
+.slate-cbl-skillsselector {
+    .x-tagfield-item:not(.x-tagfield-item-deselectable) {
+        padding: 0 5px;
+
+        .x-tagfield-item-close {
+            display: none;
+        }
+    }
+}
+
 .slate-cbl-skillsselector-list {
     .x-list-plain {
         display: table;
@@ -13,6 +23,10 @@
 
         &:not(:last-child) > * {
             border-bottom: 1px dotted #aaa;
+        }
+
+        &.x-boundlist-selected:not(.x-boundlist-deselectable) {
+            background-color: #ddd;
         }
     }
 
