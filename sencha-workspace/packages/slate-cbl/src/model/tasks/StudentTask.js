@@ -60,11 +60,6 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             type: 'int'
         },
         {
-            name: 'ExperienceType',
-            type: 'string',
-            allowNull: true
-        },
-        {
             name: 'DueDate',
             type: 'date',
             dateFormat: 'timestamp',
@@ -121,6 +116,14 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                     && Slate.cbl.model.tasks.Task.activeStatuses.indexOf(r.get('TaskStatus')) > -1
                 );
             }
+        },
+        {
+            name: 'ExperienceType',
+            mapping: 'Task.ExperienceType'
+        },
+        {
+            name: 'Instructions',
+            mapping: 'Task.Instructions'
         }
     ],
 

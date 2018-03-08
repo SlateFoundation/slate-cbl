@@ -16,6 +16,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         extend: 'Slate.ui.form.Panel',
         xtype: 'slate-cbl-tasks-studenttaskform',
         requires: [
+            'Ext.util.Format',
             'Ext.form.field.Display',
             // 'Ext.form.field.Checkbox',
             // 'Ext.form.field.Text',
@@ -82,6 +83,27 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     fieldLabel: 'Subtask of',
                     renderer: function(value) {
                         return value ? '#'+value.ID + ': ' + value.Title : '&mdash;';
+                    }
+                }
+            },
+            experienceTypeField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'ExperienceType',
+
+                    xtype: 'displayfield',
+                    fieldLabel: 'Type of Experience'
+                }
+            },
+            instructionsField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'Instructions',
+
+                    xtype: 'displayfield',
+                    fieldLabel: 'Instructions',
+                    renderer: function(value) {
+                        return Ext.util.Format.nl2br(value);
                     }
                 }
             },
@@ -240,16 +262,16 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         applyStudentField: applyFn,
         applyTaskField: applyFn,
         applyParentTaskField: applyFn,
+        applyExperienceTypeField: applyFn,
+        applyInstructionsField: applyFn,
         // applySectionField: applyFn,
         // applyTitleField: applyFn,
         // applyParentTaskField: applyFn,
-        // applyExperienceTypeField: applyFn,
         // applyDueDateField: applyFn,
         // applyExpirationDateField: applyFn,
         // applyAssignmentsField: applyFn,
         // applySkillsSelectorField: applyFn,
         // applyAttachmentsField: applyFn,
-        // applyInstructionsField: applyFn,
 
 
         // component lifecycle
@@ -263,14 +285,14 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.getStudentField(),
                 me.getTaskField(),
                 me.getParentTaskField(),
+                me.getExperienceTypeField(),
+                me.getInstructionsField(),
                 // me.getParentTaskField(),
-                // me.getExperienceTypeField(),
                 // me.getDueDateField(),
                 // me.getExpirationDateField(),
                 // me.getAssignmentsField(),
                 // me.getSkillsSelectorField(),
                 // me.getAttachmentsField(),
-                // me.getInstructionsField()
             ]);
         }
     };
