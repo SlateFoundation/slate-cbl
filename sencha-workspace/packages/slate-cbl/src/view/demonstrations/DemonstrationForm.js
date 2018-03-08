@@ -116,6 +116,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
             me.setTitle(demonstration.phantom ? 'Log Demonstration' : 'Edit Demonstration #'+demonstration.getId());
             me.setStudentSelector(demonstration.phantom);
+            me.getRatingsField().setSelectedStudent(me.getStudentSelector().getSelectedRecord());
             me.getFooter().getComponent('continueField').setHidden(!demonstration.phantom);
 
             me.show();
@@ -209,6 +210,6 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
     // event handlers
     onStudentSelect: function(studentSelector, student) {
-        this.getRatingsField().setSelectedStudent(student ? student.get('Username') : null);
+        this.getRatingsField().setSelectedStudent(student);
     }
 });

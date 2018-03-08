@@ -48,6 +48,16 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // config handlers
+    applySelectedStudent: function(selectedStudent) {
+        if (!selectedStudent) {
+            selectedStudent = null;
+        } else if (selectedStudent.isModel) {
+            selectedStudent = selectedStudent.get('Username');
+        }
+
+        return selectedStudent;
+    },
+
     updateSelectedStudent: function(selectedStudent) {
         var tabPanel = this.tabPanel,
             items = tabPanel ? tabPanel.query('[setSelectedStudent]') : [],
