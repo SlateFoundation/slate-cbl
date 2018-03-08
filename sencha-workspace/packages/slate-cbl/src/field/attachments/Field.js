@@ -14,20 +14,17 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
 
     config: {
-        fieldLabel: 'Attachments',
-
         attachmentTypes: [
             'Slate.cbl.field.attachments.Link'
-        ]
+        ],
+        toolbar: true,
+
+        fieldLabel: 'Attachments'
     },
 
 
+    componentCls: 'slate-cbl-attachments-field',
     items: [
-        {
-            itemId: 'toolbar',
-
-            xtype: 'toolbar'
-        },
         {
             itemId: 'list',
 
@@ -70,7 +67,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             return;
         }
 
-        toolbar = me.getComponent('toolbar');
+        toolbar = me.getToolbar();
 
         Ext.suspendLayouts();
         toolbar.removeAll();
@@ -86,11 +83,31 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         Ext.resumeLayouts(true);
     },
 
+    applyToolbar: function(toolbar, oldToolbar) {
+        if (!toolbar || typeof toolbar == 'boolean') {
+            toolbar = {
+                hidden: !toolbar
+            };
+        }
+
+        return Ext.factory(toolbar, 'Ext.toolbar.Toolbar', oldToolbar);
+    },
+
+    updateReadOnly: function(readOnly) {
+        this.callParent(arguments);
+        this.setToolbar(!readOnly);
+    },
+
 
     // component lifecycle
     initItems: function() {
-        this.callParent();
-        this.getComponent('toolbar').add(this.buildToolbarItemConfigs());
+        var me = this,
+            toolbar = me.getToolbar();
+
+        me.callParent();
+
+        toolbar.add(me.buildToolbarItemConfigs());
+        me.insert(0, toolbar);
     },
 
     initEvents: function() {
