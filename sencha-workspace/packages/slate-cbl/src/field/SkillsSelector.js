@@ -134,7 +134,7 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
     isDeselectable: function(record) {
         var permanentValues = this.getPermanentValues();
 
-        return !permanentValues || permanentValues.indexOf(record.get('Code')) == -1;
+        return !permanentValues || permanentValues.indexOf(record.get(this.getValueField())) == -1;
     },
 
     onBeforeDeselect: function(list, record) {
