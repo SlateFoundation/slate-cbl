@@ -20,6 +20,30 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
     },
 
 
+    multiSelectItemTpl: [
+        '<tpl for="items">',
+            '<li',
+                ' data-selectionIndex="{[xindex - 1]}"',
+                ' data-recordId="{internalId}"',
+                ' role="presentation"',
+                ' class="',
+                    ' {parent.tagItemCls}',
+                    ' {parent.childElCls}',
+                    '<tpl if="parent.$comp.selectionModel.isSelected(values)">',
+                        ' {parent.tagSelectedCls}',
+                    '</tpl>',
+                '"',
+                ' data-qtip="{[fm.htmlEncode(parent.tipTpl.apply(values.data))]}"',
+            '>',
+                '<div role="presentation" class="{parent.tagItemTextCls}">',
+                    '{[fm.htmlEncode(parent.labelTpl.apply(values.data))]}',
+                '</div>',
+                '<div role="presentation" class="{parent.tagItemCloseCls} {parent.childElCls}"></div>',
+            '</li>',
+        '</tpl>',
+    ],
+
+
     componentCls: 'slate-cbl-skillsselector',
 
     // field configuration
@@ -61,5 +85,30 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
         this.callParent(arguments);
 
         this.getStore().getProxy().setSummary(this.getLoadSummaries());
+    },
+
+
+    // tagfield lifecycle
+    getMultiSelectItemMarkup: function() {
+        var me = this,
+            childElCls = me._getChildElCls && me._getChildElCls() || ''; // hook for rtl cls
+
+        if (!me.labelTpl) {
+            me.labelTpl = '{' + me.displayField + '}';
+        }
+
+        return me.lookupTpl('multiSelectItemTpl').apply({
+            $comp: me,
+            labelTpl: me.lookupTpl('labelTpl'),
+            tipTpl: me.lookupTpl('tipTpl'),
+
+            childElCls: childElCls,
+            tagItemCls: me.tagItemCls,
+            tagSelectedCls: me.tagSelectedCls,
+            tagItemTextCls: me.tagItemTextCls,
+            tagItemCloseCls: me.tagItemCloseCls,
+
+            items: me.valueCollection.getRange()
+        });
     }
 });
