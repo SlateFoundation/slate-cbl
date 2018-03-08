@@ -252,23 +252,25 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             recordIndex = 0, record, studentId, participant, taskData, parentTaskId, parentTask;
 
         // decorate StudentTask models with Student and ParentTask data
-        for (; recordIndex < recordsLength; recordIndex++) {
-            record = records[recordIndex];
+        Ext.StoreMgr.requireLoaded([participantsStore, tasksStore], function() {
+            for (; recordIndex < recordsLength; recordIndex++) {
+                record = records[recordIndex];
 
-            if (!record.get('Student') && (studentId = record.get('StudentID'))) {
-                participant = participantsStore.getByPersonId(studentId);
-                record.set('Student', participant && participant.get('Person') || null, { dirty: false });
-            }
+                if (!record.get('Student') && (studentId = record.get('StudentID'))) {
+                    participant = participantsStore.getByPersonId(studentId);
+                    record.set('Student', participant && participant.get('Person') || null, { dirty: false });
+                }
 
-            if (
-                !record.get('ParentTask')
-                && (taskData = record.get('Task'))
-            ) {
-                parentTaskId = taskData.ParentTaskID;
-                parentTask = parentTaskId && tasksStore.getById(parentTaskId);
-                record.set('ParentTask', parentTask ? parentTask.getData() : null, { dirty: false });
+                if (
+                    !record.get('ParentTask')
+                    && (taskData = record.get('Task'))
+                ) {
+                    parentTaskId = taskData.ParentTaskID;
+                    parentTask = parentTaskId && tasksStore.getById(parentTaskId);
+                    record.set('ParentTask', parentTask ? parentTask.getData() : null, { dirty: false });
+                }
             }
-        }
+        });
     },
 
     onTaskUpdate: function(tasksStore, task, operation, modifiedFieldNames) {
