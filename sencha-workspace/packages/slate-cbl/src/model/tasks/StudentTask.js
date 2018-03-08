@@ -118,40 +118,124 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             }
         },
         {
+            name: 'Student',
+            persist: false
+        },
+        {
+            name: 'Task',
+            persist: false
+        },
+        {
             name: 'ExperienceType',
-            mapping: 'Task.ExperienceType'
+            depends: ['Task'],
+            convert: function(v, r) {
+                var taskData = r.get('Task');
+
+                return taskData && taskData.ExperienceType || null;
+            }
         },
         {
             name: 'Instructions',
-            mapping: 'Task.Instructions'
+            depends: ['Task'],
+            convert: function(v, r) {
+                var taskData = r.get('Task');
+
+                return taskData && taskData.Instructions || null;
+            }
+        },
+        {
+            name: 'Attachments',
+            depends: ['Task'],
+            convert: function(v, r) {
+                var taskData = r.get('Task');
+
+                return taskData && taskData.Attachments || [];
+            }
+        },
+        {
+            name: 'Skills',
+            depends: ['Task'],
+            convert: function(v, r) {
+                var taskData = r.get('Task');
+
+                return Slate.cbl.model.tasks.Task.fieldsMap.Skills.convert(taskData && taskData.Skills);
+            }
         }
     ],
 
     proxy: 'slate-cbl-studenttasks',
 
     // TODO: review if still needed
-    getTaskSkillsGroupedByCompetency: function() {
-        var comps = [], compIds = [],
-            skills = this.get('TaskSkills') || [],
-            compIdx, skill,
-            i = 0;
+    // getTaskSkillsGroupedByCompetency: function() {
+    //     var comps = [], compIds = [],
+    //         skills = this.get('TaskSkills') || [],
+    //         compIdx, skill,
+    //         i = 0;
 
-        for (; i < skills.length; i++) {
-            skill = skills[i];
+    //     for (; i < skills.length; i++) {
+    //         skill = skills[i];
 
-            if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
-                compIdx = compIds.length;
-                comps[compIdx] = {
-                    Code: skill.CompetencyCode,
-                    Descriptor: skill.CompetencyDescriptor,
-                    skills: []
-                };
-                compIds.push(skill.CompetencyCode);
-            }
+    //         if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
+    //             compIdx = compIds.length;
+    //             comps[compIdx] = {
+    //                 Code: skill.CompetencyCode,
+    //                 Descriptor: skill.CompetencyDescriptor,
+    //                 skills: []
+    //             };
+    //             compIds.push(skill.CompetencyCode);
+    //         }
 
-            comps[compIdx].skills.push(skill);
+    //         comps[compIdx].skills.push(skill);
+    //     }
+
+    //     return comps;
+    // },
+
+    readOperationData: function(operation) {
+        var me = this,
+            response = operation.getResponse(),
+            data = response && response.data,
+            studentData = data && data.Student,
+            taskData = data && data.Task;
+
+        me.beginEdit();
+
+        if (studentData) {
+            me.set('StudentID', studentData.ID);
+            me.set('Student', studentData, { dirty: false });
         }
 
-        return comps;
+        if (taskData) {
+            me.set('TaskID', taskData.ID);
+            me.set('Task', taskData, { dirty: false });
+        }
+
+        me.endEdit();
+    },
+
+
+    // static methods
+    inheritableStatics: {
+        load: function(options, session) {
+            var record = new this({}, session),
+                student = options.student,
+                task = options.task,
+                params;
+
+            options = Ext.Object.chain(options);
+            params = options.params = Ext.Object.chain(options.params || null);
+
+            if (student || student === false) {
+                params.student = student || '*current';
+            }
+
+            if (task) {
+                params.task = task;
+            }
+
+            record.load(options);
+
+            return record;
+        }
     }
 });

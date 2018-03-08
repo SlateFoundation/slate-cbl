@@ -107,6 +107,23 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     }
                 }
             },
+            skillsSelectorField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'Skills',
+
+                    xtype: 'slate-cbl-skillsselector',
+                    selectOnFocus: false
+                }
+            },
+            attachmentsField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'Attachments',
+
+                    xtype: 'slate-cbl-attachments-field'
+                }
+            },
             // titleField: {
             //     merge: mergeFn,
             //     $value: {
@@ -209,6 +226,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             // },
 
 
+            hidden: true,
             title: 'Task Assignment',
             editTitle: 'Edit Task Assignment #{0}: {1}',
 
@@ -238,22 +256,29 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
             Ext.suspendLayouts();
 
-            me.loadRecord(studentTask);
+            if (studentTask) {
+                me.loadRecord(studentTask);
 
-            me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
+                me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
 
-            // if (task.phantom) {
-            //     me.getForm().clearInvalid();
-            // }
+                // if (task.phantom) {
+                //     me.getForm().clearInvalid();
+                // }
 
-            // me.setTitle(
-            //     task.phantom
-            //         ? me.getInitialConfig('title')
-            //         : Ext.String.format(me.getInitialConfig('editTitle'), task.getId(), task.get('Title'))
-            // );
+                // me.setTitle(
+                //     task.phantom
+                //         ? me.getInitialConfig('title')
+                //         : Ext.String.format(me.getInitialConfig('editTitle'), task.getId(), task.get('Title'))
+                // );
 
-            // me.getClonedTaskField().setHidden(!task.phantom);
-            // me.getClonedTaskDisplayField().setHidden(task.phantom);
+                // me.getClonedTaskField().setHidden(!task.phantom);
+                // me.getClonedTaskDisplayField().setHidden(task.phantom);
+
+                me.show();
+            } else {
+                me.setTitle(null);
+                me.hide();
+            }
 
             Ext.resumeLayouts(true);
         },
@@ -264,14 +289,14 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         applyParentTaskField: applyFn,
         applyExperienceTypeField: applyFn,
         applyInstructionsField: applyFn,
+        applySkillsSelectorField: applyFn,
+        applyAttachmentsField: applyFn,
         // applySectionField: applyFn,
         // applyTitleField: applyFn,
         // applyParentTaskField: applyFn,
         // applyDueDateField: applyFn,
         // applyExpirationDateField: applyFn,
-        // applyAssignmentsField: applyFn,
-        // applySkillsSelectorField: applyFn,
-        // applyAttachmentsField: applyFn,
+        // applyAssignmentsField: applyFn
 
 
         // component lifecycle
@@ -287,12 +312,12 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.getParentTaskField(),
                 me.getExperienceTypeField(),
                 me.getInstructionsField(),
+                me.getSkillsSelectorField(),
+                me.getAttachmentsField(),
                 // me.getParentTaskField(),
                 // me.getDueDateField(),
                 // me.getExpirationDateField(),
                 // me.getAssignmentsField(),
-                // me.getSkillsSelectorField(),
-                // me.getAttachmentsField(),
             ]);
         }
     };

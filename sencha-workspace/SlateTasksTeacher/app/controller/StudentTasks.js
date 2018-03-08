@@ -309,30 +309,9 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
     },
 
     onCellClick: function(grid, taskId, participantId, cellEl) {
-        var me = this,
-            studentTasksStore = me.getStudentTasksStore(),
-            studentData = me.getSectionParticipantsStore().getById(participantId).get('Person'),
-            studentId = studentData.ID,
-            studentTask = studentTasksStore.getAt(studentTasksStore.findBy(function(r) {
-                return r.get('TaskID') == taskId && r.get('StudentID') == studentId;
-            })),
-            taskData;
+        var studentId = this.getSectionParticipantsStore().getById(participantId).get('PersonID');
 
-        if (!studentTask) {
-            taskData = me.getTasksStore().getById(taskId).getData();
-            studentTask = {
-                StudentID: studentId,
-                Student: studentData,
-                TaskID: taskId,
-                Task: taskData,
-                ParentTask: taskData.ParentTask || null
-            };
-        }
-
-        me.openStudentTaskWindow({
-            animateTarget: cellEl,
-            studentTask: studentTask
-        });
+        this.openStudentTaskWindow(studentId, taskId, { animateTarget: cellEl });
     },
 
     // onReAssignStudentTaskClick: function(taskRater, dateField, date) {
@@ -884,7 +863,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
 
     // local methods
-    openStudentTaskWindow: function(options) {
+    // TODO: always load StudentTask or, for phantoms, Task, with Skills and Attachments includes...copy StudentCompetency load method to StudentTask
+    openStudentTaskWindow: function(studentId, taskId, options) {
         options = options || {};
 
         // eslint-disable-next-line vars-on-top
@@ -893,53 +873,48 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             formWindow = me.getStudentTaskWindow({
                 ownerCmp: me.getDashboardCt()
             }),
-            formPanel = formWindow.getMainView(),
-            studentTask = options.studentTask;
+            formPanel = formWindow.getMainView();
 
 
         // reconfigure form and window
         formWindow.animateTarget = options.animateTarget || null;
 
 
-        // prepare selected model
-        if (typeof studentTask == 'number') {
-            // fetch from server and show window asynchronously
-            formPanel.setTitle(null);
-            formPanel.hide();
-            formWindow.show();
-            formWindow.setLoading('Loading student task&hellip;');
+        // clear window and show with loading indicator
+        formPanel.setStudentTask(null);
+        formWindow.show();
+        formWindow.setLoading('Loading student task&hellip;');
 
-            StudentTaskModel.load(studentTask, {
-                success: function(loadedStudentTask) {
-                    formPanel.setTask(loadedStudentTask);
-                    formPanel.show();
+
+        // fetch Student, Task, and StudentTask data from server
+        StudentTaskModel.load({
+            student: studentId,
+            task: taskId,
+            include: ['Attachments', 'Skills'],
+            success: function(loadedStudentTask, operation) {
+                loadedStudentTask.readOperationData(operation);
+                formPanel.setStudentTask(loadedStudentTask);
+                formWindow.setLoading(false);
+            },
+            failure: function(loadedStudentTask, operation) {
+                if (operation.wasSuccessful()) {
+                    // request was successful but no record was found, initialize phantom
+                    loadedStudentTask.readOperationData(operation);
+                    formPanel.setStudentTask(loadedStudentTask);
                     formWindow.setLoading(false);
-                },
-                failure: function(loadedStudentTask, operation) {
+                } else {
+                    // request failed
                     formWindow.hide();
                     formWindow.setLoading(false);
 
                     Ext.Msg.show({
-                        title: 'Failed to load student task #'+studentTask,
+                        title: 'Failed to load student task',
                         message: operation.getError(),
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.ERROR
                     });
                 }
-            });
-
-            return;
-        } else if (!studentTask || (typeof studentTask == 'object' && !studentTask.isModel)) {
-            // create from data object
-            studentTask = StudentTaskModel.create(Ext.apply({}, studentTask || null));
-        } else if (!(studentTask instanceof StudentTaskModel)) {
-            Ext.Logger.error('Invalid studentTask option');
-            return;
-        }
-
-
-        // show window with phantom or provided task
-        formPanel.setStudentTask(studentTask);
-        formWindow.show();
+            }
+        });
     }
 });
