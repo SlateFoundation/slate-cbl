@@ -257,10 +257,12 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             Ext.suspendLayouts();
 
             if (studentTask) {
+                // configure permanent values before loading record
+                me.getSkillsSelectorField().setPermanentValues(studentTask.get('InheritedSkills'));
+
                 me.loadRecord(studentTask);
 
                 me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
-                me.getSkillsSelectorField().setPermanentValues(studentTask.get('InheritedSkills'));
 
                 // if (task.phantom) {
                 //     me.getForm().clearInvalid();
