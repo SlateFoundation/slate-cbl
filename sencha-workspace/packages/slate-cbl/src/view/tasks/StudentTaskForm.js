@@ -121,7 +121,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 $value: {
                     name: 'Attachments',
 
-                    xtype: 'slate-cbl-attachments-field'
+                    xtype: 'slate-cbl-attachments-field',
+                    readOnly: true
                 }
             },
             // titleField: {
