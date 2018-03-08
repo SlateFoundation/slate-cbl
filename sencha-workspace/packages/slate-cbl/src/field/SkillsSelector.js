@@ -143,5 +143,19 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
         }
 
         return this.callParent(arguments);
+    },
+
+    toggleSelectionByListItemNode: function(itemEl, keepExisting) {
+        var me = this,
+            record = me.getRecordByListItemNode(itemEl),
+            selModel = me.selectionModel;
+
+        if (record && me.isDeselectable(record)) {
+            if (selModel.isSelected(record)) {
+                selModel.deselect(record);
+            } else {
+                selModel.select(record, keepExisting);
+            }
+        }
     }
 });
