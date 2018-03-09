@@ -18,7 +18,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         requires: [
             'Ext.util.Format',
             'Ext.form.field.Display',
-            // 'Ext.form.field.Checkbox',
+            'Ext.form.field.Date',
+            'Ext.form.field.Checkbox',
+            'Ext.form.FieldContainer',
             // 'Ext.form.field.Text',
             // 'Ext.form.field.TextArea',
             // 'Ext.form.FieldSet',
@@ -107,10 +109,67 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     }
                 }
             },
+
+            dueDateField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'DueDate',
+
+                    xtype: 'datefield',
+                    hidden: true
+                }
+            },
+            dueDateDisplayField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'InheritedDueDate',
+
+                    xtype: 'displayfield',
+                    hidden: true,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d')
+                }
+            },
+            dueDateOverrideField: {
+                merge: mergeFn,
+                $value: {
+                    xtype: 'checkbox',
+                    boxLabel: 'Override',
+                    submitValue: false
+                }
+            },
+
+            expirationDateField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'ExpirationDate',
+
+                    xtype: 'datefield',
+                    hidden: true
+                }
+            },
+            expirationDateDisplayField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'InheritedExpirationDate',
+
+                    xtype: 'displayfield',
+                    hidden: true,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d')
+                }
+            },
+            expirationDateOverrideField: {
+                merge: mergeFn,
+                $value: {
+                    xtype: 'checkbox',
+                    boxLabel: 'Override',
+                    submitValue: false
+                }
+            },
+
             skillsSelectorField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'Skills',
+                    name: 'EffectiveSkills',
 
                     xtype: 'slate-cbl-skillsselector',
                     selectOnFocus: false
@@ -169,24 +228,6 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             //         }
             //     }
             // },
-            // dueDateField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'DueDate',
-
-            //         xtype: 'datefield',
-            //         fieldLabel: 'Due Date'
-            //     }
-            // },
-            // expirationDateField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'ExpirationDate',
-
-            //         xtype: 'datefield',
-            //         fieldLabel: 'Expiration Date'
-            //     }
-            // },
             // assignmentsField: {
             //     merge: mergeFn,
             //     $value: {
@@ -233,14 +274,6 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
             footer: [
                 {
-                    name: 'Status',
-
-                    xtype: 'checkboxfield',
-                    uncheckedValue: 'private',
-                    inputValue: 'shared',
-                    boxLabel: 'Share with other teachers'
-                },
-                {
                     xtype: 'button',
                     text: 'Save Task',
                     scale: 'large',
@@ -253,31 +286,31 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         // config handlers
         updateStudentTask: function(studentTask) {
-            var me = this;
+            var me = this,
+                dueDate, expirationDate;
 
             Ext.suspendLayouts();
 
             if (studentTask) {
+                dueDate = studentTask.get('DueDate');
+                expirationDate = studentTask.get('ExpirationDate');
+
+
                 // configure permanent values before loading record
                 me.getSkillsSelectorField().setPermanentValues(studentTask.get('InheritedSkills'));
 
-                me.loadRecord(studentTask);
+                me.getDueDateDisplayField().setHidden(dueDate);
+                me.getDueDateField().setHidden(!dueDate);
+                me.getDueDateOverrideField().setValue(dueDate);
+
+                me.getExpirationDateDisplayField().setHidden(dueDate);
+                me.getExpirationDateField().setHidden(!dueDate);
+                me.getExpirationDateOverrideField().setValue(dueDate);
 
                 me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
 
-                // if (task.phantom) {
-                //     me.getForm().clearInvalid();
-                // }
 
-                // me.setTitle(
-                //     task.phantom
-                //         ? me.getInitialConfig('title')
-                //         : Ext.String.format(me.getInitialConfig('editTitle'), task.getId(), task.get('Title'))
-                // );
-
-                // me.getClonedTaskField().setHidden(!task.phantom);
-                // me.getClonedTaskDisplayField().setHidden(task.phantom);
-
+                me.loadRecord(studentTask);
                 me.show();
             } else {
                 me.setTitle(null);
@@ -293,13 +326,46 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         applyParentTaskField: applyFn,
         applyExperienceTypeField: applyFn,
         applyInstructionsField: applyFn,
+
+        applyDueDateField: applyFn,
+        applyDueDateDisplayField: applyFn,
+        applyDueDateOverrideField: applyFn,
+        updateDueDateOverrideField: function(field) {
+            var me = this;
+
+            field.on('change', function(overrideField, checked) {
+                var studentTask = me.getStudentTask(),
+                    dateField = me.getDueDateField(),
+                    value = checked ? studentTask.get('InheritedDueDate') : null;
+
+                dateField.setValue(value);
+                dateField.setHidden(!checked);
+                me.getDueDateDisplayField().setHidden(checked);
+            });
+        },
+
+        applyExpirationDateField: applyFn,
+        applyExpirationDateDisplayField: applyFn,
+        applyExpirationDateOverrideField: applyFn,
+        updateExpirationDateOverrideField: function(field) {
+            var me = this;
+
+            field.on('change', function(overrideField, checked) {
+                var studentTask = me.getStudentTask(),
+                    dateField = me.getExpirationDateField(),
+                    value = checked ? studentTask.get('InheritedExpirationDate') : null;
+
+                dateField.setValue(value);
+                dateField.setHidden(!checked);
+                me.getExpirationDateDisplayField().setHidden(checked);
+            });
+        },
+
         applySkillsSelectorField: applyFn,
         applyAttachmentsField: applyFn,
         // applySectionField: applyFn,
         // applyTitleField: applyFn,
         // applyParentTaskField: applyFn,
-        // applyDueDateField: applyFn,
-        // applyExpirationDateField: applyFn,
         // applyAssignmentsField: applyFn
 
 
@@ -316,11 +382,37 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.getParentTaskField(),
                 me.getExperienceTypeField(),
                 me.getInstructionsField(),
+                {
+                    xtype: 'fieldcontainer',
+                    fieldLabel: 'Due Date',
+                    layout: 'hbox',
+                    items: [
+                        me.getDueDateField(),
+                        me.getDueDateDisplayField(),
+                        {
+                            xtype: 'component',
+                            flex: 1
+                        },
+                        me.getDueDateOverrideField()
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    fieldLabel: 'Expiration Date',
+                    layout: 'hbox',
+                    items: [
+                        me.getExpirationDateField(),
+                        me.getExpirationDateDisplayField(),
+                        {
+                            xtype: 'component',
+                            flex: 1
+                        },
+                        me.getExpirationDateOverrideField()
+                    ]
+                },
                 me.getSkillsSelectorField(),
                 me.getAttachmentsField(),
                 // me.getParentTaskField(),
-                // me.getDueDateField(),
-                // me.getExpirationDateField(),
                 // me.getAssignmentsField(),
             ]);
         }

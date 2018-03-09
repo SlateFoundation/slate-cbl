@@ -96,7 +96,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         formPanel: 'slate-cbl-tasks-studenttaskform',
         // clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
         // statusField: 'slate-cbl-tasks-taskform ^ window field[name=Status]',
-        submitBtn: 'slate-cbl-tasks-taskform ^ window button[action=submit]'
+        submitBtn: 'slate-cbl-tasks-studenttaskform ^ window button[action=submit]'
 
     //     taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
     //     skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
@@ -183,7 +183,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             // validitychange: 'onFormValidityChange'
         },
         submitBtn: {
-            // click: 'onSubmitClick'
+            click: 'onSubmitClick'
         },
         studentsGrid: {
             cellclick: 'onCellClick',
@@ -312,6 +312,68 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         var studentId = this.getSectionParticipantsStore().getById(participantId).get('PersonID');
 
         this.openStudentTaskWindow(studentId, taskId, { animateTarget: cellEl });
+    },
+
+    onSubmitClick: function(submitBtn) {
+        var me = this,
+            formWindow = submitBtn.up('window'),
+            formPanel = formWindow.getMainView(),
+            studentTask = formPanel.getRecord(),
+            wasPhantom = studentTask.phantom;
+
+        formPanel.updateRecord(studentTask);
+
+        console.info('onSubmitClick', studentTask.getChanges());
+
+        // ensure studentTask doesn't become dirty when no changes are made to the form
+        if (!studentTask.dirty) {
+            return;
+        }
+
+        // formWindow.setLoading('Saving student task&hellip;');
+
+        // studentTask.save({
+        //     include: 'StudentTasks',
+        //     success: function(savedTask) {
+        //         var tasksStore = me.getTasksStore(),
+        //             parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+        //             tplData = {
+        //                 wasPhantom: wasPhantom,
+        //                 task: savedTask.getData(),
+        //                 assigneesCount: Ext.Array.filter(Ext.Object.getValues(savedTask.get('Assignees')), Ext.identityFn).length
+        //             };
+
+        //         // show notification to user
+        //         Ext.toast(
+        //             Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
+        //             Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+        //         );
+
+        //         // update loaded tasks data
+        //         tasksStore.beginUpdate();
+        //         tasksStore.mergeData([savedTask]);
+
+        //         if (parentTask) {
+        //             parentTask.get('ChildTasks').push(savedTask);
+        //         }
+
+        //         tasksStore.endUpdate();
+
+        //         // close window
+        //         formWindow.hide();
+        //         formWindow.setLoading(false);
+        //     },
+        //     failure: function(savedTask, operation) {
+        //         formWindow.setLoading(false);
+
+        //         Ext.Msg.show({
+        //             title: 'Failed to save task',
+        //             message: operation.getError(),
+        //             buttons: Ext.Msg.OK,
+        //             icon: Ext.Msg.ERROR
+        //         });
+        //     }
+        // });
     },
 
     // onReAssignStudentTaskClick: function(taskRater, dateField, date) {

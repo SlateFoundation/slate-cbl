@@ -125,8 +125,11 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             name: 'Task',
             persist: false
         },
+
+        // fields inherited from Task
         {
             name: 'ExperienceType',
+            persist: false,
             depends: ['Task'],
             convert: function(v, r) {
                 var taskData = r.get('Task');
@@ -136,6 +139,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
         },
         {
             name: 'Instructions',
+            persist: false,
             depends: ['Task'],
             convert: function(v, r) {
                 var taskData = r.get('Task');
@@ -145,6 +149,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
         },
         {
             name: 'Attachments',
+            persist: false,
             depends: ['Task'],
             convert: function(v, r) {
                 var taskData = r.get('Task');
@@ -152,8 +157,47 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                 return taskData && taskData.Attachments || [];
             }
         },
+
+        // fields inherited from Task but overridable
+        {
+            name: 'InheritedDueDate',
+            persist: false,
+            depends: ['Task'],
+            convert: function(v, r) {
+                var taskData = r.get('Task');
+
+                return Slate.cbl.model.tasks.Task.fieldsMap.DueDate.convert(taskData && taskData.DueDate);
+            }
+        },
+        {
+            name: 'EffectiveDueDate',
+            persist: false,
+            depends: ['DueDate', 'InheritedDueDate'],
+            convert: function(v, r) {
+                return r.get('DueDate') || r.get('InheritedDueDate');
+            }
+        },
+        {
+            name: 'InheritedExpirationDate',
+            persist: false,
+            depends: ['Task'],
+            convert: function(v, r) {
+                var taskData = r.get('Task');
+
+                return Slate.cbl.model.tasks.Task.fieldsMap.DueDate.convert(taskData && taskData.ExpirationDate);
+            }
+        },
+        {
+            name: 'EffectiveExpirationDate',
+            persist: false,
+            depends: ['ExpirationDate', 'InheritedExpirationDate'],
+            convert: function(v, r) {
+                return r.get('ExpirationDate') || r.get('InheritedExpirationDate');
+            }
+        },
         {
             name: 'InheritedSkills',
+            persist: false,
             depends: ['Task'],
             convert: function(v, r) {
                 var taskData = r.get('Task');
@@ -162,7 +206,8 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             }
         },
         {
-            name: 'Skills',
+            name: 'EffectiveSkills',
+            persist: false,
             depends: ['InheritedSkills'],
             convert: function(v, r) {
                 var inherited = r.get('InheritedSkills');
