@@ -3,9 +3,9 @@
  *
  * Modeled after a combination of FieldContainer and field.Base
  */
-Ext.define('Slate.cbl.field.Ratings', {
+Ext.define('Slate.cbl.field.CompetencyRatings', {
     extend: 'Slate.ui.form.ContainerField',
-    xtype: 'slate-cbl-ratingsfield',
+    xtype: 'slate-cbl-competencyratingsfield',
     requires: [
         'Ext.tab.Panel',
 
@@ -33,7 +33,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // container/component configuration
-    componentCls: 'slate-cbl-ratingsfield',
+    componentCls: 'slate-cbl-competencyratingsfield',
     layout: 'fit',
 
 
@@ -116,7 +116,7 @@ Ext.define('Slate.cbl.field.Ratings', {
 
         if (typeof tabPanel == 'object' && !tabPanel.isComponent) {
             tabPanel = Ext.apply({
-                cls: 'slate-cbl-ratingsfield-competenciestabs',
+                cls: 'slate-cbl-competencyratingsfield-competenciestabs',
                 tabBar: {
                     hidden: true
                 },

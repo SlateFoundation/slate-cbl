@@ -34,6 +34,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             // 'Slate.cbl.field.SkillsSelector',
             // 'Slate.cbl.field.AssigneesField',
             // 'Slate.cbl.field.attachments.Field'
+            'Slate.cbl.field.CompetencyRatings'
         ],
 
 
@@ -431,6 +432,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     ]
                 },
                 me.getSkillsSelectorField(),
+                {
+                    xtype: 'slate-cbl-competencyratingsfield'
+                },
                 me.getAttachmentsField(),
                 // me.getParentTaskField(),
                 // me.getAssignmentsField(),
