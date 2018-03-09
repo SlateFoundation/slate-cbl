@@ -329,6 +329,16 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         applyDueDateField: applyFn,
         applyDueDateDisplayField: applyFn,
+        updateDueDateDisplayField: function(field) {
+            var me = this;
+
+            field.on('render', function() {
+                field.mon(field.inputEl, 'click', function() {
+                    me.getDueDateOverrideField().setValue(true);
+                    me.getDueDateField().focus(true, 100);
+                });
+            });
+        },
         applyDueDateOverrideField: applyFn,
         updateDueDateOverrideField: function(field) {
             var me = this;
@@ -346,6 +356,16 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         applyExpirationDateField: applyFn,
         applyExpirationDateDisplayField: applyFn,
+        updateExpirationDateDisplayField: function(field) {
+            var me = this;
+
+            field.on('render', function() {
+                field.mon(field.inputEl, 'click', function() {
+                    me.getExpirationDateOverrideField().setValue(true);
+                    me.getExpirationDateField().focus(true, 100);
+                });
+            });
+        },
         applyExpirationDateOverrideField: applyFn,
         updateExpirationDateOverrideField: function(field) {
             var me = this;
