@@ -330,50 +330,43 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             return;
         }
 
-        // formWindow.setLoading('Saving student task&hellip;');
+        formWindow.setLoading('Saving student task&hellip;');
 
-        // studentTask.save({
-        //     include: 'StudentTasks',
-        //     success: function(savedTask) {
-        //         var tasksStore = me.getTasksStore(),
-        //             parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
-        //             tplData = {
-        //                 wasPhantom: wasPhantom,
-        //                 task: savedTask.getData(),
-        //                 assigneesCount: Ext.Array.filter(Ext.Object.getValues(savedTask.get('Assignees')), Ext.identityFn).length
-        //             };
+        studentTask.save({
+            // include: 'StudentTasks',
+            success: function(savedStudentTask) {
+                var studentTasksStore = me.getStudentTasksStore();
+                    // parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+                    // tplData = {
+                    //     wasPhantom: wasPhantom,
+                    //     task: savedTask.getData(),
+                    //     assigneesCount: Ext.Array.filter(Ext.Object.getValues(savedTask.get('Assignees')), Ext.identityFn).length
+                    // };
 
-        //         // show notification to user
-        //         Ext.toast(
-        //             Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
-        //             Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
-        //         );
+                // // show notification to user
+                // Ext.toast(
+                //     Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
+                //     Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+                // );
 
-        //         // update loaded tasks data
-        //         tasksStore.beginUpdate();
-        //         tasksStore.mergeData([savedTask]);
+                // // update loaded tasks data
+                studentTasksStore.mergeData([savedStudentTask]);
 
-        //         if (parentTask) {
-        //             parentTask.get('ChildTasks').push(savedTask);
-        //         }
+                // close window
+                formWindow.hide();
+                formWindow.setLoading(false);
+            },
+            failure: function(savedTask, operation) {
+                formWindow.setLoading(false);
 
-        //         tasksStore.endUpdate();
-
-        //         // close window
-        //         formWindow.hide();
-        //         formWindow.setLoading(false);
-        //     },
-        //     failure: function(savedTask, operation) {
-        //         formWindow.setLoading(false);
-
-        //         Ext.Msg.show({
-        //             title: 'Failed to save task',
-        //             message: operation.getError(),
-        //             buttons: Ext.Msg.OK,
-        //             icon: Ext.Msg.ERROR
-        //         });
-        //     }
-        // });
+                Ext.Msg.show({
+                    title: 'Failed to save student task',
+                    message: operation.getError(),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
     },
 
     // onReAssignStudentTaskClick: function(taskRater, dateField, date) {
