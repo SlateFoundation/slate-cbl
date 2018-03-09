@@ -13,7 +13,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
             'Ext.data.ChainedStore',
 
             /* global Slate */
-            'Slate.cbl.model.tasks.Task'
+            'Slate.cbl.model.tasks.StudentTask'
         ],
 
 
@@ -63,7 +63,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
                 if (group.records.length && (record = group.records[0].record)) {
                     taskStatus = record.get('TaskStatus');
                     dueDate = record.get('DueDate');
-                    statusClass = Slate.cbl.model.tasks.Task[record.get('IsLate') ? 'lateStatusClasses' : 'statusClasses'][taskStatus];
+                    statusClass = Slate.cbl.model.tasks.StudentTask[record.get('IsLate') ? 'lateStatusClasses' : 'statusClasses'][taskStatus];
                 }
 
                 // write class changes

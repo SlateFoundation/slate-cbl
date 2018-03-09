@@ -9,6 +9,37 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
     ],
 
 
+    statics: {
+        statusClasses: {
+            'assigned': 'due',
+            're-assigned': 'revision',
+            'submitted': 'due needsrated',
+            're-submitted': 'revision needsrated',
+            'completed': 'completed'
+        },
+        lateStatusClasses: {
+            'submitted': 'late needsrated',
+            're-submitted': 'late needsrated',
+
+            'assigned': 'late',
+            're-assigned': 'late'
+        },
+        statusStrings: {
+            'assigned': 'Due',
+            're-assigned': 'Revision',
+            'submitted': 'Submitted',
+            're-submitted': 'Resubmitted',
+            'completed': 'Completed'
+        },
+        activeStatuses: [
+            'assigned',
+            're-assigned',
+            'submitted',
+            're-submitted'
+        ]
+    },
+
+
     // model config
     idProperty: 'ID',
     identifier: 'negative',
@@ -113,7 +144,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                 return (
                     dueTime
                     && dueTime.getTime() < Date.now()
-                    && Slate.cbl.model.tasks.Task.activeStatuses.indexOf(r.get('TaskStatus')) > -1
+                    && r.self.activeStatuses.indexOf(r.get('TaskStatus')) > -1
                 );
             }
         },

@@ -5,7 +5,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         'SlateTasksStudent.view.TaskFiltersMenu',
 
         /* global Slate */
-        'Slate.cbl.model.tasks.Task'
+        'Slate.cbl.model.tasks.StudentTask'
     ],
 
 
@@ -84,7 +84,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '</tpl>',
         {
             getStatusString: function(taskStatus) {
-                return Slate.cbl.model.tasks.Task.statusStrings[taskStatus] || '';
+                return Slate.cbl.model.tasks.StudentTask.statusStrings[taskStatus] || '';
             },
             getStatusDate: function(taskData) {
                 var taskStatus = taskData.TaskStatus,
@@ -99,7 +99,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
             getDueStatusCls: function(task) {
-                return Slate.cbl.model.tasks.Task[task.IsLate ? 'lateStatusClasses' : 'statusClasses'][task.TaskStatus] || '';
+                return Slate.cbl.model.tasks.StudentTask[task.IsLate ? 'lateStatusClasses' : 'statusClasses'][task.TaskStatus] || '';
             }
         }
     ],

@@ -8,7 +8,7 @@ Ext.define('SlateTasksStudent.model.Task', {
         'Slate.cbl.proxy.tasks.StudentTasks',
         'Slate.cbl.model.tasks.Attachment',
         'Slate.cbl.model.Skill',
-        'Slate.cbl.model.tasks.Task'
+        'Slate.cbl.model.tasks.StudentTask'
     ],
 
 
@@ -211,7 +211,7 @@ Ext.define('SlateTasksStudent.model.Task', {
                 return (
                     dueTime
                     && dueTime.getTime() < Date.now()
-                    && Slate.cbl.model.tasks.Task.activeStatuses.indexOf(r.get('TaskStatus')) > -1
+                    && Slate.cbl.model.tasks.StudentTask.activeStatuses.indexOf(r.get('TaskStatus')) > -1
                 );
             }
         }
