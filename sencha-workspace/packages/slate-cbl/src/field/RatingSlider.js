@@ -232,7 +232,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
     },
 
     updateSkill: function(skill) {
-        this.setFieldLabel(skill ? skill.get('Descriptor') : null);
+        this.setFieldLabel(skill ? skill.get('Code') + '&mdash;' + skill.get('Descriptor') : null);
     },
 
     updateLevel: function(level, oldLevel) {
