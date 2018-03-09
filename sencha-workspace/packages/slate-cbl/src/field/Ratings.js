@@ -199,6 +199,14 @@ Ext.define('Slate.cbl.field.Ratings', {
 
 
     // containerfield lifecycle
+    initValue: function() {
+        var me = this,
+            value = me.value;
+
+        me.originalValue = me.normalizeValue(value);
+        me.value = me.normalizeValue(value);
+    },
+
     normalizeValue: function(value) {
         var normalValue = [],
             length = value ? value.length : 0,
