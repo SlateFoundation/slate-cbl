@@ -301,11 +301,11 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                 me.getDueDateDisplayField().setHidden(dueDate);
                 me.getDueDateField().setHidden(!dueDate);
-                me.getDueDateOverrideField().setValue(dueDate);
+                me.getDueDateOverrideField().setValue(Boolean(dueDate));
 
-                me.getExpirationDateDisplayField().setHidden(dueDate);
-                me.getExpirationDateField().setHidden(!dueDate);
-                me.getExpirationDateOverrideField().setValue(dueDate);
+                me.getExpirationDateDisplayField().setHidden(expirationDate);
+                me.getExpirationDateField().setHidden(!expirationDate);
+                me.getExpirationDateOverrideField().setValue(Boolean(expirationDate));
 
                 me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
 
