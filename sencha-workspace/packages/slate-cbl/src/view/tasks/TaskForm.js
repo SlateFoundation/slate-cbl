@@ -17,6 +17,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
         xtype: 'slate-cbl-tasks-taskform',
         requires: [
             'Ext.form.field.Display',
+            'Ext.form.field.Date',
             'Ext.form.field.Checkbox',
             'Ext.form.field.Text',
             'Ext.form.field.TextArea',
