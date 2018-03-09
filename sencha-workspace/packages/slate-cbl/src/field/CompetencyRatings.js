@@ -1,5 +1,5 @@
 /**
- * Implements a custom field for looking up skills and inputting ratings
+ * Implements a custom field for looking up competencies and inputting ratings
  *
  * Modeled after a combination of FieldContainer and field.Base
  */
