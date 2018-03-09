@@ -115,40 +115,6 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
 
         // virtual fields
         {
-            name: 'DueTime',
-            persist: false,
-            depends: ['DueDate'],
-            convert: function(v, r) {
-                var dueDate = r.get('DueDate'),
-                    dueTime;
-
-                if (!dueDate) {
-                    return null;
-                }
-
-                dueTime = new Date(dueDate);
-
-                // task is late after midnight of due date
-                dueTime.setHours(23, 59, 59, 999);
-
-                return dueTime;
-            }
-        },
-        {
-            name: 'IsLate',
-            persist: false,
-            depends: ['DueTime', 'TaskStatus'],
-            convert: function (v, r) {
-                var dueTime = r.get('DueTime');
-
-                return (
-                    dueTime
-                    && dueTime.getTime() < Date.now()
-                    && r.self.activeStatuses.indexOf(r.get('TaskStatus')) > -1
-                );
-            }
-        },
-        {
             name: 'Student',
             persist: false
         },
@@ -206,6 +172,40 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             depends: ['DueDate', 'InheritedDueDate'],
             convert: function(v, r) {
                 return r.get('DueDate') || r.get('InheritedDueDate');
+            }
+        },
+        {
+            name: 'EffectiveDueTime',
+            persist: false,
+            depends: ['EffectiveDueDate'],
+            convert: function(v, r) {
+                var dueDate = r.get('EffectiveDueDate'),
+                    dueTime;
+
+                if (!dueDate) {
+                    return null;
+                }
+
+                dueTime = new Date(dueDate);
+
+                // task is late after midnight of due date
+                dueTime.setHours(23, 59, 59, 999);
+
+                return dueTime;
+            }
+        },
+        {
+            name: 'IsLate',
+            persist: false,
+            depends: ['EffectiveDueTime', 'TaskStatus'],
+            convert: function (v, r) {
+                var dueTime = r.get('EffectiveDueTime');
+
+                return (
+                    dueTime
+                    && dueTime.getTime() < Date.now()
+                    && r.self.activeStatuses.indexOf(r.get('TaskStatus')) > -1
+                );
             }
         },
         {
