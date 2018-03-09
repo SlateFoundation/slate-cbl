@@ -153,11 +153,9 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
                 var responseDemonstration = records && records[0] || null;
 
                 if (success) {
-                    debugger;
                     me.mergeDemonstration(responseDemonstration);
                     Ext.callback(options.success, scope, [responseDemonstration, operation]);
                 } else {
-                    debugger;
                     Ext.callback(options.failure, scope, [responseDemonstration, operation]);
                 }
 
