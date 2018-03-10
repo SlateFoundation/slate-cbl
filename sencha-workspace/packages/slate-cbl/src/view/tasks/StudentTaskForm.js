@@ -34,7 +34,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             // 'Slate.cbl.field.SkillsSelector',
             // 'Slate.cbl.field.AssigneesField',
             // 'Slate.cbl.field.attachments.Field'
-            'Slate.cbl.field.CompetencyRatings'
+            'Slate.cbl.field.SkillRatings'
         ],
 
 
@@ -167,15 +167,15 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 }
             },
 
-            skillsSelectorField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'EffectiveSkills',
+            // skillsSelectorField: {
+            //     merge: mergeFn,
+            //     $value: {
+            //         name: 'EffectiveSkills',
 
-                    xtype: 'slate-cbl-skillsselector',
-                    selectOnFocus: false
-                }
-            },
+            //         xtype: 'slate-cbl-skillsselector',
+            //         selectOnFocus: false
+            //     }
+            // },
             attachmentsField: {
                 merge: mergeFn,
                 $value: {
@@ -298,7 +298,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
 
                 // configure permanent values before loading record
-                me.getSkillsSelectorField().setPermanentValues(studentTask.get('InheritedSkills'));
+                // me.getSkillsSelectorField().setPermanentValues(studentTask.get('InheritedSkills'));
 
                 me.getDueDateDisplayField().setHidden(dueDate);
                 me.getDueDateField().setHidden(!dueDate);
@@ -382,7 +382,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             });
         },
 
-        applySkillsSelectorField: applyFn,
+        // applySkillsSelectorField: applyFn,
         applyAttachmentsField: applyFn,
         // applySectionField: applyFn,
         // applyTitleField: applyFn,
@@ -431,9 +431,11 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                         me.getExpirationDateOverrideField()
                     ]
                 },
-                me.getSkillsSelectorField(),
+                // me.getSkillsSelectorField(),
                 {
-                    xtype: 'slate-cbl-competencyratingsfield'
+                    xtype: 'slate-cbl-skillratingsfield',
+                    fieldLabel: 'Ratings',
+                    labelAlign: 'top'
                 },
                 me.getAttachmentsField(),
                 // me.getParentTaskField(),
