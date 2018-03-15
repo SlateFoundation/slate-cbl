@@ -79,7 +79,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsCompetency', {
 
     updateLoadedCompetency: function(competency) {
         if (competency) {
-            this.setSelectedCompetency(competency.getId());
+            this.setSelectedCompetency(competency.get('Code'));
         }
 
         this.refresh();
