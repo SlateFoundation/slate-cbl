@@ -26,7 +26,7 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
     },
 
 
-    componentCls: 'slate-cbl-competencyratingsfield-competenciesgrid',
+    componentCls: 'slate-cbl-competenciesgrid',
     height: 300,
     hideHeaders: true,
     viewConfig: {
