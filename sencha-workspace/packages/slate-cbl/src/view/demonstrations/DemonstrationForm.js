@@ -45,6 +45,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
     },
 
 
+    componentCls: 'slate-cbl-demonstrations-demonstrationform',
     items: [
         {
             xtype: 'datefield',

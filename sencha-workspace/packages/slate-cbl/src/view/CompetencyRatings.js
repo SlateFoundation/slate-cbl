@@ -35,6 +35,7 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
 
     // component configuration
+    componentCls: 'slate-cbl-competencyratings',
     padding: '16 75',
 
     // container configuration

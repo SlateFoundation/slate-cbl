@@ -199,6 +199,9 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
         },
 
 
+        componentCls: 'slate-cbl-tasks-taskform',
+
+
         // config handlers
         updateTask: function(task) {
             var me = this;

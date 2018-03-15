@@ -285,6 +285,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         },
 
 
+        componentCls: 'slate-cbl-tasks-studenttaskform',
+
+
         // config handlers
         updateStudentTask: function(studentTask) {
             var me = this,
