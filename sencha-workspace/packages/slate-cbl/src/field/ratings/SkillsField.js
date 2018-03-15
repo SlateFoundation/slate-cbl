@@ -3,10 +3,11 @@
  *
  * Modeled after a combination of FieldContainer and field.Base
  */
-Ext.define('Slate.cbl.field.SkillRatings', {
+Ext.define('Slate.cbl.field.ratings.SkillsField', {
     extend: 'Slate.ui.form.ContainerField',
-    xtype: 'slate-cbl-skillratingsfield',
+    xtype: 'slate-cbl-ratings-skillsfield',
     requires: [
+        'Slate.cbl.field.ratings.SkillsCompetency',
         'Slate.cbl.field.RatingSlider',
         'Slate.cbl.field.SkillsSelector',
 
@@ -36,7 +37,7 @@ Ext.define('Slate.cbl.field.SkillRatings', {
     componentCls: 'slate-cbl-skillratingsfield',
     layout: 'anchor',
     defaults: {
-        xtype: 'slate-cbl-ratingslider',
+        xtype: 'slate-cbl-ratings-skillscompetency',
         anchor: '100%'
     },
 
@@ -46,45 +47,48 @@ Ext.define('Slate.cbl.field.SkillRatings', {
 
         me.callParent();
 
+        // apply sorters for tab items, must be able to process both instances and config objects
+        me.items.setSorters([
+            new Slate.sorter.Code({
+                codeFn: function(item) {
+                    return item.selectedCompetency;
+                }
+            })
+        ]);
+
         skillsStore.load({
             include: 'Competency',
             callback: function(skills) {
                 me.add([
                     {
-                        xtype: 'component',
-                        tpl: [
-                            '<h4 class="competency-descriptor">{Code}&mdash;{Descriptor}</h4>',
-                            '<blockquote class="competency-statement">{Statement}</blockquote>'
-                        ],
-                        data: skills[0].get('Competency')
+                        selectedCompetency: skills[0].get('Competency').Code,
+                        items: [
+                            {
+                                skill: skills[0],
+                                level: 9
+                            },
+                            {
+                                skill: skills[1],
+                                level: 10
+                            },
+                            {
+                                skill: skills[2],
+                                level: 11
+                            },
+                        ]
                     },
                     {
-                        skill: skills[0],
-                        level: 9
-                    },
-                    {
-                        skill: skills[1],
-                        level: 10
-                    },
-                    {
-                        skill: skills[2],
-                        level: 11
-                    },
-                    {
-                        xtype: 'component',
-                        tpl: [
-                            '<h4 class="competency-descriptor">{Code}&mdash;{Descriptor}</h4>',
-                            '<blockquote class="competency-statement">{Statement}</blockquote>'
-                        ],
-                        data: skills[11].get('Competency')
-                    },
-                    {
-                        skill: skills[11],
-                        level: 11
-                    },
-                    {
-                        skill: skills[12],
-                        level: 12
+                        selectedCompetency: skills[11].get('Competency').Code,
+                        items: [
+                            {
+                                skill: skills[11],
+                                level: 11
+                            },
+                            {
+                                skill: skills[12],
+                                level: 12
+                            },
+                        ]
                     },
                     {
                         xtype: 'fieldcontainer',

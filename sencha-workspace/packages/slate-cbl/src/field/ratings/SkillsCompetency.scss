@@ -1,0 +1,9 @@
+.slate-cbl-ratings-skillscompetency {
+    h4 {
+        margin: 0;
+    }
+
+    & + & {
+        margin-top: 1em;
+    }
+}
