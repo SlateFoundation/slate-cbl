@@ -1,6 +1,6 @@
-Ext.define('Slate.cbl.view.CompetencyRatings', {
+Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
     extend: 'Ext.panel.Panel',
-    xtype: 'slate-cbl-competencyratings',
+    xtype: 'slate-cbl-ratings-studentcompetency',
     mixins: [
         'Slate.ui.mixin.PlaceholderItem'
     ],
@@ -35,7 +35,7 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
 
 
     // component configuration
-    componentCls: 'slate-cbl-competencyratings',
+    componentCls: 'slate-cbl-ratings-studentcompetency',
     padding: '16 75',
 
     // container configuration

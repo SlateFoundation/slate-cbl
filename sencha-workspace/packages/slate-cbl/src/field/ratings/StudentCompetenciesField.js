@@ -3,9 +3,9 @@
  *
  * Modeled after a combination of FieldContainer and field.Base
  */
-Ext.define('Slate.cbl.field.CompetencyRatings', {
+Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
     extend: 'Slate.ui.form.ContainerField',
-    xtype: 'slate-cbl-competencyratingsfield',
+    xtype: 'slate-cbl-ratings-studentcompetenciesfield',
     requires: [
         'Ext.tab.Panel',
 
@@ -13,7 +13,7 @@ Ext.define('Slate.cbl.field.CompetencyRatings', {
         'Slate.sorter.Code',
 
         'Slate.cbl.view.CompetenciesGrid',
-        'Slate.cbl.view.CompetencyRatings'
+        'Slate.cbl.field.ratings.StudentCompetency'
     ],
 
 
@@ -33,7 +33,7 @@ Ext.define('Slate.cbl.field.CompetencyRatings', {
 
 
     // container/component configuration
-    componentCls: 'slate-cbl-competencyratingsfield',
+    componentCls: 'slate-cbl-ratings-studentcompetenciesfield',
     layout: 'fit',
 
 
@@ -116,11 +116,11 @@ Ext.define('Slate.cbl.field.CompetencyRatings', {
 
         if (typeof tabPanel == 'object' && !tabPanel.isComponent) {
             tabPanel = Ext.apply({
-                cls: 'slate-cbl-competencyratingsfield-competenciestabs',
+                cls: 'slate-cbl-ratings-studentcompetenciesfield-competenciestabs',
                 tabBar: {
                     hidden: true
                 },
-                defaultType: 'slate-cbl-competencyratings',
+                defaultType: 'slate-cbl-ratings-studentcompetency',
                 defaults: {
                     closable: true
                 }
@@ -413,7 +413,7 @@ Ext.define('Slate.cbl.field.CompetencyRatings', {
             skillIndex = 0, skillData, competency, competencyId, skillId,
             skillIds = [],
             competencyCardsMap = {},
-            cards = tabPanel.query('slate-cbl-competencyratings'),
+            cards = tabPanel.query('slate-cbl-ratings-studentcompetency'),
             cardsLength = cards.length,
             cardIndex = 0,
             card;

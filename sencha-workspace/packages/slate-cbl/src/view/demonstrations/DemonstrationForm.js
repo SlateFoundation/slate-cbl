@@ -12,7 +12,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
         'Slate.cbl.model.demonstrations.Demonstration',
         'Slate.cbl.field.StudentSelector',
-        'Slate.cbl.field.CompetencyRatings'
+        'Slate.cbl.field.ratings.StudentCompetenciesField'
     ],
 
 
@@ -167,7 +167,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             }, ratingsField);
         }
 
-        return Ext.factory(ratingsField, 'Slate.cbl.field.CompetencyRatings', oldRatingsField);
+        return Ext.factory(ratingsField, 'Slate.cbl.field.ratings.StudentCompetenciesField', oldRatingsField);
     },
 
     applyCommentsField: function(commentsField, oldCommentsField) {
