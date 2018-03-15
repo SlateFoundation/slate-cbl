@@ -1,7 +1,7 @@
 /**
  * Thumb used for rating sliders
  */
-Ext.define('Slate.cbl.field.RatingThumb', {
+Ext.define('Slate.cbl.field.ratings.Thumb', {
     extend: 'Ext.slider.Thumb',
 
 

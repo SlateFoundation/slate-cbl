@@ -7,7 +7,7 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
     requires: [
         /* global Slate */
         'Slate.cbl.model.StudentCompetency',
-        'Slate.cbl.field.RatingSlider'
+        'Slate.cbl.field.ratings.Slider'
     ],
 
 
@@ -38,7 +38,7 @@ Ext.define('Slate.cbl.view.CompetencyRatings', {
     padding: '16 75',
 
     // container configuration
-    defaultType: 'slate-cbl-ratingslider',
+    defaultType: 'slate-cbl-ratings-slider',
     layout: 'anchor',
     defaults: {
         anchor: '100%',

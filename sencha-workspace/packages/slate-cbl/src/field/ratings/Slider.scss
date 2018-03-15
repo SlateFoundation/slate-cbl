@@ -1,4 +1,4 @@
-.slate-cbl-ratingslider {
+.slate-cbl-ratings-slider {
     .x-slider-inner {
         height: 10px;
         margin: 10px 0;
@@ -70,7 +70,7 @@
         }
     }
 
-    .slate-cbl-ratingthumb-parked:hover {
+    .slate-cbl-ratings-thumb-parked:hover {
         border: 1px dashed #666;
         cursor: pointer;
         cursor: context-menu;
@@ -78,7 +78,7 @@
 }
 
 
-.slate-cbl-ratingslider-miscratingstip {
+.slate-cbl-ratings-slider-miscratingstip {
     padding: 0;
 
     .x-tip-body {

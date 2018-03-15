@@ -1,16 +1,16 @@
 /**
  * Provides a picker for ratings
  */
-Ext.define('Slate.cbl.field.RatingSlider', {
+Ext.define('Slate.cbl.field.ratings.Slider', {
     extend: 'Ext.slider.Multi',
-    xtype: 'slate-cbl-ratingslider',
+    xtype: 'slate-cbl-ratings-slider',
     requires: [
         'Ext.tip.ToolTip',
         'Ext.menu.Menu',
         'Ext.menu.CheckItem',
 
         /* global Slate */
-        'Slate.cbl.field.RatingThumb',
+        'Slate.cbl.field.ratings.Thumb',
         'Slate.cbl.model.Skill'
     ],
 
@@ -37,7 +37,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
 
     // component configuration
-    componentCls: 'slate-cbl-ratingslider',
+    componentCls: 'slate-cbl-ratings-slider',
 
     listeners: {
         change: function(me, value, thumb) {
@@ -79,17 +79,17 @@ Ext.define('Slate.cbl.field.RatingSlider', {
         me.originalValue = value;
 
         // add primary thumb for current value
-        thumbs.push(me.primaryThumb = new Slate.cbl.field.RatingThumb({
+        thumbs.push(me.primaryThumb = new Slate.cbl.field.ratings.Thumb({
             index: thumbs.length,
             ownerCt: me,
             slider: me,
             value: value,
             constrain: false,
-            thumbCls: value <= minValue ? 'slate-cbl-ratingthumb-parked' : null
+            thumbCls: value <= minValue ? 'slate-cbl-ratings-thumb-parked' : null
         }));
 
         // add misc thumb for menu values
-        thumbs.push(me.miscThumb = new Slate.cbl.field.RatingThumb({
+        thumbs.push(me.miscThumb = new Slate.cbl.field.ratings.Thumb({
             index: thumbs.length,
             ownerCt: me,
             slider: me,
@@ -99,7 +99,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
         // add disabled thumbs for each available value
         for (; i <= maxValue; i++) {
-            thumbs.push(new Slate.cbl.field.RatingThumb({
+            thumbs.push(new Slate.cbl.field.ratings.Thumb({
                 index: thumbs.length,
                 ownerCt: me,
                 slider: me,
@@ -143,13 +143,13 @@ Ext.define('Slate.cbl.field.RatingSlider', {
             animate = args[2] !== false;
             changeComplete = args[3] || false;
         } else {
-            Ext.Logger.error('RatingSlider can not handle 4+ arguments');
+            Ext.Logger.error('Slider can not handle 4+ arguments');
         }
 
 
         // sanity check
         if (thumbIndex != 0) {
-            Ext.Logger.error('RatingSlider does not support thumb index other than 0');
+            Ext.Logger.error('Slider does not support thumb index other than 0');
         }
 
 
@@ -162,7 +162,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
 
             if (me.rendered) {
                 primaryThumb.move(me.calculateThumbPosition(value), animate);
-                primaryThumb.el.toggleCls('slate-cbl-ratingthumb-parked', value <= me.minValue);
+                primaryThumb.el.toggleCls('slate-cbl-ratings-thumb-parked', value <= me.minValue);
 
                 if (miscRatingsTip && miscRatingsTip.isVisible()) {
                     miscRatingsTip.setValue(value);
@@ -319,7 +319,7 @@ Ext.define('Slate.cbl.field.RatingSlider', {
             miscRatingsTip = Ext.create('Ext.tip.ToolTip', {
                 anchor: 'left',
                 autoHide: false,
-                cls: 'slate-cbl-ratingslider-miscratingstip',
+                cls: 'slate-cbl-ratings-slider-miscratingstip',
                 items: {
                     xtype: 'menu',
                     floating: false,

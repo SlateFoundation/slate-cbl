@@ -18,7 +18,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsCompetency', {
 
     // container properties
     layout: 'anchor',
-    defaultType: 'slate-cbl-ratingslider',
+    defaultType: 'slate-cbl-ratings-slider',
     defaults: {
         anchor: '100%'
     },

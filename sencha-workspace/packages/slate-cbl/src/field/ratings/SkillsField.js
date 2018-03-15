@@ -8,7 +8,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
     xtype: 'slate-cbl-ratings-skillsfield',
     requires: [
         'Slate.cbl.field.ratings.SkillsCompetency',
-        'Slate.cbl.field.RatingSlider',
+        'Slate.cbl.field.ratings.Slider',
         'Slate.cbl.field.SkillsSelector',
 
         'Ext.form.FieldContainer',
