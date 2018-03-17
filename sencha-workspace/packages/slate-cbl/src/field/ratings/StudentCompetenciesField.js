@@ -12,6 +12,8 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
         /* global Slate */
         'Slate.sorter.Code',
 
+        'Slate.ui.override.AddSorted',
+
         'Slate.cbl.view.CompetenciesGrid',
         'Slate.cbl.field.ratings.StudentCompetency'
     ],
@@ -477,8 +479,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
         var me = this,
             selectedCompetencies = me.getSelectedCompetencies(),
             tabPanel = me.getTabPanel(),
-            tabPanelItems = tabPanel.items,
-            cardConfig, cardIndex, card;
+            cardConfig, card;
 
         if (selectedCompetencies.indexOf(competencyCode) == -1) {
             selectedCompetencies.push(competencyCode);
@@ -499,8 +500,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
             }
         };
 
-        cardIndex = tabPanelItems.getSorters() ? tabPanelItems.findInsertionIndex(cardConfig) : 0;
-        card = tabPanel.insert(cardIndex, cardConfig);
+        card = tabPanel.addSorted(cardConfig);
 
         if (activate) {
             tabPanel.setActiveItem(card);
