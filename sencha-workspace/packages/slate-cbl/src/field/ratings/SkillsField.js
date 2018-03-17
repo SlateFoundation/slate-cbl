@@ -78,6 +78,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         return Ext.factory(skillsSelector, 'Slate.cbl.field.SkillsSelector', oldSkillsSelector);
     },
 
+    updateSkillsSelector: function(skillsSelector) {
+        skillsSelector.on('change', 'onSkillsSelectorChange', this);
+    },
+
     applyAddSkillsButton: function(addSkillsButton, oldAddSkillsButton) {
         if (!addSkillsButton || typeof addSkillsButton == 'boolean') {
             addSkillsButton = {
@@ -187,6 +191,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         if (!competenciesStore.isLoaded() && competenciesCollection) {
             competenciesStore.loadRawData(competenciesCollection.getRange());
         }
+    },
+
+    onSkillsSelectorChange: function(skillsSelector, value) {
+        this.getAddSkillsButton().setDisabled(Ext.Array.difference(value, skillsSelector.getPermanentValues()).length == 0);
     },
 
     onAddSkillsClick: function() {
