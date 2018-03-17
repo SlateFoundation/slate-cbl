@@ -236,8 +236,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             skillRatingFields = me.skillRatingFields,
             competenciesStore = me.getCompetenciesStore(),
             skillsStore = me.getSkillsStore(),
-            skillsSelector = me.getSkillsSelector(),
-            permanentValues = skillsSelector.getPermanentValues() || [];
+            skillsSelector = me.getSkillsSelector();
 
         removable = removable !== false;
 
@@ -270,14 +269,56 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 skillRatingFields[skillCode] = competencyContainer.addSorted({
                     skill: skill,
                     level: 10,
-                    removable: removable
+                    removable: removable,
+                    listeners: {
+                        removeclick: function(ratingField) {
+                            me.removeSkills([ratingField.getSkill().get('Code')]);
+                        }
+                    }
                 });
             }
 
             // add skills to permanent values
-            skillsSelector.setPermanentValues(Ext.Array.union(permanentValues, skills));
+            skillsSelector.setPermanentValues(Ext.Array.union(skillsSelector.getPermanentValues() || [], skills));
 
             Ext.resumeLayouts(true);
         });
+    },
+
+    removeSkills: function(skills) {
+        var me = this,
+            skillsSelector = me.getSkillsSelector(),
+            skillRatingFields = me.skillRatingFields,
+            competencyContainers = me.competencyContainers,
+            skillsLength = skills.length,
+            skillIndex = 0, skillCode, skillRatingField, competencyId, competencyContainer;
+
+        Ext.suspendLayouts();
+
+        // remove rating fields
+        for (; skillIndex < skillsLength; skillIndex++) {
+            skillCode = skills[skillIndex];
+            skillRatingField = skillRatingFields[skillCode];
+
+            if (!skillRatingField) {
+                continue;
+            }
+
+            competencyContainer = skillRatingField.ownerCt;
+            competencyId = Ext.Object.getKey(competencyContainers, competencyContainer);
+
+            competencyContainer.remove(skillRatingField, true);
+            delete skillRatingFields[skillCode];
+
+            if (competencyContainer.items.getCount() == 0) {
+                me.remove(competencyContainer, true);
+                delete competencyContainer[competencyId];
+            }
+        }
+
+        // remove from permanent values
+        skillsSelector.setPermanentValues(Ext.Array.difference(skillsSelector.getPermanentValues() || [], skills));
+
+        Ext.resumeLayouts(true);
     }
 });
