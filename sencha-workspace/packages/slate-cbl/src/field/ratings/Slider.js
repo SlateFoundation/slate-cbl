@@ -76,7 +76,7 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
             i = minValue + 1,
             value = me.normalizeValue(me.value);
 
-        me.originalValue = value;
+        me.value = me.originalValue = value;
 
         // add primary thumb for current value
         thumbs.push(me.primaryThumb = new Slate.cbl.field.ratings.Thumb({
