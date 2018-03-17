@@ -85,5 +85,11 @@ Ext.define('Slate.cbl.store.Competencies', {
         }
 
         return skillIdMap[skillId] || null;
+    },
+
+    getByCode: function(code) {
+        var index = code ? this.findExact('Code', code) : -1;
+
+        return index == -1 ? null : this.getAt(index);
     }
 });

@@ -60,5 +60,11 @@ Ext.define('Slate.cbl.store.Skills', {
         return Ext.callback(callback, scope, [this.queryBy(function(skill) {
             return skill.get('CompetencyID') == competency;
         })]);
+    },
+
+    getByCode: function(code) {
+        var index = code ? this.findExact('Code', code) : -1;
+
+        return index == -1 ? null : this.getAt(index);
     }
 });
