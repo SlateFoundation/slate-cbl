@@ -5,7 +5,9 @@ Ext.define('Slate.cbl.field.ratings.SkillsCompetency', {
         'Ext.util.Format',
 
         /* global Slate */
-        'Slate.cbl.model.Competency'
+        'Slate.cbl.model.Competency',
+        'Slate.sorter.Code',
+        'Slate.ui.override.AddSorted'
     ],
 
 
@@ -97,6 +99,20 @@ Ext.define('Slate.cbl.field.ratings.SkillsCompetency', {
         this.callParent(arguments);
         this.refresh();
         this.loadIfNeeded();
+    },
+
+
+    // container lifecycle
+    initItems: function() {
+        this.callParent();
+
+        this.items.setSorters([
+            new Slate.sorter.Code({
+                codeFn: function(item) {
+                    return item.getSkill().get('Code');
+                }
+            })
+        ]);
     },
 
 

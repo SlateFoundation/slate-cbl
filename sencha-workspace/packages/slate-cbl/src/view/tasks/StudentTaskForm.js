@@ -167,15 +167,16 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 }
             },
 
-            // skillsSelectorField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'EffectiveSkills',
+            ratingsField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'DemonstrationSkills',
 
-            //         xtype: 'slate-cbl-skillsselector',
-            //         selectOnFocus: false
-            //     }
-            // },
+                    xtype: 'slate-cbl-ratings-skillsfield',
+                    fieldLabel: 'Ratings',
+                    labelAlign: 'top'
+                }
+            },
             attachmentsField: {
                 merge: mergeFn,
                 $value: {
@@ -291,6 +292,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         // config handlers
         updateStudentTask: function(studentTask) {
             var me = this,
+                ratingsField = me.getRatingsField(),
                 dueDate, expirationDate;
 
             Ext.suspendLayouts();
@@ -301,7 +303,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
 
                 // configure permanent values before loading record
-                // me.getSkillsSelectorField().setPermanentValues(studentTask.get('InheritedSkills'));
+                ratingsField.clearSkills();
+                ratingsField.addSkills(studentTask.get('InheritedSkills'), false);
 
                 me.getDueDateDisplayField().setHidden(dueDate);
                 me.getDueDateField().setHidden(!dueDate);
@@ -385,7 +388,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             });
         },
 
-        // applySkillsSelectorField: applyFn,
+        applyRatingsField: applyFn,
         applyAttachmentsField: applyFn,
         // applySectionField: applyFn,
         // applyTitleField: applyFn,
@@ -434,12 +437,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                         me.getExpirationDateOverrideField()
                     ]
                 },
-                // me.getSkillsSelectorField(),
-                {
-                    xtype: 'slate-cbl-ratings-skillsfield',
-                    fieldLabel: 'Ratings',
-                    labelAlign: 'top'
-                },
+                me.getRatingsField(),
                 me.getAttachmentsField(),
                 // me.getParentTaskField(),
                 // me.getAssignmentsField(),

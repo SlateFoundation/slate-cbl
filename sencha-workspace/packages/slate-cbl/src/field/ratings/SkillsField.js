@@ -13,8 +13,11 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         'Slate.cbl.field.ratings.Slider',
         'Slate.cbl.field.SkillsSelector',
 
+        'Jarvus.override.data.RequireLoadedStores',
+
         /* global Slate */
-        'Slate.sorter.Code'
+        'Slate.sorter.Code',
+        'Slate.ui.override.AddSorted'
     ],
 
 
@@ -24,10 +27,20 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         skillsSelector: true,
         addSkillsButton: true,
-        footer: true
+        footer: true,
 
-    //     tabPanel: true,
-    //     competenciesGrid: true
+        skillsStore: {
+            type: 'slate-cbl-skills',
+            proxy: {
+                type: 'slate-cbl-skills',
+                summary: true,
+                relatedTable: ['Competency']
+            }
+        },
+
+        competenciesStore: {
+            type: 'slate-cbl-competencies'
+        }
     },
 
 
@@ -108,16 +121,47 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         return Ext.factory(footer, 'Ext.container.Container', oldFooter);
     },
 
+    applySkillsStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    updateSkillsStore: function(store, oldStore) {
+        if (oldStore) {
+            oldStore.un('load', 'onSkillsStoreLoad', this);
+        }
+
+        if (store) {
+            store.on('load', 'onSkillsStoreLoad', this);
+        }
+    },
+
+    applyCompetenciesStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
 
     // container lifecycle
     initItems: function() {
         var me = this,
-            skillsStore = Slate.cbl.store.Skills.create();
+            footer = me.getFooter();
 
         me.callParent();
 
-        // apply sorters for tab items, must be able to process both instances and config objects
+        // configure sorter for contained items
         me.items.setSorters([
+            {
+                sorterFn: function(a, b) {
+                    if (a === footer) {
+                        return 1;
+                    }
+
+                    if (b === footer) {
+                        return -1;
+                    }
+
+                    return 0;
+                }
+            },
             new Slate.sorter.Code({
                 codeFn: function(item) {
                     return item.selectedCompetency;
@@ -125,49 +169,85 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             })
         ]);
 
-        skillsStore.load({
-            include: 'Competency',
-            callback: function(skills) {
-                me.add([
-                    {
-                        selectedCompetency: skills[0].get('Competency').Code,
-                        items: [
-                            {
-                                skill: skills[0],
-                                level: 9
-                            },
-                            {
-                                skill: skills[1],
-                                level: 10
-                            },
-                            {
-                                skill: skills[2],
-                                level: 11
-                            },
-                        ]
-                    },
-                    {
-                        selectedCompetency: skills[11].get('Competency').Code,
-                        items: [
-                            {
-                                skill: skills[11],
-                                level: 11
-                            },
-                            {
-                                skill: skills[12],
-                                level: 12
-                            },
-                        ]
-                    },
-                    me.getFooter()
-                ]);
-            }
-        });
+        // add footer to end of items
+        me.add(footer);
+
+        // initialize map of competency containers
+        me.competencyContainers = {};
     },
 
 
-    // event hand
+    // event handlers
+    onSkillsStoreLoad: function(skillsStore) {
+        var competenciesCollection = skillsStore.getProxy().relatedCollections.Competency,
+            competenciesStore = this.getCompetenciesStore();
+
+        if (!competenciesStore.isLoaded() && competenciesCollection) {
+            competenciesStore.loadRawData(competenciesCollection.getRange());
+        }
+    },
+
     onAddSkillsClick: function() {
         console.info('Add skills', this.getSkillsSelector().getValue());
+    },
+
+
+    // public API
+    clearSkills: function() {
+        var me = this,
+            competencyContainers = me.competencyContainers,
+            competencyId;
+
+        Ext.suspendLayouts();
+
+        for (competencyId in competencyContainers) {
+            if (!competencyContainers.hasOwnProperty(competencyId)) {
+                continue;
+            }
+
+            me.remove(competencyContainers[competencyId], true);
+            delete competencyContainers[competencyId];
+        }
+
+        Ext.resumeLayouts(true);
+    },
+
+    addSkills(skills, removable) {
+        var me = this,
+            competencyContainers = me.competencyContainers,
+            competenciesStore = me.getCompetenciesStore(),
+            skillsStore = me.getSkillsStore();
+
+        removable = removable !== false;
+
+        Ext.StoreMgr.requireLoaded([competenciesStore, skillsStore], function() {
+            var skillsLength = skills.length,
+                skillIndex = 0, skill, competency, competencyId, competencyContainer;
+
+            Ext.suspendLayouts();
+
+            // group skills by competency
+            for (; skillIndex < skillsLength; skillIndex++) {
+                skill = skillsStore.getByCode(skills[skillIndex]);
+                competencyId = skill.get('CompetencyID');
+                competency = competenciesStore.getById(competencyId);
+
+                if (competencyId in competencyContainers) {
+                    competencyContainer = competencyContainers[competencyId];
+                } else {
+                    competencyContainer = competencyContainers[competencyId] = me.addSorted({
+                        loadedCompetency: competency
+                    });
+                }
+
+                competencyContainer.addSorted({
+                    skill: skill,
+                    level: 10,
+                    removable: removable
+                });
+            }
+
+            Ext.resumeLayouts(true);
+        });
     }
 });
