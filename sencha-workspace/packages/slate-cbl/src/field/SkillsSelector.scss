@@ -6,6 +6,12 @@
             display: none;
         }
     }
+
+    &.slate-cbl-skillsselector-hidepermanent {
+        .x-tagfield-item:not(.x-tagfield-item-deselectable) {
+            display: none;
+        }
+    }
 }
 
 .slate-cbl-skillsselector-list {

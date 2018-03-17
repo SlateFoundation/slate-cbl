@@ -12,6 +12,7 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
 
     config: {
         permanentValues: null,
+        showPermanentTags: true,
         loadSummaries: true,
 
         fieldLabel: 'Standards',
@@ -51,8 +52,14 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
         '</tpl>',
     ],
 
+    tipTpl: '{Descriptor}',
 
+    tagItemDeselectableCls: Ext.baseCSSPrefix + 'tagfield-item-deselectable',
+
+
+    // component configuration
     componentCls: 'slate-cbl-skillsselector',
+
 
     // field configuration
     name: 'Skills',
@@ -61,9 +68,6 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
         type: 'slate-cbl-skills',
         proxy: 'slate-cbl-skills'
     },
-
-    tipTpl: '{Descriptor}',
-    tagItemDeselectableCls: Ext.baseCSSPrefix + 'tagfield-item-deselectable',
 
     listConfig: {
         cls: 'slate-cbl-skillsselector-list',
@@ -85,6 +89,24 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
 
 
     // config handlers
+    updatePermanentValues: function(permanentValues, oldPermanentValues) {
+        var values = this.getValue();
+
+        if (oldPermanentValues) {
+            values = Ext.Array.difference(values, permanentValues && permanentValues.length ? Ext.Array.difference(oldPermanentValues, permanentValues) : oldPermanentValues);
+        }
+
+        if (permanentValues) {
+            values = Ext.Array.union(permanentValues, values);
+        }
+
+        this.setValue(values);
+    },
+
+    updateShowPermanentTags: function(showPermanentTags) {
+        this.toggleCls('slate-cbl-skillsselector-hidepermanent', !showPermanentTags);
+    },
+
     updateLoadSummaries: function(loadSummaries) {
         var store = this.getStore();
 
@@ -103,6 +125,16 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
 
 
     // tagfield lifecycle
+    setValue: function(value) {
+        var permanentValues = this.getPermanentValues();
+
+        if (permanentValues && permanentValues.length) {
+            value = Ext.Array.union(permanentValues, value);
+        }
+
+        return this.callParent([value]);
+    },
+
     getMultiSelectItemMarkup: function() {
         var me = this,
             childElCls = me._getChildElCls && me._getChildElCls() || ''; // hook for rtl cls

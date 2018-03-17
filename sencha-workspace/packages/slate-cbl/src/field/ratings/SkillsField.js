@@ -70,7 +70,8 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         if (typeof skillsSelector == 'object' && !skillsSelector.isComponent) {
             skillsSelector = Ext.apply({
                 fieldLabel: null,
-                flex: 1
+                flex: 1,
+                showPermanentTags: false
             }, skillsSelector);
         }
 
@@ -172,8 +173,9 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         // add footer to end of items
         me.add(footer);
 
-        // initialize map of competency containers
+        // initialize map of competency containers and skill rating fields
         me.competencyContainers = {};
+        me.skillRatingFields = {};
     },
 
 
@@ -215,25 +217,36 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         }
 
         Ext.resumeLayouts(true);
+
+        me.skillRatingFields = {};
     },
 
     addSkills(skills, removable) {
         var me = this,
             competencyContainers = me.competencyContainers,
+            skillRatingFields = me.skillRatingFields,
             competenciesStore = me.getCompetenciesStore(),
-            skillsStore = me.getSkillsStore();
+            skillsStore = me.getSkillsStore(),
+            skillsSelector = me.getSkillsSelector(),
+            permanentValues = skillsSelector.getPermanentValues() || [];
 
         removable = removable !== false;
 
         Ext.StoreMgr.requireLoaded([competenciesStore, skillsStore], function() {
             var skillsLength = skills.length,
-                skillIndex = 0, skill, competency, competencyId, competencyContainer;
+                skillIndex = 0, skillCode, skill, competency, competencyId, competencyContainer;
 
             Ext.suspendLayouts();
 
             // group skills by competency
             for (; skillIndex < skillsLength; skillIndex++) {
-                skill = skillsStore.getByCode(skills[skillIndex]);
+                skillCode = skills[skillIndex];
+
+                if (skillCode in skillRatingFields) {
+                    continue;
+                }
+
+                skill = skillsStore.getByCode(skillCode);
                 competencyId = skill.get('CompetencyID');
                 competency = competenciesStore.getById(competencyId);
 
@@ -245,12 +258,15 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     });
                 }
 
-                competencyContainer.addSorted({
+                skillRatingFields[skillCode] = competencyContainer.addSorted({
                     skill: skill,
                     level: 10,
                     removable: removable
                 });
             }
+
+            // add skills to permanent values
+            skillsSelector.setPermanentValues(Ext.Array.union(permanentValues, skills));
 
             Ext.resumeLayouts(true);
         });
