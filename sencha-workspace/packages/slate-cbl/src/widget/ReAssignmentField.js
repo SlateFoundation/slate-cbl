@@ -1,3 +1,4 @@
+// TODO: deprecate
 Ext.define('Slate.cbl.widget.ReAssignmentField', {
     extend: 'Ext.form.FieldContainer',
 

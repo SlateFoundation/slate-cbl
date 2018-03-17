@@ -1,3 +1,4 @@
+// TODO: deprecate
 Ext.define('Slate.cbl.view.modals.CreateTask', {
     extend: 'Slate.ui.Window',
     xtype: 'slate-createtaskwindow',

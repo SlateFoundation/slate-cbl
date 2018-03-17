@@ -1,3 +1,4 @@
+// TODO: deprecate
 Ext.define('Slate.cbl.view.modals.RateTask', {
     extend: 'Slate.ui.Window',
     xtype: 'slate-ratetaskwindow',

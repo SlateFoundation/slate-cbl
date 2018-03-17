@@ -1,3 +1,4 @@
+// TODO: deprecate
 Ext.define('Slate.cbl.widget.SubmissionsField', {
     extend: 'Ext.form.FieldContainer',
 

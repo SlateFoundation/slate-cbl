@@ -1,4 +1,4 @@
-/*jslint browser: true, undef: true *//*global Ext*/
+// TODO: deprecate
 Ext.define('Slate.cbl.widget.Popover', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-popover',

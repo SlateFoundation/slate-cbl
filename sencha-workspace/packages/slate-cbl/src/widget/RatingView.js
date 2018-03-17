@@ -1,3 +1,4 @@
+// TODO: deprecate
 Ext.define('Slate.cbl.widget.RatingView', {
     extend: 'Ext.Component',
     xtype: 'slate-ratingview',
