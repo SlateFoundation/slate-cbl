@@ -257,39 +257,39 @@ Ext.define('Slate.cbl.model.tasks.Task', {
     ],
 
     // TODO: review if still needed
-    getSkillsGroupedByCompetency: function() {
-        var comps = [], compIds = [],
-            skills = this.get('Skills');
+    // getSkillsGroupedByCompetency: function() {
+    //     var comps = [], compIds = [],
+    //         skills = this.get('Skills');
 
-        Ext.each(skills, function(skill) {
-            var compIdx;
+    //     Ext.each(skills, function(skill) {
+    //         var compIdx;
 
-            if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
-                compIdx = compIds.length;
-                comps[compIdx] = {
-                    Code: skill.CompetencyCode,
-                    Descriptor: skill.CompetencyDescriptor,
-                    skills: []
-                };
-                compIds.push(skill.CompetencyCode);
-            }
+    //         if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
+    //             compIdx = compIds.length;
+    //             comps[compIdx] = {
+    //                 Code: skill.CompetencyCode,
+    //                 Descriptor: skill.CompetencyDescriptor,
+    //                 skills: []
+    //             };
+    //             compIds.push(skill.CompetencyCode);
+    //         }
 
-            comps[compIdx].skills.push(skill);
-        });
+    //         comps[compIdx].skills.push(skill);
+    //     });
 
-        return comps;
-    },
+    //     return comps;
+    // },
 
-    // TODO: review if still needed
-    getAssigneeIds: function() {
-        var assignees = [],
-            studentTasks = this.get('StudentTasks') || [],
-            i = 0;
+    // // TODO: review if still needed
+    // getAssigneeIds: function() {
+    //     var assignees = [],
+    //         studentTasks = this.get('StudentTasks') || [],
+    //         i = 0;
 
-        for (; i < studentTasks.length; i++) {
-            assignees.push(studentTasks[i].StudentID);
-        }
+    //     for (; i < studentTasks.length; i++) {
+    //         assignees.push(studentTasks[i].StudentID);
+    //     }
 
-        return assignees;
-    }
+    //     return assignees;
+    // }
 });

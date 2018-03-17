@@ -1,3 +1,4 @@
+// TODO: update from model
 Ext.define('Slate.cbl.model.Skill', {
     extend: 'Ext.data.Model',
     requires: [
@@ -41,10 +42,10 @@ Ext.define('Slate.cbl.model.Skill', {
             name: 'CompetencyID',
             type: 'int'
         },
-        {
-            name: 'CompetencyLevel',
-            type: 'int'
-        },
+        // {
+        //     name: 'CompetencyLevel',
+        //     type: 'int'
+        // },
         {
             name: 'Code',
             type: 'string'
@@ -60,20 +61,20 @@ Ext.define('Slate.cbl.model.Skill', {
         {
             name: 'DemonstrationsRequired'
         },
-        {
-            name: 'SkillRating',
-            type: 'string',
-            defaultValue: 'N/A',
-            persist: false
-        },
-        {
-            name: 'Code_Descriptor',
-            depends: ['Code', 'Descriptor'],
-            persist: false,
-            calculate: function(data) {
-                return [data.Code, '-', data.Descriptor].join(' ');
-            }
-        }
+        // {
+        //     name: 'SkillRating',
+        //     type: 'string',
+        //     defaultValue: 'N/A',
+        //     persist: false
+        // },
+        // {
+        //     name: 'Code_Descriptor',
+        //     depends: ['Code', 'Descriptor'],
+        //     persist: false,
+        //     calculate: function(data) {
+        //         return [data.Code, '-', data.Descriptor].join(' ');
+        //     }
+        // }
     ],
 
     proxy: 'slate-cbl-skills',
