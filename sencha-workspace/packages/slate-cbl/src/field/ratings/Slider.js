@@ -24,7 +24,8 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
 
         minRating: 8,
         maxRating: 13,
-        menuRatings: [7, 6, 5, 4, 3, 2, 1, 0]
+        menuRatings: [7, 6, 5, 4, 3, 2, 1, 0],
+        removable: false
     },
 
 
@@ -389,6 +390,18 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
             itemsCfg.push({
                 value: rating,
                 text: primaryThumb.buildValueHtml(rating)
+            });
+        }
+
+        if (me.getRemovable()) {
+            itemsCfg.push({
+                xtype: 'menuitem',
+                text: '<i class="fa fa-times-circle" style="color:red"></i> Remove',
+                listeners: {
+                    click: function() {
+                        me.fireEvent('removeclick', me);
+                    }
+                }
             });
         }
 
