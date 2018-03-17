@@ -7,6 +7,7 @@
 Ext.define('SlateTasksTeacher.controller.StudentTasks', {
     extend: 'Ext.app.Controller',
     requires: [
+        'Jarvus.override.data.RequireLoadedStores'
         // 'Ext.window.Toast',
         // 'Ext.window.MessageBox'
     ],
