@@ -188,7 +188,12 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
     },
 
     onAddSkillsClick: function() {
-        console.info('Add skills', this.getSkillsSelector().getValue());
+        var me = this,
+            skillsSelector = me.getSkillsSelector();
+
+        me.addSkills(skillsSelector.getValue(), true);
+
+        skillsSelector.clearValue();
     },
 
 
