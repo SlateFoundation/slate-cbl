@@ -204,6 +204,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         me.addSkills(skillsSelector.getValue(), true);
 
         skillsSelector.clearValue();
+        me.getAddSkillsButton().disable();
     },
 
 
