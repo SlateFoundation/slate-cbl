@@ -399,6 +399,7 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
                 text: '<i class="fa fa-times-circle" style="color:red"></i> Remove',
                 listeners: {
                     click: function() {
+                        me.miscRatingsTip.hide();
                         me.fireEvent('removeclick', me);
                     }
                 }
