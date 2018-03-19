@@ -83,6 +83,10 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
 
             $conditions['CompetencyID'] = $Competency->ID;
             $responseData['Competency'] = $Competency;
+        } elseif (!empty($_GET['competencies'])) {
+            $conditions['CompetencyID'] = [
+                'values' => array_filter(array_map('intval', explode(',', $_GET['competencies'])))
+            ];
         } elseif (!empty($_GET['content_area'])) {
             if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content_area'])) {
                 return static::throwNotFoundError('Content area not found');
