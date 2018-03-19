@@ -65,6 +65,19 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
         this.removeAll();
     },
 
+    getByCompetencyId: function(competencyId) {
+        var me = this,
+            index;
+
+        if (!me.getStudent()) {
+            Ext.Logger.warn('getByCompetencyId is only available when filtering by student');
+            return null;
+        }
+
+        index = competencyId ? me.findExact('CompetencyID', competencyId) : -1;
+        return index == -1 ? null : me.getAt(index);
+    },
+
     buildDemonstrationInclude: function(demonstrationProxy) {
         var proxyInclude = this.getProxy().getInclude();
 
