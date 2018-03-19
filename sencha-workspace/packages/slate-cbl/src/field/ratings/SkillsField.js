@@ -8,6 +8,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
     xtype: 'slate-cbl-ratings-skillsfield',
     requires: [
         'Ext.button.Button',
+        'Ext.util.DelayedTask',
 
         'Slate.cbl.store.Skills',
         'Slate.cbl.store.Competencies',
@@ -67,7 +68,13 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
     // config handlers
     updateSelectedStudent: function(selectedStudent, oldSelectedStudent) {
-        var studentCompetenciesStore = this.getStudentCompetenciesStore();
+        var me = this,
+            studentCompetenciesStore = me.getStudentCompetenciesStore(),
+            studentCompetenciesLoadQueue = me.studentCompetenciesLoadQueue,
+            competencyIds, queueLength, queueIndex = 0;
+
+        me.studentCompetenciesLoadTask.cancel();
+        studentCompetenciesLoadQueue.length = 0;
 
         if (oldSelectedStudent) {
             studentCompetenciesStore.unload();
@@ -75,7 +82,15 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         if (selectedStudent) {
             studentCompetenciesStore.setStudent(selectedStudent);
-            studentCompetenciesStore.load({});
+
+            competencyIds = Ext.Object.getKeys(me.competencyContainers);
+            queueLength = competencyIds.length;
+
+            for (; queueIndex < queueLength; queueIndex++) {
+                studentCompetenciesLoadQueue.push(parseInt(competencyIds[queueIndex], 10));
+            }
+
+            me.studentCompetenciesLoadTask.delay(50);
         }
     },
 
@@ -169,6 +184,16 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
 
     // container lifecycle
+    initComponent: function() {
+        var me = this;
+
+        me.callParent(arguments);
+
+        me.studentCompetenciesLoadQueue = [];
+        me.studentCompetenciesLoaded = [];
+        me.studentCompetenciesLoadTask = new Ext.util.DelayedTask(me.loadStudentCompetencies, me);
+    },
+
     initItems: function() {
         var me = this,
             footer = me.getFooter();
@@ -237,6 +262,9 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             competencyContainers = me.competencyContainers,
             competencyId;
 
+        me.studentCompetenciesLoadTask.cancel();
+        me.studentCompetenciesLoadQueue.length = 0;
+
         Ext.suspendLayouts();
 
         for (competencyId in competencyContainers) {
@@ -259,13 +287,16 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             skillRatingFields = me.skillRatingFields,
             competenciesStore = me.getCompetenciesStore(),
             skillsStore = me.getSkillsStore(),
+            studentCompetenciesStore = me.getStudentCompetenciesStore(),
+            studentCompetenciesLoadQueue = me.studentCompetenciesLoadQueue,
+            studentCompetenciesLoaded = me.studentCompetenciesLoaded,
             skillsSelector = me.getSkillsSelector();
 
         removable = removable !== false;
 
         Ext.StoreMgr.requireLoaded([competenciesStore, skillsStore], function() {
             var skillsLength = skills.length,
-                skillIndex = 0, skillCode, skill, competency, competencyId, competencyContainer;
+                skillIndex = 0, skillCode, skill, competency, competencyId, competencyContainer, studentCompetency;
 
             Ext.suspendLayouts();
 
@@ -273,14 +304,17 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             for (; skillIndex < skillsLength; skillIndex++) {
                 skillCode = skills[skillIndex];
 
+                // skip skill if a field already exists for it
                 if (skillCode in skillRatingFields) {
                     continue;
                 }
 
+                // load skill/competency from local stores
                 skill = skillsStore.getByCode(skillCode);
                 competencyId = skill.get('CompetencyID');
                 competency = competenciesStore.getById(competencyId);
 
+                // get or create container for competency
                 if (competencyId in competencyContainers) {
                     competencyContainer = competencyContainers[competencyId];
                 } else {
@@ -289,8 +323,23 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     });
                 }
 
+                // fetch level or queue for loading
+                studentCompetency = studentCompetenciesStore.getByCompetencyId(competencyId);
+
+                if (
+                    !studentCompetency
+                    && studentCompetenciesLoadQueue.indexOf(competencyId) == -1
+                    && studentCompetenciesLoaded.indexOf(competencyId) == -1
+                ) {
+                    studentCompetenciesLoadQueue.push(competencyId);
+                }
+
+                me.studentCompetenciesLoadTask.delay(50);
+
+                // create skill field
                 skillRatingFields[skillCode] = competencyContainer.addSorted({
                     skill: skill,
+                    level: studentCompetency ? studentCompetency.get('Level') : null,
                     removable: removable,
                     listeners: {
                         removeclick: function(ratingField) {
@@ -342,5 +391,56 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         skillsSelector.setPermanentValues(Ext.Array.difference(skillsSelector.getPermanentValues() || [], skills));
 
         Ext.resumeLayouts(true);
+    },
+
+    loadStudentCompetencies: function() {
+        var me = this,
+            studentCompetenciesStore = me.getStudentCompetenciesStore(),
+            studentCompetenciesLoadQueue = me.studentCompetenciesLoadQueue,
+            competencyContainers = me.competencyContainers;
+
+        if (!studentCompetenciesStore.getStudent() || !studentCompetenciesLoadQueue.length) {
+            return;
+        }
+
+        me.studentCompetenciesLoaded = Ext.Array.union(me.studentCompetenciesLoaded, studentCompetenciesLoadQueue);
+
+        studentCompetenciesStore.load({
+            addRecords: true,
+            params: {
+                competencies: studentCompetenciesLoadQueue.join(',')
+            },
+            callback: function(studentCompetencies, operation, success) {
+                if (!success) {
+                    Ext.Logger.error('Failed to load student competencies');
+                    return;
+                }
+
+                // eslint-disable-next-line vars-on-top
+                var studentCompetenciesLength = studentCompetencies.length,
+                    studentCompetencyIndex = 0, studentCompetency, level,
+                    ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField;
+
+                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
+                    studentCompetency = studentCompetencies[studentCompetencyIndex];
+                    level = studentCompetency.get('Level');
+
+                    ratingFields = competencyContainers[studentCompetency.get('CompetencyID')].items;
+                    ratingFieldsLength = ratingFields.getCount();
+                    ratingFieldIndex = 0;
+
+                    for (; ratingFieldIndex < ratingFieldsLength; ratingFieldIndex++) {
+                        ratingField = ratingFields.getAt(ratingFieldIndex);
+
+                        if (!ratingField.getLevel()) {
+                            ratingField.setLevel(level);
+                        }
+                    }
+                }
+            }
+        });
+
+        // clear queue immediately after request is executed
+        studentCompetenciesLoadQueue.length = 0;
     }
 });
