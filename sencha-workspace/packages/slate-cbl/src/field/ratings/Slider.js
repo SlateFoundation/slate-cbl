@@ -214,6 +214,14 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
         me.primaryThumb.el.on('click', 'onPrimaryThumbClick', me);
     },
 
+    onDisable: function() {
+        this.primaryThumb.disable();
+    },
+
+    onEnable: function() {
+        this.primaryThumb.enable();
+    },
+
 
     // config handlers
     applySkill: function(skill, oldSkill) {
