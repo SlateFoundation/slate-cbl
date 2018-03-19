@@ -9,6 +9,8 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
     requires: [
         'Ext.button.Button',
 
+        'Slate.cbl.store.Skills',
+        'Slate.cbl.store.Competencies',
         'Slate.cbl.field.ratings.SkillsCompetency',
         'Slate.cbl.field.ratings.Slider',
         'Slate.cbl.field.SkillsSelector',
@@ -23,7 +25,6 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
     config: {
         selectedStudent: null,
-        selectedCompetencies: true,
 
         skillsSelector: true,
         addSkillsButton: true,
