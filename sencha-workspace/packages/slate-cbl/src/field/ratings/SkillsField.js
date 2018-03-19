@@ -269,7 +269,6 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
                 skillRatingFields[skillCode] = competencyContainer.addSorted({
                     skill: skill,
-                    level: 10,
                     removable: removable,
                     listeners: {
                         removeclick: function(ratingField) {
