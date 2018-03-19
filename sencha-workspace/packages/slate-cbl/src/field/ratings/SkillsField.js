@@ -11,6 +11,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         'Slate.cbl.store.Skills',
         'Slate.cbl.store.Competencies',
+        'Slate.cbl.store.StudentCompetencies',
         'Slate.cbl.field.ratings.SkillsCompetency',
         'Slate.cbl.field.ratings.Slider',
         'Slate.cbl.field.SkillsSelector',
@@ -41,6 +42,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         competenciesStore: {
             type: 'slate-cbl-competencies'
+        },
+
+        studentCompetenciesStore: {
+            type: 'slate-cbl-studentcompetencies'
         }
     },
 
@@ -61,6 +66,19 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
 
     // config handlers
+    updateSelectedStudent: function(selectedStudent, oldSelectedStudent) {
+        var studentCompetenciesStore = this.getStudentCompetenciesStore();
+
+        if (oldSelectedStudent) {
+            studentCompetenciesStore.unload();
+        }
+
+        if (selectedStudent) {
+            studentCompetenciesStore.setStudent(selectedStudent);
+            studentCompetenciesStore.load({});
+        }
+    },
+
     applySkillsSelector: function(skillsSelector, oldSkillsSelector) {
         if (!skillsSelector || typeof skillsSelector == 'boolean') {
             skillsSelector = {
@@ -142,6 +160,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
     },
 
     applyCompetenciesStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    applyStudentCompetenciesStore: function(store) {
         return Ext.StoreMgr.lookup(store);
     },
 
