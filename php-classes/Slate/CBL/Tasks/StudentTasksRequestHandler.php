@@ -206,6 +206,8 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
 
     public static function onRecordSaved(\ActiveRecord $Record, $data)
     {
+        $Record->sendNotificationEmail();    
+        
 
         if (is_array($data) && isset($data['Comment'])) {
             Comment::create([
