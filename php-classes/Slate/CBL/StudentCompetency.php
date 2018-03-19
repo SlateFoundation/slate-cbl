@@ -328,20 +328,24 @@ class StudentCompetency extends \ActiveRecord
         if ($this->demonstrationsAverage === null) {
             $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
             $totalScore = 0;
-            $overrideCount = 0;
+            $overrideMax = 0; 
             $totalRecords = 0;
+            
             foreach ($effectiveDemonstrationsData as $skillId => $demonstrationsData) {
                 foreach ($demonstrationsData as $demonstration) {
                     if (empty($demonstration['Override'])) {
                         $totalScore += $demonstration['DemonstratedLevel'];
+                        $totalRecords++;
                     } else {
+                        $overrideMax = max($demonstration['TargetLevel'], $overrideMax);
                         $totalScore += $demonstration['TargetLevel'];
+                        $totalRecords++;
                     }
-                    $totalRecords++;
                 }
             }
-            if ($totalRecords > 0){            
-                $this->demonstrationsAverage = $totalScore / $totalRecords;
+            if ($totalRecords > 0){
+                $average = $totalScore / $totalRecords;
+                $this->demonstrationsAverage = max($overrideMax, $average);    
             }
         }
 
@@ -364,10 +368,10 @@ class StudentCompetency extends \ActiveRecord
         $completed = $positiveDemonstrationReporting? $this->getDemonstrationsAtLevel() : $this->getDemonstrationsComplete();
         $average = $this->getDemonstrationsAverage();
         
-
+        
         $competencyEvidenceRequirements = $this->Competency->getTotalDemonstrationsRequired($this->Level);
         $minimumOffset = $this->Competency->getMinimumAverageOffset();
-
+        //print("{" . $completed . "/" .  $competencyEvidenceRequirements . "@" . $average . "}");
         // Require a minimum total demonstrations for the competency
         if ($competencyEvidenceRequirements && $completed < $competencyEvidenceRequirements) {
             return false;
@@ -375,6 +379,7 @@ class StudentCompetency extends \ActiveRecord
 
         // Require minimum average as offset from level if there are, indeed, and requirements for this level
         if ($this->getDemonstrationsRequired() > 0 && $minimumOffset !== null && $average < $this->Level + $minimumOffset) {
+            //print("{average nope}");
             return false;
         }
 
