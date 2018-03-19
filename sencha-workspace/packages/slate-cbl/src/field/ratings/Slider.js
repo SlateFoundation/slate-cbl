@@ -38,6 +38,7 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
 
 
     // component configuration
+    disabled: true,
     componentCls: 'slate-cbl-ratings-slider',
 
     listeners: {
@@ -237,13 +238,17 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
     },
 
     updateLevel: function(level, oldLevel) {
+        var me = this;
+
         if (oldLevel) {
-            this.removeCls('cbl-level-'+oldLevel);
+            me.removeCls('cbl-level-'+oldLevel);
         }
 
         if (level) {
-            this.addCls('cbl-level-'+level);
+            me.addCls('cbl-level-'+level);
         }
+
+        me.setDisabled(!level);
     },
 
     updateMinRating: function(minRating) {
