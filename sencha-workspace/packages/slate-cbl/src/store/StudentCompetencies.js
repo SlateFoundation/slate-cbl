@@ -13,6 +13,7 @@ Ext.define('Slate.cbl.store.StudentCompetencies', {
         studentsList: null,
         contentArea: null,
 
+        pageSize: 0,
         remoteFilter: false,
         remoteSort: false
     },
