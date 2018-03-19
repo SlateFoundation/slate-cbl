@@ -106,6 +106,7 @@ class StudentTask extends \VersionedRecord
         //     'getter' => 'getTaskSkills'
         // ],
         'Skills',
+        'Demonstration'
         // 'Submitted' => [
         //     'getter' => 'getSubmissionTimestamp'
         // ]
