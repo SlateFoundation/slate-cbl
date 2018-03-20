@@ -21,19 +21,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             'Ext.form.field.Date',
             'Ext.form.field.Checkbox',
             'Ext.form.FieldContainer',
-            // 'Ext.form.field.Text',
-            // 'Ext.form.field.TextArea',
-            // 'Ext.form.FieldSet',
-
-            // 'Jarvus.store.FieldValuesStore',
 
             'Emergence.proxy.Values',
 
-            // 'Slate.cbl.field.TaskSelector',
-            // 'Slate.cbl.field.ClearableSelector',
-            // 'Slate.cbl.field.SkillsSelector',
-            // 'Slate.cbl.field.AssigneesField',
-            // 'Slate.cbl.field.attachments.Field'
             'Slate.cbl.field.ratings.SkillsField'
         ],
 
@@ -188,89 +178,6 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     readOnly: true
                 }
             },
-            // titleField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'Title',
-
-            //         xtype: 'textfield',
-            //         fieldLabel: 'Title'
-            //     }
-            // },
-            // parentTaskField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'ParentTaskID',
-
-            //         xtype: 'slate-cbl-taskselector',
-            //         fieldLabel: 'Subtask of',
-            //         emptyText: '(Optional)',
-            //         queryMode: 'local',
-            //         anyMatch: true,
-            //         allowBlank: true
-            //     }
-            // },
-            // experienceTypeField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'ExperienceType',
-
-            //         xtype: 'slate-cbl-clearableselector',
-            //         fieldLabel: 'Type of Experience',
-            //         displayField: 'value',
-            //         valueField: 'value',
-            //         allowBlank: true,
-            //         autoSelect: false,
-            //         queryMode: 'local',
-            //         store: {
-            //             fields: ['value'],
-            //             pageSize: 0,
-            //             proxy: {
-            //                 type: 'emergence-values',
-            //                 url: '/cbl/tasks/*experience-types'
-            //             }
-            //         }
-            //     }
-            // },
-            // assignmentsField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'Assignees',
-
-            //         xtype: 'slate-cbl-assigneesfield',
-            //         allowBlank: false
-            //     }
-            // },
-            // skillsSelectorField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'Skills',
-
-            //         xtype: 'slate-cbl-skillsselector',
-            //         selectOnFocus: false
-            //     }
-            // },
-            // attachmentsField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         name: 'Attachments',
-
-            //         xtype: 'slate-cbl-attachments-field'
-            //     }
-            // },
-            // instructionsField: {
-            //     merge: mergeFn,
-            //     $value: {
-            //         flex: 1,
-            //         name: 'Instructions',
-
-            //         xtype: 'textareafield',
-            //         fieldLabel: 'Instructions',
-            //         // grow: true,
-            //         // growMin: 200
-            //     }
-            // },
-
 
             hidden: true,
             title: 'Task Assignment',
@@ -393,10 +300,6 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         applyRatingsField: applyFn,
         applyAttachmentsField: applyFn,
-        // applySectionField: applyFn,
-        // applyTitleField: applyFn,
-        // applyParentTaskField: applyFn,
-        // applyAssignmentsField: applyFn
 
 
         // component lifecycle
@@ -441,9 +344,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     ]
                 },
                 me.getRatingsField(),
-                me.getAttachmentsField(),
-                // me.getParentTaskField(),
-                // me.getAssignmentsField(),
+                me.getAttachmentsField()
             ]);
         }
     };
