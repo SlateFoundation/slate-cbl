@@ -179,16 +179,16 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         dashboardCt: {
             selectedsectionchange: 'onSelectedSectionChange'
         },
-        formPanel: {
-            // dirtychange: 'onFormDirtyChange',
-            // validitychange: 'onFormValidityChange'
-        },
-        submitBtn: {
-            click: 'onSubmitClick'
-        },
         studentsGrid: {
             cellclick: 'onCellClick',
             subcellclick: 'onCellClick'
+        },
+        formPanel: {
+            dirtychange: 'onFormDirtyChange',
+            validitychange: 'onFormValidityChange'
+        },
+        submitBtn: {
+            click: 'onSubmitClick'
         }
     //     tasksGrid: {
     //         cellclick: 'onTasksGridCellClick',
@@ -329,6 +329,16 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         var studentId = this.getSectionParticipantsStore().getById(participantId).get('PersonID');
 
         this.openStudentTaskWindow(studentId, taskId, { animateTarget: cellEl });
+    },
+
+    onFormDirtyChange: function(form, dirty) {
+        console.info('onFormDirtyChange', dirty);
+        this.getSubmitBtn().setDisabled(!dirty || !form.isValid());
+    },
+
+    onFormValidityChange: function(form, valid) {
+        console.info('onFormValidityChange', valid);
+        this.getSubmitBtn().setDisabled(!valid || !form.isDirty());
     },
 
     onSubmitClick: function(submitBtn) {
