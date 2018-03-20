@@ -135,7 +135,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 $value: {
                     xtype: 'checkbox',
                     boxLabel: 'Override',
-                    submitValue: false
+                    submitValue: false,
+                    excludeForm: true // exclude from any parent forms
                 }
             },
 
@@ -163,7 +164,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 $value: {
                     xtype: 'checkbox',
                     boxLabel: 'Override',
-                    submitValue: false
+                    submitValue: false,
+                    excludeForm: true // exclude from any parent forms
                 }
             },
 

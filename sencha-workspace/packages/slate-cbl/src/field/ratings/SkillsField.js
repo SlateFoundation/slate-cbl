@@ -105,7 +105,8 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             skillsSelector = Ext.apply({
                 fieldLabel: null,
                 flex: 1,
-                showPermanentTags: false
+                showPermanentTags: false,
+                excludeForm: true // exclude from any parent forms
             }, skillsSelector);
         }
 
