@@ -306,6 +306,12 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
                 // load skill/competency from local stores
                 skill = skillsStore.getByCode(skillCode);
+
+                if (!skill) {
+                    Ext.Logger.warn('Could not lookup skill by code '+skillCode);
+                    continue;
+                }
+
                 competencyId = skill.get('CompetencyID');
                 competency = competenciesStore.getById(competencyId);
 
