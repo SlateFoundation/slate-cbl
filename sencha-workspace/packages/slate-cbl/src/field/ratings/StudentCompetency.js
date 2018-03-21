@@ -20,7 +20,6 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
         placeholderItem: {
             dock: 'bottom',
             tpl: [
-                '{% console.log("placeholder.update", values) %}',
                 '<tpl if="!values.student || !values.competency">',
                     'Select ',
                     '<tpl if="!values.student">student</tpl>',
