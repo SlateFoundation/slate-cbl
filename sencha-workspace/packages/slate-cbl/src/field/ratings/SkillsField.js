@@ -4,7 +4,7 @@
  * Modeled after a combination of FieldContainer and field.Base
  */
 Ext.define('Slate.cbl.field.ratings.SkillsField', {
-    extend: 'Slate.ui.form.ContainerField',
+    extend: 'Slate.cbl.field.ratings.AbstractSkillsField',
     xtype: 'slate-cbl-ratings-skillsfield',
     requires: [
         'Ext.button.Button',
@@ -49,12 +49,6 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             type: 'slate-cbl-studentcompetencies'
         }
     },
-
-
-    // containerfield configuration
-    name: 'DemonstrationSkills',
-    allowBlank: false,
-    blankText: 'At least one rating must be selected',
 
 
     // container/component configuration
