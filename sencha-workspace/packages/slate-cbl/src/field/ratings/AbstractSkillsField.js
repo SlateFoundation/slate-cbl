@@ -36,11 +36,11 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
             demonstrationSkill = value[i];
 
             normalValue.push({
-                ID: demonstrationSkill.ID,
+                ID: demonstrationSkill.ID || null,
                 SkillID: demonstrationSkill.SkillID,
-                TargetLevel: demonstrationSkill.TargetLevel,
-                DemonstratedLevel: demonstrationSkill.DemonstratedLevel,
-                Override: demonstrationSkill.Override
+                TargetLevel: demonstrationSkill.TargetLevel || null,
+                DemonstratedLevel: demonstrationSkill.DemonstratedLevel || null,
+                Override: demonstrationSkill.Override || false
             });
         }
 
