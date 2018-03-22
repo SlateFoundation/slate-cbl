@@ -40,7 +40,8 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
                 SkillID: demonstrationSkill.SkillID,
                 TargetLevel: demonstrationSkill.TargetLevel || null,
                 DemonstratedLevel: demonstrationSkill.DemonstratedLevel || null,
-                Override: demonstrationSkill.Override || false
+                Override: demonstrationSkill.Override || false,
+                Removable: demonstrationSkill.Removable || false
             });
         }
 

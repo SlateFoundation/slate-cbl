@@ -212,9 +212,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
 
                 // configure permanent values before loading record
-                ratingsField.clearSkills();
+                // ratingsField.clearSkills();
                 ratingsField.setSelectedStudent(studentTask.get('Student').Username);
-                ratingsField.addSkills(studentTask.get('InheritedSkills'), false);
+                // ratingsField.addSkills(studentTask.get('InheritedSkills'), false);
 
                 me.getDueDateDisplayField().setHidden(dueDate);
                 me.getDueDateField().setHidden(!dueDate);

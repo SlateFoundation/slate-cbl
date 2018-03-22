@@ -97,6 +97,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         if (typeof skillsSelector == 'object' && !skillsSelector.isComponent) {
             skillsSelector = Ext.apply({
+                valueField: 'ID',
                 fieldLabel: null,
                 flex: 1,
                 showPermanentTags: false,
@@ -244,7 +245,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         var me = this,
             skillsSelector = me.getSkillsSelector();
 
-        me.addSkills(skillsSelector.getValue(), true);
+        me.addSkills(skillsSelector.getValue());
 
         skillsSelector.clearValue();
         me.getAddSkillsButton().disable();
@@ -252,6 +253,17 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
 
     // public API
+    loadValue: function() {
+        var me = this;
+
+        Ext.suspendLayouts();
+
+        me.clearSkills();
+        me.addSkills(me.getValue());
+
+        Ext.resumeLayouts(true);
+    },
+
     clearSkills: function() {
         var me = this,
             competencyContainers = me.competencyContainers,
@@ -276,7 +288,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         me.skillRatingFields = {};
     },
 
-    addSkills(skills, removable) {
+    addSkills(skills) {
         var me = this,
             competencyContainers = me.competencyContainers,
             skillRatingFields = me.skillRatingFields,
@@ -287,28 +299,35 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             studentCompetenciesLoaded = me.studentCompetenciesLoaded,
             skillsSelector = me.getSkillsSelector();
 
-        removable = removable !== false;
-
         Ext.StoreMgr.requireLoaded([competenciesStore, skillsStore], function() {
             var skillsLength = skills.length,
-                skillIndex = 0, skillCode, skill, competency, competencyId, competencyContainer, studentCompetency;
+                skillIndex = 0, demonstrationSkill, skillId, skill, competency, competencyId, competencyContainer, studentCompetency;
 
             Ext.suspendLayouts();
 
             // group skills by competency
             for (; skillIndex < skillsLength; skillIndex++) {
-                skillCode = skills[skillIndex];
+                demonstrationSkill = skills[skillIndex];
+
+                if (typeof demonstrationSkill == 'number') {
+                    demonstrationSkill = {
+                        SkillID: demonstrationSkill,
+                        Removable: true
+                    };
+                }
+
+                skillId = demonstrationSkill.SkillID;
 
                 // skip skill if a field already exists for it
-                if (skillCode in skillRatingFields) {
+                if (skillId in skillRatingFields) {
                     continue;
                 }
 
                 // load skill/competency from local stores
-                skill = skillsStore.getByCode(skillCode);
+                skill = skillsStore.getById(skillId);
 
                 if (!skill) {
-                    Ext.Logger.warn('Could not lookup skill by code '+skillCode);
+                    Ext.Logger.warn('Could not lookup skill by ID '+skillId);
                     continue;
                 }
 
@@ -338,10 +357,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 me.studentCompetenciesLoadTask.delay(50);
 
                 // create skill field
-                skillRatingFields[skillCode] = competencyContainer.addSorted({
+                skillRatingFields[skillId] = competencyContainer.addSorted({
                     skill: skill,
                     level: studentCompetency ? studentCompetency.get('Level') : null,
-                    removable: removable,
+                    removable: demonstrationSkill.Removable,
                     listeners: {
                         removeclick: function(ratingField) {
                             me.removeSkills([ratingField.getSkill().get('Code')]);

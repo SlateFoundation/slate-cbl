@@ -226,6 +226,12 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                 return r.get('ExpirationDate') || r.get('InheritedExpirationDate');
             }
         },
+
+        // dynamic fields
+        {
+            name: 'Skills',
+            persist: false
+        },
         {
             name: 'InheritedSkills',
             persist: false,
@@ -233,7 +239,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             convert: function(v, r) {
                 var taskData = r.get('Task');
 
-                return Slate.cbl.model.tasks.Task.fieldsMap.Skills.convert(taskData && taskData.Skills);
+                return taskData && taskData.Skills || [];
             }
         },
         {
@@ -244,6 +250,57 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                 var inherited = r.get('InheritedSkills');
 
                 return inherited;
+            }
+        },
+
+        // writable dynamic fields
+        {
+            name: 'DemonstrationSkills',
+            defaultValue: [],
+            depends: ['InheritedSkills', 'Skills'],
+            convert: function(v, r) {
+                var inheritedSkills = r.get('InheritedSkills'),
+                    studentSkills = r.get('Skills'),
+                    skillsMap = {},
+                    demonstrationSkills = [],
+                    len, i, skillData, skillId, demonstrationSkill;
+
+                // build entries for inherited skills
+                for (len = inheritedSkills.length, i = 0; i < len; i++) {
+                    skillData = inheritedSkills[i];
+                    skillId = skillData.ID;
+
+                    if (skillId in skillsMap) {
+                        demonstrationSkill = skillsMap[skillId];
+                    } else {
+                        demonstrationSkill = skillsMap[skillId] = {
+                            SkillID: skillId
+                        };
+
+                        demonstrationSkills.push(demonstrationSkill);
+                    }
+                }
+
+                // build entries for student-specific skills
+                for (len = studentSkills.length, i = 0; i < len; i++) {
+                    skillData = studentSkills[i];
+                    skillId = skillData.ID;
+
+                    if (skillId in skillsMap) {
+                        demonstrationSkill = skillsMap[skillId];
+                    } else {
+                        demonstrationSkill = skillsMap[skillId] = {
+                            SkillID: skillId,
+                            Removable: true
+                        };
+
+                        demonstrationSkills.push(demonstrationSkill);
+                    }
+                }
+
+                // TODO: layer in existing DemonstrationSkill records from demonstration
+
+                return demonstrationSkills;
             }
         }
     ],
