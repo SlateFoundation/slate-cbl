@@ -301,7 +301,11 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         Ext.StoreMgr.requireLoaded([competenciesStore, skillsStore], function() {
             var skillsLength = skills.length,
-                skillIndex = 0, demonstrationSkill, skillId, skill, competency, competencyId, competencyContainer, studentCompetency;
+                skillIndex = 0, demonstrationSkill,
+                skillId, skill,
+                competency, competencyId, competencyContainer,
+                studentCompetency,
+                skillIds = [];
 
             Ext.suspendLayouts();
 
@@ -363,14 +367,17 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     removable: demonstrationSkill.Removable,
                     listeners: {
                         removeclick: function(ratingField) {
-                            me.removeSkills([ratingField.getSkill().get('Code')]);
+                            me.removeSkills([ratingField.getSkill().getId()]);
                         }
                     }
                 });
+
+                // add to list for permanent values
+                skillIds.push(skillId);
             }
 
             // add skills to permanent values
-            skillsSelector.setPermanentValues(Ext.Array.union(skillsSelector.getPermanentValues() || [], skills));
+            skillsSelector.setPermanentValues(Ext.Array.union(skillsSelector.getPermanentValues() || [], skillIds));
 
             Ext.resumeLayouts(true);
         });
@@ -382,14 +389,14 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             skillRatingFields = me.skillRatingFields,
             competencyContainers = me.competencyContainers,
             skillsLength = skills.length,
-            skillIndex = 0, skillCode, skillRatingField, competencyId, competencyContainer;
+            skillIndex = 0, skillId, skillRatingField, competencyId, competencyContainer;
 
         Ext.suspendLayouts();
 
         // remove rating fields
         for (; skillIndex < skillsLength; skillIndex++) {
-            skillCode = skills[skillIndex];
-            skillRatingField = skillRatingFields[skillCode];
+            skillId = skills[skillIndex];
+            skillRatingField = skillRatingFields[skillId];
 
             if (!skillRatingField) {
                 continue;
@@ -399,7 +406,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             competencyId = Ext.Object.getKey(competencyContainers, competencyContainer);
 
             competencyContainer.remove(skillRatingField, true);
-            delete skillRatingFields[skillCode];
+            delete skillRatingFields[skillId];
 
             if (competencyContainer.items.getCount() == 0) {
                 me.remove(competencyContainer, true);
