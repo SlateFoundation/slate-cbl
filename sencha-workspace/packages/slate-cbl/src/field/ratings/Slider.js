@@ -320,7 +320,19 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
 
         miscRatingsTip.setTarget(me.primaryThumb.el);
         miscRatingsTip.setValue(value);
-        miscRatingsTip.show();
+
+        if (me.fireEvent('beforetipshow', me, miscRatingsTip) !== false) {
+            miscRatingsTip.show();
+
+            me.fireEvent('tipshow', me, miscRatingsTip);
+
+            // create a static listener once to close this tip when any other instance shows its tip
+            me.mgr = me.mgr || me.self.on('tipshow', function(slider) {
+                if (slider !== me) {
+                    miscRatingsTip.hide();
+                }
+            });
+        }
     },
 
 
@@ -421,4 +433,7 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
 
         return itemsCfg;
     }
+}, function(Slider) {
+    // make this class statically observable so instances can monitor other instances for tip showing
+    Ext.util.Observable.observe(Slider);
 });
