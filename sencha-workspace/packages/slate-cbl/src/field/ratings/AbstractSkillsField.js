@@ -28,24 +28,20 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
     },
 
     normalizeValue: function(value) {
-        var normalValue = [],
-            length = value ? value.length : 0,
-            i = 0, demonstrationSkill;
+        return Ext.Array.map(value || [], this.normalizeDemonstrationSkill, this);
+    },
 
-        for (; i < length; i++) {
-            demonstrationSkill = value[i];
+    normalizeDemonstrationSkill: function(demonstrationSkill) {
+        var level = demonstrationSkill.DemonstratedLevel;
 
-            normalValue.push({
-                ID: demonstrationSkill.ID || null,
-                SkillID: demonstrationSkill.SkillID,
-                TargetLevel: demonstrationSkill.TargetLevel || null,
-                DemonstratedLevel: demonstrationSkill.DemonstratedLevel || null,
-                Override: demonstrationSkill.Override || false,
-                Removable: demonstrationSkill.Removable || false
-            });
-        }
-
-        return normalValue;
+        return {
+            ID: demonstrationSkill.ID || null,
+            SkillID: demonstrationSkill.SkillID,
+            TargetLevel: demonstrationSkill.TargetLevel || null,
+            DemonstratedLevel: typeof level == 'number' ? level : null,
+            Override: demonstrationSkill.Override || false,
+            Removable: demonstrationSkill.Removable || false
+        };
     },
 
     setValue: function(value) {
@@ -153,5 +149,37 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         }
 
         return errors;
+    },
+
+    setSkillValue: function(skillId, rating, level) {
+        var me = this,
+            value = me.value,
+            valueSkillsMap = me.valueSkillsMap,
+            skillData = valueSkillsMap[skillId];
+
+        if (rating === null) {
+            delete valueSkillsMap[skillId];
+
+            if (skillData) {
+                Ext.Array.remove(value, skillData);
+            }
+        } else {
+            if (!skillData) {
+                skillData = valueSkillsMap[skillId] = me.normalizeDemonstrationSkill({ SkillID: skillId });
+                value.push(skillData);
+            }
+
+            skillData.TargetLevel = level;
+            skillData.DemonstratedLevel = rating;
+        }
+
+        me.fireEvent('ratingchange', me, skillId, rating, level);
+
+        me.validate();
+        me.checkDirty();
+    },
+
+    getSkillValue: function(skillId) {
+        return this.valueSkillsMap[skillId] || null;
     }
 });

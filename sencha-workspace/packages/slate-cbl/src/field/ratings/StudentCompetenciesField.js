@@ -205,57 +205,21 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
 
     onBeforeCardRemove: function(tabPanel, card) {
         var me = this,
-            value = me.value,
-            valueSkillsMap = me.valueSkillsMap,
             fields = card.isCompetencyCard ? card.query('[isRatingField]') : [],
             length = fields.length,
-            i = 0, skill, skillId, skillData;
+            i = 0, skill;
 
         for (; i < length; i++) {
             skill = card.query('field')[i].getSkill();
 
-            if (!skill) {
-                continue;
-            }
-
-            skillId = skill.getId();
-            skillData = valueSkillsMap[skillId];
-
-            delete valueSkillsMap[skillId];
-
-            if (skillData) {
-                Ext.Array.remove(value, skillData);
+            if (skill) {
+                me.setSkillValue(skill.getId(), null);
             }
         }
     },
 
-    onRatingChange: function(competencyCard, rating, level, skill, ratingSlider) {
-        var me = this,
-            value = me.value,
-            valueSkillsMap = me.valueSkillsMap,
-            skillId = skill.getId(),
-            skillData = valueSkillsMap[skillId];
-
-        if (rating === null) {
-            delete valueSkillsMap[skillId];
-
-            if (skillData) {
-                Ext.Array.remove(value, skillData);
-            }
-        } else {
-            if (!skillData) {
-                skillData = valueSkillsMap[skillId] = { SkillID: skillId };
-                value.push(skillData);
-            }
-
-            skillData.TargetLevel = level;
-            skillData.DemonstratedLevel = rating;
-        }
-
-        me.fireEvent('ratingchange', me, rating, level, skill, ratingSlider, competencyCard);
-
-        me.validate();
-        me.checkDirty();
+    onRatingChange: function(competencyCard, rating, level, skill) {
+        this.setSkillValue(skill.getId(), rating, level);
     },
 
 
