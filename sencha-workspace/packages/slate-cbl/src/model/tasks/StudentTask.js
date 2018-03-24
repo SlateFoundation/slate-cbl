@@ -230,7 +230,8 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
         // dynamic fields
         {
             name: 'Skills',
-            persist: false
+            persist: false,
+            defaultValue: []
         },
         {
             name: 'InheritedSkills',
