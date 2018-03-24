@@ -243,16 +243,6 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                 return taskData && taskData.Skills || [];
             }
         },
-        {
-            name: 'EffectiveSkills',
-            persist: false,
-            depends: ['InheritedSkills'],
-            convert: function(v, r) {
-                var inherited = r.get('InheritedSkills');
-
-                return inherited;
-            }
-        },
 
         // writable dynamic fields
         {
