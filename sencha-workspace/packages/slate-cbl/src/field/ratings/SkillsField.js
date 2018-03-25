@@ -331,6 +331,9 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
                 skillId = demonstrationSkill.SkillID;
 
+                // add empty rating to value
+                me.setSkillValue(skillId, null);
+
                 // skip skill if a field already exists for it
                 if (skillId in skillRatingFields) {
                     continue;
