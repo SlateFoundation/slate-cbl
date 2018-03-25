@@ -147,8 +147,8 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
 
 
     // event handlers
-    onRatingChange: function(ratingSlider, value) {
-        this.fireEvent('ratingchange', this, value, ratingSlider.getLevel(), ratingSlider.getSkill(), ratingSlider);
+    onRatingChange: function(ratingSlider, rating) {
+        this.fireEvent('ratingchange', this, rating, ratingSlider.getLevel(), ratingSlider.getSkill(), ratingSlider);
     },
 
 

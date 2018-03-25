@@ -251,6 +251,14 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         me.getAddSkillsButton().disable();
     },
 
+    onRatingChange: function(ratingSlider, rating) {
+        this.setSkillValue(ratingSlider.getSkill().getId(), rating, ratingSlider.getLevel());
+    },
+
+    onRatingRemove: function(ratingField) {
+        this.removeSkills([ratingField.getSkill().getId()]);
+    },
+
 
     // public API
     loadValue: function() {
@@ -366,9 +374,9 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     level: studentCompetency ? studentCompetency.get('Level') : null,
                     removable: demonstrationSkill.Removable,
                     listeners: {
-                        removeclick: function(ratingField) {
-                            me.removeSkills([ratingField.getSkill().getId()]);
-                        }
+                        scope: me,
+                        changecomplete: 'onRatingChange',
+                        removeclick: 'onRatingRemove'
                     }
                 });
 
@@ -396,18 +404,25 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         // remove rating fields
         for (; skillIndex < skillsLength; skillIndex++) {
             skillId = skills[skillIndex];
-            skillRatingField = skillRatingFields[skillId];
 
+            // remove value
+            me.removeSkillValue(skillId);
+
+            // get existing skill field
+            skillRatingField = skillRatingFields[skillId];
             if (!skillRatingField) {
                 continue;
             }
 
+            // get containing competency
             competencyContainer = skillRatingField.ownerCt;
             competencyId = Ext.Object.getKey(competencyContainers, competencyContainer);
 
+            // remove skill field
             competencyContainer.remove(skillRatingField, true);
             delete skillRatingFields[skillId];
 
+            // remove containing competency if now empty
             if (competencyContainer.items.getCount() == 0) {
                 me.remove(competencyContainer, true);
                 delete competencyContainer[competencyId];

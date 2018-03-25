@@ -213,13 +213,17 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
             skill = card.query('field')[i].getSkill();
 
             if (skill) {
-                me.setSkillValue(skill.getId(), null);
+                me.removeSkillValue(skill.getId());
             }
         }
     },
 
     onRatingChange: function(competencyCard, rating, level, skill) {
-        this.setSkillValue(skill.getId(), rating, level);
+        if (rating === null) {
+            this.removeSkillValue(skill.getId());
+        } else {
+            this.setSkillValue(skill.getId(), rating, level);
+        }
     },
 
 

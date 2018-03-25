@@ -69,7 +69,7 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
     },
 
     isEqual: function(value1, value2) {
-        var skillId, skill1, skill2;
+        var skillId, skill1, skill2, rating, override;
 
         if (value1 === value2) {
             return true;
@@ -102,13 +102,20 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
             }
 
             skill1 = value1[skillId];
+            rating = skill1.DemonstratedLevel ;
+            override = skill1.Override;
 
-            if (skill1.DemonstratedLevel !== skill2.DemonstratedLevel) {
+            if (rating !== skill2.DemonstratedLevel) {
                 return false;
             }
 
-            if (skill1.Override !== skill2.Override) {
+            if (override !== skill2.Override) {
                 return false;
+            }
+
+            // differences in any following attributes are irrelevant if no DemonstrationSkill record would persist
+            if (rating === null && !override) {
+                continue;
             }
 
             if (skill1.TargetLevel !== skill2.TargetLevel) {
@@ -157,20 +164,15 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
             valueSkillsMap = me.valueSkillsMap,
             skillData = valueSkillsMap[skillId];
 
-        if (rating === null) {
-            delete valueSkillsMap[skillId];
+        if (!skillData) {
+            skillData = valueSkillsMap[skillId] = me.normalizeDemonstrationSkill({ SkillID: skillId });
+            value.push(skillData);
+        }
 
-            if (skillData) {
-                Ext.Array.remove(value, skillData);
-            }
-        } else {
-            if (!skillData) {
-                skillData = valueSkillsMap[skillId] = me.normalizeDemonstrationSkill({ SkillID: skillId });
-                value.push(skillData);
-            }
+        skillData.DemonstratedLevel = rating;
 
+        if (level) {
             skillData.TargetLevel = level;
-            skillData.DemonstratedLevel = rating;
         }
 
         me.fireEvent('ratingchange', me, skillId, rating, level);
@@ -181,5 +183,20 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
 
     getSkillValue: function(skillId) {
         return this.valueSkillsMap[skillId] || null;
+    },
+
+    removeSkillValue: function(skillId) {
+        var me = this,
+            valueSkillsMap = me.valueSkillsMap,
+            skillData = valueSkillsMap[skillId];
+
+        delete valueSkillsMap[skillId];
+
+        if (skillData) {
+            Ext.Array.remove(me.value, skillData);
+        }
+
+        me.validate();
+        me.checkDirty();
     }
 });
