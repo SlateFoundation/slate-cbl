@@ -256,14 +256,26 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                     demonstrationSkills = [],
                     len, i, skillData, skillId, demonstrationSkill;
 
+                // TODO: layer under existing DemonstrationSkill records from demonstration
+                // - remove defaultValue and only read from Demonstration if v is unset?
+
+                // copy incoming value
+                for (len = v && v.length, i = 0; i < len; i++) {
+                    demonstrationSkill = v[i];
+                    skillId = demonstrationSkill.SkillID;
+
+                    if (!(skillId in skillsMap)) {
+                        skillsMap[skillId] = demonstrationSkill;
+                        demonstrationSkills.push(demonstrationSkill);
+                    }
+                }
+
                 // build entries for inherited skills
                 for (len = inheritedSkills.length, i = 0; i < len; i++) {
                     skillData = inheritedSkills[i];
                     skillId = skillData.ID;
 
-                    if (skillId in skillsMap) {
-                        demonstrationSkill = skillsMap[skillId];
-                    } else {
+                    if (!(skillId in skillsMap)) {
                         demonstrationSkill = skillsMap[skillId] = {
                             SkillID: skillId
                         };
@@ -277,9 +289,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                     skillData = studentSkills[i];
                     skillId = skillData.ID;
 
-                    if (skillId in skillsMap) {
-                        demonstrationSkill = skillsMap[skillId];
-                    } else {
+                    if (!(skillId in skillsMap)) {
                         demonstrationSkill = skillsMap[skillId] = {
                             SkillID: skillId,
                             Removable: true
@@ -288,8 +298,6 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                         demonstrationSkills.push(demonstrationSkill);
                     }
                 }
-
-                // TODO: layer in existing DemonstrationSkill records from demonstration
 
                 return demonstrationSkills;
             }
