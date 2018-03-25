@@ -267,6 +267,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         Ext.suspendLayouts();
 
         me.clearSkills();
+        me.getSkillsSelector().setPermanentValues([]);
         me.addSkills(me.getValue());
 
         Ext.resumeLayouts(true);
