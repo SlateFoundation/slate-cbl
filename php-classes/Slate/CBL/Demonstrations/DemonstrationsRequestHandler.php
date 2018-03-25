@@ -103,7 +103,7 @@ class DemonstrationsRequestHandler extends \RecordsRequestHandler
 
                     if (!empty($demonstrationSkillData['TargetLevel'])) {
                         $DemonstrationSkill->TargetLevel = $demonstrationSkillData['TargetLevel'];
-                    } elseif(array_key_exists($DemonstrationSkill->Skill->CompetencyID, $competencyLevels)) {
+                    } elseif (array_key_exists($DemonstrationSkill->Skill->CompetencyID, $competencyLevels)) {
                         $DemonstrationSkill->TargetLevel = $competencyLevels[$DemonstrationSkill->Skill->CompetencyID];
                     } else {
                         $StudentCompetency = StudentCompetency::getCurrentForStudent($Demonstration->Student, $DemonstrationSkill->Skill->Competency);
