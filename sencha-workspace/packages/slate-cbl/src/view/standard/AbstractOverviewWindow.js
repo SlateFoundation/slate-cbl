@@ -5,7 +5,7 @@
  * @abstract
  */
 function getBaxterLevel(level) {
-  return ["M","EN","PR","GB","AD","EX","BA"][level];
+  return ["NE","EN","PR","GB","AD","EX","BA"][level];
 }
 
 Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
@@ -74,7 +74,7 @@ Ext.define('Slate.cbl.view.standard.AbstractOverviewWindow', {
                                 '<td class="skill-grid-demo-data skill-grid-demo-index">{[xindex]}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-date">{Demonstrated:date}</td>',
                                 '<td class="skill-grid-demo-data skill-grid-demo-level"><div class="level-color cbl-level-{DemonstratedLevel}">',
-                                '<tpl if="DemonstratedLevel==0">M<tpl else>{[getBaxterLevel(values.DemonstratedLevel)]}',
+                                '<tpl if="DemonstratedLevel==0">NE<tpl else>{[getBaxterLevel(values.DemonstratedLevel)]}',
                                 '</tpl></div></td>',
                                 '<tpl if="Override">',
                                     '<td colspan="3" class="skill-grid-demo-data skill-grid-override">Override</td>',

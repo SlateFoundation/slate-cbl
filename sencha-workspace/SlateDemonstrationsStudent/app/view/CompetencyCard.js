@@ -164,7 +164,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                             '<tpl if="Override">',
                                 'O',
                             '<tpl elseif="values.DemonstratedLevel &gt;= 0">',
-                                '{[values.DemonstratedLevel == 0 ? "M" : levelLut[values.DemonstratedLevel]]}',
+                                '{[levelLut[values.DemonstratedLevel]]}',
                             '<tpl else>',
                                 '&nbsp;',
                             '</tpl>',

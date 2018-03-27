@@ -8,6 +8,11 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.cbl-level-0.level-color {
+    color: red;
+    border: 1px dotted red; 
+}
+
 @for $n from 1 through 6 {
     .cbl-level-#{$n} {
         $level-color:        nth($level-colors,        ($n));
