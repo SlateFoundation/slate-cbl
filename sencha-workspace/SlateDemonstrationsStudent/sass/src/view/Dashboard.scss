@@ -8,11 +8,6 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.cbl-level-0.level-color {
-    color: red;
-    border: 1px dotted red; 
-}
-
 @for $n from 1 through 6 {
     .cbl-level-#{$n} {
         $level-color:        nth($level-colors,        ($n));
@@ -52,7 +47,8 @@
 
             &.cbl-skill-demo-uncounted {
                 background-color: mix($text-color, $page-bg-color, 17%);
-                color: mix($text-color, $page-bg-color, 67%);
+                color: red;
+                border: 1px dotted red; 
                 font-weight: normal;
                 text-shadow: none;
             }
