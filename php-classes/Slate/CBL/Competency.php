@@ -7,7 +7,7 @@ use Slate\People\Student;
 
 class Competency extends \VersionedRecord
 {
-    public static $minimumAverageOffset = -0.5;
+    public static $minimumAverageOffset = 0;
     public static $maximumTargetLevel = 12;
 
     // ActiveRecord configuration
@@ -156,6 +156,7 @@ class Competency extends \VersionedRecord
 
     public function getTotalDemonstrationsRequired($level = null, $forceRefresh = false)
     {
+        $forceRefresh = true;
         $cacheKey = "cbl-competency/$this->ID/total-demonstrations-required";
         if ($forceRefresh || false === ($levelTotals = Cache::fetch($cacheKey))) {
             try {
@@ -175,7 +176,6 @@ class Competency extends \VersionedRecord
                 }
 
                 foreach ($uniqueLevels as $uniqueLevel) {
-
                     $levelTotals[$uniqueLevel] = 0;
                     foreach ($totals as $values) {
                         $levelTotals[$uniqueLevel] += isset($values[$uniqueLevel]) ? $values[$uniqueLevel] : $values['default'];
@@ -198,7 +198,6 @@ class Competency extends \VersionedRecord
                 return 0;
             }
         }
-
         return $levelTotals;
     }
 

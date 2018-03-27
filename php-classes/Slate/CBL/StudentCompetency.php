@@ -104,6 +104,7 @@ class StudentCompetency extends \ActiveRecord
             'CompetencyID' => $this->CompetencyID,
             'currentLevel' => $this->Level,
             'baselineRating' => $this->BaselineRating,
+            'isComplete' => $this->isLevelComplete(),
             'demonstrationsLogged' => $this->getDemonstrationsLogged(),
             'demonstrationsMissed' => $this->getDemonstrationsMissed(),
             'demonstrationsComplete' => $this->getDemonstrationsComplete(),
@@ -178,7 +179,7 @@ class StudentCompetency extends \ActiveRecord
                             ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                          WHERE DemonstrationSkill.SkillID IN (%s) AND ' .
                           (static::$positiveDemonstrationReporting ?
-                            'DemonstrationSkill.DemonstratedLevel >= %u ' :
+                            '(DemonstrationSkill.DemonstratedLevel >= %5$u OR (DemonstrationSkill.Override = 1))' :
                             'DemonstrationSkill.TargetLevel = %u '
                           ) . '
                          ORDER BY SkillID, DemonstrationDate, DemonstrationID
@@ -307,6 +308,7 @@ class StudentCompetency extends \ActiveRecord
 
                 foreach ($demonstrationData as $demonstration) {
                     if (!empty($demonstration['Override'])) {
+                        
                         $skillCount += $demonstrationsRequired;
                     } elseif (!empty($demonstration['DemonstratedLevel']) && $demonstration['DemonstratedLevel'] >= $level) {
                         $skillCount++;
@@ -324,17 +326,26 @@ class StudentCompetency extends \ActiveRecord
     public function getDemonstrationsAverage()
     {
         if ($this->demonstrationsAverage === null) {
-            if ($this->getDemonstrationsLogged()) {
-                $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
-                $totalScore = 0;
-                foreach ($effectiveDemonstrationsData as $skillId => $demonstrationsData) {
-                    foreach ($demonstrationsData as $demonstration) {
-                        if (empty($demonstration['Override'])) {
-                            $totalScore += $demonstration['DemonstratedLevel'];
-                        }
+            $effectiveDemonstrationsData = $this->getEffectiveDemonstrationsData();
+            $totalScore = 0;
+            $overrideMax = 0; 
+            $totalRecords = 0;
+            
+            foreach ($effectiveDemonstrationsData as $skillId => $demonstrationsData) {
+                foreach ($demonstrationsData as $demonstration) {
+                    if (empty($demonstration['Override'])) {
+                        $totalScore += $demonstration['DemonstratedLevel'];
+                        $totalRecords++;
+                    } else {
+                        $overrideMax = max($demonstration['TargetLevel'], $overrideMax);
+                        $totalScore += $demonstration['TargetLevel'];
+                        $totalRecords++;
                     }
                 }
-                $this->demonstrationsAverage = $totalScore / $this->getDemonstrationsLogged();
+            }
+            if ($totalRecords > 0){
+                $average = $totalScore / $totalRecords;
+                $this->demonstrationsAverage = max($overrideMax, $average);    
             }
         }
 
@@ -354,29 +365,30 @@ class StudentCompetency extends \ActiveRecord
     public function isLevelComplete()
     {
         $logged = $this->getDemonstrationsLogged();
-        $completed = $this->getDemonstrationsComplete();
+        $completed = $positiveDemonstrationReporting? $this->getDemonstrationsAtLevel() : $this->getDemonstrationsComplete();
         $average = $this->getDemonstrationsAverage();
-
+        
+        
         $competencyEvidenceRequirements = $this->Competency->getTotalDemonstrationsRequired($this->Level);
         $minimumOffset = $this->Competency->getMinimumAverageOffset();
-
+        //print("{" . $completed . "/" .  $competencyEvidenceRequirements . "@" . $average . "}");
         // Require a minimum total demonstrations for the competency
         if ($competencyEvidenceRequirements && $completed < $competencyEvidenceRequirements) {
             return false;
         }
 
-        // Require minimum average as offset from level
-        if ($minimumOffset !== null && $average < $this->Level + $minimumOffset) {
+        // Require minimum average as offset from level if there are, indeed, and requirements for this level
+        if ($this->getDemonstrationsRequired() > 0 && $minimumOffset !== null && $average < $this->Level + $minimumOffset) {
+            //print("{average nope}");
             return false;
         }
 
         // Require all demonstrations have ratings above minimum
         if (static::$minimumRatingOffset !== null) {
             $minimumRating = $this->Level + static::$minimumRatingOffset;
-
             foreach ($this->getEffectiveDemonstrationsData() as $skillID => $demonstrations) {
                 foreach ($demonstrations as $demonstration) {
-                    if ($demonstration['DemonstratedLevel'] < $minimumRating) {
+                    if ($demonstration['DemonstratedLevel'] < $minimumRating) {                        
                         return false;
                     }
                 }

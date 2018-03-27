@@ -96,6 +96,7 @@ class TeacherDashboardRequestHandler extends \RequestHandler
 
     public static function handleDemonstrationSkillsRequest()
     {
+        
         if (empty($_GET['students']) || !($students = Student::getAllByListIdentifier($_GET['students']))) {
             return static::throwNotFoundError('Students list required');
         }
@@ -128,9 +129,13 @@ class TeacherDashboardRequestHandler extends \RequestHandler
                            FROM `%4$s`
                           WHERE StudentID IN (%6$s) AND CompetencyID IN (%5$s)
                           GROUP BY StudentID) StudentCompetency
-                     ON StudentCompetency.StudentID = Demonstration.StudentID
-                    AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
-                ,[
+                    ON StudentCompetency.StudentID = Demonstration.StudentID AND ' .
+                     (StudentCompetency::$positiveDemonstrationReporting ?
+                        'StudentCompetency.CurrentLevel <= DemonstrationSkill.DemonstratedLevel' :
+                        'StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
+                     )
+    
+               ,[
                     Skill::$tableName                   // 1
                     ,DemonstrationSkill::$tableName     // 2
                     ,Demonstration::$tableName          // 3

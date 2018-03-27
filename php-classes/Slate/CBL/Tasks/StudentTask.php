@@ -11,6 +11,9 @@ use Slate\CBL\Skill;
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\ExperienceDemonstration;
 
+use Emergence\Mailer\Mailer;
+
+
 class StudentTask extends \VersionedRecord
 {
     public static $rateExpiredMissing = false;
@@ -248,5 +251,24 @@ class StudentTask extends \VersionedRecord
         }
 
         return $timestamp;
+    }
+    
+    public function sendNotificationEmail()
+    {
+        $assigner = $this->Section->Teachers[0];
+        $student = $this->Student;
+        $task = $this->Task;
+        $email = $student->PrimaryEmail;
+
+        Mailer::sendFromTemplate($email, 'assignmentNotification', [
+            'Sender' => $GLOBALS['Session']->Person,
+            'Title' => $task->Title,
+            'TeacherName' => $assigner->FirstName . " " . $assigner->LastName,
+            'CourseName' => $this->Section->Title, 
+            'DueDate' => $this->DueDate,
+            'Description' => $task->Instructions
+            
+        ]);
+        
     }
 }
