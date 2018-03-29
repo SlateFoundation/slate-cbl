@@ -16,3 +16,5 @@
 results/last_build.env
 results/slate-slate-cbl-tasks-teacher-2.1.2-git+537.3ffe853c-20180117034406-x86_64-linux.hart
 sencha-workspace/SlateDemonstrationsTeacher/sass/var/view/Todo:
+*.hart
+sencha-workspace/SlateDemonstrationsStudent/results/last_build.env

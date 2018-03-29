@@ -155,7 +155,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                             'class="',
                                 'cbl-skill-demo',
                                 '<tpl if="values.DemonstratedLevel &gt;= 0"> level-color cbl-level-{DemonstratedLevel}</tpl>',
-                                '<tpl if="values.DemonstratedLevel==0 && !Override"> cbl-skill-demo-uncounted</tpl>',
+                                '<tpl if="values.DemonstratedLevel==0 && values.TargetLevel &gt;= TargetLevel && !Override"> cbl-skill-demo-uncounted</tpl>',
                                 '<tpl if="this.standardOverridden"> cbl-skill-demo-overridden</tpl>',
                                 '<tpl if="Override"> cbl-skill-override cbl-skill-span-{[xcount - xindex + 1]}{% this.standardOverridden = true %}</tpl>',
                             '"',
