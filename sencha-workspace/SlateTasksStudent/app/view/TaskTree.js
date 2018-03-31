@@ -16,8 +16,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             're-submitted': 'revision needsrated',
 
             late: {
-                submitted: 'late needsrated',
-                're-submitted': 'late needsrated',
+                submitted: 'completed needsrated',
+                're-submitted': 'completed needsrated',
 
                 assigned: 'late',
                 're-assigned': 'late'
