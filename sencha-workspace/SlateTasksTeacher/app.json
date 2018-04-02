@@ -20,7 +20,6 @@
         "font-awesome",
         "jarvus-hotfixes",
         "jarvus-routing",
-        "jarvus-lazydata",
         "jarvus-aggregrid",
         "slate-cbl"
     ],
