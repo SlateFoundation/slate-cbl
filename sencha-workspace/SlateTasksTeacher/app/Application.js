@@ -17,8 +17,8 @@ Ext.define('SlateTasksTeacher.Application', {
     controllers: [
         'Dashboard',
         'Tasks',
-        'StudentTasks',
-        'GoogleDrive'
+        'StudentTasks'
+        // 'GoogleDrive'
     ],
 
     launch: function() {
