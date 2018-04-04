@@ -155,6 +155,12 @@ parameter `apiHost` when loading the page.
 - [ ] Review TODO notes and comments; fix things or turn into issues
 - [ ] Purge sass folders
 
+- [X] Unfuck error message when saving null DemonstrationLevel
+- [X] Don't save null demonstration level when removing a rating, exclude from list
+- [X] Need to add added skills to value array so they can be saved without being rated
+- [ ] Need a way to remove disabled raters
+- [ ] Warn if trying to close demo or task form with unsaved changes
+
 ### Next release
 
 - [ ] Audit reflows
