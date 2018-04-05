@@ -216,10 +216,12 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
 
     onDisable: function() {
         this.primaryThumb.disable();
+        this.updateLayout();
     },
 
     onEnable: function() {
         this.primaryThumb.enable();
+        this.updateLayout();
     },
 
 

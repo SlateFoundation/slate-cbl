@@ -467,6 +467,8 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     studentCompetencyIndex = 0, studentCompetency, level,
                     competencyContainer, ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField;
 
+                Ext.suspendLayouts();
+
                 for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
                     studentCompetency = studentCompetencies[studentCompetencyIndex];
                     level = studentCompetency.get('Level');
@@ -488,6 +490,8 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                         }
                     }
                 }
+
+                Ext.resumeLayouts(true);
             }
         });
 
