@@ -252,7 +252,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
 
         // defer until competencies store is loaded
         if (!competenciesStore.isLoaded()) {
-            competenciesStore.on('load', me.syncValueToCards, me, { single: true });
+            competenciesStore.on('load', 'loadValue', me, { single: true });
             return;
         }
 
