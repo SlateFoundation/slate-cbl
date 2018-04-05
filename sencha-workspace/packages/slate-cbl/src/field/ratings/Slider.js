@@ -36,6 +36,9 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
     // field configuration
     labelAlign: 'top',
     labelSeparator: '',
+    beforeLabelTextTpl: [
+        '<span class="slate-cbl-ratings-slider-bullet"></span>'
+    ],
 
 
     // component configuration
@@ -56,6 +59,17 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
 
     calculateThumbPosition: function(value) {
         return this.callParent([Math.max(value, this.minValue)]);
+    },
+
+    onMouseDown: function(ev) {
+        var me = this;
+
+        if (ev.getTarget('.slate-cbl-ratings-slider-bullet') && me.getRemovable()) {
+            me.fireEvent('removeclick', me);
+            return;
+        }
+
+        me.callParent(arguments);
     },
 
     onClickChange: function(trackPoint) {
@@ -303,6 +317,10 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
         Ext.resumeLayouts(true);
     },
 
+    updateRemovable: function(removable) {
+        this.toggleCls('slate-cbl-ratings-slider-removable', removable);
+    },
+
 
     // event handlers
     onPrimaryThumbClick: function() {
@@ -418,19 +436,6 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
             itemsCfg.push({
                 value: rating,
                 text: primaryThumb.buildValueHtml(rating)
-            });
-        }
-
-        if (me.getRemovable()) {
-            itemsCfg.push({
-                xtype: 'menuitem',
-                text: '<i class="fa fa-times-circle" style="color:red"></i> Remove',
-                listeners: {
-                    click: function() {
-                        me.miscRatingsTip.hide();
-                        me.fireEvent('removeclick', me);
-                    }
-                }
             });
         }
 
