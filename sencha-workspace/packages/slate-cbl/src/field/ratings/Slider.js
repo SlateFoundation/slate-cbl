@@ -35,6 +35,7 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
 
     // field configuration
     labelAlign: 'top',
+    labelSeparator: '',
 
 
     // component configuration
