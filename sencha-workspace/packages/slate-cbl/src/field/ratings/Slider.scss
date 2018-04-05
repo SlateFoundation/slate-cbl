@@ -13,16 +13,6 @@
             cursor: ew-resize;
             cursor: col-resize;
         }
-
-        &::before {
-            color: #c00;
-            content: '\00d7'; // times
-            font-size: large;
-            font-weight: bold;
-            left: 26px;
-            position: absolute;
-            top: 6px;
-        }
     }
 
     .x-slider-horz {
