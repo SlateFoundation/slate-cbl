@@ -465,13 +465,18 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 // eslint-disable-next-line vars-on-top
                 var studentCompetenciesLength = studentCompetencies.length,
                     studentCompetencyIndex = 0, studentCompetency, level,
-                    ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField;
+                    competencyContainer, ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField;
 
                 for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
                     studentCompetency = studentCompetencies[studentCompetencyIndex];
                     level = studentCompetency.get('Level');
+                    competencyContainer = competencyContainers[studentCompetency.get('CompetencyID')];
 
-                    ratingFields = competencyContainers[studentCompetency.get('CompetencyID')].items;
+                    if (!competencyContainer) {
+                        continue;
+                    }
+
+                    ratingFields = competencyContainer.items;
                     ratingFieldsLength = ratingFields.getCount();
                     ratingFieldIndex = 0;
 
