@@ -46,7 +46,7 @@
                                 {if count($.User->CurrentCourseSections)}
                                     <optgroup label="My Sections">
                                         {foreach item=Section from=$.User->CurrentCourseSections}
-                                            <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Title|escape}</option>
+                                            <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Term->Title|escape} {$Section->Title|escape}  {$Section->Schedule->Title|escape}</option>
                                         {/foreach}
                                     </optgroup>
                                 {else}
@@ -55,7 +55,7 @@
                                         {$termIds = $Term->getRelatedTermIDs()|implode:','}
                                         <optgroup label="All Sections in {$Term->Title}">
                                             {foreach item=Section from=Slate\Courses\Section::getAllByWhere("TermID IN ($termIds)")}
-                                                <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Title|escape}</option>
+                                                <option value="section {$Section->Code|escape}" {refill field=students selected="section $Section->Code"}>{$Section->Title|escape} {$Section->Schedule->Title|escape}</option>
                                             {/foreach}
                                         </optgroup>
                                     {/if}
