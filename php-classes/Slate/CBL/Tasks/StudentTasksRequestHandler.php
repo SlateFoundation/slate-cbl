@@ -5,6 +5,8 @@ namespace Slate\CBL\Tasks;
 use DB;
 use JSON;
 
+use Slate\Courses\Section;
+use Slate\Courses\SectionParticipant;
 use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
@@ -51,7 +53,16 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         $student = static::_getRequestedStudent();
 
         $conditions['StudentID'] = $student->ID;
+        $enrolledSectionIds = DB::allValues(
+            'CourseSectionID',
+            'SELECT CourseSectionID FROM `%s` WHERE PersonID = %u',
+            [
+                SectionParticipant::$tableName,
+                $student->ID
+            ]
+        );                        
 
+        $conditions[] = sprintf('SectionID IN (%s)', count($enrolledSectionIds) ? join(',', $enrolledSectionIds) : '0');
         return static::handleBrowseRequest($options, $conditions);
 
     }
