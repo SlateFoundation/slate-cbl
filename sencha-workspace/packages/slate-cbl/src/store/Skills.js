@@ -37,7 +37,9 @@ Ext.define('Slate.cbl.store.Skills', {
                 competency: competency
             },
             callback: function() {
-                Ext.callback(callback, scope, [loadedCompetencies[competency] = me.query('CompetencyID', competency)]);
+                var skills = me.query('CompetencyID', competency);
+                loadedCompetencies[competency] = skills;
+                Ext.callback(callback, scope, [val]);
             }
         });
     }
