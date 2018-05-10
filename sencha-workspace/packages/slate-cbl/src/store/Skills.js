@@ -28,18 +28,19 @@ Ext.define('Slate.cbl.store.Skills', {
         competency = competency.isModel ? competency.getId() : parseInt(competency, 10);
 
         if (competency in loadedCompetencies) {
-            return Ext.callback(callback, scope, [loadedCompetencies[competency]]);
+            //return Ext.callback(callback, scope, [loadedCompetencies[competency]]);
         }
 
         me.load({
-            addRecords: true,
+            addRecords: false,
             params: {
                 competency: competency
             },
             callback: function() {
                 var skills = me.query('CompetencyID', competency);
-                loadedCompetencies[competency] = skills;
-                Ext.callback(callback, scope, [val]);
+
+                //loadedCompetencies[competency] = [];
+                Ext.callback(callback, scope, [skills]);
             }
         });
     }
