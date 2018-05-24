@@ -179,7 +179,7 @@ class StudentCompetency extends \ActiveRecord
                             ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                          WHERE DemonstrationSkill.SkillID IN (%s) AND ' .
                           (static::$positiveDemonstrationReporting ?
-                            '(DemonstrationSkill.DemonstratedLevel >= %5$u OR (DemonstrationSkill.Override = 1))' :
+                            '(DemonstrationSkill.DemonstratedLevel >= %5$u OR (DemonstrationSkill.Override = 1 AND DemonstrationSkill.TargetLevel = %5$u))' :
                             'DemonstrationSkill.TargetLevel = %u '
                           ) . '
                          ORDER BY SkillID, DemonstrationDate, DemonstrationID
