@@ -31,6 +31,10 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         loadedSkill: null,
         loadedCompetency: null,
 
+        defaults: {
+            labelAlign: 'right',
+            labelWidth: 100
+        },
 
         competencySelector: {
             matchFieldWidth: true,
