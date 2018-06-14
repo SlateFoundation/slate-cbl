@@ -14,21 +14,26 @@
     }
 
     td, th {
-        padding-bottom: .375em;
-        padding-top: .375em;
+        padding: .375em 1em;
     }
 
     td {
+        background-color: rgba(white, .4);
         border-bottom: 1px solid $border-color;
     }
 
+    .empty-text {
+        color: $muted-color;
+        font-style: italic;
+        padding: 1em;
+        text-align: center;
+    }
+
     .scoring-domain-col {
-        padding-left: 1em;
         white-space: normal;
     }
 
     .level-col {
-        padding-right: 1em;
         text-align: center;
         width: 2.75em;
 
