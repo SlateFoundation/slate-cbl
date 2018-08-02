@@ -13,4 +13,6 @@
 
 /sencha-workspace/docs/build/
 
+sencha-error-*.log
+
 results/
