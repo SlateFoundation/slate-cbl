@@ -1,13 +1,15 @@
 Ext.define('SlateTasksTeacher.view.TaskAssigner', {
     extend: 'Slate.cbl.view.modals.AssignLater',
-
     xtype: 'slate-tasks-teacher-taskassigner',
+
 
     config: {
         student: null,
         task: null
     },
 
+
+    // config handlers
     updateStudent: function(student) {
         this.down('#informationCmp').update(student.getData());
     },

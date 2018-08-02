@@ -1,3 +1,4 @@
+// TODO: deprecate
 Ext.define('Slate.cbl.widget.CommentsField', {
     extend: 'Ext.form.FieldContainer',
     requires: [

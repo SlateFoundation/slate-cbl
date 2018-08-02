@@ -1,9 +1,9 @@
-/*jslint browser: true, undef: true *//*global Ext*/
 Ext.define('SlateTasksStudent.model.Todo', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.proxy.Records'
+        'Slate.cbl.proxy.Todos'
     ],
+
 
     // model config
     idProperty: 'ID',
@@ -60,12 +60,28 @@ Ext.define('SlateTasksStudent.model.Todo', {
             name: 'Cleared',
             type: 'boolean',
             defaultValue: false
+        },
+        {
+            name: 'DueTime',
+            persist: false,
+            depends: ['DueDate'],
+            convert: function(v, r) {
+                var dueDate = r.get('DueDate'),
+                    dueTime;
+
+                if (!dueDate) {
+                    return null;
+                }
+
+                dueTime = new Date(dueDate);
+
+                // task is late after midnight of due date
+                dueTime.setHours(23, 59, 59, 999);
+
+                return dueTime;
+            }
         }
     ],
 
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/todos'
-    }
-
+    proxy: 'slate-cbl-todos'
 });

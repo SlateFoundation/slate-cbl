@@ -4,47 +4,18 @@
  */
 Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
     extend: 'Ext.app.Controller',
-    requires: [
-        'Jarvus.util.APIDomain',
-
-        'Slate.API',
-
-        'Ext.window.MessageBox'
-    ],
-
-
-    // entry points
-    listen: {
-        api: {
-            demonstrationsave: 'onDemonstrationSave',
-            demonstrationdelete: 'onDemonstrationDelete'
-        }
-    },
-
-    control: {
-        studentProgressGrid: {
-            competencyrowclick: 'onCompetencyRowClick',
-            democellclick: 'onDemoCellClick'
-        },
-        'slate-demonstrations-teacher-skill-overviewwindow': {
-            createdemonstrationclick: 'onOverviewCreateDemonstrationClick',
-            editdemonstrationclick: 'onOverviewEditDemonstrationClick',
-            deletedemonstrationclick: 'onOverviewDeleteDemonstrationClick',
-            createoverrideclick: 'onOverviewCreateOverrideClick'
-        }
-    },
 
 
     // controller configuration
     views: [
-        'Dashboard',
-        'OverviewWindow',
-        'OverrideWindow',
-        'EditWindow'
+        'Dashboard'
     ],
 
-    models: [
-        'Demonstration@Slate.cbl.model'
+    stores: [
+        'Students',
+        'Competencies@Slate.cbl.store',
+        'Skills@Slate.cbl.store',
+        'StudentCompetencies'
     ],
 
     refs: {
@@ -54,157 +25,196 @@ Ext.define('SlateDemonstrationsTeacher.controller.Dashboard', {
 
             xtype: 'slate-demonstrations-teacher-dashboard'
         },
-        studentProgressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-studentsprogressgrid'
+        contentAreaSelector: 'slate-demonstrations-teacher-dashboard slate-appheader slate-cbl-contentareaselector',
+        studentsListSelector: 'slate-demonstrations-teacher-dashboard slate-appheader slate-cbl-studentslistselector',
+        progressGrid: 'slate-demonstrations-teacher-dashboard slate-demonstrations-teacher-progressgrid'
     },
 
 
-    // controller templates method overrides
+    // entry points
+    routes: {
+        ':contentAreaCode': {
+            action: 'showDashboard',
+            conditions: {
+                ':contentAreaCode': '([^/]+)'
+            }
+        },
+        ':contentAreaCode/:studentsList': {
+            action: 'showDashboard',
+            conditions: {
+                ':contentAreaCode': '([^/]+)',
+                ':studentsList': '([^/]+)'
+            }
+        }
+    },
+
+    listen: {
+        controller: {
+            '#': {
+                unmatchedroute: 'onUnmatchedRoute'
+            }
+        },
+        store: {
+            '#StudentCompetencies': {
+                beforeload: 'onStudentCompetenciesStoreBeforeLoad',
+                load: 'onStudentCompetenciesStoreLoad'
+            }
+        }
+    },
+
+    control: {
+        dashboardCt: {
+            selectedcontentareachange: 'onContentAreaChange',
+            selectedstudentslistchange: 'onStudentsListChange'
+        },
+        contentAreaSelector: {
+            select: 'onContentAreaSelectorSelect',
+            clear: 'onContentAreaSelectorClear'
+        },
+        studentsListSelector: {
+            select: 'onStudentsListSelectorSelect',
+            clear: 'onStudentsListSelectorClear'
+        },
+        progressGrid: {
+            competencyrowclick: 'onCompetencyRowClick'
+        }
+    },
+
+
+    // controller lifecycle
     onLaunch: function () {
+
+        // instantiate and render viewport
+        this.getDashboardCt().render('slateapp-viewport');
+    },
+
+
+    // route handlers
+    showDashboard: function(contentAreaCode, studentsList) {
+        var dashboardCt = this.getDashboardCt();
+
+        dashboardCt.setSelectedContentArea(contentAreaCode != '_' && contentAreaCode || null);
+        dashboardCt.setSelectedStudentsList(this.decodeRouteComponent(studentsList) || null);
+    },
+
+
+    // event handlers
+    onUnmatchedRoute: function(token) {
+        Ext.Logger.warn('Unmatched route: '+token);
+    },
+
+    onStudentCompetenciesStoreBeforeLoad: function() {
+        var dashboardCt = this.getDashboardCt();
+
+        dashboardCt.setProgressGrid(false);
+        dashboardCt.setLoading('Loading progress...');
+    },
+
+    onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
+        if (!success) {
+            return;
+        }
+
+
+        // eslint-disable-next-line vars-on-top
         var me = this,
-            siteEnv = window.SiteEnvironment || {},
-            contentAreaCode = (siteEnv.cblContentArea || {}).Code,
             dashboardCt = me.getDashboardCt(),
-            progressGrid = dashboardCt.getProgressGrid();
+            skillsStore = me.getSkillsStore(),
+            proxy = store.getProxy(),
+            studentsCollection = proxy.relatedCollections.Student,
+            rawData = proxy.getReader().rawData,
+            contentAreaData = rawData.ContentArea,
+            competenciesData = contentAreaData.Competencies,
+            competenciesLength = competenciesData.length,
+            competencyIndex = 0;
 
-        // configure dashboard with any available embedded data
-        if (contentAreaCode) {
-            progressGrid.setStudentDashboardLink('/cbl/student-dashboard?content-area=' + encodeURIComponent(contentAreaCode));
+
+        // clear embedded data from contentArea
+        delete contentAreaData.Competencies;
+
+
+        // load content area, competencies, skills, and students
+        dashboardCt.setLoadedContentArea(contentAreaData);
+
+        me.getCompetenciesStore().loadRawData(competenciesData);
+
+        skillsStore.beginUpdate();
+        skillsStore.removeAll(true);
+        for (; competencyIndex < competenciesLength; competencyIndex++) {
+            skillsStore.loadRawData(competenciesData[competencyIndex].Skills, true);
         }
+        skillsStore.endUpdate();
 
-        if (siteEnv.cblStudents) {
-            progressGrid.getStudentsStore().loadData(siteEnv.cblStudents);
-        }
-
-        if (siteEnv.cblCompetencies) {
-            progressGrid.getCompetenciesStore().loadData(siteEnv.cblCompetencies);
-        }
-
-        // handle any external "Log a Demonstartion" buttons
-        Ext.getBody().on('click', function(ev) {
-            ev.stopEvent();
-
-            me.showDemonstrationEditWindow();
-        }, me, { delegate: 'button[data-action="demonstration-create"]' });
-
-        // render dashboard
-        dashboardCt.render('slateapp-viewport');
-    },
+        me.getStudentsStore().loadRawData(studentsCollection.getRange());
 
 
-    // event handers
-    onCompetencyRowClick: function(me, competency, ev, targetEl) {
-        me.toggleCompetency(competency);
-    },
-
-    onDemoCellClick: function(progressGrid, ev, targetEl) {
-        this.getOverviewWindowView().create({
-            ownerCmp: this.getDashboardCt(),
-            autoShow: true,
-            animateTarget: targetEl,
-
-            competency: parseInt(targetEl.up('.cbl-grid-skills-row').getAttribute('data-competency'), 10),
-            studentsStore: progressGrid.getStudentsStore(),
-            competenciesStore: progressGrid.getCompetenciesStore(),
-
-            skill: parseInt(targetEl.up('.cbl-grid-skill-row').getAttribute('data-skill'), 10),
-            student: parseInt(targetEl.up('.cbl-grid-demos-cell').getAttribute('data-student'), 10),
-            selectedDemonstration: parseInt(targetEl.getAttribute('data-demonstration'), 10)
+        // finish load
+        dashboardCt.setProgressGrid({
+            contentArea: dashboardCt.getLoadedContentArea()
         });
+        dashboardCt.setLoading(false);
     },
 
-    onOverviewCreateDemonstrationClick: function(overviewWindow, student, competency) {
-        this.showDemonstrationEditWindow({
-            defaultStudent: student,
-            defaultCompetency: competency
-        });
-    },
-
-    onOverviewEditDemonstrationClick: function(overviewWindow, demonstrationId) {
+    onContentAreaChange: function(dashboardCt, contentAreaCode) {
         var me = this,
-            editWindow = me.showDemonstrationEditWindow({
-                title: 'Edit demonstration #' + demonstrationId
-            });
+            studentCompetenciesStore = me.getStudentCompetenciesStore();
 
-        editWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
-        Slate.cbl.model.Demonstration.load(demonstrationId, {
-            params: {
-                include: 'Skills.Skill'
-            },
-            success: function(demonstration) {
-                editWindow.setDemonstration(demonstration);
-                editWindow.setLoading(false);
-            }
-        });
+        // (re)load student competencies store
+        studentCompetenciesStore.setContentArea(contentAreaCode);
+        studentCompetenciesStore.loadIfDirty();
+
+        // push value to selector
+        me.getContentAreaSelector().setValue(contentAreaCode);
     },
 
-    onOverviewDeleteDemonstrationClick: function(overviewWindow, demonstrationId) {
-        overviewWindow.setLoading('Loading demonstration #' + demonstrationId + '&hellip;');
+    onStudentsListChange: function(dashboardCt, studentsList) {
+        var me = this,
+            studentCompetenciesStore = me.getStudentCompetenciesStore();
 
-        Slate.cbl.model.Demonstration.load(demonstrationId, {
-            params: {
-                include: 'Skills.Skill'
-            },
-            success: function(demonstration) {
-                Ext.Msg.confirm(
-                    'Delete demonstration #' + demonstrationId,
-                    'Are you sure you want to permenantly delete this demonstration?' +
-                        ' Scores in all the following standards will be removed:' +
-                        '<ul>' +
-                            '<li>' +
-                            Ext.Array.map(demonstration.get('Skills'), function(demoSkill) {
-                                return '<strong>Level ' + demoSkill.DemonstratedLevel + '</strong> demonstrated in <strong>' + demoSkill.Skill.Code + '</strong>: <em>' + demoSkill.Skill.Statement + '</em>';
-                            }).join('</li><li>') +
-                            '</li>' +
-                        '</ul>',
-                    function(btnId) {
-                        if (btnId != 'yes') {
-                            overviewWindow.setLoading(false);
-                            return;
-                        }
+        // (re)load student competencies store
+        studentCompetenciesStore.setStudentsList(studentsList || null);
+        studentCompetenciesStore.loadIfDirty();
 
-                        demonstration.erase({
-                            params: {
-                                include: 'competencyCompletions'
-                            },
-                            success: function(demonstration, operation) {
-                                Slate.API.fireEvent('demonstrationdelete', operation.getResultSet().getRecords()[0]);
-                                overviewWindow.setLoading(false);
-                            }
-                        });
-                    }
-                );
-            }
-        });
+        // push value to selector
+        me.getStudentsListSelector().setValue(studentsList);
     },
 
-    onOverviewCreateOverrideClick: function(overviewWindow, studentId, standardId) {
-        this.getOverrideWindowView().create({
-            ownerCmp: this.getDashboardCt(),
-            autoShow: true,
+    onContentAreaSelectorSelect: function(contentAreaCombo, contentArea) {
+        var path = [contentArea.get('Code')],
+            studentsList = this.getDashboardCt().getSelectedStudentsList();
 
-            student: studentId,
-            standard: standardId
-        });
+        if (studentsList) {
+            path.push(studentsList);
+        }
+
+        this.redirectTo(path);
     },
 
-    onDemonstrationSave: function(demonstration) {
-        this.getDashboardCt().progressGrid.loadDemonstration(demonstration);
+    onContentAreaSelectorClear: function() {
+        var path = ['_'],
+            studentsList = this.getDashboardCt().getSelectedStudentsList();
+
+        if (studentsList) {
+            path.push(studentsList);
+        }
+
+        this.redirectTo(path);
     },
 
-    onDemonstrationDelete: function(demonstration) {
-        this.getDashboardCt().progressGrid.deleteDemonstration(demonstration);
+    onStudentsListSelectorSelect: function(studentsListCombo, studentsList) {
+        var contentArea = this.getDashboardCt().getSelectedContentArea();
+
+        this.redirectTo([
+            contentArea || '_',
+            studentsList.get('value')
+        ]);
     },
 
+    onStudentsListSelectorClear: function() {
+        this.redirectTo(this.getDashboardCt().getSelectedContentArea() || '_');
+    },
 
-    // public methods
-    showDemonstrationEditWindow: function(options) {
-        var dashboardView = this.getDashboardCt();
-
-        return this.getEditWindowView().create(Ext.apply({
-            ownerCmp: dashboardView,
-            autoShow: true,
-
-            studentsStore: dashboardView.progressGrid.getStudentsStore()
-        }, options));
+    onCompetencyRowClick: function(progressGrid, context) {
+        progressGrid.toggleCompetency(context.competency);
     }
 });

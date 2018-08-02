@@ -24,17 +24,17 @@ class Demonstration extends \VersionedRecord
 
     public static $fields = [
         'StudentID' => [
-            'type' => 'uint'
-            ,'index' => true
-        ]
-        ,'Demonstrated' => [
-            'type' => 'timestamp'
-            ,'default' => null
-        ]
-        ,'ArtifactURL' => [
+            'type' => 'uint',
+            'index' => true
+        ],
+        'Demonstrated' => [
+            'type' => 'timestamp',
+            'default' => null
+        ],
+        'ArtifactURL' => [
             'notnull' => false
-        ]
-        ,'Comments' => [
+        ],
+        'Comments' => [
             'type' => 'clob',
             'notnull' => false
         ]
@@ -42,27 +42,27 @@ class Demonstration extends \VersionedRecord
 
     public static $relationships = [
         'Student' => [
-            'type' => 'one-one'
-            ,'class' => Student::class
+            'type' => 'one-one',
+            'class' => Student::class
         ],
-        'Skills' => [
-            'type' => 'one-many'
-            ,'class' => DemonstrationSkill::class
-            ,'foreign' => 'DemonstrationID'
+        'DemonstrationSkills' => [
+            'type' => 'one-many',
+            'class' => DemonstrationSkill::class,
+            'foreign' => 'DemonstrationID',
+            'prune' => 'delete'
         ]
     ];
 
     public static $validators = [
-        'StudentID' => [
-            'validator' => 'number'
-            ,'min' => 1
-        ]
+        'Student' => 'require-relationship'
     ];
 
     public static $dynamicFields = [
         'Student',
-        'competencyCompletions' => ['getter' => 'getCompetencyCompletions'],
-        'Skills'
+        'Competencies' => ['getter' => 'getCompetencies'],
+        'StudentCompetencies' => ['getter' => 'getStudentCompetencies'],
+        'AffectedStudentCompetencies' => ['getter' => 'getAffectedStudentCompetencies'],
+        'DemonstrationSkills'
     ];
 
 #    public static function getAllBySkill(Skill $Skill)
@@ -81,47 +81,111 @@ class Demonstration extends \VersionedRecord
 
     public function destroy()
     {
-        foreach ($this->Skills AS $Skill) {
-            $Skill->destroy();
+        foreach ($this->DemonstrationSkills as $DemonstrationSkill) {
+            $DemonstrationSkill->destroy();
         }
 
         return parent::destroy();
     }
 
     /**
-     * Returns current completion state of all competencies affected by this demonstration
+     * Returns list of competencies associated with skills rated in this demonstration
      */
-    public function getCompetencyCompletions()
+    private $competencies;
+    public function getCompetencies()
     {
-        // use cached $this->Skills array to include skills that may have been destroyed in this session
-        if (count($this->Skills)) {
-            $competencies = Competency::getAllByQuery(
-                'SELECT DISTINCT Competency.*'
-                .' FROM `%s` Skill'
-                .' JOIN `%s` Competency ON Competency.ID = Skill.CompetencyID'
-                .' WHERE Skill.ID IN (%s)',
-                [
-                    Skill::$tableName,
-                    Competency::$tableName,
-                    implode(',', array_map(function($DemonstrationSkill) {
-                        return $DemonstrationSkill->SkillID;
-                    }, $this->Skills))
-                ]
-            );
-        } else {
-            $competencies = [];
+        if ($this->competencies === null) {
+            $this->competencies = [];
+
+            // use cached $this->DemonstrationSkills array to include skills that may have been destroyed in this session
+            foreach ($this->DemonstrationSkills as $DemonstrationSkill) {
+                $competencyId = $DemonstrationSkill->Skill->CompetencyID;
+
+                if (!isset($this->competencies[$competencyId])) {
+                    $this->competencies[$competencyId] = $DemonstrationSkill->Skill->Competency;
+                }
+            }
+
+            // strip keys
+            $this->competencies = array_values($this->competencies);
         }
 
-        $completions = [];
-        foreach ($competencies AS $Competency) {
-            $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $Competency);
-            if ($StudentCompetency) {
-                $completions[] = $StudentCompetency->getCompletion();
-            } else {
-                $completions[] = StudentCompetency::getBlankCompletion($this->Student, $Competency);
+        return $this->competencies;
+    }
+
+    /**
+     * Returns list of StudentCompetency records affected by this demonstration in its present state
+     */
+    public function getStudentCompetencies()
+    {
+        $studentCompetencies = [];
+
+        foreach ($this->captureAffectedStudentCompetencies(true) as $levelStudentCompetencies) {
+            foreach ($levelStudentCompetencies as $StudentCompetency) {
+                $studentCompetencies[] = $StudentCompetency;
             }
         }
 
-        return $completions;
+        return $studentCompetencies;
+    }
+
+    /**
+     * Returns list of StudentCompetency records affected by this demonstration in its present state
+     */
+    public function getAffectedStudentCompetencies()
+    {
+        $studentCompetencies = [];
+
+        foreach ($this->captureAffectedStudentCompetencies() as $levelStudentCompetencies) {
+            foreach ($levelStudentCompetencies as $StudentCompetency) {
+                $studentCompetencies[] = $StudentCompetency;
+            }
+        }
+
+        return $studentCompetencies;
+    }
+
+    /**
+     * Enable recording affected student competencies throughout
+     */
+    private $recordAffectedStudentCompetencies = false;
+    public function recordAffectedStudentCompetencies($enable = true)
+    {
+        $this->recordAffectedStudentCompetencies = $enable;
+
+        if ($enable) {
+            $this->captureAffectedStudentCompetencies();
+        }
+    }
+
+    private $affectedStudentCompetenciesByLevel = [];
+    public function captureAffectedStudentCompetencies($currentOnly = false)
+    {
+        if ($this->recordAffectedStudentCompetencies && !$currentOnly) {
+            $studentCompetenciesByLevel = &$this->affectedStudentCompetenciesByLevel;
+        } else {
+            $studentCompetenciesByLevel = [];
+        }
+
+        foreach ($this->DemonstrationSkills as $DemonstrationSkill) {
+            $competencyId = $DemonstrationSkill->Skill->CompetencyID;
+
+            if (
+                !isset($studentCompetenciesByLevel[$competencyId])
+                || !isset($studentCompetenciesByLevel[$competencyId][$DemonstrationSkill->TargetLevel])
+            ) {
+                $StudentCompetency = StudentCompetency::getByWhere([
+                    'StudentID' => $this->StudentID,
+                    'CompetencyID' => $competencyId,
+                    'Level' => $DemonstrationSkill->TargetLevel
+                ]);
+
+                if ($StudentCompetency) {
+                    $studentCompetenciesByLevel[$competencyId][$DemonstrationSkill->TargetLevel] = $StudentCompetency;
+                }
+            }
+        }
+
+        return $studentCompetenciesByLevel;
     }
 }

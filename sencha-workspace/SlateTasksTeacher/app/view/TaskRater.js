@@ -1,11 +1,14 @@
 Ext.define('SlateTasksTeacher.view.TaskRater', {
     extend: 'Slate.cbl.view.modals.RateTask',
-
     xtype: 'slate-tasks-teacher-taskrater',
+
+
     config: {
         readOnly: null
     },
 
+
+    // config handlers
     updateTask: function(task) {
         var me = this,
             form = me.down('slate-modalform'),

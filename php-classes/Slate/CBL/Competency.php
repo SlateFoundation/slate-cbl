@@ -5,6 +5,7 @@ namespace Slate\CBL;
 use DB, Cache, TableNotFoundException;
 use Slate\People\Student;
 
+
 class Competency extends \VersionedRecord
 {
     public static $minimumAverageOffset = -0.5;
@@ -54,13 +55,25 @@ class Competency extends \VersionedRecord
 
     public static $dynamicFields = [
         'ContentArea',
-        'Skills',
+        'Skills' => [
+            'getter' => 'getSkills'
+        ],
+        'skillIds' => [
+            'getter' => 'getSkillIds'
+        ],
         'totalDemonstrationsRequired' => [
             'getter' => 'getTotalDemonstrationsRequired'
         ],
         'minimumAverageOffset' => [
             'getter' => 'getMinimumAverageOffset'
         ]
+    ];
+
+    public static $summaryFields = [
+        'ID' => true,
+        'Code' => true,
+        'Descriptor' => true,
+        'ContentAreaID' => true
     ];
 
     public function getHandle()
@@ -129,7 +142,7 @@ class Competency extends \VersionedRecord
         try {
             $skillIds = array_map('intval', DB::allValues(
                 'ID',
-                'SELECT Skill.ID FROM `%s` Skill WHERE Skill.CompetencyID = %u',
+                'SELECT ID FROM `%s` WHERE CompetencyID = %u',
                 [
                     Skill::$tableName,
                     $this->ID
@@ -142,6 +155,17 @@ class Competency extends \VersionedRecord
         Cache::store($cacheKey, $skillIds);
 
         return $skillIds;
+    }
+
+    public function getSkills($forceRefresh = false)
+    {
+        $skills = [];
+
+        foreach (static::getSkillIds($forceRefresh) as $skillId) {
+            $skills[] = Skill::getByID($skillId);
+        }
+
+        return $skills;
     }
 
     private $totalSkills;
@@ -157,31 +181,31 @@ class Competency extends \VersionedRecord
     public function getTotalDemonstrationsRequired($level = null, $forceRefresh = false)
     {
         $cacheKey = "cbl-competency/$this->ID/total-demonstrations-required";
+
         if ($forceRefresh || false === ($levelTotals = Cache::fetch($cacheKey))) {
             try {
-                $levelTotals = [];
-                $totals = DB::allValues('DemonstrationsRequired',
-                    'SELECT Skill.DemonstrationsRequired FROM `%s` Skill WHERE Skill.CompetencyID = %u',
-                    [
-                        Skill::$tableName,
-                        $this->ID
-                    ]
-                );
+                $skills = $this->getSkills();
 
-                $uniqueLevels = [];
-                foreach ($totals as &$total) {
-                    $total = json_decode($total, true);
-                    $uniqueLevels = array_unique(array_merge($uniqueLevels, array_keys($total)));
+                // accumulate available levels
+                $collectedLevel = [];
+                foreach ($skills as $Skill) {
+                    $collectedLevel = array_merge($collectedLevel, array_keys($Skill->DemonstrationsRequired));
                 }
+                $collectedLevel = array_unique($collectedLevel);
 
-                foreach ($uniqueLevels as $uniqueLevel) {
+                // sum required demonstrations
+                $levelTotals = [];
+                foreach ($collectedLevel as $collectedLeve) {
+                    $levelTotals[$collectedLeve] = 0;
 
-                    $levelTotals[$uniqueLevel] = 0;
-                    foreach ($totals as $values) {
-                        $levelTotals[$uniqueLevel] += isset($values[$uniqueLevel]) ? $values[$uniqueLevel] : $values['default'];
+                    foreach ($skills as $Skill) {
+                        if (isset($Skill->DemonstrationsRequired[$collectedLeve])) {
+                            $levelTotals[$collectedLeve] += $Skill->DemonstrationsRequired[$collectedLeve];
+                        } else {
+                            $levelTotals[$collectedLeve] += $Skill->DemonstrationsRequired['default'];
+                        }
                     }
                 }
-
             } catch (TableNotFoundException $e) {
                 $levelTotals = [];
             }

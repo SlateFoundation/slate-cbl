@@ -1,0 +1,51 @@
+.slate-tasks-student-recentactivity {
+    display: inline-block;
+    margin: 0 0 3% 1.5%;
+    vertical-align: top;
+    width: percentage(1/3) - 1.5;
+
+    .table-ct {
+        max-height: 12em;
+        overflow: auto;
+    }
+
+    table {
+        margin: 0;
+    }
+
+    td, th {
+        padding-bottom: .375em;
+        padding-top: .375em;
+    }
+
+    td {
+        border-bottom: 1px solid $border-color;
+    }
+
+    .scoring-domain-col {
+        padding-left: 1em;
+        white-space: normal;
+    }
+
+    .level-col {
+        padding-right: 1em;
+        text-align: center;
+        width: 2.75em;
+
+        > div {
+            border-radius: 3px;
+        }
+    }
+
+    .domain-skill {
+        display: block;
+        font-size: small;
+        line-height: 1.3333;
+    }
+
+    .meta {
+        color: $muted-color;
+        font-size: small;
+        line-height: 1.3333;
+    }
+}

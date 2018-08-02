@@ -1,0 +1,156 @@
+$cbl-progress-missed-color: dynamic(red);
+
+.cbl-level-colored {
+    background-color: #666;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(black, .8);
+}
+
+@for $n from 1 through length($level-colors) {
+    .cbl-level-#{$n} {
+        $level-color:        nth($level-colors,        $n);
+        $level-color-light:  nth($level-colors-light,  $n);
+        $level-color-medium: nth($level-colors-medium, $n);
+        $level-color-dark:   nth($level-colors-dark,   $n);
+
+        &.level-color {
+            @extend .cbl-level-colored;
+            background-color: nth($level-colors, $n);
+        }
+
+        .cbl-progress-meter {
+            background-color: $level-color-light;
+        }
+
+        .cbl-progress-bar {
+            @include background-image(linear-gradient(
+                            $level-color,
+                            $level-color-dark
+            ));
+        }
+
+        .cbl-skill-complete-indicator {
+            &.is-checked {
+                border-color: $level-color;
+                color: $level-color;
+            }
+        }
+
+        .check-mark {
+            fill: $level-color;
+        }
+
+        .cbl-skill-demo[data-demonstration] {
+            background-color: $level-color;
+
+            &.cbl-skill-demo-uncounted {
+                background-color: mix($text-color, $page-bg-color, 17%);
+                color: mix($text-color, $page-bg-color, 67%);
+                font-weight: normal;
+                text-shadow: none;
+            }
+
+            &.cbl-grid-demo-missed {
+                background-color: #C8C8C8;
+            }
+        }
+    }
+}
+
+.cbl-grad-progress {
+    .cbl-progress-level,
+    .cbl-progress-percent {
+        background-color: rgba(black, .1667);
+        border-radius: 3px;
+        padding: 0 .5em;
+    }
+}
+
+.cbl-labeled-meter {
+    align-items: center;
+    clear: both;
+    display: flex;
+    margin: 1em 0;
+
+    .cbl-progress-meter {
+        border-radius: .25em;
+        flex: 1;
+        overflow: hidden;
+    }
+}
+
+.cbl-meter-label {
+    color: inherit;
+    font: inherit;
+    margin: 0 2em 0 0;
+}
+
+.cbl-progress-meter {
+    @extend .cbl-level-colored;
+    background-color: #ddd;
+    height: 2.5em;
+    position: relative;
+}
+
+.is-average-low {
+    background-image: url('slate-cbl/images/halted-progress.png');
+}
+
+.cbl-progress-bar {
+    height: 100%;
+
+    .is-average-low & {
+        opacity: .6;
+    }
+
+    &.cbl-progress-bar-missed {
+        background-color: $cbl-progress-missed-color;
+        @include background-image(linear-gradient(
+            $cbl-progress-missed-color,
+            adjust-color($cbl-progress-missed-color,
+                $hue: 10.53923deg,
+                $saturation: 0.96819%,
+                $lightness: -8.03922%
+            )
+        ));
+        opacity: .75;
+        position: absolute;
+        top: 0;
+    }
+}
+
+
+.cbl-progress-level {
+    left: .5em;
+    position: absolute;
+    top: 50%;
+    @include translateY(-50%);
+
+    &.no-select {
+        left: 1em;
+    }
+}
+
+.cbl-progress-percent {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    @include translate(-50%, -50%);
+}
+
+.cbl-progress-average {
+    font-size: .75em;
+    right: 1em;
+    position: absolute;
+    top: 50%;
+    @include translateY(-50%);
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: subpixel-antialiased;
+
+    .is-average-low & {
+        background: red;
+        padding: 0 .3em;
+    }
+}

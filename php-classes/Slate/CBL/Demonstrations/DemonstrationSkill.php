@@ -5,7 +5,7 @@ namespace Slate\CBL\Demonstrations;
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
 
-class DemonstrationSkill extends \ActiveRecord
+class DemonstrationSkill extends \VersionedRecord
 {
     // ActiveRecord configuration
     public static $tableName = 'cbl_demonstration_skills';
@@ -23,11 +23,12 @@ class DemonstrationSkill extends \ActiveRecord
         ],
         'TargetLevel' => [
             'type' => 'tinyint',
-            'notnull' => false
+            'default' => null
         ],
         'DemonstratedLevel' => [
             'type' => 'tinyint',
-            'unsigned' => true
+            'unsigned' => true,
+            'default' => null
         ],
         'Override' => [
             'type' => 'boolean',
@@ -44,34 +45,23 @@ class DemonstrationSkill extends \ActiveRecord
 
     public static $relationships = [
         'Demonstration' => [
-            'type' => 'one-one'
-            ,'class' => Demonstration::class
+            'type' => 'one-one',
+            'class' => Demonstration::class
         ],
         'Skill' => [
-            'type' => 'one-one'
-            ,'class' => Skill::class
+            'type' => 'one-one',
+            'class' => Skill::class
         ]
     ];
 
     public static $validators = [
-        'DemonstrationID' => [
-            'validator' => 'number'
-            ,'min' => 1
-        ]
-        ,'SkillID' => [
-            'validator' => 'number'
-            ,'min' => 1
-        ]
-        ,'TargetLevel' => [
-            'validator' => 'number'
-            ,'min' => 1
-            ,'max' => 13
-            ,'required' => false
-        ]
-        ,'DemonstratedLevel' => [
-            'validator' => 'number'
-            ,'min' => 0
-            ,'max' => 13
+        'Demonstration' => 'require-relationship',
+        'Skill' => 'require-relationship',
+        'TargetLevel' => [
+            'validator' => 'number',
+            'min' => 1,
+            'max' => 13,
+            'required' => false
         ]
     ];
 
@@ -79,6 +69,22 @@ class DemonstrationSkill extends \ActiveRecord
         'Demonstration',
         'Skill'
     ];
+
+    public function validate($deep = true)
+    {
+        // call parent
+        parent::validate($deep);
+
+        // demonstrated level
+        if ($this->Override && $this->DemonstratedLevel !== null) {
+            $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must be null for override');
+        } elseif (!$this->Override && $this->DemonstratedLevel === null) {
+            $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must not be null for non-override');
+        }
+
+        // save results
+        return $this->finishValidation();
+    }
 
     public function save($deep = true)
     {

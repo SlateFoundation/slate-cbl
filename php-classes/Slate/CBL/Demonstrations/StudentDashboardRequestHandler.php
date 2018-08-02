@@ -3,39 +3,39 @@
 namespace Slate\CBL\Demonstrations;
 
 use DB, TableNotFoundException;
-use Sencha_App;
-use Sencha_RequestHandler;
+
+use Emergence\People\Person;
+use Emergence\People\GuardianRelationship;
 use Emergence\People\PeopleRequestHandler;
 
-use Slate\People\Student;
+use Emergence\WebApps\SenchaApp;
 
 use Slate\CBL\ContentAreasRequestHandler;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
-use Slate\CBL\StudentCompetency;
 
 
-class StudentDashboardRequestHandler extends \RequestHandler
+class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json',
         'text/csv' => 'csv'
     ];
 
+
     public static function handleRequest()
     {
-        $GLOBALS['Session']->requireAuthentication();
-
         switch ($action = static::shiftPath()) {
-            case 'recent-progress':
-                return static::handleRecentProgressRequest();
-            case 'completions':
-                return static::handleCompletionsRequest();
-            case 'demonstration-skills':
-                return static::handleDemonstrationSkillsRequest();
             case '':
             case false:
                 return static::handleDashboardRequest();
+
+            case 'bootstrap':
+                return static::handleBootstrapRequest();
+
+            case 'recent-progress':
+                return static::handleRecentProgressRequest();
+
             default:
                 return static::throwNotFoundError();
         }
@@ -43,56 +43,74 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleDashboardRequest()
     {
-        return Sencha_RequestHandler::respond('app/SlateDemonstrationsStudent/ext', [
-            'App' => Sencha_App::getByName('SlateDemonstrationsStudent'),
-            'mode' => 'production',
-            'Student' => static::_getRequestedStudent(),
-            'ContentArea' => static::_getRequestedContentArea()
+        $GLOBALS['Session']->requireAuthentication();
+
+        return static::sendResponse(SenchaApp::load('SlateDemonstrationsStudent')->render(), 'webapps/SlateDemonstrationsStudent');
+    }
+
+    public static function handleBootstrapRequest()
+    {
+        $GLOBALS['Session']->requireAuthentication();
+
+        return static::respond('bootstrap', [
+            'user' => $GLOBALS['Session']->Person
         ]);
     }
 
-    public static function handleRecentProgressRequest() {
+    public static function handleRecentProgressRequest()
+    {
+        $GLOBALS['Session']->requireAuthentication();
         $Student = static::_getRequestedStudent();
         $ContentArea = static::_getRequestedContentArea();
 
-        if (!$ContentArea) {
-            return static::throwInvalidRequestError('Content area required');
+
+        $where = [
+            'd.StudentID = ' . $Student->ID
+        ];
+
+        if ($ContentArea) {
+            $where[] = 'c.ContentAreaID = ' . $ContentArea->ID;
         }
 
+
         $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+
 
         try {
             // TODO: do name formatting on the client-side
             $progress = DB::allRecords('
-                SELECT ds.DemonstratedLevel AS demonstratedLevel,
+                SELECT ds.TargetLevel AS targetLevel,
+                       ds.DemonstratedLevel AS demonstratedLevel,
+                       ds.Override AS override,
                        d.Created AS demonstrationCreated,
                        CONCAT(CASE p.Gender
                          WHEN "Male"   THEN "Mr. "
                          WHEN "Female" THEN "Ms. "
-                          END, p.lastName) AS teacherTitle,
+                         ELSE CONCAT(p.FirstName, " ")
+                          END, p.LastName) AS teacherTitle,
                        c.Descriptor AS competencyDescriptor,
-                       s.Descriptor AS skillDescriptor
+                       s.Descriptor AS skillDescriptor,
+                       d.StudentID,
+                       c.ContentAreaID
                   FROM %s AS ds
                   JOIN %s AS p
-                    ON ds.CreatorID = p.ID
+                    ON p.ID = ds.CreatorID
                   JOIN %s AS d
                     ON d.ID = ds.DemonstrationID
                   JOIN %s AS s
                     ON s.ID = ds.SkillID
                   JOIN %s AS c
                     ON c.ID = s.CompetencyID
-                  WHERE d.StudentID = %s
-                    AND c.ContentAreaID = %s
-                  ORDER BY d.Created DESC
+                  WHERE (%s)
+                  ORDER BY d.ID DESC
                   LIMIT %d',
                 [
                     DemonstrationSkill::$tableName,
-                    \Emergence\People\Person::$tableName,
+                    Person::$tableName,
                     Demonstration::$tableName,
                     Skill::$tableName,
                     Competency::$tableName,
-                    $Student->ID,
-                    $ContentArea->ID,
+                    count($where) ? implode(') AND (', $where) : 'TRUE',
                     $limit
                 ]
             );
@@ -101,136 +119,39 @@ class StudentDashboardRequestHandler extends \RequestHandler
         }
 
         // cast strings to integers
-        foreach ($progress AS &$progressRecord) {
+        foreach ($progress as &$progressRecord) {
+            $progressRecord['targetLevel'] = intval($progressRecord['targetLevel']);
             $progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
+            $progressRecord['override'] = (bool)$progressRecord['override'];
             $progressRecord['demonstrationCreated'] = strtotime($progressRecord['demonstrationCreated']);
+
+            if ($Student) {
+                unset($progressRecord['StudentID']);
+            } else {
+                $progressRecord['StudentID'] = intval($progressRecord['StudentID']);
+            }
+
+            if ($ContentArea) {
+                unset($progressRecord['ContentAreaID']);
+            } else {
+                $progressRecord['ContentAreaID'] = intval($progressRecord['ContentAreaID']);
+            }
         }
+
 
         return static::respond('progress', [
             'data' => $progress
         ]);
     }
 
-    public static function handleCompletionsRequest()
-    {
-        $Student = static::_getRequestedStudent();
-
-        if (empty($_GET['competencies']) || !($competencies = Competency::getAllByListIdentifier($_GET['competencies']))) {
-            return static::throwNotFoundError('Competencies list required');
-        }
-
-        $lowestLevel = null;
-        $completions = [];
-
-        // fetch completion for current level of each competency
-        foreach ($competencies as $Competency) {
-            $StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
-
-            if ($StudentCompetency) {
-                $completions[] = $StudentCompetency->getCompletion();
-
-                if (!$lowestLevel || $StudentCompetency->Level < $lowestLevel) {
-                    $lowestLevel = $StudentCompetency->Level;
-                }
-            } else {
-                $completions[] = StudentCompetency::getBlankCompletion($Student, $Competency);
-            }
-        }
-
-        // fill completions with data for lowest incomplete level
-        foreach ($completions as &$completion) {
-            if ($completion['currentLevel'] == $lowestLevel) {
-                continue;
-            }
-
-            $StudentCompetency = StudentCompetency::getByWhere([
-                'StudentID' => $completion['StudentID'],
-                'CompetencyID' => $completion['CompetencyID'],
-                'Level' => $lowestLevel
-            ]);
-
-            $completion['lowest'] = $StudentCompetency ? $StudentCompetency->getCompletion() : false;
-        }
-
-        return static::respond('completions', [
-            'data' => $completions
-        ]);
-    }
-
-    public static function handleDemonstrationSkillsRequest()
-    {
-        $Student = static::_getRequestedStudent();
-
-        if (empty($_GET['competencies']) || !($competencies = Competency::getAllByListIdentifier($_GET['competencies']))) {
-            return static::throwNotFoundError('Competencies list required');
-        }
-
-        // query demonstrations sums
-        try {
-            $demonstrationSkills = DB::allRecords('
-                 SELECT Demonstration.ID AS DemonstrationID,
-                        Demonstration.StudentID,
-                        Demonstration.Demonstrated,
-                        DemonstrationSkill.SkillID,
-                        DemonstrationSkill.TargetLevel,
-                        DemonstrationSkill.DemonstratedLevel,
-                        DemonstrationSkill.Override,
-                        DemonstrationSkill.ID
-                   FROM (SELECT ID
-                           FROM `%1$s`
-                          WHERE CompetencyID IN (%5$s)) AS Skill
-                   JOIN `%2$s` DemonstrationSkill
-                     ON DemonstrationSkill.SkillID = Skill.ID
-                   JOIN (SELECT ID, StudentID, UNIX_TIMESTAMP(Demonstrated) AS Demonstrated
-                           FROM `%3$s`
-                          WHERE StudentID = %6$u) Demonstration
-                     ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-                   JOIN (SELECT StudentID, MAX(Level) AS CurrentLevel
-                           FROM `%4$s`
-                          WHERE StudentID = %6$u AND CompetencyID IN (%5$s)
-                          GROUP BY StudentID) StudentCompetency
-                     ON StudentCompetency.StudentID = Demonstration.StudentID
-                    AND StudentCompetency.CurrentLevel = DemonstrationSkill.TargetLevel'
-                ,[
-                    Skill::$tableName                   // 1
-                    ,DemonstrationSkill::$tableName     // 2
-                    ,Demonstration::$tableName          // 3
-                    ,StudentCompetency::$tableName      // 4
-                    ,implode(',', array_map(function ($Competency) {
-                        return $Competency->ID;
-                    }, $competencies))                  // 5
-                    ,$Student->ID                       // 6
-                ]
-            );
-        } catch (TableNotFoundException $e) {
-            $demonstrationSkills = [];
-        }
-
-        // cast strings to integers
-        foreach ($demonstrationSkills AS &$demonstrationSkill) {
-            $demonstrationSkill['DemonstrationID'] = intval($demonstrationSkill['DemonstrationID']);
-            $demonstrationSkill['Demonstrated'] = intval($demonstrationSkill['Demonstrated']);
-            $demonstrationSkill['StudentID'] = intval($demonstrationSkill['StudentID']);
-            $demonstrationSkill['SkillID'] = intval($demonstrationSkill['SkillID']);
-            $demonstrationSkill['TargetLevel'] = intval($demonstrationSkill['TargetLevel']);
-            $demonstrationSkill['DemonstratedLevel'] = intval($demonstrationSkill['DemonstratedLevel']);
-            $demonstrationSkill['Override'] = boolval($demonstrationSkill['Override']);
-            $demonstrationSkill['ID'] = intval($demonstrationSkill['ID']);
-        }
-
-        return static::respond('demonstrationSkills', [
-            'data' => $demonstrationSkills
-        ]);
-    }
-
     protected static function _getRequestedStudent()
     {
-        if (!empty($_GET['student'])) {
+        if (!empty($_GET['student']) && $_GET['student'] != '*current') {
             $Student = PeopleRequestHandler::getRecordByHandle($_GET['student']);
             $userIsStaff = $GLOBALS['Session']->hasAccountLevel('Staff');
 
             if ($Student && !$userIsStaff) {
-                $GuardianRelationship = \Emergence\People\GuardianRelationship::getByWhere([
+                $GuardianRelationship = GuardianRelationship::getByWhere([
                     'PersonID' => $Student->ID,
                     'RelatedPersonID' => $GLOBALS['Session']->PersonID
                 ]);
@@ -245,10 +166,6 @@ class StudentDashboardRequestHandler extends \RequestHandler
             $Student = $GLOBALS['Session']->Person;
         }
 
-        if (!$Student->isA(Student::class)) {
-            return static::throwInvalidRequestError('Requested user is not a student');
-        }
-
         return $Student;
     }
 
@@ -256,8 +173,8 @@ class StudentDashboardRequestHandler extends \RequestHandler
     {
         $ContentArea = null;
 
-        if (!empty($_GET['content-area'])) {
-            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content-area'])) {
+        if (!empty($_GET['content_area'])) {
+            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content_area'])) {
                 return static::throwNotFoundError('Content area not found');
             }
         }

@@ -4,6 +4,7 @@ namespace Slate\CBL;
 
 use ActiveRecord, RecordsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
+use Slate\People\Student;
 
 
 class StudentCompetenciesRequestHandler extends RecordsRequestHandler
@@ -43,11 +44,13 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
             $conditions['StudentID'] = $User->ID;
         }
 
-        // apply student filter
+        // apply student or students filter
         if (!$User) {
             return static::throwUnauthorizedError('Login required');
         } elseif (!empty($_GET['student'])) {
-            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
+            if ($_GET['student'] == '*current') {
+                $Student = $User;
+            } elseif (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
                 return static::throwNotFoundError('Student not found');
             }
 
@@ -60,8 +63,17 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
         } elseif (!$User->hasAccountLevel('Staff')) {
             $conditions['StudentID'] = $User->ID;
             $responseData['Student'] = $User;
-        }
+        } elseif (!empty($_GET['students'])) {
+            if (!$students = Student::getAllByListIdentifier($_GET['students'])) {
+                return static::throwNotFoundError('Students list not found');
+            }
 
+            $conditions['StudentID'] = [
+                'values' => array_map(function($Student) {
+                    return $Student->ID;
+                }, $students)
+            ];
+        }
 
         // apply competency filter
         if (!empty($_GET['competency'])) {
@@ -71,10 +83,21 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
 
             $conditions['CompetencyID'] = $Competency->ID;
             $responseData['Competency'] = $Competency;
+        } elseif (!empty($_GET['competencies'])) {
+            $conditions['CompetencyID'] = [
+                'values' => array_filter(array_map('intval', explode(',', $_GET['competencies'])))
+            ];
+        } elseif (!empty($_GET['content_area'])) {
+            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content_area'])) {
+                return static::throwNotFoundError('Content area not found');
+            }
+
+            $conditions['CompetencyID'] = [ 'values' => $ContentArea->getCompetencyIds() ];
+            $responseData['ContentArea'] = $ContentArea;
         }
 
 
-        // apply competency filter
+        // apply level filter
         if (!empty($_GET['level'])) {
             if (!ctype_digit($_GET['level'])) {
                 return static::throwInvalidRequestError('Level must be numeric');
@@ -84,15 +107,15 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
         }
 
 
-        // apply competency filter
-        if (!empty($_GET['entered-via'])) {
-            if (!in_array($_GET['entered-via'], StudentCompetency::getFieldOptions('EnteredVia', 'values'))) {
+        // apply entered_via filter
+        if (!empty($_GET['entered_via'])) {
+            if (!in_array($_GET['entered_via'], StudentCompetency::getFieldOptions('EnteredVia', 'values'))) {
                 return static::throwInvalidRequestError('Entered Via must be numeric');
             }
 
-            $conditions['EnteredVia'] = $_GET['entered-via'];
+            $conditions['EnteredVia'] = $_GET['entered_via'];
         }
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
-    }  
+    }
 }

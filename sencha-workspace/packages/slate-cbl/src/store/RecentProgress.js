@@ -1,33 +1,78 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.store.RecentProgress', {
     extend: 'Ext.data.Store',
     requires: [
         'Slate.proxy.Records'
     ],
 
-    model: 'Slate.cbl.model.RecentProgress',
-    pageSize: 0,
 
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/dashboards/demonstrations/student/recent-progress'
+    config: {
+        student: null,
+        contentArea: null,
+
+        remoteFilter: true,
+        remoteSort: true,
+
+        fields: [
+            {
+                name: 'demonstratedLevel',
+                type: 'int'
+            },
+            {
+                name: 'demonstrationCreated',
+                type: 'date',
+                dateFormat: 'timestamp'
+            },
+            {
+                name: 'teacherTitle',
+                type: 'string'
+            },
+            {
+                name: 'competencyDescriptor',
+                type: 'string'
+            },
+            {
+                name: 'skillDescriptor',
+                type: 'string'
+            }
+        ],
+
+        proxy: {
+            type: 'slate-records',
+            url: '/cbl/dashboards/demonstrations/student/recent-progress'
+        }
     },
 
-    /**
-     * Loads recent progress for given student+content area
-     *
-     * @param {Number/Slate.cbl.model.Student} student
-     * @param {Number/Slate.cbl.model.ContentArea} contentArea
-     * @param {Object} [options]
-     */
-    loadByStudentAndContentArea: function(student, contentArea, options) {
-        options = options || {};
 
-        options.params = Ext.apply(options.params || {}, {
-            student: student.isModel ? student.getId() : student,
-            'content-area': contentArea.isModel ? contentArea.getId() : contentArea
-        });
+    constructor: function() {
+        this.callParent(arguments);
+        this.dirty = true;
+    },
 
-        return this.load(options);
+
+    // config handlers
+    updateStudent: function(student) {
+        this.getProxy().setExtraParam('student', student || null);
+        this.dirty = true;
+    },
+
+    updateContentArea: function(contentArea) {
+        this.getProxy().setExtraParam('content_area', contentArea || null);
+        this.dirty = true;
+    },
+
+
+    // member methods
+    loadIfDirty: function() {
+        if (!this.dirty) {
+            return;
+        }
+
+        this.dirty = false;
+        this.load();
+    },
+
+    unload: function() {
+        this.loadCount = 0;
+        this.removeAll();
     }
 });

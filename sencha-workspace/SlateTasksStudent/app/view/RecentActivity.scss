@@ -1,0 +1,90 @@
+.slate-recentactivity-list {
+    font-size: .875em;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slate-recentactivity-item {
+    display: flex;
+
+    + .slate-recentactivity-item {
+        border-top: 1px solid $border-color;
+    }
+}
+
+.slate-recentactivity-status {
+    background-color: $border-color;
+    width: 1.5em;
+
+    @for $i from 1 through length($slate-task-statuses) {
+        &.slate-recentactivity-status-#{nth($slate-task-statuses, $i)} {
+            background-color: nth($slate-task-colors, $i);
+        }
+    }
+}
+
+.slate-recentactivity-info {
+    flex: 1;
+    padding: .5em .75em;
+}
+
+.slate-recentactivity-meta {
+    align-items: flex-end;
+    display: flex;
+}
+
+.slate-recentactivity-date {
+    color: $muted-color;
+    font-size: .875em;
+}
+
+.slate-recentactivity-title {
+    font-weight: bold;
+    flex: 1;
+    margin: 0 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.slate-recentactivity-context {
+    color: $muted-color;
+    font-size: .875em;
+    text-transform: uppercase;
+}
+
+.slate-recentactivity-skills {
+    list-style: none;
+    margin: .125em 0 0;
+    padding: 0;
+}
+
+.slate-recentactivity-skill {
+    display: flex;
+}
+
+.slate-recentactivity-skill-title {
+    flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.slate-recentactivity-skill-level {
+    background-color: #666;
+    border-radius: .25em;
+    color: white;
+    display: inline-block;
+    font-size: .875em;
+    font-weight: bold;
+    margin: .125em 0;
+    padding: 0 1em;
+    text-align: center;
+    text-shadow: 0 1px 1px black;
+
+    @for $n from 1 through length($level-colors) {
+        &.slate-level-#{$n} {
+            background-color: nth($level-colors-dark, $n);
+        }
+    }
+}

@@ -3,11 +3,14 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
     extend: 'Slate.cbl.view.modals.CreateTask',
     xtype: 'slate-tasks-teacher-taskeditor',
 
+
     config: {
         task: null,
         studentTask: null
     },
 
+
+    // config handlers
     updateStudentTask: function(studentTask) {
         var me = this,
             assignmentsfield = me.down('slate-tasks-assignmentsfield'),
@@ -98,7 +101,6 @@ Ext.define('SlateTasksTeacher.view.TaskEditor', {
                 taskStatus = false;
             }
         }
-
 
         taskPrivacyField.setValue(taskStatus);
     }

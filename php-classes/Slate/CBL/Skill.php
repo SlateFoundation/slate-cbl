@@ -44,15 +44,22 @@ class Skill extends \VersionedRecord
 
     public static $dynamicFields = [
         'Competency',
-        'CompetencyLevel' => [
-            'getter' => 'getCompetencyLevel'
-        ],
-        'CompetencyDescriptor' => [
-            'getter' => 'getCompetencyDescriptor'
-        ],
-        'CompetencyCode' => [
-            'getter' => 'getCompetencyCode'
-        ]
+        // 'CompetencyLevel' => [
+        //     'getter' => 'getCompetencyLevel'
+        // ],
+        // 'CompetencyDescriptor' => [
+        //     'getter' => 'getCompetencyDescriptor'
+        // ],
+        // 'CompetencyCode' => [
+        //     'getter' => 'getCompetencyCode'
+        // ]
+    ];
+
+    public static $summaryFields = [
+        'ID' => true,
+        'Code' => true,
+        'Descriptor' => true,
+        'CompetencyID' => true
     ];
 
     public static $searchConditions = [
@@ -69,20 +76,20 @@ class Skill extends \VersionedRecord
         ]
     ];
 
-    public static function __classLoaded()
-    {
-        static::$searchConditions['CompetencyDescriptor'] = [
-            'qualifiers' => ['competency', 'any'],
-            'points' => 1,
-            'join' => [
-                'className' => Competency::class,
-                'localField' => 'CompetencyID',
-                'foreignField' => 'ID',
-                'aliasName' => Competency::getTableAlias() // todo: remove when ActiveRecord class can set this automatically
-            ],
-            'callback' => [__CLASS__, 'getCompetencyDescriptorSql']
-        ];
-    }
+    // public static function __classLoaded()
+    // {
+    //     static::$searchConditions['CompetencyDescriptor'] = [
+    //         'qualifiers' => ['competency', 'any'],
+    //         'points' => 1,
+    //         'join' => [
+    //             'className' => Competency::class,
+    //             'localField' => 'CompetencyID',
+    //             'foreignField' => 'ID',
+    //             'aliasName' => Competency::getTableAlias() // todo: remove when ActiveRecord class can set this automatically
+    //         ],
+    //         'callback' => [__CLASS__, 'getCompetencyDescriptorSql']
+    //     ];
+    // }
 
     public function getHandle()
     {
@@ -166,25 +173,25 @@ class Skill extends \VersionedRecord
         return static::getTableAlias() . '.Descriptor LIKE "%'.$term.'%"';
     }
 
-    public function getCompetencyDescriptor()
-    {
-        return $this->Competency ? $this->Competency->Descriptor : null;
-    }
+    // public function getCompetencyDescriptor()
+    // {
+    //     return $this->Competency ? $this->Competency->Descriptor : null;
+    // }
 
-    public function getCompetencyCode()
-    {
-        return $this->Competency ? $this->Competency->Code : null;
-    }
+    // public function getCompetencyCode()
+    // {
+    //     return $this->Competency ? $this->Competency->Code : null;
+    // }
 
-    public function getCompetencyLevel()
-    {
-        $level = null;
-        if ($GLOBALS['Session']->PersonID && $this->Competency && $StudentCompetency = StudentCompetency::getByWhere(['StudentID' => $GLOBALS['Session']->PersonID, 'CompetencyID' => $this->Competency->ID])) {
-            $level = $StudentCompetency->Level;
-        }
+    // public function getCompetencyLevel()
+    // {
+    //     $level = null;
+    //     if ($GLOBALS['Session']->PersonID && $this->Competency && $StudentCompetency = StudentCompetency::getByWhere(['StudentID' => $GLOBALS['Session']->PersonID, 'CompetencyID' => $this->Competency->ID])) {
+    //         $level = $StudentCompetency->Level;
+    //     }
 
-        return $level;
-    }
+    //     return $level;
+    // }
 
     public function getDemonstrationsRequiredByLevel($level, $returnDefault = true)
     {

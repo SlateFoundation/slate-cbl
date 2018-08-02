@@ -1,15 +1,11 @@
+// TODO: move into SlateTasksStudent app
 Ext.define('Slate.cbl.view.student.TaskHistory', {
-    extend: 'Slate.cbl.widget.SimplePanel',
+    extend: 'Slate.ui.SimplePanel',
     xtype: 'slate-taskhistory',
-    requires:[
-    ],
 
-    config: {
-    },
 
     title: 'Past English Tasks',
-
-    componentCls: 'slate-taskhistory',
+    cls: 'slate-taskhistory',
 
     data: {
         tasks: [
@@ -101,14 +97,14 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
                                                         '<span class="slate-taskhistory-taskbullet"></span>',
                                                         '<span class="slate-taskhistory-tasktitle">{title}</span>',
                                                     '</td>',
-                            
+
                                                     '<td class="slate-taskhistory-cell slate-taskhistory-skills-cell text-center">',
                                                         '<tpl foreach="skills">',
                                                             '{[ this.printSomeIndicators(values, xkey) ]}',
                                                         '</tpl>',
                                                         '<div class="slate-taskhistory-skills-overlay"><span class="slate-taskhistory-skills-caption">{[ this.printOverlayString(values.skills) ]}</span></div>',
                                                     '</td>',
-                            
+
                                                     '<td class="slate-taskhistory-cell text-center">',
                                                         '{date}',
                                                     '</td>',
@@ -119,7 +115,7 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
                                 '</div>',
                             '</td>',
                         '</tr>',
-                    '</tpl>',                       
+                    '</tpl>',
                 '</tpl>',
             '</tbody>',
         '</table>',
@@ -170,10 +166,11 @@ Ext.define('Slate.cbl.view.student.TaskHistory', {
     },
 
     onExpandClick: function(ev, t) {
-        var target = Ext.get(t);
+        var target = Ext.get(t),
+            row;
 
         if (target.is('.slate-taskhistory-taskbullet')) {
-            var row = target.up('.slate-taskhistory-row');
+            row = target.up('.slate-taskhistory-row');
 
             row.toggleCls('is-expanded');
         }

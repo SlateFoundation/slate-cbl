@@ -11,4 +11,6 @@
 /sencha-workspace/*Example/bootstrap.*
 /sencha-workspace/*Example/sass/example/bootstrap.*
 
-/sencha-workspace/docs/*/build/
+/sencha-workspace/docs/build/
+
+results/

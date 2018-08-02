@@ -1,3 +1,4 @@
+// TODO: deprecate
 Ext.define('Slate.cbl.widget.SkillsField', {
     extend: 'Ext.form.FieldContainer',
     requires: [

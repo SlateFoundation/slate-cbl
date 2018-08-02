@@ -1,44 +1,70 @@
-/*jslint browser: true, undef: true *//*global Ext,Slate*/
 Ext.define('Slate.cbl.store.Skills', {
     extend: 'Ext.data.Store',
+    alias: 'store.slate-cbl-skills',
     requires: [
-        'Slate.cbl.API'
+        /* global Slate */
+        'Slate.sorter.Code'
     ],
+
 
     model: 'Slate.cbl.model.Skill',
     config: {
+        competency: null,
+
         pageSize: 0,
-        asynchronousLoad: false
+        remoteSort: false,
+        sorters: true
     },
 
-    constructor: function(config) {
-        console.log('constructing', this.$className, config);
-        config = config || {};
-        config.session = Slate.cbl.API.getSession();
 
-        this.callParent([config]);
+    // model lifecycle
+    constructor: function() {
+        this.callParent(arguments);
+        this.dirty = true;
+    },
 
-        this.loadedCompetencies = {};
+
+    // config handlers
+    updateCompetency: function(competency) {
+        this.getProxy().setExtraParam('competency', competency || null);
+        this.dirty = true;
+    },
+
+    applySorters: function(sorters) {
+        if (sorters === true) {
+            sorters = new Slate.sorter.Code();
+        }
+
+        return this.callParent([sorters]);
+    },
+
+
+    // member methods
+    loadIfDirty: function() {
+        if (!this.dirty) {
+            return;
+        }
+
+        this.dirty = false;
+        this.load();
+    },
+
+    unload: function() {
+        this.loadCount = 0;
+        this.removeAll();
     },
 
     getAllByCompetency: function(competency, callback, scope) {
-        var me = this,
-            loadedCompetencies = this.loadedCompetencies;
-
         competency = competency.isModel ? competency.getId() : parseInt(competency, 10);
 
-        if (competency in loadedCompetencies) {
-            return Ext.callback(callback, scope, [loadedCompetencies[competency]]);
-        }
+        return Ext.callback(callback, scope, [this.queryBy(function(skill) {
+            return skill.get('CompetencyID') == competency;
+        })]);
+    },
 
-        me.load({
-            addRecords: true,
-            params: {
-                competency: competency
-            },
-            callback: function() {
-                Ext.callback(callback, scope, [loadedCompetencies[competency] = me.query('CompetencyID', competency)]);
-            }
-        });
+    getByCode: function(code) {
+        var index = code ? this.findExact('Code', code) : -1;
+
+        return index == -1 ? null : this.getAt(index);
     }
 });

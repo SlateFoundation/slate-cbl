@@ -1,15 +1,12 @@
 Ext.define('SlateTasksManager.view.TasksManager', {
     extend: 'Ext.grid.GridPanel',
     xtype: 'slate-tasks-manager',
-    requires:[
+    requires: [
         'SlateTasksManager.view.AppHeader',
         'SlateTasksManager.view.TaskDetails',
-        'Slate.cbl.store.Tasks',
-		'Ext.saki.grid.MultiSearch'
+        'Ext.saki.grid.MultiSearch'
     ],
 
-    config: {
-    },
 
     title: 'Task Library',
     header: false,
@@ -32,13 +29,13 @@ Ext.define('SlateTasksManager.view.TasksManager', {
         }
     ],
 
-	plugins: [
-		{
-			ptype: 'saki-gms',
-			pluginId: 'gms',
+    plugins: [
+        {
+            ptype: 'saki-gms',
+            pluginId: 'gms',
             iconColumn: false
-		}
-	],
+        }
+    ],
 
     columns: {
         defaults: {

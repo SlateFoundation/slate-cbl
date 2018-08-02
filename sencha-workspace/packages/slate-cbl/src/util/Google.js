@@ -1,12 +1,22 @@
 Ext.define('Slate.cbl.util.Google', {
     singleton: true,
-
     requires: [
         'Ext.Promise',
         'Ext.util.Cookies'
     ],
+    mixins: [
+        'Ext.mixin.Mashup'
+    ],
+    requiredScripts: [
+        'https://apis.google.com/js/api.js'
+    ],
+
 
     config: {
+        domain: null,
+        clientId: null,
+        developerKey: null,
+
         tokenName: 'googleAppsToken',
         scope: 'https://www.googleapis.com/auth/drive',
         requiredAPIs: [
@@ -42,20 +52,8 @@ Ext.define('Slate.cbl.util.Google', {
         return Ext.util.Cookies.set(this.getTokenName(), token, expiration, '/');
     },
 
-    getDeveloperKey: function() {
-        return SiteEnvironment && SiteEnvironment.googleAppsDeveloperKey;
-    },
-
-    getClientId: function() {
-        return SiteEnvironment && SiteEnvironment.googleAppsClientId;
-    },
-
-    getGoogleAppsDomain: function() {
-        return SiteEnvironment && SiteEnvironment.googleAppsDomain || location.host;
-    },
-
     verifyEmailAddress: function(email) {
-        return email.match(new RegExp('^.+@'+Slate.cbl.util.Google.getGoogleAppsDomain()+'$'));
+        return email.match(new RegExp('^.+@'+Slate.cbl.util.Google.getDomain()+'$'));
     },
 
     initFilePicker: function() {
@@ -112,7 +110,7 @@ Ext.define('Slate.cbl.util.Google', {
     onUserAuthenticated: function(response) {
         return new Ext.Promise(function(resolve, reject) {
             var me = Slate.cbl.util.Google,
-                googleAppsDomain = me.getGoogleAppsDomain(),
+                googleAppsDomain = me.getDomain(),
                 authResult = response.getAuthResponse();
 
             console.info('handleAuthResult(%o)', authResult);

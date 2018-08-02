@@ -1,125 +1,90 @@
 Ext.define('SlateTasksStudent.view.TaskTree', {
-    extend: 'Slate.cbl.widget.SimplePanel',
-    xtype: 'slatetasksstudent-tasktree',
+    extend: 'Slate.ui.SimplePanel',
+    xtype: 'slate-tasks-student-tasktree',
+    requires: [
+        'SlateTasksStudent.view.TaskFiltersMenu',
 
-    config: {
-        courseSection: null,
-        student: null,
-        readOnly: false,
-
-        statusClasses: {
-
-            assigned: 'due',
-            're-assigned': 'revision',
-
-            submitted: 'due needsrated',
-            're-submitted': 'revision needsrated',
-
-            late: {
-                submitted: 'late needsrated',
-                're-submitted': 'late needsrated',
-
-                assigned: 'late',
-                're-assigned': 'late'
-            },
-
-            completed: 'completed'
-        },
-    },
-
-    title: 'Current Tasks',
-    showTools: true,
-
-    componentCls: 'slate-tasktree',
-
-    items: [
-        {
-            xtype: 'container',
-            componentCls: 'slate-simplepanel-header',
-            layout: 'hbox',
-            items: [
-                {
-                    flex: 1,
-                    xtype: 'component',
-                    cls: 'slate-simplepanel-title',
-                    html: '',
-                    itemId: 'title'
-                },
-                {
-                    // TODO make this configurable
-                    xtype: 'container',
-                    layout: 'hbox',
-                    itemId: 'tools',
-                    items: [{
-                        xtype: 'button',
-                        ui: 'light',
-                        text: 'Filter',
-                        itemId: 'filter',
-                        menu: {
-                            xtype: 'slatetasksstudent-taskfilters'
-                        }
-                    }]
-                }
-            ]
-        }
+        /* global Slate */
+        'Slate.cbl.model.tasks.StudentTask'
     ],
 
-    tpl: [
-        '<ul class="slate-tasktree-list">',
-            '{% var statusClasses = values.statusClasses || new Object() %}',
-            '<tpl for="tasks">',
-                '<li class="slate-tasktree-item <tpl if="subtasks">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values, statusClasses) ]}" recordId="{ID}">',
 
-                    '<div class="flex-ct">',
-                        '<div class="slate-tasktree-nub <tpl if="subtasks">is-clickable</tpl>"></div>', // TODO: ARIA it up
-                        '<div class="slate-tasktree-data">',
-                            '<div class="slate-tasktree-category">{SectionTitle}</div>',
-                            '<div class="slate-tasktree-text">',
-                                '<div class="slate-tasktree-title">{Title}</div>',
-                                '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
+    config: {
+        store: null,
+        readOnly: false
+    },
+
+
+    title: 'Current Tasks',
+    cls: 'slate-tasktree',
+
+    tools: [{
+        text: 'Filter',
+        menu: {
+            xtype: 'slate-tasks-student-taskfiltersmenu'
+        }
+    }],
+
+    listeners: {
+        scope: 'this',
+        click: {
+            fn: 'onTreeClick',
+            element: 'el'
+        }
+    },
+
+    tpl: [
+        '<tpl if="tasks.length">',
+            '<ul class="slate-tasktree-list">',
+                '<tpl for="tasks">',
+                    '<li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task) ]}" data-id="{task.ID}">',
+
+                        '<div class="flex-ct">',
+                            '<div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
+                            '<div class="slate-tasktree-data">',
+                                '<tpl if="parent.showSection">',
+                                    '<div class="slate-tasktree-category">{task.SectionTitle}</div>',
+                                '</tpl>',
+                                '<div class="slate-tasktree-text">',
+                                    '<div class="slate-tasktree-title">{task.Title}</div>',
+                                    '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values.task)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.task.TaskStatus) ]}</div>',
+                                    '<div class="slate-tasktree-date">{[ this.getStatusDate(values.task) ]}</div>',
+                                '</div>',
                             '</div>',
                         '</div>',
-                    '</div>',
 
-                    '<tpl if="subtasks">',
-                        '<ul class="slate-tasktree-sublist">',
+                        '<tpl if="subTasks.length">',
+                            '<ul class="slate-tasktree-sublist">',
 
-                            '<tpl for="subtasks">',
-                                '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values, statusClasses) ]}" recordId="{ID}">',
+                                '<tpl for="subTasks">',
+                                    '<li class="slate-tasktree-item slate-tasktree-status-{[ this.getDueStatusCls(values) ]}" data-id="{ID}">',
 
-                                    '<div class="flex-ct">',
-                                        '<div class="slate-tasktree-nub"></div>',
-                                        '<div class="slate-tasktree-data">',
-                                            '<div class="slate-tasktree-text">',
-                                                '<div class="slate-tasktree-title">{Title}</div>',
-                                                '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                                '<div class="slate-tasktree-date<tpl if="!values.DueDate">-null</tpl>">{[ this.getStatusDate(values) ]}</div>',
+                                        '<div class="flex-ct">',
+                                            '<div class="slate-tasktree-nub"></div>',
+                                            '<div class="slate-tasktree-data">',
+                                                '<div class="slate-tasktree-text">',
+                                                    '<div class="slate-tasktree-title">{Title}</div>',
+                                                    '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
+                                                    '<div class="slate-tasktree-date<tpl if="!values.DueDate">-null</tpl>">{[ this.getStatusDate(values) ]}</div>',
+                                                '</div>',
                                             '</div>',
                                         '</div>',
-                                    '</div>',
 
-                                '</li>',
-                            '</tpl>',
+                                    '</li>',
+                                '</tpl>',
 
-                        '</ul>',
-                    '</tpl>',
+                            '</ul>',
+                        '</tpl>',
 
-                '</li>',
-            '</tpl>',
-
-        '</ul>',
+                    '</li>',
+                '</tpl>',
+            '</ul>',
+        '<tpl else>',
+            '<div class="empty-text">No tasks found</div>',
+        '</tpl>',
         {
             getStatusString: function(taskStatus) {
-                var statusStrings = {
-                    'assigned': 'Due',
-                    're-assigned': 'Revision',
-                    'submitted': 'Submitted',
-                    're-submitted': 'Resubmitted',
-                    'completed': 'Completed'
-                };
-
-                return statusStrings[taskStatus] || '';
+                return Slate.cbl.model.tasks.StudentTask.statusStrings[taskStatus] || '';
             },
             getStatusDate: function(taskData) {
                 var taskStatus = taskData.TaskStatus,
@@ -133,115 +98,145 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
-            getDueStatusCls: function(data, statusClasses) {
-                var activeStatuses = [
-                        'assigned',
-                        're-assigned',
-                        'submitted',
-                        're-submitted'
-                    ],
-                    dueDate = data.DueDate,
-                    status = data.TaskStatus,
-                    now, endOfDueDate, isLate;
-
-                if (dueDate) {
-                    now = new Date();
-                    endOfDueDate = new Date(dueDate);
-                    // task is late after midnight of due date
-                    endOfDueDate.setHours(23);
-                    endOfDueDate.setMinutes(59);
-                    endOfDueDate.setSeconds(59);
-
-                    isLate = activeStatuses.indexOf(status) > -1 && endOfDueDate < now;
-                }
-
-                if (isLate) {
-                    return statusClasses.late[status] || '';
-                }
-                return statusClasses[status] || '';
+            getDueStatusCls: function(task) {
+                return Slate.cbl.model.tasks.StudentTask[task.IsLate ? 'lateStatusClasses' : 'statusClasses'][task.TaskStatus] || '';
             }
         }
     ],
 
-    listeners: {
-        scope: 'this',
-        click: {
-            fn: 'onTreeClick',
-            element: 'el'
+
+    // config handlers
+    applyStore: function(store) {
+        return Ext.StoreMgr.lookup(store);
+    },
+
+    updateStore: function(store, oldStore) {
+        if (oldStore) {
+            oldStore.un({
+                beforeload: 'onBeforeStoreLoad',
+                load: 'onStoreLoad',
+                scope: this
+            });
+        }
+
+        if (store) {
+            store.on({
+                beforeload: 'onBeforeStoreLoad',
+                load: 'onStoreLoad',
+                scope: this
+            });
         }
     },
 
-    // config handlers
-    updateCourseSection: function(val) {
-        var me = this;
-
-        me.fireEvent('coursesectionchange', me, val);
-    },
-
-    applyData: function(data) {
-        data.statusClasses = this.getStatusClasses();
-        return data;
-    },
-
-    updateData: function(data) {
-        this.update(data);
-    },
 
     // event handlers
+    onBeforeStoreLoad: function() {
+        this.addCls('is-loading');
+        this.setLoading('Loading Tasks&hellip;');
+    },
+
+    onStoreLoad: function() {
+        this.refresh();
+        this.removeCls('is-loading');
+        this.setLoading(false);
+    },
+
     onTreeClick: function(ev, t) {
         var me = this,
             target = Ext.get(t),
-            parentEl, recordId;
+            parentEl = target.up('.slate-tasktree-item');
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            parentEl = target.up('.slate-tasktree-item');
             parentEl.toggleCls('is-expanded');
-            me.resizeSubtasksContainer(parentEl);
-            me.resizeParentContainer();
-        } else {
-            parentEl = target.up('.slate-tasktree-item');
-            if (parentEl) {
-                recordId = parentEl.dom.getAttribute('recordId');
-                me.fireEvent('itemclick', recordId);
-            }
+        } else if (parentEl) {
+            me.fireEvent('itemclick', me, me.getStore().getById(parentEl.getAttribute('data-id')));
         }
     },
 
 
-    // custom methods
-    /*
-     * TODO: This seems hacky to me.  If the height of the subtasks can't be correctly sized in CSS, I'd prefer handling
-     * subitem expansion with Ext.Dom visibility methods as is currently implemeted in the Todo list.
-     */
-    resizeSubtasksContainer: function(parentTaskEl) {
-        var subtasks,
-            subtasksLength,
-            subtasksHeight = 0,
-            i = 0;
-
-        if (parentTaskEl.hasCls('is-expanded')) {
-            subtasks = parentTaskEl.query('.slate-tasktree-item', false);
-            subtasksLength = subtasks.length;
-
-            for (; i<subtasksLength; i++) {
-                subtasksHeight += subtasks[i].getHeight() + 1;
-            }
-
-            parentTaskEl.down('ul').setHeight(subtasksHeight);
-
-        } else {
-            parentTaskEl.down('ul').setHeight(0);
-        }
-    },
-
-    resizeParentContainer: function() {
+    // member methods
+    refresh: function() {
         var me = this,
-            doc = document.documentElement,
-            currentScroll = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+            store = me.getStore(),
+            items = [],
 
-        Ext.Function.defer(function() {
-            me.up('container').updateLayout();
-            window.scrollTo(0, currentScroll);
-        }, 200);
+            rootTasks = store.queryBy(function(task) {
+                return !task.get('ParentTaskID');
+            }),
+            rootTasksLength = rootTasks.getCount(),
+            rootTasksIndex = 0,
+            rootTask, rootTaskId, subTasks;
+
+        // build tree of top-level tasks and subtasks
+        for (; rootTasksIndex < rootTasksLength; rootTasksIndex++) {
+            rootTask = rootTasks.getAt(rootTasksIndex);
+            rootTaskId = rootTask.get('TaskID');
+
+            subTasks = store.queryBy(function(task) { // eslint-disable-line no-loop-func
+                return task.get('ParentTaskID') == rootTaskId && !task.get('filtered');
+            });
+
+            if (subTasks.getCount() > 0) {
+                rootTask.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
+            }
+
+            if (!rootTask.get('filtered')) {
+                items.push({
+                    task: rootTask.getData(),
+                    subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
+                });
+            }
+        }
+
+        // render markup
+        me.setData({
+            tasks: items,
+            showSection: !store.getSection()
+        });
+
+        // sync heights for animated expansion
+        me.syncSublistHeights();
+    },
+
+    syncSublistHeights: function() {
+        var me = this,
+            sublistEls, sublistElsLength, sublistElIndex = 0, sublistEl, sublistHeight,
+            listItemEls, listItemElsLength, listItemElIndex,
+            sublistHeights = [], sublistHeightsLength, sublistHeightIndex = 0;
+
+        if (!me.rendered) {
+            me.on('render', 'syncSublistHeights', me, { single: true });
+            return;
+        }
+
+        // READ PHASE: sum heights of items in each sublist
+        sublistEls = me.el.query('.slate-tasktree-sublist', false);
+        sublistElsLength = sublistEls.length;
+
+        for (; sublistElIndex < sublistElsLength; sublistElIndex++) {
+            sublistEl = sublistEls[sublistElIndex];
+            sublistHeight = 0;
+
+            listItemEls = sublistEl.query('.slate-tasktree-item', false);
+            listItemElsLength = listItemEls.length;
+            listItemElIndex = 0;
+
+            for (; listItemElIndex < listItemElsLength; listItemElIndex++) {
+                sublistHeight += listItemEls[listItemElIndex].getHeight();
+            }
+
+            sublistHeights.push({
+                el: sublistEl,
+                height: sublistHeight
+            });
+        }
+
+        // WRITE PHASE: set heights of sublists to item sums
+        sublistHeightsLength = sublistHeights.length;
+
+        for (; sublistHeightIndex < sublistHeightsLength; sublistHeightIndex++) {
+            sublistHeight = sublistHeights[sublistHeightIndex];
+            sublistHeight.el.setHeight(sublistHeight.height);
+        }
     }
 });

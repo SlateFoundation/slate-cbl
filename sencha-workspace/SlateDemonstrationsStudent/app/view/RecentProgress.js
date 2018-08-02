@@ -1,129 +1,95 @@
 Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
-    extend: 'Ext.Component',
+    extend: 'Slate.ui.SimplePanel',
     xtype: 'slate-demonstrations-student-recentprogress',
     requires: [
         'Slate.cbl.store.RecentProgress'
     ],
 
+
     config: {
-        studentId: null,
-        contentAreaId: null,
-
-        loadStatus: 'unloaded',
-
-        recentProgressStore: {
-            xclass: 'Slate.cbl.store.RecentProgress'
-        },
-
-        componentCls: 'cbl-recent-progress',
-        cls: 'panel',
-
-        borderBoxCls: null,
-        rootCls: null
+        store: 'RecentProgress'
     },
 
-    renderTpl: [
-        '<header class="panel-header">',
-            '<h3 class="header-title">Recent Progress</h3>',
-        '</header>',
 
+    title: 'Recent Progress',
+    cls: 'slate-tasks-student-recentactivity',
+    tpl: [
         '<div class="table-ct">',
-            '<table class="panel-body" id="{id}-tableEl" data-ref="tableEl"></table>',
+            '<table>',
+                '<tpl if="values.length !== 0">',
+                    '<thead>',
+                        '<tr>',
+                            '<th class="col-header scoring-domain-col">Scoring Domain</th>',
+                            '<th class="col-header level-col">Rating</th>',
+                        '</tr>',
+                    '</thead>',
+                '</tpl>',
+                '<tbody>',
+                    '<tpl for=".">',
+                        '<tr>',
+                            '<td class="scoring-domain-col">',
+                                '<span class="domain-skill">{skillDescriptor:htmlEncode}</span>',
+                                '<div class="meta">',
+                                    '<span class="domain-competency">{competencyDescriptor:htmlEncode}</span>',
+                                    '<tpl if="teacherTitle">, </tpl>',
+                                    '<span class="domain-teacher">{teacherTitle:htmlEncode}</span>',
+                                '</div>',
+                            '</td>',
+                            '<td class="level-col">',
+                                '<div class="level-color cbl-level-{targetLevel}">',
+                                   '<tpl if="override">',
+                                       '<i class="fa fa-check"></i>',
+                                   '<tpl elseif="demonstratedLevel == 0">',
+                                       'M',
+                                   '<tpl else>',
+                                       '{demonstratedLevel}',
+                                   '</tpl>',
+                               '</div>',
+                            '</td>',
+                        '</tr>',
+                    '</tpl>',
+                    '<tpl if="values.length == 0">',
+                        '<tr>',
+                            '<td>No demonstrations have been logged in this content area.</td>',
+                        '</tr>',
+                    '</tpl>',
+                '</tbody>',
+            '</table>',
         '</div>'
-    ],
-    childEls: [
-        'tableEl'
-    ],
-
-    progressTpl: [
-        '<tpl if="values.progress.length !== 0">',
-            '<thead>',
-                '<tr>',
-                    '<th class="col-header scoring-domain-col">Scoring Domain</th>',
-                    '<th class="col-header level-col">Rating</th>',
-                '</tr>',
-            '</thead>',
-        '</tpl>',
-        '<tbody>',
-            '<tpl for="progress">',
-                '<tr>',
-                    '<td class="scoring-domain-col">',
-                        '<span class="domain-skill">{skillDescriptor:htmlEncode}</span>',
-                        '<div class="meta">',
-                            '<span class="domain-competency">{competencyDescriptor:htmlEncode}<tpl if="teacherTitle">, </tpl></span>',
-                            '<span class="domain-teacher">{teacherTitle:htmlEncode}</span>',
-                        '</div>',
-                    '</td>',
-                    '<td class="level-col">',
-                        '<div class="cbl-level-colored cbl-level-{demonstratedLevel}">', // TODO color with target level, not demo. level
-                           '<tpl if="demonstratedLevel != 0">{demonstratedLevel}<tpl else>M</tpl>',
-                       '</div>',
-                    '</td>',
-                '</tr>',
-            '</tpl>',
-            '<tpl if="values.progress.length == 0">',
-                '<tr>',
-                    '<td>No demonstrations have been logged in this content area.</td>',
-                '</tr>',
-            '</tpl>',
-        '</tbody>'
     ],
 
 
     // config handlers
-    updateLoadStatus: function(newStatus, oldStatus) {
-        if (oldStatus) {
-            this.removeCls('progress-' + oldStatus);
-        }
-
-        if (newStatus) {
-            this.addCls('progress-' + newStatus);
-        }
-    },
-
-    applyRecentProgressStore: function(store) {
+    applyStore: function(store) {
         return Ext.StoreMgr.lookup(store);
     },
 
-    updateRecentProgressStore: function(store) {
+    updateStore: function(store) {
         if (store) {
-            store.on('refresh', 'refreshProgress', this);
+            store.on({
+                scope: this,
+                beforeload: 'onStoreBeforeLoad',
+                load: 'onStoreLoad',
+                refresh: 'onStoreRefresh'
+            });
         }
     },
 
 
-    // template methods
-    onRender: function() {
-        var me = this;
-
-        me.callParent(arguments);
-
-        me.loadProgress();
+    // event handlers
+    onStoreBeforeLoad: function() {
+        this.addCls('is-loading');
+        this.setLoading(true);
     },
 
-
-    // public methods
-    loadProgress: function() {
-        var me = this,
-            studentId = me.getStudentId(),
-            contentAreaId = me.getContentAreaId();
-
-        if (!studentId || !contentAreaId) {
-            throw 'Unable to load progress without studentId and contentAreaId set';
-        }
-
-        me.setLoadStatus('loading');
-
-        me.getRecentProgressStore().loadByStudentAndContentArea(studentId, contentAreaId);
+    onStoreLoad: function() {
+        this.removeCls('is-loading');
+        this.setLoading(false);
     },
 
-    refreshProgress: function() {
+    onStoreRefresh: function() {
         var me = this;
 
-        me.lookupTpl('progressTpl').overwrite(me.tableEl, {
-            progress: Ext.pluck(me.getRecentProgressStore().getRange(), 'data')
-        });
-
-        me.setLoadStatus('loaded');
+        me.update(Ext.pluck(me.getStore().getRange(), 'data'));
     }
 });

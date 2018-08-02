@@ -1,29 +1,11 @@
 Ext.define('SlateTasksTeacher.store.StudentTasks', {
-    extend: 'Ext.data.Store',
-    requires: [
-        'Slate.proxy.Records'
-    ],
+    extend: 'Slate.cbl.store.tasks.StudentTasks',
 
-    model: 'Slate.cbl.model.StudentTask',
-    remoteFilter: true,
-    remoteSort: true,
-    pageSize: 0,
-
-    proxy: {
-        type: 'slate-records',
-        url: '/cbl/student-tasks',
-        include: 'Attachments.File,Comments,Skills,Student,TaskSkills,Submissions'
-    },
 
     config: {
-        courseSection: null
-    },
-
-    updateCourseSection: function(courseSection) {
-        var me = this;
-
-        me.getProxy().setExtraParam('course_section', courseSection);
-
-        return me;
+        proxy: {
+            type: 'slate-cbl-studenttasks',
+            relatedTable: ['Task']
+        }
     }
 });

@@ -1,4 +1,4 @@
-/* global Slate *//* eslint new-cap: 0 */
+/* global google, gapi */
 /**
  * The Tasks controller manages the student task list and the task details pop-up.
  */
@@ -6,38 +6,34 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.window.Toast',
+
+        /* global Slate */
+        'Slate.API',
         'Slate.cbl.util.Google'
     ],
 
 
     // dependencies
     views: [
-        'TaskTree',
-        'TaskDetails',
-        'TaskFilters'
+        'TaskDetails'
     ],
 
     stores: [
-        'StudentTasks'
+        'Tasks'
     ],
 
 
     // component references
     refs: {
+        dashboard: 'slate-tasks-student-dashboard',
+
         taskTree: {
-            selector: 'slatetasksstudent-tasktree',
+            selector: 'slate-tasks-student-tasktree',
             autoCreate: true,
 
-            xtype: 'slatetasksstudent-tasktree'
+            xtype: 'slate-tasks-student-tasktree'
         },
-        taskDetails: {
-            selector: 'slate-taskdetails',
-            autoCreate: true,
-
-            xtype: 'slate-taskdetails'
-        },
-        filterMenu: 'button#filter menu',
-        taskForm: 'slate-taskdetails slate-modalform',
+        filterMenu: 'slate-tasks-student-taskfiltersmenu',
         parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
         ratingView: 'slate-modalform slate-ratingview',
         taskAttachmentsList: 'slate-modalform slate-attachmentslist#task-attachments',
@@ -47,16 +43,26 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         // attachmentsTextField: 'slate-tasks-attachmentsfield textfield',
         // addLinkButton: 'slate-tasks-attachmentsfield button[action=addlink]',
         // addAttachmentButton: 'slate-tasks-attachmentsfield button[action=addattachment]',
-        submitButton: 'slate-taskdetails button#submit',
-        studentAttachmentsField: 'slate-tasks-attachmentsfield#student-attachments'
+
+        taskDetails: {
+            selector: 'slate-tasks-student-taskdetails',
+            autoCreate: true,
+
+            xtype: 'slate-tasks-student-taskdetails'
+        },
+        taskForm: 'slate-tasks-student-taskdetails slate-modalform',
+        submitButton: 'slate-tasks-student-taskdetails button#submit'
     },
 
 
     // entry points
     control: {
-        'slatetasksstudent-tasktree': {
-            itemclick: 'onTaskTreeItemClick',
-            coursesectionchange: 'onTaskTreeCourseSectionChange'
+        dashboard: {
+            studentchange: 'onStudentChange',
+            sectionchange: 'onSectionChange'
+        },
+        taskTree: {
+            itemclick: 'onTaskTreeItemClick'
         },
         submitButton: {
             click: 'onSubmitButtonClick'
@@ -64,36 +70,35 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         studentAttachmentsField: {
             addgoogleattachment: 'onAddGoogleAttachmentClick'
         },
-        'button#filter menucheckitem': {
+        'slate-tasks-student-taskfiltersmenu menucheckitem': {
             checkchange: 'onFilterItemCheckChange'
         },
-        'button#filter button#view-all': {
+        'slate-tasks-student-taskfiltersmenu button#view-all': {
             click: 'onFilterViewAllClick'
-        }
-    },
-
-    listen: {
-        store: {
-            '#StudentTasks': {
-                beforeload: 'onStudentTasksStoreBeforeLoad',
-                load: 'onStudentTasksStoreLoad'
-            }
         }
     },
 
 
     // event handlers
-    onStudentTasksStoreBeforeLoad: function() {
-        this.getTaskTree().mask('Loading Tasks');
+    onStudentChange: function(dashboardCt, studentUsername) {
+        var tasksStore = this.getTasksStore();
+
+        this.getTaskTree().setReadOnly(studentUsername !== false);
+
+        tasksStore.setStudent(studentUsername);
+        tasksStore.loadIfDirty();
     },
 
-    onStudentTasksStoreLoad: function(store) {
-        this.displayTaskData(store.getRange(), true);
+    onSectionChange: function(dashboardCt, sectionCode) {
+        var tasksStore = this.getTasksStore();
+
+        tasksStore.setSection(sectionCode);
+        tasksStore.loadIfDirty();
     },
 
-    onTaskTreeItemClick: function(id) {
+    // TODO: audit and optimize
+    onTaskTreeItemClick: function(tasksTree, rec) {
         var me = this,
-            rec = me.getStudentTasksStore().getById(id),
             details = me.getTaskDetails(),
             form = me.getTaskForm(),
             ratingView = me.getRatingView(),
@@ -137,6 +142,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         details.show();
     },
 
+    // TODO: audit and optimize
     onSubmitButtonClick: function() {
         var me = this,
             taskDetails = me.getTaskDetails(),
@@ -151,31 +157,32 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 return true;
             });
 
-        taskDetails.mask('Submitting&hellip;');
+        taskDetails.setLoading('Submitting&hellip;');
         Slate.API.request({
-            url: Slate.API.buildUrl('/cbl/student-tasks/submit'),
+            url: '/cbl/student-tasks/submit',
             jsonData: {
                 ID: record.get('ID'),
                 Attachments: studentTaskAttachments
             },
             success: function() {
                 Ext.toast('Task successfully submitted!');
-                me.getStudentTasksStore().reload();
-                me.getTaskDetails().close();
+                me.getTasksStore().reload();
+                taskDetails.close();
             },
             failure: function() {
-                taskDetails.unmask();
+                taskDetails.setLoading(false);
                 Ext.toast('Task could not be submitted.');
             }
         });
     },
 
+    // TODO: audit and optimize
     onFilterItemCheckChange: function() {
         var me = this,
             menu = me.getFilterMenu(),
             statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
             timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
-            store = me.getStudentTasksStore(),
+            store = me.getTasksStore(),
             recs = store.getRange(),
             recLength = recs.length,
             i = 0,
@@ -186,16 +193,16 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
         }
 
-        me.displayTaskData(store.getRange());
-
+        me.getTaskTree().refresh();
     },
 
+    // TODO: audit and optimize
     onFilterViewAllClick: function() {
         var me = this,
             menu = me.getFilterMenu(),
             checkedFilters = menu.query('menucheckitem[checked]'),
             checkedFiltersLength = checkedFilters.length,
-            store = this.getStudentTasksStore(),
+            store = this.getTasksStore(),
             recs = store.getRange(),
             recLength = recs.length,
             i = 0;
@@ -208,26 +215,10 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             recs[i].set('filtered', false);
         }
 
-        me.displayTaskData(store.getRange());
+        me.getTaskTree().refresh();
     },
 
-    onTaskTreeCourseSectionChange: function(taskTree, courseSectionId) {
-        var student = taskTree.getStudent(),
-            params = {};
-
-        if (courseSectionId) {
-            params.course_section = courseSectionId;  // eslint-disable-line camelcase
-        }
-
-        if (student) {
-            params.student = student;
-        }
-
-        this.getStudentTasksStore().load({
-            params: params
-        });
-    },
-
+    // TODO: audit and optimize
     onAddGoogleAttachmentClick: function() {
         var me = this,
             googleUtil = Slate.cbl.util.Google;
@@ -271,6 +262,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
     },
 
+    // TODO: audit and optimize
     openFilePicker: function() {
         var me = this,
             googleUtil = Slate.cbl.util.Google,
@@ -306,7 +298,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                             }
 
                             return new Ext.Promise(function(resolve) {
-                                Ext.Msg.confirm('Clone File', 'This google drive file is currently owned by someone outside of the '+googleUtil.getGoogleAppsDomain() + ' domain. Would you like to clone this document instead?', function(answer) {
+                                Ext.Msg.confirm('Clone File', 'This google drive file is currently owned by someone outside of the '+googleUtil.getDomain() + ' domain. Would you like to clone this document instead?', function(answer) {
                                     if (answer === 'yes') {
                                         resolve(googleUtil.cloneGoogleFile(fileData));
                                     }
@@ -333,6 +325,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             setVisible(true);
     },
 
+    // TODO: audit and optimize
     doAddGoogleFile: function(file, ownerEmail) {
         var me = this,
             attachmentsField = me.getStudentAttachmentsField(),
@@ -381,85 +374,16 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     // custom controller methods
-    displayTaskData: function(recs) {
-        var me = this,
-            tree = me.getTaskTree(),
-            tasks;
-
-        tasks = me.formatTaskData(recs);
-        tree.setData({ tasks: tasks });
-        tree.unmask();
-    },
-
-    formatTaskData: function(recs) {
-        var me = this,
-            parentRecs = me.getParentRecs(recs),
-            parentRecsLength = parentRecs.length,
-            parentRec,
-            tasks = [],
-            task,
-            subTasks,
-            i = 0;
-
-        for (; i<parentRecsLength; i++) {
-            parentRec = parentRecs[i];
-            task = parentRec.getData();
-            subTasks = me.getSubTasks(recs, task.TaskID);
-
-            if (subTasks.length > 0) {
-                task.subtasks = subTasks;
-                parentRec.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
-            }
-            if (!parentRec.get('filtered')) {
-                tasks.push(task);
-            }
-        }
-
-        return tasks;
-    },
-
-    getParentRecs: function(recs) {
-        var recsLength = recs.length,
-            parentRecs = [],
-            i = 0,
-            rec;
-
-        for (; i<recsLength; i++) {
-            rec = recs[i];
-            if (rec.get('ParentTaskID') === null) {
-                parentRecs.push(rec);
-            }
-        }
-
-        return parentRecs;
-    },
-
-    getSubTasks: function(recs, parentId) {
-        var recsLength = recs.length,
-            i = 0,
-            subTasks = [],
-            rec;
-
-        for (; i<recsLength; i++) {
-            rec = recs[i];
-            if (rec.get('ParentTaskID') === parentId && !rec.get('filtered')) {
-                rec.set('ParentTaskTitle', rec.get('Task').ParentTask.Title);
-                subTasks.push(rec.getData());
-            }
-        }
-
-        return subTasks;
-    },
-
     /**
      * Passes a record through a group of filters.
      * @param {Ext.data.Model} rec- The record to be tested.
      * @param {Array} filterGroup - An array of objects with a filter function.
      * @returns {boolean} filtered - true if this rec should be filtered
      */
+    // TODO: audit and optimize
     filterRecord: function(rec, filterGroup) {
         var filterGroupLength = filterGroup.length,
-            filtered = filterGroupLength !== 0,  // if no filters, return false
+            filtered = filterGroupLength !== 0, // if no filters, return false
             i = 0;
 
         for (; i < filterGroupLength; i++) {
@@ -468,5 +392,4 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         return filtered;
     }
-
 });

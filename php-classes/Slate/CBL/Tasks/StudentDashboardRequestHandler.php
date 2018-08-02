@@ -2,15 +2,17 @@
 
 namespace Slate\CBL\Tasks;
 
-use Sencha_App;
-use Sencha_RequestHandler;
+use Emergence\WebApps\SenchaApp;
+use Google\API as GoogleAPI;
 
-class StudentDashboardRequestHandler extends \RequestHandler
+
+class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json',
         'text/csv' => 'csv'
     ];
+
 
     public static function handleRequest()
     {
@@ -29,19 +31,21 @@ class StudentDashboardRequestHandler extends \RequestHandler
 
     public static function handleDashboardRequest()
     {
-        return Sencha_RequestHandler::respond('app/SlateTasksStudent/ext', [
-            'App' => Sencha_App::getByName('SlateTasksStudent'),
-            'mode' => 'production'
-        ]);
+        $GLOBALS['Session']->requireAuthentication();
+
+        return static::sendResponse(SenchaApp::load('SlateTasksStudent')->render(), 'webapps/SlateTasksStudent');
     }
 
     public static function handleBootstrapRequest()
     {
+        $GLOBALS['Session']->requireAuthentication();
+
         return static::respond('bootstrap', [
-            'google' => [
-                 'domain' => \Google\API::$domain,
-                 'developerKey' => \Google\API::$developerKey,
-                 'clientId' => \Google\API::$clientId
+            'user' => $GLOBALS['Session']->Person,
+            'googleApiConfig' => [
+                 'domain' => GoogleAPI::$domain,
+                 'developerKey' => GoogleAPI::$developerKey,
+                 'clientId' => GoogleAPI::$clientId
             ]
         ]);
     }

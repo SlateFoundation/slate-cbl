@@ -6,14 +6,37 @@
 Ext.define('SlateDemonstrationsStudent.Application', {
     extend: 'Ext.app.Application',
     requires: [
-        'Ext.window.MessageBox'
+        'Ext.window.MessageBox',
+
+        /* global Slate */
+        'Slate.API'
     ],
+
 
     name: 'SlateDemonstrationsStudent',
+    defaultToken: 'me',
 
     controllers: [
-        'Dashboard'
+        'Dashboard',
+        'RecentProgress',
+        'Skills'
     ],
+
+    launch: function() {
+        var me = this;
+
+        // load bootstrap data
+        Slate.API.request({
+            method: 'GET',
+            url: '/cbl/dashboards/demonstrations/student/bootstrap',
+            params: {
+                include: 'Wards'
+            },
+            success: function(response) {
+                me.fireEvent('bootstrapdataload', me, response.data);
+            }
+        });
+    },
 
     onAppUpdate: function () {
         Ext.Msg.confirm('Application Update', 'This application has an update, reload?',

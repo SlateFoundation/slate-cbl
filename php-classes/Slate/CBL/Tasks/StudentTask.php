@@ -2,12 +2,12 @@
 
 namespace Slate\CBL\Tasks;
 
+
 use Emergence\People\Person;
 use Emergence\Comments\Comment;
-use Slate\People\Student;
-use Slate\Courses\Section;
-use Slate\CBL\StudentCompetency;
+
 use Slate\CBL\Skill;
+use Slate\CBL\StudentCompetency;
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\ExperienceDemonstration;
 
@@ -15,33 +15,22 @@ class StudentTask extends \VersionedRecord
 {
     public static $rateExpiredMissing = false;
 
+
+    //VersionedRecord configuration
     public static $historyTable = 'history_cbl_student_tasks';
 
-    public static $tableName = 'cbl_student_tasks';
 
+    // ActiveRecord configuration
+    public static $tableName = 'cbl_student_tasks';
     public static $singularNoun = 'student task';
     public static $pluralNoun = 'student tasks';
-
     public static $collectionRoute = '/cbl/student-tasks';
+
 
     public static $fields = [
         'TaskID' => 'uint',
         'StudentID' => 'uint',
-        'SectionID' => [
-            'type' => 'uint',
-            'default' => null
-        ],
-        'ExperienceType' => [
-            'default' => null
-        ],
-        'DueDate' => [
-            'type' => 'timestamp',
-            'default' => null
-        ],
-        'ExpirationDate' => [
-            'type' => 'timestamp',
-            'default' => null
-        ],
+
         'TaskStatus' => [
             'type' => 'enum',
             'notnull' => true,
@@ -50,6 +39,16 @@ class StudentTask extends \VersionedRecord
         ],
         'DemonstrationID' => [
             'type' => 'uint',
+            'default' => null
+        ],
+
+        // Task fields that can be overridden
+        'DueDate' => [
+            'type' => 'timestamp',
+            'default' => null
+        ],
+        'ExpirationDate' => [
+            'type' => 'timestamp',
             'default' => null
         ]
     ];
@@ -64,10 +63,6 @@ class StudentTask extends \VersionedRecord
             'type' => 'one-one',
             'local' => 'StudentID',
             'class' => Person::class
-        ],
-        'Section' => [
-            'type' => 'one-one',
-            'class' => Section::class
         ],
         'Comments' => [
             'type' => 'context-children',
@@ -100,21 +95,21 @@ class StudentTask extends \VersionedRecord
     public static $dynamicFields = array(
         'Task',
         'Student',
-        'Section',
         'SkillRatings',
         'Comments',
         'Attachments',
         'Submissions',
-        'StudentName' => [
-            'getter' => 'getStudentName'
-        ],
-        'TaskSkills' => [
-            'getter' => 'getTaskSkills'
-        ],
+        // 'StudentName' => [
+        //     'getter' => 'getStudentName'
+        // ],
+        // 'TaskSkills' => [
+        //     'getter' => 'getTaskSkills'
+        // ],
         'Skills',
-        'Submitted' => [
-            'getter' => 'getSubmissionTimestamp'
-        ]
+        'Demonstration'
+        // 'Submitted' => [
+        //     'getter' => 'getSubmissionTimestamp'
+        // ]
     );
 
     public static $indexes = [
@@ -125,128 +120,110 @@ class StudentTask extends \VersionedRecord
     ];
 
     public static $validators = [
-        'Task' => [
-            'validator' => 'require-relationship'
-        ],
-
-        'Student' => [
-            'validator' => [__CLASS__, 'validateStudent']
-        ],
-
-        'Section' => [
-            'validator' => 'require-relationship'
-        ]
+        'Task' => 'require-relationship',
+        'Student' => 'require-relationship'
     ];
 
     public static $searchConditions = [
         'Task' => [
-            'qualifiers' => ['task', 'task_id', 'taskid'],
+            'qualifiers' => ['task'],
             'points' => 2,
             'sql' => 'TaskID = %u'
         ],
         'Student' => [
-            'qualifiers' => ['student', 'student_id', 'studentid'],
+            'qualifiers' => ['student'],
             'points' => 2,
             'sql' => 'StudentID = %u'
         ]
     ];
 
-    public function getValue($name)
-    {
-        switch ($name) {
-            case 'AllSkills':
-                return $this->Skills + ($this->Task ? $this->Task->Skills : []);
 
-            default:
-                return parent::getValue($name);
-        }
-    }
+    // TODO: delete all this?
+    // public function getValue($name)
+    // {
+    //     switch ($name) {
+    //         case 'AllSkills':
+    //             return $this->Skills + ($this->Task ? $this->Task->Skills : []);
 
-    protected static function validateStudent(\RecordValidator $RecordValidator, StudentTask $StudentTask, $options, $validator)
-    {
-        if (!$RecordValidator->hasErrors('Student')) {
-            if (!$StudentTask->Student) {
-                $RecordValidator->addError('Student', 'Tasks must be assigned to a student.');
-            } elseif (!$StudentTask->Student instanceof \Slate\People\Student) {
-                $RecordValidator->addError('Student', 'Tasks can only be assigned to students.');
-            }
-        }
-    }
+    //         default:
+    //             return parent::getValue($name);
+    //     }
+    // }
 
-    public function getStudentName()
-    {
-        return $this->Student->FullName;
-    }
+    // public function getStudentName()
+    // {
+    //     return $this->Student->FullName;
+    // }
 
-    public function getTaskSkills()
-    {
-        // todo: use a UI-centric api endpoint instead of dynamic fields
-        $taskSkills = [];
-        $demoSkillIds = [];
-        $demoSkills = $this->Demonstration ? $this->Demonstration->Skills : [];
-        foreach ($demoSkills as $demoSkill) {
-            $demoSkillIds[$demoSkill->SkillID] = $demoSkill;
-        }
+    // public function getTaskSkills()
+    // {
+    //     // todo: use a UI-centric api endpoint instead of dynamic fields
+    //     $taskSkills = [];
+    //     $demoSkillIds = [];
+    //     $demoSkills = $this->Demonstration ? $this->Demonstration->Skills : [];
+    //     foreach ($demoSkills as $demoSkill) {
+    //         $demoSkillIds[$demoSkill->SkillID] = $demoSkill;
+    //     }
 
-        if ($this->Task && $this->Task->Skills) {
-            foreach ($this->Task->Skills as $skill) {
-                $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
-                $DemonstrationSkill = $demoSkillIds[$skill->ID];
+    //     if ($this->Task && $this->Task->Skills) {
+    //         foreach ($this->Task->Skills as $skill) {
+    //             $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
+    //             $DemonstrationSkill = $demoSkillIds[$skill->ID];
 
-                $taskSkills[] = array_merge($skill->getData(), [
-                    'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
-                    'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
-                    'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-                    'Rating' => $DemonstrationSkill ? $DemonstrationSkill->DemonstratedLevel : null,
-                    'Level' => $DemonstrationSkill ? $DemonstrationSkill->TargetLevel : null
-                ]);
-            }
-        }
+    //             $taskSkills[] = array_merge($skill->getData(), [
+    //                 'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
+    //                 'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
+    //                 'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
+    //                 'Rating' => $DemonstrationSkill ? $DemonstrationSkill->DemonstratedLevel : null,
+    //                 'Level' => $DemonstrationSkill ? $DemonstrationSkill->TargetLevel : null
+    //             ]);
+    //         }
+    //     }
 
-        if ($this->Skills) {
-            foreach ($this->Skills as $skill) {
-                $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
-                $DemonstrationSkill = $demoSkillIds[$skill->ID];
+    //     if ($this->Skills) {
+    //         foreach ($this->Skills as $skill) {
+    //             $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
+    //             $DemonstrationSkill = $demoSkillIds[$skill->ID];
 
-                $taskSkills[] = array_merge($skill->getData(), [
-                    'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
-                    'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
-                    'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-                    'Rating' => $DemonstrationSkill ? $DemonstrationSkill->DemonstratedLevel : null,
-                    'Level' => $DemonstrationSkill ? $DemonstrationSkill->TargetLevel : null
-                ]);
-            }
-        }
+    //             $taskSkills[] = array_merge($skill->getData(), [
+    //                 'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
+    //                 'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
+    //                 'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
+    //                 'Rating' => $DemonstrationSkill ? $DemonstrationSkill->DemonstratedLevel : null,
+    //                 'Level' => $DemonstrationSkill ? $DemonstrationSkill->TargetLevel : null
+    //             ]);
+    //         }
+    //     }
 
-        return $taskSkills;
-    }
+    //     return $taskSkills;
+    // }
 
-    public function getDemonstration($autoCreate = true)
-    {
-        if (!$demonstration = $this->Demonstration && $autoCreate === true) {
-            $demonstration = ExperienceDemonstration::create([
-                'StudentID' => $this->StudentID,
-                'PerformanceType' => $this->Task->Title,
-                'Context' => $this->Section->Title,
-                'ExperienceType' => $this->ExperienceType,
-                'CreatorID' => $this->CreatorID
-            ], true);
+    // public function getDemonstration($autoCreate = true)
+    // {
+    //     if (!$demonstration = $this->Demonstration && $autoCreate === true) {
+    //         $demonstration = ExperienceDemonstration::create([
+    //             'StudentID' => $this->StudentID,
+    //             'PerformanceType' => $this->Task->Title,
+    //             'Context' => $this->Task->Section->Title,
+    //             'ExperienceType' => $this->ExperienceType,
+    //             'CreatorID' => $this->CreatorID
+    //         ], true);
 
-            $this->DemonstrationID = $demonstration->ID;
-            $this->save(false);
-        }
+    //         $this->DemonstrationID = $demonstration->ID;
+    //         $this->save(false);
+    //     }
 
-        return $this->Demonstration;
-    }
+    //     return $this->Demonstration;
+    // }
 
-    public function getSubmissionTimestamp()
-    {
-        $timestamp = null;
-        if (!empty($this->Submissions)) {
-            $submission = end($this->Submissions);
-            $timestamp = $submission->Created;
-        }
+    // public function getSubmissionTimestamp()
+    // {
+    //     $timestamp = null;
+    //     if (!empty($this->Submissions)) {
+    //         $submission = end($this->Submissions);
+    //         $timestamp = $submission->Created;
+    //     }
 
-        return $timestamp;
-    }
+    //     return $timestamp;
+    // }
 }

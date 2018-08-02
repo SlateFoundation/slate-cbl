@@ -2,20 +2,20 @@
 
 namespace Slate\CBL\Tasks;
 
-use Sencha_App;
-use Sencha_RequestHandler;
+use Emergence\WebApps\SenchaApp;
+use Google\API as GoogleAPI;
 
-class TeacherDashboardRequestHandler extends \RequestHandler
+
+class TeacherDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json',
         'text/csv' => 'csv'
     ];
 
+
     public static function handleRequest()
     {
-        $GLOBALS['Session']->requireAccountLevel('Staff');
-
         switch (static::shiftPath()) {
             case '':
             case false:
@@ -31,20 +31,41 @@ class TeacherDashboardRequestHandler extends \RequestHandler
 
     public static function handleDashboardRequest()
     {
-        return Sencha_RequestHandler::respond('app/SlateTasksTeacher/ext', [
-            'App' => Sencha_App::getByName('SlateTasksTeacher'),
-            'mode' => 'production'
-        ]);
+        $GLOBALS['Session']->requireAccountLevel('Staff');
+
+        return static::sendResponse(SenchaApp::load('SlateTasksTeacher')->render(), 'webapps/SlateTasksTeacher');
     }
 
     public static function handleBootstrapRequest()
     {
+        $GLOBALS['Session']->requireAccountLevel('Staff');
+
+        $taskFields = [];
+
+        foreach (Task::aggregateStackedConfig('fields') as $field => $config) {
+            if (
+                isset($config['default'])
+                && !(
+                    $config['type'] == 'timestamp'
+                    && $config['default'] == 'CURRENT_TIMESTAMP'
+                )
+            ) {
+                $taskFields[$field]['default'] = $config['default'];
+            }
+
+            if (!empty($config['values'])) {
+                $taskFields[$field]['values'] = $config['values'];
+            }
+        }
+
         return static::respond('bootstrap', [
-            'google' => [
-                 'domain' => \Google\API::$domain,
-                 'developerKey' => \Google\API::$developerKey,
-                 'clientId' => \Google\API::$clientId
-            ]
+            'user' => $GLOBALS['Session']->Person,
+            'googleApiConfig' => [
+                 'domain' => GoogleAPI::$domain,
+                 'developerKey' => GoogleAPI::$developerKey,
+                 'clientId' => GoogleAPI::$clientId
+            ],
+            'taskFields' => $taskFields
         ]);
     }
 }

@@ -2,248 +2,288 @@
 
 namespace Slate\CBL\Tasks;
 
+
 use DB;
 use JSON;
+use Emergence\Comments\Comment;
 
-use Slate\People\Student;
+use Slate\People\PeopleRequestHandler;
+use Slate\Courses\SectionsRequestHandler;
+
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
-use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
-use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
-use Slate\Courses\SectionsRequestHandler;
-use Emergence\People\PeopleRequestHandler;
-use Emergence\Comments\Comment;
+
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
+
+use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
+use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
+
 
 class StudentTasksRequestHandler extends \RecordsRequestHandler
 {
     public static $recordClass =  StudentTask::class;
     public static $accountLevelBrowse = 'User';
 
-    public static function handleRecordsRequest($action = false)
-    {
-        switch ($action = $action ?: static::shiftPath()) {
-            case 'assigned':
-                return static::handleAssignedRequest();
-
-            // TODO: re-implement endpoint RE: https://jarvus.atlassian.net/browse/CBL-215
-            case 'submit':
-                return static::handleStudentTaskSubmissionRequest();
-            default:
-                return parent::handleRecordsRequest($action);
-        }
-    }
-
-
-    public static function handleRecordRequest(\ActiveRecord $Record, $action = false)
-    {
-        switch ($action = $action ?: static::shiftPath()) {
-            case 'rate':
-                return static::handleRateSkillRequest($Record);
-            default:
-                return parent::handleRecordRequest($Record, $action);
-        }
-    }
-
-    public static function handleAssignedRequest($options = [], $conditions = [])
-    {
-        $student = static::_getRequestedStudent();
-
-        $conditions['StudentID'] = $student->ID;
-
-        return static::handleBrowseRequest($options, $conditions);
-
-    }
 
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
     {
-        $student = static::_getRequestedStudent();
-        $courseSection = static::_getRequestedCourseSection();
-
-        if ($courseSection) {
-            $conditions['SectionID'] = $courseSection->ID;
+        // apply student filter
+        if ($Student = static::_getRequestedStudent()) {
+            $conditions['StudentID'] = $Student->ID;
+            $responseData['Student'] = $Student;
         }
+
+
+        // apply task or course_section filter
+        if (!empty($_REQUEST['task'])) {
+            if (!$Task = TasksRequestHandler::getRecordByHandle($_REQUEST['task'])) {
+                return static::throwInvalidRequestError('Task not found');
+            }
+
+            $conditions['TaskID'] = $Task->ID;
+            $responseData['Task'] = $Task;
+        } elseif (!empty($_REQUEST['course_section'])) {
+            if (!$Section = SectionsRequestHandler::getRecordByHandle($_REQUEST['course_section'])) {
+                return static::throwInvalidRequestError('Course section not found');
+            }
+
+            $conditions['TaskID'] = [
+                'values' => DB::allValues('ID', 'SELECT ID FROM `%s` WHERE SectionID = %u', [ Task::$tableName, $Section->ID ])
+            ];
+            $responseData['CourseSection'] = $Section;
+        }
+
 
         return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
     }
 
-    public static function handleRateSkillRequest(StudentTask $StudentTask)
-    {
-        // collect input
-        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            return static::throwInvalidRequestError('POST required');
-        }
+    // public static function handleRecordsRequest($action = false)
+    // {
+    //     switch ($action = $action ?: static::shiftPath()) {
+    //         // TODO: re-implement as query params on browse endpoint
+    //         case 'assigned':
+    //             return static::handleAssignedRequest();
 
-        $requestData = JSON::getRequestData() ?: $_POST;
-
-
-        // validate request
-        if (empty($requestData['SkillID'])) {
-            return static::throwError('SkillID required');
-        }
-
-        if (!array_key_exists('Rating', $requestData)) {
-            return static::throwError('Rating required');
-        }
-
-        if (!$Skill = Skill::getByHandle($requestData['SkillID'])) {
-            return static::throwError('Skill "%s" not found', $requestData['SkillID']);
-        }
-
-        if (!$StudentCompetency = StudentCompetency::getCurrentForStudent($StudentTask->Student, $Skill->Competency)) {
-            return static::throwError('Student %s not enrolled in competency %s', $StudentTask->Student->Username, $Skill->Competency->Code);
-        }
+    //         // TODO: re-implement endpoint RE: https://jarvus.atlassian.net/browse/CBL-215
+    //         case 'submit':
+    //             return static::handleStudentTaskSubmissionRequest();
+    //         default:
+    //             return parent::handleRecordsRequest($action);
+    //     }
+    // }
 
 
-        // load existing data
-        $Demonstration = $StudentTask->getDemonstration();
+    // public static function handleRecordRequest(\ActiveRecord $Record, $action = false)
+    // {
+    //     switch ($action = $action ?: static::shiftPath()) {
+    //         case 'rate':
+    //             return static::handleRateSkillRequest($Record);
+    //         default:
+    //             return parent::handleRecordRequest($Record, $action);
+    //     }
+    // }
 
-        $DemonstrationSkill = DemonstrationSkill::getByWhere([
-            'DemonstrationID' => $Demonstration->ID,
-            'SkillID' => $Skill->ID
-        ]);
+    // public static function handleAssignedRequest($options = [], $conditions = [])
+    // {
+    //     $student = static::_getRequestedStudent();
+
+    //     $conditions['StudentID'] = $student->ID;
+
+    //     return static::handleBrowseRequest($options, $conditions);
+
+    // }
+
+    // public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
+    // {
+    //     $student = static::_getRequestedStudent();
+    //     $courseSection = static::_getRequestedCourseSection();
+
+    //     if ($courseSection) {
+    //         $conditions['TaskID'] = [
+    //             'values' => DB::allValues('ID', 'SELECT ID FROM `%s` WHERE SectionID = %u', [Task::$tableName, $courseSection->ID])
+    //         ];
+    //     }
+
+    //     return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
+    // }
+
+    // public static function handleRateSkillRequest(StudentTask $StudentTask)
+    // {
+    //     // collect input
+    //     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    //         return static::throwInvalidRequestError('POST required');
+    //     }
+
+    //     $requestData = JSON::getRequestData() ?: $_POST;
 
 
-        // destroy or update record
-        if ($requestData['Rating'] === null) {
-            if ($DemonstrationSkill) {
-                $DemonstrationSkill->destroy();
-            }
-        } else {
-            if (!$DemonstrationSkill) {
-                $DemonstrationSkill = DemonstrationSkill::create([
-                    'DemonstrationID' => $Demonstration->ID,
-                    'SkillID' => $Skill->ID,
-                    'TargetLevel' => $StudentCompetency->Level
-                ]);
-            }
+    //     // validate request
+    //     if (empty($requestData['SkillID'])) {
+    //         return static::throwError('SkillID required');
+    //     }
 
-            $DemonstrationSkill->DemonstratedLevel = $requestData['Rating'];
-            $DemonstrationSkill->save(false);
-        }
+    //     if (!array_key_exists('Rating', $requestData)) {
+    //         return static::throwError('Rating required');
+    //     }
+
+    //     if (!$Skill = Skill::getByHandle($requestData['SkillID'])) {
+    //         return static::throwError('Skill "%s" not found', $requestData['SkillID']);
+    //     }
+
+    //     if (!$StudentCompetency = StudentCompetency::getCurrentForStudent($StudentTask->Student, $Skill->Competency)) {
+    //         return static::throwError('Student %s not enrolled in competency %s', $StudentTask->Student->Username, $Skill->Competency->Code);
+    //     }
 
 
-        // return response with full StudentTask supplemental record
-        return static::respond('ratingUpdated', [
-            'success' => true,
-            'data' => $DemonstrationSkill,
-            'StudentTask' => $StudentTask
-        ]);
-    }
+    //     // load existing data
+    //     $Demonstration = $StudentTask->getDemonstration();
 
-    public static function handleStudentTaskSubmissionRequest()
-    {
-        $_REQUEST = JSON::getRequestData();
+    //     $DemonstrationSkill = DemonstrationSkill::getByWhere([
+    //         'DemonstrationID' => $Demonstration->ID,
+    //         'SkillID' => $Skill->ID
+    //     ]);
 
-        if ($_REQUEST) {
-            $StudentTask = static::getRecordByHandle($_REQUEST['ID']);
-        }
 
-        static::setStudentTaskAttachments($StudentTask, $_REQUEST);
-        if (!empty($StudentTask->Submissions) || $StudentTask->TaskStatus == 're-assigned') {
-            $StudentTask->TaskStatus = 're-submitted';
-        } else {
-            $StudentTask->TaskStatus = 'submitted';
-        }
+    //     // destroy or update record
+    //     if ($requestData['Rating'] === null) {
+    //         if ($DemonstrationSkill) {
+    //             $DemonstrationSkill->destroy();
+    //         }
+    //     } else {
+    //         if (!$DemonstrationSkill) {
+    //             $DemonstrationSkill = DemonstrationSkill::create([
+    //                 'DemonstrationID' => $Demonstration->ID,
+    //                 'SkillID' => $Skill->ID,
+    //                 'TargetLevel' => $StudentCompetency->Level
+    //             ]);
+    //         }
 
-        $StudentTask->save();
+    //         $DemonstrationSkill->DemonstratedLevel = $requestData['Rating'];
+    //         $DemonstrationSkill->save(false);
+    //     }
 
-        $StudentTaskSubmission = new StudentTaskSubmission();
-        $StudentTaskSubmission->StudentTaskID = $StudentTask->ID;
-        $StudentTaskSubmission->save();
 
-        return static::respond('submitted', [
-            'data' => $StudentTask,
-            'success' => true,
-        ]);
-    }
+    //     // return response with full StudentTask supplemental record
+    //     return static::respond('ratingUpdated', [
+    //         'success' => true,
+    //         'data' => $DemonstrationSkill,
+    //         'StudentTask' => $StudentTask
+    //     ]);
+    // }
 
-    public static function setStudentTaskAttachments(StudentTask $Record, $requestData)
-    {
+    // public static function handleStudentTaskSubmissionRequest()
+    // {
+    //     $_REQUEST = JSON::getRequestData();
 
-        $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
+    //     if ($_REQUEST) {
+    //         $StudentTask = static::getRecordByHandle($_REQUEST['ID']);
+    //     }
 
-        $attachments = [];
-        if (isset($requestData['Attachments'])) {
-            foreach ($requestData['Attachments'] as $attachmentData) {
-                $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
-                if ($attachmentData['ID'] >= 1) {
-                    if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
-                        $failed[] = $attachmentData;
-                        continue;
-                    }
+    //     static::setStudentTaskAttachments($StudentTask, $_REQUEST);
+    //     if (!empty($StudentTask->Submissions) || $StudentTask->TaskStatus == 're-assigned') {
+    //         $StudentTask->TaskStatus = 're-submitted';
+    //     } else {
+    //         $StudentTask->TaskStatus = 'submitted';
+    //     }
 
-                    if (!empty($attachmentData['Status']) && in_array($attachmentData['Status'], $defaultAttachmentClass::getFieldOptions('Status', 'values'))) {
-                         $Attachment->Status = $attachmentData['Status'];
-                     }
-                } else {
-                    $Attachment = $attachmentClass::create($attachmentData);
-                }
+    //     $StudentTask->save();
 
-                if ($Attachment instanceof Attachments\GoogleDriveFile) {
-                    if (!$Attachment->File) {
-                        if (!$File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
-                            $File = \Google\DriveFile::create($attachmentData['File']);
-                            if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
-                                $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
-                            }
-                        }
-                        $Attachment->File = $File;
-                    } else if ($Attachment->File->isPhantom && $File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
-                        $Attachment->File = $File;
-                    }
-                }
+    //     $StudentTaskSubmission = new StudentTaskSubmission();
+    //     $StudentTaskSubmission->StudentTaskID = $StudentTask->ID;
+    //     $StudentTaskSubmission->save();
 
-                $Attachment->Context = $Record;
-                $attachments[] = $Attachment;
-            }
+    //     return static::respond('submitted', [
+    //         'data' => $StudentTask,
+    //         'success' => true,
+    //     ]);
+    // }
 
-            $Record->Attachments = $attachments;
-        }
+    // public static function setStudentTaskAttachments(StudentTask $Record, $requestData)
+    // {
 
-    }
+    //     $defaultAttachmentClass = AbstractTaskAttachment::$defaultClass;
 
-    public static function onRecordSaved(\ActiveRecord $Record, $data)
-    {
+    //     $attachments = [];
+    //     if (isset($requestData['Attachments'])) {
+    //         foreach ($requestData['Attachments'] as $attachmentData) {
+    //             $attachmentClass = $attachmentData['Class'] ?: $defaultAttachmentClass;
+    //             if ($attachmentData['ID'] >= 1) {
+    //                 if (!$Attachment = $attachmentClass::getByID($attachmentData['ID'])) {
+    //                     $failed[] = $attachmentData;
+    //                     continue;
+    //                 }
 
-        if (is_array($data) && isset($data['Comment'])) {
-            Comment::create([
-                'ContextClass' => $Record->getRootClass(),
-                'ContextID' => $Record->ID,
-                'Message' => $data['Comment']
-            ], true);
-        }
+    //                 if (!empty($attachmentData['Status']) && in_array($attachmentData['Status'], $defaultAttachmentClass::getFieldOptions('Status', 'values'))) {
+    //                      $Attachment->Status = $attachmentData['Status'];
+    //                  }
+    //             } else {
+    //                 $Attachment = $attachmentClass::create($attachmentData);
+    //             }
 
-         //update skills
-        if (isset($data['SkillIDs'])) {
-            $originalSkills = $Record->Skills;
-            $originalSkillIds = array_map(function($s) {
-                return $s->ID;
-            }, $originalSkills);
+    //             if ($Attachment instanceof Attachments\GoogleDriveFile) {
+    //                 if (!$Attachment->File) {
+    //                     if (!$File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
+    //                         $File = \Google\DriveFile::create($attachmentData['File']);
+    //                         if (!$File->OwnerEmail && $GLOBALS['Session']->Person && $GLOBALS['Session']->Person->PrimaryEmail) {
+    //                             $File->OwnerEmail = $GLOBALS['Session']->Person->PrimaryEmail->toString();
+    //                         }
+    //                     }
+    //                     $Attachment->File = $File;
+    //                 } else if ($Attachment->File->isPhantom && $File = \Google\DriveFile::getByField('DriveID', $attachmentData['File']['DriveID'])) {
+    //                     $Attachment->File = $File;
+    //                 }
+    //             }
 
-            $oldSkillIds = array_diff($originalSkillIds, $data['SkillIDs']);
-            $newSkillIds = array_diff($data['SkillIDs'], $originalSkillIds);
+    //             $Attachment->Context = $Record;
+    //             $attachments[] = $Attachment;
+    //         }
 
-            foreach ($newSkillIds as $newSkill) {
-                if (!$taskSkill = TaskSkill::getByWhere(['TaskID' => $Record->Task->ID, 'SkillID' => $newSkill])) { // check if skill is attached to related task first
-                    StudentTaskSkill::create([
-                        'StudentTaskID' => $Record->ID,
-                        'SkillID' => $newSkill
-                    ], true);
-                }
-            }
+    //         $Record->Attachments = $attachments;
+    //     }
 
-            if (!empty($oldSkillIds)) {
+    // }
 
-                DB::nonQuery('DELETE FROM `%s` WHERE StudentTaskID = %u AND SkillID IN ("%s")', [
-                    StudentTaskSkill::$tableName,
-                    $Record->ID,
-                    join('", "', $oldSkillIds)
-                ]);
-            }
-        }
-    }
+    // public static function onRecordSaved(\ActiveRecord $Record, $data)
+    // {
+
+    //     if (is_array($data) && isset($data['Comment'])) {
+    //         Comment::create([
+    //             'ContextClass' => $Record->getRootClass(),
+    //             'ContextID' => $Record->ID,
+    //             'Message' => $data['Comment']
+    //         ], true);
+    //     }
+
+    //      //update skills
+    //     if (isset($data['SkillIDs'])) {
+    //         $originalSkills = $Record->Skills;
+    //         $originalSkillIds = array_map(function($s) {
+    //             return $s->ID;
+    //         }, $originalSkills);
+
+    //         $oldSkillIds = array_diff($originalSkillIds, $data['SkillIDs']);
+    //         $newSkillIds = array_diff($data['SkillIDs'], $originalSkillIds);
+
+    //         foreach ($newSkillIds as $newSkill) {
+    //             if (!$taskSkill = TaskSkill::getByWhere(['TaskID' => $Record->Task->ID, 'SkillID' => $newSkill])) { // check if skill is attached to related task first
+    //                 StudentTaskSkill::create([
+    //                     'StudentTaskID' => $Record->ID,
+    //                     'SkillID' => $newSkill
+    //                 ], true);
+    //             }
+    //         }
+
+    //         if (!empty($oldSkillIds)) {
+
+    //             DB::nonQuery('DELETE FROM `%s` WHERE StudentTaskID = %u AND SkillID IN ("%s")', [
+    //                 StudentTaskSkill::$tableName,
+    //                 $Record->ID,
+    //                 join('", "', $oldSkillIds)
+    //             ]);
+    //         }
+    //     }
+    // }
 
     public static function checkWriteAccess(\ActiveRecord $Record, $suppressLogin = false)
     {
@@ -254,40 +294,28 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         return parent::checkWriteAccess($Record, $suppressLogin);
     }
 
+
+    // TODO: merge into buildBrowseConditions?
     protected static function _getRequestedStudent()
     {
+        if (empty($_REQUEST['student'])) {
+            return null;
+        }
 
-        if (!empty($_GET['student'])) {
-            $Student = PeopleRequestHandler::getRecordByHandle($_GET['student']);
-            $userIsStaff = $GLOBALS['Session']->hasAccountLevel('Staff');
+        $Student = PeopleRequestHandler::getRecordByHandle($_REQUEST['student']);
+        $userIsStaff = $GLOBALS['Session']->hasAccountLevel('Staff');
 
-            if ($Student && !$userIsStaff) {
-                $GuardianRelationship = \Emergence\People\GuardianRelationship::getByWhere([
-                    'PersonID' => $Student->ID,
-                    'RelatedPersonID' => $GLOBALS['Session']->PersonID
-                ]);
-            }
+        if ($Student && !$userIsStaff) {
+            $GuardianRelationship = \Emergence\People\GuardianRelationship::getByWhere([
+                'PersonID' => $Student->ID,
+                'RelatedPersonID' => $GLOBALS['Session']->PersonID
+            ]);
+        }
 
-            if (!$Student || (!$userIsStaff && !$GuardianRelationship)) {
-                return static::throwNotFoundError('Student not found');
-            }
-        } else {
-            $Student = $GLOBALS['Session']->Person;
+        if (!$Student || (!$userIsStaff && !$GuardianRelationship)) {
+            return static::throwNotFoundError('Student not found');
         }
 
         return $Student;
-    }
-
-    protected static function _getRequestedCourseSection()
-    {
-        $CourseSection = null;
-
-        if (!empty($_GET['course_section'])) {
-            if (!$CourseSection = SectionsRequestHandler::getRecordByHandle($_GET['course_section'])) {
-                return static::throwNotFoundError('Course Section not found');
-            }
-        }
-
-        return $CourseSection;
     }
 }

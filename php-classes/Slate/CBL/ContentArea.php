@@ -2,6 +2,9 @@
 
 namespace Slate\CBL;
 
+use DB, Cache, TableNotFoundException;
+
+
 class ContentArea extends \ActiveRecord
 {
     // ActiveRecord configuration
@@ -35,7 +38,18 @@ class ContentArea extends \ActiveRecord
     ];
 
     public static $dynamicFields = [
-        'Competencies'
+        'Competencies' => [
+            'getter' => 'getCompetencies'
+        ],
+        'competencyIds' => [
+            'getter' => 'getCompetencyIds'
+        ],
+    ];
+
+    public static $summaryFields = [
+        'ID' => true,
+        'Code' => true,
+        'Title' => true
     ];
 
     public function getHandle()
@@ -52,6 +66,43 @@ class ContentArea extends \ActiveRecord
         }
 
         return $title;
+    }
+
+    public function getCompetencyIds($forceRefresh = false)
+    {
+        $cacheKey = "cbl-contentarea/$this->ID/competency-ids";
+
+        if (!$forceRefresh && false !== ($competencyIds = Cache::fetch($cacheKey))) {
+            return $competencyIds;
+        }
+
+        try {
+            $competencyIds = array_map('intval', DB::allValues(
+                'ID',
+                'SELECT ID FROM `%s` WHERE ContentAreaID = %u',
+                [
+                    Competency::$tableName,
+                    $this->ID
+                ]
+            ));
+        } catch (TableNotFoundException $e) {
+            $competencyIds = [];
+        }
+
+        Cache::store($cacheKey, $competencyIds);
+
+        return $competencyIds;
+    }
+    
+    public function getCompetencies($forceRefresh = false)
+    {
+        $competencies = [];
+
+        foreach (static::getCompetencyIds($forceRefresh) as $competencyId) {
+            $competencies[] = Competency::getByID($competencyId);
+        }
+
+        return $competencies;
     }
 
     public static function getByHandle($handle)

@@ -3,48 +3,79 @@
  * specific pre-painted container in the design
  */
 Ext.define('SlateTasksStudent.view.Dashboard', {
-    extend: 'Ext.container.Container',
-    xtype: 'slatetasksstudent-dashboard',
+    extend: 'Slate.ui.app.Container',
+    xtype: 'slate-tasks-student-dashboard',
+    requires: [
+        'Ext.layout.container.Column',
 
-    items: [
-        {
-            xtype: 'slatetasksstudent-appheader',
-            style: {
-                border: 'none',
-                padding: '1em 7.5%'
-            }
-        },
-        {
-            // like .site > .inner
-            xtype: 'container',
-            style: {
-                padding: '2em 7.5%'
-            },
+        'SlateTasksStudent.view.TaskTree',
+        'SlateTasksStudent.view.TodoList',
+
+        'Slate.cbl.field.StudentSelector',
+        'Slate.cbl.field.SectionSelector'
+    ],
+
+
+    config: {
+        student: null,
+        section: null,
+
+        header: {
+            title: 'My Tasks',
+
             items: [
                 {
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
-                    },
-                    items: [
-                        {
-                            xtype: 'slatetasksstudent-tasktree',
-                            minHeight: 200,  // need a minimum height for load mask
-                            margin: '0 32 0 0',
-                            flex: 1
-                        }, {
-                            xtype: 'slatetasksstudent-todolist',
-                            flex: 1
-                        }
-                    ]
-                // @todo Unhide task history once it can be populated with live data
-                // },
-                // {
-                //     xtype: 'slate-taskhistory',
-                //     margin: '32 0 0'
+                    xtype: 'slate-cbl-studentselector',
+                    hidden: true,
+                    emptyText: 'Me'
+                },
+                {
+                    xtype: 'slate-cbl-sectionselector',
+                    disabled: true,
+                    store: 'Sections',
+                    queryMode: 'local',
+                    emptyText: 'All'
                 }
+
+                // TODO: Unide recent activity toggle once the RecentActivity.js
+                // view is populated with real data.
+                // '->',
+                // {
+                //     xtype: 'button',
+                //     iconCls: 'x-fa fa-clock-o',
+                //     enableToggle: true,
+                //     action: 'show-recent'
+                // }
             ]
         }
-    ]
+    },
+
+
+    // TODO: remove nesting once appcontainer reports correct width
+    items: [{
+        layout: 'column',
+        defaults: {
+            columnWidth: 0.5
+        },
+        items: [
+            {
+                xtype: 'slate-tasks-student-tasktree',
+                margin: '0 32 0 0',
+                store: 'Tasks'
+            }, {
+                xtype: 'slate-tasks-student-todolist',
+                store: 'Todos'
+            }
+        ]
+    }],
+
+
+    // config handlers
+    updateStudent: function(student, oldStudent) {
+        this.fireEvent('studentchange', this, student, oldStudent);
+    },
+
+    updateSection: function(section, oldSection) {
+        this.fireEvent('sectionchange', this, section, oldSection);
+    }
 });
