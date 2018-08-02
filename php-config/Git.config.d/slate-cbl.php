@@ -2,8 +2,8 @@
 
 Git::$repositories['slate-cbl'] = [
     'remote' => 'https://github.com/SlateFoundation/slate-cbl.git',
-    'originBranch' => 'releases/v2',
-    'workingBranch' => 'releases/v2',
+    'originBranch' => 'releases/v3',
+    'workingBranch' => 'releases/v3',
     'localOnly' => true,
     'trees' => [
         'api-docs/definitions/Slate/CBL',
