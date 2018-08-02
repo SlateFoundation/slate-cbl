@@ -1,5 +1,5 @@
 @keyframes slate-demonstrations-student-competencycard-slidein {
-    from { opacity: 0; transform: translateY(-.5em); }
+    from { opacity: 0; transform: translateY(-.3333em); }
         to { opacity: 1; transform: none; }
 }
 
@@ -11,11 +11,18 @@
     width: 47%;
 
     .explainer {
+        background-color: rgba(white, .4);
+        color: $muted-color;
         font-style: italic;
-        margin: 1em 0;
+        margin: 0;
+        padding: 1em 3em;
 
         p {
             margin: 0 0 1em;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
         }
     }
 
@@ -37,7 +44,7 @@
         th {
             background: none;
             border: 0;
-            color: $muted-color;
+            color: mix($base-color, $muted-color);
             font-size: .75em;
             font-weight: normal;
             letter-spacing: .05em;
@@ -46,7 +53,9 @@
         }
 
         td {
-            padding: 0 0 .5em;
+            color: mix($base-color, $color);
+            font-size: 1.25em;
+            padding: 0 0 (1em/3);
         }
     }
 
@@ -59,7 +68,7 @@
     .cbl-skill {
         border-top: 1px solid $border-color;
         clear: both;
-        padding: 1em;
+        padding: 1em 1em 1.5em;
         position: relative;
 
         &:hover {
@@ -116,12 +125,13 @@
 
     .cbl-skill-description {
         animation: slate-demonstrations-student-competencycard-slidein .2s;
-        background: rgba(white, .95);
+        background: rgba(white, .97);
         border: 1px solid darken($border-color, 10);
         border-top-width: 0;
         box-shadow: 0 1em 1em -1em rgba(black, .4);
         display: none;
         left: -1px;
+        margin-top: -.5em;
         padding: 0 3em 1.5em;
         position: absolute;
         right: -1px;

@@ -4,6 +4,9 @@ Ext.define('Slate.cbl.field.ClearableSelector', {
 
 
     config: {
+        labelAlign: 'right',
+        labelSeparator: '',
+        labelPad: 10,
         triggers: {
             clear: {
                 cls: 'x-form-clear-trigger',

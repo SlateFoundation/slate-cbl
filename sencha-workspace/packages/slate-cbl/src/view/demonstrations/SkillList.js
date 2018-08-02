@@ -46,9 +46,9 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                 '<th class="skill-list-header skill-list-demo-index">&nbsp;</th>',
                 '<th class="skill-list-header skill-list-demo-date">Date</th>',
                 '<th class="skill-list-header skill-list-demo-level">Rating</th>',
-                '<th class="skill-list-header skill-list-demo-experience">Experience Type</th>',
-                '<th class="skill-list-header skill-list-demo-context">Experience Name</th>',
-                '<th class="skill-list-header skill-list-demo-task">Performance&nbsp;Task</th>',
+                '<th class="skill-list-header skill-list-demo-experience">Exp. Type</th>',
+                '<th class="skill-list-header skill-list-demo-context">Exp. Name</th>',
+                '<th class="skill-list-header skill-list-demo-task">Perf. Task</th>',
             '</tr>',
         '</thead>',
 

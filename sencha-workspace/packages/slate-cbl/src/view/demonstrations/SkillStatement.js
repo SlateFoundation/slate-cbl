@@ -1,7 +1,6 @@
 Ext.define('Slate.cbl.view.demonstrations.SkillStatement', {
     extend: 'Ext.Component',
+    componentCls: 'skill-statement',
 
-
-    autoEl: 'p',
-    padding: '5 50 0'
+    autoEl: 'p'
 });
