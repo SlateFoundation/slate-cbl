@@ -27,6 +27,15 @@
 .skill-list-header {
     background: none;
     border-bottom: 2px solid $border-color;
+    font-size: .75em;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.skill-list-demo:last-child {
+    .skill-list-demo-detail-ct {
+        border-bottom: 0;
+    }
 }
 
 .skill-list-demo-row {
@@ -74,8 +83,12 @@
 }
 
 .skill-list-demo-level {
-    text-align: center;
-    width: 9%;
+    width: 10%;
+
+    .level-color {
+        border-radius: 3px;
+        margin-right: .5em;
+    }
 }
 
 .skill-list-demo-experience {
@@ -95,6 +108,7 @@
 }
 
 .skill-list-demo-detail-ct {
+    background-color: rgba(white, .5);
     border: 1px solid #ccc;
     border-width: 1px 0;
     border-left: .375em solid rgba($base-color, .4);
@@ -126,8 +140,7 @@
 
 .skill-list-demo-meta {
     color: #777;
-    font-size: small;
-    font-style: italic;
+    font-size: .875em;
 
     a {
         color: inherit;

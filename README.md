@@ -96,8 +96,12 @@ parameter `apiHost` when loading the page.
 1. Copy [sample `slate-cbl.php` git config script](https://github.com/SlateFoundation/slate-cbl/blob/releases/v2/php-config/Git.config.d/slate-cbl.php) into site
 1. Visit `/site-admin/sources` and initialize the `slate-cbl` source
 1. Return to `/site-admin/sources/slate-cbl` and click <kbd>Sync</kbd> → <kbd>Update emergence VFS</kbd> for the `slate-cbl` layer
-1. Push sencha builds to instance, logging in with a developer account when prompted: `http://cbl.projects.jarv.us/push-builds?ref=releases/v2&host=SITE_HOSTNAME`
-   - Alternatively, builds may be created locally and uploaded to `sencha-build/APP_NAME/production`
+1. Build each app:
+   - `/sencha-cmd/app-build?name=SlateTasksTeacher`
+   - `/sencha-cmd/app-build?name=SlateTasksStudent`
+   - `/sencha-cmd/app-build?name=SlateTasksManager`
+   - `/sencha-cmd/app-build?name=SlateDemonstrationsTeacher`
+   - `/sencha-cmd/app-build?name=SlateDemonstrationsStudent`
 
 ## Roadmap
 

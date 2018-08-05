@@ -105,6 +105,31 @@ publish-app() {
     popd > /dev/null
 }
 
+echo "    * Use 'publish-app-quick pkg/ident http://myhost.org' to quickly publish a build update to a server by including only frequently changed files"
+publish-app-quick() {
+    pkg_ident="$1"
+    server_host="$2"
+    [ -z "$pkg_ident" ] || [ -z "$server_host" ] && { echo >&2 "Usage: publish-app-quick pkg/ident http://myhost.org"; return 1; }
+
+    pkg_path=$(hab pkg path "${pkg_ident}")
+    [ -z "$pkg_path" ] && { echo >&2 "Path not found for ${pkg_ident}"; return 1; }
+
+    app_name=$(cat "${pkg_path}/APP_NAME")
+    [ -z "$app_name" ] && { echo >&2 "Could not read app_name from ${pkg_path}/APP_NAME"; return 1; }
+
+    echo "    Publishing quickly: ${app_name} from ${pkg_path} to ${server_host}"
+
+    pushd "${pkg_path}/app" > /dev/null
+    hab pkg exec jarvus/cadaver cadaver -r <(
+        find . -maxdepth 1 -type f -printf 'mput "%f"\n';
+        echo 'cd resources';
+        echo 'lcd resources';
+        find resources -maxdepth 1 -type f -printf 'mput "%f"\n';
+        echo 'quit'
+    ) "${server_host}/develop/webapp-builds/${app_name}/"
+    popd > /dev/null
+}
+
 
 # setup caddy server
 caddy-start() {

@@ -91,7 +91,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
 
         // appcontainer config
         header: {
-            title: 'Students\' Progress',
+            title: 'Students\u2019 Progress', // u2019 = right single quote
 
             items: [
                 {
