@@ -285,7 +285,7 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
     //     }
     // }
 
-    public static function checkWriteAccess(\ActiveRecord $Record, $suppressLogin = false)
+    public static function checkWriteAccess(\ActiveRecord $Record = null, $suppressLogin = false)
     {
         if ($Record && $Record->StudentID == $GLOBALS['Session']->PersonID) {
             return true;
