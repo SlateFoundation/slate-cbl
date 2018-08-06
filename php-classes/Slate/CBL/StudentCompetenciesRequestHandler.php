@@ -19,7 +19,7 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
     public static $browseOrder = ['ID' => 'DESC'];
 
 
-    public static function checkReadAccess(ActiveRecord $Record, $suppressLogin = false)
+    public static function checkReadAccess(ActiveRecord $Record = null, $suppressLogin = false)
     {
         $User = $GLOBALS['Session']->Person;
 
@@ -33,7 +33,7 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
             return true;
         }
 
-        return $Record->StudentID === $User->ID;
+        return $Record && $Record->StudentID === $User->ID;
     }
 
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
