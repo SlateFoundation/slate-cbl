@@ -98,48 +98,48 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // TODO: audit and optimize
     onTaskTreeItemClick: function(tasksTree, rec) {
-        var me = this,
-            details = me.getTaskDetails(),
-            form = me.getTaskForm(),
-            ratingView = me.getRatingView(),
-            teacherAttachmentsField = me.getTeacherAttachmentsField(),
-            studentAttachmentsField = me.getStudentAttachmentsField(),
-            studentAttachmentList = studentAttachmentsField.down('slate-attachmentslist'),
-            commentsField = me.getCommentsField(),
-            submissions = rec.get('Submissions'),
-            readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
+        // var me = this,
+        //     details = me.getTaskDetails(),
+        //     form = me.getTaskForm(),
+        //     ratingView = me.getRatingView(),
+        //     teacherAttachmentsField = me.getTeacherAttachmentsField(),
+        //     studentAttachmentsField = me.getStudentAttachmentsField(),
+        //     studentAttachmentList = studentAttachmentsField.down('slate-attachmentslist'),
+        //     commentsField = me.getCommentsField(),
+        //     submissions = rec.get('Submissions'),
+        //     readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
 
-        form.getForm().loadRecord(rec);
+        // form.getForm().loadRecord(rec);
 
-        if (submissions && submissions.length && submissions.length > 0) {
-            form.down('displayfield[name="Submitted"]').hide();
-            form.down('displayfield[name="Submissions"]').show();
-        } else {
-            form.down('displayfield[name="Submitted"]').show();
-            form.down('displayfield[name="Submissions"]').hide();
-        }
+        // if (submissions && submissions.length && submissions.length > 0) {
+        //     form.down('displayfield[name="Submitted"]').hide();
+        //     form.down('displayfield[name="Submissions"]').show();
+        // } else {
+        //     form.down('displayfield[name="Submitted"]').show();
+        //     form.down('displayfield[name="Submissions"]').hide();
+        // }
 
-        ratingView.setData({
-            ratings: [7, 8, 9, 10, 11, 12, 'M'],
-            competencies: rec.getTaskSkillsGroupedByCompetency()
-        });
+        // ratingView.setData({
+        //     ratings: [7, 8, 9, 10, 11, 12, 'M'],
+        //     competencies: rec.getTaskSkillsGroupedByCompetency()
+        // });
 
-        me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
-        teacherAttachmentsField.setAttachments(rec.getTeacherAttachments());
-        teacherAttachmentsField.setReadOnly(true);
-        commentsField.setRecord(rec);
-        commentsField.setReadOnly(true);
+        // me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
+        // teacherAttachmentsField.setAttachments(rec.getTeacherAttachments());
+        // teacherAttachmentsField.setReadOnly(true);
+        // commentsField.setRecord(rec);
+        // commentsField.setReadOnly(true);
 
-        studentAttachmentsField.setAttachments(rec.getStudentAttachments());
-        studentAttachmentsField.setReadOnly(readonly);
+        // studentAttachmentsField.setAttachments(rec.getStudentAttachments());
+        // studentAttachmentsField.setReadOnly(readonly);
 
-        studentAttachmentList.setConfig({
-            editable: !readonly,
-            shareMethodMutable: false
-        });
-        me.getSubmitButton().setDisabled(readonly);
+        // studentAttachmentList.setConfig({
+        //     editable: !readonly,
+        //     shareMethodMutable: false
+        // });
+        // me.getSubmitButton().setDisabled(readonly);
 
-        details.show();
+        // details.show();
     },
 
     // TODO: audit and optimize
