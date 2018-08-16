@@ -7,8 +7,6 @@ use DB;
 use JSON;
 use Emergence\Comments\Comment;
 
-use Slate\People\PeopleRequestHandler;
-use Slate\Courses\SectionsRequestHandler;
 
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
@@ -20,42 +18,38 @@ use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
 
 
-class StudentTasksRequestHandler extends \RecordsRequestHandler
+class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 {
     public static $recordClass =  StudentTask::class;
     public static $accountLevelBrowse = 'User';
 
-
-    public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
+    protected static function buildBrowseConditions(array $conditions = [], array &$filterObjects = [])
     {
+        global $Session;
+
+        $conditions = parent::buildBrowseConditions($conditions);
+
         // apply student filter
-        if ($Student = static::_getRequestedStudent()) {
+        if ($Student = static::getRequestedStudent()) {
             $conditions['StudentID'] = $Student->ID;
-            $responseData['Student'] = $Student;
+            $filterObjects['Student'] = $Student;
+        } elseif (!$Session || !$Session->hasAccountLevel('Staff')) {
+            // only staff can load without a student filter
+            $conditions[] = 'FALSE';
         }
 
-
         // apply task or course_section filter
-        if (!empty($_REQUEST['task'])) {
-            if (!$Task = TasksRequestHandler::getRecordByHandle($_REQUEST['task'])) {
-                return static::throwInvalidRequestError('Task not found');
-            }
-
+        if ($Task = static::getRequestedTask()) {
             $conditions['TaskID'] = $Task->ID;
-            $responseData['Task'] = $Task;
-        } elseif (!empty($_REQUEST['course_section'])) {
-            if (!$Section = SectionsRequestHandler::getRecordByHandle($_REQUEST['course_section'])) {
-                return static::throwInvalidRequestError('Course section not found');
-            }
-
+            $filterObjects['Task'] = $Task;
+        } elseif ($Section = static::getRequestedSection()) {
             $conditions['TaskID'] = [
                 'values' => DB::allValues('ID', 'SELECT ID FROM `%s` WHERE SectionID = %u', [ Task::$tableName, $Section->ID ])
             ];
-            $responseData['CourseSection'] = $Section;
+            $filterObjects['CourseSection'] = $Section;
         }
 
-
-        return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
+        return $conditions;
     }
 
     // public static function handleRecordsRequest($action = false)
@@ -292,30 +286,5 @@ class StudentTasksRequestHandler extends \RecordsRequestHandler
         }
 
         return parent::checkWriteAccess($Record, $suppressLogin);
-    }
-
-
-    // TODO: merge into buildBrowseConditions?
-    protected static function _getRequestedStudent()
-    {
-        if (empty($_REQUEST['student'])) {
-            return null;
-        }
-
-        $Student = PeopleRequestHandler::getRecordByHandle($_REQUEST['student']);
-        $userIsStaff = $GLOBALS['Session']->hasAccountLevel('Staff');
-
-        if ($Student && !$userIsStaff) {
-            $GuardianRelationship = \Emergence\People\GuardianRelationship::getByWhere([
-                'PersonID' => $Student->ID,
-                'RelatedPersonID' => $GLOBALS['Session']->PersonID
-            ]);
-        }
-
-        if (!$Student || (!$userIsStaff && !$GuardianRelationship)) {
-            return static::throwNotFoundError('Student not found');
-        }
-
-        return $Student;
     }
 }
