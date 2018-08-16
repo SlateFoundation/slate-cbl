@@ -85,7 +85,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         this.getTaskTree().setReadOnly(studentUsername !== false);
 
-        tasksStore.setStudent(studentUsername);
+        tasksStore.setStudent(studentUsername || '*current');
         tasksStore.loadIfDirty();
     },
 

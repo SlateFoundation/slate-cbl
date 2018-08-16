@@ -23,7 +23,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
     public static $recordClass =  Task::class;
     public static $browseOrder = ['Created' => 'DESC'];
 
-    protected static function buildBrowseConditions(array $conditions = array())
+    protected static function buildBrowseConditions(array $conditions = array(), array &$filterObjects = [])
     {
         $conditions = parent::buildBrowseConditions($conditions);
 
@@ -35,6 +35,7 @@ class TasksRequestHandler extends \RecordsRequestHandler
             }
 
             $conditions['SectionID'] = $Section->ID;
+            $filterObjects['Section'] = $Section;
         } else { // show all tasks that are either shared, or created by current user.
             $recordClass = static::$recordClass;
             $conditions[] = sprintf('(%1$s.Status = "shared" OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u))', $recordClass::getTableAlias(), $GLOBALS['Session']->PersonID);
