@@ -35,6 +35,11 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
             subDataStore: 'StudentTasks',
 
             columnHeaderField: 'PersonFullName',
+            columnHeaderLinkTpl: [
+                '<tpl for="Person">',
+                    '{[ Slate.API.buildUrl("/people/"+(values.Username||values.ID)) ]}',
+                '</tpl>'
+            ],
 
             rowHeaderField: null,
             subRowHeaderField: null,
