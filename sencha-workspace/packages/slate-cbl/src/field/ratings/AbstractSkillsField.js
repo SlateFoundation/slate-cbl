@@ -45,13 +45,21 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
     },
 
     setValue: function(value) {
-        var me = this;
+        var me = this,
+            valueSkillsMap = me.valueSkillsMap = {},
+            i = 0, length, skillData;
 
         // clone value to normalized array
         value = me.normalizeValue(value);
 
-        // normal field behavior
+        // update value and valueSkillsMap
         me.value = value;
+        for (length = value.length; i < length; i++) {
+            skillData = value[i];
+            valueSkillsMap[skillData.SkillID] = skillData;
+        }
+
+        // trigger change events if value differs from lastValue
         me.checkChange();
 
         // ensure lastValue and value always reference same instance
@@ -102,7 +110,7 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
             }
 
             skill1 = value1[skillId];
-            rating = skill1.DemonstratedLevel ;
+            rating = skill1.DemonstratedLevel;
             override = skill1.Override;
 
             if (rating !== skill2.DemonstratedLevel) {
@@ -127,15 +135,7 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
     },
 
     onChange: function(value) {
-        var me = this,
-            length = value ? value.length : 0,
-            i = 0, skillData,
-            valueSkillsMap = me.valueSkillsMap = {};
-
-        for (; i < length; i++) {
-            skillData = value[i];
-            valueSkillsMap[skillData.SkillID] = skillData;
-        }
+        var me = this;
 
         me.loadValue();
 
