@@ -4,9 +4,9 @@ $level-colors: dynamic(
     #666, // 3
     #666, // 4
     #666, // 5
-    #666, // 6
-    #666, // 7
-    #666, // 8
+    #d11141, // 6
+    #00aedb, // 7
+    #8e7cc3, // 8
     #d94181, // 9
     #ffa200, // 10
     #5dc02a, // 11
@@ -19,9 +19,9 @@ $level-colors-light: dynamic(
     #aaa, // 3
     #aaa, // 4
     #aaa, // 5
-    #aaa, // 6
-    #aaa, // 7
-    #aaa, // 8
+    lighten(nth($level-colors, 6), 20%), // 6
+    lighten(nth($level-colors, 7), 20%), // 7
+    lighten(nth($level-colors, 8), 20%), // 8
     #ea97ba, // 9
     #ffcc73, // 10
     #a6dc8a, // 11
@@ -34,9 +34,9 @@ $level-colors-medium: dynamic(
     #888, // 3
     #888, // 4
     #888, // 5
-    #888, // 6
-    #888, // 7
-    #888, // 8
+    lighten(nth($level-colors, 6), 9%), // 6
+    lighten(nth($level-colors, 7), 9%), // 7
+    lighten(nth($level-colors, 8), 9%), // 8
     #e1679a, // 9
     #ffb533, // 10
     #7dcd55, // 11
@@ -49,9 +49,9 @@ $level-colors-dark: dynamic(
     #444, // 3
     #444, // 4
     #444, // 5
-    #444, // 6
-    #444, // 7
-    #444, // 8
+    darken(nth($level-colors, 6), 10%), // 6
+    darken(nth($level-colors, 7), 10%), // 7
+    darken(nth($level-colors, 8), 10%), // 8
     #ca274f, // 9
     #ff7d00, // 10
     #38a719, // 11
