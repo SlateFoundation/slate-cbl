@@ -7,37 +7,37 @@
 Ext.define('SlateTasksTeacher.controller.StudentTasks', {
     extend: 'Ext.app.Controller',
     requires: [
-        'Jarvus.override.data.RequireLoadedStores'
-        // 'Ext.window.Toast',
-        // 'Ext.window.MessageBox'
+        'Jarvus.override.data.RequireLoadedStores',
+        'Ext.window.Toast',
+        'Ext.window.MessageBox'
     ],
 
 
-    // saveNotificationTitleTpl: [
-    //     '<tpl if="wasPhantom">',
-    //         'Task Saved',
-    //     '<tpl else>',
-    //         'Task Updated',
-    //     '</tpl>'
-    // ],
+    saveNotificationTitleTpl: [
+        '<tpl if="wasPhantom">',
+            'Assignment Saved',
+        '<tpl else>',
+            'Assignment Updated',
+        '</tpl>'
+    ],
 
-    // saveNotificationBodyTpl: [
-    //     '<tpl if="wasPhantom">',
-    //         'Created',
-    //     '<tpl else>',
-    //         'Updated',
-    //     '</tpl>',
-    //     ' task',
-    //     '<tpl for="task">',
-    //         ' <strong>{Title}</strong>',
-    //     '</tpl>',
-    //     ' and assigneed to',
-    //     ' <strong>',
-    //         ' {assigneesCount}',
-    //         ' <tpl if="assigneesCount == 1">student<tpl else>students</tpl>',
-    //         '.',
-    //     '</strong>'
-    // ],
+    saveNotificationBodyTpl: [
+        '<tpl if="wasPhantom">',
+            'Created',
+        '<tpl else>',
+            'Updated',
+        '</tpl>',
+        ' assignment of ',
+        '<tpl for="studentTask">',
+            '<tpl for="Task">',
+                '<strong>{Title}</strong>',
+            '</tpl>',
+            ' to ',
+            '<tpl for="Student">',
+                '<strong>{FirstName} {LastName}</strong>',
+            '</tpl>',
+        '</tpl>'
+    ],
 
 
     // dependencies
@@ -353,33 +353,31 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
         formPanel.updateRecord(studentTask);
 
-        console.info('onSubmitClick', studentTask.getChanges());
-
         // ensure studentTask doesn't become dirty when no changes are made to the form
         if (!studentTask.dirty) {
             return;
         }
 
-        formWindow.setLoading('Saving student task&hellip;');
+        formWindow.setLoading('Saving assignment&hellip;');
 
         studentTask.save({
-            // include: 'StudentTasks',
-            success: function(savedStudentTask) {
-                var studentTasksStore = me.getStudentTasksStore();
-                    // parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
-                    // tplData = {
-                    //     wasPhantom: wasPhantom,
-                    //     task: savedTask.getData(),
-                    //     assigneesCount: Ext.Array.filter(Ext.Object.getValues(savedTask.get('Assignees')), Ext.identityFn).length
-                    // };
+            include: ['Attachments', 'Demonstration.DemonstrationSkills', 'Skills'],
+            success: function(savedStudentTask, operation) {
+                var studentTasksStore = me.getStudentTasksStore(),
+                    tplData = {
+                        wasPhantom: wasPhantom,
+                        studentTask: savedStudentTask.getData()
+                    };
 
-                // // show notification to user
-                // Ext.toast(
-                //     Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
-                //     Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
-                // );
+                // show notification to user
+                Ext.toast(
+                    Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+                );
 
-                // // update loaded tasks data
+                savedStudentTask.readOperationData(operation);
+
+                // update loaded tasks data
                 studentTasksStore.mergeData([savedStudentTask]);
 
                 // close window
@@ -974,7 +972,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         StudentTaskModel.load({
             student: studentId,
             task: taskId,
-            include: ['Attachments', 'Skills'],
+            include: ['Attachments', 'Demonstration.DemonstrationSkills', 'Skills'],
             success: function(loadedStudentTask, operation) {
                 loadedStudentTask.readOperationData(operation);
                 formPanel.setStudentTask(loadedStudentTask);

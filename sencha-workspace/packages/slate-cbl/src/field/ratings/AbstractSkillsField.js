@@ -124,6 +124,10 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
                 return false;
             }
 
+            if (skill1.Removable !== skill2.Removable) {
+                return false;
+            }
+
             // differences in any following attributes are irrelevant if no DemonstrationSkill record would persist
             if (rating === null && !override) {
                 continue;
@@ -153,14 +157,18 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         return errors;
     },
 
-    setSkillValue: function(skillId, rating, level) {
+    setSkillValue: function(skillId, rating, level, removable) {
         var me = this,
             value = me.value,
             valueSkillsMap = me.valueSkillsMap,
             skillData = valueSkillsMap[skillId];
 
         if (!skillData) {
-            skillData = valueSkillsMap[skillId] = me.normalizeDemonstrationSkill({ SkillID: skillId });
+            skillData = valueSkillsMap[skillId] = me.normalizeDemonstrationSkill({
+                SkillID: skillId,
+                Removable: removable
+            });
+
             value.push(skillData);
         }
 

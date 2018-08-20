@@ -69,6 +69,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         me.studentCompetenciesLoadTask.cancel();
         studentCompetenciesLoadQueue.length = 0;
+        me.studentCompetenciesLoaded.length = 0;
 
         if (oldSelectedStudent) {
             studentCompetenciesStore.unload();
@@ -314,11 +315,12 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             skillsSelector = me.getSkillsSelector();
 
         Ext.StoreMgr.requireLoaded([competenciesStore, skillsStore], function() {
-            var skillsLength = skills.length,
+            var valueSkillsMap = me.valueSkillsMap,
+                skillsLength = skills.length,
                 skillIndex = 0, demonstrationSkill,
                 skillId, skill,
                 competency, competencyId, competencyContainer,
-                studentCompetency, level,
+                studentCompetency, level, rating, skillRatingField,
                 skillIds = [];
 
             Ext.suspendLayouts();
@@ -328,7 +330,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 demonstrationSkill = skills[skillIndex];
 
                 if (typeof demonstrationSkill == 'number') {
-                    demonstrationSkill = {
+                    demonstrationSkill = valueSkillsMap[demonstrationSkill] || {
                         SkillID: demonstrationSkill,
                         Removable: true
                     };
@@ -365,12 +367,20 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
                 me.studentCompetenciesLoadTask.delay(50);
 
+                // read any existing rating
+                rating = demonstrationSkill.DemonstratedLevel;
+
+                if (typeof rating != 'number') {
+                    rating = null;
+                }
+
                 // add empty rating to value
-                me.setSkillValue(skillId, null, level);
+                me.setSkillValue(skillId, rating, level, demonstrationSkill.Removable);
 
                 // skip skill if a field already exists for it
-                if (skillId in skillRatingFields) {
-                    // need to update level
+                skillRatingField = skillRatingFields[skillId];
+                if (skillRatingField) {
+                    skillRatingField.setLevel(level);
                     continue;
                 }
 
@@ -385,6 +395,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
                 // create skill field
                 skillRatingFields[skillId] = competencyContainer.addSorted({
+                    value: rating,
                     skill: skill,
                     level: level,
                     removable: demonstrationSkill.Removable,
