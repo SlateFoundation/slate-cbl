@@ -32,7 +32,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             '<tpl for="Task">',
                 '<strong>{Title}</strong>',
             '</tpl>',
-            ' to ',
+            ' for ',
             '<tpl for="Student">',
                 '<strong>{FirstName} {LastName}</strong>',
             '</tpl>',
