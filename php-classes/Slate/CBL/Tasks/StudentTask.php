@@ -79,6 +79,11 @@ class StudentTask extends \VersionedRecord
             'local' => 'ID',
             'order' => ['Created' => 'ASC']
         ],
+        'TaskSkills' => [
+            'type' => 'one-many',
+            'class' => StudentTaskSkill::class,
+            'prune' => 'delete'
+        ],
         'Skills' => [
             'type' => 'many-many',
             'class' => Skill::class,

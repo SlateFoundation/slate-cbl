@@ -65,8 +65,31 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
 
         if (isset($demonstrationSkillsData)) {
-            $Demonstration = $StudentTask->getOrCreateDemonstration();
+            // save skills not associated with parent task
+            $skills = [];
+            foreach ($demonstrationSkillsData as $demonstrationSkillData) {
+                if (empty($demonstrationSkillData['SkillID'])) {
+                    throw new Exception('demonstration skill requires SkillID be set');
+                }
 
+                $skills[$demonstrationSkillData['SkillID']] = true;
+            }
+
+            foreach ($StudentTask->Task->TaskSkills as $TaskSkill) {
+                unset($skills[$TaskSkill->SkillID]);
+            }
+
+            foreach ($skills as $skillId => &$StudentTaskSkill) {
+                $StudentTaskSkill = StudentTaskSkill::create([
+                    'SkillID' => $skillId
+                ]);
+            }
+
+            $StudentTask->TaskSkills = array_values($skills);
+
+
+            // save ratings via an attached demonstration
+            $Demonstration = $StudentTask->getOrCreateDemonstration();
             $Demonstration->recordAffectedStudentCompetencies();
             $Demonstration->applySkillsData($demonstrationSkillsData);
         }
