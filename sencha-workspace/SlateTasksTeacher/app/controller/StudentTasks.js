@@ -184,6 +184,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             subcellclick: 'onCellClick'
         },
         formPanel: {
+            studenttaskchange: 'onStudentTaskChange',
             dirtychange: 'onFormDirtyChange',
             validitychange: 'onFormValidityChange'
         },
@@ -331,14 +332,16 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         this.openStudentTaskWindow(studentId, taskId, { animateTarget: cellEl });
     },
 
-    onFormDirtyChange: function(form, dirty) {
-        console.info('onFormDirtyChange', dirty);
-        this.getSubmitBtn().setDisabled(!dirty || !form.isValid());
+    onStudentTaskChange: function() {
+        this.refreshFormActions();
     },
 
-    onFormValidityChange: function(form, valid) {
-        console.info('onFormValidityChange', valid);
-        this.getSubmitBtn().setDisabled(!valid || !form.isDirty());
+    onFormDirtyChange: function() {
+        this.refreshFormActions();
+    },
+
+    onFormValidityChange: function() {
+        this.refreshFormActions();
     },
 
     onSubmitClick: function(submitBtn) {
@@ -998,5 +1001,11 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
                 }
             }
         });
+    },
+
+    refreshFormActions: function() {
+        var form = this.getFormPanel().getForm();
+
+        this.getSubmitBtn().setDisabled(!form.isValid() || !form.isDirty() && !form.getRecord().phantom);
     }
 });
