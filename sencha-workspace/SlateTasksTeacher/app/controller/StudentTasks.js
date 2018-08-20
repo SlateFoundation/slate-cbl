@@ -948,7 +948,6 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
 
     // local methods
-    // TODO: always load StudentTask or, for phantoms, Task, with Skills and Attachments includes...copy StudentCompetency load method to StudentTask
     openStudentTaskWindow: function(studentId, taskId, options) {
         options = options || {};
 
