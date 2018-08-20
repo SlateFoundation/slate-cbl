@@ -482,16 +482,31 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 }
 
                 // eslint-disable-next-line vars-on-top
-                var studentCompetenciesLength = studentCompetencies.length,
-                    studentCompetencyIndex = 0, studentCompetency, level,
-                    competencyContainer, ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField;
+                var valueSkillsMap = me.valueSkillsMap,
+                    competencyLevels = {},
+                    studentCompetenciesLength = studentCompetenciesStore.getCount(),
+                    studentCompetencyIndex = 0, studentCompetency, competencyId, level,
+                    competencyContainer, ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField, skillData;
+
+                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
+                    studentCompetency = studentCompetenciesStore.getAt(studentCompetencyIndex);
+                    competencyId = studentCompetency.get('CompetencyID');
+                    level = studentCompetency.get('Level');
+
+                    if ((competencyLevels[competencyId]||0) < level) {
+                        competencyLevels[competencyId] = level;
+                    }
+                }
 
                 Ext.suspendLayouts();
 
-                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
-                    studentCompetency = studentCompetencies[studentCompetencyIndex];
-                    level = studentCompetency.get('Level');
-                    competencyContainer = competencyContainers[studentCompetency.get('CompetencyID')];
+                for (competencyId in competencyLevels) {
+                    if (!competencyLevels.hasOwnProperty(competencyId)) {
+                        continue;
+                    }
+
+                    level = competencyLevels[competencyId];
+                    competencyContainer = competencyContainers[competencyId];
 
                     if (!competencyContainer) {
                         continue;
@@ -502,7 +517,14 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     ratingFieldIndex = 0;
 
                     for (; ratingFieldIndex < ratingFieldsLength; ratingFieldIndex++) {
-                        ratingFields.getAt(ratingFieldIndex).setLevel(level);
+                        ratingField = ratingFields.getAt(ratingFieldIndex);
+                        ratingField.setLevel(level);
+
+                        skillData = valueSkillsMap[ratingField.getSkill().getId()];
+
+                        if (skillData) {
+                            skillData.TargetLevel = level;
+                        }
                     }
                 }
 
