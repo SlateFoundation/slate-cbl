@@ -180,8 +180,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             },
 
             hidden: true,
-            title: 'Task Assignment',
-            editTitle: 'Edit Task Assignment #{0}: {1}',
+            title: null,
+            createTitle: 'Assign to {0} {1}: {2}',
+            editTitle: 'Rate for {0} {1}: {2}',
 
             footer: [
                 {
@@ -202,14 +203,21 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         updateStudentTask: function(studentTask) {
             var me = this,
                 ratingsField = me.getRatingsField(),
-                dueDate, expirationDate;
+                studentData, dueDate, expirationDate;
 
             Ext.suspendLayouts();
 
             if (studentTask) {
+                studentData = studentTask.get('Student');
                 dueDate = studentTask.get('DueDate');
                 expirationDate = studentTask.get('ExpirationDate');
 
+                me.setTitle(Ext.String.format(
+                    studentTask.phantom ? me.getInitialConfig('createTitle') : me.getInitialConfig('editTitle'),
+                    studentData.FirstName,
+                    studentData.LastName,
+                    studentTask.get('Task').Title
+                ));
 
                 // configure permanent values before loading record
                 // ratingsField.clearSkills();
