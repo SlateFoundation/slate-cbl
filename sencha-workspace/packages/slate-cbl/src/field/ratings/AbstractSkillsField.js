@@ -59,6 +59,9 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
             valueSkillsMap[skillData.SkillID] = skillData;
         }
 
+        // load new value into UI via implementation
+        me.loadValue();
+
         // trigger change events if value differs from lastValue
         me.checkChange();
 
@@ -132,14 +135,6 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         }
 
         return true;
-    },
-
-    onChange: function(value) {
-        var me = this;
-
-        me.loadValue();
-
-        return me.callParent([value]);
     },
 
     loadValue: Ext.emptyFn,
