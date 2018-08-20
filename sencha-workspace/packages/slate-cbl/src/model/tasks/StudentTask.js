@@ -229,9 +229,12 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
 
         // dynamic fields
         {
+            name: 'Demonstration',
+            persist: false
+        },
+        {
             name: 'Skills',
-            persist: false,
-            defaultValue: []
+            persist: false
         },
         {
             name: 'InheritedSkills',
@@ -240,28 +243,33 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
             convert: function(v, r) {
                 var taskData = r.get('Task');
 
-                return taskData && taskData.Skills || [];
+                return taskData && taskData.Skills;
             }
         },
 
         // writable dynamic fields
         {
             name: 'DemonstrationSkills',
-            defaultValue: [],
-            depends: ['InheritedSkills', 'Skills'],
+            depends: ['InheritedSkills', 'Skills', 'Demonstration'],
             convert: function(v, r) {
                 var inheritedSkills = r.get('InheritedSkills'),
                     studentSkills = r.get('Skills'),
+                    demonstration = r.get('Demonstration'),
+                    savedDemonstrationSkills = demonstration && demonstration.DemonstrationSkills,
                     skillsMap = {},
                     demonstrationSkills = [],
                     len, i, skillData, skillId, demonstrationSkill;
 
-                // TODO: layer under existing DemonstrationSkill records from demonstration
-                // - remove defaultValue and only read from Demonstration if v is unset?
+                // pass-thru provided value or skip if parent task isn't available yet
+                if (v) {
+                    return v;
+                } else if (!inheritedSkills) {
+                    return null;
+                }
 
-                // copy incoming value
-                for (len = v && v.length, i = 0; i < len; i++) {
-                    demonstrationSkill = v[i];
+                // copy saved values
+                for (len = savedDemonstrationSkills && savedDemonstrationSkills.length, i = 0; i < len; i++) {
+                    demonstrationSkill = savedDemonstrationSkills[i];
                     skillId = demonstrationSkill.SkillID;
 
                     if (!(skillId in skillsMap)) {
@@ -271,32 +279,39 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                 }
 
                 // build entries for inherited skills
-                for (len = inheritedSkills.length, i = 0; i < len; i++) {
+                for (len = inheritedSkills && inheritedSkills.length, i = 0; i < len; i++) {
                     skillData = inheritedSkills[i];
                     skillId = skillData.ID;
 
-                    if (!(skillId in skillsMap)) {
+                    demonstrationSkill = skillsMap[skillId];
+
+                    if (!demonstrationSkill) {
                         demonstrationSkill = skillsMap[skillId] = {
                             SkillID: skillId
                         };
 
                         demonstrationSkills.push(demonstrationSkill);
                     }
+
+                    demonstrationSkill.Removable = false;
                 }
 
                 // build entries for student-specific skills
-                for (len = studentSkills.length, i = 0; i < len; i++) {
+                for (len = studentSkills && studentSkills.length, i = 0; i < len; i++) {
                     skillData = studentSkills[i];
                     skillId = skillData.ID;
 
-                    if (!(skillId in skillsMap)) {
+                    demonstrationSkill = skillsMap[skillId];
+
+                    if (!demonstrationSkill) {
                         demonstrationSkill = skillsMap[skillId] = {
-                            SkillID: skillId,
-                            Removable: true
+                            SkillID: skillId
                         };
 
                         demonstrationSkills.push(demonstrationSkill);
                     }
+
+                    demonstrationSkill.Removable = true;
                 }
 
                 return demonstrationSkills;

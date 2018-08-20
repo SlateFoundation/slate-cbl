@@ -116,9 +116,14 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
         },
 
         buildColumnTplData: function() {
-            var columnTplData = this.callParent(arguments);
+            var columnTplData = this.callParent(arguments),
+                studentUsername = columnTplData.Person.Username;
 
             columnTplData.$cls = 'slate-studentsgrid-cell';
+
+            if (studentUsername) {
+                columnTplData.$href = (location.hostname == 'localhost' ? '../SlateTasksStudent/' + location.search : Slate.API.buildUrl('/cbl/dashboards/tasks/student')) + '#' + studentUsername + '/all';
+            }
 
             return columnTplData;
         }

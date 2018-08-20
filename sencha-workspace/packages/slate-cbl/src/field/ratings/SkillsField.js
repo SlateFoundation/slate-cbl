@@ -69,6 +69,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         me.studentCompetenciesLoadTask.cancel();
         studentCompetenciesLoadQueue.length = 0;
+        me.studentCompetenciesLoaded.length = 0;
 
         if (oldSelectedStudent) {
             studentCompetenciesStore.unload();
@@ -252,7 +253,12 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
     },
 
     onRatingChange: function(ratingSlider, rating) {
-        this.setSkillValue(ratingSlider.getSkill().getId(), rating, ratingSlider.getLevel());
+        var me = this;
+
+        me.setSkillValue(ratingSlider.getSkill().getId(), rating, ratingSlider.getLevel());
+
+        me.validate();
+        me.checkDirty();
     },
 
     onRatingRemove: function(ratingField) {
@@ -309,11 +315,12 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             skillsSelector = me.getSkillsSelector();
 
         Ext.StoreMgr.requireLoaded([competenciesStore, skillsStore], function() {
-            var skillsLength = skills.length,
+            var valueSkillsMap = me.valueSkillsMap,
+                skillsLength = skills.length,
                 skillIndex = 0, demonstrationSkill,
                 skillId, skill,
                 competency, competencyId, competencyContainer,
-                studentCompetency,
+                studentCompetency, level, rating, skillRatingField,
                 skillIds = [];
 
             Ext.suspendLayouts();
@@ -323,21 +330,13 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 demonstrationSkill = skills[skillIndex];
 
                 if (typeof demonstrationSkill == 'number') {
-                    demonstrationSkill = {
+                    demonstrationSkill = valueSkillsMap[demonstrationSkill] || {
                         SkillID: demonstrationSkill,
                         Removable: true
                     };
                 }
 
                 skillId = demonstrationSkill.SkillID;
-
-                // add empty rating to value
-                me.setSkillValue(skillId, null);
-
-                // skip skill if a field already exists for it
-                if (skillId in skillRatingFields) {
-                    continue;
-                }
 
                 // load skill/competency from local stores
                 skill = skillsStore.getById(skillId);
@@ -350,6 +349,41 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 competencyId = skill.get('CompetencyID');
                 competency = competenciesStore.getById(competencyId);
 
+                // fetch level or queue for loading
+                studentCompetency = studentCompetenciesStore.getByCompetencyId(competencyId);
+
+                if (studentCompetency) {
+                    level = studentCompetency.get('Level');
+                } else {
+                    level = null;
+
+                    if (
+                        studentCompetenciesLoadQueue.indexOf(competencyId) == -1
+                        && studentCompetenciesLoaded.indexOf(competencyId) == -1
+                    ) {
+                        studentCompetenciesLoadQueue.push(competencyId);
+                    }
+                }
+
+                me.studentCompetenciesLoadTask.delay(50);
+
+                // read any existing rating
+                rating = demonstrationSkill.DemonstratedLevel;
+
+                if (typeof rating != 'number') {
+                    rating = null;
+                }
+
+                // add empty rating to value
+                me.setSkillValue(skillId, rating, level, demonstrationSkill.Removable);
+
+                // skip skill if a field already exists for it
+                skillRatingField = skillRatingFields[skillId];
+                if (skillRatingField) {
+                    skillRatingField.setLevel(level);
+                    continue;
+                }
+
                 // get or create container for competency
                 if (competencyId in competencyContainers) {
                     competencyContainer = competencyContainers[competencyId];
@@ -359,23 +393,11 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     });
                 }
 
-                // fetch level or queue for loading
-                studentCompetency = studentCompetenciesStore.getByCompetencyId(competencyId);
-
-                if (
-                    !studentCompetency
-                    && studentCompetenciesLoadQueue.indexOf(competencyId) == -1
-                    && studentCompetenciesLoaded.indexOf(competencyId) == -1
-                ) {
-                    studentCompetenciesLoadQueue.push(competencyId);
-                }
-
-                me.studentCompetenciesLoadTask.delay(50);
-
                 // create skill field
                 skillRatingFields[skillId] = competencyContainer.addSorted({
+                    value: rating,
                     skill: skill,
-                    level: studentCompetency ? studentCompetency.get('Level') : null,
+                    level: level,
                     removable: demonstrationSkill.Removable,
                     listeners: {
                         scope: me,
@@ -390,6 +412,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
             // add skills to permanent values
             skillsSelector.setPermanentValues(Ext.Array.union(skillsSelector.getPermanentValues() || [], skillIds));
+
+            // refresh field state
+            me.validate();
+            me.checkDirty();
 
             Ext.resumeLayouts(true);
         });
@@ -429,12 +455,16 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             // remove containing competency if now empty
             if (competencyContainer.items.getCount() == 0) {
                 me.remove(competencyContainer, true);
-                delete competencyContainer[competencyId];
+                delete competencyContainers[competencyId];
             }
         }
 
         // remove from permanent values
         skillsSelector.setPermanentValues(Ext.Array.difference(skillsSelector.getPermanentValues() || [], skills));
+
+        // refresh field state
+        me.validate();
+        me.checkDirty();
 
         Ext.resumeLayouts(true);
     },
@@ -463,16 +493,31 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 }
 
                 // eslint-disable-next-line vars-on-top
-                var studentCompetenciesLength = studentCompetencies.length,
-                    studentCompetencyIndex = 0, studentCompetency, level,
-                    competencyContainer, ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField;
+                var valueSkillsMap = me.valueSkillsMap,
+                    competencyLevels = {},
+                    studentCompetenciesLength = studentCompetenciesStore.getCount(),
+                    studentCompetencyIndex = 0, studentCompetency, competencyId, level,
+                    competencyContainer, ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField, skillData;
+
+                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
+                    studentCompetency = studentCompetenciesStore.getAt(studentCompetencyIndex);
+                    competencyId = studentCompetency.get('CompetencyID');
+                    level = studentCompetency.get('Level');
+
+                    if ((competencyLevels[competencyId]||0) < level) {
+                        competencyLevels[competencyId] = level;
+                    }
+                }
 
                 Ext.suspendLayouts();
 
-                for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
-                    studentCompetency = studentCompetencies[studentCompetencyIndex];
-                    level = studentCompetency.get('Level');
-                    competencyContainer = competencyContainers[studentCompetency.get('CompetencyID')];
+                for (competencyId in competencyLevels) {
+                    if (!competencyLevels.hasOwnProperty(competencyId)) {
+                        continue;
+                    }
+
+                    level = competencyLevels[competencyId];
+                    competencyContainer = competencyContainers[competencyId];
 
                     if (!competencyContainer) {
                         continue;
@@ -484,12 +529,18 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
                     for (; ratingFieldIndex < ratingFieldsLength; ratingFieldIndex++) {
                         ratingField = ratingFields.getAt(ratingFieldIndex);
+                        ratingField.setLevel(level);
 
-                        if (!ratingField.getLevel()) {
-                            ratingField.setLevel(level);
+                        skillData = valueSkillsMap[ratingField.getSkill().getId()];
+
+                        if (skillData) {
+                            skillData.TargetLevel = level;
                         }
                     }
                 }
+
+                me.validate();
+                me.checkDirty();
 
                 Ext.resumeLayouts(true);
             }

@@ -5,6 +5,7 @@ namespace Slate\CBL\Tasks;
 
 use DB;
 use JSON;
+use ActiveRecord;
 use Emergence\Comments\Comment;
 
 
@@ -50,6 +51,48 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         }
 
         return $conditions;
+    }
+
+    protected static function applyRecordDelta(ActiveRecord $StudentTask, $requestData)
+    {
+        if (array_key_exists('DemonstrationSkills', $requestData)) {
+            $demonstrationSkillsData = $requestData['DemonstrationSkills'];
+            unset($requestData['DemonstrationSkills']);
+        }
+
+
+        parent::applyRecordDelta($StudentTask, $requestData);
+
+
+        if (isset($demonstrationSkillsData)) {
+            // save skills not associated with parent task
+            $skills = [];
+            foreach ($demonstrationSkillsData as $demonstrationSkillData) {
+                if (empty($demonstrationSkillData['SkillID'])) {
+                    throw new Exception('demonstration skill requires SkillID be set');
+                }
+
+                $skills[$demonstrationSkillData['SkillID']] = true;
+            }
+
+            foreach ($StudentTask->Task->TaskSkills as $TaskSkill) {
+                unset($skills[$TaskSkill->SkillID]);
+            }
+
+            foreach ($skills as $skillId => &$StudentTaskSkill) {
+                $StudentTaskSkill = StudentTaskSkill::create([
+                    'SkillID' => $skillId
+                ]);
+            }
+
+            $StudentTask->TaskSkills = array_values($skills);
+
+
+            // save ratings via an attached demonstration
+            $Demonstration = $StudentTask->getOrCreateDemonstration();
+            $Demonstration->recordAffectedStudentCompetencies();
+            $Demonstration->applySkillsData($demonstrationSkillsData);
+        }
     }
 
     // public static function handleRecordsRequest($action = false)

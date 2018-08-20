@@ -216,14 +216,22 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
                 me.removeSkillValue(skill.getId());
             }
         }
+
+        me.validate();
+        me.checkDirty();
     },
 
     onRatingChange: function(competencyCard, rating, level, skill) {
+        var me = this;
+
         if (rating === null) {
-            this.removeSkillValue(skill.getId());
+            me.removeSkillValue(skill.getId());
         } else {
-            this.setSkillValue(skill.getId(), rating, level);
+            me.setSkillValue(skill.getId(), rating, level);
         }
+
+        me.validate();
+        me.checkDirty();
     },
 
 

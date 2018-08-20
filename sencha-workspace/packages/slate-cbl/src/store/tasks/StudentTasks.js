@@ -49,5 +49,48 @@ Ext.define('Slate.cbl.store.tasks.StudentTasks', {
     unload: function() {
         this.loadCount = 0;
         this.removeAll();
+    },
+
+    mergeTasks: function(tasks) {
+        var me = this,
+            taskIndex = 0, tasksLength = tasks.length,
+            task, taskId, taskData, studentTasks, studentTaskIds,
+            studentTaskIndex, studentTasksLength,
+            _filterRemoved = function(studentTask) {
+                return (
+                    studentTask.get('TaskID') == taskId
+                    && studentTaskIds.indexOf(studentTask.getId()) == -1
+                );
+            };
+
+        // pause change propagation on StudentTasks store
+        me.beginUpdate();
+
+        for (; taskIndex < tasksLength; taskIndex++) {
+            task = tasks[taskIndex];
+            taskId = task.getId();
+            taskData = task.getData();
+
+            // merge associated student tasks into StudentTasks store and remove any that have been deleted
+            studentTasks = task.get('StudentTasks') || [];
+            me.mergeData(studentTasks);
+
+            // remove any StudentTask records that are associated with the updated task but missing from new list
+            studentTaskIds = Ext.Array.pluck(studentTasks, 'ID');
+            me.remove(me.queryBy(_filterRemoved).getRange());
+
+
+            // update task data embedded in any associated StudentTask records
+            studentTasks = me.queryRecords('TaskID', taskId);
+            studentTaskIndex = 0;
+            studentTasksLength = studentTasks.length;
+
+            for (; studentTaskIndex < studentTasksLength; studentTaskIndex++) {
+                studentTasks[studentTaskIndex].set('Task', taskData, { dirty: false });
+            }
+        }
+
+        // propagate all changes to StudentTasks store
+        me.endUpdate();
     }
 });

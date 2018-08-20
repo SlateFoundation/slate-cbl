@@ -45,13 +45,24 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
     },
 
     setValue: function(value) {
-        var me = this;
+        var me = this,
+            valueSkillsMap = me.valueSkillsMap = {},
+            i = 0, length, skillData;
 
         // clone value to normalized array
         value = me.normalizeValue(value);
 
-        // normal field behavior
+        // update value and valueSkillsMap
         me.value = value;
+        for (length = value.length; i < length; i++) {
+            skillData = value[i];
+            valueSkillsMap[skillData.SkillID] = skillData;
+        }
+
+        // load new value into UI via implementation
+        me.loadValue();
+
+        // trigger change events if value differs from lastValue
         me.checkChange();
 
         // ensure lastValue and value always reference same instance
@@ -102,7 +113,7 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
             }
 
             skill1 = value1[skillId];
-            rating = skill1.DemonstratedLevel ;
+            rating = skill1.DemonstratedLevel;
             override = skill1.Override;
 
             if (rating !== skill2.DemonstratedLevel) {
@@ -110,6 +121,10 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
             }
 
             if (override !== skill2.Override) {
+                return false;
+            }
+
+            if (skill1.Removable !== skill2.Removable) {
                 return false;
             }
 
@@ -124,22 +139,6 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         }
 
         return true;
-    },
-
-    onChange: function(value) {
-        var me = this,
-            length = value ? value.length : 0,
-            i = 0, skillData,
-            valueSkillsMap = me.valueSkillsMap = {};
-
-        for (; i < length; i++) {
-            skillData = value[i];
-            valueSkillsMap[skillData.SkillID] = skillData;
-        }
-
-        me.loadValue();
-
-        return me.callParent([value]);
     },
 
     loadValue: Ext.emptyFn,
@@ -158,14 +157,18 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         return errors;
     },
 
-    setSkillValue: function(skillId, rating, level) {
+    setSkillValue: function(skillId, rating, level, removable) {
         var me = this,
             value = me.value,
             valueSkillsMap = me.valueSkillsMap,
             skillData = valueSkillsMap[skillId];
 
         if (!skillData) {
-            skillData = valueSkillsMap[skillId] = me.normalizeDemonstrationSkill({ SkillID: skillId });
+            skillData = valueSkillsMap[skillId] = me.normalizeDemonstrationSkill({
+                SkillID: skillId,
+                Removable: removable
+            });
+
             value.push(skillData);
         }
 
@@ -174,11 +177,6 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         if (level) {
             skillData.TargetLevel = level;
         }
-
-        me.fireEvent('ratingchange', me, skillId, rating, level);
-
-        me.validate();
-        me.checkDirty();
     },
 
     getSkillValue: function(skillId) {
@@ -195,8 +193,5 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         if (skillData) {
             Ext.Array.remove(me.value, skillData);
         }
-
-        me.validate();
-        me.checkDirty();
     }
 });

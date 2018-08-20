@@ -144,7 +144,7 @@ parameter `apiHost` when loading the page.
   - [X] Update grid correctly when new task has a parent task that may or may not have already had child tasks
   - [ ] Audit requires and inheritance chain
   - [ ] Review old tasks controller for any unimplemented workflows and stash/tag
-- [ ] Reuse windows, split default, instantiated, and per-show config like SDT.Demonstrations controller does (#441)
+- [ ] Reuse windows, split default/instantiated/per-show config like SDT.Demonstrations controller does (#441)
 - [ ] Restore building/loading of SlateTasksManager (#440)
 
 - [ ] Investigate baselines getting `NULL`d out: https://github.com/SlateFoundation/slate-fixtures/commit/74b14c13b783afed59463e90fb4770ae67f6745c
@@ -164,6 +164,7 @@ parameter `apiHost` when loading the page.
 - [X] Need to add added skills to value array so they can be saved without being rated
 - [X] Need a way to remove disabled raters
 - [ ] Warn if trying to close demo or task form with unsaved changes
+- [X] Update student header links between apps
 
 ### Next release
 

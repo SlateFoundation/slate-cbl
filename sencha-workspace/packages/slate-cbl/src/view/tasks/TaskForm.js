@@ -104,7 +104,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                     fieldLabel: 'Type of Experience',
                     displayField: 'value',
                     valueField: 'value',
-                    allowBlank: true,
+                    allowBlank: false,
                     autoSelect: false,
                     queryMode: 'local',
                     store: {
@@ -123,7 +123,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                     name: 'DueDate',
 
                     xtype: 'datefield',
-                    fieldLabel: 'Due Date'
+                    fieldLabel: 'Due Date',
+                    allowBlank: true
                 }
             },
             expirationDateField: {
@@ -132,7 +133,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                     name: 'ExpirationDate',
 
                     xtype: 'datefield',
-                    fieldLabel: 'Expiration Date'
+                    fieldLabel: 'Expiration Date',
+                    allowBlank: true
                 }
             },
             assignmentsField: {
@@ -150,7 +152,8 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                     name: 'Skills',
 
                     xtype: 'slate-cbl-skillsselector',
-                    selectOnFocus: false
+                    selectOnFocus: false,
+                    allowBlank: true
                 }
             },
             attachmentsField: {
@@ -169,6 +172,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
                     xtype: 'textareafield',
                     fieldLabel: 'Instructions',
+                    allowBlank: true
                     // grow: true,
                     // growMin: 200
                 }
@@ -203,7 +207,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
 
         // config handlers
-        updateTask: function(task) {
+        updateTask: function(task, oldTask) {
             var me = this;
 
             Ext.suspendLayouts();
@@ -229,6 +233,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 me.hide();
             }
 
+            me.fireEvent('taskchange', me, task, oldTask);
             Ext.resumeLayouts(true);
         },
 

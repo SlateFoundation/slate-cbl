@@ -2,6 +2,9 @@
 
 namespace Slate\CBL\Demonstrations;
 
+
+use Exception;
+
 use Slate\CBL\Competency;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Skill;
@@ -187,5 +190,73 @@ class Demonstration extends \VersionedRecord
         }
 
         return $studentCompetenciesByLevel;
+    }
+
+    /**
+     * Differentially apply a complete array of new DemonstrationSkills data
+     */
+    public function applySkillsData(array $skillsData)
+    {
+        // index existing DemonstrationSkill records by SkillID
+        $existingSkills = [];
+
+        foreach ($this->DemonstrationSkills as $DemonstrationSkill) {
+            $existingSkills[$DemonstrationSkill->SkillID] = $DemonstrationSkill;
+        }
+
+
+        // cache current competency levels so all skills saved in this request target the same level, even if it advances during
+        $competencyLevels = [];
+
+
+        // create new and update existing skills
+        $skills = [];
+        foreach ($skillsData as $skillData) {
+            // skip if DemonstratedLevel and Override is unset or null -- these will be deleted
+            if (!isset($skillData['DemonstratedLevel']) && empty($skillData['Override'])) {
+                continue;
+            }
+
+            if (empty($skillData['SkillID'])) {
+                throw new Exception('demonstration skill requires SkillID be set');
+            }
+
+            $override = !empty($skillData['Override']);
+            $rating = $override ? null : $skillData['DemonstratedLevel'];
+
+            if ($DemonstrationSkill = $existingSkills[$skillData['SkillID']]) {
+                if (!empty($skillData['TargetLevel'])) {
+                    $DemonstrationSkill->TargetLevel = $skillData['TargetLevel'];
+                }
+
+                $DemonstrationSkill->DemonstratedLevel = $rating;
+                $DemonstrationSkill->Override = $override;
+            } else {
+                $DemonstrationSkill = DemonstrationSkill::create([
+                    'Demonstration' => $this,
+                    'SkillID' => $skillData['SkillID'],
+                    'DemonstratedLevel' => $rating,
+                    'Override' => $override
+                ]);
+
+                if (!empty($skillData['TargetLevel'])) {
+                    $DemonstrationSkill->TargetLevel = $skillData['TargetLevel'];
+                } elseif (array_key_exists($DemonstrationSkill->Skill->CompetencyID, $competencyLevels)) {
+                    $DemonstrationSkill->TargetLevel = $competencyLevels[$DemonstrationSkill->Skill->CompetencyID];
+                } else {
+                    $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $DemonstrationSkill->Skill->Competency);
+                    $DemonstrationSkill->TargetLevel = $competencyLevels[$DemonstrationSkill->Skill->CompetencyID] = $StudentCompetency ? $StudentCompetency->Level : null;
+                }
+
+                // append to existing map to prevent issues if data contains multiple entries for same SkillID
+                $existingSkills[$skillData['SkillID']] = $DemonstrationSkill;
+            }
+
+            $skills[] = $DemonstrationSkill;
+        }
+
+
+        // write new list to relationship
+        $this->DemonstrationSkills = $skills;
     }
 }
