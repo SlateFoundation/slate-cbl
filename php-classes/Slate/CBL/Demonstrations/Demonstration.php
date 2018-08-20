@@ -233,6 +233,7 @@ class Demonstration extends \VersionedRecord
                 $DemonstrationSkill->Override = $override;
             } else {
                 $DemonstrationSkill = DemonstrationSkill::create([
+                    'Demonstration' => $this,
                     'SkillID' => $skillData['SkillID'],
                     'DemonstratedLevel' => $rating,
                     'Override' => $override
