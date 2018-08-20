@@ -12,7 +12,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     xtype: 'slate-demonstrations-teacher-progressgrid',
     requires: [
         /* global Slate */
-        'Slate.cbl.widget.Popover'
+        'Slate.cbl.widget.Popover',
+        'Slate.cbl.util.Config'
     ],
 
     config: {
@@ -117,10 +118,9 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             '</div>',
             '<div class="cbl-grid-legend">',
                 '<span class="cbl-grid-legend-label">Portfolios:&ensp;</span>',
-                '<span class="cbl-grid-legend-item level-color cbl-level-9">Y1</span>',
-                '<span class="cbl-grid-legend-item level-color cbl-level-10">Y2</span>',
-                '<span class="cbl-grid-legend-item level-color cbl-level-11">Y3</span>',
-                '<span class="cbl-grid-legend-item level-color cbl-level-12">Y4</span>',
+                '<tpl foreach="Slate.cbl.util.Config.getLevels()">',
+                    '<span class="cbl-grid-legend-item level-color cbl-level-{$}">{title}</span>',
+                '</tpl>',
             '</div>',
 
         '</tpl>'
