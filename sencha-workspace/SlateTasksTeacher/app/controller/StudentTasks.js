@@ -170,6 +170,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
                 load: 'onStudentTasksLoad'
             },
             '#Tasks': {
+                add: 'onTaskAdd',
                 update: 'onTaskUpdate'
             }
         }
@@ -275,46 +276,16 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         });
     },
 
+    onTaskAdd: function(tasksStore, tasks) {
+        this.getStudentTasksStore().mergeTasks(tasks);
+    },
+
     onTaskUpdate: function(tasksStore, task, operation, modifiedFieldNames) {
         if (operation != 'edit' || modifiedFieldNames.indexOf('StudentTasks') == -1) {
             return;
         }
 
-        // eslint-disable-next-line vars-on-top
-        var taskId = task.getId(),
-            taskData = task.getData(),
-            studentTasksStore = this.getStudentTasksStore(),
-            studentTasks = task.get('StudentTasks') || [],
-            studentTaskIds = Ext.Array.pluck(studentTasks, 'ID'),
-            studentTaskIndex = 0, studentTasksLength;
-
-
-        // pause change propagation on StudentTasks store
-        studentTasksStore.beginUpdate();
-
-
-        // merge associated student tasks into StudentTasks store and remove any that have been deleted
-        studentTasksStore.mergeData(studentTasks);
-        studentTasksStore.remove(studentTasksStore.queryBy(function(studentTask) {
-            // remove any StudentTask records that are associated with the updated task but missing from new list
-            return (
-                studentTask.get('TaskID') == taskId
-                && studentTaskIds.indexOf(studentTask.getId()) == -1
-            );
-        }).getRange());
-
-
-        // update task data embedded in any associated StudentTask records
-        studentTasks = studentTasksStore.queryRecords('TaskID', taskId);
-        studentTasksLength = studentTasks.length;
-
-        for (; studentTaskIndex < studentTasksLength; studentTaskIndex++) {
-            studentTasks[studentTaskIndex].set('Task', taskData, { dirty: false });
-        }
-
-
-        // propagate all changes to StudentTasks store
-        studentTasksStore.endUpdate();
+        this.getStudentTasksStore().mergeTasks([task]);
     },
 
     onSelectedSectionChange: function(dashboardCt, sectionCode) {
