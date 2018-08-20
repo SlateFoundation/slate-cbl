@@ -260,10 +260,10 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', {
                     demonstrationSkills = [],
                     len, i, skillData, skillId, demonstrationSkill;
 
-                // pass-thru provided value or skip if any dependencies aren't available
+                // pass-thru provided value or skip if parent task isn't available yet
                 if (v) {
                     return v;
-                } else if (!inheritedSkills || !studentSkills) {
+                } else if (!inheritedSkills) {
                     return null;
                 }
 
