@@ -187,7 +187,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             footer: [
                 {
                     xtype: 'button',
-                    text: 'Save Task',
+                    text: 'Save Assignment',
                     scale: 'large',
                     action: 'submit',
                     margin: '0 0 0 16'
