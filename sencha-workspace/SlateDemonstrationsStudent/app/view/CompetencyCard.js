@@ -3,7 +3,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     xtype: 'slate-demonstrations-student-competencycard',
     requires: [
         'Ext.util.Format',
-
+        'Slate.cbl.util.format.PreventOrphans',
         'Slate.ui.SimplePanel', // using its CSS classes
     ],
 
@@ -81,7 +81,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         '</div>',
 
         '<div class="slate-simplepanel-body explainer">',
-            '<p id="{id}-statementEl" data-ref="statementEl">{competency.Statement:htmlEncode|preventOrphans}</p>',
+            '<p id="{id}-statementEl" data-ref="statementEl">{[fm.preventOrphans(fm.htmlEncode(values.competency.Statement))]}</p>',
         '</div>',
 
         '<ul id="{id}-skillsCt" data-ref="skillsCt" class="cbl-skill-meter">',
