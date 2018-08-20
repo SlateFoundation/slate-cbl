@@ -169,8 +169,6 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         if (level) {
             skillData.TargetLevel = level;
         }
-
-        me.fireEvent('ratingchange', me, skillId, rating, level);
     },
 
     getSkillValue: function(skillId) {
