@@ -252,7 +252,12 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
     },
 
     onRatingChange: function(ratingSlider, rating) {
-        this.setSkillValue(ratingSlider.getSkill().getId(), rating, ratingSlider.getLevel());
+        var me = this;
+
+        me.setSkillValue(ratingSlider.getSkill().getId(), rating, ratingSlider.getLevel());
+
+        me.validate();
+        me.checkDirty();
     },
 
     onRatingRemove: function(ratingField) {
@@ -397,6 +402,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             // add skills to permanent values
             skillsSelector.setPermanentValues(Ext.Array.union(skillsSelector.getPermanentValues() || [], skillIds));
 
+            // refresh field state
+            me.validate();
+            me.checkDirty();
+
             Ext.resumeLayouts(true);
         });
     },
@@ -441,6 +450,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
         // remove from permanent values
         skillsSelector.setPermanentValues(Ext.Array.difference(skillsSelector.getPermanentValues() || [], skills));
+
+        // refresh field state
+        me.validate();
+        me.checkDirty();
 
         Ext.resumeLayouts(true);
     },
@@ -492,6 +505,9 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                         ratingFields.getAt(ratingFieldIndex).setLevel(level);
                     }
                 }
+
+                me.validate();
+                me.checkDirty();
 
                 Ext.resumeLayouts(true);
             }

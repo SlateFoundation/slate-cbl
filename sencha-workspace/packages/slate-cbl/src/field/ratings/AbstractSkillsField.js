@@ -176,9 +176,6 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         }
 
         me.fireEvent('ratingchange', me, skillId, rating, level);
-
-        me.validate();
-        me.checkDirty();
     },
 
     getSkillValue: function(skillId) {
@@ -195,8 +192,5 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
         if (skillData) {
             Ext.Array.remove(me.value, skillData);
         }
-
-        me.validate();
-        me.checkDirty();
     }
 });
