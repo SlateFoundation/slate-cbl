@@ -217,7 +217,7 @@ class Demonstration extends \VersionedRecord
                 continue;
             }
 
-            if (!isset($skillData['SkillID'])) {
+            if (empty($skillData['SkillID'])) {
                 throw new Exception('demonstration skill requires SkillID be set');
             }
 
