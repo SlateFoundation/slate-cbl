@@ -213,7 +213,7 @@ class Demonstration extends \VersionedRecord
         $skills = [];
         foreach ($skillsData as $skillData) {
             // skip if DemonstratedLevel and Override is unset or null -- these will be deleted
-            if (!isset($skillData['DemonstratedLevel']) && !isset($skillData['Override'])) {
+            if (!isset($skillData['DemonstratedLevel']) && empty($skillData['Override'])) {
                 continue;
             }
 
