@@ -138,6 +138,20 @@ class StudentTask extends \VersionedRecord
     ];
 
 
+    public function getOrCreateDemonstration()
+    {
+        if (!$this->Demonstration) {
+            $this->Demonstration = ExperienceDemonstration::create([
+                'StudentID' => $this->StudentID,
+                'PerformanceType' => $this->Task->Title,
+                'Context' => $this->Task->Section->Title,
+                'ExperienceType' => $this->Task->ExperienceType
+            ]);
+        }
+
+        return $this->Demonstration;
+    }
+
     // TODO: delete all this?
     // public function getValue($name)
     // {
@@ -196,24 +210,6 @@ class StudentTask extends \VersionedRecord
     //     }
 
     //     return $taskSkills;
-    // }
-
-    // public function getDemonstration($autoCreate = true)
-    // {
-    //     if (!$demonstration = $this->Demonstration && $autoCreate === true) {
-    //         $demonstration = ExperienceDemonstration::create([
-    //             'StudentID' => $this->StudentID,
-    //             'PerformanceType' => $this->Task->Title,
-    //             'Context' => $this->Task->Section->Title,
-    //             'ExperienceType' => $this->ExperienceType,
-    //             'CreatorID' => $this->CreatorID
-    //         ], true);
-
-    //         $this->DemonstrationID = $demonstration->ID;
-    //         $this->save(false);
-    //     }
-
-    //     return $this->Demonstration;
     // }
 
     // public function getSubmissionTimestamp()

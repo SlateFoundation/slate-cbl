@@ -5,6 +5,7 @@ namespace Slate\CBL\Tasks;
 
 use DB;
 use JSON;
+use ActiveRecord;
 use Emergence\Comments\Comment;
 
 
@@ -50,6 +51,25 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         }
 
         return $conditions;
+    }
+
+    protected static function applyRecordDelta(ActiveRecord $StudentTask, $requestData)
+    {
+        if (array_key_exists('DemonstrationSkills', $requestData)) {
+            $demonstrationSkillsData = $requestData['DemonstrationSkills'];
+            unset($requestData['DemonstrationSkills']);
+        }
+
+
+        parent::applyRecordDelta($StudentTask, $requestData);
+
+
+        if (isset($demonstrationSkillsData)) {
+            $Demonstration = $StudentTask->getOrCreateDemonstration();
+
+            $Demonstration->recordAffectedStudentCompetencies();
+            $Demonstration->applySkillsData($demonstrationSkillsData);
+        }
     }
 
     // public static function handleRecordsRequest($action = false)
