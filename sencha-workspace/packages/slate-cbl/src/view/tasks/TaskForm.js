@@ -203,7 +203,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
 
         // config handlers
-        updateTask: function(task) {
+        updateTask: function(task, oldTask) {
             var me = this;
 
             Ext.suspendLayouts();
@@ -229,6 +229,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 me.hide();
             }
 
+            me.fireEvent('taskchange', me, task, oldTask);
             Ext.resumeLayouts(true);
         },
 

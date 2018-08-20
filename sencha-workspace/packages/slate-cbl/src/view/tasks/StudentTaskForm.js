@@ -200,7 +200,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
 
         // config handlers
-        updateStudentTask: function(studentTask) {
+        updateStudentTask: function(studentTask, oldStudentTask) {
             var me = this,
                 ratingsField = me.getRatingsField(),
                 studentData, dueDate, expirationDate;
@@ -242,6 +242,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.hide();
             }
 
+            me.fireEvent('studenttaskchange', me, studentTask, oldStudentTask);
             Ext.resumeLayouts(true);
         },
 
