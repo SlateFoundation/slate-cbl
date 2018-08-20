@@ -166,7 +166,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                     xtype: 'slate-cbl-ratings-skillsfield',
                     fieldLabel: 'Ratings',
-                    labelAlign: 'top'
+                    labelAlign: 'top',
+                    allowBlank: true
                 }
             },
             attachmentsField: {
