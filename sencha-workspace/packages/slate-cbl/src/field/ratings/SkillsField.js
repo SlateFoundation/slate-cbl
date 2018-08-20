@@ -429,7 +429,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
             // remove containing competency if now empty
             if (competencyContainer.items.getCount() == 0) {
                 me.remove(competencyContainer, true);
-                delete competencyContainer[competencyId];
+                delete competencyContainers[competencyId];
             }
         }
 
