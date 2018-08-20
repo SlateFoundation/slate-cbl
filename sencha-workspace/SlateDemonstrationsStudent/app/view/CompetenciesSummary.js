@@ -3,6 +3,9 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
     xtype: 'slate-demonstrations-student-competenciessummary',
     requires: [
         'SlateDemonstrationsStudent.view.CompetencyCard', // using its CSS classes
+
+        /* global Slate */
+        'Slate.cbl.util.Config',
         'Slate.ui.SimplePanel' // using its CSS classes
     ],
 
@@ -34,7 +37,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
         '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter">',
             '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
             '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-            '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">Y{level - 8}</tpl></div>',
+            '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">{[Slate.cbl.util.Config.getTitleForLevel(values.level)]}</tpl></div>',
             '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
         '</div>',
 
@@ -123,7 +126,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? 'Y'+(newLevel - 8) : '');
+            me.meterLevelEl.update(newLevel ? Slate.cbl.util.Config.getTitleForLevel(newLevel) : '');
         }
     },
 

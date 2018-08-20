@@ -24,5 +24,11 @@ Ext.define('Slate.cbl.util.Config', {
         this.initConfig(config);
 
         return this;
+    },
+
+    getTitleForLevel: function(level) {
+        var levelConfig = this.getLevels()[level];
+
+        return levelConfig ? levelConfig.title : level;
     }
 });

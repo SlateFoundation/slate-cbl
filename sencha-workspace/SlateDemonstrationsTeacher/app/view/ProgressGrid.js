@@ -794,7 +794,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
                 progressCellEl.addCls('cbl-level-'+level);
 
-                node.progressLevelEl.update('Y' + (level - 8));
+                node.progressLevelEl.update(Slate.cbl.util.Config.getTitleForLevel(level));
                 node.renderedLevel = level;
             }
 
