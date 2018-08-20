@@ -313,7 +313,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 skillIndex = 0, demonstrationSkill,
                 skillId, skill,
                 competency, competencyId, competencyContainer,
-                studentCompetency,
+                studentCompetency, level,
                 skillIds = [];
 
             Ext.suspendLayouts();
@@ -331,14 +331,6 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
                 skillId = demonstrationSkill.SkillID;
 
-                // add empty rating to value
-                me.setSkillValue(skillId, null);
-
-                // skip skill if a field already exists for it
-                if (skillId in skillRatingFields) {
-                    continue;
-                }
-
                 // load skill/competency from local stores
                 skill = skillsStore.getById(skillId);
 
@@ -350,6 +342,33 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 competencyId = skill.get('CompetencyID');
                 competency = competenciesStore.getById(competencyId);
 
+                // fetch level or queue for loading
+                studentCompetency = studentCompetenciesStore.getByCompetencyId(competencyId);
+
+                if (studentCompetency) {
+                    level = studentCompetency.get('Level');
+                } else {
+                    level = null;
+
+                    if (
+                        studentCompetenciesLoadQueue.indexOf(competencyId) == -1
+                        && studentCompetenciesLoaded.indexOf(competencyId) == -1
+                    ) {
+                        studentCompetenciesLoadQueue.push(competencyId);
+                    }
+                }
+
+                me.studentCompetenciesLoadTask.delay(50);
+
+                // add empty rating to value
+                me.setSkillValue(skillId, null, level);
+
+                // skip skill if a field already exists for it
+                if (skillId in skillRatingFields) {
+                    // need to update level
+                    continue;
+                }
+
                 // get or create container for competency
                 if (competencyId in competencyContainers) {
                     competencyContainer = competencyContainers[competencyId];
@@ -359,23 +378,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     });
                 }
 
-                // fetch level or queue for loading
-                studentCompetency = studentCompetenciesStore.getByCompetencyId(competencyId);
-
-                if (
-                    !studentCompetency
-                    && studentCompetenciesLoadQueue.indexOf(competencyId) == -1
-                    && studentCompetenciesLoaded.indexOf(competencyId) == -1
-                ) {
-                    studentCompetenciesLoadQueue.push(competencyId);
-                }
-
-                me.studentCompetenciesLoadTask.delay(50);
-
                 // create skill field
                 skillRatingFields[skillId] = competencyContainer.addSorted({
                     skill: skill,
-                    level: studentCompetency ? studentCompetency.get('Level') : null,
+                    level: level,
                     removable: demonstrationSkill.Removable,
                     listeners: {
                         scope: me,
@@ -483,11 +489,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     ratingFieldIndex = 0;
 
                     for (; ratingFieldIndex < ratingFieldsLength; ratingFieldIndex++) {
-                        ratingField = ratingFields.getAt(ratingFieldIndex);
-
-                        if (!ratingField.getLevel()) {
-                            ratingField.setLevel(level);
-                        }
+                        ratingFields.getAt(ratingFieldIndex).setLevel(level);
                     }
                 }
 
