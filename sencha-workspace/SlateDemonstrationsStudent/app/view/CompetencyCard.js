@@ -3,6 +3,9 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     xtype: 'slate-demonstrations-student-competencycard',
     requires: [
         'Ext.util.Format',
+
+        /* global Slate */
+        'Slate.cbl.util.Config',
         'Slate.cbl.util.format.PreventOrphans',
         'Slate.ui.SimplePanel', // using its CSS classes
     ],
