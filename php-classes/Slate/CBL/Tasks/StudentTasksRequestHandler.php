@@ -44,9 +44,22 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             $conditions['TaskID'] = $Task->ID;
             $filterObjects['Task'] = $Task;
         } elseif ($Section = static::getRequestedSection()) {
-            $conditions['TaskID'] = [
-                'values' => DB::allValues('ID', 'SELECT ID FROM `%s` WHERE SectionID = %u', [ Task::$tableName, $Section->ID ])
-            ];
+            $taskIds = DB::allValues(
+                'ID',
+                'SELECT ID FROM `%s` WHERE SectionID = %u',
+                [
+                    Task::$tableName,
+                    $Section->ID
+                ]
+            );
+
+            if (count($taskIds)) {
+                $conditions['TaskID'] = [ 'values' => $taskIds ];
+            } else {
+                // block all results if no tasks match
+                $conditions[] = 'FALSE';
+            }
+
             $filterObjects['CourseSection'] = $Section;
         }
 
