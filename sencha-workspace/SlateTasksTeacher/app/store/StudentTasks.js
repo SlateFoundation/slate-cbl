@@ -5,7 +5,12 @@ Ext.define('SlateTasksTeacher.store.StudentTasks', {
     config: {
         proxy: {
             type: 'slate-cbl-studenttasks',
-            relatedTable: ['Task']
+            relatedTable: [
+                {
+                    relationship: 'Task',
+                    clearOnLoad: true
+                }
+            ],
         }
     }
 });
