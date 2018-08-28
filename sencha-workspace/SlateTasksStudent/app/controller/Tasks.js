@@ -25,7 +25,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // component references
     refs: {
-        dashboard: 'slate-tasks-student-dashboard',
+        dashboardCt: 'slate-tasks-student-dashboard',
 
         taskTree: {
             selector: 'slate-tasks-student-tasktree',

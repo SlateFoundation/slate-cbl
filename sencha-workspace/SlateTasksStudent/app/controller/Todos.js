@@ -24,14 +24,14 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // component references
     refs: {
-        dashboard: 'slate-tasks-student-dashboard',
+        dashboardCt: 'slate-tasks-student-dashboard',
         todoList: 'slate-tasks-student-todolist'
     },
 
 
     // entry points
     control: {
-        dashboard: {
+        dashboardCt: {
             studentchange: 'onStudentChange',
             sectionchange: 'onSectionChange'
         },
