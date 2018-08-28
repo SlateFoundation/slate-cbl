@@ -6,6 +6,7 @@ Ext.define('Slate.cbl.store.tasks.StudentTasks', {
     model: 'Slate.cbl.model.tasks.StudentTask',
     config: {
         section: null,
+        student: null,
 
         remoteFilter: true,
         remoteSort: true,
@@ -25,6 +26,11 @@ Ext.define('Slate.cbl.store.tasks.StudentTasks', {
     // config handlers
     updateSection: function(section) {
         this.getProxy().setExtraParam('course_section', section || null);
+        this.dirty = true;
+    },
+
+    updateStudent: function(student) {
+        this.getProxy().setExtraParam('student', student || null);
         this.dirty = true;
     },
 
