@@ -10,8 +10,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
 
     config: {
-        store: null,
-        readOnly: false
+        store: null
     },
 
 

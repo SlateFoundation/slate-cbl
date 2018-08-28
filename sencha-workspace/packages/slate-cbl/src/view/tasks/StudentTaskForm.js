@@ -113,7 +113,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             dueDateDisplayField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'InheritedDueDate',
+                    name: 'EffectiveDueDate',
 
                     xtype: 'displayfield',
                     hidden: true,
@@ -142,7 +142,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             expirationDateDisplayField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'InheritedExpirationDate',
+                    name: 'EffectiveExpirationDate',
 
                     xtype: 'displayfield',
                     hidden: true,
@@ -203,7 +203,12 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         // config handlers
         updateStudentTask: function(studentTask, oldStudentTask) {
             var me = this,
-                ratingsField = me.getRatingsField(),
+                dueDateField = me.getDueDateField(),
+                dueDateOverrideField = me.getDueDateOverrideField(),
+                dueDateReadOnly = dueDateField.readOnly,
+                expirationDateField = me.getExpirationDateField(),
+                expirationDateOverrideField = me.getExpirationDateOverrideField(),
+                expirationDateReadOnly = expirationDateField.readOnly,
                 studentData, dueDate, expirationDate;
 
             Ext.suspendLayouts();
@@ -220,18 +225,17 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     studentTask.get('Task').Title
                 ));
 
-                // configure permanent values before loading record
-                // ratingsField.clearSkills();
-                ratingsField.setSelectedStudent(studentTask.get('Student').Username);
-                // ratingsField.addSkills(studentTask.get('InheritedSkills'), false);
+                me.getRatingsField().setSelectedStudent(studentTask.get('Student').Username);
 
-                me.getDueDateDisplayField().setHidden(dueDate);
-                me.getDueDateField().setHidden(!dueDate);
-                me.getDueDateOverrideField().setValue(Boolean(dueDate));
+                me.getDueDateDisplayField().setHidden(dueDate && !dueDateReadOnly);
+                dueDateField.setHidden(!dueDate || dueDateReadOnly);
+                dueDateOverrideField.setHidden(dueDateReadOnly);
+                dueDateOverrideField.setValue(dueDateReadOnly ? null : Boolean(dueDate));
 
-                me.getExpirationDateDisplayField().setHidden(expirationDate);
-                me.getExpirationDateField().setHidden(!expirationDate);
-                me.getExpirationDateOverrideField().setValue(Boolean(expirationDate));
+                me.getExpirationDateDisplayField().setHidden(expirationDate && !expirationDateReadOnly);
+                expirationDateField.setHidden(!expirationDate || expirationDateReadOnly);
+                expirationDateOverrideField.setHidden(expirationDateReadOnly);
+                expirationDateOverrideField.setValue(expirationDateReadOnly ? null : Boolean(expirationDate));
 
                 me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
 
