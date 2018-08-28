@@ -12,8 +12,8 @@ Ext.define('SlateTasksStudent.store.Tasks', {
             sorterFn: function(task1, task2) {
                 var completed1 = task1.get('TaskStatus') == 'completed',
                     completed2 = task2.get('TaskStatus') == 'completed',
-                    date1 = task1.get('DueDate'),
-                    date2 = task2.get('DueDate'),
+                    date1 = task1.get('EffectiveDueDate'),
+                    date2 = task2.get('EffectiveDueDate'),
                     submitted1, submitted2;
 
                 // completed tasks are obsolute last
@@ -30,7 +30,7 @@ Ext.define('SlateTasksStudent.store.Tasks', {
                         return -1;
                     }
 
-                    return submitted1 > submitted2 ? -1 : submitted1.getTime() == submitted2.getTime() ? 0 : 1;
+                    return submitted1 > submitted2 ? -1 : submitted1.getTime() == submitted2.getTime() ? 0 : 1; // eslint-disable-line no-nested-ternary
                 } else if (completed1) {
                     return 1;
                 } else if (completed2) {
@@ -45,7 +45,7 @@ Ext.define('SlateTasksStudent.store.Tasks', {
                 }
 
                 // finally sort by oldest due date first
-                return date1 > date2 ? 1 : date1.getTime() == date2.getTime() ? 0 : -1;
+                return date1 > date2 ? 1 : date1.getTime() == date2.getTime() ? 0 : -1; // eslint-disable-line no-nested-ternary
             }
         }],
 
