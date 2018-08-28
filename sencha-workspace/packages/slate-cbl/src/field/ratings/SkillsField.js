@@ -61,6 +61,26 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
 
     // config handlers
+    updateReadOnly: function(readOnly) {
+        var me = this,
+            skillRatingFields = me.skillRatingFields,
+            skillId;
+
+        Ext.suspendLayouts();
+
+        me.callParent(arguments);
+
+        me.setFooter(!readOnly);
+
+        for (skillId in skillRatingFields) {
+            if (skillRatingFields.hasOwnProperty(skillId)) {
+                skillRatingFields[skillId].setReadOnly(readOnly);
+            }
+        }
+
+        Ext.resumeLayouts(true);
+    },
+
     updateSelectedStudent: function(selectedStudent, oldSelectedStudent) {
         var me = this,
             studentCompetenciesStore = me.getStudentCompetenciesStore(),
@@ -305,6 +325,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
 
     addSkills(skills) {
         var me = this,
+            readOnly = me.getReadOnly(),
             competencyContainers = me.competencyContainers,
             skillRatingFields = me.skillRatingFields,
             competenciesStore = me.getCompetenciesStore(),
@@ -399,6 +420,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     skill: skill,
                     level: level,
                     removable: demonstrationSkill.Removable,
+                    readOnly: readOnly,
                     listeners: {
                         scope: me,
                         changecomplete: 'onRatingChange',

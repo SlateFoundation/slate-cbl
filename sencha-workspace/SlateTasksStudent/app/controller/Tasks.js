@@ -49,10 +49,14 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
             mainView: {
                 xtype: 'slate-cbl-tasks-studenttaskform',
+                // TODO: create an app-specific subclass?
                 dueDateField: {
                     readOnly: true
                 },
                 expirationDateField: {
+                    readOnly: true
+                },
+                ratingsField: {
                     readOnly: true
                 }
                 // parentTaskField: {
