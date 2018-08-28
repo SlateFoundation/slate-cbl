@@ -136,7 +136,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             };
         }
 
-        if (typeof studentSelector == 'object' && !studentSelector.isComponent) {
+        if (typeof studentSelector == 'object' && !studentSelector.isComponent && !oldStudentSelector) {
             studentSelector = Ext.apply({
                 name: 'StudentID',
                 valueField: 'ID',
@@ -160,7 +160,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             };
         }
 
-        if (typeof ratingsField == 'object' && !ratingsField.isComponent) {
+        if (typeof ratingsField == 'object' && !ratingsField.isComponent && !oldRatingsField) {
             ratingsField = Ext.apply({
                 fieldLabel: 'Demonstrated Skills',
                 labelAlign: 'top'
@@ -177,7 +177,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
             };
         }
 
-        if (typeof commentsField == 'object' && !commentsField.isComponent) {
+        if (typeof commentsField == 'object' && !commentsField.isComponent && !oldCommentsField) {
             commentsField = Ext.apply({
                 flex: 1,
 
