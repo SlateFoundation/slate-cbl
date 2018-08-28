@@ -1,15 +1,12 @@
 Ext.define('SlateTasksStudent.store.Tasks', {
-    extend: 'Ext.data.Store',
+    extend: 'Slate.cbl.store.tasks.StudentTasks',
 
 
-    model: 'SlateTasksStudent.model.Task',
+    model: 'Slate.cbl.model.tasks.StudentTask',
 
     config: {
-        student: null,
-        section: null,
-
-        pageSize: 0,
         remoteSort: false,
+        remoteFilter: false,
 
         sorters: [{
             sorterFn: function(task1, task2) {
@@ -55,41 +52,18 @@ Ext.define('SlateTasksStudent.store.Tasks', {
         // redeclare identical proxy as model for dynamic reconfiguration
         proxy: {
             type: 'slate-cbl-studenttasks',
-            url: '/cbl/student-tasks',
-            include: [
-                'Submitted',
-                'Student',
-                'Comments',
-                'Attachments.File',
-                'Submissions',
-                'TaskSkills',
-                'Task.Attachments.File',
-                'Task.ParentTask',
-                'Task.Section'
-            ]
+            include: 'Task.Section'
+            // include: [
+            //     'Submitted',
+            //     'Student',
+            //     'Comments',
+            //     'Attachments.File',
+            //     'Submissions',
+            //     'TaskSkills',
+            //     'Task.Attachments.File',
+            //     'Task.ParentTask',
+            //     'Task.Section'
+            // ]
         }
-    },
-
-
-    // config handlers
-    updateStudent: function(student) {
-        this.getProxy().setExtraParam('student', student || null);
-        this.dirty = true;
-    },
-
-    updateSection: function(section) {
-        this.getProxy().setExtraParam('course_section', section || null);
-        this.dirty = true;
-    },
-
-
-    // member methods
-    loadIfDirty: function() {
-        if (!this.dirty || this.getStudent() === null || this.getSection() === null) {
-            return;
-        }
-
-        this.dirty = false;
-        this.load();
     }
 });
