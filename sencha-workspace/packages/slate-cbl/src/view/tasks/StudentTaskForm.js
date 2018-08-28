@@ -24,7 +24,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
             'Emergence.proxy.Values',
 
-            'Slate.cbl.field.ratings.SkillsField'
+            'Slate.cbl.field.ratings.SkillsField',
+            'Slate.cbl.field.attachments.Field'
         ],
 
 
