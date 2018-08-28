@@ -169,6 +169,12 @@ parameter `apiHost` when loading the page.
 ### Next release
 
 - [ ] Audit reflows
+- [ ] Create and apply checklist for reviewing:
+  - Controllers
+  - Views
+  - Stores
+  - Models
+  - Fields
 - [ ] Handle editing overrides better
 - [ ] Expand current content area by default when demo window opened
 - [ ] Reorganize slate-cbl package

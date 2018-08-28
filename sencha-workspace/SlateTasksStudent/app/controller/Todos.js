@@ -103,6 +103,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         });
     },
 
+    // TODO: verify this works / is used anywhere?
     onTodosListClearClick: function(todoList, sectionId) {
         var me = this,
             store = me.getTodosStore(),

@@ -1,3 +1,4 @@
+// TODO: deprecate
 Ext.define('SlateTasksTeacher.view.TaskRater', {
     extend: 'Slate.cbl.view.modals.RateTask',
     xtype: 'slate-tasks-teacher-taskrater',
