@@ -30,6 +30,11 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         click: {
             fn: 'onTreeClick',
             element: 'el'
+        },
+        transitionend: {
+            fn: 'onTransitionEnd',
+            element: 'el',
+            buffer: 10
         }
     },
 
@@ -151,6 +156,10 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         } else if (parentEl) {
             me.fireEvent('itemclick', me, me.getStore().getById(parentEl.getAttribute('data-id')), parentEl);
         }
+    },
+
+    onTransitionEnd: function() {
+        this.updateLayout();
     },
 
 
