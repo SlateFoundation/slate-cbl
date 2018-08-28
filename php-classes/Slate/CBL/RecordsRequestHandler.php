@@ -3,6 +3,8 @@
 namespace Slate\CBL;
 
 
+use OutOfBoundsException;
+
 use Slate\CBL\Tasks\TasksRequestHandler;
 
 abstract class RecordsRequestHandler extends \Slate\RecordsRequestHandler
@@ -28,9 +30,14 @@ abstract class RecordsRequestHandler extends \Slate\RecordsRequestHandler
 
         // get the requested task
         $Task = TasksRequestHandler::getRecordByHandle($_REQUEST['task']);
-        $userIsStaff = $Session->hasAccountLevel('Staff');
+
+        if (!$Task) {
+            throw new OutOfBoundsException('task not found');
+        }
 
         // staff and author definitely have access
+        $userIsStaff = $Session->hasAccountLevel('Staff');
+
         if ($userIsStaff || $Task->CreatorID == $Session->PersonID) {
             return $Task;
         }
