@@ -320,32 +320,8 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
 
         proxy: 'slate-cbl-studenttasks',
 
-        // TODO: review if still needed
-        // getTaskSkillsGroupedByCompetency: function() {
-        //     var comps = [], compIds = [],
-        //         skills = this.get('TaskSkills') || [],
-        //         compIdx, skill,
-        //         i = 0;
 
-        //     for (; i < skills.length; i++) {
-        //         skill = skills[i];
-
-        //         if ((compIdx = compIds.indexOf(skill.CompetencyCode)) === -1) {
-        //             compIdx = compIds.length;
-        //             comps[compIdx] = {
-        //                 Code: skill.CompetencyCode,
-        //                 Descriptor: skill.CompetencyDescriptor,
-        //                 skills: []
-        //             };
-        //             compIds.push(skill.CompetencyCode);
-        //         }
-
-        //         comps[compIdx].skills.push(skill);
-        //     }
-
-        //     return comps;
-        // },
-
+        // local methods
         readOperationData: function(operation) {
             var me = this,
                 response = operation.getResponse(),
