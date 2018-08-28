@@ -256,6 +256,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
         // decorate StudentTask models with Student and ParentTask data
         Ext.StoreMgr.requireLoaded([participantsStore, tasksStore], function() {
+            store.beginUpdate();
+
             for (; recordIndex < recordsLength; recordIndex++) {
                 record = records[recordIndex];
 
@@ -273,6 +275,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
                     record.set('ParentTask', parentTask ? parentTask.getData() : null, { dirty: false });
                 }
             }
+
+            store.endUpdate();
         });
     },
 
