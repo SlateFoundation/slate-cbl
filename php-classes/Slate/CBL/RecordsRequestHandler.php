@@ -5,6 +5,7 @@ namespace Slate\CBL;
 
 use OutOfBoundsException;
 
+use Slate\Courses\SectionParticipant;
 use Slate\CBL\Tasks\TasksRequestHandler;
 
 abstract class RecordsRequestHandler extends \Slate\RecordsRequestHandler
@@ -46,7 +47,7 @@ abstract class RecordsRequestHandler extends \Slate\RecordsRequestHandler
         if ($Task && $Task->SectionID) {
             $SectionParticipant = SectionParticipant::getByWhere([
                 'CourseSectionID' => $Task->SectionID,
-                'PersonID' => $Session->ID
+                'PersonID' => $Session->PersonID
             ]);
         }
 
