@@ -10,8 +10,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
 
     config: {
-        store: null,
-        readOnly: false
+        store: null
     },
 
 
@@ -30,25 +29,30 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         click: {
             fn: 'onTreeClick',
             element: 'el'
+        },
+        transitionend: {
+            fn: 'onTransitionEnd',
+            element: 'el',
+            buffer: 10
         }
     },
 
     tpl: [
-        '<tpl if="tasks.length">',
+        '<tpl if="studentTasks.length">',
             '<ul class="slate-tasktree-list">',
-                '<tpl for="tasks">',
-                    '<li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.task) ]}" data-id="{task.ID}">',
+                '<tpl for="studentTasks">',
+                    '<li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.studentTask) ]}" data-id="{studentTask.ID}">',
 
                         '<div class="flex-ct">',
                             '<div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
                             '<div class="slate-tasktree-data">',
                                 '<tpl if="parent.showSection">',
-                                    '<div class="slate-tasktree-category">{task.SectionTitle}</div>',
+                                    '<div class="slate-tasktree-category">{studentTask.Task.Section.Title}</div>',
                                 '</tpl>',
                                 '<div class="slate-tasktree-text">',
-                                    '<div class="slate-tasktree-title">{task.Title}</div>',
-                                    '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values.task)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.task.TaskStatus) ]}</div>',
-                                    '<div class="slate-tasktree-date">{[ this.getStatusDate(values.task) ]}</div>',
+                                    '<div class="slate-tasktree-title">{studentTask.Title}</div>',
+                                    '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values.studentTask)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.studentTask.TaskStatus) ]}</div>',
+                                    '<div class="slate-tasktree-date">{[ this.getStatusDate(values.studentTask) ]}</div>',
                                 '</div>',
                             '</div>',
                         '</div>',
@@ -64,8 +68,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                             '<div class="slate-tasktree-data">',
                                                 '<div class="slate-tasktree-text">',
                                                     '<div class="slate-tasktree-title">{Title}</div>',
-                                                    '<div class="slate-tasktree-status">{[ this.getStatusString(values.TaskStatus) ]}</div>',
-                                                    '<div class="slate-tasktree-date<tpl if="!values.DueDate">-null</tpl>">{[ this.getStatusDate(values) ]}</div>',
+                                                    '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.TaskStatus) ]}</div>',
+                                                    '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
                                                 '</div>',
                                             '</div>',
                                         '</div>',
@@ -86,20 +90,20 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             getStatusString: function(taskStatus) {
                 return Slate.cbl.model.tasks.StudentTask.statusStrings[taskStatus] || '';
             },
-            getStatusDate: function(taskData) {
-                var taskStatus = taskData.TaskStatus,
+            getStatusDate: function(studentTaskData) {
+                var taskStatus = studentTaskData.TaskStatus,
                     taskDate;
 
                 if (taskStatus === 'submitted' || taskStatus === 're-submitted') {
-                    taskDate = taskData.Submitted;
+                    taskDate = studentTaskData.Submitted;
                 } else {
-                    taskDate = taskData.DueDate;
+                    taskDate = studentTaskData.EffectiveDueDate;
                 }
 
                 return Ext.Date.dateFormat(taskDate, 'M d, Y');
             },
-            getDueStatusCls: function(task) {
-                return Slate.cbl.model.tasks.StudentTask[task.IsLate ? 'lateStatusClasses' : 'statusClasses'][task.TaskStatus] || '';
+            getDueStatusCls: function(studentTask) {
+                return Slate.cbl.model.tasks.StudentTask[studentTask.IsLate ? 'lateStatusClasses' : 'statusClasses'][studentTask.TaskStatus] || '';
             }
         }
     ],
@@ -149,8 +153,12 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         if (target.is('.slate-tasktree-nub.is-clickable')) {
             parentEl.toggleCls('is-expanded');
         } else if (parentEl) {
-            me.fireEvent('itemclick', me, me.getStore().getById(parentEl.getAttribute('data-id')));
+            me.fireEvent('itemclick', me, me.getStore().getById(parentEl.getAttribute('data-id')), parentEl);
         }
+    },
+
+    onTransitionEnd: function() {
+        this.updateLayout();
     },
 
 
@@ -160,8 +168,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             store = me.getStore(),
             items = [],
 
-            rootTasks = store.queryBy(function(task) {
-                return !task.get('ParentTaskID');
+            rootTasks = store.queryBy(function(studentTask) {
+                return !studentTask.get('Task').ParentTaskID;
             }),
             rootTasksLength = rootTasks.getCount(),
             rootTasksIndex = 0,
@@ -172,8 +180,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             rootTask = rootTasks.getAt(rootTasksIndex);
             rootTaskId = rootTask.get('TaskID');
 
-            subTasks = store.queryBy(function(task) { // eslint-disable-line no-loop-func
-                return task.get('ParentTaskID') == rootTaskId && !task.get('filtered');
+            subTasks = store.queryBy(function(studentTask) { // eslint-disable-line no-loop-func
+                return studentTask.get('Task').ParentTaskID == rootTaskId && !studentTask.get('filtered');
             });
 
             if (subTasks.getCount() > 0) {
@@ -182,7 +190,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
             if (!rootTask.get('filtered')) {
                 items.push({
-                    task: rootTask.getData(),
+                    studentTask: rootTask.getData(),
                     subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
                 });
             }
@@ -190,7 +198,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
 
         // render markup
         me.setData({
-            tasks: items,
+            studentTasks: items,
             showSection: !store.getSection()
         });
 

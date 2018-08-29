@@ -42,5 +42,17 @@ Ext.define('Slate.cbl.field.ratings.Thumb', {
         if (el) {
             el.setHtml(me.buildValueHtml(value));
         }
+    },
+
+    setReadOnly: function(readOnly) {
+        this.readOnly = readOnly;
+    },
+
+    onBeforeDragStart: function() {
+        if (this.readOnly) {
+            return false;
+        }
+
+        return this.callParent(arguments);
     }
 });

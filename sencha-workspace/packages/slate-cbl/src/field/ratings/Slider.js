@@ -76,6 +76,10 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
         var me = this,
             value = me.reversePixelValue(trackPoint);
 
+        if (me.readOnly) {
+            return;
+        }
+
         if (Math.round(value) == me.minValue) {
             value = null;
         }
@@ -102,6 +106,7 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
             slider: me,
             value: value,
             constrain: false,
+            readOnly: me.readOnly,
             thumbCls: value <= minValue ? 'slate-cbl-ratings-thumb-parked' : null
         }));
 
@@ -216,6 +221,16 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
         return value;
     },
 
+    setReadOnly: function(readOnly) {
+        var me = this;
+
+        me.toggleCls('slate-cbl-ratings-slider-removable', me.getRemovable() && !readOnly);
+
+        me.primaryThumb.setReadOnly(readOnly);
+
+        Ext.form.field.Base.prototype.setReadOnly.apply(this, arguments); // skip other slider implementations that mess with thumbs
+    },
+
 
     // component lifecycle
     onRender: function() {
@@ -318,7 +333,7 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
     },
 
     updateRemovable: function(removable) {
-        this.toggleCls('slate-cbl-ratings-slider-removable', removable);
+        this.toggleCls('slate-cbl-ratings-slider-removable', removable && !this.readOnly);
     },
 
 

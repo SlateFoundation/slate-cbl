@@ -83,7 +83,7 @@ Ext.define('Slate.cbl.view.CompetenciesGrid', {
             };
         }
 
-        if (typeof searchField == 'object' && !searchField.isComponent) {
+        if (typeof searchField == 'object' && !searchField.isComponent && !oldSearchField) {
             searchField = Ext.apply({
                 margin: '6 12',
                 emptyText: 'Type competency code or statement&hellip;',

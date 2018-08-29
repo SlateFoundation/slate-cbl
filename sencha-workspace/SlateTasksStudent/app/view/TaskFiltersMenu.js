@@ -51,40 +51,36 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
             text: 'Past Due',
             filterGroup: 'Timeline',
             filterFn: function(rec) {
-                var now = new Date(),
-                    due = rec.get('DueDate');
+                var dueDate = rec.get('EffectiveDueDate');
 
-                return !due || rec.get('DueDate') >= now;
+                return !dueDate || dueDate >= new Date();
             }
         },
         {
             text: 'Due Today',
             filterGroup: 'Timeline',
             filterFn: function(rec) {
-                var now = new Date(),
-                    due = rec.get('DueDate');
+                var dueDate = rec.get('EffectiveDueDate');
 
-                return !due || due.toDateString() !== now.toDateString();
+                return !dueDate || dueDate.toDateString() !== (new Date()).toDateString();
             }
         },
         {
             text: 'Due This Week',
             filterGroup: 'Timeline',
             filterFn: function(rec) {
-                var now = new Date(),
-                    due = rec.get('DueDate');
+                var dueDate = rec.get('EffectiveDueDate');
 
-                return !due || Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now);
+                return !dueDate || Ext.Date.getWeekOfYear(dueDate) !== Ext.Date.getWeekOfYear(new Date());
             }
         },
         {
             text: 'Due Next Week',
             filterGroup: 'Timeline',
             filterFn: function(rec) {
-                var now = new Date(),
-                    due = rec.get('DueDate');
+                var dueDate = rec.get('EffectiveDueDate');
 
-                return !due || Ext.Date.getWeekOfYear(rec.get('DueDate')) !== Ext.Date.getWeekOfYear(now)+1;
+                return !dueDate || Ext.Date.getWeekOfYear(dueDate) !== Ext.Date.getWeekOfYear(new Date())+1;
             }
         },
         { xtype: 'menuseparator' },

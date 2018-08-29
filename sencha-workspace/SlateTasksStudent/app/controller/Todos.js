@@ -24,14 +24,14 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // component references
     refs: {
-        dashboard: 'slate-tasks-student-dashboard',
+        dashboardCt: 'slate-tasks-student-dashboard',
         todoList: 'slate-tasks-student-todolist'
     },
 
 
     // entry points
     control: {
-        dashboard: {
+        dashboardCt: {
             studentchange: 'onStudentChange',
             sectionchange: 'onSectionChange'
         },
@@ -103,6 +103,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         });
     },
 
+    // TODO: verify this works / is used anywhere?
     onTodosListClearClick: function(todoList, sectionId) {
         var me = this,
             store = me.getTodosStore(),

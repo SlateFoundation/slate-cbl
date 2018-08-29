@@ -113,7 +113,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
             };
         }
 
-        if (typeof tabPanel == 'object' && !tabPanel.isComponent) {
+        if (typeof tabPanel == 'object' && !tabPanel.isComponent && !oldTabPanel) {
             tabPanel = Ext.apply({
                 cls: 'slate-cbl-ratings-studentcompetenciesfield-competenciestabs',
                 tabBar: {
@@ -146,7 +146,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
             };
         }
 
-        if (typeof competenciesGrid == 'object' && !competenciesGrid.isComponent) {
+        if (typeof competenciesGrid == 'object' && !competenciesGrid.isComponent && !oldCompetenciesGrid) {
             competenciesGrid = Ext.apply({
                 title: 'Add competency',
                 glyph: 0xf0fe + '@FontAwesome',
