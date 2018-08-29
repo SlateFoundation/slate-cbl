@@ -51,9 +51,17 @@ abstract class RecordsRequestHandler extends \Slate\RecordsRequestHandler
             ]);
         }
 
+        // look up if user has been assigned this task
+        if ($Task && !$SectionParticipant) {
+            $StudentTask = Tasks\StudentTask::getByWhere([
+                'TaskID' => $Task->ID,
+                'StudentID' => $Session->PersonID
+            ]);
+        }
+
         // don't differentiate between nonexistant and unauthorized
-        if (!$Task || !$SectionParticipant) {
-            return static::throwNotFoundError('Task not found');
+        if (!$Task || (!$SectionParticipant && !$StudentTask)) {
+            return static::throwNotFoundError('task not found');
         }
 
         return $Task;
