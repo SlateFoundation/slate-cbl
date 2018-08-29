@@ -3,6 +3,7 @@
 namespace Slate\CBL\Tasks;
 
 
+use Emergence\People\IPerson;
 use Emergence\People\Person;
 use Emergence\Comments\Comment;
 
@@ -14,6 +15,8 @@ use Slate\CBL\Demonstrations\ExperienceDemonstration;
 class StudentTask extends \VersionedRecord
 {
     public static $rateExpiredMissing = false;
+    public static $canSubmitStatuses = ['assigned', 're-assigned'];
+    public static $canResubmitStatuses = ['submitted', 're-submitted'];
 
 
     //VersionedRecord configuration
@@ -155,6 +158,60 @@ class StudentTask extends \VersionedRecord
         }
 
         return $this->Demonstration;
+    }
+
+    public function getAvailableActions(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        $actions = parent::getAvailableActions($User);
+
+        $actions['submit'] = $this->userCanSubmitStudentTask($User);
+        $actions['resubmit'] = $this->userCanResubmitStudentTask($User);
+
+        return $actions;
+    }
+
+    public function userCanCreateRecord(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return $User && $User->hasAccountLevel('Staff');
+    }
+
+    public function userCanReadRecord(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return $User && ($User->ID == $this->StudentID || $User->hasAccountLevel('Staff'));
+    }
+
+    public function userCanUpdateRecord(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return $User && $User->hasAccountLevel('Staff');
+    }
+
+    public function userCanDeleteRecord(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return $User && $User->hasAccountLevel('Staff');
+    }
+
+    public function userCanSubmitStudentTask(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return $User && $User->ID == $this->StudentID && in_array($this->TaskStatus, static::$canSubmitStatuses);
+    }
+
+    public function userCanResubmitStudentTask(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return $User && $User->ID == $this->StudentID && in_array($this->TaskStatus, static::$canResubmitStatuses);
     }
 
     // TODO: delete all this?
