@@ -65,6 +65,15 @@
         cursor: pointer;
         cursor: context-menu;
     }
+
+    &.x-form-readonly {
+        .x-slider-ct-horz,
+        .x-slider-ct-horz:active,
+        .x-slider-thumb,
+        .slate-cbl-ratings-thumb-parked:hover {
+            cursor: auto;
+        }
+    }
 }
 
 

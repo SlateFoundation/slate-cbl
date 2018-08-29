@@ -9,6 +9,12 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             return Ext.merge(oldValue ? Ext.Object.chain(oldValue) : {}, newValue);
         },
         applyFn = function(config, instance) {
+            if (typeof config === 'boolean') {
+                config = {
+                    hidden: !config
+                };
+            }
+
             return Ext.factory(config, null, instance);
         };
 
@@ -108,7 +114,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     name: 'DueDate',
 
                     xtype: 'datefield',
-                    hidden: true
+                    hidden: true,
+                    emptyText: 'none'
                 }
             },
             dueDateDisplayField: {
@@ -118,7 +125,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                     xtype: 'displayfield',
                     hidden: true,
-                    renderer: Ext.util.Format.dateRenderer('Y-m-d')
+                    renderer: function(v) {
+                        return v ? Ext.util.Format.date(v, 'Y-m-d') : 'none';
+                    }
                 }
             },
             dueDateOverrideField: {
@@ -137,7 +146,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     name: 'ExpirationDate',
 
                     xtype: 'datefield',
-                    hidden: true
+                    hidden: true,
+                    emptyText: 'none'
                 }
             },
             expirationDateDisplayField: {
@@ -147,7 +157,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                     xtype: 'displayfield',
                     hidden: true,
-                    renderer: Ext.util.Format.dateRenderer('Y-m-d')
+                    renderer: function(v) {
+                        return v ? Ext.util.Format.date(v, 'Y-m-d') : 'none';
+                    }
                 }
             },
             expirationDateOverrideField: {
@@ -160,6 +172,15 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 }
             },
 
+            attachmentsField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'Attachments',
+
+                    xtype: 'slate-cbl-attachments-field',
+                    readOnly: true
+                }
+            },
             ratingsField: {
                 merge: mergeFn,
                 $value: {
@@ -171,20 +192,12 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     allowBlank: true
                 }
             },
-            attachmentsField: {
-                merge: mergeFn,
-                $value: {
-                    name: 'Attachments',
-
-                    xtype: 'slate-cbl-attachments-field',
-                    readOnly: true
-                }
-            },
 
             hidden: true,
             title: null,
             createTitle: 'Assign to {0} {1}: {2}',
             editTitle: 'Rate for {0} {1}: {2}',
+            viewTitle: '{2} ―{0} {1}',
 
             footer: [
                 {
@@ -204,12 +217,14 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         // config handlers
         updateStudentTask: function(studentTask, oldStudentTask) {
             var me = this,
+                ratingsField = me.getRatingsField(),
                 dueDateField = me.getDueDateField(),
                 dueDateOverrideField = me.getDueDateOverrideField(),
                 dueDateReadOnly = dueDateField.readOnly,
                 expirationDateField = me.getExpirationDateField(),
                 expirationDateOverrideField = me.getExpirationDateOverrideField(),
                 expirationDateReadOnly = expirationDateField.readOnly,
+                ratingsFieldReadOnly = ratingsField.getReadOnly(),
                 studentData, dueDate, expirationDate;
 
             Ext.suspendLayouts();
@@ -220,25 +235,38 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 expirationDate = studentTask.get('ExpirationDate');
 
                 me.setTitle(Ext.String.format(
-                    studentTask.phantom ? me.getInitialConfig('createTitle') : me.getInitialConfig('editTitle'),
+                    // eslint-disable-next-line no-nested-ternary
+                    ratingsFieldReadOnly
+                        ? me.getInitialConfig('viewTitle')
+                        : studentTask.phantom
+                            ? me.getInitialConfig('createTitle')
+                            : me.getInitialConfig('editTitle'),
                     studentData.FirstName,
                     studentData.LastName,
-                    studentTask.get('Task').Title
+                    studentTask.get('Title')
                 ));
 
-                me.getRatingsField().setSelectedStudent(studentTask.get('Student').Username);
+                me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
+
+                me.setInstructionsField(Boolean(studentTask.get('Instructions')));
+
+                ratingsField.setSelectedStudent(studentTask.get('Student').Username);
+                ratingsField.setHidden(ratingsFieldReadOnly && !studentTask.get('DemonstrationSkills').length);
 
                 me.getDueDateDisplayField().setHidden(dueDate && !dueDateReadOnly);
                 dueDateField.setHidden(!dueDate || dueDateReadOnly);
                 dueDateOverrideField.setHidden(dueDateReadOnly);
                 dueDateOverrideField.setValue(dueDateReadOnly ? null : Boolean(dueDate));
+                me.dueDateCt.setHidden(dueDateReadOnly && !studentTask.get('EffectiveDueDate'));
+
 
                 me.getExpirationDateDisplayField().setHidden(expirationDate && !expirationDateReadOnly);
                 expirationDateField.setHidden(!expirationDate || expirationDateReadOnly);
                 expirationDateOverrideField.setHidden(expirationDateReadOnly);
                 expirationDateOverrideField.setValue(expirationDateReadOnly ? null : Boolean(expirationDate));
+                me.expirationDateCt.setHidden(expirationDateReadOnly && !studentTask.get('EffectiveExpirationDate'));
 
-                me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
+                me.setAttachmentsField(studentTask.get('Attachments').length > 0);
 
 
                 me.loadRecord(studentTask);
@@ -313,8 +341,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             });
         },
 
-        applyRatingsField: applyFn,
         applyAttachmentsField: applyFn,
+        applyRatingsField: applyFn,
 
 
         // component lifecycle
@@ -331,6 +359,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.getExperienceTypeField(),
                 me.getInstructionsField(),
                 {
+                    itemId: 'dueDateCt',
                     xtype: 'fieldcontainer',
                     fieldLabel: 'Due Date',
                     layout: 'hbox',
@@ -345,6 +374,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     ]
                 },
                 {
+                    itemId: 'expirationDateCt',
                     xtype: 'fieldcontainer',
                     fieldLabel: 'Expiration Date',
                     layout: 'hbox',
@@ -358,9 +388,12 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                         me.getExpirationDateOverrideField()
                     ]
                 },
-                me.getRatingsField(),
-                me.getAttachmentsField()
+                me.getAttachmentsField(),
+                me.getRatingsField()
             ]);
+
+            me.dueDateCt = me.getComponent('dueDateCt');
+            me.expirationDateCt = me.getComponent('expirationDateCt');
         }
     };
 });

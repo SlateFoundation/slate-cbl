@@ -45,7 +45,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             layout: 'fit',
             minWidth: 300,
             width: 600,
-            minHeight: 600,
+            minHeight: 400,
 
             mainView: {
                 xtype: 'slate-cbl-tasks-studenttaskform',
@@ -58,23 +58,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 },
                 ratingsField: {
                     readOnly: true
-                }
-                // parentTaskField: {
-                //     store: {
-                //         type: 'chained',
-                //         source: 'Tasks',
-                //         filters: [{
-                //             filterFn: function(task) {
-                //                 return !task.get('ParentTaskID');
-                //             }
-                //         }]
-                //     }
-                // },
-                // assignmentsField: {
-                //     store: 'SectionParticipants',
-                //     valueField: 'PersonID',
-                //     displayField: 'PersonFullName'
-                // }
+                },
+                footer: false
             }
         },
         formPanel: 'slate-cbl-tasks-studenttaskform',
