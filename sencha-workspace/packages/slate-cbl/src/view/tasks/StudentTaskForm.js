@@ -220,27 +220,29 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 ratingsField = me.getRatingsField(),
                 dueDateField = me.getDueDateField(),
                 dueDateOverrideField = me.getDueDateOverrideField(),
-                dueDateReadOnly = dueDateField.readOnly,
                 expirationDateField = me.getExpirationDateField(),
                 expirationDateOverrideField = me.getExpirationDateOverrideField(),
-                expirationDateReadOnly = expirationDateField.readOnly,
-                ratingsFieldReadOnly = ratingsField.getReadOnly(),
+                availableActions, canUpdate, canRate,
                 studentData, dueDate, expirationDate;
 
             Ext.suspendLayouts();
 
             if (studentTask) {
+                availableActions = studentTask.get('availableActions');
+                canUpdate = availableActions.update;
+                canRate = availableActions.rate;
+
                 studentData = studentTask.get('Student');
                 dueDate = studentTask.get('DueDate');
                 expirationDate = studentTask.get('ExpirationDate');
 
                 me.setTitle(Ext.String.format(
                     // eslint-disable-next-line no-nested-ternary
-                    ratingsFieldReadOnly
-                        ? me.getInitialConfig('viewTitle')
-                        : studentTask.phantom
+                    canUpdate
+                        ? studentTask.phantom
                             ? me.getInitialConfig('createTitle')
-                            : me.getInitialConfig('editTitle'),
+                            : me.getInitialConfig('editTitle')
+                        : me.getInitialConfig('viewTitle'),
                     studentData.FirstName,
                     studentData.LastName,
                     studentTask.get('Title')
@@ -251,20 +253,21 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.setInstructionsField(Boolean(studentTask.get('Instructions')));
 
                 ratingsField.setSelectedStudent(studentTask.get('Student').Username);
-                ratingsField.setHidden(ratingsFieldReadOnly && !studentTask.get('DemonstrationSkills').length);
+                ratingsField.setHidden(!canRate && !studentTask.get('DemonstrationSkills').length);
+                ratingsField.setReadOnly(!canRate);
 
-                me.getDueDateDisplayField().setHidden(dueDate && !dueDateReadOnly);
-                dueDateField.setHidden(!dueDate || dueDateReadOnly);
-                dueDateOverrideField.setHidden(dueDateReadOnly);
-                dueDateOverrideField.setValue(dueDateReadOnly ? null : Boolean(dueDate));
-                me.dueDateCt.setHidden(dueDateReadOnly && !studentTask.get('EffectiveDueDate'));
+                me.getDueDateDisplayField().setHidden(dueDate && canUpdate);
+                dueDateField.setHidden(!dueDate || !canUpdate);
+                dueDateOverrideField.setHidden(!canUpdate);
+                dueDateOverrideField.setValue(canUpdate ? Boolean(dueDate) : null);
+                me.dueDateCt.setHidden(!canUpdate && !studentTask.get('EffectiveDueDate'));
 
 
-                me.getExpirationDateDisplayField().setHidden(expirationDate && !expirationDateReadOnly);
-                expirationDateField.setHidden(!expirationDate || expirationDateReadOnly);
-                expirationDateOverrideField.setHidden(expirationDateReadOnly);
-                expirationDateOverrideField.setValue(expirationDateReadOnly ? null : Boolean(expirationDate));
-                me.expirationDateCt.setHidden(expirationDateReadOnly && !studentTask.get('EffectiveExpirationDate'));
+                me.getExpirationDateDisplayField().setHidden(expirationDate && canUpdate);
+                expirationDateField.setHidden(!expirationDate || !canUpdate);
+                expirationDateOverrideField.setHidden(!canUpdate);
+                expirationDateOverrideField.setValue(canUpdate ? Boolean(expirationDate) : null);
+                me.expirationDateCt.setHidden(!canUpdate && !studentTask.get('EffectiveExpirationDate'));
 
                 me.setAttachmentsField(studentTask.get('Attachments').length > 0);
 

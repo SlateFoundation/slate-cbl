@@ -129,6 +129,11 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
                 name: 'Task',
                 persist: false
             },
+            {
+                name: 'availableActions',
+                persist: false,
+                defaultValue: {}
+            },
 
             // fields inherited from Task
             {

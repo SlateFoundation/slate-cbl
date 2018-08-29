@@ -48,18 +48,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             minHeight: 400,
 
             mainView: {
-                xtype: 'slate-cbl-tasks-studenttaskform',
-                // TODO: create an app-specific subclass?
-                dueDateField: {
-                    readOnly: true
-                },
-                expirationDateField: {
-                    readOnly: true
-                },
-                ratingsField: {
-                    readOnly: true
-                },
-                footer: false
+                xtype: 'slate-cbl-tasks-studenttaskform'
             }
         },
         formPanel: 'slate-cbl-tasks-studenttaskform',
@@ -392,6 +381,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             student: studentTask.get('StudentID'),
             task: studentTask.get('TaskID'),
             include: [
+                'availableActions',
                 'Attachments',
                 'Demonstration.DemonstrationSkills',
                 'Skills'
