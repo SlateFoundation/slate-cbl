@@ -7,6 +7,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     requires: [
         'Ext.toolbar.Toolbar',
         'Ext.button.Button',
+        'Ext.form.field.Display',
 
         'Slate.cbl.field.attachments.Attachment',
         'Slate.cbl.field.attachments.Link'
@@ -26,9 +27,17 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     componentCls: 'slate-cbl-attachments-field',
     items: [
         {
+            itemId: 'placeholder',
+
+            xtype: 'displayfield',
+            hidden: true,
+            value: 'none'
+        },
+        {
             itemId: 'list',
 
             xtype: 'container',
+            hidden: true,
             componentCls: 'slate-cbl-attachments-list',
             autoEl: 'ul',
             defaults: {
@@ -187,6 +196,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
     onChange: function(value) {
         var me = this,
+            placeholderCmp = me.getComponent('placeholder'),
             listCt = me.getComponent('list'),
             valueItemsMap = me.valueItemsMap = {},
             length = value ? value.length : 0,
@@ -209,6 +219,9 @@ Ext.define('Slate.cbl.field.attachments.Field', {
                 valueItemsMap[attachmentItem.getId()] = itemValue;
             }
         }
+
+        listCt.setHidden(length == 0);
+        placeholderCmp.setHidden(length > 0);
 
         --me.suspendCheckChange;
         Ext.resumeLayouts(true);
