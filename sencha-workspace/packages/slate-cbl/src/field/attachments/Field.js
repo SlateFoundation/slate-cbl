@@ -239,7 +239,8 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         attachmentItem.on({
             scope: me,
-            change: 'onAttachmentChange'
+            change: 'onAttachmentChange',
+            remove: 'onAttachmentRemove'
         });
 
         me.refreshVisibility();
@@ -258,7 +259,8 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         attachmentItem.un({
             scope: me,
-            change: 'onAttachmentChange'
+            change: 'onAttachmentChange',
+            remove: 'onAttachmentRemove'
         });
 
         me.validate();
@@ -282,6 +284,15 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         me.validate();
         me.checkDirty();
+    },
+
+    onAttachmentRemove: function(attachmentItem) {
+        var itemValue = attachmentItem.getValue(),
+            existingValue = this.valueItemsMap[attachmentItem.getId()];
+
+        if (itemValue.Status == 'removed' && !existingValue.ID) {
+            attachmentItem.destroy();
+        }
     },
 
 
