@@ -9,6 +9,8 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         'Ext.button.Button',
         'Ext.form.field.Display',
 
+        /* global Slate */
+        'Slate.cbl.data.field.Attachments',
         'Slate.cbl.field.attachments.Attachment',
         'Slate.cbl.field.attachments.Link'
     ],
@@ -183,32 +185,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     },
 
     isEqual: function(value1, value2) {
-        var length, i = 0;
-
-        if (value1 === value2) {
-            return true;
-        }
-
-        if (!value1 && !value2) {
-            return true;
-        }
-
-        if (!value1 || !value2) {
-            return false;
-        }
-
-        length = value1.length;
-        if (length !== value2.length) {
-            return false;
-        }
-
-        for (; i < length; i++) {
-            if (!Ext.Object.equals(value1[i], value2[i])) {
-                return false;
-            }
-        }
-
-        return true;
+        return Slate.cbl.data.field.Attachments.prototype.isEqual(value1, value2);
     },
 
     onChange: function(value) {
