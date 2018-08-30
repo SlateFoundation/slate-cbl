@@ -68,15 +68,29 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
     protected static function applyRecordDelta(ActiveRecord $StudentTask, $requestData)
     {
+        // read related data out from request before applying default field handling
+        if (array_key_exists('Attachments', $requestData)) {
+            $attachmentsData = $requestData['Attachments'];
+            unset($requestData['Attachments']);
+        }
+
         if (array_key_exists('DemonstrationSkills', $requestData)) {
             $demonstrationSkillsData = $requestData['DemonstrationSkills'];
             unset($requestData['DemonstrationSkills']);
         }
 
 
+        // apply default field handling
         parent::applyRecordDelta($StudentTask, $requestData);
 
 
+        // apply related attachments
+        if (isset($attachmentsData)) {
+            Attachments\AbstractTaskAttachment::applyAttachmentsData($StudentTask, $attachmentsData);
+        }
+
+
+        // apply related skills
         if (isset($demonstrationSkillsData)) {
             // save skills not associated with parent task
             $skills = [];
