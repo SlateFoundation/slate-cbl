@@ -38,26 +38,30 @@ Ext.define('Slate.cbl.data.field.DemonstrationSkills', {
 
             skill1 = value1[skillId];
             rating = skill1.DemonstratedLevel;
-            override = skill1.Override;
+            override = Boolean(skill1.Override);
 
-            if (rating !== skill2.DemonstratedLevel) {
+            if (
+                typeof rating == 'number' || typeof skill2.DemonstratedLevel == 'number'
+                    ? rating !== skill2.DemonstratedLevel // if either is a number, don't let 0 == null
+                    : rating != skill2.DemonstratedLevel // let null == undefined
+            ) {
                 return false;
             }
 
-            if (override !== skill2.Override) {
+            if (override !== Boolean(skill2.Override)) {
                 return false;
             }
 
-            if (skill1.Removable !== skill2.Removable) {
+            if (Boolean(skill1.Removable) !== Boolean(skill2.Removable)) {
                 return false;
             }
 
             // differences in any following attributes are irrelevant if no DemonstrationSkill record would persist
-            if (rating === null && !override) {
+            if ((rating === null || typeof rating == 'undefined') && !override) {
                 continue;
             }
 
-            if (skill1.TargetLevel !== skill2.TargetLevel) {
+            if (skill1.TargetLevel != skill2.TargetLevel) {
                 return false;
             }
         }
