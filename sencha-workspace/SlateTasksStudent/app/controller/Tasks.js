@@ -18,7 +18,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         '<tpl if="wasPhantom">',
             'Assignment Saved',
         '<tpl else>',
-            'Assignment Updated',
+            'Assignment Saved',
         '</tpl>'
     ],
 
@@ -26,7 +26,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         '<tpl if="wasPhantom">',
             'Created',
         '<tpl else>',
-            'Updated',
+            'Saved',
         '</tpl>',
         ' assignment of ',
         '<tpl for="studentTask">',
