@@ -2,7 +2,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
     var convertInheritedFn = function(v, r) {
         var taskData = r.get('Task');
 
-        return taskData && taskData[this.name] || this.defaultValue || null;
+        return taskData && taskData[this.name.substr(4)] || this.defaultValue || null;
     };
 
     return {
@@ -137,22 +137,25 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
 
             // fields inherited from Task
             {
-                name: 'Title',
+                name: 'TaskTitle',
                 depends: ['Task'],
+                persist: false,
                 convert: convertInheritedFn
             },
             {
-                name: 'ExperienceType',
+                name: 'TaskExperienceType',
                 depends: ['Task'],
+                persist: false,
                 convert: convertInheritedFn
             },
             {
-                name: 'Instructions',
+                name: 'TaskInstructions',
                 depends: ['Task'],
+                persist: false,
                 convert: convertInheritedFn
             },
             {
-                name: 'Attachments',
+                name: 'TaskAttachments',
                 depends: ['Task'],
                 persist: false,
                 defaultValue: [],

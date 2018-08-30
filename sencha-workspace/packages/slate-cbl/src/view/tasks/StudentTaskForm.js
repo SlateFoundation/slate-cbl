@@ -99,7 +99,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             experienceTypeField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'ExperienceType',
+                    name: 'TaskExperienceType',
 
                     xtype: 'displayfield',
                     fieldLabel: 'Type of Experience'
@@ -108,7 +108,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             instructionsField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'Instructions',
+                    name: 'TaskInstructions',
 
                     xtype: 'displayfield',
                     fieldLabel: 'Instructions',
@@ -182,10 +182,10 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 }
             },
 
-            attachmentsField: {
+            taskAttachmentsField: {
                 merge: mergeFn,
                 $value: {
-                    name: 'Attachments',
+                    name: 'TaskAttachments',
 
                     xtype: 'slate-cbl-attachments-field',
                     readOnly: true
@@ -267,12 +267,12 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                         : me.getInitialConfig('viewTitle'),
                     studentData.FirstName,
                     studentData.LastName,
-                    studentTask.get('Title')
+                    studentTask.get('TaskTitle')
                 ));
 
                 me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
 
-                me.setInstructionsField(Boolean(studentTask.get('Instructions')));
+                me.setInstructionsField(Boolean(studentTask.get('TaskInstructions')));
 
                 ratingsField.setSelectedStudent(studentTask.get('Student').Username);
                 ratingsField.setHidden(!canRate && !studentTask.get('DemonstrationSkills').length);
@@ -291,7 +291,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 expirationDateOverrideField.setValue(canEdit ? Boolean(expirationDate) : null);
                 me.expirationDateCt.setHidden(!canEdit && !studentTask.get('EffectiveExpirationDate'));
 
-                me.setAttachmentsField(studentTask.get('Attachments').length > 0);
+                me.setTaskAttachmentsField(studentTask.get('TaskAttachments').length > 0);
 
                 me.setSaveBtn(
                     // eslint-disable-next-line no-nested-ternary
@@ -384,7 +384,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             });
         },
 
-        applyAttachmentsField: applyFn,
+        applyTaskAttachmentsField: applyFn,
         applyRatingsField: applyFn,
 
         applySaveBtn: applyFn,
@@ -434,7 +434,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                         me.getExpirationDateOverrideField()
                     ]
                 },
-                me.getAttachmentsField(),
+                me.getTaskAttachmentsField(),
                 me.getRatingsField()
             ]);
 
