@@ -3,7 +3,7 @@
  */
 Ext.define('Slate.cbl.field.attachments.Field', {
     extend: 'Slate.ui.form.ContainerField',
-    xtype: 'slate-cbl-attachments-field',
+    xtype: 'slate-cbl-attachmentsfield',
     requires: [
         'Ext.toolbar.Toolbar',
         'Ext.button.Button',
@@ -24,7 +24,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     },
 
 
-    componentCls: 'slate-cbl-attachments-field',
+    componentCls: 'slate-cbl-attachmentsfield',
     items: [
         {
             itemId: 'placeholder',

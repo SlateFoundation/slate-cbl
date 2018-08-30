@@ -161,7 +161,7 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 $value: {
                     name: 'Attachments',
 
-                    xtype: 'slate-cbl-attachments-field'
+                    xtype: 'slate-cbl-attachmentsfield'
                 }
             },
             instructionsField: {
