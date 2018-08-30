@@ -115,13 +115,16 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         me.callParent();
 
+        me.listCt = me.getComponent('list');
+        me.placeholderCmp = me.getComponent('placeholder');
+
         toolbar.add(me.buildToolbarItemConfigs());
         me.insert(0, toolbar);
     },
 
     initEvents: function() {
         var me = this,
-            listCt = me.getComponent('list');
+            listCt = me.listCt;
 
         me.callParent();
 
@@ -210,8 +213,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
     onChange: function(value) {
         var me = this,
-            placeholderCmp = me.getComponent('placeholder'),
-            listCt = me.getComponent('list'),
+            listCt = me.listCt,
             valueItemsMap = me.valueItemsMap = {},
             length = value ? value.length : 0,
             i = 0, itemValue, itemClass, Attachment, attachmentItem;
@@ -234,8 +236,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             }
         }
 
-        listCt.setHidden(length == 0);
-        placeholderCmp.setHidden(length > 0);
+        me.syncVisibility();
 
         --me.suspendCheckChange;
         Ext.resumeLayouts(true);
@@ -255,6 +256,8 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             scope: me,
             change: 'onAttachmentChange'
         });
+
+        me.syncVisibility();
     },
 
     onListRemove: function(listCt, attachmentItem) {
@@ -275,6 +278,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         me.validate();
         me.checkDirty();
+        me.syncVisibility();
     },
 
     onAttachmentChange: function(attachmentItem) {
@@ -315,9 +319,22 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         return buttonConfigs;
     },
 
+    syncVisibility: function() {
+        var me = this,
+            isReadOnly = me.getReadOnly(),
+            isEmpty = me.value.length == 0;
+
+        Ext.suspendLayouts();
+
+        me.listCt.setHidden(isEmpty && isReadOnly);
+        me.placeholderCmp.setHidden(!isEmpty || !isReadOnly);
+
+        Ext.resumeLayouts(true);
+    },
+
     addAttachment: function(attachment) {
         var me = this,
-            attachmentItem = me.getComponent('list').add(attachment);
+            attachmentItem = me.listCt.add(attachment);
 
         me.value.push(me.valueItemsMap[attachmentItem.getId()]);
 
