@@ -119,6 +119,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             oldStore.un({
                 beforeload: 'onBeforeStoreLoad',
                 load: 'onStoreLoad',
+                refresh: 'refresh',
+                update: 'refresh',
                 scope: this
             });
         }
@@ -127,9 +129,21 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             store.on({
                 beforeload: 'onBeforeStoreLoad',
                 load: 'onStoreLoad',
+                refresh: 'refresh',
+                update: 'refresh',
                 scope: this
             });
         }
+    },
+
+
+    // component lifecycle
+    initComponent: function() {
+        var me = this;
+
+        me.callParent();
+
+        me.refresh = Ext.Function.createBuffered(me.refresh, 50);
     },
 
 
@@ -140,7 +154,6 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     },
 
     onStoreLoad: function() {
-        this.refresh();
         this.removeCls('is-loading');
         this.setLoading(false);
     },
