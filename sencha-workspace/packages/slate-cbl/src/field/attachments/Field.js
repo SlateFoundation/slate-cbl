@@ -138,6 +138,20 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
 
     // containerfield lifecycle
+    initValue: function() {
+        var me = this;
+
+        if (!me.value) {
+            me.value = [];
+        }
+
+        me.valueItemsMap = {};
+
+        me.callParent(arguments);
+
+        me.syncVisibility();
+    },
+
     normalizeValue: function(value) {
         var normalValue = [],
             length = value ? value.length : 0,
