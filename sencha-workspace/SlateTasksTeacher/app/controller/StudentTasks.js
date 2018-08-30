@@ -947,7 +947,12 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         StudentTaskModel.load({
             student: studentId,
             task: taskId,
-            include: ['Attachments', 'Demonstration.DemonstrationSkills', 'Skills'],
+            include: [
+                'availableActions',
+                'Attachments',
+                'Demonstration.DemonstrationSkills',
+                'Skills'
+            ],
             success: function(loadedStudentTask, operation) {
                 loadedStudentTask.readOperationData(operation);
                 formPanel.setStudentTask(loadedStudentTask);
@@ -956,7 +961,11 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             failure: function(loadedStudentTask, operation) {
                 if (operation.wasSuccessful()) {
                     // request was successful but no record was found, initialize phantom
-                    loadedStudentTask.readOperationData(operation);
+                    loadedStudentTask.readOperationData(operation, {
+                        availableActions: {
+                            create: true
+                        }
+                    });
                     formPanel.setStudentTask(loadedStudentTask);
                     formWindow.setLoading(false);
                 } else {

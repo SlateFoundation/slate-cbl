@@ -4,6 +4,11 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 newValue = {
                     hidden: !newValue
                 };
+            } else if (typeof newValue === 'string') {
+                newValue = {
+                    text: newValue,
+                    hidden: false
+                };
             }
 
             return Ext.merge(oldValue ? Ext.Object.chain(oldValue) : {}, newValue);
@@ -12,6 +17,11 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             if (typeof config === 'boolean') {
                 config = {
                     hidden: !config
+                };
+            } else if (typeof config === 'string') {
+                config = {
+                    text: config,
+                    hidden: false
                 };
             }
 
@@ -193,21 +203,33 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 }
             },
 
-            hidden: true,
-            title: null,
-            createTitle: 'Assign to {0} {1}: {2}',
-            editTitle: 'Rate for {0} {1}: {2}',
-            viewTitle: '{2} ―{0} {1}',
-
-            footer: [
-                {
+            saveBtn: {
+                merge: mergeFn,
+                $value: {
                     xtype: 'button',
                     text: 'Save Assignment',
                     scale: 'large',
                     action: 'submit',
                     margin: '0 0 0 16'
                 }
-            ]
+            },
+
+            submitBtn: {
+                merge: mergeFn,
+                $value: {
+                    xtype: 'button',
+                    text: 'Submit Assignment',
+                    scale: 'large',
+                    action: 'submit',
+                    margin: '0 0 0 16'
+                }
+            },
+
+            hidden: true,
+            title: null,
+            createTitle: 'Assign to {0} {1}: {2}',
+            editTitle: 'Rate for {0} {1}: {2}',
+            viewTitle: '{2} ―{0} {1}'
         },
 
 
@@ -229,7 +251,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
             if (studentTask) {
                 availableActions = studentTask.get('availableActions');
-                canUpdate = availableActions.update;
+                canUpdate = studentTask.phantom ? availableActions.create : availableActions.update;
                 canRate = availableActions.rate;
 
                 studentData = studentTask.get('Student');
@@ -270,6 +292,17 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.expirationDateCt.setHidden(!canUpdate && !studentTask.get('EffectiveExpirationDate'));
 
                 me.setAttachmentsField(studentTask.get('Attachments').length > 0);
+
+                me.setSaveBtn(studentTask.phantom ? 'Assign Task' : 'Save Assignment');
+
+                me.setSubmitBtn(
+                    // eslint-disable-next-line no-nested-ternary
+                    availableActions.submit
+                        ? 'Submit Assignment'
+                        : availableActions.resubmit
+                            ? 'Resubmit Assignment'
+                            : false
+                );
 
 
                 me.loadRecord(studentTask);
@@ -347,6 +380,9 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         applyAttachmentsField: applyFn,
         applyRatingsField: applyFn,
 
+        applySaveBtn: applyFn,
+        applySubmitBtn: applyFn,
+
 
         // component lifecycle
         initItems: function() {
@@ -394,6 +430,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.getAttachmentsField(),
                 me.getRatingsField()
             ]);
+
+            me.setFooter([me.getSaveBtn(), me.getSubmitBtn()]);
 
             me.dueDateCt = me.getComponent('dueDateCt');
             me.expirationDateCt = me.getComponent('expirationDateCt');

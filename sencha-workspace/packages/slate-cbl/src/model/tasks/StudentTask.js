@@ -327,7 +327,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
 
 
         // local methods
-        readOperationData: function(operation) {
+        readOperationData: function(operation, extraValues) {
             var me = this,
                 response = operation.getResponse(),
                 data = response && response.data,
@@ -344,6 +344,10 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
             if (taskData) {
                 me.set('TaskID', taskData.ID);
                 me.set('Task', taskData, { dirty: false });
+            }
+
+            if (extraValues) {
+                me.set(extraValues, { dirty: false });
             }
 
             me.endEdit();
