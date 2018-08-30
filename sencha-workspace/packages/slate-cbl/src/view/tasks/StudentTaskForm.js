@@ -202,6 +202,15 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     allowBlank: true
                 }
             },
+            submissionAttachmentsField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'Attachments',
+
+                    xtype: 'slate-cbl-attachmentsfield',
+                    fieldLabel: 'Submission Attachments'
+                }
+            },
 
             saveBtn: {
                 merge: mergeFn,
@@ -402,6 +411,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         applyTaskAttachmentsField: applyFn,
         applyRatingsField: applyFn,
+        applySubmissionAttachmentsField: applyFn,
 
         applySaveBtn: applyFn,
         applySubmitBtn: applyFn,
@@ -451,7 +461,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     ]
                 },
                 me.getTaskAttachmentsField(),
-                me.getRatingsField()
+                me.getRatingsField(),
+                me.getSubmissionAttachmentsField()
             ]);
 
             me.setFooter([me.getSaveBtn(), me.getSubmitBtn()]);

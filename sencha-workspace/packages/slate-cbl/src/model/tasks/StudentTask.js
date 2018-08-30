@@ -11,6 +11,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
             'Ext.data.identifier.Negative',
 
             /* global Slate */
+            'Slate.cbl.data.field.Attachments',
             'Slate.cbl.data.field.DemonstrationSkills',
             'Slate.cbl.proxy.tasks.StudentTasks',
             'Slate.cbl.model.tasks.Task'
@@ -325,7 +326,12 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
 
                     return demonstrationSkills;
                 }
-            }
+            },
+            {
+                name: 'Attachments',
+                type: 'slate-cbl-attachments',
+                defaultValue: []
+            },
         ],
 
         proxy: 'slate-cbl-studenttasks',
