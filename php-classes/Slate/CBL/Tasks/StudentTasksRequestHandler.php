@@ -6,6 +6,7 @@ namespace Slate\CBL\Tasks;
 use DB;
 use JSON;
 use ActiveRecord;
+use UserUnauthorizedException;
 use Emergence\Comments\Comment;
 
 
@@ -79,9 +80,29 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             unset($requestData['DemonstrationSkills']);
         }
 
+        if (!empty($requestData['TaskStatus']) && $requestData['TaskStatus'] == 'submitting') {
+            $submitting = true;
+            unset($requestData['TaskStatus']);
+        }
+
 
         // apply default field handling
         parent::applyRecordDelta($StudentTask, $requestData);
+
+
+        // apply status
+        if (!empty($submitting)) {
+            $submissions = $StudentTask->Submissions;
+
+            if (count($submissions) || $StudentTask->TaskStatus == 're-assigned') {
+                $StudentTask->TaskStatus = 're-submitted';
+            } else {
+                $StudentTask->TaskStatus = 'submitted';
+            }
+
+            $submissions[] = StudentTaskSubmission::create();
+            $StudentTask->Submissions = $submissions;
+        }
 
 
         // apply related attachments
@@ -92,6 +113,10 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
         // apply related skills
         if (isset($demonstrationSkillsData)) {
+            if (!$StudentTask->userCanRateStudentTask()) {
+                throw new UserUnauthorizedException('rate authorization denied');
+            }
+
             // save skills not associated with parent task
             $skills = [];
             foreach ($demonstrationSkillsData as $demonstrationSkillData) {
