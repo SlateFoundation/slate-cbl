@@ -1,4 +1,4 @@
-/* global google, gapi */
+// /* global google, gapi */
 /**
  * The Tasks controller manages the student task list and the task details pop-up.
  */
@@ -7,11 +7,37 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     requires: [
         'Ext.window.Toast',
 
-        /* global Slate */
-        'Slate.API',
-        'Slate.cbl.util.Google'
+        // /* global Slate */
+        // 'Slate.API',
+        // 'Slate.cbl.util.Google'
     ],
 
+
+    saveNotificationTitleTpl: [
+        '<tpl if="wasPhantom">',
+            'Assignment Saved',
+        '<tpl else>',
+            'Assignment Updated',
+        '</tpl>'
+    ],
+
+    saveNotificationBodyTpl: [
+        '<tpl if="wasPhantom">',
+            'Created',
+        '<tpl else>',
+            'Updated',
+        '</tpl>',
+        ' assignment of ',
+        '<tpl for="studentTask">',
+            '<tpl for="Task">',
+                '<strong>{Title}</strong>',
+            '</tpl>',
+            ' for ',
+            '<tpl for="Student">',
+                '<strong>{FirstName} {LastName}</strong>',
+            '</tpl>',
+        '</tpl>'
+    ],
 
     studentTaskInclude: [
         'availableActions',
@@ -62,6 +88,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         formPanel: 'slate-cbl-tasks-studenttaskform',
         // clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
         // statusField: 'slate-cbl-tasks-taskform ^ window field[name=Status]',
+        saveBtn: 'slate-cbl-tasks-studenttaskform ^ window button[action=save]',
         submitBtn: 'slate-cbl-tasks-studenttaskform ^ window button[action=submit]'
 
         // parentTaskField: 'slate-modalform field[name="ParentTaskTitle"]',
@@ -99,6 +126,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         },
         'slate-tasks-student-taskfiltersmenu button#view-all': {
             click: 'onFilterViewAllClick'
+        },
+        saveBtn: {
+            click: 'onSaveClick'
+        },
+        submitBtn: {
+            click: 'onSubmitClick'
         }
         // submitButton: {
         //     click: 'onSubmitButtonClick'
@@ -169,6 +202,14 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
 
         me.getTaskTree().refresh();
+    },
+
+    onSaveClick: function(saveBtn) {
+        this.saveTaskWindow(saveBtn.up('window'));
+    },
+
+    onSubmitClick: function(submitBtn) {
+        this.saveTaskWindow(submitBtn.up('window'));
     },
 
     // TODO: audit and optimize
@@ -407,52 +448,58 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
                 });
             }
         });
+    },
 
+    saveTaskWindow: function(formWindow) {
+        var me = this,
+            formPanel = formWindow.getMainView(),
+            studentTask = formPanel.getRecord(),
+            wasPhantom = studentTask.phantom;
 
+        formPanel.updateRecord(studentTask);
 
+        // ensure studentTask doesn't become dirty when no changes are made to the form
+        if (!studentTask.dirty) {
+            return;
+        }
 
-        // var me = this,
-        //     details = me.getTaskDetails(),
-        //     form = me.getTaskForm(),
-        //     ratingView = me.getRatingView(),
-        //     teacherAttachmentsField = me.getTeacherAttachmentsField(),
-        //     studentAttachmentsField = me.getStudentAttachmentsField(),
-        //     studentAttachmentList = studentAttachmentsField.down('slate-attachmentslist'),
-        //     commentsField = me.getCommentsField(),
-        //     submissions = rec.get('Submissions'),
-        //     readonly = me.getTaskTree().getReadOnly() || rec.get('TaskStatus') === 'completed';
+        formWindow.setLoading('Saving assignment&hellip;');
 
-        // form.getForm().loadRecord(rec);
+        studentTask.save({
+            include: me.studentTaskInclude,
+            success: function(savedStudentTask, operation) {
+                var studentTasksStore = me.getTasksStore(),
+                    tplData = {
+                        wasPhantom: wasPhantom,
+                        studentTask: savedStudentTask.getData()
+                    };
 
-        // if (submissions && submissions.length && submissions.length > 0) {
-        //     form.down('displayfield[name="Submitted"]').hide();
-        //     form.down('displayfield[name="Submissions"]').show();
-        // } else {
-        //     form.down('displayfield[name="Submitted"]').show();
-        //     form.down('displayfield[name="Submissions"]').hide();
-        // }
+                // show notification to user
+                Ext.toast(
+                    Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+                );
 
-        // ratingView.setData({
-        //     ratings: [7, 8, 9, 10, 11, 12, 'M'],
-        //     competencies: rec.getTaskSkillsGroupedByCompetency()
-        // });
+                savedStudentTask.readOperationData(operation);
 
-        // me.getParentTaskField().setVisible(rec.get('ParentTaskID') !== null);
-        // teacherAttachmentsField.setAttachments(rec.getTeacherAttachments());
-        // teacherAttachmentsField.setReadOnly(true);
-        // commentsField.setRecord(rec);
-        // commentsField.setReadOnly(true);
+                // update loaded tasks data
+                studentTasksStore.mergeData([savedStudentTask]);
 
-        // studentAttachmentsField.setAttachments(rec.getStudentAttachments());
-        // studentAttachmentsField.setReadOnly(readonly);
+                // close window
+                formWindow.hide();
+                formWindow.setLoading(false);
+            },
+            failure: function(savedTask, operation) {
+                formWindow.setLoading(false);
 
-        // studentAttachmentList.setConfig({
-        //     editable: !readonly,
-        //     shareMethodMutable: false
-        // });
-        // me.getSubmitButton().setDisabled(readonly);
-
-        // details.show();
+                Ext.Msg.show({
+                    title: 'Failed to save student task',
+                    message: operation.getError(),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
     },
 
     /**
