@@ -191,11 +191,6 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             cellclick: 'onCellClick',
             subcellclick: 'onCellClick'
         },
-        formPanel: {
-            studenttaskchange: 'onStudentTaskChange',
-            dirtychange: 'onFormDirtyChange',
-            validitychange: 'onFormValidityChange'
-        },
         saveBtn: {
             click: 'onSaveClick'
         }
@@ -312,18 +307,6 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         var studentId = this.getSectionParticipantsStore().getById(participantId).get('PersonID');
 
         this.openStudentTaskWindow(studentId, taskId, { animateTarget: cellEl });
-    },
-
-    onStudentTaskChange: function() {
-        this.refreshFormActions();
-    },
-
-    onFormDirtyChange: function() {
-        this.refreshFormActions();
-    },
-
-    onFormValidityChange: function() {
-        this.refreshFormActions();
     },
 
     onSaveClick: function(saveBtn) {
@@ -985,11 +968,5 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
                 }
             }
         });
-    },
-
-    refreshFormActions: function() {
-        var form = this.getFormPanel().getForm();
-
-        this.getSaveBtn().setDisabled(!form.isValid() || !form.isDirty() && !form.getRecord().phantom);
     }
 });

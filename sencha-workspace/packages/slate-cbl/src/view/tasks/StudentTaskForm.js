@@ -242,7 +242,13 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         },
 
 
+        // component configuration
         componentCls: 'slate-cbl-tasks-studenttaskform',
+
+        listeners: {
+            dirtychange: 'onDirtyChange',
+            validitychange: 'onValidityChange'
+        },
 
 
         // config handlers
@@ -330,6 +336,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.hide();
             }
 
+            me.refreshActions();
             me.fireEvent('studenttaskchange', me, studentTask, oldStudentTask);
             Ext.resumeLayouts(true);
         },
@@ -469,6 +476,30 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
             me.dueDateCt = me.getComponent('dueDateCt');
             me.expirationDateCt = me.getComponent('expirationDateCt');
+        },
+
+
+        // event handlers
+        onDirtyChange: function() {
+            this.refreshActions();
+        },
+
+        onValidityChange: function() {
+            this.refreshActions();
+        },
+
+
+        // protected methods
+        refreshActions: function() {
+            var me = this,
+                form = me.getForm(),
+                studentTask = me.getStudentTask();
+
+            me.getSaveBtn().setDisabled(
+                !studentTask
+                || !form.isValid()
+                || !form.isDirty()
+                && !studentTask.phantom);
         }
     };
 });
