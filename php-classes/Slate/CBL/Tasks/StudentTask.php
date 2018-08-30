@@ -234,7 +234,7 @@ class StudentTask extends \VersionedRecord
         return (
             $User
             && $User->ID == $this->StudentID
-            && (!$this->ExpirationDate || $this->ExpirationDate >= time())
+            && (!$this->ExpirationDate || strtotime('23:59:59', $this->ExpirationDate) >= time())
             && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canSubmitStatuses)
         );
     }
@@ -246,7 +246,7 @@ class StudentTask extends \VersionedRecord
         return (
             $User
             && $User->ID == $this->StudentID
-            && (!$this->ExpirationDate || $this->ExpirationDate >= time())
+            && (!$this->ExpirationDate || strtotime('23:59:59', $this->ExpirationDate) >= time())
             && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canResubmitStatuses)
         );
     }
