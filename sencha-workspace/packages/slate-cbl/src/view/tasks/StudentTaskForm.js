@@ -374,11 +374,13 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             field.on('change', function(overrideField, checked) {
                 var studentTask = me.getStudentTask(),
                     dateField = me.getDueDateField(),
-                    value = checked ? studentTask.get('InheritedDueDate') : null;
+                    dateDisplayField = me.getDueDateDisplayField(),
+                    value = checked ? studentTask.get('DueDate') || studentTask.get('InheritedDueDate') : null;
 
                 dateField.setValue(value);
                 dateField.setHidden(!checked);
-                me.getDueDateDisplayField().setHidden(checked);
+                dateDisplayField.setValue(value || studentTask.get('InheritedDueDate'));
+                dateDisplayField.setHidden(checked);
             });
         },
 
@@ -408,11 +410,13 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             field.on('change', function(overrideField, checked) {
                 var studentTask = me.getStudentTask(),
                     dateField = me.getExpirationDateField(),
-                    value = checked ? studentTask.get('InheritedExpirationDate') : null;
+                    dateDisplayField = me.getExpirationDateDisplayField(),
+                    value = checked ? studentTask.get('ExpirationDate') || studentTask.get('InheritedExpirationDate') : null;
 
                 dateField.setValue(value);
                 dateField.setHidden(!checked);
-                me.getExpirationDateDisplayField().setHidden(checked);
+                dateDisplayField.setValue(value || studentTask.get('InheritedExpirationDate'));
+                dateDisplayField.setHidden(checked);
             });
         },
 
