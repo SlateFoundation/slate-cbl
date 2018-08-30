@@ -94,7 +94,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 var taskStatus = studentTaskData.TaskStatus,
                     taskDate;
 
-                if (taskStatus === 'submitted' || taskStatus === 're-submitted') {
+                if (taskStatus == 'submitted' || taskStatus == 're-submitted') {
                     taskDate = studentTaskData.Submitted;
                 } else {
                     taskDate = studentTaskData.EffectiveDueDate;

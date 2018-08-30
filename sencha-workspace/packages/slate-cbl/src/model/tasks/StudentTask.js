@@ -136,6 +136,12 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
                 persist: false,
                 defaultValue: {}
             },
+            {
+                name: 'Submitted',
+                type: 'date',
+                dateFormat: 'timestamp',
+                allowNull: true
+            },
 
             // fields inherited from Task
             {
