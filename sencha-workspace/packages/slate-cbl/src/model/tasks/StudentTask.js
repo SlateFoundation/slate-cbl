@@ -11,6 +11,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
             'Ext.data.identifier.Negative',
 
             /* global Slate */
+            'Slate.cbl.data.field.DemonstrationSkills',
             'Slate.cbl.proxy.tasks.StudentTasks',
             'Slate.cbl.model.tasks.Task'
         ],
@@ -257,6 +258,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
             // writable dynamic fields
             {
                 name: 'DemonstrationSkills',
+                type: 'slate-cbl-demonstrationskills',
                 depends: ['InheritedSkills', 'Skills', 'Demonstration'],
                 convert: function(v, r) {
                     var inheritedSkills = r.get('InheritedSkills'),
