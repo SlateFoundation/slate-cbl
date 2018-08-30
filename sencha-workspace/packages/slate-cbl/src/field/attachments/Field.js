@@ -173,27 +173,17 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     },
 
     setValue: function(value) {
-        return this.callParent([this.normalizeValue(value)]);
-    },
-
-    resetOriginalValue: function() {
-        var me = this;
-
-        // use clone from normalizeValue to isolate from updates
-        me.originalValue = me.normalizeValue(me.getValue());
-        me.checkDirty();
-    },
-
-    isEqual: function(value1, value2) {
-        return Slate.cbl.data.field.Attachments.prototype.isEqual(value1, value2);
-    },
-
-    onChange: function(value) {
         var me = this,
             listCt = me.listCt,
             valueItemsMap = me.valueItemsMap = {},
             length = value ? value.length : 0,
             i = 0, itemValue, itemClass, Attachment, attachmentItem;
+
+        // clone value to normalized array
+        value = me.normalizeValue(value);
+
+        // update value and items map while loading into UI
+        me.value = value;
 
         Ext.suspendLayouts();
         ++me.suspendCheckChange;
@@ -218,7 +208,25 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         --me.suspendCheckChange;
         Ext.resumeLayouts(true);
 
-        return me.callParent([value]);
+        // trigger change events if value differs from lastValue
+        me.checkChange();
+
+        // ensure lastValue and value always reference same instance
+        me.lastValue = value;
+
+        return me;
+    },
+
+    resetOriginalValue: function() {
+        var me = this;
+
+        // use clone from normalizeValue to isolate from updates
+        me.originalValue = me.normalizeValue(me.getValue());
+        me.checkDirty();
+    },
+
+    isEqual: function(value1, value2) {
+        return Slate.cbl.data.field.Attachments.prototype.isEqual(value1, value2);
     },
 
 
