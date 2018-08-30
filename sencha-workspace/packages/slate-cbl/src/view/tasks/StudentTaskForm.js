@@ -209,7 +209,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     xtype: 'button',
                     text: 'Save Assignment',
                     scale: 'large',
-                    action: 'submit',
+                    action: 'save',
                     margin: '0 0 0 16'
                 }
             },

@@ -97,7 +97,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         formPanel: 'slate-cbl-tasks-studenttaskform',
         // clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
         // statusField: 'slate-cbl-tasks-taskform ^ window field[name=Status]',
-        submitBtn: 'slate-cbl-tasks-studenttaskform ^ window button[action=submit]'
+        saveBtn: 'slate-cbl-tasks-studenttaskform ^ window button[action=save]'
 
     //     taskEditorForm: 'slate-tasks-teacher-taskeditor slate-modalform',
     //     skillsField: 'slate-tasks-teacher-taskeditor slate-skillsfield',
@@ -189,8 +189,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             dirtychange: 'onFormDirtyChange',
             validitychange: 'onFormValidityChange'
         },
-        submitBtn: {
-            click: 'onSubmitClick'
+        saveBtn: {
+            click: 'onSaveClick'
         }
     //     tasksGrid: {
     //         cellclick: 'onTasksGridCellClick',
@@ -319,9 +319,9 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         this.refreshFormActions();
     },
 
-    onSubmitClick: function(submitBtn) {
+    onSaveClick: function(saveBtn) {
         var me = this,
-            formWindow = submitBtn.up('window'),
+            formWindow = saveBtn.up('window'),
             formPanel = formWindow.getMainView(),
             studentTask = formPanel.getRecord(),
             wasPhantom = studentTask.phantom;
@@ -988,6 +988,6 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
     refreshFormActions: function() {
         var form = this.getFormPanel().getForm();
 
-        this.getSubmitBtn().setDisabled(!form.isValid() || !form.isDirty() && !form.getRecord().phantom);
+        this.getSaveBtn().setDisabled(!form.isValid() || !form.isDirty() && !form.getRecord().phantom);
     }
 });
