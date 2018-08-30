@@ -152,7 +152,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         me.callParent(arguments);
 
-        me.syncVisibility();
+        me.refreshVisibility();
     },
 
     normalizeValue: function(value) {
@@ -236,7 +236,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             }
         }
 
-        me.syncVisibility();
+        me.refreshVisibility();
 
         --me.suspendCheckChange;
         Ext.resumeLayouts(true);
@@ -257,7 +257,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             change: 'onAttachmentChange'
         });
 
-        me.syncVisibility();
+        me.refreshVisibility();
     },
 
     onListRemove: function(listCt, attachmentItem) {
@@ -278,7 +278,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         me.validate();
         me.checkDirty();
-        me.syncVisibility();
+        me.refreshVisibility();
     },
 
     onAttachmentChange: function(attachmentItem) {
@@ -319,7 +319,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         return buttonConfigs;
     },
 
-    syncVisibility: function() {
+    refreshVisibility: function() {
         var me = this,
             isReadOnly = me.getReadOnly(),
             isEmpty = me.value.length == 0;
