@@ -244,14 +244,14 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 dueDateOverrideField = me.getDueDateOverrideField(),
                 expirationDateField = me.getExpirationDateField(),
                 expirationDateOverrideField = me.getExpirationDateOverrideField(),
-                availableActions, canUpdate, canRate,
+                availableActions, canEdit, canRate,
                 studentData, dueDate, expirationDate;
 
             Ext.suspendLayouts();
 
             if (studentTask) {
                 availableActions = studentTask.get('availableActions');
-                canUpdate = studentTask.phantom ? availableActions.create : availableActions.update;
+                canEdit = studentTask.phantom ? availableActions.create : availableActions.update;
                 canRate = availableActions.rate;
 
                 studentData = studentTask.get('Student');
@@ -260,7 +260,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                 me.setTitle(Ext.String.format(
                     // eslint-disable-next-line no-nested-ternary
-                    canUpdate
+                    canEdit
                         ? studentTask.phantom
                             ? me.getInitialConfig('createTitle')
                             : me.getInitialConfig('editTitle')
@@ -278,22 +278,29 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 ratingsField.setHidden(!canRate && !studentTask.get('DemonstrationSkills').length);
                 ratingsField.setReadOnly(!canRate);
 
-                me.getDueDateDisplayField().setHidden(dueDate && canUpdate);
-                dueDateField.setHidden(!dueDate || !canUpdate);
-                dueDateOverrideField.setHidden(!canUpdate);
-                dueDateOverrideField.setValue(canUpdate ? Boolean(dueDate) : null);
-                me.dueDateCt.setHidden(!canUpdate && !studentTask.get('EffectiveDueDate'));
+                me.getDueDateDisplayField().setHidden(dueDate && canEdit);
+                dueDateField.setHidden(!dueDate || !canEdit);
+                dueDateOverrideField.setHidden(!canEdit);
+                dueDateOverrideField.setValue(canEdit ? Boolean(dueDate) : null);
+                me.dueDateCt.setHidden(!canEdit && !studentTask.get('EffectiveDueDate'));
 
 
-                me.getExpirationDateDisplayField().setHidden(expirationDate && canUpdate);
-                expirationDateField.setHidden(!expirationDate || !canUpdate);
-                expirationDateOverrideField.setHidden(!canUpdate);
-                expirationDateOverrideField.setValue(canUpdate ? Boolean(expirationDate) : null);
-                me.expirationDateCt.setHidden(!canUpdate && !studentTask.get('EffectiveExpirationDate'));
+                me.getExpirationDateDisplayField().setHidden(expirationDate && canEdit);
+                expirationDateField.setHidden(!expirationDate || !canEdit);
+                expirationDateOverrideField.setHidden(!canEdit);
+                expirationDateOverrideField.setValue(canEdit ? Boolean(expirationDate) : null);
+                me.expirationDateCt.setHidden(!canEdit && !studentTask.get('EffectiveExpirationDate'));
 
                 me.setAttachmentsField(studentTask.get('Attachments').length > 0);
 
-                me.setSaveBtn(studentTask.phantom ? 'Assign Task' : 'Save Assignment');
+                me.setSaveBtn(
+                    // eslint-disable-next-line no-nested-ternary
+                    canEdit
+                        ? studentTask.phantom
+                            ? 'Assign Task'
+                            : 'Save Assignment'
+                        :  false
+                );
 
                 me.setSubmitBtn(
                     // eslint-disable-next-line no-nested-ternary

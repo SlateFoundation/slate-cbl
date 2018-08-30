@@ -963,7 +963,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
                     // request was successful but no record was found, initialize phantom
                     loadedStudentTask.readOperationData(operation, {
                         availableActions: {
-                            create: true
+                            create: true,
+                            rate: true
                         }
                     });
                     formPanel.setStudentTask(loadedStudentTask);
