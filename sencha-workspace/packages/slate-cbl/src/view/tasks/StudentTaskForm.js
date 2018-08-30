@@ -259,7 +259,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 dueDateOverrideField = me.getDueDateOverrideField(),
                 expirationDateField = me.getExpirationDateField(),
                 expirationDateOverrideField = me.getExpirationDateOverrideField(),
-                availableActions, canEdit, canRate,
+                availableActions, canEdit, canRate, canSubmit,
                 studentData, dueDate, expirationDate;
 
             Ext.suspendLayouts();
@@ -268,6 +268,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 availableActions = studentTask.get('availableActions');
                 canEdit = studentTask.phantom ? availableActions.create : availableActions.update;
                 canRate = availableActions.rate;
+                canSubmit = availableActions.submit || availableActions.resubmit;
 
                 studentData = studentTask.get('Student');
                 dueDate = studentTask.get('DueDate');
@@ -312,11 +313,11 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                 me.setSaveBtn(
                     // eslint-disable-next-line no-nested-ternary
-                    canEdit
-                        ? studentTask.phantom
+                    canEdit || canSubmit
+                        ? studentTask.phantom && canEdit
                             ? 'Assign Task'
                             : 'Save Assignment'
-                        :  false
+                        : false
                 );
 
                 me.setSubmitBtn(

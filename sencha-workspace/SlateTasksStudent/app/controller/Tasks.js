@@ -15,16 +15,16 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
 
     saveNotificationTitleTpl: [
-        '<tpl if="wasPhantom">',
-            'Assignment Saved',
+        '<tpl if="submitting">',
+            'Assignment Submitted',
         '<tpl else>',
             'Assignment Saved',
         '</tpl>'
     ],
 
     saveNotificationBodyTpl: [
-        '<tpl if="wasPhantom">',
-            'Created',
+        '<tpl if="submitting">',
+            'Submitted',
         '<tpl else>',
             'Saved',
         '</tpl>',
@@ -210,7 +210,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     onSubmitClick: function(submitBtn) {
-        this.saveTaskWindow(submitBtn.up('window'));
+        this.saveTaskWindow(submitBtn.up('window'), true);
     },
 
     // TODO: audit and optimize
@@ -451,27 +451,30 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
     },
 
-    saveTaskWindow: function(formWindow) {
+    saveTaskWindow: function(formWindow, submitting) {
         var me = this,
             formPanel = formWindow.getMainView(),
-            studentTask = formPanel.getRecord(),
-            wasPhantom = studentTask.phantom;
+            studentTask = formPanel.getRecord();
 
         formPanel.updateRecord(studentTask);
+
+        if (submitting) {
+            studentTask.set('TaskStatus', 'submitting');
+        }
 
         // ensure studentTask doesn't become dirty when no changes are made to the form
         if (!studentTask.dirty) {
             return;
         }
 
-        formWindow.setLoading('Saving assignment&hellip;');
+        formWindow.setLoading((submitting ? 'Submitting' : 'Saving') + ' assignment&hellip;');
 
         studentTask.save({
             include: me.studentTaskInclude,
             success: function(savedStudentTask, operation) {
                 var studentTasksStore = me.getTasksStore(),
                     tplData = {
-                        wasPhantom: wasPhantom,
+                        submitting: Boolean(submitting),
                         studentTask: savedStudentTask.getData()
                     };
 
