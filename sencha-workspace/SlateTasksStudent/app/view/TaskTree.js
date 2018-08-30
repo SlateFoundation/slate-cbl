@@ -41,7 +41,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '<tpl if="studentTasks.length">',
             '<ul class="slate-tasktree-list">',
                 '<tpl for="studentTasks">',
-                    '<li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.studentTask) ]}" data-id="{studentTask.ID}">',
+                    '<li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.studentTask) ]} <tpl if="expanded">is-expanded</tpl>" data-id="{studentTask.ID}">',
 
                         '<div class="flex-ct">',
                             '<div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -50,7 +50,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                     '<div class="slate-tasktree-category">{studentTask.Task.Section.Title}</div>',
                                 '</tpl>',
                                 '<div class="slate-tasktree-text">',
-                                    '<div class="slate-tasktree-title">{studentTask.Title}</div>',
+                                    '<div class="slate-tasktree-title">{studentTask.TaskTitle}</div>',
                                     '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values.studentTask)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.studentTask.TaskStatus) ]}</div>',
                                     '<div class="slate-tasktree-date">{[ this.getStatusDate(values.studentTask) ]}</div>',
                                 '</div>',
@@ -67,7 +67,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                                             '<div class="slate-tasktree-nub"></div>',
                                             '<div class="slate-tasktree-data">',
                                                 '<div class="slate-tasktree-text">',
-                                                    '<div class="slate-tasktree-title">{Title}</div>',
+                                                    '<div class="slate-tasktree-title">{TaskTitle}</div>',
                                                     '<div class="slate-tasktree-status <tpl if="!this.getStatusDate(values)">slate-tasktree-nodate</tpl>">{[ this.getStatusString(values.TaskStatus) ]}</div>',
                                                     '<div class="slate-tasktree-date">{[ this.getStatusDate(values) ]}</div>',
                                                 '</div>',
@@ -94,7 +94,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
                 var taskStatus = studentTaskData.TaskStatus,
                     taskDate;
 
-                if (taskStatus === 'submitted' || taskStatus === 're-submitted') {
+                if (taskStatus == 'submitted' || taskStatus == 're-submitted') {
                     taskDate = studentTaskData.Submitted;
                 } else {
                     taskDate = studentTaskData.EffectiveDueDate;
@@ -119,6 +119,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             oldStore.un({
                 beforeload: 'onBeforeStoreLoad',
                 load: 'onStoreLoad',
+                refresh: 'refresh',
+                update: 'refresh',
                 scope: this
             });
         }
@@ -127,9 +129,23 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             store.on({
                 beforeload: 'onBeforeStoreLoad',
                 load: 'onStoreLoad',
+                refresh: 'refresh',
+                update: 'refresh',
                 scope: this
             });
         }
+    },
+
+
+    // component lifecycle
+    initComponent: function() {
+        var me = this;
+
+        me.callParent();
+
+        me.refresh = Ext.Function.createBuffered(me.refresh, 50);
+
+        me.expandedTasks = {};
     },
 
 
@@ -140,7 +156,6 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     },
 
     onStoreLoad: function() {
-        this.refresh();
         this.removeCls('is-loading');
         this.setLoading(false);
     },
@@ -148,10 +163,12 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     onTreeClick: function(ev, t) {
         var me = this,
             target = Ext.get(t),
-            parentEl = target.up('.slate-tasktree-item');
+            parentEl = target.up('.slate-tasktree-item'),
+            taskId;
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            parentEl.toggleCls('is-expanded');
+            taskId = parentEl.getAttribute('data-id');
+            parentEl.toggleCls('is-expanded', me.expandedTasks[taskId] = !me.expandedTasks[taskId]);
         } else if (parentEl) {
             me.fireEvent('itemclick', me, me.getStore().getById(parentEl.getAttribute('data-id')), parentEl);
         }
@@ -165,6 +182,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     // member methods
     refresh: function() {
         var me = this,
+            expandedTasks = me.expandedTasks,
             store = me.getStore(),
             items = [],
 
@@ -191,6 +209,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             if (!rootTask.get('filtered')) {
                 items.push({
                     studentTask: rootTask.getData(),
+                    expanded: Boolean(expandedTasks[rootTask.getId()]),
                     subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
                 });
             }

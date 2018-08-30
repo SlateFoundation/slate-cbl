@@ -165,6 +165,11 @@ parameter `apiHost` when loading the page.
 - [X] Need a way to remove disabled raters
 - [ ] Warn if trying to close demo or task form with unsaved changes
 - [X] Update student header links between apps
+- [~] Improve changes detection on complex models with writable dynamic fields
+  - Already done for Attachments and DemonstrationSkills
+- [ ] Move saveWindow code to local member like openWindow code as in STS.Tasks controller
+- [~] Move action button state management into form class
+  - Already done for StudentTaskForm
 
 ### Next release
 
@@ -175,6 +180,8 @@ parameter `apiHost` when loading the page.
   - Stores
   - Models
   - Fields
+- [ ] Rename TaskStatus field to Status
+- [ ] Change re-submitted and re-assigned to resubmitted and reassigned
 - [ ] Handle editing overrides better
 - [ ] Expand current content area by default when demo window opened
 - [ ] Reorganize slate-cbl package

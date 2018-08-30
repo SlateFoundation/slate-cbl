@@ -1,10 +1,12 @@
 Ext.define('Slate.cbl.model.tasks.Task', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.cbl.proxy.tasks.Tasks',
         'Ext.data.identifier.Negative',
         'Ext.data.validator.Presence',
-        'Ext.data.validator.Range'
+        'Ext.data.validator.Range',
+
+        'Slate.cbl.data.field.Attachments',
+        'Slate.cbl.proxy.tasks.Tasks'
     ],
 
 
@@ -154,6 +156,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         },
         {
             name: 'Attachments',
+            type: 'slate-cbl-attachments',
             defaultValue: [],
 
             clonable: true

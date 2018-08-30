@@ -1,6 +1,7 @@
 Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
     extend: 'Ext.app.Controller',
     requires: [
+        'Ext.util.Format',
         'Ext.window.MessageBox',
         'Ext.window.Toast'
     ],
@@ -131,7 +132,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
 
                 Ext.Msg.show({
                     title: 'Failed to save override',
-                    message: operation.getError(),
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
                     buttons: Ext.Msg.OK,
                     icon: Ext.Msg.ERROR
                 });

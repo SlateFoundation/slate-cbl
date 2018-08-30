@@ -6,6 +6,7 @@ namespace Slate\CBL\Tasks;
 use DB;
 use JSON;
 use ActiveRecord;
+use UserUnauthorizedException;
 use Emergence\Comments\Comment;
 
 
@@ -68,16 +69,54 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
     protected static function applyRecordDelta(ActiveRecord $StudentTask, $requestData)
     {
+        // read related data out from request before applying default field handling
+        if (array_key_exists('Attachments', $requestData)) {
+            $attachmentsData = $requestData['Attachments'];
+            unset($requestData['Attachments']);
+        }
+
         if (array_key_exists('DemonstrationSkills', $requestData)) {
             $demonstrationSkillsData = $requestData['DemonstrationSkills'];
             unset($requestData['DemonstrationSkills']);
         }
 
+        if (!empty($requestData['TaskStatus']) && $requestData['TaskStatus'] == 'submitting') {
+            $submitting = true;
+            unset($requestData['TaskStatus']);
+        }
 
+
+        // apply default field handling
         parent::applyRecordDelta($StudentTask, $requestData);
 
 
+        // apply status
+        if (!empty($submitting)) {
+            $submissions = $StudentTask->Submissions;
+
+            if (count($submissions) || $StudentTask->TaskStatus == 're-assigned') {
+                $StudentTask->TaskStatus = 're-submitted';
+            } else {
+                $StudentTask->TaskStatus = 'submitted';
+            }
+
+            $submissions[] = StudentTaskSubmission::create();
+            $StudentTask->Submissions = $submissions;
+        }
+
+
+        // apply related attachments
+        if (isset($attachmentsData)) {
+            Attachments\AbstractTaskAttachment::applyAttachmentsData($StudentTask, $attachmentsData);
+        }
+
+
+        // apply related skills
         if (isset($demonstrationSkillsData)) {
+            if (!$StudentTask->userCanRateStudentTask()) {
+                throw new UserUnauthorizedException('rate authorization denied');
+            }
+
             // save skills not associated with parent task
             $skills = [];
             foreach ($demonstrationSkillsData as $demonstrationSkillData) {

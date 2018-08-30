@@ -2,7 +2,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
     var convertInheritedFn = function(v, r) {
         var taskData = r.get('Task');
 
-        return taskData && taskData[this.name] || this.defaultValue || null;
+        return taskData && taskData[this.name.substr(4)] || this.defaultValue || null;
     };
 
     return {
@@ -11,6 +11,8 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
             'Ext.data.identifier.Negative',
 
             /* global Slate */
+            'Slate.cbl.data.field.Attachments',
+            'Slate.cbl.data.field.DemonstrationSkills',
             'Slate.cbl.proxy.tasks.StudentTasks',
             'Slate.cbl.model.tasks.Task'
         ],
@@ -129,25 +131,39 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
                 name: 'Task',
                 persist: false
             },
+            {
+                name: 'availableActions',
+                persist: false,
+                defaultValue: {}
+            },
+            {
+                name: 'Submitted',
+                type: 'date',
+                dateFormat: 'timestamp',
+                allowNull: true
+            },
 
             // fields inherited from Task
             {
-                name: 'Title',
+                name: 'TaskTitle',
                 depends: ['Task'],
+                persist: false,
                 convert: convertInheritedFn
             },
             {
-                name: 'ExperienceType',
+                name: 'TaskExperienceType',
                 depends: ['Task'],
+                persist: false,
                 convert: convertInheritedFn
             },
             {
-                name: 'Instructions',
+                name: 'TaskInstructions',
                 depends: ['Task'],
+                persist: false,
                 convert: convertInheritedFn
             },
             {
-                name: 'Attachments',
+                name: 'TaskAttachments',
                 depends: ['Task'],
                 persist: false,
                 defaultValue: [],
@@ -249,6 +265,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
             // writable dynamic fields
             {
                 name: 'DemonstrationSkills',
+                type: 'slate-cbl-demonstrationskills',
                 depends: ['InheritedSkills', 'Skills', 'Demonstration'],
                 convert: function(v, r) {
                     var inheritedSkills = r.get('InheritedSkills'),
@@ -315,14 +332,19 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
 
                     return demonstrationSkills;
                 }
-            }
+            },
+            {
+                name: 'Attachments',
+                type: 'slate-cbl-attachments',
+                defaultValue: []
+            },
         ],
 
         proxy: 'slate-cbl-studenttasks',
 
 
         // local methods
-        readOperationData: function(operation) {
+        readOperationData: function(operation, extraValues) {
             var me = this,
                 response = operation.getResponse(),
                 data = response && response.data,
@@ -339,6 +361,10 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
             if (taskData) {
                 me.set('TaskID', taskData.ID);
                 me.set('Task', taskData, { dirty: false });
+            }
+
+            if (extraValues) {
+                me.set(extraValues, { dirty: false });
             }
 
             me.endEdit();

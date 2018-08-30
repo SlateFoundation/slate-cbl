@@ -15,8 +15,8 @@ use Slate\CBL\Demonstrations\ExperienceDemonstration;
 class StudentTask extends \VersionedRecord
 {
     public static $rateExpiredMissing = false;
-    public static $canSubmitStatuses = ['assigned', 're-assigned'];
-    public static $canResubmitStatuses = ['submitted', 're-submitted'];
+    public static $canSubmitStatuses = ['assigned'];
+    public static $canResubmitStatuses = ['re-assigned', 'submitted', 're-submitted'];
 
 
     //VersionedRecord configuration
@@ -80,7 +80,7 @@ class StudentTask extends \VersionedRecord
             'class' => StudentTaskSubmission::class,
             'foreign' => 'StudentTaskID',
             'local' => 'ID',
-            'order' => ['Created' => 'ASC']
+            'order' => ['ID' => 'ASC']
         ],
         'TaskSkills' => [
             'type' => 'one-many',
@@ -114,10 +114,10 @@ class StudentTask extends \VersionedRecord
         //     'getter' => 'getTaskSkills'
         // ],
         'Skills',
-        'Demonstration'
-        // 'Submitted' => [
-        //     'getter' => 'getSubmissionTimestamp'
-        // ]
+        'Demonstration',
+        'Submitted' => [
+            'getter' => 'getSubmissionTimestamp'
+        ]
     );
 
     public static $indexes = [
@@ -168,6 +168,7 @@ class StudentTask extends \VersionedRecord
 
         $actions['submit'] = $this->userCanSubmitStudentTask($User);
         $actions['resubmit'] = $this->userCanResubmitStudentTask($User);
+        $actions['rate'] = $this->userCanRateStudentTask($User);
 
         return $actions;
     }
@@ -190,7 +191,33 @@ class StudentTask extends \VersionedRecord
     {
         $User = $User ?: $this->getUserFromEnvironment();
 
-        return $User && $User->hasAccountLevel('Staff');
+        // must be logged-in to update record
+        if (!$User) {
+            return false;
+        }
+
+        // staff can update any record
+        if ($User->hasAccountLevel('Staff')) {
+            return true;
+        }
+
+        // only status can be updated by non-staff
+        if (
+            count($this->originalValues) != 1
+            || !$this->isFieldDirty('TaskStatus')
+        ) {
+            return false;
+        }
+
+        if ($this->TaskStatus == 'submitted' && $this->userCanSubmitStudentTask($User)) {
+            return true;
+        }
+
+        if ($this->TaskStatus == 're-submitted' && $this->userCanResubmitStudentTask($User)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function userCanDeleteRecord(IPerson $User = null)
@@ -204,14 +231,31 @@ class StudentTask extends \VersionedRecord
     {
         $User = $User ?: $this->getUserFromEnvironment();
 
-        return $User && $User->ID == $this->StudentID && in_array($this->TaskStatus, static::$canSubmitStatuses);
+        return (
+            $User
+            && $User->ID == $this->StudentID
+            && (!$this->ExpirationDate || strtotime('23:59:59', $this->ExpirationDate) >= time())
+            && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canSubmitStatuses)
+        );
     }
 
     public function userCanResubmitStudentTask(IPerson $User = null)
     {
         $User = $User ?: $this->getUserFromEnvironment();
 
-        return $User && $User->ID == $this->StudentID && in_array($this->TaskStatus, static::$canResubmitStatuses);
+        return (
+            $User
+            && $User->ID == $this->StudentID
+            && (!$this->ExpirationDate || strtotime('23:59:59', $this->ExpirationDate) >= time())
+            && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canResubmitStatuses)
+        );
+    }
+
+    public function userCanRateStudentTask(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return $User && $User->hasAccountLevel('Staff');
     }
 
     // TODO: delete all this?
@@ -274,14 +318,15 @@ class StudentTask extends \VersionedRecord
     //     return $taskSkills;
     // }
 
-    // public function getSubmissionTimestamp()
-    // {
-    //     $timestamp = null;
-    //     if (!empty($this->Submissions)) {
-    //         $submission = end($this->Submissions);
-    //         $timestamp = $submission->Created;
-    //     }
+    public function getSubmissionTimestamp()
+    {
+        if (
+            $this->TaskStatus != 'assigned'
+            && ($Submission = end($this->Submissions))
+        ) {
+            return $Submission->Created;
+        }
 
-    //     return $timestamp;
-    // }
+        return null;
+    }
 }

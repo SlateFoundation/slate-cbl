@@ -3,11 +3,14 @@
  */
 Ext.define('Slate.cbl.field.attachments.Field', {
     extend: 'Slate.ui.form.ContainerField',
-    xtype: 'slate-cbl-attachments-field',
+    xtype: 'slate-cbl-attachmentsfield',
     requires: [
         'Ext.toolbar.Toolbar',
         'Ext.button.Button',
+        'Ext.form.field.Display',
 
+        /* global Slate */
+        'Slate.cbl.data.field.Attachments',
         'Slate.cbl.field.attachments.Attachment',
         'Slate.cbl.field.attachments.Link'
     ],
@@ -23,12 +26,20 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     },
 
 
-    componentCls: 'slate-cbl-attachments-field',
+    componentCls: 'slate-cbl-attachmentsfield',
     items: [
+        {
+            itemId: 'placeholder',
+
+            xtype: 'displayfield',
+            hidden: true,
+            value: 'none'
+        },
         {
             itemId: 'list',
 
             xtype: 'container',
+            hidden: true,
             componentCls: 'slate-cbl-attachments-list',
             autoEl: 'ul',
             defaults: {
@@ -106,13 +117,16 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         me.callParent();
 
+        me.listCt = me.getComponent('list');
+        me.placeholderCmp = me.getComponent('placeholder');
+
         toolbar.add(me.buildToolbarItemConfigs());
         me.insert(0, toolbar);
     },
 
     initEvents: function() {
         var me = this,
-            listCt = me.getComponent('list');
+            listCt = me.listCt;
 
         me.callParent();
 
@@ -129,6 +143,20 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
 
     // containerfield lifecycle
+    initValue: function() {
+        var me = this;
+
+        if (!me.value) {
+            me.value = [];
+        }
+
+        me.valueItemsMap = {};
+
+        me.callParent(arguments);
+
+        me.refreshVisibility();
+    },
+
     normalizeValue: function(value) {
         var normalValue = [],
             length = value ? value.length : 0,
@@ -145,52 +173,17 @@ Ext.define('Slate.cbl.field.attachments.Field', {
     },
 
     setValue: function(value) {
-        return this.callParent([this.normalizeValue(value)]);
-    },
-
-    resetOriginalValue: function() {
-        var me = this;
-
-        // use clone from normalizeValue to isolate from updates
-        me.originalValue = me.normalizeValue(me.getValue());
-        me.checkDirty();
-    },
-
-    isEqual: function(value1, value2) {
-        var length, i = 0;
-
-        if (value1 === value2) {
-            return true;
-        }
-
-        if (!value1 && !value2) {
-            return true;
-        }
-
-        if (!value1 || !value2) {
-            return false;
-        }
-
-        length = value1.length;
-        if (length !== value2.length) {
-            return false;
-        }
-
-        for (; i < length; i++) {
-            if (!Ext.Object.equals(value1[i], value2[i])) {
-                return false;
-            }
-        }
-
-        return true;
-    },
-
-    onChange: function(value) {
         var me = this,
-            listCt = me.getComponent('list'),
+            listCt = me.listCt,
             valueItemsMap = me.valueItemsMap = {},
             length = value ? value.length : 0,
             i = 0, itemValue, itemClass, Attachment, attachmentItem;
+
+        // clone value to normalized array
+        value = me.normalizeValue(value);
+
+        // update value and items map while loading into UI
+        me.value = value;
 
         Ext.suspendLayouts();
         ++me.suspendCheckChange;
@@ -210,10 +203,30 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             }
         }
 
+        me.refreshVisibility();
+
         --me.suspendCheckChange;
         Ext.resumeLayouts(true);
 
-        return me.callParent([value]);
+        // trigger change events if value differs from lastValue
+        me.checkChange();
+
+        // ensure lastValue and value always reference same instance
+        me.lastValue = value;
+
+        return me;
+    },
+
+    resetOriginalValue: function() {
+        var me = this;
+
+        // use clone from normalizeValue to isolate from updates
+        me.originalValue = me.normalizeValue(me.getValue());
+        me.checkDirty();
+    },
+
+    isEqual: function(value1, value2) {
+        return Slate.cbl.data.field.Attachments.prototype.isEqual(value1, value2);
     },
 
 
@@ -226,8 +239,11 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         attachmentItem.on({
             scope: me,
-            change: 'onAttachmentChange'
+            change: 'onAttachmentChange',
+            remove: 'onAttachmentRemove'
         });
+
+        me.refreshVisibility();
     },
 
     onListRemove: function(listCt, attachmentItem) {
@@ -243,11 +259,13 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         attachmentItem.un({
             scope: me,
-            change: 'onAttachmentChange'
+            change: 'onAttachmentChange',
+            remove: 'onAttachmentRemove'
         });
 
         me.validate();
         me.checkDirty();
+        me.refreshVisibility();
     },
 
     onAttachmentChange: function(attachmentItem) {
@@ -266,6 +284,15 @@ Ext.define('Slate.cbl.field.attachments.Field', {
 
         me.validate();
         me.checkDirty();
+    },
+
+    onAttachmentRemove: function(attachmentItem) {
+        var itemValue = attachmentItem.getValue(),
+            existingValue = this.valueItemsMap[attachmentItem.getId()];
+
+        if (itemValue.Status == 'removed' && !existingValue.ID) {
+            attachmentItem.destroy();
+        }
     },
 
 
@@ -288,9 +315,22 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         return buttonConfigs;
     },
 
+    refreshVisibility: function() {
+        var me = this,
+            isReadOnly = me.getReadOnly(),
+            isEmpty = me.value.length == 0;
+
+        Ext.suspendLayouts();
+
+        me.listCt.setHidden(isEmpty && isReadOnly);
+        me.placeholderCmp.setHidden(!isEmpty || !isReadOnly);
+
+        Ext.resumeLayouts(true);
+    },
+
     addAttachment: function(attachment) {
         var me = this,
-            attachmentItem = me.getComponent('list').add(attachment);
+            attachmentItem = me.listCt.add(attachment);
 
         me.value.push(me.valueItemsMap[attachmentItem.getId()]);
 
