@@ -39,6 +39,13 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         '</tpl>'
     ],
 
+    studentTaskInclude: [
+        'availableActions',
+        'Attachments',
+        'Demonstration.DemonstrationSkills',
+        'Skills'
+    ],
+
 
     // dependencies
     views: [
@@ -336,7 +343,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         formWindow.setLoading('Saving assignment&hellip;');
 
         studentTask.save({
-            include: ['Attachments', 'Demonstration.DemonstrationSkills', 'Skills'],
+            include: me.studentTaskInclude,
             success: function(savedStudentTask, operation) {
                 var studentTasksStore = me.getStudentTasksStore(),
                     tplData = {
@@ -947,12 +954,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         StudentTaskModel.load({
             student: studentId,
             task: taskId,
-            include: [
-                'availableActions',
-                'Attachments',
-                'Demonstration.DemonstrationSkills',
-                'Skills'
-            ],
+            include: me.studentTaskInclude,
             success: function(loadedStudentTask, operation) {
                 loadedStudentTask.readOperationData(operation);
                 formPanel.setStudentTask(loadedStudentTask);

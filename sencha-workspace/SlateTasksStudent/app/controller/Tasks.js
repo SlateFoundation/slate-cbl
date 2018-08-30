@@ -13,6 +13,14 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     ],
 
 
+    studentTaskInclude: [
+        'availableActions',
+        'Attachments',
+        'Demonstration.DemonstrationSkills',
+        'Skills'
+    ],
+
+
     // dependencies
     views: [
         'Window@Slate.ui',
@@ -380,12 +388,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         StudentTaskModel.load({
             student: studentTask.get('StudentID'),
             task: studentTask.get('TaskID'),
-            include: [
-                'availableActions',
-                'Attachments',
-                'Demonstration.DemonstrationSkills',
-                'Skills'
-            ],
+            include: me.studentTaskInclude,
             success: function(loadedStudentTask, operation) {
                 loadedStudentTask.readOperationData(operation);
                 formPanel.setStudentTask(loadedStudentTask);
