@@ -279,6 +279,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 ratingsField.setReadOnly(!canRate);
 
                 me.getDueDateDisplayField().setHidden(dueDate && canEdit);
+                dueDateField.setReadOnly(!canEdit);
                 dueDateField.setHidden(!dueDate || !canEdit);
                 dueDateOverrideField.setHidden(!canEdit);
                 dueDateOverrideField.setValue(canEdit ? Boolean(dueDate) : null);
@@ -286,6 +287,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
 
                 me.getExpirationDateDisplayField().setHidden(expirationDate && canEdit);
+                expirationDateField.setReadOnly(!canEdit);
                 expirationDateField.setHidden(!expirationDate || !canEdit);
                 expirationDateOverrideField.setHidden(!canEdit);
                 expirationDateOverrideField.setValue(canEdit ? Boolean(expirationDate) : null);
@@ -336,9 +338,16 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             var me = this;
 
             field.on('render', function() {
+                var dateField = me.getDueDateField(),
+                    overrideField = me.getDueDateOverrideField();
+
                 field.mon(field.inputEl, 'click', function() {
-                    me.getDueDateOverrideField().setValue(true);
-                    me.getDueDateField().focus(true, 100);
+                    if (dateField.readOnly) {
+                        return;
+                    }
+
+                    overrideField.setValue(true);
+                    dateField.focus(true, 100);
                 });
             });
         },
@@ -363,9 +372,16 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             var me = this;
 
             field.on('render', function() {
+                var dateField = me.getExpirationDateField(),
+                    overrideField = me.getExpirationDateOverrideField();
+
                 field.mon(field.inputEl, 'click', function() {
-                    me.getExpirationDateOverrideField().setValue(true);
-                    me.getExpirationDateField().focus(true, 100);
+                    if (dateField.readOnly) {
+                        return;
+                    }
+
+                    overrideField.setValue(true);
+                    dateField.focus(true, 100);
                 });
             });
         },
