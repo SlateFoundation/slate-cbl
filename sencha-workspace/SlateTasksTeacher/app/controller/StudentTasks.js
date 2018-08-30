@@ -72,7 +72,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             layout: 'fit',
             minWidth: 300,
             width: 600,
-            minHeight: 600,
+            minHeight: 200,
 
             mainView: {
                 xtype: 'slate-cbl-tasks-studenttaskform',
