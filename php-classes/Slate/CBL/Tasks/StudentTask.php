@@ -114,10 +114,10 @@ class StudentTask extends \VersionedRecord
         //     'getter' => 'getTaskSkills'
         // ],
         'Skills',
-        'Demonstration'
-        // 'Submitted' => [
-        //     'getter' => 'getSubmissionTimestamp'
-        // ]
+        'Demonstration',
+        'Submitted' => [
+            'getter' => 'getSubmissionTimestamp'
+        ]
     );
 
     public static $indexes = [
@@ -318,14 +318,15 @@ class StudentTask extends \VersionedRecord
     //     return $taskSkills;
     // }
 
-    // public function getSubmissionTimestamp()
-    // {
-    //     $timestamp = null;
-    //     if (!empty($this->Submissions)) {
-    //         $submission = end($this->Submissions);
-    //         $timestamp = $submission->Created;
-    //     }
+    public function getSubmissionTimestamp()
+    {
+        if (
+            $this->TaskStatus != 'assigned'
+            && ($Submission = end($this->Submissions))
+        ) {
+            return $Submission->Created;
+        }
 
-    //     return $timestamp;
-    // }
+        return null;
+    }
 }
