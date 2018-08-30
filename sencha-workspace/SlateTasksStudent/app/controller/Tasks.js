@@ -5,6 +5,7 @@
 Ext.define('SlateTasksStudent.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
+        'Ext.util.Format',
         'Ext.window.Toast',
 
         // /* global Slate */
@@ -494,7 +495,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
                 Ext.Msg.show({
                     title: 'Failed to save student task',
-                    message: operation.getError(),
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
                     buttons: Ext.Msg.OK,
                     icon: Ext.Msg.ERROR
                 });

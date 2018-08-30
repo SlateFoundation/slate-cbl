@@ -7,6 +7,7 @@
 Ext.define('SlateTasksTeacher.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
+        'Ext.util.Format',
         'Ext.window.Toast',
         'Ext.window.MessageBox'
     ],
@@ -246,12 +247,12 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
                 formPanel.setLoading(false);
             },
-            failure: function() {
+            failure: function(savedTask, operation) {
                 formPanel.setLoading(false);
 
                 Ext.Msg.show({
                     title: 'Failed to save task',
-                    message: operation.getError(),
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
                     buttons: Ext.Msg.OK,
                     icon: Ext.Msg.ERROR
                 });
@@ -312,7 +313,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
                 Ext.Msg.show({
                     title: 'Failed to save task',
-                    message: operation.getError(),
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
                     buttons: Ext.Msg.OK,
                     icon: Ext.Msg.ERROR
                 });

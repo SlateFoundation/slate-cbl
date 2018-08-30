@@ -8,6 +8,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
     extend: 'Ext.app.Controller',
     requires: [
         'Jarvus.override.data.RequireLoadedStores',
+        'Ext.util.Format',
         'Ext.window.Toast',
         'Ext.window.MessageBox'
     ],
@@ -354,7 +355,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
                 Ext.Msg.show({
                     title: 'Failed to save student task',
-                    message: operation.getError(),
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
                     buttons: Ext.Msg.OK,
                     icon: Ext.Msg.ERROR
                 });
