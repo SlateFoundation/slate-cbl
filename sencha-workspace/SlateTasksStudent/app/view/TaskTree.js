@@ -41,7 +41,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         '<tpl if="studentTasks.length">',
             '<ul class="slate-tasktree-list">',
                 '<tpl for="studentTasks">',
-                    '<li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.studentTask) ]}" data-id="{studentTask.ID}">',
+                    '<li class="slate-tasktree-item <tpl if="subTasks.length">has-subtasks</tpl> slate-tasktree-status-{[ this.getDueStatusCls(values.studentTask) ]} <tpl if="expanded">is-expanded</tpl>" data-id="{studentTask.ID}">',
 
                         '<div class="flex-ct">',
                             '<div class="slate-tasktree-nub <tpl if="subTasks.length">is-clickable</tpl>"></div>', // TODO: ARIA it up
@@ -144,6 +144,8 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
         me.callParent();
 
         me.refresh = Ext.Function.createBuffered(me.refresh, 50);
+
+        me.expandedTasks = {};
     },
 
 
@@ -161,10 +163,12 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     onTreeClick: function(ev, t) {
         var me = this,
             target = Ext.get(t),
-            parentEl = target.up('.slate-tasktree-item');
+            parentEl = target.up('.slate-tasktree-item'),
+            taskId;
 
         if (target.is('.slate-tasktree-nub.is-clickable')) {
-            parentEl.toggleCls('is-expanded');
+            taskId = parentEl.getAttribute('data-id');
+            parentEl.toggleCls('is-expanded', me.expandedTasks[taskId] = !me.expandedTasks[taskId]);
         } else if (parentEl) {
             me.fireEvent('itemclick', me, me.getStore().getById(parentEl.getAttribute('data-id')), parentEl);
         }
@@ -178,6 +182,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
     // member methods
     refresh: function() {
         var me = this,
+            expandedTasks = me.expandedTasks,
             store = me.getStore(),
             items = [],
 
@@ -204,6 +209,7 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             if (!rootTask.get('filtered')) {
                 items.push({
                     studentTask: rootTask.getData(),
+                    expanded: Boolean(expandedTasks[rootTask.getId()]),
                     subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
                 });
             }
