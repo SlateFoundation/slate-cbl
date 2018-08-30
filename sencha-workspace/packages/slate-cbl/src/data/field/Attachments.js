@@ -4,7 +4,8 @@ Ext.define('Slate.cbl.data.field.Attachments', {
 
 
     isEqual: function(value1, value2) {
-        var length, i = 0;
+        var length, i = 0,
+            attachment1, attachment2;
 
         if (value1 === value2) {
             return true;
@@ -24,7 +25,19 @@ Ext.define('Slate.cbl.data.field.Attachments', {
         }
 
         for (; i < length; i++) {
-            if (!Ext.Object.equals(value1[i], value2[i])) {
+            // mask out meta properties
+            attachment1 = Ext.applyIf({
+                Created: null,
+                CreatorID: null
+            }, value1[i]);
+
+            attachment2 = Ext.applyIf({
+                Created: null,
+                CreatorID: null
+            }, value2[i]);
+
+            // compare all remaining fields
+            if (!Ext.Object.equals(attachment1, attachment2)) {
                 return false;
             }
         }
