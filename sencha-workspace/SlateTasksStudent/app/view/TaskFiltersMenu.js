@@ -50,10 +50,8 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
         {
             text: 'Past Due',
             filterGroup: 'Timeline',
-            filterFn: function(rec) {
-                var dueDate = rec.get('EffectiveDueDate');
-
-                return !dueDate || dueDate >= new Date();
+            filterFn: function(studentTask) {
+                return !studentTask.get('IsLate');
             }
         },
         {
