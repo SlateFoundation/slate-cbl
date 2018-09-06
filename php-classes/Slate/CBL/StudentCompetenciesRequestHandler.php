@@ -18,7 +18,7 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
     public static $browseOrder = ['ID' => 'DESC'];
 
 
-    public static function checkReadAccess(ActiveRecord $Record, $suppressLogin = false)
+    public static function checkReadAccess(ActiveRecord $Record = null, $suppressLogin = false)
     {
         $User = $GLOBALS['Session']->Person;
 
