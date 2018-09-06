@@ -174,6 +174,7 @@ parameter `apiHost` when loading the page.
 ### Next release
 
 - [ ] Audit reflows
+  - use loglayouts/breakonlayouts from DeveloperTools controller
 - [ ] Create and apply checklist for reviewing:
   - Controllers
   - Views
