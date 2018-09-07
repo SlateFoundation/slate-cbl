@@ -7,6 +7,7 @@ Git::$repositories['slate-cbl'] = [
     'localOnly' => true,
     'trees' => [
         'api-docs/definitions/Slate/CBL',
+        'data-exporters/slate-cbl',
         'event-handlers/Slate/CBL',
         'event-handlers/Emergence/Site/nightly-maintenance/50_cbl-google-drive-changes-monitor.php',
         'event-handlers/Emergence/Site/nightly-maintenance/50_cbl-invalidate-expired-tasks.php',
@@ -17,6 +18,7 @@ Git::$repositories['slate-cbl'] = [
         'html-templates/webapps/SlateTasksTeacher',
         'html-templates/cbl',
         'html-templates/connectors/cbl-maps',
+        'html-templates/exports/exports.tpl',
         'html-templates/google-drive/files.tpl',
         'php-classes/Google/API.php',
         'php-classes/Google/Drive',

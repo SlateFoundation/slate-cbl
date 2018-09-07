@@ -17,6 +17,8 @@ class StudentTask extends \VersionedRecord
     public static $rateExpiredMissing = false;
     public static $canSubmitStatuses = ['assigned'];
     public static $canResubmitStatuses = ['re-assigned', 'submitted', 're-submitted'];
+    public static $canReassignStatuses = ['submitted', 're-submitted', 'completed'];
+    public static $canCompleteStatuses = ['assigned', 're-assigned', 'submitted', 're-submitted'];
 
 
     //VersionedRecord configuration
@@ -169,6 +171,8 @@ class StudentTask extends \VersionedRecord
         $actions['submit'] = $this->userCanSubmitStudentTask($User);
         $actions['resubmit'] = $this->userCanResubmitStudentTask($User);
         $actions['rate'] = $this->userCanRateStudentTask($User);
+        $actions['reassign'] = $this->userCanReassignStudentTask($User);
+        $actions['complete'] = $this->userCanCompleteStudentTask($User);
 
         return $actions;
     }
@@ -256,6 +260,28 @@ class StudentTask extends \VersionedRecord
         $User = $User ?: $this->getUserFromEnvironment();
 
         return $User && $User->hasAccountLevel('Staff');
+    }
+
+    public function userCanReassignStudentTask(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return (
+            $User
+            && $User->hasAccountLevel('Staff')
+            && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canReassignStatuses)
+        );
+    }
+
+    public function userCanCompleteStudentTask(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return (
+            $User
+            && $User->hasAccountLevel('Staff')
+            && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canCompleteStatuses)
+        );
     }
 
     // TODO: delete all this?

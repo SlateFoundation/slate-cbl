@@ -52,12 +52,36 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 merge: mergeFn,
                 $value: {
                     name: 'TaskStatus',
+                    flex: 1,
 
                     xtype: 'displayfield',
-                    fieldLabel: 'Status',
                     renderer: function(value) {
                         return value || 'not assigned';
                     }
+                }
+            },
+            reassignField: {
+                merge: mergeFn,
+                $value: {
+                    hidden: true,
+
+                    xtype: 'checkbox',
+                    boxLabel: 'Re-assign',
+                    margin: '0 0 0 16',
+                    name: 'TaskStatus',
+                    inputValue: 're-assigned'
+                }
+            },
+            completeField: {
+                merge: mergeFn,
+                $value: {
+                    hidden: true,
+
+                    xtype: 'checkbox',
+                    boxLabel: 'Complete',
+                    margin: '0 0 0 16',
+                    name: 'TaskStatus',
+                    inputValue: 'completed'
                 }
             },
             studentField: {
@@ -252,7 +276,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
 
         // config handlers
-        updateStudentTask: function(studentTask, oldStudentTask) {
+        updateStudentTask: function(studentTask, oldStudentTask) { // eslint-disable-line complexity
             var me = this,
                 ratingsField = me.getRatingsField(),
                 dueDateField = me.getDueDateField(),
@@ -288,6 +312,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                 me.getParentTaskField().setHidden(!studentTask.get('ParentTask'));
 
+                me.setReassignField(availableActions.reassign);
+                me.setCompleteField(availableActions.complete);
                 me.setInstructionsField(Boolean(studentTask.get('TaskInstructions')));
 
                 ratingsField.setSelectedStudent(studentTask.get('Student').Username);
@@ -343,6 +369,37 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         },
 
         applyStatusField: applyFn,
+        applyReassignField: applyFn,
+        updateReassignField: function(field) {
+            var me = this,
+                statusField = me.getStatusField(),
+                completeField = me.getCompleteField();
+
+            field.on('change', function(field, checked) {
+                if (checked) {
+                    completeField.setValue(false);
+                    statusField.disable();
+                } else if (!completeField.getValue()) {
+                    statusField.enable();
+                }
+            });
+        },
+        applyCompleteField: applyFn,
+        updateCompleteField: function(field) {
+            var me = this,
+            statusField = me.getStatusField(),
+                reassignField = me.getReassignField();
+
+            field.on('change', function(field, checked) {
+                if (checked) {
+                    reassignField.setValue(false);
+                    statusField.disable();
+                } else if (!reassignField.getValue()) {
+                    statusField.enable();
+                }
+            });
+        },
+
         applyStudentField: applyFn,
         applyTaskField: applyFn,
         applyParentTaskField: applyFn,
@@ -436,7 +493,17 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             me.callParent();
 
             me.insert(0, [
-                me.getStatusField(),
+                {
+                    itemId: 'statusCt',
+                    xtype: 'fieldcontainer',
+                    fieldLabel: 'Status',
+                    layout: 'hbox',
+                    items: [
+                        me.getStatusField(),
+                        me.getReassignField(),
+                        me.getCompleteField()
+                    ]
+                },
                 me.getStudentField(),
                 me.getTaskField(),
                 me.getParentTaskField(),

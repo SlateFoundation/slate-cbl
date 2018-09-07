@@ -72,6 +72,9 @@ class StudentCompetency extends \ActiveRecord
         'completion' => [
             'getter' => 'getCompletion'
         ],
+        'demonstrationOpportunities' => [
+            'getter' => 'getDemonstrationOpportunities'
+        ],
         'demonstrationsLogged' => [
             'getter' => 'getDemonstrationsLogged'
         ],
@@ -217,6 +220,24 @@ class StudentCompetency extends \ActiveRecord
         }
 
         return $this->demonstrationData;
+    }
+
+    private $demonstrationOpportunities;
+    public function getDemonstrationOpportunities()
+    {
+        if ($this->demonstrationOpportunities === null) {
+            $this->demonstrationOpportunities = 0;
+
+            foreach ($this->getDemonstrationData() as $skillId => $demonstrationData) {
+                foreach ($demonstrationData as $demonstration) {
+                    if (empty($demonstration['Override'])) {
+                        $this->demonstrationOpportunities++;
+                    }
+                }
+            }
+        }
+
+        return $this->demonstrationOpportunities;
     }
 
     protected static function sortEffectiveDemonstrations($a, $b)
