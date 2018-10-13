@@ -17,7 +17,7 @@ class StudentTask extends \VersionedRecord
     public static $rateExpiredMissing = false;
     public static $canSubmitStatuses = ['assigned'];
     public static $canResubmitStatuses = ['re-assigned', 'submitted', 're-submitted'];
-    public static $canReassignStatuses = ['submitted', 're-submitted', 'completed'];
+    public static $canReassignStatuses = ['assigned', 'submitted', 're-submitted', 'completed'];
     public static $canCompleteStatuses = ['assigned', 're-assigned', 'submitted', 're-submitted'];
 
 
