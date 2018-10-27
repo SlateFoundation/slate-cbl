@@ -44,7 +44,6 @@ Ext.define('Slate.cbl.field.attachments.Attachment', {
 
 
     // component configuration
-    autoEl: 'li',
     componentCls: 'slate-cbl-attachments-attachment',
     renderTpl: [
         '<span class="slate-cbl-attachments-attachment-title" id="{id}-titleEl" data-ref="titleEl">',
