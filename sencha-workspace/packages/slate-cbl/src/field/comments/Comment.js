@@ -13,7 +13,7 @@ Ext.define('Slate.cbl.field.comments.Comment', {
     tpl: [
         '<tpl for="Creator">',
             '<div class="author">',
-                '<a href="{[Slate.API.buildUrl("/people/"+values.ID)]}">',
+                '<a href="{[Slate.API.buildUrl("/people/"+values.ID)]}" target="_blank">',
                     '<img height="56" width="56" alt="{FirstName:htmlEncode} {LastName:htmlEncode}" src="{[Slate.API.buildUrl("/people/"+values.ID+"/thumbnail/112x112/cropped")]}" class="avatar">',
                 '</a>',
             '</div>',
@@ -22,7 +22,7 @@ Ext.define('Slate.cbl.field.comments.Comment', {
         '<div class="message">',
             '<header>',
                 '<tpl for="Creator">',
-                    '<a href="{[Slate.API.buildUrl("/people/"+values.ID)]}">',
+                    '<a href="{[Slate.API.buildUrl("/people/"+values.ID)]}" target="_blank">',
                         '<span class="name">{FirstName} {LastName}</span>',
                     '</a>',
                 '</tpl>',
