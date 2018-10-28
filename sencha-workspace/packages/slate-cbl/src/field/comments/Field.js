@@ -70,6 +70,31 @@ Ext.define('Slate.cbl.field.comments.Field', {
         var me = this,
             listCt = me.listCt;
 
+        Ext.Array.sort(value, (comment1, comment2) => {
+            var date1 = comment1.Created,
+                date2 = comment2.Created;
+
+            if (date1) {
+                date1 = date1.getTime();
+            } else {
+                return -1;
+            }
+
+            if (date2) {
+                date2 = date2.getTime();
+            } else {
+                return 1;
+            }
+
+            if (date1 < date2) {
+                return 1;
+            } else if (date1 == date2) {
+                return 0;
+            }
+
+            return -1;
+        });
+
         // update value and items map while loading into UI
         me.value = value;
 
