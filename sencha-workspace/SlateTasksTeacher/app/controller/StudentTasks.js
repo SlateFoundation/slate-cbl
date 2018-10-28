@@ -44,7 +44,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         'availableActions',
         'Attachments',
         'Demonstration.DemonstrationSkills',
-        'Skills'
+        'Skills',
+        'Comments.Creator'
     ],
 
 

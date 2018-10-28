@@ -41,7 +41,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             'Emergence.proxy.Values',
 
             'Slate.cbl.field.ratings.SkillsField',
-            'Slate.cbl.field.attachments.Field'
+            'Slate.cbl.field.attachments.Field',
+            'Slate.cbl.field.comments.Field'
         ],
 
 
@@ -233,6 +234,15 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                     xtype: 'slate-cbl-attachmentsfield',
                     fieldLabel: 'Submission Attachments'
+                }
+            },
+            commentsField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'Comments',
+
+                    xtype: 'slate-cbl-commentsfield',
+                    fieldLabel: 'Comments'
                 }
             },
 
@@ -481,6 +491,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         applyTaskAttachmentsField: applyFn,
         applyRatingsField: applyFn,
         applyAttachmentsField: applyFn,
+        applyCommentsField: applyFn,
 
         applySaveBtn: applyFn,
         applySubmitBtn: applyFn,
@@ -541,7 +552,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 },
                 me.getTaskAttachmentsField(),
                 me.getRatingsField(),
-                me.getAttachmentsField()
+                me.getAttachmentsField(),
+                me.getCommentsField()
             ]);
 
             me.setFooter([me.getSaveBtn(), me.getSubmitBtn()]);
