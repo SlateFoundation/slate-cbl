@@ -173,6 +173,7 @@ class StudentTask extends \VersionedRecord
         $actions['rate'] = $this->userCanRateStudentTask($User);
         $actions['reassign'] = $this->userCanReassignStudentTask($User);
         $actions['complete'] = $this->userCanCompleteStudentTask($User);
+        $actions['comment'] = $this->userCanComment($User);
 
         return $actions;
     }
@@ -281,6 +282,19 @@ class StudentTask extends \VersionedRecord
             $User
             && $User->hasAccountLevel('Staff')
             && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canCompleteStatuses)
+        );
+    }
+
+    public function userCanComment(IPerson $User = null)
+    {
+        $User = $User ?: $this->getUserFromEnvironment();
+
+        return (
+            $User
+            && (
+                $User->ID == $this->StudentID
+                || $User->hasAccountLevel('Staff')
+            )
         );
     }
 
