@@ -85,6 +85,11 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             unset($requestData['TaskStatus']);
         }
 
+        if (array_key_exists('Comments', $requestData)) {
+            $commentsData = $requestData['Comments'];
+            unset($requestData['Comments']);
+        }
+
 
         // apply default field handling
         parent::applyRecordDelta($StudentTask, $requestData);
@@ -144,6 +149,12 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             $Demonstration = $StudentTask->getOrCreateDemonstration();
             $Demonstration->recordAffectedStudentCompetencies();
             $Demonstration->applySkillsData($demonstrationSkillsData);
+        }
+
+
+        // apply related comments
+        if (isset($commentsData)) {
+            Comment::applyCommentsData($StudentTask, $commentsData);
         }
     }
 

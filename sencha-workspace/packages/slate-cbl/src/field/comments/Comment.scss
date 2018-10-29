@@ -1,0 +1,39 @@
+.slate-cbl-comments-comment {
+    clear: both;
+
+    .author {
+        float: left;
+        margin-right: 0.5em;
+    }
+
+    .name {
+        font-weight: bold;
+    }
+
+    .message {
+        padding-top: 0.25em;
+        overflow: hidden;
+    }
+
+    header {
+        float: left;
+        margin-right: .25em;
+    }
+
+    footer {
+        color: #949494;
+        font-size: .875em;
+    }
+
+    p {
+        margin: 0.75em 0;
+
+        &:first-child {
+            display: inline;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
