@@ -397,7 +397,7 @@ class StudentCompetency extends \ActiveRecord
 
         // Custom level complete function
         if (is_callable(static::$isLevelComplete)) {
-            return call_user_func(static::$isLevelComplete, $this);
+            return call_user_func(static::$isLevelComplete, $this) ?: false;
         }
 
         return true;
