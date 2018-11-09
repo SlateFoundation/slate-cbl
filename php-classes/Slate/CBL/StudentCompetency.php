@@ -13,6 +13,7 @@ use Slate\CBL\Demonstrations\DemonstrationSkill;
 class StudentCompetency extends \ActiveRecord
 {
     public static $autoGraduate = true;
+    public static $getDemonstrationConditions;
     public static $isLevelComplete;
     public static $minimumRatingOffset;
 
@@ -177,6 +178,15 @@ class StudentCompetency extends \ActiveRecord
                 $skillIds = $this->Competency->getSkillIds();
 
                 if (count($skillIds)) {
+                    $conditions = [
+                        'SkillID' => [ 'values' => $skillIds ],
+                        'TargetLevel' => $this->Level
+                    ];
+
+                    if (is_callable(static::$getDemonstrationConditions)) {
+                        $conditions = call_user_func(static::$getDemonstrationConditions, $this, $conditions);
+                    }
+
                     $this->demonstrationData = DB::arrayTable(
                         'SkillID',
                         '
@@ -185,16 +195,14 @@ class StudentCompetency extends \ActiveRecord
                           FROM `%s` DemonstrationSkill
                           JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration
                             ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-                         WHERE DemonstrationSkill.SkillID IN (%s)
-                           AND DemonstrationSkill.TargetLevel = %u
+                         WHERE (%s)
                          ORDER BY SkillID, DemonstrationDate, DemonstrationID
                         ',
                         [
                             DemonstrationSkill::$tableName,
                             Demonstration::$tableName,
                             $this->StudentID,
-                            join(', ', $skillIds),
-                            $this->Level
+                            implode(DemonstrationSkill::mapConditions($conditions, 'DemonstrationSkill'), ') AND (')
                         ]
                     );
 
