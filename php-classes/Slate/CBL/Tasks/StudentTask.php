@@ -298,66 +298,6 @@ class StudentTask extends \VersionedRecord
         );
     }
 
-    // TODO: delete all this?
-    // public function getValue($name)
-    // {
-    //     switch ($name) {
-    //         case 'AllSkills':
-    //             return $this->Skills + ($this->Task ? $this->Task->Skills : []);
-
-    //         default:
-    //             return parent::getValue($name);
-    //     }
-    // }
-
-    // public function getStudentName()
-    // {
-    //     return $this->Student->FullName;
-    // }
-
-    // public function getTaskSkills()
-    // {
-    //     // todo: use a UI-centric api endpoint instead of dynamic fields
-    //     $taskSkills = [];
-    //     $demoSkillIds = [];
-    //     $demoSkills = $this->Demonstration ? $this->Demonstration->Skills : [];
-    //     foreach ($demoSkills as $demoSkill) {
-    //         $demoSkillIds[$demoSkill->SkillID] = $demoSkill;
-    //     }
-
-    //     if ($this->Task && $this->Task->Skills) {
-    //         foreach ($this->Task->Skills as $skill) {
-    //             $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
-    //             $DemonstrationSkill = $demoSkillIds[$skill->ID];
-
-    //             $taskSkills[] = array_merge($skill->getData(), [
-    //                 'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
-    //                 'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
-    //                 'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-    //                 'Rating' => $DemonstrationSkill ? $DemonstrationSkill->DemonstratedLevel : null,
-    //                 'Level' => $DemonstrationSkill ? $DemonstrationSkill->TargetLevel : null
-    //             ]);
-    //         }
-    //     }
-
-    //     if ($this->Skills) {
-    //         foreach ($this->Skills as $skill) {
-    //             $StudentCompetency = StudentCompetency::getCurrentForStudent($this->Student, $skill->Competency);
-    //             $DemonstrationSkill = $demoSkillIds[$skill->ID];
-
-    //             $taskSkills[] = array_merge($skill->getData(), [
-    //                 'CompetencyLevel' => $StudentCompetency ? $StudentCompetency->Level : null,
-    //                 'CompetencyCode' => $skill->Competency ? $skill->Competency->Code : null,
-    //                 'CompetencyDescriptor' => $skill->Competency ? $skill->Competency->Descriptor : null,
-    //                 'Rating' => $DemonstrationSkill ? $DemonstrationSkill->DemonstratedLevel : null,
-    //                 'Level' => $DemonstrationSkill ? $DemonstrationSkill->TargetLevel : null
-    //             ]);
-    //         }
-    //     }
-
-    //     return $taskSkills;
-    // }
-
     public function getSubmissionTimestamp()
     {
         if (
