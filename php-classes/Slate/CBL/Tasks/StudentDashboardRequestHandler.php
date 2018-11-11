@@ -5,14 +5,12 @@ namespace Slate\CBL\Tasks;
 use Emergence\WebApps\SenchaApp;
 use Google\API as GoogleAPI;
 
-
 class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json',
         'text/csv' => 'csv'
     ];
-
 
     public static function handleRequest()
     {

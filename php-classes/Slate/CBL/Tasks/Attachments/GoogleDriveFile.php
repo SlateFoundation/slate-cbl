@@ -26,7 +26,6 @@ use Exception;
 use RecordValidationException;
 use Validators;
 
-
 class GoogleDriveFile extends AbstractTaskAttachment
 {
     public $syncedPermissions = [];
@@ -87,7 +86,6 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
             default:
                 return parent::getValue($name);
-
         }
     }
 
@@ -132,7 +130,6 @@ class GoogleDriveFile extends AbstractTaskAttachment
             ]);
             return false;
         }
-
     }
 
     /*

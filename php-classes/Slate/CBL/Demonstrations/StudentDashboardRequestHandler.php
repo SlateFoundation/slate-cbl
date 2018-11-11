@@ -2,10 +2,10 @@
 
 namespace Slate\CBL\Demonstrations;
 
-use DB, TableNotFoundException;
+use DB;
+use TableNotFoundException;
 
 use Emergence\People\Person;
-
 use Emergence\WebApps\SenchaApp;
 
 use Slate\CBL\RecordsRequestHandler as CBLRecordsRequestHandler;
@@ -13,14 +13,12 @@ use Slate\CBL\ContentAreasRequestHandler;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
 
-
 class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
         'application/json' => 'json',
         'text/csv' => 'csv'
     ];
-
 
     public static function handleRequest()
     {

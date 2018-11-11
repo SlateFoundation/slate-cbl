@@ -4,7 +4,6 @@ namespace Slate\CBL\Demonstrations;
 
 use Emergence\WebApps\SenchaApp;
 
-
 class TeacherDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [
