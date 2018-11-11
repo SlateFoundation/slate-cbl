@@ -192,7 +192,6 @@ parameter `apiHost` when loading the page.
 - [ ] Merge slate-cbl-admin and repair
 - [ ] Restore google drive integration
 - [ ] Refactor TargetLevel -> Level and DemonstratedLevel -> Rating
-- [ ] Rename "Skill" to "Standard" ?
 - [ ] Remove hardcoded subtraction of 8 to go from grade to level
 - [ ] Eliminate `Slate.cbl.widget.*` namespace, all classes should be `view.*` or `field.*`
 - [ ] Move common store constructor->dirty=true, loadIfDirty, unload methods to lazydata package, override loadIfDirty where needed
@@ -203,6 +202,7 @@ parameter `apiHost` when loading the page.
   - [ ] Park other global rating configuration here.
   - [ ] Create another such class for levels config.
 - [ ] Rename TaskStatus column to Status
+- [X] Migrate all local _getRequested* methods to standard RecordsRequestHandler methods
 
 ## Best Practices
 
