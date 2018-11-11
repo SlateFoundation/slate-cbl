@@ -5,11 +5,10 @@ namespace Slate\CBL\Demonstrations;
 use DB, TableNotFoundException;
 
 use Emergence\People\Person;
-use Emergence\People\GuardianRelationship;
-use Emergence\People\PeopleRequestHandler;
 
 use Emergence\WebApps\SenchaApp;
 
+use Slate\CBL\RecordsRequestHandler as CBLRecordsRequestHandler;
 use Slate\CBL\ContentAreasRequestHandler;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
@@ -59,11 +58,14 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 
     public static function handleRecentProgressRequest()
     {
-        $GLOBALS['Session']->requireAuthentication();
-        $Student = static::_getRequestedStudent();
-        $ContentArea = static::_getRequestedContentArea();
+        // read request
+        global $Session;
+        $Session->requireAuthentication();
+        $Student = CBLRecordsRequestHandler::getRequestedStudent() ?: $Session->Person;
+        $ContentArea = CBLRecordsRequestHandler::getRequestedContentArea();
 
 
+        // build conditions
         $where = [
             'd.StudentID = ' . $Student->ID
         ];
@@ -73,9 +75,11 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
         }
 
 
+        // build limit
         $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
 
 
+        // query database
         try {
             // TODO: do name formatting on the client-side
             $progress = DB::allRecords('
@@ -118,6 +122,7 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
             $progress = [];
         }
 
+
         // cast strings to integers
         foreach ($progress as &$progressRecord) {
             $progressRecord['targetLevel'] = intval($progressRecord['targetLevel']);
@@ -139,46 +144,9 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
         }
 
 
+        // return progress packet
         return static::respond('progress', [
             'data' => $progress
         ]);
-    }
-
-    protected static function _getRequestedStudent()
-    {
-        if (!empty($_GET['student']) && $_GET['student'] != '*current') {
-            $Student = PeopleRequestHandler::getRecordByHandle($_GET['student']);
-            $userIsStaff = $GLOBALS['Session']->hasAccountLevel('Staff');
-
-            if ($Student && !$userIsStaff) {
-                $GuardianRelationship = GuardianRelationship::getByWhere([
-                    'PersonID' => $Student->ID,
-                    'RelatedPersonID' => $GLOBALS['Session']->PersonID
-                ]);
-            }
-
-            if (!$Student || ($Student->ID != $GLOBALS['Session']->PersonID && !$userIsStaff && !$GuardianRelationship)) {
-                return static::throwNotFoundError('Student not found');
-            }
-        }
-
-        if (!$Student) { // automatically set student to session user
-            $Student = $GLOBALS['Session']->Person;
-        }
-
-        return $Student;
-    }
-
-    protected static function _getRequestedContentArea()
-    {
-        $ContentArea = null;
-
-        if (!empty($_GET['content_area'])) {
-            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content_area'])) {
-                return static::throwNotFoundError('Content area not found');
-            }
-        }
-
-        return $ContentArea;
     }
 }

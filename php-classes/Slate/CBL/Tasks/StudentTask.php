@@ -2,10 +2,10 @@
 
 namespace Slate\CBL\Tasks;
 
-
 use Emergence\People\IPerson;
 use Emergence\People\Person;
 use Emergence\Comments\Comment;
+use Emergence\People\GuardianRelationship;
 
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
@@ -109,12 +109,6 @@ class StudentTask extends \VersionedRecord
         'Comments',
         'Attachments',
         'Submissions',
-        // 'StudentName' => [
-        //     'getter' => 'getStudentName'
-        // ],
-        // 'TaskSkills' => [
-        //     'getter' => 'getTaskSkills'
-        // ],
         'Skills',
         'Demonstration',
         'Submitted' => [
@@ -189,7 +183,11 @@ class StudentTask extends \VersionedRecord
     {
         $User = $User ?: $this->getUserFromEnvironment();
 
-        return $User && ($User->ID == $this->StudentID || $User->hasAccountLevel('Staff'));
+        return $User && (
+            $User->ID == $this->StudentID
+            || in_array($this->StudentID, GuardianRelationship::getWardIds($User))
+            || $User->hasAccountLevel('Staff')
+        );
     }
 
     public function userCanUpdateRecord(IPerson $User = null)

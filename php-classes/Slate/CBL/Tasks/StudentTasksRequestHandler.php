@@ -2,28 +2,27 @@
 
 namespace Slate\CBL\Tasks;
 
-
 use DB;
 use JSON;
 use ActiveRecord;
 use UserUnauthorizedException;
 use Emergence\Comments\Comment;
-
+use Emergence\People\GuardianRelationship;
 
 use Slate\CBL\Skill;
 use Slate\CBL\StudentCompetency;
-
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
-
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
-
 
 class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 {
     public static $recordClass =  StudentTask::class;
+    public static $accountLevelAPI = 'User';
     public static $accountLevelBrowse = 'User';
+    public static $accountLevelRead = 'Staff';
+    public static $accountLevelComment = 'Staff';
 
     protected static function buildBrowseConditions(array $conditions = [], array &$filterObjects = [])
     {
@@ -31,14 +30,28 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
         $conditions = parent::buildBrowseConditions($conditions);
 
-        // apply student filter
-        if ($Student = static::getRequestedStudent()) {
+
+        // apply student or students filter
+        if (!$Session->Person) {
+            throw new UserUnauthorizedException();
+        } elseif ($Student = static::getRequestedStudent()) {
             $conditions['StudentID'] = $Student->ID;
             $filterObjects['Student'] = $Student;
-        } elseif (!$Session || !$Session->hasAccountLevel('Staff')) {
-            // only staff can load without a student filter
-            $conditions[] = 'FALSE';
+        } elseif ($students = static::getRequestedStudents()) {
+            $conditions['StudentID'] = [
+                'values' => array_map(function ($Student) {
+                    return $Student->ID;
+                }, $students)
+            ];
+        } elseif (!$Session->hasAccountLevel('Staff')) {
+            $conditions['StudentID'] = [
+                'values' => array_merge(
+                    [$Session->PersonID],
+                    GuardianRelationship::getWardIds($Session->Person)
+                )
+            ];
         }
+
 
         // apply task or course_section filter
         if ($Task = static::getRequestedTask()) {
@@ -63,6 +76,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
             $filterObjects['CourseSection'] = $Section;
         }
+
 
         return $conditions;
     }

@@ -14,16 +14,24 @@ class SkillsRequestHandler extends RecordsRequestHandler
         static::$browseOrder = sprintf('LENGTH(%1$s.Code), %1$s.Code', $recordClass::getTableAlias());
     }
 
-    public static function handleBrowseRequest($options = array(), $conditions = array(), $responseID = null, $responseData = array())
+    protected static function buildBrowseConditions(array $conditions = [], array &$filterObjects = [])
     {
-        if (!empty($_GET['competency'])) {
-            if (!$Competency = CompetenciesRequestHandler::getRecordByHandle($_GET['competency'])) {
-                return static::throwNotFoundError('Competency not found');
-            }
+        $conditions = parent::buildBrowseConditions($conditions, $filterObjects);
 
+        if ($Competency = static::getRequestedCompetency()) {
             $conditions['CompetencyID'] = $Competency->ID;
+            $filterObjects['Competency'] = $Competency;
+        } elseif ($competencies = static::getRequestedCompetencies()) {
+            $conditions['CompetencyID'] = [
+                'values' => array_map(function ($Competency) {
+                    return $Competency->ID;
+                }, $competencies)
+            ];
+        } elseif ($ContentArea = static::getRequestedContentArea()) {
+            $conditions['CompetencyID'] = [ 'values' => $ContentArea->getCompetencyIds() ];
+            $filterObjects['ContentArea'] = $ContentArea;
         }
 
-        return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
+        return $conditions;
     }
 }

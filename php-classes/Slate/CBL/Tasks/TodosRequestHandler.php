@@ -10,8 +10,7 @@ use Slate\Courses\SectionParticipant;
 use Slate\Courses\SectionsRequestHandler;
 use Emergence\People\PeopleRequestHandler;
 
-
-class TodosRequestHandler extends \RecordsRequestHandler
+class TodosRequestHandler extends \Slate\CBL\RecordsRequestHandler
 {
     public static $recordClass = Todo::class;
     public static $accountLevelBrowse = 'User';
@@ -30,11 +29,13 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
     public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
     {
-        $GLOBALS['Session']->requireAuthentication();
+        global $Session;
+
+        $Session->requireAuthentication();
 
 
-        $Student = static::_getRequestedStudent();
-        $Section = static::_getRequestedCourseSection();
+        $Student = static::getRequestedStudent() ?: $Session->Person;
+        $Section = static::getRequestedSection();
 
 
         $enrolledSections = [];
@@ -104,11 +105,13 @@ class TodosRequestHandler extends \RecordsRequestHandler
 
     public static function handleClearRequest()
     {
-        $student = static::_getRequestedStudent();
+        global $Session;
+
+        $Session->requireAuthentication();
 
         $todos = Todo::getAllByWhere([
             'SectionID' => !empty($_REQUEST['sectionId']) ? $_REQUEST['sectionId'] : null,
-            'StudentID' => $student->ID,
+            'StudentID' => $Session->PersonID,
             'Completed' => 1
         ]);
 
@@ -117,38 +120,9 @@ class TodosRequestHandler extends \RecordsRequestHandler
             $todo->save();
         }
 
-        return static::respond('todos/clear-section',[
+        return static::respond('todos/clear-section', [
             'success' => true
             ,'total' => count($todos)
         ]);
-    }
-
-    protected static function _getRequestedStudent()
-    {
-        if (
-            !empty($_GET['student']) &&
-            $GLOBALS['Session']->hasAccountLevel('Staff')
-        ) {
-            if (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
-                return static::throwNotFoundError('Student not found');
-            }
-        } else {
-            $Student = $GLOBALS['Session']->Person;
-        }
-
-        return $Student;
-    }
-
-    protected static function _getRequestedCourseSection()
-    {
-        $CourseSection = null;
-
-        if (!empty($_GET['course_section'])) {
-            if (!$CourseSection = SectionsRequestHandler::getRecordByHandle($_GET['course_section'])) {
-                return static::throwNotFoundError('Course Section not found');
-            }
-        }
-
-        return $CourseSection;
     }
 }
