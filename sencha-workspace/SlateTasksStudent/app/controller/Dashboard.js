@@ -134,9 +134,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         // reload students store with just selected student if they're not in the current result set
         if (studentUsername && !studentCombo.getSelectedRecord()) {
             studentCombo.getStore().load({
-                params: {
-                    q: 'username:'+studentUsername
-                }
+                url: `/people/${studentUsername}`
             });
         }
     },
