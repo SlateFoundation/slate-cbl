@@ -21,7 +21,7 @@ class TodosRequestHandler extends \Slate\CBL\RecordsRequestHandler
         switch ($action = $action ?: static::shiftPath()) {
             case '*groups':
                 return static::handleGroupsRequest();
-            case '*clear':
+            case '!clear':
                 return static::handleClearRequest();
             default:
                 return parent::handleRecordsRequest($action);

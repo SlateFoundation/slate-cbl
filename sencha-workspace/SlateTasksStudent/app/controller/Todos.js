@@ -110,7 +110,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
         Slate.API.request({
             method: 'POST',
-            url: '/cbl/todos/*clear',
+            url: '/cbl/todos/!clear',
             params: {
                 'course_section': sectionId
             },
