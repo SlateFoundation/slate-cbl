@@ -43,16 +43,7 @@ class Skill extends \VersionedRecord
     ];
 
     public static $dynamicFields = [
-        'Competency',
-        // 'CompetencyLevel' => [
-        //     'getter' => 'getCompetencyLevel'
-        // ],
-        // 'CompetencyDescriptor' => [
-        //     'getter' => 'getCompetencyDescriptor'
-        // ],
-        // 'CompetencyCode' => [
-        //     'getter' => 'getCompetencyCode'
-        // ]
+        'Competency'
     ];
 
     public static $summaryFields = [
@@ -75,21 +66,6 @@ class Skill extends \VersionedRecord
             'callback' => [__CLASS__, 'getDescriptorSql']
         ]
     ];
-
-    // public static function __classLoaded()
-    // {
-    //     static::$searchConditions['CompetencyDescriptor'] = [
-    //         'qualifiers' => ['competency', 'any'],
-    //         'points' => 1,
-    //         'join' => [
-    //             'className' => Competency::class,
-    //             'localField' => 'CompetencyID',
-    //             'foreignField' => 'ID',
-    //             'aliasName' => Competency::getTableAlias() // todo: remove when ActiveRecord class can set this automatically
-    //         ],
-    //         'callback' => [__CLASS__, 'getCompetencyDescriptorSql']
-    //     ];
-    // }
 
     public function getHandle()
     {
@@ -173,31 +149,11 @@ class Skill extends \VersionedRecord
         return static::getTableAlias() . '.Descriptor LIKE "%'.$term.'%"';
     }
 
-    // public function getCompetencyDescriptor()
-    // {
-    //     return $this->Competency ? $this->Competency->Descriptor : null;
-    // }
-
-    // public function getCompetencyCode()
-    // {
-    //     return $this->Competency ? $this->Competency->Code : null;
-    // }
-
-    // public function getCompetencyLevel()
-    // {
-    //     $level = null;
-    //     if ($GLOBALS['Session']->PersonID && $this->Competency && $StudentCompetency = StudentCompetency::getByWhere(['StudentID' => $GLOBALS['Session']->PersonID, 'CompetencyID' => $this->Competency->ID])) {
-    //         $level = $StudentCompetency->Level;
-    //     }
-
-    //     return $level;
-    // }
-
     public function getDemonstrationsRequiredByLevel($level, $returnDefault = true)
     {
         if (isset($this->DemonstrationsRequired[$level])) {
             return $this->DemonstrationsRequired[$level];
-        } else if ($returnDefault) { // return default value if level is not explicitely set.$_COOKIE
+        } elseif ($returnDefault) {
             return $this->DemonstrationsRequired['default'];
         }
 

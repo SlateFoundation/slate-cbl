@@ -3,7 +3,6 @@
 namespace Slate\CBL;
 
 use DB, Cache, TableNotFoundException;
-use Slate\People\Student;
 
 
 class Competency extends \VersionedRecord

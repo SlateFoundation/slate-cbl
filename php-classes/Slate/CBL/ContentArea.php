@@ -93,7 +93,7 @@ class ContentArea extends \ActiveRecord
 
         return $competencyIds;
     }
-    
+
     public function getCompetencies($forceRefresh = false)
     {
         $competencies = [];
@@ -103,6 +103,50 @@ class ContentArea extends \ActiveRecord
         }
 
         return $competencies;
+    }
+
+    public function getSkillIds($forceRefresh = false)
+    {
+        $cacheKey = "cbl-contentarea/$this->ID/skill-ids";
+
+        if (!$forceRefresh && false !== ($skillIds = Cache::fetch($cacheKey))) {
+            return $skillIds;
+        }
+
+        try {
+            $skillIds = array_map('intval', DB::allValues(
+                'ID',
+                '
+                    SELECT Skill.ID
+                      FROM `%s` Skill
+                      JOIN `%s` Competency
+                        ON Competency.ID = Skill.CompetencyID
+                     WHERE Competency.ContentAreaID = %u
+                ',
+                [
+                    Skill::$tableName,
+                    Competency::$tableName,
+                    $this->ID
+                ]
+            ));
+        } catch (TableNotFoundException $e) {
+            $skillIds = [];
+        }
+
+        Cache::store($cacheKey, $skillIds);
+
+        return $skillIds;
+    }
+
+    public function getSkills($forceRefresh = false)
+    {
+        $skills = [];
+
+        foreach (static::getSkillIds($forceRefresh) as $skillId) {
+            $skills[] = Skill::getByID($skillId);
+        }
+
+        return $skills;
     }
 
     public static function getByHandle($handle)

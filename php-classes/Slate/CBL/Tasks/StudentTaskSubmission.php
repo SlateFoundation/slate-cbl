@@ -20,5 +20,4 @@ class StudentTaskSubmission extends \VersionedRecord
             'class' => StudentTask::class
         ]
     ];
-
 }

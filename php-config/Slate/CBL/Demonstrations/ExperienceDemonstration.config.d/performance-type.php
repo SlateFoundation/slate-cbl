@@ -1,18 +1,6 @@
 <?php
 
 
-Slate\CBL\Demonstrations\ExperienceDemonstration::$fields['ExperienceType']['default'] = null;
-Slate\CBL\Demonstrations\ExperienceDemonstration::$fields['ExperienceType']['values'] = [
-    'Studio',
-    'Celebration of Learning',
-    'Presentation of Learning'
-];
-
-
-Slate\CBL\Demonstrations\ExperienceDemonstration::$fields['Context']['default'] = null;
-Slate\CBL\Demonstrations\ExperienceDemonstration::$fields['Context']['values'] = [];
-
-
 Slate\CBL\Demonstrations\ExperienceDemonstration::$fields['PerformanceType']['default'] = null;
 Slate\CBL\Demonstrations\ExperienceDemonstration::$fields['PerformanceType']['values'] = [
     'Annotated Writing',

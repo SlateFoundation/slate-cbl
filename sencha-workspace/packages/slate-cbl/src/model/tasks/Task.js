@@ -194,37 +194,6 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             defaultValue: [],
             persist: true
         }
-        // TODO: review if still needed
-        // {
-        //     name: 'ParentTaskTitle',
-        //     depends: 'ParentTask',
-        //     mapping: 'ParentTask.Title'
-        // },
-        // {
-        //     name: 'CreatorFullName',
-        //     depends: 'Creator',
-        //     calculate: function(data) {
-        //         if (!data.Creator) {
-        //             return null;
-        //         }
-
-        //         return data.Creator.FirstName + ' ' + data.Creator.LastName;
-        //     }
-        // },
-        // {
-        //     name: 'SkillIDs',
-        //     depends: 'Skills',
-        //     persist: true,
-        //     calculate: function(data) {
-        //         if (!Ext.isEmpty(data.Skills)) {
-        //             return Ext.Array.map(data.Skills, function(skill) {
-        //                 return skill.ID;
-        //             });
-        //         }
-
-        //         return [];
-        //     }
-        // }
     ],
 
     proxy: {

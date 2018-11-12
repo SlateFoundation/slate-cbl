@@ -2,10 +2,10 @@
 
 namespace Slate\CBL\Tasks\Attachments;
 
-
 use Exception;
 
 use ActiveRecord;
+
 use Slate\CBL\Tasks\Task;
 
 abstract class AbstractTaskAttachment extends ActiveRecord

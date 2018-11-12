@@ -2,27 +2,21 @@
 
 namespace Slate\CBL;
 
-use DB;
-use SpreadsheetWriter;
-use TableNotFoundException;
-use Slate\People\Student;
-
-class CompetenciesRequestHandler extends \RecordsRequestHandler
+class CompetenciesRequestHandler extends RecordsRequestHandler
 {
     public static $recordClass = Competency::class;
     public static $browseOrder = 'ContentAreaID, Code';
     public static $accountLevelBrowse = 'User';
 
-    public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
+    protected static function buildBrowseConditions(array $conditions = [], array &$filterObjects = [])
     {
-        if (!empty($_GET['content_area'])) {
-            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content_area'])) {
-                return static::throwNotFoundError('Content area not found');
-            }
+        $conditions = parent::buildBrowseConditions($conditions, $filterObjects);
 
+        if ($ContentArea = static::getRequestedContentArea()) {
             $conditions['ContentAreaID'] = $ContentArea->ID;
+            $filterObjects['ContentArea'] = $ContentArea;
         }
 
-        return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
+        return $conditions;
     }
 }

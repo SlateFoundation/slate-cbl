@@ -1,8 +1,8 @@
-Ext.define('SlateTasksStudent.store.Todos', {
+Ext.define('SlateTasksStudent.store.TodoGroups', {
     extend: 'Ext.data.Store',
 
 
-    model: 'SlateTasksStudent.model.TodosGroup',
+    model: 'SlateTasksStudent.model.TodoGroup',
 
     config: {
         student: null,
@@ -12,9 +12,7 @@ Ext.define('SlateTasksStudent.store.Todos', {
         remoteSort: false,
 
         // redeclare identical proxy as model for dynamic reconfiguration
-        proxy: {
-            type: 'slate-cbl-todos'
-        }
+        proxy: 'slate-cbl-todogroups'
     },
 
 

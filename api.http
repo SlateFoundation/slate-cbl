@@ -1,0 +1,79 @@
+GET {{host}}/login
+
+###
+
+GET {{host}}/logout
+
+###
+
+GET {{host}}/cbl/content-areas
+
+###
+
+GET {{host}}/cbl/competencies
+    ?content_area=SCI
+
+###
+
+GET {{host}}/cbl/skills
+    ?content_area=SCI
+    # &competencies[]=SCI.1
+    # &competencies[]=SCI.2
+    # &competencies[]=1
+
+###
+
+GET {{host}}/cbl/student-competencies
+    ?entered_via=enrollment
+    # &student=aabernathy-2
+    &students=section:ELA-001
+    &level=9
+    &content_area=SCI
+    # &competency=SCI.1
+    # &competencies[]=SCI.1
+    # &competencies[]=SCI.2
+    # &competencies[]=1
+
+###
+
+GET {{host}}/cbl/demonstrations
+    ?foo=bar
+    &student=aabernathy
+    # &students=section:ELA-001
+    &content_area=ELA
+    # &competency=SCI.1
+    # &competencies[]=SCI.1
+    # &competencies[]=SCI.2
+    # &competencies[]=1
+    # &skills[]=SCI.1.HS.1
+    # &skills[]=SCI.1.HS.2
+    # &skills[]=97
+
+###
+
+GET {{host}}/cbl/demonstration-skills
+    ?foo=bar
+    # &student=aabernathy
+    &students=section:ELA-001
+    &content_area=ELA
+    # &competency=SCI.1
+    # &competencies[]=SCI.1
+    # &competencies[]=SCI.2
+    # &competencies[]=1
+    # &skills[]=SCI.1.HS.1
+    # &skills[]=SCI.1.HS.2
+    # &skills[]=97
+
+###
+
+GET {{host}}/cbl/todos
+    ?foo=bar
+    &student=23
+    &section=ELA-001
+
+###
+
+GET {{host}}/cbl/student-tasks
+    ?foo=bar
+    &student=aabernathy
+    &section=ELA-001

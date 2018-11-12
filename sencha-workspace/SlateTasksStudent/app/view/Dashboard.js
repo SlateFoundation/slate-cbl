@@ -64,7 +64,7 @@ Ext.define('SlateTasksStudent.view.Dashboard', {
                 store: 'Tasks'
             }, {
                 xtype: 'slate-tasks-student-todolist',
-                store: 'Todos'
+                store: 'TodoGroups'
             }
         ]
     }],

@@ -68,11 +68,6 @@ class Demonstration extends \VersionedRecord
         'DemonstrationSkills'
     ];
 
-#    public static function getAllBySkill(Skill $Skill)
-#    {
-#        return static::getAllByField('SkillID', $Skill->ID, ['order' => ['ID' => 'ASC']]);
-#    }
-
     public function save($deep = true)
     {
         if (!$this->Demonstrated) {

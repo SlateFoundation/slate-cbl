@@ -13,18 +13,22 @@ class Todo extends \ActiveRecord
     public static $pluralNoun = 'todos';
 
     public static $fields = [
-        'StudentID' => 'uint',
+        'StudentID' => [
+            'type' => 'uint',
+            'index' => true
+        ],
         'SectionID' => [
             'type' => 'uint',
-            'notnull' => false
+            'default' => null,
+            'index' => true
         ],
         'Description' => [
             'type' => 'string',
-            'notnull' => false
+            'default' => null
         ],
         'DueDate' => [
             'type' => 'timestamp',
-            'notnull' => false
+            'default' => null
         ],
         'Completed' => [
             'type' => 'boolean',
@@ -49,10 +53,10 @@ class Todo extends \ActiveRecord
         ]
     ];
 
-    public static $dynamicFields = array(
+    public static $dynamicFields = [
         'Student',
         'Section'
-    );
+    ];
 
     public static $validators = [
         'Student' => 'require-relationship'

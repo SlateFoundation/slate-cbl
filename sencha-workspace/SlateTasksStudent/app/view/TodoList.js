@@ -38,8 +38,6 @@ Ext.define('SlateTasksStudent.view.TodoList', {
     },
 
     tpl: [
-        '{% var now = new Date() %}',
-
         '<tpl for=".">',
             '<div class="slate-simplepanel slate-todolist-section <tpl if="readOnly">is-readonly</tpl>" data-section="{sectionId}" data-student="{studentId}">',
                 '<div class="slate-simplepanel-header">',
@@ -47,10 +45,10 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                 '</div>',
 
                 '<div class="slate-todolist-section-content" <tpl if="collapsed">style="display:none"</tpl>>',
-                '<tpl if="todos.length == 0">',
+                '<tpl if="subGroups.length == 0">',
                     '<div class="empty-text">No to-dos found</div>',
                 '<tpl else>',
-                    '<tpl for="todos">',
+                    '<tpl for="subGroups">',
                         '<section class="slate-todolist-itemgroup" data-group="{id}">',
                             '<header class="slate-todolist-itemgroup-header">',
                                 '<h4 class="slate-todolist-itemgroup-title">{title}</h4>',
@@ -77,11 +75,11 @@ Ext.define('SlateTasksStudent.view.TodoList', {
                                 '</tpl>',
                             '</header>',
                             '<ul class="slate-todolist-list" <tpl if="parent.completedHidden && id == \'completed\'">style="display:none"</tpl>>',
-                                '<tpl for="items">',
-                                    '<li class="slate-todolist-item slate-todolist-status-{[ values.DueTime < now ? "late" : "due" ]}" data-todo="{ID}">',
+                                '<tpl for="todos">',
+                                    '<li class="slate-todolist-item slate-todolist-status-<tpl if="IsLate">late<tpl else>due</tpl>" data-todo="{ID}">',
                                         '<input class="slate-todolist-item-checkbox" type="checkbox" <tpl if="Completed">checked</tpl> <tpl if="parent.readOnly">disabled</tpl>>',
                                         '<div class="slate-todolist-item-text">',
-                                            '<label class="slate-todolist-item-title">{Description}</label>',
+                                            '<label class="slate-todolist-item-title">{Description:htmlEncode}</label>',
                                         '</div>',
                                         '<div class="slate-todolist-item-date">{DueDate:date("M j, Y")}</div>',
                                     '</li>',
@@ -243,66 +241,70 @@ Ext.define('SlateTasksStudent.view.TodoList', {
             collapsedSections = me.collapsedSections,
             completedHiddenSections = me.completedHiddenSections,
 
-            todoSectionsData = [], // template input
+            todoGroupsData = [], // template input
 
-            todoSectionsStore = me.getStore(),
-            todoSectionsCount = todoSectionsStore.getCount(),
-            todoSectionIndex = 0,
-            todoSection, sectionId,
-            todosStore, todosCount, todoIndex, todo,
-            completeTodos, activeTodos, todoGroups;
+            todoGroupsStore = me.getStore(),
+            todoGroupsCount = todoGroupsStore.getCount(),
+            todoGroupIndex = 0,
+            todoGroup, sectionId,
+            todos, todosCount, todoIndex, todo,
+            completeTodos, activeTodos, todoSubGroups;
 
         // build array of todo groups
-        for (; todoSectionIndex < todoSectionsCount; todoSectionIndex++) {
-            todoSection = todoSectionsStore.getAt(todoSectionIndex);
-            sectionId = todoSection.get('SectionID');
-            todosStore = todoSection.Todos(); // eslint-disable-line new-cap
-            todosCount = todosStore.getCount();
+        for (; todoGroupIndex < todoGroupsCount; todoGroupIndex++) {
+            todoGroup = todoGroupsStore.getAt(todoGroupIndex);
+            sectionId = todoGroup.get('sectionId');
+            todos = todoGroup.get('todos');
+            todosCount = todos.length;
 
             // group todos by active and completed
             completeTodos = [];
             activeTodos = [];
 
             for (todoIndex = 0; todoIndex < todosCount; todoIndex++) {
-                todo = todosStore.getAt(todoIndex);
+                todo = todos.getAt(todoIndex);
+
+                if (todo.get('Cleared')) {
+                    continue;
+                }
 
                 (todo.get('Completed') ? completeTodos : activeTodos).push(todo.getData());
             }
 
             // generate data for populated groups
-            todoGroups = [];
+            todoSubGroups = [];
 
             if (activeTodos.length || !readOnly) {
-                todoGroups.push({
+                todoSubGroups.push({
                     id: 'active',
                     title: 'Active Items',
                     readOnly: readOnly,
-                    items: activeTodos
+                    todos: activeTodos
                 });
             }
 
             if (completeTodos.length > 0) {
-                todoGroups.push({
+                todoSubGroups.push({
                     id: 'completed',
                     title: 'Completed Items',
                     readOnly: readOnly,
-                    items: completeTodos
+                    todos: completeTodos
                 });
             }
 
-            todoSectionsData.push({
-                title: todoSection.get('Title'),
-                studentId: todoSection.get('StudentID'),
+            todoGroupsData.push({
+                title: todoGroup.get('title'),
+                studentId: todoGroup.get('studentId'),
                 sectionId: sectionId,
                 readOnly: readOnly,
                 collapsed: Boolean(collapsedSections[sectionId]),
                 completedHidden: Boolean(completedHiddenSections[sectionId]),
-                todos: todoGroups
+                subGroups: todoSubGroups
             });
         }
 
         // render markup
-        this.setData(todoSectionsData);
+        this.setData(todoGroupsData);
     },
 
     submitNewTask: function(sectionEl) {

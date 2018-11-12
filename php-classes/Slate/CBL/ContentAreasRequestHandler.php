@@ -2,7 +2,7 @@
 
 namespace Slate\CBL;
 
-class ContentAreasRequestHandler extends \RecordsRequestHandler
+class ContentAreasRequestHandler extends RecordsRequestHandler
 {
     public static $recordClass = ContentArea::class;
     public static $browseOrder = 'Code';

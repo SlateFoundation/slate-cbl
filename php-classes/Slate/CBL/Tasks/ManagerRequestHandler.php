@@ -5,7 +5,6 @@ namespace Slate\CBL\Tasks;
 use Emergence\WebApps\SenchaApp;
 use Google\API as GoogleAPI;
 
-
 class ManagerRequestHandler extends \Emergence\Site\RequestHandler
 {
     public static $userResponseModes = [

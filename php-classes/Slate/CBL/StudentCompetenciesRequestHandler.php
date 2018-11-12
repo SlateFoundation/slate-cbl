@@ -2,10 +2,12 @@
 
 namespace Slate\CBL;
 
-use ActiveRecord, RecordsRequestHandler;
-use Emergence\People\PeopleRequestHandler;
-use Slate\People\Student;
+use OutOfBoundsException;
 
+use ActiveRecord;
+use UserUnauthorizedException;
+
+use Emergence\People\GuardianRelationship;
 
 class StudentCompetenciesRequestHandler extends RecordsRequestHandler
 {
@@ -36,86 +38,71 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
         return $Record && $Record->StudentID === $User->ID;
     }
 
-    public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
+    protected static function buildBrowseConditions(array $conditions = [], array &$filterObjects = [])
     {
-        $User = $GLOBALS['Session']->Person;
+        global $Session;
 
-        if (!$User || !$User->hasAccountLevel('Staff')) {
-            $conditions['StudentID'] = $User->ID;
-        }
+        $conditions = parent::buildBrowseConditions($conditions, $filterObjects);
+
 
         // apply student or students filter
-        if (!$User) {
-            return static::throwUnauthorizedError('Login required');
-        } elseif (!empty($_GET['student'])) {
-            if ($_GET['student'] == '*current') {
-                $Student = $User;
-            } elseif (!$Student = PeopleRequestHandler::getRecordByHandle($_GET['student'])) {
-                return static::throwNotFoundError('Student not found');
-            }
-
-            if (!$User || ($Student->ID != $User->ID && !$User->hasAccountLevel('Staff'))) {
-                return static::throwUnauthorizedError('Only staff may browse others\' records');
-            }
-
+        if (!$Session->Person) {
+            throw new UserUnauthorizedException();
+        } elseif ($Student = static::getRequestedStudent()) {
             $conditions['StudentID'] = $Student->ID;
-            $responseData['Student'] = $Student;
-        } elseif (!$User->hasAccountLevel('Staff')) {
-            $conditions['StudentID'] = $User->ID;
-            $responseData['Student'] = $User;
-        } elseif (!empty($_GET['students'])) {
-            if (!$students = Student::getAllByListIdentifier($_GET['students'])) {
-                return static::throwNotFoundError('Students list not found');
-            }
-
+            $filterObjects['Student'] = $Student;
+        } elseif ($students = static::getRequestedStudents()) {
             $conditions['StudentID'] = [
-                'values' => array_map(function($Student) {
+                'values' => array_map(function ($Student) {
                     return $Student->ID;
                 }, $students)
             ];
+        } elseif (!$Session->hasAccountLevel('Staff')) {
+            $conditions['StudentID'] = [
+                'values' => array_merge(
+                    [$Session->PersonID],
+                    GuardianRelationship::getWardIds($Session->Person)
+                )
+            ];
         }
 
+
         // apply competency filter
-        if (!empty($_GET['competency'])) {
-            if (!$Competency = CompetenciesRequestHandler::getRecordByHandle($_GET['competency'])) {
-                return static::throwNotFoundError('Competency not found');
-            }
-
+        if ($Competency = static::getRequestedCompetency()) {
             $conditions['CompetencyID'] = $Competency->ID;
-            $responseData['Competency'] = $Competency;
-        } elseif (!empty($_GET['competencies'])) {
+            $filterObjects['Competency'] = $Competency;
+        } elseif ($competencies = static::getRequestedCompetencies()) {
             $conditions['CompetencyID'] = [
-                'values' => array_filter(array_map('intval', explode(',', $_GET['competencies'])))
+                'values' => array_map(function ($Competency) {
+                    return $Competency->ID;
+                }, $competencies)
             ];
-        } elseif (!empty($_GET['content_area'])) {
-            if (!$ContentArea = ContentAreasRequestHandler::getRecordByHandle($_GET['content_area'])) {
-                return static::throwNotFoundError('Content area not found');
-            }
-
+        } elseif ($ContentArea = static::getRequestedContentArea()) {
             $conditions['CompetencyID'] = [ 'values' => $ContentArea->getCompetencyIds() ];
-            $responseData['ContentArea'] = $ContentArea;
+            $filterObjects['ContentArea'] = $ContentArea;
         }
 
 
         // apply level filter
-        if (!empty($_GET['level'])) {
-            if (!ctype_digit($_GET['level'])) {
-                return static::throwInvalidRequestError('Level must be numeric');
+        if (!empty($_REQUEST['level'])) {
+            if (!ctype_digit($_REQUEST['level'])) {
+                throw new OutOfBoundsException('level must be numeric');
             }
 
-            $conditions['Level'] = $_GET['level'];
+            $conditions['Level'] = $_REQUEST['level'];
         }
 
 
         // apply entered_via filter
-        if (!empty($_GET['entered_via'])) {
-            if (!in_array($_GET['entered_via'], StudentCompetency::getFieldOptions('EnteredVia', 'values'))) {
-                return static::throwInvalidRequestError('Entered Via must be numeric');
+        if (!empty($_REQUEST['entered_via'])) {
+            if (!in_array($_REQUEST['entered_via'], StudentCompetency::getFieldOptions('EnteredVia', 'values'))) {
+                throw new OutOfBoundsException('entered_via invalid');
             }
 
-            $conditions['EnteredVia'] = $_GET['entered_via'];
+            $conditions['EnteredVia'] = $_REQUEST['entered_via'];
         }
 
-        return parent::handleBrowseRequest($options, $conditions, $responseID, $responseData);
+
+        return $conditions;
     }
 }

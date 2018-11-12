@@ -107,11 +107,27 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
     },
 
     onBootstrapDataLoad: function(app, bootstrapData) {
-        var userData = bootstrapData.user;
+        var studentSelector = this.getStudentSelector(),
+            studentsStore = studentSelector.getStore(),
+            userData = bootstrapData.user,
+            isStaff = userData.AccountLevel != 'User',
+            wards = userData.Wards || [];
 
-        // show and load student selector for priveleged users
-        if (!userData || userData.AccountLevel != 'User') {
-            this.getStudentSelector().show();
+        // show and load student selector for privileged users
+        if (isStaff || wards.length) {
+            studentSelector.show();
+
+            if (!isStaff) {
+                studentSelector.queryMode = 'local';
+                studentSelector.setEditable(false);
+
+                if (studentsStore.isLoading()) {
+                    studentsStore.getProxy().abortLastRequest();
+                }
+
+                studentsStore.loadRawData(wards);
+                studentSelector.setValueOnData();
+            }
         }
     },
 
@@ -134,9 +150,7 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         // reload students store with just selected student if they're not in the current result set
         if (studentUsername && !studentCombo.getSelectedRecord()) {
             studentCombo.getStore().load({
-                params: {
-                    q: 'username:'+studentUsername
-                }
+                url: `/people/${studentUsername}`
             });
         }
     },
