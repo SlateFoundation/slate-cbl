@@ -13,10 +13,14 @@ class Todo extends \ActiveRecord
     public static $pluralNoun = 'todos';
 
     public static $fields = [
-        'StudentID' => 'uint',
+        'StudentID' => [
+            'type' => 'uint',
+            'index' => true
+        ],
         'SectionID' => [
             'type' => 'uint',
-            'default' => null
+            'default' => null,
+            'index' => true
         ],
         'Description' => [
             'type' => 'string',
