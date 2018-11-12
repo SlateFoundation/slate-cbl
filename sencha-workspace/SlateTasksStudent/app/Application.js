@@ -30,6 +30,9 @@ Ext.define('SlateTasksStudent.Application', {
         Slate.API.request({
             method: 'GET',
             url: '/cbl/dashboards/tasks/student/bootstrap',
+            params: {
+                include: 'Wards'
+            },
             success: function(response) {
                 me.fireEvent('bootstrapdataload', me, response.data);
             }
