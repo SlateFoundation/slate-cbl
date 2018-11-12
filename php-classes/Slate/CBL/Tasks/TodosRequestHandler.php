@@ -18,88 +18,83 @@ class TodosRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
     public static function handleRecordsRequest($action = false)
     {
-        switch ($action = ($action ?: static::shiftPath())) {
-            case 'clear-section':
+        switch ($action = $action ?: static::shiftPath()) {
+            case '*groups':
+                return static::handleGroupsRequest();
+            case '*clear':
                 return static::handleClearRequest();
-
             default:
                 return parent::handleRecordsRequest($action);
         }
     }
 
-    public static function handleBrowseRequest($options = [], $conditions = [], $responseID = null, $responseData = [])
+    public static function handleGroupsRequest()
     {
         global $Session;
 
         $Session->requireAuthentication();
-
-
         $Student = static::getRequestedStudent() ?: $Session->Person;
-        $Section = static::getRequestedSection();
 
 
-        $enrolledSections = [];
-        $todos = [];
+        $groups = [];
 
 
-        // Todos with a null SectionID are considered personal Todos
-        $todos[] = [
-            'ID' => 0,
-            'SectionID' => null,
-            'StudentID' => $Student->ID,
-            'Title' => 'Personal',
-            'Section' => null,
-            'Todos' => static::getSectionTodos($Student)
+        // group with a null SectionID contains personal todos
+        $groups[0] = [
+            'title' => 'Personal',
+            'studentId' => $Student->ID,
+            'todos' => []
         ];
 
 
-        // get section-based Todos for specified section, current term, or any
-        $participantConditions = [
-            'PersonID' => $Student->ID
-        ];
-
-        if ($Section) {
-            // return todos from a specific section
+        // get section-based todos for specified section or selected/current term
+        if ($Section = static::getRequestedSection()) {
+            $sectionIds = [$Section->ID];
             $participantConditions['CourseSectionID'] = $Section->ID;
-        } elseif ($currentTerm = Term::getCurrent()) {
-            // return all todos from sections in the current term
-            $participantConditions['CourseSectionID'] = [
-                'values' => DB::allValues(
-                    'ID',
-                    'SELECT ID FROM `%s` Section WHERE TermID IN (%s)',
-                    [
-                        Section::$tableName,
-                        implode(',', $currentTerm->getConcurrentTermIDs())
-                    ]
-                )
-            ];
+        } elseif ($Term = static::getRequestedTerm() ?: Term::getClosest()) {
+            $sectionIds = DB::allValues(
+                'ID',
+                'SELECT ID FROM `%s` Section WHERE TermID IN (%s)',
+                [
+                    Section::$tableName,
+                    implode(',', $Term->getConcurrentTermIDs())
+                ]
+            );
         }
 
 
-        foreach (SectionParticipant::getAllByWhere($participantConditions) as $Participant) {
-            $todos[] = [
-                'ID' => $Participant->ID,
-                'SectionID' => $Participant->Section->ID,
-                'StudentID' => $Student->ID,
-                'Title' => $Participant->Section->Title,
-                'Section' => $Participant->Section,
-                'Todos' => static::getSectionTodos($Student, $Participant->CourseSectionID)
-            ];
-        }
-
-        return static::respond('todos', [
-            'success' => true,
-            'data' => $todos,
-            'total' => count($todos)
+        // add group for each enrolled section
+        $enrollments = SectionParticipant::getAllByWhere([
+            'CourseSectionID' => [ 'values' => $sectionIds ],
+            'PersonID' => $Student->ID
         ]);
-    }
 
-    public static function getSectionTodos($student, $sectionId = null)
-    {
-        return Todo::getAllByWhere([
-            'SectionID' => $sectionId,
-            'StudentID' => $student->ID,
+        foreach ($enrollments as $Participant) {
+            $groups[$Participant->CourseSectionID] = [
+                'title' => $Participant->Section->Title,
+                'studentId' => $Student->ID,
+                'section' => $Participant->Section,
+                'todos' => []
+            ];
+        }
+
+
+        // add todos
+        $todos = Todo::getAllByWhere([
+            'StudentID' => $Student->ID,
+            'SectionID IS NULL OR SectionID IN ('.implode(',', $sectionIds).')',
             'Cleared' => false
+        ]);
+
+        foreach ($todos as $Todo) {
+            $groups[$Todo->SectionID ?: 0]['todos'][] = $Todo;
+        }
+
+
+        return static::respond('todoGroups', [
+            'success' => true,
+            'data' => array_values($groups),
+            'total' => count($groups)
         ]);
     }
 
@@ -109,20 +104,28 @@ class TodosRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
         $Session->requireAuthentication();
 
-        $todos = Todo::getAllByWhere([
-            'SectionID' => !empty($_REQUEST['sectionId']) ? $_REQUEST['sectionId'] : null,
-            'StudentID' => $Session->PersonID,
-            'Completed' => 1
-        ]);
-
-        foreach ($todos as $todo) {
-            $todo->Cleared = true;
-            $todo->save();
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            return static::throwInvalidRequestError('request must be POST');
         }
 
-        return static::respond('todos/clear-section', [
-            'success' => true
-            ,'total' => count($todos)
+        $Section = static::getRequestedSection();
+
+        $todos = Todo::getAllByWhere([
+            'SectionID' => $Section ? $Section->ID : null,
+            'StudentID' => $Session->PersonID,
+            'Completed' => true,
+            'Cleared' => false
+        ]);
+
+        foreach ($todos as $Todo) {
+            $Todo->Cleared = true;
+            $Todo->save();
+        }
+
+        return static::respond('clearTodos', [
+            'success' => true,
+            'data' => $todos,
+            'total' => count($todos)
         ]);
     }
 }
