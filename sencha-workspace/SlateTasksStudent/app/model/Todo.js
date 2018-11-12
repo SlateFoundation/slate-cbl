@@ -1,14 +1,19 @@
 Ext.define('SlateTasksStudent.model.Todo', {
     extend: 'Ext.data.Model',
     requires: [
-        'Slate.cbl.proxy.Todos'
+        'Slate.cbl.proxy.Todos',
+        'Ext.data.identifier.Negative',
+        'Ext.data.validator.Range'
     ],
 
 
     // model config
     idProperty: 'ID',
+    identifier: 'negative',
 
     fields: [
+
+        // ActiveRecord fields
         {
             name: 'ID',
             type: 'int',
@@ -23,31 +28,34 @@ Ext.define('SlateTasksStudent.model.Todo', {
             name: 'Created',
             type: 'date',
             dateFormat: 'timestamp',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
         {
             name: 'CreatorID',
             type: 'int',
-            allowNull: true
+            allowNull: true,
+            persist: false
         },
+
+        // Todo fields
         {
             name: 'StudentID',
-            reference: 'Student',
             type: 'int'
         },
         {
             name: 'SectionID',
-            reference: 'Section',
-            type: 'int'
+            type: 'int',
+            allowNull: true
         },
         {
             name: 'Description',
-            type: 'string'
+            type: 'string',
+            allowNull: true
         },
         {
             name: 'DueDate',
             type: 'date',
-            mapping: 'Task.DueDate',
             dateFormat: 'timestamp',
             allowNull: true
         },
@@ -61,6 +69,8 @@ Ext.define('SlateTasksStudent.model.Todo', {
             type: 'boolean',
             defaultValue: false
         },
+
+        // virtual fields
         {
             name: 'DueTime',
             persist: false,
@@ -80,8 +90,30 @@ Ext.define('SlateTasksStudent.model.Todo', {
 
                 return dueTime;
             }
-        }
+        },
+        {
+            name: 'IsLate',
+            persist: false,
+            depends: ['DueTime'],
+            convert: function (v, r) {
+                var dueTime = r.get('DueTime');
+
+                return (
+                    dueTime
+                    && dueTime.getTime() < Date.now()
+                );
+            }
+        },
     ],
 
-    proxy: 'slate-cbl-todos'
+    proxy: 'slate-cbl-todos',
+
+    validators: [
+        {
+            field: 'StudentID',
+            type: 'min',
+            min: 1,
+            emptyMessage: 'StudentID is required'
+        }
+    ]
 });

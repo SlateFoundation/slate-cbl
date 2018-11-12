@@ -14,7 +14,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // dependencies
     stores: [
-        'Todos'
+        'TodoGroups'
     ],
 
     models: [
@@ -45,26 +45,26 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     // event handlers
     onStudentChange: function(dashboardCt, studentUsername) {
-        var todosStore = this.getTodosStore();
+        var todoGroupsStore = this.getTodoGroupsStore();
 
         this.getTodoList().setReadOnly(studentUsername !== false);
 
-        todosStore.setStudent(studentUsername);
-        todosStore.loadIfDirty();
+        todoGroupsStore.setStudent(studentUsername);
+        todoGroupsStore.loadIfDirty();
     },
 
     onSectionChange: function(dashboardCt, sectionCode) {
-        var todosStore = this.getTodosStore();
+        var todoGroupsStore = this.getTodoGroupsStore();
 
-        todosStore.setSection(sectionCode);
-        todosStore.loadIfDirty();
+        todoGroupsStore.setSection(sectionCode);
+        todoGroupsStore.loadIfDirty();
     },
 
     onTaskSubmit: function(todoList, todoData, sectionEl) {
         var me = this,
             todo = me.getTodoModel().create(todoData),
-            store = me.getTodosStore(),
-            todoSection = store.getAt(store.findExact('SectionID', todo.get('SectionID'))),
+            todoGroupsStore = me.getTodoGroupsStore(),
+            todoGroup = todoGroupsStore.getAt(todoGroupsStore.findExact('sectionId', todo.get('SectionID'))),
             inputEls = sectionEl.select('input:not([type=checkbox])');
 
         inputEls.set({
@@ -73,7 +73,7 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
         todo.save({
             success: function() {
-                todoSection.Todos().add(todo); // eslint-disable-line new-cap
+                todoGroup.get('todos').add(todo);
                 todoList.refresh();
             },
             failure: function() {
@@ -87,9 +87,9 @@ Ext.define('SlateTasksStudent.controller.Todos', {
 
     onTodosListCheckClick: function(todoList, sectionId, todoId, checked) {
         var me = this,
-            store = me.getTodosStore(),
-            todoSection = store.getAt(store.findExact('SectionID', sectionId)),
-            todo = todoSection.Todos().getById(todoId); // eslint-disable-line new-cap
+            todoGroupsStore = me.getTodoGroupsStore(),
+            todoGroup = todoGroupsStore.getAt(todoGroupsStore.findExact('sectionId', sectionId)),
+            todo = todoGroup.get('todos').getByKey(todoId);
 
         todo.set('Completed', checked);
 
@@ -103,22 +103,19 @@ Ext.define('SlateTasksStudent.controller.Todos', {
         });
     },
 
-    // TODO: verify this works / is used anywhere?
     onTodosListClearClick: function(todoList, sectionId) {
         var me = this,
-            store = me.getTodosStore(),
-            todosStore = store.getAt(store.findExact('SectionID', sectionId)).Todos(); // eslint-disable-line new-cap
+            todoGroupsStore = me.getTodoGroupsStore(),
+            todoGroup = todoGroupsStore.getAt(todoGroupsStore.findExact('sectionId', sectionId));
 
         Slate.API.request({
-            url: '/cbl/todos/clear-section',
+            method: 'POST',
+            url: '/cbl/todos/*clear',
             params: {
-                sectionId: sectionId
+                'course_section': sectionId
             },
-            success: function() {
-                todosStore.remove(todosStore.queryBy(function(todo) {
-                    return todo.get('Completed');
-                }).getRange());
-
+            success: function(response) {
+                todoGroup.get('todos').add(response.data.data);
                 todoList.refresh();
             },
             failure: function() {
