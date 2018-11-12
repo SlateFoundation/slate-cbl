@@ -27,8 +27,6 @@ Ext.define('Slate.cbl.field.StudentSelector', {
                     return false;
                 }
 
-                queryPlan.query += ' class:student';
-
                 return true;
             }
         }
@@ -46,6 +44,7 @@ Ext.define('Slate.cbl.field.StudentSelector', {
         }],
         proxy: {
             type: 'slate-people',
+            url: '/people/*students',
             summary: true
         }
     }
