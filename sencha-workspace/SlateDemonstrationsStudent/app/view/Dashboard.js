@@ -117,7 +117,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
                 }
             ]
         },
-        placeholderItem: 'Select a content area to load demonstrations dashboard',
+        placeholderItem: 'Select a content area to load demonstrations dashboard'
     },
 
 

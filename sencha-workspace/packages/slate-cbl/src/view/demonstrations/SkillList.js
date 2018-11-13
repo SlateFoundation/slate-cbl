@@ -5,8 +5,10 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
     extend: 'Ext.view.View',
     xtype: 'slate-cbl-demonstrations-skilllist',
     requires: [
-        'Slate.cbl.store.demonstrations.DemonstrationSkills',
-        'Slate.API'
+        'Slate.API',
+
+        'Slate.cbl.util.Config',
+        'Slate.cbl.store.demonstrations.DemonstrationSkills'
     ],
 
 
@@ -59,13 +61,20 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                     '<td class="skill-list-demo-data skill-list-demo-index">{[xindex]}</td>',
                     '<td class="skill-list-demo-data skill-list-demo-date">{Demonstrated:date}</td>',
                     '<td class="skill-list-demo-data skill-list-demo-level">',
-                        '<div class="level-color cbl-level-{TargetLevel}">',
+                        '<div',
+                            ' class="level-color cbl-level-{TargetLevel}"',
+                            ' title="',
+                                '<tpl if="Override">',
+                                    'Overriden',
+                                '<tpl else>',
+                                    '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
+                                '</tpl>',
+                            '"',
+                        '>',
                             '<tpl if="Override">',
                                 '<i class="fa fa-check"></i>',
-                            '<tpl elseif="DemonstratedLevel==0">',
-                                'M',
                             '<tpl else>',
-                                '{DemonstratedLevel}',
+                                '{[fm.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(values.DemonstratedLevel))]}',
                             '</tpl>',
                         '</div>',
                     '</td>',

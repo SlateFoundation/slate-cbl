@@ -3,15 +3,19 @@
  */
 Ext.define('Slate.cbl.field.ratings.Thumb', {
     extend: 'Ext.slider.Thumb',
+    requires: [
+        'Ext.util.Format',
+
+        /* global Slate */
+        'Slate.cbl.util.Config'
+    ],
 
 
     contentTpl: [
         '<tpl if="value === null">',
             '<small class="muted">N/A</small>',
-        '<tpl elseif="value === 0">',
-            'M',
         '<tpl else>',
-            '{value}',
+            '{[fm.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(values.value))]}',
         '</tpl>'
     ],
 
@@ -21,6 +25,7 @@ Ext.define('Slate.cbl.field.ratings.Thumb', {
             config = me.callParent();
 
         config.html = me.buildValueHtml(me.value);
+        config.title = Slate.cbl.util.Config.getTitleForRating(me.value);
 
         if (thumbCls) {
             config.cls += ' ' + thumbCls;
@@ -40,7 +45,8 @@ Ext.define('Slate.cbl.field.ratings.Thumb', {
         me.value = value;
 
         if (el) {
-            el.setHtml(me.buildValueHtml(value));
+            el.set({ title: Slate.cbl.util.Config.getTitleForRating(value) })
+                .setHtml(me.buildValueHtml(value));
         }
     },
 

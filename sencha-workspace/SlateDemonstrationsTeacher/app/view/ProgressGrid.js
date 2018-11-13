@@ -11,6 +11,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     extend: 'Ext.Component',
     xtype: 'slate-demonstrations-teacher-progressgrid',
     requires: [
+        'Ext.util.Format',
+
         /* global Slate */
         'Slate.cbl.widget.Popover',
         'Slate.cbl.util.Config'
@@ -116,10 +118,13 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     '</table>',
                 '</div>',
             '</div>',
+
             '<div class="cbl-grid-legend">',
                 '<span class="cbl-grid-legend-label">Portfolios:&ensp;</span>',
                 '<tpl foreach="Slate.cbl.util.Config.getLevels()">',
-                    '<span class="cbl-grid-legend-item level-color cbl-level-{$}">{title}</span>',
+                    '<tpl if="xkey != 0">',
+                        '<span class="cbl-grid-legend-item level-color cbl-level-{$}" title="{title:htmlEncode}">{abbreviation:htmlEncode}</span>',
+                    '</tpl>',
                 '</tpl>',
             '</div>',
 
@@ -163,6 +168,13 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                     '<li',
                                         ' data-demonstration="{DemonstrationID}"',
                                         '<tpl if="Override"> data-span="{[xcount - xindex + 1]}"</tpl>',
+                                        ' title="',
+                                            '<tpl if="Override">',
+                                                'Overriden',
+                                            '<tpl else>',
+                                                '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
+                                            '</tpl>',
+                                        '"',
                                         ' class="',
                                             ' cbl-grid-demo',
                                             '<tpl if="Override">',
@@ -179,10 +191,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                     '>',
                                         '<tpl if="Override">',
                                             '<i class="fa fa-check"></i>',
-                                        '<tpl elseif="DemonstratedLevel == 0">',
-                                            'M',
                                         '<tpl else>',
-                                            '{DemonstratedLevel}',
+                                            '{[fm.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(values.DemonstratedLevel))]}',
                                         '</tpl>',
                                     '</li>',
                                     '{% if (values.Override) break; %}', // don't print any more blocks after override
@@ -680,6 +690,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
         // eslint-disable-next-line vars-on-top
         var me = this,
+            htmlEncode = Ext.util.Format.htmlEncode,
             competenciesById,
 
             studentCompetenciesLength = studentCompetencies.length,
@@ -794,7 +805,10 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
 
                 progressCellEl.addCls('cbl-level-'+level);
 
-                node.progressLevelEl.update(Slate.cbl.util.Config.getTitleForLevel(level));
+                node.progressLevelEl
+                    .set({ title: Slate.cbl.util.Config.getTitleForLevel(level) })
+                    .update(htmlEncode(Slate.cbl.util.Config.getAbbreviationForLevel(level)));
+
                 node.renderedLevel = level;
             }
 
@@ -869,10 +883,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                         // TODO: use a global template
                         if (demonstrationOverride) {
                             demonstrationHtml = '<i class="fa fa-check"></i>';
-                        } else if (demonstrationRating == 0) {
-                            demonstrationHtml = 'M';
                         } else {
-                            demonstrationHtml = demonstrationRating;
+                            demonstrationHtml = htmlEncode(Slate.cbl.util.Config.getTitleForRating(demonstrationRating));
                         }
 
                         demonstrationBlockEl.update(demonstrationHtml);
