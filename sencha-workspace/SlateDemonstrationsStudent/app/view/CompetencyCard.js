@@ -128,9 +128,16 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                 '<ul class="cbl-skill-demos">',
                     '<tpl for="demonstrations">',
                         '<tpl if=".">',
-                            '<li ',
-                                'data-demonstration="{DemonstrationID}"',
-                                'class="',
+                            '<li',
+                                ' data-demonstration="{DemonstrationID}"',
+                                ' title="',
+                                    '<tpl if="Override">',
+                                        'Overriden',
+                                    '<tpl else>',
+                                        '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
+                                    '</tpl>',
+                                '"',
+                                ' class="',
                                     ' cbl-skill-demo',
                                     '<tpl if="Override">',
                                         ' cbl-skill-override',
@@ -145,10 +152,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                             '>',
                                 '<tpl if="Override">',
                                     '<i class="fa fa-check"></i>',
-                                '<tpl elseif="DemonstratedLevel == 0">',
-                                    'M',
                                 '<tpl else>',
-                                    '{DemonstratedLevel}',
+                                    '{[fm.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(values.DemonstratedLevel))]}',
                                 '</tpl>',
                             '</li>',
                             '{% if (values.Override) break; %}', // don't print any more blocks after override
@@ -250,7 +255,13 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
 
         if (me.rendered) {
-            me.meterLevelEl.update(newLevel ? Slate.cbl.util.Config.getTitleForLevel(newLevel) : '');
+            me.meterLevelEl.update(
+                newLevel
+                    ? Ext.util.Format.htmlEncode(
+                        Slate.cbl.util.Config.getTitleForLevel(newLevel)
+                    )
+                    : ''
+            );
         }
     },
 
