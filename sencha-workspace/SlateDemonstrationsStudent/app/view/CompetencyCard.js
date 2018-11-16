@@ -143,6 +143,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                                     '<tpl if="Override">',
                                         ' cbl-skill-override',
                                         ' cbl-skill-span-{[xcount - xindex + 1]}',
+                                    '<tpl else>',
+                                        ' cbl-rating-{DemonstratedLevel}',
                                     '</tpl>',
                                     '<tpl if="DemonstratedLevel || Override">',
                                         ' cbl-skill-demo-counted',
