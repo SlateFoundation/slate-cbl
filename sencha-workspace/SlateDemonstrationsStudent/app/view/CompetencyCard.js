@@ -83,7 +83,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '</table>',
         '</div>',
 
-        '<div class="slate-simplepanel-body explainer">',
+        '<div id="{id}-explainerEl" data-ref="explainerEl" class="slate-simplepanel-body explainer" <tpl if="!competency.Statement">style="display:none"</tpl>>',
             '<p id="{id}-statementEl" data-ref="statementEl">{[fm.preventOrphans(fm.htmlEncode(values.competency.Statement))]}</p>',
         '</div>',
 
@@ -105,6 +105,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         'averageEl',
         'baselineRatingEl',
         'growthEl',
+        'explainerEl',
         'statementEl',
         'skillsCt'
     ],
@@ -142,6 +143,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                                     '<tpl if="Override">',
                                         ' cbl-skill-override',
                                         ' cbl-skill-span-{[xcount - xindex + 1]}',
+                                    '<tpl else>',
+                                        ' cbl-rating-{DemonstratedLevel}',
                                     '</tpl>',
                                     '<tpl if="DemonstratedLevel || Override">',
                                         ' cbl-skill-demo-counted',
@@ -212,6 +215,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this,
             htmlEncode = Ext.util.Format.htmlEncode,
             studentCompetency = competency.get('currentStudentCompetency'),
+            statement = competency.get('Statement'),
             demonstrationsAverage, level, demonstrationsRequired, percentComplete;
 
         if (studentCompetency) {
@@ -236,7 +240,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         if (me.rendered) {
             me.codeEl.update(htmlEncode(competency.get('Code')));
             me.descriptorEl.update(htmlEncode(competency.get('Descriptor')));
-            me.statementEl.update(htmlEncode(competency.get('Statement')));
+            me.explainerEl.setDisplayed(Boolean(statement));
+            me.statementEl.update(htmlEncode(statement));
             me.lookupTpl('skillsTpl').overwrite(me.skillsCt, me.buildSkillsTplData(competency));
         }
 
