@@ -74,12 +74,14 @@ $level-colors-dark: dynamic(
             $color-medium: nth($colors-medium, $n);
             $color-dark:   nth($colors-dark,   $n);
 
+            // generic utility classes:
             &.cbl-level-colored,
             & .cbl-level-colored {
                 color: white;
                 background-color: $color;
             }
 
+            // level progress meters:
             .cbl-level-progress-meter {
                 color: white;
                 background-color: $color-light;
@@ -102,6 +104,7 @@ $level-colors-dark: dynamic(
                 ));
             }
 
+            // skill progress indicators:
             .cbl-skill-complete-indicator {
                 &.is-checked {
                     border-color: $color;
@@ -109,6 +112,7 @@ $level-colors-dark: dynamic(
                 }
             }
 
+            // demonstration cells:
             .cbl-skill-demo-counted {
                 color: white;
                 background-color: $color;
