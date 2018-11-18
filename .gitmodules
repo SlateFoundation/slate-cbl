@@ -54,3 +54,7 @@
 	path = sencha-workspace/packages/slate-ui-classic
 	url = https://github.com/SlateFoundation/slate-ui-classic.git
 	branch = master
+[submodule "slate-cbl-colors"]
+	path = sencha-workspace/packages/slate-cbl-colors
+	url = https://github.com/SlateFoundation/slate-cbl-colors.git
+	branch = master
