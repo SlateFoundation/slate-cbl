@@ -224,10 +224,6 @@ $data-cell-padding: dynamic(.5em);
     }
 }
 
-.#{$g}-legend {
-    padding: 2em 0;
-}
-
 .#{$g}-competency-col {
     width: $label-cell-width;
 }
@@ -310,13 +306,6 @@ $data-cell-padding: dynamic(.5em);
         margin-top: -.8em;
         padding: .3em .4em .4em;
     }
-}
-
-.#{$g}-legend-item {
-    border-radius: 3px;
-    display: inline-block;
-    margin-right: .25em;
-    padding: .25em .5em;
 }
 
 .#{$g}-skills-row > .#{$g}-skills-cell {
