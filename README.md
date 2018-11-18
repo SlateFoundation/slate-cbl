@@ -159,7 +159,7 @@ parameter `apiHost` when loading the page.
 - [ ] Review TODO notes and comments; fix things or turn into issues
 - [ ] Purge sass folders
 
-- [X] Unfuck error message when saving null DemonstrationLevel
+- [X] Fix error message when saving null DemonstrationLevel
 - [X] Don't save null demonstration level when removing a rating, exclude from list
 - [X] Need to add added skills to value array so they can be saved without being rated
 - [X] Need a way to remove disabled raters
@@ -200,9 +200,10 @@ parameter `apiHost` when loading the page.
 - [ ] Re-implement SlateDemonstrationsTeacher.view.ProgressGrid as an Aggregrid
 - [ ] Create a central singleton in slate-cbl package for storing a ratingTpl template and getRatingCls function, use in all apps for student-skill-demo cells.
   - [ ] Park other global rating configuration here.
-  - [ ] Create another such class for levels config.
+  - [X] Create another such class for levels config.
 - [ ] Rename TaskStatus column to Status
 - [X] Migrate all local _getRequested* methods to standard RecordsRequestHandler methods
+- [ ] Upgrade package format for `slate-cbl` to purge `.sencha` tree
 
 ## Best Practices
 

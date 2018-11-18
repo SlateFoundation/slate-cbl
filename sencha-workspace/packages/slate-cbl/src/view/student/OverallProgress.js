@@ -1,3 +1,9 @@
+/**
+ * A static mockup for a view that shows a student's progress across
+ * all content areas.
+ *
+ * Not currently implemented
+ */
 Ext.define('Slate.cbl.view.student.OverallProgress', {
     extend: 'Ext.Component',
     xtype: 'slate-cbl-student-overallprogress',

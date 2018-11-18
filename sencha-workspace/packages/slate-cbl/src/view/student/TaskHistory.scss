@@ -1,3 +1,7 @@
+$slate-taskhistory-on-level-color:      dynamic(#84c91c);
+$slate-taskhistory-off-level-color:     dynamic(#f6815e);
+$slate-taskhistory-incomplete-color:    dynamic(#ccc);
+
 @mixin slate-taskhistory-skill-status($status, $color) {
     &.status-#{$status} {
         color: $color;
