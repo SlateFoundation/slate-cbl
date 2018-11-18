@@ -1,6 +1,12 @@
 $cbl-progress-missed-color: dynamic(red);
 
+.slate-demonstrations-student-dashboard {
+    .cbl-levelslegend {
+        text-align: right;
+    }
+}
 
+// TODO: refactor to common place under slate-cbl/etc ?
 .cbl-level-progress-meter {
     background-color: #ccc;
     font-weight: bold;

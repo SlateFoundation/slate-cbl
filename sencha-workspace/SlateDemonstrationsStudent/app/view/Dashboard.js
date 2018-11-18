@@ -7,6 +7,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'SlateDemonstrationsStudent.view.CardsContainer',
 
         /* global Slate */
+        'Slate.cbl.view.LevelsLegend',
         'Slate.cbl.field.StudentSelector',
         'Slate.cbl.field.ContentAreaSelector',
         'Slate.cbl.model.ContentArea'
@@ -90,6 +91,14 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         recentProgress: false,
 
         /**
+         * @cfg {Slate.cbl.view.LevelsLegend|Object|boolean}
+         * Instance or configuration for legend component.
+         *
+         * Setting boolean values change visibility.
+         */
+        legend: false,
+
+        /**
          * @cfg {Ext.container.Container|Object|boolean}
          * Instance or configuration for cards container.
          *
@@ -121,6 +130,10 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     },
 
 
+    // component configuration
+    cls: 'slate-demonstrations-student-dashboard',
+
+
     // config handlers
     updateSelectedStudent: function(student, oldStudent) {
         this.fireEvent('selectedstudentchange', this, student, oldStudent);
@@ -134,6 +147,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.setPlaceholderItem(!contentAreaSet);
         me.setCompetenciesSummary(contentAreaSet);
         me.setRecentProgress(contentAreaSet);
+        me.setLegend(contentAreaSet);
         me.setCardsCt(contentAreaSet);
         Ext.resumeLayouts(true);
 
@@ -187,6 +201,16 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         return Ext.factory(recentProgress, 'SlateDemonstrationsStudent.view.RecentProgress', oldRecentProgress);
     },
 
+    applyLegend: function(legend, oldLegend) {
+        if (typeof legend === 'boolean') {
+            legend = {
+                hidden: !legend
+            };
+        }
+
+        return Ext.factory(legend, 'Slate.cbl.view.LevelsLegend', oldLegend);
+    },
+
     applyCardsCt: function(cardsCt, oldCardsCt) {
         if (typeof cardsCt === 'boolean') {
             cardsCt = {
@@ -207,6 +231,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.add([
             me.getCompetenciesSummary(),
             me.getRecentProgress(),
+            me.getLegend(),
             me.getCardsCt()
         ]);
     }
