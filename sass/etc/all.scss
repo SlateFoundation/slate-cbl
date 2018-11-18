@@ -59,3 +59,60 @@ $level-colors-dark: dynamic(
     #38a719, // 11
     #005ea8 // 12
 );
+
+
+@mixin level-colors($colors, $colors-light, $colors-medium, $colors-dark) {
+    .cbl-skill-demo-counted {
+        color: white;
+        background-color: $level-color-unknown;
+    }
+
+    @for $n from 1 through length($colors) {
+        .cbl-level-#{$n} {
+            $color:        nth($colors,        $n);
+            $color-light:  nth($colors-light,  $n);
+            $color-medium: nth($colors-medium, $n);
+            $color-dark:   nth($colors-dark,   $n);
+
+            &.cbl-level-colored,
+            & .cbl-level-colored {
+                color: white;
+                background-color: $color;
+            }
+
+            .cbl-level-progress-meter {
+                color: white;
+                background-color: $color-light;
+            }
+
+            .is-average-low {
+                // background-image: url('slate-cbl/images/halted-progress.png');
+                background-image: repeating-linear-gradient(-45deg,
+                    transparent, transparent 10px,
+                    rgba($color-dark, .4) 11px,
+                    rgba($color-dark, .4) 20px,
+                    transparent 21px
+                );
+            }
+
+            .cbl-level-progress-bar {
+                @include background-image(linear-gradient(
+                    $color,
+                    $color-dark
+                ));
+            }
+
+            .cbl-skill-complete-indicator {
+                &.is-checked {
+                    border-color: $color;
+                    color: $color;
+                }
+            }
+
+            .cbl-skill-demo-counted {
+                color: white;
+                background-color: $color;
+            }
+        }
+    }
+}
