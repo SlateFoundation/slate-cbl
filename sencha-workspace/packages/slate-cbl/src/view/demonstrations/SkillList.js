@@ -62,7 +62,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                     '<td class="skill-list-demo-data skill-list-demo-date">{Demonstrated:date}</td>',
                     '<td class="skill-list-demo-data skill-list-demo-level">',
                         '<div',
-                            ' class="level-color cbl-level-{TargetLevel}"',
+                            ' class="cbl-level-colored cbl-level-{TargetLevel} <tpl if="!Override">cbl-rating-{DemonstratedLevel}</tpl>"',
                             ' title="',
                                 '<tpl if="Override">',
                                     'Overriden',

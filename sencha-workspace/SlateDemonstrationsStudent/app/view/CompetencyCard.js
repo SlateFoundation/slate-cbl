@@ -43,11 +43,11 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '</div>',
         '</header>',
 
-        '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
-            '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
-            '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-progress-bar cbl-progress-bar-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
-            '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-progress-level no-select"><tpl if="level">{[Slate.cbl.util.Config.getTitleForLevel(values.level)]}</tpl></div>',
-            '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
+        '<div id="{id}-meterEl" data-ref="meterEl" class="cbl-level-progress-meter <tpl if="isAverageLow">is-average-low</tpl>">',
+            '<div id="{id}-meterBarEl" data-ref="meterBarEl" class="cbl-level-progress-bar" style="width: {percentComplete:number(values.percentFormat)}"></div>',
+            '<div id="{id}-meterBarMissedEl" data-ref="meterBarMissedEl" class="cbl-level-progress-bar cbl-level-progress-missed" style="width: {percentMissed:number(values.percentFormat)}; left: {percentComplete:number(values.percentFormat)}"></div>',
+            '<div id="{id}-meterLevelEl" data-ref="meterLevelEl" class="cbl-level-progress-label no-select"><tpl if="level">{[Slate.cbl.util.Config.getTitleForLevel(values.level)]}</tpl></div>',
+            '<div id="{id}-meterPercentEl" data-ref="meterPercentEl" class="cbl-level-progress-percent">{percentComplete:number(values.percentFormat)}</div>',
         '</div>',
 
         '<div class="stats-ct">',
@@ -148,8 +148,10 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                                     '</tpl>',
                                     '<tpl if="DemonstratedLevel || Override">',
                                         ' cbl-skill-demo-counted',
+                                    '<tpl elseif="!DemonstratedLevel">',
+                                        ' cbl-skill-demo-missed',
                                     '<tpl else>',
-                                        ' cbl-skill-demo-uncounted',
+                                        ' cbl-skill-demo-empty',
                                     '</tpl>',
                                 '"',
                             '>',
@@ -161,7 +163,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                             '</li>',
                             '{% if (values.Override) break; %}', // don't print any more blocks after override
                         '<tpl else>',
-                            '<li class="cbl-skill-demo cbl-skill-demo-uncounted">&nbsp;</li>',
+                            '<li class="cbl-skill-demo cbl-skill-demo-empty">&nbsp;</li>',
                         '</tpl>',
                     '</tpl>',
 
