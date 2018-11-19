@@ -298,6 +298,13 @@ $data-cell-padding: dynamic(.5em);
         text-align: center;
         text-shadow: 0 1px 1px black;
     }
+
+    .cbl-skill-demo-missed {
+        background-color: mix($text-color, $page-bg-color, 17%);
+        color: mix($text-color, $page-bg-color, 67%);
+        font-weight: normal;
+        text-shadow: none;
+    }
 }
 
 .#{$g}-skill-row > .#{$g}-skill-name {
