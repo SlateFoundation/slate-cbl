@@ -75,19 +75,21 @@ $level-colors-dark: dynamic(
             $color-dark:   nth($colors-dark,   $n);
 
             // generic utility classes:
-            &.cbl-level-colored,
-            & .cbl-level-colored {
+            .cbl-level-colored,
+            &.cbl-level-colored {
                 color: white;
                 background-color: $color;
             }
 
             // level progress meters:
-            .cbl-level-progress-meter {
+            .cbl-level-progress-meter,
+            &.cbl-level-progress-meter {
                 color: white;
                 background-color: $color-light;
             }
 
-            .is-average-low {
+            .is-average-low,
+            &.is-average-low {
                 // background-image: url('slate-cbl/images/halted-progress.png');
                 background-image: repeating-linear-gradient(-45deg,
                     transparent, transparent 10px,
@@ -116,6 +118,10 @@ $level-colors-dark: dynamic(
             .cbl-skill-demo-counted {
                 color: white;
                 background-color: $color;
+            }
+
+            &.cbl-grid-demos-cell .cbl-skill-demo-counted {
+                background-color: $color-medium;
             }
 
             // rating sliders:
