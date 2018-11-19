@@ -128,6 +128,10 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
     },
 
 
+    // component configuration
+    cls: 'slate-demonstrations-teacher-dashboard',
+
+
     // config handlers
     updateSelectedContentArea: function(contentArea, oldContentArea) {
         this.fireEvent('selectedcontentareachange', this, contentArea, oldContentArea);
