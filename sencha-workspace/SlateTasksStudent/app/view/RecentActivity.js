@@ -1,3 +1,9 @@
+/**
+ * A static mockup for a view that shows a student's
+ * recently activity
+ *
+ * Not currently implemented
+ */
 Ext.define('SlateTasksStudent.view.RecentActivity', {
     extend: 'Ext.window.Window',
     xtype: 'slate-tasks-student-recentactivity',
