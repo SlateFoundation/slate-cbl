@@ -180,12 +180,10 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     },
 
     onFormDirtyChange: function(form, dirty) {
-        console.info('onFormDirtyChange', dirty);
         this.getSubmitBtn().setDisabled(!dirty || !form.isValid());
     },
 
     onFormValidityChange: function(form, valid) {
-        console.info('onFormValidityChange', valid);
         this.getSubmitBtn().setDisabled(!valid || !form.isDirty());
     },
 

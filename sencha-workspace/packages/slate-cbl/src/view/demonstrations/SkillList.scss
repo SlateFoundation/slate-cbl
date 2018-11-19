@@ -85,9 +85,12 @@
 .skill-list-demo-level {
     width: 10%;
 
-    .level-color {
+    .cbl-level-colored {
         border-radius: 3px;
+        font-weight: bold;
         margin-right: .5em;
+        text-align: center;
+        text-shadow: 0 1px 1px rgba(black, .8);
     }
 }
 

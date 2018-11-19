@@ -95,11 +95,11 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                             '<tpl for="competencies">',
                                 '<tr class="cbl-grid-progress-row" data-competency="{competency.ID}">',
                                     '<tpl for="students">',
-                                        '<td class="cbl-grid-progress-cell" data-student="{student.ID}">',
-                                            '<span class="cbl-grid-progress-bar" style="width: 0%"></span>',
-                                            '<span class="cbl-grid-progress-level"></span>',
-                                            '<span class="cbl-grid-progress-percent"></span>',
-                                            '<span class="cbl-grid-progress-average"></span>',
+                                        '<td class="cbl-grid-progress-cell cbl-level-progress-meter" data-student="{student.ID}">',
+                                            '<span class="cbl-grid-progress-bar cbl-level-progress-bar" style="width: 0%"></span>',
+                                            '<span class="cbl-grid-progress-level cbl-level-progress-label"></span>',
+                                            '<span class="cbl-grid-progress-percent cbl-level-progress-percent"></span>',
+                                            '<span class="cbl-grid-progress-average cbl-level-progress-average"></span>',
                                         '</td>',
                                     '</tpl>',
                                 '</tr>',
@@ -118,18 +118,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     '</table>',
                 '</div>',
             '</div>',
-
-            '<div class="cbl-grid-legend">',
-                '<span class="cbl-grid-legend-label">Portfolios:&ensp;</span>',
-                '<tpl foreach="Slate.cbl.util.Config.getLevels()">',
-                    '<tpl if="xkey != 0">',
-                        '<span class="cbl-grid-legend-item level-color cbl-level-{$}" title="{title:htmlEncode}">{abbreviation:htmlEncode}</span>',
-                    '</tpl>',
-                '</tpl>',
-            '</div>',
-
         '</tpl>'
-
     ],
 
     listeners: {
@@ -137,7 +126,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
         click: {
             fn: 'onGridClick',
             element: 'el',
-            delegate: '.cbl-grid-progress-row, .cbl-grid-demo'
+            delegate: '.cbl-grid-progress-row, .cbl-skill-demo'
         },
         mouseover: {
             fn: 'onSkillNameMouseOver',
@@ -162,7 +151,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             '<tr class="cbl-grid-skill-row" data-skill="{skill.ID}">',
                 '<tpl for="students">',
                     '<td class="cbl-grid-demos-cell <tpl if="studentCompetency">cbl-level-{studentCompetency.Level}</tpl>" data-student="{student.ID}">',
-                        '<ul class="cbl-grid-demos">',
+                        '<ul class="cbl-skill-demos">',
                             '<tpl for="demonstrations">',
                                 '<tpl if=".">',
                                     '<li',
@@ -176,18 +165,18 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                             '</tpl>',
                                         '"',
                                         ' class="',
-                                            ' cbl-grid-demo',
+                                            ' cbl-skill-demo',
                                             '<tpl if="Override">',
-                                                ' cbl-grid-demo-override',
+                                                ' cbl-skill-demo-override',
                                             '<tpl else>',
                                                 ' cbl-rating-{DemonstratedLevel}',
                                             '</tpl>',
                                             '<tpl if="DemonstratedLevel || Override">',
-                                                ' cbl-grid-demo-counted',
+                                                ' cbl-skill-demo-counted',
                                             '<tpl elseif="DemonstratedLevel == 0">',
-                                                ' cbl-grid-demo-missing',
+                                                ' cbl-skill-demo-missed',
                                             '<tpl else>',
-                                                ' cbl-grid-demo-uncounted',
+                                                ' cbl-skill-demo-uncounted',
                                             '</tpl>',
                                         '"',
                                     '>',
@@ -199,7 +188,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                     '</li>',
                                     '{% if (values.Override) break; %}', // don't print any more blocks after override
                                 '<tpl else>',
-                                    '<li class="cbl-grid-demo cbl-grid-demo-uncounted">&nbsp;</li>',
+                                    '<li class="cbl-skill-demo cbl-skill-demo-uncounted">&nbsp;</li>',
                                 '</tpl>',
                             '</tpl>',
                         '</ul>',
@@ -300,7 +289,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 },
                 ev
             );
-        } else if (target.is('.cbl-grid-demo')) { // eslint-disable-line no-cond-assign
+        } else if (target.is('.cbl-skill-demo')) { // eslint-disable-line no-cond-assign
             me.fireEvent(
                 'democellclick',
                 me,
@@ -490,8 +479,8 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                 for (studentIndex = 0; studentIndex < studentsCount; studentIndex++) {
                     studentSkillRenderData = studentsRenderData[studentIndex];
                     studentSkillRenderData.demonstrationsCellEl = demonstrationsCellEl = skillRowEl.child('.cbl-grid-demos-cell[data-student="'+studentSkillRenderData.student.ID+'"]');
-                    studentSkillRenderData.demonstrationsListEl = demonstrationsCellEl.down('.cbl-grid-demos');
-                    studentSkillRenderData.demonstrationBlockEls = demonstrationsCellEl.select('.cbl-grid-demo', true);
+                    studentSkillRenderData.demonstrationsListEl = demonstrationsCellEl.down('.cbl-skill-demos');
+                    studentSkillRenderData.demonstrationBlockEls = demonstrationsCellEl.select('.cbl-skill-demo', true);
                 }
             }
 
@@ -865,7 +854,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     if (!demonstrationBlockEl) {
                         demonstrationBlockEl = studentSkill.demonstrationsListEl.appendChild({
                             tag: 'li',
-                            cls: 'cbl-grid-demo'
+                            cls: 'cbl-skill-demo'
                         }, false);
                         demonstrationBlockEls.add(demonstrationBlockEl);
                     }
@@ -890,15 +879,15 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                         }
 
                         demonstrationBlockEl.update(demonstrationHtml);
-                        demonstrationBlockEl.toggleCls('cbl-grid-demo-counted', Boolean(demonstrationRating || demonstrationOverride));
+                        demonstrationBlockEl.toggleCls('cbl-skill-demo-counted', Boolean(demonstrationRating || demonstrationOverride));
                     }
 
                     if (demonstrationRatingDirty) {
-                        demonstrationBlockEl.toggleCls('cbl-grid-demo-missing', demonstrationRating === 0 && !demonstrationOverride);
+                        demonstrationBlockEl.toggleCls('cbl-skill-demo-missing', demonstrationRating === 0 && !demonstrationOverride);
                     }
 
                     if (demonstrationOverrideDirty) {
-                        demonstrationBlockEl.toggleCls('cbl-grid-demo-override', demonstrationOverride);
+                        demonstrationBlockEl.toggleCls('cbl-skill-demo-override', demonstrationOverride);
                         demonstrationBlockEl.set({
                             'data-span': demonstrationOverride ? demonstrationsLength - demonstrationIndex : ''
                         });

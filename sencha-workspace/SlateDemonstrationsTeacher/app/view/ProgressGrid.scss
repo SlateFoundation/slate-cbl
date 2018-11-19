@@ -14,111 +14,8 @@ $data-cell-padding: dynamic(.5em);
     width: 16px;
 }
 
-.level-n { // switch to %level-n when placeholders supported
-    color: white;
-    font-weight: bold;
-    text-align: center;
-    text-shadow: 0 1px 1px black;
-}
-
-@for $n from 1 through length($level-colors) {
-    .cbl-level-#{$n} {
-        $level-color:        nth($level-colors,        $n);
-        $level-color-light:  nth($level-colors-light,  $n);
-        $level-color-medium: nth($level-colors-medium, $n);
-        $level-color-dark:   nth($level-colors-dark,   $n);
-
-        &.level-color {
-            @extend .level-n;
-            background-color: $level-color;
-        }
-
-        &.#{$g}-progress-cell {
-            background-color: $level-color-light;
-        }
-
-        .#{$g}-progress-bar {
-            @include background-image(linear-gradient(
-                $level-color,
-                $level-color-dark
-            ));
-        }
-
-        .#{$g}-demo {
-            &:hover,
-            &:focus {
-                box-shadow: inset 0 0 0 2px $level-color-light;
-            }
-
-            &.#{$g}-demo-missing {
-                background-color: mix($text-color, $page-bg-color, 17%);
-                color: mix($text-color, $page-bg-color, 67%);
-                font-weight: normal;
-                text-shadow: none;
-            }
-
-            &.#{$g}-demo-counted {
-                background-color: $level-color-medium;
-            }
-        }
-    }
-}
-
 .ellipsis {
     @include ellipsis;
-}
-
-.popover,
-.popover.x-body {
-    box-shadow: 0 0 1em rgba(black, .2);
-    color: inherit;
-    font: inherit;
-    max-width: 30em;
-    overflow: visible;
-}
-
-.popover-title {
-    background-color: #888;
-    border-radius: 0 .25em 0 0;
-    color: white;
-    font-size: 1.25em;
-    font-family: $heading-font;
-    font-weight: bold;
-    line-height: 1;
-    margin: 0;
-    padding: .6625em 1.125em .4625em;
-    position: relative;
-    text-shadow: 0 1px 1px rgba(black, .3);
-    -webkit-font-smoothing: antialiased;
-}
-
-.popover-pointer-img {
-    display: block;
-    height: 1em;
-    left: -.5em;
-    position: absolute;
-    top: .5625em;
-    width: .5em;
-
-    .point-none & {
-        display: none;
-    }
-
-    .point-right & {
-        left: 100%;
-        @include transform(rotate(180deg) translate(0%, 50%));
-    }
-}
-
-.popover-pointer {
-    fill: #888;
-}
-
-.popover-body {
-    background-color: white;
-    border-radius: 0 0 .25em .25em;
-    font-family: $body-font;
-    padding: 1em 1.5em;
 }
 
 .#{$g}-ct {
@@ -224,10 +121,6 @@ $data-cell-padding: dynamic(.5em);
     }
 }
 
-.#{$g}-legend {
-    padding: 2em 0;
-}
-
 .#{$g}-competency-col {
     width: $label-cell-width;
 }
@@ -246,11 +139,17 @@ $data-cell-padding: dynamic(.5em);
 }
 
 .#{$g}-progress-cell {
-    @extend .level-n;
+    font-weight: bold;
     text-align: center;
+    text-shadow: 0 1px 1px black;
 
     &.is-average-low {
-        background-image: url('slate-cbl/images/halted-progress.png');
+        background-image: repeating-linear-gradient(-45deg,
+            transparent, transparent 10px,
+            rgba(black, .1) 10px,
+            rgba(black, .1) 20px,
+            transparent 20px
+        );
     }
 }
 
@@ -266,6 +165,7 @@ $data-cell-padding: dynamic(.5em);
 
     .is-average-low & {
         opacity: .6;
+        box-shadow: inset -1px 0 0 rgba(black, .3);
     }
 }
 
@@ -312,13 +212,6 @@ $data-cell-padding: dynamic(.5em);
     }
 }
 
-.#{$g}-legend-item {
-    border-radius: 3px;
-    display: inline-block;
-    margin-right: .25em;
-    padding: .25em .5em;
-}
-
 .#{$g}-skills-row > .#{$g}-skills-cell {
     border: none;
     overflow: hidden;
@@ -358,6 +251,60 @@ $data-cell-padding: dynamic(.5em);
 
 .#{$g}-demos-cell {
     position: relative;
+
+    .cbl-skill-demos {
+        @include box-align(stretch);
+        @include display-box;
+        left: 0;
+        list-style: none;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
+    .cbl-skill-demo {
+        border-right: 1px solid $grid-border-color;
+        @include box-align(center);
+        @include box-flex(1);
+        @include box-pack(center);
+        @include box-sizing(border-box);
+        @include display-box;
+        @include transition(background-color 250ms ease-in);
+        cursor: pointer;
+        width: 0;
+
+        &:last-child {
+            border-right: none;
+        }
+
+        &.is-complete {
+            background-color: #ccc;
+        }
+    }
+
+    .cbl-skill-demo-override {
+        @for $n from 2 through 10 {
+            &[data-span="#{$n}"] {
+                @include box-flex($n);
+            }
+        }
+    }
+
+    .cbl-skill-demo-counted {
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 0 1px 1px black;
+    }
+
+    .cbl-skill-demo-missed {
+        background-color: mix($text-color, $page-bg-color, 17%);
+        color: mix($text-color, $page-bg-color, 67%);
+        font-weight: normal;
+        text-shadow: none;
+    }
 }
 
 .#{$g}-skill-row > .#{$g}-skill-name {
@@ -369,7 +316,7 @@ $data-cell-padding: dynamic(.5em);
     padding: .75em .5em .75em 1.5em;
     position: relative;
 
-    .popover {
+    .cbl-popover {
         right: -5px;
         top: 0;
         width: 300px;
@@ -377,54 +324,8 @@ $data-cell-padding: dynamic(.5em);
 
     &:hover,
     &:focus {
-        .popover {
+        .cbl-popover {
             display: block;
         }
     }
-}
-
-.#{$g}-demos {
-    @include box-align(stretch);
-    @include display-box;
-    left: 0;
-    list-style: none;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-}
-
-.#{$g}-demo {
-    background-color: $page-bg-color;
-    border-right: 1px solid $grid-border-color;
-    @include box-align(center);
-    @include box-flex(1);
-    @include box-pack(center);
-    @include box-sizing(border-box);
-    @include display-box;
-    @include transition(background-color 250ms ease-in);
-    cursor: pointer;
-    width: 0;
-
-    &:last-child {
-        border-right: none;
-    }
-
-    &.is-complete {
-        background-color: #ccc;
-    }
-}
-
-.cbl-grid-demo-override {
-    @for $n from 2 through 10 {
-        &[data-span="#{$n}"] {
-            @include box-flex($n);
-        }
-    }
-}
-
-.#{$g}-demo-counted {
-    @extend .level-n;
 }

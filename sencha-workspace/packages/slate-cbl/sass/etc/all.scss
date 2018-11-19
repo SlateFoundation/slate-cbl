@@ -1,3 +1,9 @@
-@import 'level-colors';
 @import 'slate-boundlist';
 @import 'task-colors';
+
+@include level-colors(
+    $level-colors,
+    $level-colors-light,
+    $level-colors-medium,
+    $level-colors-dark
+);

@@ -14,6 +14,7 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
         'SlateDemonstrationsTeacher.view.ProgressGrid',
 
         /* global Slate */
+        'Slate.cbl.view.LevelsLegend',
         'Slate.cbl.field.ContentAreaSelector',
         'Slate.cbl.field.StudentsListSelector',
         'Slate.cbl.model.ContentArea'
@@ -88,6 +89,14 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
          */
         progressGrid: null,
 
+        /**
+         * @cfg {Slate.cbl.view.LevelsLegend|Object|boolean}
+         * Instance or configuration for legend component.
+         *
+         * Setting boolean values change visibility.
+         */
+        legend: false,
+
 
         // appcontainer config
         header: {
@@ -117,6 +126,10 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
         },
         placeholderItem: 'Select a list of students and a content area to load progress dashboard'
     },
+
+
+    // component configuration
+    cls: 'slate-demonstrations-teacher-dashboard',
 
 
     // config handlers
@@ -171,9 +184,31 @@ Ext.define('SlateDemonstrationsTeacher.view.Dashboard', {
         }
 
         if (progressGrid) {
-            me.add(progressGrid);
+            me.insert(0, progressGrid);
         }
 
+        me.setLegend(Boolean(progressGrid));
+
         Ext.resumeLayouts(true);
+    },
+
+    applyLegend: function(legend, oldLegend) {
+        if (typeof legend === 'boolean') {
+            legend = {
+                hidden: !legend
+            };
+        }
+
+        return Ext.factory(legend, 'Slate.cbl.view.LevelsLegend', oldLegend);
+    },
+
+
+    // component lifecycle
+    initItems: function() {
+        var me = this;
+
+        me.callParent();
+
+        me.add(me.getLegend());
     }
 });

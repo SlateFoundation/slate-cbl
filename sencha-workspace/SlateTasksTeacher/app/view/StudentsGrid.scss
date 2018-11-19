@@ -11,7 +11,7 @@ $slate-studentsgrid-colheader-bg-color: dynamic(#f5f5f5);
 $slate-studentsgrid-colheader-width:    dynamic(223px);
 
 
-$g: dynamic('slate-studentsgrid'); // 'shorthand' for selectors
+$g: 'slate-studentsgrid'; // 'shorthand' for selectors
 
 .#{$g} {
     display: flex;

@@ -1,4 +1,12 @@
-// TODO: move into SlateTasksStudent app
+/**
+ * A static mockup for a view that shows a student's recently completed
+ * tasks.
+ *
+ * Not currently implemented
+ *
+ * TODO:
+ * - [ ] move into SlateTasksStudent app
+ */
 Ext.define('Slate.cbl.view.student.TaskHistory', {
     extend: 'Slate.ui.SimplePanel',
     xtype: 'slate-taskhistory',
