@@ -31,6 +31,12 @@ Ext.define('Slate.cbl.util.Config', {
         return this;
     },
 
+    getAvailableLevels: function() {
+        return Object.keys(this.getLevels())
+            .map(key => parseInt(key, 10))
+            .filter(key => key != 0);
+    },
+
     getTitleForLevel: function(level) {
         var levelConfig = this.getLevels()[level];
 

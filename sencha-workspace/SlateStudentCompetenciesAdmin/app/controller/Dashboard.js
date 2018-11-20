@@ -1,5 +1,9 @@
 Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
     extend: 'Ext.app.Controller',
+    requires: [
+        /* global Slate*/
+        'Slate.cbl.util.Config'
+    ],
 
 
     // controller configuration
@@ -13,6 +17,10 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
         'StudentCompetencies'
     ],
 
+    models: [
+        'StudentCompetency@Slate.cbl.model'
+    ],
+
     refs: {
         dashboardCt: {
             selector: 'slate-studentcompetencies-admin-dashboard',
@@ -22,7 +30,7 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
         },
         contentAreaSelector: 'slate-studentcompetencies-admin-dashboard slate-appheader slate-cbl-contentareaselector',
         studentsListSelector: 'slate-studentcompetencies-admin-dashboard slate-appheader slate-cbl-studentslistselector',
-        progressGrid: 'slate-studentcompetencies-admin-dashboard slate-studentcompetencies-admin-grid'
+        grid: 'slate-studentcompetencies-admin-dashboard slate-studentcompetencies-admin-grid'
     },
 
 
@@ -69,12 +77,17 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
         studentsListSelector: {
             select: 'onStudentsListSelectorSelect',
             clear: 'onStudentsListSelectorClear'
+        },
+        grid: {
+            cellclick: 'onCellClick'
         }
     },
 
 
     // controller lifecycle
     onLaunch: function () {
+        // build array of available levels
+        this.availableLevels = Slate.cbl.util.Config.getAvailableLevels();
 
         // instantiate and render viewport
         this.getDashboardCt().render('slateapp-viewport');
@@ -170,5 +183,51 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
 
     onStudentsListSelectorClear: function() {
         this.redirectTo(this.getDashboardCt().getSelectedContentArea() || '_');
+    },
+
+    onCellClick: function(grid, competencyId, studentId, cellEl) {
+        var me = this,
+            studentCompetenciesStore = me.getStudentCompetenciesStore(),
+            StudentCompetency = me.getStudentCompetencyModel(),
+            availableLevels = me.availableLevels,
+            currentLevel = parseInt(cellEl.dom.textContent, 10),
+            nextLevel, studentCompetency;
+
+        // find any existing phantom record
+        studentCompetency = studentCompetenciesStore.queryBy(
+            sc => sc.phantom
+                  && sc.get('StudentID') == studentId
+                  && sc.get('CompetencyID') == competencyId
+        ).first();
+
+        // determine next level
+        if (currentLevel) {
+            nextLevel = availableLevels[availableLevels.indexOf(currentLevel) + 1];
+
+            if (!nextLevel) {
+                // reset existing phantom when clicking past last level
+                if (studentCompetency) {
+                    studentCompetency.drop();
+                }
+
+                return;
+            }
+        } else {
+            nextLevel = availableLevels[0];
+        }
+
+        // update existing phantom or create new one
+        if (studentCompetency) {
+            studentCompetency.set('Level', nextLevel);
+        } else {
+            studentCompetency = StudentCompetency.create({
+                StudentID: studentId,
+                CompetencyID: competencyId,
+                Level: nextLevel,
+                EnteredVia: 'enrollment'
+            });
+
+            studentCompetenciesStore.add(studentCompetency);
+        }
     }
 });

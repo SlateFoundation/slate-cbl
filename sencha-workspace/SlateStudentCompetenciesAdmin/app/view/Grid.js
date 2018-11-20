@@ -4,6 +4,10 @@
 Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
     extend: 'Jarvus.aggregrid.Aggregrid',
     xtype: 'slate-studentcompetencies-admin-grid',
+    requires: [
+        /* global Slate */
+        'Slate.cbl.util.Config'
+    ],
 
 
     config: {
@@ -18,31 +22,24 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
         dataStore: 'StudentCompetencies',
         cellTpl: null,
         cellRenderer: function(group, cellEl, rendered) {
-            var studentCompetencies = group.records,
+            var availableLevels = this.availableLevels,
+                studentCompetencies = group.records,
                 studentCompetenciesLength = studentCompetencies.length,
-                studentCompetencyIndex = 0, studentCompetency,
-                highestStudentCompetency, highestLevel;
+                studentCompetencyIndex = 0, studentCompetency, level,
+                highestLevel = 0, highestStudentCompetency, highestIsPhantom, highestIncreasable;
 
             for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
                 studentCompetency = studentCompetencies[studentCompetencyIndex].record;
+                level = studentCompetency.get('Level');
 
-                if (
-                    !highestStudentCompetency
-                    || studentCompetency.get('Level') > highestStudentCompetency.get('Level')
-                ) {
+                if (level > highestLevel) {
+                    highestLevel = level;
                     highestStudentCompetency = studentCompetency;
+                    highestIsPhantom = studentCompetency.phantom;
                 }
-            }
-
-            if (highestStudentCompetency) {
-                highestLevel = highestStudentCompetency.get('Level');
             }
 
             if (!rendered || rendered.level != highestLevel) {
-                if (!rendered) {
-                    cellEl.addCls('cbl-level-colored');
-                }
-
                 if (rendered && rendered.level) {
                     cellEl.removeCls('cbl-level-'+rendered.level);
                 }
@@ -51,7 +48,16 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
                     cellEl.addCls('cbl-level-'+highestLevel);
                 }
 
-                cellEl.update(highestLevel ? highestLevel : '');
+                highestIncreasable = availableLevels.indexOf(highestLevel) != availableLevels.length - 1;
+
+                cellEl
+                    .toggleCls('cbl-level-phantom', highestIsPhantom)
+                    .toggleCls('cbl-level-colored-light', !highestIsPhantom)
+                    .toggleCls('cbl-level-colored', highestIsPhantom)
+                    .toggleCls('cbl-level-increasable', highestIncreasable)
+                    .toggleCls('cbl-level-maxxed', !highestIncreasable);
+
+                cellEl.dom.textContent = highestLevel ? highestLevel : '';
             }
 
             return {
@@ -62,5 +68,12 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
 
 
     // component configuration
-    cls: 'slate-studentcompetencies-admin-grid'
+    cls: 'slate-studentcompetencies-admin-grid',
+
+
+    // component lifecycle
+    initComponent: function() {
+        this.availableLevels = Slate.cbl.util.Config.getAvailableLevels();
+        this.callParent(arguments);
+    }
 });
