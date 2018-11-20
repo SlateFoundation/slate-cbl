@@ -65,6 +65,11 @@ build-tasks-manager() {
     build-app SlateTasksManager
 }
 
+echo "    * Use 'build-enroll-admin' to build SlateStudentCompetenciesAdmin for testing"
+build-enroll-admin() {
+    build-app SlateStudentCompetenciesAdmin
+}
+
 echo "    * Use 'build-all' to build all apps for testing"
 build-all() {
     build-demos-student
