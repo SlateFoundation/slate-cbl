@@ -81,6 +81,22 @@ $level-colors-dark: dynamic(
                 background-color: $color;
             }
 
+            .cbl-level-colored-light,
+            &.cbl-level-colored-light {
+                color: white;
+                background-color: $color-light;
+            }
+            .cbl-level-colored-medium,
+            &.cbl-level-colored-medium {
+                color: white;
+                background-color: $color-medium;
+            }
+            .cbl-level-colored-dark,
+            &.cbl-level-colored-dark {
+                color: white;
+                background-color: $color-dark;
+            }
+
             // level progress meters:
             .cbl-level-progress-meter,
             &.cbl-level-progress-meter {
