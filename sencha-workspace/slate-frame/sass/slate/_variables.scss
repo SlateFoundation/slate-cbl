@@ -13,6 +13,8 @@ $heading-font:  dynamic(Sanchez, Lato, Rockwell, 'Rockwell Std', Georgia, serif)
 
 $omnibar-height: 2.75em;
 
+$hero-header-image: dynamic(image-url('header.jpg'));
+
 // button colors
 $button-color:      dynamic(mix(#dfdfdf, $accent-color, 95%));
 $destructive-color: dynamic(#ff332e);
