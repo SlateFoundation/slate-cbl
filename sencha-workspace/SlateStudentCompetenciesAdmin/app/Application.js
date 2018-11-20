@@ -5,8 +5,31 @@
  */
 Ext.define('SlateStudentCompetenciesAdmin.Application', {
     extend: 'Ext.app.Application',
+    requires: [
+        'Ext.window.MessageBox',
+
+        /* global Slate */
+        'Slate.API'
+    ],
 
     name: 'SlateStudentCompetenciesAdmin',
+
+    controllers: [
+        'Dashboard'
+    ],
+
+    launch: function() {
+        var me = this;
+
+        // load bootstrap data
+        Slate.API.request({
+            method: 'GET',
+            url: '/cbl/dashboards/student-competencies/admin/bootstrap',
+            success: function(response) {
+                me.fireEvent('bootstrapdataload', me, response.data);
+            }
+        });
+    },
 
     quickTips: false,
     platformConfig: {
