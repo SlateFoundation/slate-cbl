@@ -1,8 +1,21 @@
 Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
     extend: 'Ext.app.Controller',
     requires: [
+        'Ext.window.MessageBox',
+        'Ext.window.Toast',
+
         /* global Slate*/
         'Slate.cbl.util.Config'
+    ],
+
+
+    saveNotificationTitleTpl: 'Enrollments Saved',
+    saveNotificationBodyTpl: [
+        'Created',
+        ' <strong>',
+            '{changes}',
+            ' <tpl if="changes == 1">enrollment<tpl else>enrollments</tpl>',
+        '</strong>'
     ],
 
 
@@ -30,6 +43,8 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
         },
         contentAreaSelector: 'slate-studentcompetencies-admin-dashboard slate-appheader slate-cbl-contentareaselector',
         studentsListSelector: 'slate-studentcompetencies-admin-dashboard slate-appheader slate-cbl-studentslistselector',
+        statusText: 'slate-studentcompetencies-admin-dashboard slate-appheader #statusText',
+        saveBtn: 'slate-studentcompetencies-admin-dashboard slate-appheader button[action=save-studentcompetencies]',
         grid: 'slate-studentcompetencies-admin-dashboard slate-studentcompetencies-admin-grid'
     },
 
@@ -60,7 +75,11 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
         store: {
             '#StudentCompetencies': {
                 beforeload: 'onStudentCompetenciesStoreBeforeLoad',
-                load: 'onStudentCompetenciesStoreLoad'
+                load: 'onStudentCompetenciesStoreLoad',
+                datachanged: {
+                    buffer: 10,
+                    fn: 'onStudentCompetenciesDataChanged'
+                }
             }
         }
     },
@@ -80,6 +99,9 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
         },
         grid: {
             cellclick: 'onCellClick'
+        },
+        saveBtn: {
+            click: 'onSaveBtnClick'
         }
     },
 
@@ -114,6 +136,13 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
 
     onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
         this.getDashboardCt().setLoading(false);
+    },
+
+    onStudentCompetenciesDataChanged: function(store) {
+        var changes = store.queryBy(record => record.phantom).getCount();
+
+        this.getStatusText().update({ changes });
+        this.getSaveBtn().setDisabled(changes == 0);
     },
 
     onContentAreaChange: function(dashboardCt, contentAreaCode) {
@@ -229,5 +258,37 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
 
             studentCompetenciesStore.add(studentCompetency);
         }
+    },
+
+    onSaveBtnClick: function(saveBtn) {
+        var me = this;
+
+        saveBtn.disable();
+
+        this.getStudentCompetenciesStore().sync({
+            success: function(batch) {
+                var tplData = {
+                    changes: Ext.Array.sum(batch.getOperations().map(operation => operation.getRecords().length))
+                };
+
+                // show notification to user
+                Ext.toast(
+                    Ext.XTemplate.getTpl(me, 'saveNotificationBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+                );
+            },
+            failure: function(batch) {
+                var operations = batch.getOperations();
+
+                saveBtn.enable();
+
+                Ext.Msg.show({
+                    title: 'Failed to save enrollments',
+                    message: operations.length ? operations[0].getError() : 'Unknown problem, check your connection and try again',
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
     }
 });

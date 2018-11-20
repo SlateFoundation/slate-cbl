@@ -97,8 +97,28 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Dashboard', {
                     flex: 1
                 },
                 {
-                    xtype: 'tbfill',
-                    flex: 2
+                    itemId: 'statusText',
+                    flex: 2,
+
+                    xtype: 'tbtext',
+                    cls: 'slate-studentcompetencies-admin-dashboard-status',
+                    tpl: [
+                        '<tpl if="changes == 0">',
+                            'No changes pending',
+                        '<tpl elseif="changes == 1">',
+                            '1 change pending',
+                        '<tpl else>',
+                            '{changes} changes pending',
+                        '</tpl>'
+                    ],
+                    data: { changes: 0 }
+                },
+                {
+                    cls: 'primary',
+                    iconCls: 'x-fa fa-save',
+                    action: 'save-studentcompetencies',
+                    tooltip: 'Save all pending changes',
+                    disabled: true
                 }
             ]
         },
