@@ -26,7 +26,7 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
                 studentCompetencies = group.records,
                 studentCompetenciesLength = studentCompetencies.length,
                 studentCompetencyIndex = 0, studentCompetency, level,
-                highestLevel = 0, highestStudentCompetency, highestIsPhantom, highestIncreasable;
+                highestLevel = 0, highestIsPhantom = false, highestIncreasable;
 
             for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
                 studentCompetency = studentCompetencies[studentCompetencyIndex].record;
@@ -34,12 +34,11 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
 
                 if (level > highestLevel) {
                     highestLevel = level;
-                    highestStudentCompetency = studentCompetency;
                     highestIsPhantom = studentCompetency.phantom;
                 }
             }
 
-            if (!rendered || rendered.level != highestLevel) {
+            if (rendered.level != highestLevel) {
                 if (rendered && rendered.level) {
                     cellEl.removeCls('cbl-level-'+rendered.level);
                 }
@@ -51,17 +50,21 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
                 highestIncreasable = availableLevels.indexOf(highestLevel) != availableLevels.length - 1;
 
                 cellEl
+                    .toggleCls('cbl-level-increasable', highestIncreasable)
+                    .toggleCls('cbl-level-maxxed', !highestIncreasable)
+                    .update(highestLevel ? highestLevel : '');
+            }
+
+            if (rendered.phantom != highestIsPhantom) {
+                cellEl
                     .toggleCls('cbl-level-phantom', highestIsPhantom)
                     .toggleCls('cbl-level-colored-light', !highestIsPhantom)
-                    .toggleCls('cbl-level-colored', highestIsPhantom)
-                    .toggleCls('cbl-level-increasable', highestIncreasable)
-                    .toggleCls('cbl-level-maxxed', !highestIncreasable);
-
-                cellEl.dom.textContent = highestLevel ? highestLevel : '';
+                    .toggleCls('cbl-level-colored', highestIsPhantom);
             }
 
             return {
-                level: highestLevel
+                level: highestLevel,
+                phantom: highestIsPhantom
             };
         }
     },
