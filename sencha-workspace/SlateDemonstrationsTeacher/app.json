@@ -142,7 +142,7 @@
         "var": [
             "sass/var/all.scss",
             "sass/var",
-            "${workspace.dir}/slate-frame/sass/_variables-all.scss"
+            "resources/slate-frame/sass/_variables-all.scss"
         ],
 
         /**
