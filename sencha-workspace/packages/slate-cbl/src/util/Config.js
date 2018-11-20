@@ -10,15 +10,15 @@ Ext.define('Slate.cbl.util.Config', {
             },
             10: {
                 title: 'Year 2',
-                abbreviation: 'Y1'
+                abbreviation: 'Y2'
             },
             11: {
                 title: 'Year 3',
-                abbreviation: 'Y1'
+                abbreviation: 'Y3'
             },
             12: {
                 title: 'Year 4',
-                abbreviation: 'Y1'
+                abbreviation: 'Y4'
             }
         },
         ratings: {}
