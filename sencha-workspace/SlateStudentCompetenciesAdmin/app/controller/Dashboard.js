@@ -96,46 +96,21 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
     },
 
     onStudentCompetenciesStoreBeforeLoad: function() {
-        var dashboardCt = this.getDashboardCt();
-
-        dashboardCt.setLoadedContentArea(null);
-        dashboardCt.setLoading('Loading enrollments...');
+        this.getDashboardCt().setLoading('Loading enrollments...');
     },
 
     onStudentCompetenciesStoreLoad: function(store, studentCompetencies, success) {
-        if (!success) {
-            return;
-        }
-
-
-        // eslint-disable-next-line vars-on-top
-        var me = this,
-            dashboardCt = me.getDashboardCt(),
-            proxy = store.getProxy(),
-            studentsCollection = proxy.relatedCollections.Student,
-            rawData = proxy.getReader().rawData,
-            contentAreaData = rawData.ContentArea,
-            competenciesData = contentAreaData.Competencies;
-
-        // clear embedded data from contentArea
-        delete contentAreaData.Competencies;
-
-
-        // load content area, competencies, and students
-        Ext.suspendLayouts();
-        dashboardCt.setLoadedContentArea(contentAreaData);
-        me.getCompetenciesStore().loadRawData(competenciesData);
-        me.getStudentsStore().loadRawData(studentsCollection.getRange());
-        Ext.resumeLayouts(true);
-
-
-        // finish load
-        dashboardCt.setLoading(false);
+        this.getDashboardCt().setLoading(false);
     },
 
     onContentAreaChange: function(dashboardCt, contentAreaCode) {
         var me = this,
+            competenciesStore = me.getCompetenciesStore(),
             studentCompetenciesStore = me.getStudentCompetenciesStore();
+
+        // (re)load student competencies store
+        competenciesStore.setContentArea(contentAreaCode);
+        competenciesStore.loadIfDirty();
 
         // (re)load student competencies store
         studentCompetenciesStore.setContentArea(contentAreaCode);
@@ -147,7 +122,12 @@ Ext.define('SlateStudentCompetenciesAdmin.controller.Dashboard', {
 
     onStudentsListChange: function(dashboardCt, studentsList) {
         var me = this,
+            studentsStore = me.getStudentsStore(),
             studentCompetenciesStore = me.getStudentCompetenciesStore();
+
+        // (re)load student competencies store
+        studentsStore.setList(studentsList || null);
+        studentsStore.loadIfDirty();
 
         // (re)load student competencies store
         studentCompetenciesStore.setStudentsList(studentsList || null);

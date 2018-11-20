@@ -30,15 +30,6 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Dashboard', {
      */
 
     /**
-     * @event loadedcontentareachange
-     * Fires when the populated record for the last selected section becomes available
-     * or is cleared pending a new section loading
-     * @param {SlateStudentCompetenciesAdmin.view.Dashboard} dashboardCt
-     * @param {Slate.cbl.model.ContentArea|null} section
-     * @param {Slate.cbl.model.ContentArea|null} oldSection
-     */
-
-    /**
      * @event selectedstudentslistchange
      * Fires when a new students list is selected via browser navigation or a menu
      * @param {SlateStudentCompetenciesAdmin.view.Dashboard} dashboardCt
@@ -60,14 +51,6 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Dashboard', {
          * begin loading.
          */
         selectedContentArea: null,
-
-        /**
-         * @cfg {Slate.cbl.model.ContentArea|null}
-         * The loaded content area model instance for the application. This config gets
-         * set following a change in {@link #cfg-selectedContentArea} and successful load
-         * of the indicated content area.
-         */
-        loadedContentArea: null,
 
         /**
          * @cfg {String|null}
@@ -129,42 +112,12 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Dashboard', {
 
     // config handlers
     updateSelectedContentArea: function(contentArea, oldContentArea) {
+        this.syncVisibleComponents();
         this.fireEvent('selectedcontentareachange', this, contentArea, oldContentArea);
     },
 
-    applyLoadedContentArea: function(contentArea, oldContentArea) {
-        if (!contentArea) {
-            return null;
-        }
-
-        if (!contentArea.isModel) {
-            if (oldContentArea && contentArea.ID == oldContentArea.getId()) {
-                oldContentArea.set(contentArea, { dirty: false });
-                return oldContentArea;
-            }
-
-            contentArea = Slate.cbl.model.ContentArea.create(contentArea);
-        }
-
-        return contentArea;
-    },
-
-    updateLoadedContentArea: function(contentArea, oldContentArea) {
-        var me = this,
-            isLoaded = Boolean(contentArea);
-
-        if (contentArea) {
-            me.setSelectedContentArea(contentArea.get('Code'));
-        }
-
-        me.setPlaceholderItem(!isLoaded);
-        me.setGrid(isLoaded);
-        me.setLegend(isLoaded);
-
-        me.fireEvent('loadedcontentareachange', me, contentArea, oldContentArea);
-    },
-
     updateSelectedStudentsList: function(studentsList, oldStudentsList) {
+        this.syncVisibleComponents();
         this.fireEvent('selectedstudentslistchange', this, studentsList, oldStudentsList);
     },
 
@@ -199,5 +152,18 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Dashboard', {
             me.getGrid(),
             me.getLegend()
         ]);
+    },
+
+
+    // local methods
+    syncVisibleComponents: function() {
+        var me = this,
+            isSelectionComplete = Boolean(me.getSelectedContentArea() && me.getSelectedStudentsList());
+
+        Ext.suspendLayouts();
+        me.setPlaceholderItem(!isSelectionComplete);
+        me.setGrid(isSelectionComplete);
+        me.setLegend(isSelectionComplete);
+        Ext.resumeLayouts(true);
     }
 });
