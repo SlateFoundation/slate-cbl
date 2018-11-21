@@ -278,10 +278,15 @@ class StudentCompetency extends \ActiveRecord
         return $this->demonstrationOpportunities;
     }
 
+    protected static function sortDemonstrations($a, $b)
+    {
+        return $a['ID'] < $b['ID'] ? -1 : 1;
+    }
+
     protected static function sortEffectiveDemonstrations($a, $b)
     {
         if ($a['DemonstratedLevel'] == $b['DemonstratedLevel']) {
-            return 0;
+            return static::sortDemonstrations($a, $b);
         }
 
         return $a['DemonstratedLevel'] < $b['DemonstratedLevel'] ? 1 : -1;
@@ -294,12 +299,14 @@ class StudentCompetency extends \ActiveRecord
             $demonstrationsData = $this->getDemonstrationData();
 
             foreach ($demonstrationsData as $skillId => &$demonstrationData) {
-                uasort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
+                usort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
 
                 $Skill = Skill::getByID($skillId);
                 $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
 
                 array_splice($demonstrationData, $demonstrationsRequired);
+
+                usort($demonstrationData, [__CLASS__,  'sortDemonstrations']);
             }
 
             $this->effectiveDemonstrationsData = $demonstrationsData;
