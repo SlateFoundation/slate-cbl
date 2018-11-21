@@ -3,7 +3,7 @@
 return [
     'title' => 'Student Tasks',
     'description' => 'Each row represents an assignment of a task to a student',
-    'filename' => 'student-competencies',
+    'filename' => 'student-tasks',
     'headers' => [
         'StudentFullName' => 'Student',
         'StudentNumber' => 'Student Number',
