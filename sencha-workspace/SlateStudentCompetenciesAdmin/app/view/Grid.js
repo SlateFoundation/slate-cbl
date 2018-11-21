@@ -16,7 +16,7 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
     config: {
         popover: true,
         popoverTitleTpl: [
-            'Enrollment #{ID}'
+            'Enrollment <tpl if="ID &gt; 0">#{ID}<tpl else>(unsaved)</tpl>'
         ],
         popoverBodyTpl: [
             '<dl class="slate-studentcompetencies-admin-grid-popover">',
@@ -24,8 +24,10 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
                 '<dd><tpl if="BaselineRating">{BaselineRating}<tpl else>&mdash;</tpl></dd>',
                 '<dt>Entered via</dt>',
                 '<dd>{EnteredVia}</dd>',
-                '<dt>Created on</dt>',
-                '<dd><time>{Created:date("D, M j, Y \\\\&\\\\m\\\\i\\\\d\\\\d\\\\o\\\\t\\\\; g:i a")}</time></dd>',
+                '<tpl if="Created">',
+                    '<dt>Created on</dt>',
+                    '<dd><time>{Created:date("D, M j, Y \\\\&\\\\m\\\\i\\\\d\\\\d\\\\o\\\\t\\\\; g:i a")}</time></dd>',
+                '</tpl>',
                 '<tpl for="Creator">',
                     '<dt>Created by</dt>',
                     '<dd><tpl if="Username">{Username}<tpl else>{FirstName} {LastName}</tpl></dd>',
