@@ -315,17 +315,4 @@ $data-cell-padding: dynamic(.5em);
     font-weight: normal;
     padding: .75em .5em .75em 1.5em;
     position: relative;
-
-    .cbl-popover {
-        right: -5px;
-        top: 0;
-        width: 300px;
-    }
-
-    &:hover,
-    &:focus {
-        .cbl-popover {
-            display: block;
-        }
-    }
 }

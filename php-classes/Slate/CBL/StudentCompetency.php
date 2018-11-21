@@ -13,6 +13,7 @@ use Slate\CBL\Demonstrations\DemonstrationSkill;
 class StudentCompetency extends \ActiveRecord
 {
     public static $autoGraduate = true;
+    public static $autoBaseline = true;
     public static $getDemonstrationConditions;
     public static $isLevelComplete;
     public static $minimumRatingOffset;
@@ -107,6 +108,35 @@ class StudentCompetency extends \ActiveRecord
             'getter' => 'getNext'
         ]
     ];
+
+    public function save($deep = true)
+    {
+        // initialize baseline
+        if (
+            static::$autoBaseline
+            && !$this->BaselineRating
+            && $this->isPhantom
+            && $this->StudentID && $this->CompetencyID && $this->Level
+            && (
+                $Previous = static::getByWhere([
+                    'StudentID' => $this->StudentID,
+                    'CompetencyID' => $this->CompetencyID,
+                    'Level' => [
+                        'operator' => '<',
+                        'value' => $this->Level
+                    ]
+                ], [
+                    'order' => 'Level DESC',
+                    'limit' => 1
+                ])
+            )
+        ) {
+            $this->BaselineRating = $Previous->getDemonstrationsAverage();
+        }
+
+        // call parent
+        parent::save($deep);
+    }
 
     public function getCompletion()
     {

@@ -9,22 +9,28 @@ $Competency = $_EVENT['Record']->Skill->Competency;
 
 $StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
 
-if (
-        $StudentCompetency &&
-        StudentCompetency::$autoGraduate &&
-        $StudentCompetency->isLevelComplete() &&
-        $StudentCompetency->Level < $Competency->getMaximumTargetLevel()
-   ) {
+if (!$StudentCompetency) {
+    return;
+}
 
+if (
+    StudentCompetency::$autoGraduate
+    && $StudentCompetency->isLevelComplete()
+    && $StudentCompetency->Level < $Competency->getMaximumTargetLevel()
+) {
     // enroll student in next level
     StudentCompetency::create([
         'StudentID' => $Student->ID,
         'CompetencyID' => $Competency->ID,
         'Level' => $StudentCompetency->Level + 1,
-        'EnteredVia' => 'graduation',
-        'BaselineRating' => $StudentCompetency->getDemonstrationsAverage()
+        'EnteredVia' => 'graduation'
     ], true);
-} elseif (empty($completion['baselineRating']) && $StudentCompetency) {
+}
+
+if (
+    StudentCompetency::$autoBaseline
+    && !$StudentCompetency->BaselineRating
+) {
     $StudentCompetency->BaselineRating = $StudentCompetency->calculateStartingRating();
     $StudentCompetency->save();
 }

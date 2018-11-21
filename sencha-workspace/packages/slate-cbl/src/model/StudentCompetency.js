@@ -67,13 +67,13 @@ Ext.define('Slate.cbl.model.StudentCompetency', {
     validators: [
         {
             field: 'StudentID',
-            type: 'min',
+            type: 'range',
             min: 1,
             emptyMessage: 'StudentID is required'
         },
         {
             field: 'CompetencyID',
-            type: 'min',
+            type: 'range',
             min: 1,
             emptyMessage: 'CompetencyID is required'
         }

@@ -10,6 +10,7 @@ Ext.define('Slate.cbl.widget.Popover', {
     componentCls: 'cbl-popover',
     cls: 'point-left',
     defaultAlign: 'tl-tr',
+    alignOffset: [10, 0],
     floating: true,
     tpl: [
         '<tpl if="title">',
