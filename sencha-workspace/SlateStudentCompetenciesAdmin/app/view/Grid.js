@@ -64,6 +64,10 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
                 }
             }
 
+            if (!rendered) {
+                cellEl.addCls('cbl-level-colored');
+            }
+
             if (rendered.level != highestLevel) {
                 if (rendered && rendered.level) {
                     cellEl.removeCls('cbl-level-'+rendered.level);
@@ -82,10 +86,7 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
             }
 
             if (rendered.phantom != highestIsPhantom) {
-                cellEl
-                    .toggleCls('cbl-level-phantom', highestIsPhantom)
-                    .toggleCls('cbl-level-colored-light', !highestIsPhantom)
-                    .toggleCls('cbl-level-colored', highestIsPhantom);
+                cellEl.toggleCls('cbl-level-phantom', highestIsPhantom);
             }
 
             if (rendered.id != highestId) {
