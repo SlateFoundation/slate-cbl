@@ -147,10 +147,12 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
             studentCompetenciesStore = me.getStudentCompetenciesStore(),
             studentCompetenciesCount = studentCompetenciesStore.getCount(),
-            studentCompetencyIndex, studentCompetency, level, competency, competencyCurrent, average, growth,
+            studentCompetencyIndex, studentCompetency, level, competencyId,
+            competency, competencyCurrent, average, growth,
 
 
-            lowestIncompleteLevel = Infinity,
+            competencyLevels = {},
+            lowestLevel = Infinity,
             totalRequired = 0,
             totalMissed = 0,
             totalComplete = 0,
@@ -166,27 +168,32 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         competenciesStore.loadRawData(competenciesData);
 
 
-        // find lowest incomplete level
+        // find highest enrollment for each competency
         for (studentCompetencyIndex = 0; studentCompetencyIndex < studentCompetenciesCount; studentCompetencyIndex++) {
             studentCompetency = studentCompetenciesStore.getAt(studentCompetencyIndex);
+            competencyId = studentCompetency.get('CompetencyID');
             level = studentCompetency.get('Level');
-            competency = competenciesStore.getById(studentCompetency.get('CompetencyID'));
+
+            // locate related competency in current store
+            competency = competenciesStore.getById(competencyId);
 
             if (!competency) {
                 Ext.Logger.warn('Encountered CompetencyID not in loaded content area, skipping...');
                 continue;
             }
 
+            // set current to highest enrolled
             competencyCurrent = competency.get('currentStudentCompetency');
-
-            if (!studentCompetency.get('isLevelComplete') && level < lowestIncompleteLevel) {
-                lowestIncompleteLevel = level;
-            }
 
             if (!competencyCurrent || competencyCurrent.get('Level') < level) {
                 competency.set('currentStudentCompetency', studentCompetency, { dirty: false });
+                competencyLevels[competencyId] = level;
             }
         }
+
+
+        // determine lowest level of highest enrollments
+        lowestLevel = Ext.Array.min(Object.values(competencyLevels));
 
 
         // aggregate data for lowest incomplete level
@@ -194,7 +201,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             studentCompetency = studentCompetenciesStore.getAt(studentCompetencyIndex);
 
             // process only the lowest incomplete level
-            if (studentCompetency.get('Level') !== lowestIncompleteLevel) {
+            if (studentCompetency.get('Level') !== lowestLevel) {
                 continue;
             }
 
@@ -230,7 +237,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         Ext.suspendLayouts();
 
         competenciesSummary.setConfig({
-            level: isFinite(lowestIncompleteLevel) ? lowestIncompleteLevel : null,
+            level: isFinite(lowestLevel) ? lowestLevel : null,
             percentComplete: totalRequired ? 100 * totalComplete / totalRequired : null,
             percentMissed: totalRequired ? 100 * totalMissed / totalRequired : null,
             missed: totalRequired ? totalMissed : null,
