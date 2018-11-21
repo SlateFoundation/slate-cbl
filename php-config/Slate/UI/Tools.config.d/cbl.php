@@ -13,6 +13,7 @@ if ($GLOBALS['Session']->hasAccountLevel('Staff')) {
     $cblTools['Task Dashboard'] = '/cbl/dashboards/tasks/teacher';
     //$cblTools['My Assigned Tasks'] = '/cbl/dashboards/tasks/student';
     $cblTools['Task Library'] = '/cbl/dashboards/tasks/manager';
+    $cblTools['Enrollments Dashboard'] = '/cbl/dashboards/student-competencies/admin';
 
     $cblTools['Exports'] = [
         '_icon' => 'export',
