@@ -22,7 +22,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
 
         // optional config
         percentFormat: '0%',
-        averageFormat: '0.##',
+        averageFormat: '0.#',
         growthFormat: '0.# yr',
     },
 

@@ -19,7 +19,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     ],
 
     config: {
-        averageFormat: '0.##',
+        averageFormat: '0.#',
         progressFormat: '0%',
         contentArea: null,
 
