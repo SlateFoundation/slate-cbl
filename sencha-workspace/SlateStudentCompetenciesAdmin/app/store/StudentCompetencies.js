@@ -10,7 +10,8 @@ Ext.define('SlateStudentCompetenciesAdmin.store.StudentCompetencies', {
         proxy: {
             type: 'slate-cbl-studentcompetencies',
             include: [
-                'Competencies'
+                'Competencies',
+                'Creator'
             ],
             relatedTable: [
                 {
