@@ -26,7 +26,7 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
                 studentCompetencies = group.records,
                 studentCompetenciesLength = studentCompetencies.length,
                 studentCompetencyIndex = 0, studentCompetency, level,
-                highestLevel = 0, highestIsPhantom = false, highestIncreasable;
+                highestLevel = 0, highestIsPhantom = false, highestIncreasable, highestId;
 
             for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
                 studentCompetency = studentCompetencies[studentCompetencyIndex].record;
@@ -35,6 +35,7 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
                 if (level > highestLevel) {
                     highestLevel = level;
                     highestIsPhantom = studentCompetency.phantom;
+                    highestId = studentCompetency.getId();
                 }
             }
 
@@ -62,9 +63,16 @@ Ext.define('SlateStudentCompetenciesAdmin.view.Grid', {
                     .toggleCls('cbl-level-colored', highestIsPhantom);
             }
 
+            if (rendered.id != highestId) {
+                cellEl.set({
+                    'data-studentcompetency-id': highestId
+                });
+            }
+
             return {
                 level: highestLevel,
-                phantom: highestIsPhantom
+                phantom: highestIsPhantom,
+                id: highestId
             };
         }
     },
