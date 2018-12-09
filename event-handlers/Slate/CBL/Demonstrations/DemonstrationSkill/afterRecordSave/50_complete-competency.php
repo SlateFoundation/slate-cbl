@@ -16,7 +16,10 @@ if (!$StudentCompetency) {
 if (
     StudentCompetency::$autoGraduate
     && $StudentCompetency->isLevelComplete()
-    && $StudentCompetency->Level < $Competency->getMaximumTargetLevel()
+    && (
+        !StudentCompetency::$maximumLevel
+        || $StudentCompetency->Level < StudentCompetency::$maximumLevel
+    )
 ) {
     // enroll student in next level
     StudentCompetency::create([

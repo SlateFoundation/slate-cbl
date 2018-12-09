@@ -5,6 +5,6 @@ Ext.define('Slate.cbl.proxy.Competencies', {
 
     config: {
         url: '/cbl/competencies',
-        include: ['totalDemonstrationsRequired', 'minimumAverageOffset']
+        include: ['totalDemonstrationsRequired']
     }
 });

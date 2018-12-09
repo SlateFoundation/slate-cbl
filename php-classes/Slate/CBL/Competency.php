@@ -7,9 +7,6 @@ use DB, Cache, TableNotFoundException;
 
 class Competency extends \VersionedRecord
 {
-    public static $minimumAverageOffset = -0.5;
-    public static $maximumTargetLevel = 12;
-
     // ActiveRecord configuration
     public static $tableName = 'cbl_competencies';
     public static $singularNoun = 'competency';
@@ -62,9 +59,6 @@ class Competency extends \VersionedRecord
         ],
         'totalDemonstrationsRequired' => [
             'getter' => 'getTotalDemonstrationsRequired'
-        ],
-        'minimumAverageOffset' => [
-            'getter' => 'getMinimumAverageOffset'
         ]
     ];
 
@@ -117,17 +111,6 @@ class Competency extends \VersionedRecord
 
         // save results
         return $this->finishValidation();
-    }
-
-    public function getMinimumAverageOffset()
-    {
-        return static::$minimumAverageOffset;
-    }
-
-    public function getMaximumTargetLevel()
-    {
-        // TODO: convert to a database field for the competency or content area?
-        return static::$maximumTargetLevel;
     }
 
     public function getSkillIds($forceRefresh = false)
