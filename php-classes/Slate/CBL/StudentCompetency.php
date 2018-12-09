@@ -437,7 +437,7 @@ class StudentCompetency extends \ActiveRecord
                 $this->minimumAverageCache = false;
             } elseif (!is_numeric($minimumAverage)) {
                 throw new \UnexpectedValueException('minimumAverage must be numeric: '.var_export($minimumAverage, true));
-            } elseif ($minimumAverage < 0) {
+            } elseif ($minimumAverage <= 0) {
                 $this->minimumAverageCache = $minimumAverage + $this->Level;
             } else {
                 $this->minimumAverageCache = $minimumAverage;
@@ -465,7 +465,7 @@ class StudentCompetency extends \ActiveRecord
                 $this->minimumRatingCache = false;
             } elseif (!is_numeric($minimumRating)) {
                 throw new \UnexpectedValueException('minimumRating must be numeric: '.var_export($minimumRating, true));
-            } elseif ($minimumRating < 0) {
+            } elseif ($minimumRating <= 0) {
                 $this->minimumRatingCache = $minimumRating + $this->Level;
             } else {
                 $this->minimumRatingCache = $minimumRating;
