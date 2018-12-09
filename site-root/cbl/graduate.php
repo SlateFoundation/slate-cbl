@@ -24,9 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $StudentCompetency = StudentCompetency::getCurrentForStudent($Student, $Competency);
 
             if (
-                $StudentCompetency &&
-                $StudentCompetency->isLevelComplete() &&
-                $StudentCompetency->Level < $Competency->getMaximumTargetLevel()
+                $StudentCompetency
+                && $StudentCompetency->isLevelComplete()
+                && (
+                    !StudentCompetency::$maximumLevel
+                    || $StudentCompetency->Level < StudentCompetency::$maximumLevel
+                )
             ) {
                 // enroll student in next level
                 StudentCompetency::create([

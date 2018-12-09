@@ -12,12 +12,12 @@ Ext.define('SlateDemonstrationsStudent.store.StudentCompetencies', {
             include: [
                 'Competencies.Skills',
                 'Competencies.totalDemonstrationsRequired',
-                'Competencies.minimumAverageOffset',
                 'effectiveDemonstrationsData',
                 'demonstrationsRequired',
                 'demonstrationsMissed',
                 'demonstrationsComplete',
                 'demonstrationsAverage',
+                'minimumAverage',
                 'isLevelComplete',
                 'growth'
             ],

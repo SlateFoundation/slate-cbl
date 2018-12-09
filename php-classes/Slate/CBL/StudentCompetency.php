@@ -12,11 +12,16 @@ use Slate\CBL\Demonstrations\DemonstrationSkill;
 
 class StudentCompetency extends \ActiveRecord
 {
+    public static $minimumAverage;
+    public static $minimumRating;
+    public static $maximumLevel;
+
     public static $autoGraduate = true;
     public static $autoBaseline = true;
+
     public static $getDemonstrationConditions;
     public static $isLevelComplete;
-    public static $minimumRatingOffset;
+
 
     // ActiveRecord configuration
     public static $tableName = 'cbl_student_competencies';
@@ -97,6 +102,12 @@ class StudentCompetency extends \ActiveRecord
         ],
         'effectiveDemonstrationsData' => [
             'getter' => 'getEffectiveDemonstrationsData'
+        ],
+        'minimumAverage' => [
+            'getter' => 'getMinimumAverage'
+        ],
+        'minimumRating' => [
+            'getter' => 'getMinimumRating'
         ],
         'isLevelComplete' => [
             'getter' => 'isLevelComplete'
@@ -408,29 +419,90 @@ class StudentCompetency extends \ActiveRecord
         return $this->demonstrationsRequired;
     }
 
+    private $minimumAverageCache;
+    public function getMinimumAverage()
+    {
+        if ($this->minimumAverageCache === null) {
+            if (is_array(static::$minimumAverage)) {
+                $minimumAverage = isset(static::$minimumAverage[$this->Level])
+                    ? static::$minimumAverage[$this->Level]
+                    : null;
+            } elseif (is_callable(static::$minimumAverage)) {
+                $minimumAverage = call_user_func(static::$minimumAverage, $this);
+            } else {
+                $minimumAverage = static::$minimumAverage;
+            }
+
+            if ($minimumAverage === null) {
+                $this->minimumAverageCache = false;
+            } elseif (!is_numeric($minimumAverage)) {
+                throw new \UnexpectedValueException('minimumAverage must be numeric: '.var_export($minimumAverage, true));
+            } elseif ($minimumAverage < 0) {
+                $this->minimumAverageCache = $minimumAverage + $this->Level;
+            } else {
+                $this->minimumAverageCache = $minimumAverage;
+            }
+        }
+
+        return $this->minimumAverageCache === false ? null : $this->minimumAverageCache;
+    }
+
+    private $minimumRatingCache;
+    public function getMinimumRating()
+    {
+        if ($this->minimumRatingCache === null) {
+            if (is_array(static::$minimumRating)) {
+                $minimumRating = isset(static::$minimumRating[$this->Level])
+                    ? static::$minimumRating[$this->Level]
+                    : null;
+            } elseif (is_callable(static::$minimumRating)) {
+                $minimumRating = call_user_func(static::$minimumRating, $this);
+            } else {
+                $minimumRating = static::$minimumRating;
+            }
+
+            if ($minimumRating === null) {
+                $this->minimumRatingCache = false;
+            } elseif (!is_numeric($minimumRating)) {
+                throw new \UnexpectedValueException('minimumRating must be numeric: '.var_export($minimumRating, true));
+            } elseif ($minimumRating < 0) {
+                $this->minimumRatingCache = $minimumRating + $this->Level;
+            } else {
+                $this->minimumRatingCache = $minimumRating;
+            }
+        }
+
+        return $this->minimumRatingCache === false ? null : $this->minimumRatingCache;
+    }
+
     public function isLevelComplete()
     {
-        $logged = $this->getDemonstrationsLogged();
-        $completed = $this->getDemonstrationsComplete();
-        $average = $this->getDemonstrationsAverage();
-
+        // require a minimum total demonstrations for the competency
         $competencyEvidenceRequirements = $this->Competency->getTotalDemonstrationsRequired($this->Level);
-        $minimumOffset = $this->Competency->getMinimumAverageOffset();
 
-        // Require a minimum total demonstrations for the competency
-        if ($competencyEvidenceRequirements && $completed < $competencyEvidenceRequirements) {
+        if (
+            $competencyEvidenceRequirements
+            && $this->getDemonstrationsComplete() < $competencyEvidenceRequirements
+        ) {
             return false;
         }
 
-        // Require minimum average as offset from level
-        if ($minimumOffset !== null && $average < $this->Level + $minimumOffset) {
+
+        // require minimum average as offset from level
+        $minimumAverage = $this->getMinimumAverage();
+
+        if (
+            $minimumAverage !== null
+            && $this->getDemonstrationsAverage() < $minimumAverage
+        ) {
             return false;
         }
 
-        // Require all demonstrations have ratings above minimum
-        if (static::$minimumRatingOffset !== null) {
-            $minimumRating = $this->Level + static::$minimumRatingOffset;
 
+        // require all demonstrations have ratings above minimum
+        $minimumRating = $this->getMinimumRating();
+
+        if ($minimumRating !== null) {
             foreach ($this->getEffectiveDemonstrationsData() as $skillID => $demonstrations) {
                 foreach ($demonstrations as $demonstration) {
                     if ($demonstration['DemonstratedLevel'] < $minimumRating) {
@@ -440,7 +512,8 @@ class StudentCompetency extends \ActiveRecord
             }
         }
 
-        // Custom level complete function
+
+        // custom level complete function
         if (is_callable(static::$isLevelComplete)) {
             return call_user_func(static::$isLevelComplete, $this) ?: false;
         }

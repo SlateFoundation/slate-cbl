@@ -234,7 +234,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             percentComplete: studentCompetency ? percentComplete : null,
             percentMissed: studentCompetency ? 100 * studentCompetency.get('demonstrationsMissed') / demonstrationsRequired : null,
             demonstrationsAverage: studentCompetency ? demonstrationsAverage : null,
-            isAverageLow: studentCompetency ? percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < level + competency.get('minimumAverageOffset') : null,
+            isAverageLow: studentCompetency ? percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < studentCompetency.get('minimumAverage') : null,
             baselineRating: studentCompetency ? studentCompetency.get('BaselineRating') : null,
             growth: studentCompetency ? studentCompetency.get('growth') : null
         });
