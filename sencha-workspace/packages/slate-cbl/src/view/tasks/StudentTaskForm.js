@@ -42,6 +42,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
             'Slate.cbl.field.ratings.SkillsField',
             'Slate.cbl.field.attachments.Field',
+            'Slate.cbl.field.SubmissionsField',
             'Slate.cbl.field.comments.Field'
         ],
 
@@ -52,7 +53,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 'Attachments',
                 'Demonstration.DemonstrationSkills',
                 'Skills',
-                'Submitted',
+                'Submissions',
                 'Comments.Creator'
             ]
         },
@@ -246,6 +247,15 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                     xtype: 'slate-cbl-attachmentsfield',
                     fieldLabel: 'Submission Attachments'
+                }
+            },
+            submissionsField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'Submissions',
+
+                    xtype: 'slate-cbl-submissionsfield',
+                    fieldLabel: 'Submissions'
                 }
             },
             commentsField: {
@@ -565,6 +575,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.getTaskAttachmentsField(),
                 me.getRatingsField(),
                 me.getAttachmentsField(),
+                me.getSubmissionsField(),
                 me.getCommentsField()
             ]);
 
