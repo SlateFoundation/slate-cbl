@@ -42,8 +42,21 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
             'Slate.cbl.field.ratings.SkillsField',
             'Slate.cbl.field.attachments.Field',
+            'Slate.cbl.field.SubmissionsField',
             'Slate.cbl.field.comments.Field'
         ],
+
+
+        statics: {
+            modelInclude: [
+                'availableActions',
+                'Attachments',
+                'Demonstration.DemonstrationSkills',
+                'Skills',
+                'Submissions',
+                'Comments.Creator'
+            ]
+        },
 
 
         config: {
@@ -236,6 +249,15 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                     fieldLabel: 'Submission Attachments'
                 }
             },
+            submissionsField: {
+                merge: mergeFn,
+                $value: {
+                    name: 'Submissions',
+
+                    xtype: 'slate-cbl-submissionsfield',
+                    fieldLabel: 'Submissions'
+                }
+            },
             commentsField: {
                 merge: mergeFn,
                 $value: {
@@ -347,6 +369,8 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
                 me.setTaskAttachmentsField(studentTask.get('TaskAttachments').length > 0);
 
+                me.getCommentsField().setReadOnly(!availableActions.comment);
+
                 me.setSaveBtn(
                     // eslint-disable-next-line no-nested-ternary
                     canEdit || canSubmit
@@ -397,7 +421,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         applyCompleteField: applyFn,
         updateCompleteField: function(field) {
             var me = this,
-            statusField = me.getStatusField(),
+                statusField = me.getStatusField(),
                 reassignField = me.getReassignField();
 
             field.on('change', function(field, checked) {
@@ -553,6 +577,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                 me.getTaskAttachmentsField(),
                 me.getRatingsField(),
                 me.getAttachmentsField(),
+                me.getSubmissionsField(),
                 me.getCommentsField()
             ]);
 

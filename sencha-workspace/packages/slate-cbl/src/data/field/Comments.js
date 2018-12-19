@@ -16,6 +16,17 @@ Ext.define('Slate.cbl.data.field.Comments', {
         }));
     },
 
+    serialize: function(value) {
+        if (!value) {
+            return [];
+        }
+
+        // only send new messages to server
+        return value
+            .filter(data => !data.ID)
+            .map(data => ({ Message: data.Message }));
+    },
+
     isEqual: function(value1, value2) {
         var length, i = 0,
             comment1, comment2;

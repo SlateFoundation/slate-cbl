@@ -12,28 +12,19 @@ Ext.define('Slate.cbl.field.comments.Field', {
 
 
     config: {
-        fieldLabel: 'Comments'
+        fieldLabel: 'Comments',
+        commentField: {
+            hidden: false
+        }
     },
 
 
     componentCls: 'slate-cbl-commentsfield',
     layout: 'anchor',
-    defaults: {
-        anchor: '100%'
-    },
     items: [
         {
-            itemId: 'field',
-
-            xtype: 'textarea',
-            emptyText: 'Enter a new comment to add on save',
-            grow: true,
-
-            submitValue: false,
-            excludeForm: true // exclude from any parent forms
-        },
-        {
             itemId: 'list',
+            anchor: '100%',
 
             xtype: 'container',
             // hidden: true,
@@ -49,19 +40,52 @@ Ext.define('Slate.cbl.field.comments.Field', {
 
 
     // config handlers
+    applyCommentField: function(commentField, oldCommentField) {
+        if (!commentField || typeof commentField == 'boolean') {
+            commentField = {
+                hidden: !commentField
+            };
+        }
+
+        if (Ext.isSimpleObject(commentField)) {
+            Ext.applyIf(commentField, {
+                anchor: '100%',
+
+                emptyText: 'Enter a new comment to add on save',
+                grow: true,
+
+                submitValue: false,
+                excludeForm: true // exclude from any parent forms
+            });
+        }
+
+        return Ext.factory(commentField, 'Ext.form.field.TextArea', oldCommentField);
+    },
+
+    updateCommentField: function(commentField, oldCommentField) {
+        if (oldCommentField) {
+            oldCommentField.un('change', 'syncValue', this);
+        }
+
+        if (commentField) {
+            commentField.on('change', 'syncValue', this);
+        }
+    },
+
+    updateReadOnly: function(readOnly) {
+        this.callParent(arguments);
+        this.setCommentField(!readOnly);
+    },
 
 
     // component lifecycle
     initItems: function() {
-        var me = this,
-            commentField;
+        var me = this;
 
         me.callParent();
 
-        commentField = me.commentField = me.getComponent('field');
+        me.items.insert(0, me.getCommentField());
         me.listCt = me.getComponent('list');
-
-        commentField.on('change', 'syncValue', me);
     },
 
 
@@ -100,7 +124,7 @@ Ext.define('Slate.cbl.field.comments.Field', {
 
         Ext.suspendLayouts();
 
-        me.commentField.setValue(null);
+        me.getCommentField().setValue(null);
         listCt.removeAll(true);
         listCt.add(value.map(data => ({ data })));
 
@@ -115,7 +139,7 @@ Ext.define('Slate.cbl.field.comments.Field', {
 
     syncValue: function() {
         var me = this,
-            newMessage = me.commentField.getValue(),
+            newMessage = me.getCommentField().getValue(),
             value = me.value || [],
             firstComment = value[0];
 

@@ -145,6 +145,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
     // event handlers
     onBootstrapDataLoad: function(app, bootstrapData) {
+        if (!bootstrapData) {
+            return;
+        }
 
         // configure model defaults from server configuration
         this.getTaskModel().loadFieldsConfig(bootstrapData.taskFields);
