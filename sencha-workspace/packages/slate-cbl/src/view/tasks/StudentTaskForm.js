@@ -46,6 +46,18 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         ],
 
 
+        statics: {
+            modelInclude: [
+                'availableActions',
+                'Attachments',
+                'Demonstration.DemonstrationSkills',
+                'Skills',
+                'Submitted',
+                'Comments.Creator'
+            ]
+        },
+
+
         config: {
             studentTask: null,
 
