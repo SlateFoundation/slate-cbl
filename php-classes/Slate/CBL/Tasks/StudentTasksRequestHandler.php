@@ -167,7 +167,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
 
         // apply related comments
-        if (isset($commentsData)) {
+        if (isset($commentsData) && $StudentTask->userCanComment()) {
             Comment::applyCommentsData($StudentTask, $commentsData);
         }
     }
