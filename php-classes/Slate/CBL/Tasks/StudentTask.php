@@ -233,11 +233,12 @@ class StudentTask extends \VersionedRecord
     public function userCanSubmitStudentTask(IPerson $User = null)
     {
         $User = $User ?: $this->getUserFromEnvironment();
+        $expirationDate = $this->ExpirationDate ?: $this->Task->ExpirationDate;
 
         return (
             $User
             && $User->ID == $this->StudentID
-            && (!$this->ExpirationDate || strtotime('23:59:59', $this->ExpirationDate) >= time())
+            && (!$expirationDate || strtotime('23:59:59', $expirationDate) >= time())
             && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canSubmitStatuses)
         );
     }
@@ -245,11 +246,12 @@ class StudentTask extends \VersionedRecord
     public function userCanResubmitStudentTask(IPerson $User = null)
     {
         $User = $User ?: $this->getUserFromEnvironment();
+        $expirationDate = $this->ExpirationDate ?: $this->Task->ExpirationDate;
 
         return (
             $User
             && $User->ID == $this->StudentID
-            && (!$this->ExpirationDate || strtotime('23:59:59', $this->ExpirationDate) >= time())
+            && (!$expirationDate || strtotime('23:59:59', $expirationDate) >= time())
             && in_array($this->getOriginalValue('TaskStatus') ?: $this->TaskStatus, static::$canResubmitStatuses)
         );
     }
