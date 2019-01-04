@@ -224,7 +224,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             demonstrationsAverage = studentCompetency.get('demonstrationsAverage');
             level = studentCompetency.get('Level');
             demonstrationsRequired = competency.getTotalDemonstrationsRequired(level);
-            percentComplete = 100 * studentCompetency.get('demonstrationsComplete') / demonstrationsRequired;
+            percentComplete = demonstrationsRequired ? 100 * studentCompetency.get('demonstrationsComplete') / demonstrationsRequired : null;
         }
 
         Ext.suspendLayouts();
@@ -234,7 +234,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             percentComplete: studentCompetency ? percentComplete : null,
             percentMissed: studentCompetency ? 100 * studentCompetency.get('demonstrationsMissed') / demonstrationsRequired : null,
             demonstrationsAverage: studentCompetency ? demonstrationsAverage : null,
-            isAverageLow: studentCompetency ? percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < studentCompetency.get('minimumAverage') : null,
+            isAverageLow: studentCompetency && percentComplete !== null ? percentComplete >= 50 && demonstrationsAverage !== null && demonstrationsAverage < studentCompetency.get('minimumAverage') : null,
             baselineRating: studentCompetency ? studentCompetency.get('BaselineRating') : null,
             growth: studentCompetency ? studentCompetency.get('growth') : null
         });
@@ -358,13 +358,20 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             skills = competency.get('Skills'),
             skillsLength = skills.length,
             skillIndex = 0, skill,
-            demonstrationsRequired, demonstrations, demonstrationsCount, lastDemonstration, isSkillComplete,
+            requirements, demonstrationsRequired, demonstrations, demonstrationsCount, lastDemonstration, isSkillComplete,
             tplData = [];
 
         for (; skillIndex < skillsLength; skillIndex++) {
             skill = skills[skillIndex];
-            demonstrationsRequired = skill.DemonstrationsRequired;
-            demonstrationsRequired = level && demonstrationsRequired[level] || demonstrationsRequired.default || 1;
+            requirements = skill.DemonstrationsRequired;
+
+            demonstrationsRequired = requirements[level];
+            if (typeof demonstrationsRequired == 'undefined') {
+                demonstrationsRequired = requirements.default;
+                if (typeof demonstrationsRequired == 'undefined') {
+                    demonstrationsRequired = 1;
+                }
+            }
 
             demonstrations = Ext.Array.clone(demonstrationsBySkill && demonstrationsBySkill[skill.ID] || []);
             demonstrationsCount = demonstrations.length;
@@ -384,7 +391,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             /* eslint-enable no-extra-parens */
 
             // fill demonstrations array with undefined items
-            demonstrations.length = demonstrationsRequired;
+            demonstrations.length = demonstrationsRequired || 1;
 
             tplData.push(Ext.applyIf({
                 isLevelComplete: isSkillComplete,

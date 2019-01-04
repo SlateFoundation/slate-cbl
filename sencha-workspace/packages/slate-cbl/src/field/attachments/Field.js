@@ -12,13 +12,15 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         /* global Slate */
         'Slate.cbl.data.field.Attachments',
         'Slate.cbl.field.attachments.Attachment',
-        'Slate.cbl.field.attachments.Link'
+        'Slate.cbl.field.attachments.Link',
+        'Slate.cbl.field.attachments.GoogleDriveFile' // TODO: move to slate-cbl-gdrive plugin
     ],
 
 
     config: {
         attachmentTypes: [
-            'Slate.cbl.field.attachments.Link'
+            'Slate.cbl.field.attachments.Link',
+            'Slate.cbl.field.attachments.GoogleDriveFile' // TODO: move to slate-cbl-gdrive plugin
         ],
         toolbar: true,
 
