@@ -103,10 +103,16 @@ Ext.define('Slate.cbl.model.Competency', {
 
 
     // local methods
-    getTotalDemonstrationsRequired: function(level) {
-        var totalDemonstrationsRequired = this.get('totalDemonstrationsRequired');
+    getTotalDemonstrationsRequired: function(userLevel) {
+        var me = this,
+            requirements = me.get('totalDemonstrationsRequired'),
+            total = requirements[userLevel];
 
-        return totalDemonstrationsRequired[level] || totalDemonstrationsRequired.default;
+        if (typeof total != 'undefined') {
+            return total;
+        }
+
+        return requirements.default;
     },
 
 
