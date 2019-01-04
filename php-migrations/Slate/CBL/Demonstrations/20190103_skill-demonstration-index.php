@@ -2,6 +2,8 @@
 
 namespace Slate\CBL\Demonstrations;
 
+use DB;
+
 // skip if table does not exist yet
 if (!static::tableExists(DemonstrationSkill::$tableName)) {
     printf("Skipping migration because table `%s` does not yet exist\n", DemonstrationSkill::$tableName);
@@ -10,7 +12,7 @@ if (!static::tableExists(DemonstrationSkill::$tableName)) {
 
 
 // skip if DemonstrationID index already exists
-$indexData = \DB::oneRecord(
+$indexData = DB::oneRecord(
     '
     SELECT *
       FROM information_schema.STATISTICS
