@@ -16,6 +16,7 @@ class DemonstrationSkill extends \VersionedRecord
     public static $fields = [
         'DemonstrationID' => [
             'type' => 'uint'
+            ,'index' => true
         ],
         'SkillID' => [
             'type' => 'uint'
