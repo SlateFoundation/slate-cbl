@@ -51,6 +51,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
             modelInclude: [
                 'availableActions',
                 'Attachments',
+                'Attachments.File', // TODO: move to slate-cbl-gdrive plugin
                 'Demonstration.DemonstrationSkills',
                 'Skills',
                 'Submissions',
