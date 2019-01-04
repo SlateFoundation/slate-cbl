@@ -4,6 +4,7 @@ Ext.define('Slate.cbl.proxy.StudentCompetencies', {
 
 
     config: {
-        url: '/cbl/student-competencies'
+        url: '/cbl/student-competencies',
+        timeout: 120000
     }
 });
