@@ -8,11 +8,15 @@ caddy_root="http://localhost:${caddy_port}"
 # install additional packages
 echo
 echo "--> Installing additional studio packages for slate-cbl development..."
-hab pkg install jarvus/sencha-cmd/6.5.2.15 core/caddy core/git jarvus/underscore jarvus/cadaver
+hab pkg install emergence/studio jarvus/sencha-cmd/6.5.2.15 core/caddy core/git jarvus/underscore jarvus/cadaver
 hab pkg binlink jarvus/sencha-cmd sencha
 hab pkg binlink core/caddy caddy
 hab pkg binlink core/git git
 hab pkg binlink jarvus/underscore underscore
+
+
+# load emergence studio
+source "$(hab pkg path emergence/studio)/studio.sh"
 
 
 # setup sencha cmd
