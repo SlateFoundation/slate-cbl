@@ -36,7 +36,6 @@
      *
      *    "toolkit": "classic",
      */
-    "toolkit": "classic",
 
      /**
       * The author of the package.
@@ -227,6 +226,7 @@
      *     "framework": "ext",
      */
     "framework": "ext",
+    "framework.version": "5.1.1.451",
 
     /**
      * Packages can require other packages in the same way that applications can require
