@@ -1,8 +1,6 @@
 Ext.define('SlateTasksManager.store.ParentTasks', {
-    extend: 'Ext.data.Store',
+    extend: 'Slate.cbl.store.tasks.Tasks',
 
-
-    model: 'Slate.cbl.model.task.Task',
     config: {
         proxy: {
             type: 'slate-cbl-tasks',

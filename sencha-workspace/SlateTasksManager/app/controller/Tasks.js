@@ -12,13 +12,12 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     ],
 
     stores: [
-        // 'ParentTasks',
-        // 'Skills@Slate.cbl.store'
         'Tasks'
+        // 'ParentTasks'
     ],
 
     models: [
-        // 'Task@Slate.cbl.model.tasks'
+        'Task@Slate.cbl.model.tasks'
     ],
 
     config: {
@@ -45,9 +44,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     control: {
-        // 'slate-tasks-manager toolbar button[action=delete]': {
-        //     click: 'onDeleteTaskClick'
-        // },
+        'slate-tasks-manager toolbar button[action=delete]': {
+            click: 'onDeleteTaskClick'
+        },
         'slate-tasks-manager toolbar button[action=edit]': {
             click: 'onEditTaskClick'
         },
@@ -86,27 +85,28 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         return me.editTask(selection);
     },
 
-    // onDeleteTaskClick: function() {
-    //     var me = this,
-    //         taskManager = me.getTasksManager(),
-    //         selection = taskManager.getSelection()[0],
-    //         title, message;
+    onDeleteTaskClick: function() {
+        var me = this,
+            taskManager = me.getTasksManager(),
+            selection = taskManager.getSelection()[0],
+            title, message;
 
-    //     if (!selection) {
-    //         Ext.Msg.alert('Delete Task', 'Nothing selected. Please select a task to delete.');
-    //         return;
-    //     }
+        if (!selection) {
+            Ext.Msg.alert('Delete Task', 'Nothing selected. Please select a task to delete.');
+            return;
+        }
 
-    //     title = 'Delete Task';
-    //     message = 'Are you sure you want to delete this task? <br><strong>' + selection.get('Title') + '</strong>';
-    //     Ext.Msg.confirm(title, message, function(response) {
-    //         if (response === 'yes') {
-    //             me.deleteTask(selection);
-    //         }
-    //     });
-    // },
+        title = 'Delete Task';
+        message = 'Are you sure you want to delete this task? <br><strong>' + selection.get('Title') + '</strong>';
+        Ext.Msg.confirm(title, message, function(response) {
+            if (response === 'yes') {
+                me.deleteTask(selection);
+            }
+        });
+    },
 
     onSaveTaskClick: function() {
+        debugger;
         return this.saveTask();
     },
 
@@ -198,12 +198,12 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         taskEditor.show();
     },
 
-    // deleteTask: function(taskRecord) {
-    //     var store = this.getTasksStore();
+    deleteTask: function(taskRecord) {
+        var store = this.getTasksStore();
 
-    //     store.remove(taskRecord);
-    //     store.sync();
-    // },
+        store.remove(taskRecord);
+        store.sync();
+    },
 
     // cloneTask: function(taskRecord) {
     //     var me = this,

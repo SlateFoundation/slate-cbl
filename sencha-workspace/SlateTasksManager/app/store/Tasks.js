@@ -5,7 +5,10 @@ Ext.define('SlateTasksManager.store.Tasks', {
       proxy: {
           type: 'slate-cbl-tasks',
           include: [
-              'Attachments'
+              'Attachments',
+              'Creator',
+              'ParentTask',
+              'Skills'
           ]
       }
   }

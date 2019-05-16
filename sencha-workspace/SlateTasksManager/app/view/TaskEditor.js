@@ -28,7 +28,7 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
         footer.down('button[action=submit]').setText(task.phantom ? 'Create' : 'Save');
 
         if (task.get('ParentTaskID')) {
-            parentTaskField = form.down('slate-tasks-titlefield[name=ParentTaskID]');
+            parentTaskField = me.getParentTaskField();
             parentTaskStore = parentTaskField.getStore();
             //load parent task if store does not contain the record
             if (!parentTaskStore.getById(task.get('ParentTaskID'))) {
