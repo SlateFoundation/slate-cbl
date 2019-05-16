@@ -56,7 +56,11 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             },
             {
                 text: 'Subtask of&hellip;',
-                dataIndex: 'ParentTaskTitle'
+                dataIndex: 'ParentTask',
+                xtype: 'templatecolumn',
+                tpl: [
+                    '<tpl for="ParentTask">{Title}</tpl>'
+                ]
             },
             {
                 text: 'Type of Exp.',
@@ -68,13 +72,17 @@ Ext.define('SlateTasksManager.view.TasksManager', {
                 dataIndex: 'Skills',
                 xtype: 'templatecolumn',
                 tpl: [
-                    '<tpl for="Skills" between=", ">{Code}</tpl>'
+                    '<tpl for="Skills">{.}</tpl>'
                 ]
             },
             {
                 text: 'Created by',
-                dataIndex: 'CreatorFullName',
-                width: 160
+                dataIndex: 'Creator',
+                width: 160,
+                xtype: 'templatecolumn',
+                tpl: [
+                    '<tpl for="Creator">{FirstName} {LastName}</tpl>'
+                ]
             },
             {
                 text: 'Created',
