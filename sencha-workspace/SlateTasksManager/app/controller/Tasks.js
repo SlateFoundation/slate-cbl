@@ -12,8 +12,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     ],
 
     stores: [
-        'Tasks'
-        // 'ParentTasks'
+        'Tasks',
+        'ParentTasks'
     ],
 
     models: [
@@ -50,9 +50,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slate-tasks-manager toolbar button[action=edit]': {
             click: 'onEditTaskClick'
         },
-        // 'slate-tasks-manager toolbar button[action=create]': {
-        //     click: 'onCreateTaskClick'
-        // },
+        'slate-tasks-manager toolbar button[action=create]': {
+            click: 'onCreateTaskClick'
+        },
         'slatetasksmanager-task-editor button[action=submit]': {
             click: 'onSaveTaskClick'
         },
@@ -71,9 +71,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         this.getTasksStore().load();
     },
 
-    // onCreateTaskClick: function() {
-    //     return this.editTask();
-    // },
+    onCreateTaskClick: function() {
+        return this.editTask();
+    },
 
     onEditTaskClick: function() {
         var me = this,
@@ -106,7 +106,6 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     onSaveTaskClick: function() {
-        debugger;
         return this.saveTask();
     },
 
@@ -156,6 +155,12 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             Skills: skillsField.getValue(),
             Attachments: attachmentsField.getValue()
         });
+
+        if (!record.get('SectionID')) {
+            record.set({
+                SectionID: -1
+            });
+        }
 
         errors = record.validate();
 

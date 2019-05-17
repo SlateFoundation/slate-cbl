@@ -1,15 +1,10 @@
 Ext.define('SlateTasksManager.store.ParentTasks', {
-    extend: 'Slate.cbl.store.tasks.Tasks',
+    extend: 'Ext.data.ChainedStore',
 
     config: {
-        proxy: {
-            type: 'slate-cbl-tasks',
-            extraParams: {
-                excludeSubtasks: true
-            },
-            include: [
-                'Creator'
-            ]
-        }
-    }
+        source: 'Tasks',
+        filters: [
+            item => item.data.ParentTaskID === null
+        ]
+    },
 });
