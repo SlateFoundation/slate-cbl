@@ -36,6 +36,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slatetasksmanager-task-editor'
             },
             taskDetails: 'slate-tasks-manager-details',
+            clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]'
             // taskEditorForm: 'slatetasksmanager-task-editor slate-modalform',
             // skillsField: 'slate-skillsfield',
             // attachmentsField: 'slate-tasks-attachmentsfield',
@@ -56,10 +57,10 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slatetasksmanager-task-editor button[action=submit]': {
             click: 'onSaveTaskClick'
         },
-        // // TODO: clonable was deleted from the form, due this another way
-        // 'slatetasksmanager-task-editor slate-tasks-titlefield[clonable]': {
-        //     select: 'onClonableTitleFieldSelect'
-        // },
+        clonedTaskField: {
+            beforeselect: 'onBeforeClonedTaskSelect',
+            select: 'onClonedTaskSelect'
+        },
         tasksManager: {
             rowdblclick: 'onEditTaskClick',
             select: 'onTaskManagerRecordSelect'
@@ -109,22 +110,81 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         return this.saveTask();
     },
 
-    // onClonableTitleFieldSelect: function(combo) {
-    //     var me = this,
-    //         record = combo.getSelectedRecord(),
-    //         title = 'New Task',
-    //         message = 'Do you want to clone this task?<br><strong>' + record.get('Title') + '</strong>';
-
-    //     Ext.Msg.confirm(title, message, function(btnId) {
-    //         if (btnId === 'yes') {
-    //             me.cloneTask(record);
-    //         }
-    //     });
-    // },
-
     onTaskManagerRecordSelect: function() {
         this.showTaskDetails();
     },
+
+    onBeforeClonedTaskSelect: function(clonedTaskField, clonedTask) {
+        var formPanel = this.getTaskEditor();
+
+        if (!formPanel.getTask().phantom) {
+            return true;
+        }
+
+        if (
+            clonedTaskField.confirmedOverwrite === clonedTask
+            || !formPanel.isDirty()
+        ) {
+            delete clonedTaskField.confirmedOverwrite;
+            return true;
+        }
+
+        Ext.Msg.confirm(
+            'Are you sure?',
+            'Selecting a task to clone may overwrite what you have input already, proceed?',
+            function(btnId) {
+                if (btnId == 'yes') {
+                    clonedTaskField.confirmedOverwrite = clonedTask;
+                    clonedTaskField.setSelection(clonedTask);
+                }
+            }
+        );
+
+        return false;
+    },
+
+    onClonedTaskSelect: function(clonedTaskField, clonedTask) {
+        var formPanel = this.getTaskEditor(),
+            form = formPanel.getForm(),
+            fields = clonedTask.getFields(),
+            fieldsLength = fields.length, fieldIndex = 0, field, fieldName, formField;
+
+        formPanel.setLoading('Cloning task&hellip;');
+
+        clonedTask.load({
+            success: function(loadedTask, operation) {
+                for (; fieldIndex < fieldsLength; fieldIndex++) {
+                    field = fields[fieldIndex];
+
+                    if (!field.clonable) {
+                        continue;
+                    }
+
+                    fieldName = field.name;
+                    formField = form.findField(fieldName);
+
+                    if (formField) {
+                        formField.setValue(loadedTask.get(fieldName));
+                    } else {
+                        Ext.Logger.warn('Could not find form field for clonable task model field: '+fieldName);
+                    }
+                }
+
+                formPanel.setLoading(false);
+            },
+            failure: function(savedTask, operation) {
+                formPanel.setLoading(false);
+
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
+    },
+
 
     showTaskDetails: function(task) {
         var me = this,
@@ -189,6 +249,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         var me = this,
             taskEditor = me.getTaskEditor();
 
+        taskEditor.setClonedTaskDisplayField({ hidden: !taskRecord });
+        taskEditor.setClonedTaskField({ hidden: !!taskRecord });
+
         if (!taskRecord) {
             taskRecord = me.getTaskModel().create({
                 SectionID: 0
@@ -204,16 +267,5 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
         store.remove(taskRecord);
         store.sync();
-    },
-
-    // cloneTask: function(taskRecord) {
-    //     var me = this,
-    //         taskCopy = taskRecord.copy(null);
-
-    //     taskCopy.set({
-    //         Title: taskCopy.get('Title') + ' Clone'
-    //     });
-
-    //     me.editTask(taskCopy);
-    // }
+    }
 });

@@ -8,7 +8,8 @@ Ext.define('SlateTasksManager.store.Tasks', {
               'Attachments',
               'Creator',
               'ParentTask',
-              'Skills'
+              'Skills',
+              'ClonedTask'
           ]
       }
   }
