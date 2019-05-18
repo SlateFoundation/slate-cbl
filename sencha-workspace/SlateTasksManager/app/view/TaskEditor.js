@@ -15,6 +15,10 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
                 store: 'ParentTasks'
             }
         },
+
+        clonedTaskDisplayField: {
+            $value: false
+        }
     },
 
     enableAssignments: false,
