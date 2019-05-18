@@ -156,12 +156,6 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             Attachments: attachmentsField.getValue()
         });
 
-        if (!record.get('SectionID')) {
-            record.set({
-                SectionID: -1
-            });
-        }
-
         errors = record.validate();
 
         if (errors.length) {
@@ -196,7 +190,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             taskEditor = me.getTaskEditor();
 
         if (!taskRecord) {
-            taskRecord = me.getTaskModel().create();
+            taskRecord = me.getTaskModel().create({
+                SectionID: 0
+            });
         }
 
         taskEditor.setTask(taskRecord);

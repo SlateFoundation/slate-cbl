@@ -71,7 +71,10 @@ class Task extends \VersionedRecord
     ];
 
     public static $validators = [
-        'Section' => 'require-relationship',
+        'Section' => [
+            'type' => 'require-relationship',
+            'required' => false
+        ],
         'Title'
     ];
 

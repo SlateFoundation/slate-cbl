@@ -218,7 +218,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
         {
             type: 'range',
             field: 'SectionID',
-            min: 1,
+            min: 0,
             emptyMessage: 'SectionID is required'
         },
         {
