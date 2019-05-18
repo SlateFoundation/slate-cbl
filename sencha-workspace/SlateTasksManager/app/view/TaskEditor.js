@@ -6,6 +6,10 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
         task: null,
         floating: true,
         closable: true,
+        sectionField: {
+            $value: false
+        },
+
         parentTaskField: {
             $value: {
                 store: 'ParentTasks'

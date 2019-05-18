@@ -71,11 +71,11 @@ class Task extends \VersionedRecord
     ];
 
     public static $validators = [
-        'Section' => 'require-relationship',
-        'Title',
-        'ParentTaskID' => [
-            'validator' => [__CLASS__, 'validateParentTask']
-        ]
+        'Section' => [
+            'type' => 'require-relationship',
+            'required' => false
+        ],
+        'Title'
     ];
 
     public static $relationships = [
