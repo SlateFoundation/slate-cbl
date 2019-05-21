@@ -1,14 +1,14 @@
 Ext.define('SlateTasksManager.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
-        // 'Slate.API',
-        // 'Ext.window.Toast'
+        'Slate.API',
+        'Ext.window.Toast'
     ],
 
     views: [
         'TasksManager',
-        'TaskEditor'
-        // 'TaskDetails'
+        'TaskForm@Slate.cbl.view.tasks',
+        'Window@Slate.ui'
     ],
 
     stores: [
@@ -29,18 +29,31 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slate-tasks-manager'
             },
 
-            taskEditor: {
-                selector: 'slatetasksmanager-task-editor',
+            taskDetails: 'slate-tasks-manager-details',
+            clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
+
+            taskWindow: {
                 autoCreate: true,
 
-                xtype: 'slatetasksmanager-task-editor'
-            },
-            taskDetails: 'slate-tasks-manager-details',
-            clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]'
-            // taskEditorForm: 'slatetasksmanager-task-editor slate-modalform',
-            // skillsField: 'slate-skillsfield',
-            // attachmentsField: 'slate-tasks-attachmentsfield',
-            // taskStatusField: 'slatetasksmanager-task-editor #status'
+                xtype: 'slate-window',
+                closeAction: 'hide',
+                modal: true,
+                layout: 'fit',
+                minWidth: 300,
+                width: 600,
+                minHeight: 600,
+
+                mainView: {
+                    xtype: 'slate-cbl-tasks-taskform',
+
+                    parentTaskField: {
+                        store: 'ParentTasks'
+                    },
+                    sectionField: false,
+                    clonedTaskDisplayField: false,
+                    assignmentsField: false
+                }
+            }
         }
     },
 
@@ -54,15 +67,18 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slate-tasks-manager toolbar button[action=create]': {
             click: 'onCreateTaskClick'
         },
-        'slatetasksmanager-task-editor button[action=submit]': {
+        'slate-cbl-tasks-taskform ^ window button[action=submit]': {
             click: 'onSaveTaskClick'
+        },
+        'slate-cbl-tasks-taskform': {
+            taskchange: 'onTaskFormTaskChange'
         },
         clonedTaskField: {
             beforeselect: 'onBeforeClonedTaskSelect',
             select: 'onClonedTaskSelect'
         },
         tasksManager: {
-            rowdblclick: 'onEditTaskClick',
+            rowdblclick: 'onTaskManagerRowDblClick',
             select: 'onTaskManagerRecordSelect'
         }
     },
@@ -72,18 +88,23 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         this.getTasksStore().load();
     },
 
-    onCreateTaskClick: function() {
-        return this.editTask();
+    onCreateTaskClick: function({ btnEl: { el }}) {
+        return this.editTask({
+            animateTarget: el
+        });
     },
 
-    onEditTaskClick: function() {
+    onEditTaskClick: function({ el }) {
         var me = this,
-            selection = me.getTasksManager().getSelection()[0];
+            task = me.getTasksManager().getSelection()[0];
 
-        if (!selection) {
+        if (!task) {
             return Ext.Msg.alert('Edit Task', 'Nothing selected. Please select a task to edit.');
         }
-        return me.editTask(selection);
+        return me.editTask({
+            task,
+            animateTarget: el
+        });
     },
 
     onDeleteTaskClick: function() {
@@ -114,16 +135,24 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         this.showTaskDetails();
     },
 
-    onBeforeClonedTaskSelect: function(clonedTaskField, clonedTask) {
-        var formPanel = this.getTaskEditor();
+    onTaskManagerRowDblClick: function(taskManager, task, taskRowEl) {
+        return this.editTask({
+            task,
+            animateTarget: taskRowEl
+        });
+    },
 
-        if (!formPanel.getTask().phantom) {
+    onBeforeClonedTaskSelect: function(clonedTaskField, clonedTask) {
+        var taskWindow = this.getTaskWindow(),
+            taskEditor = taskWindow.getMainView();
+
+        if (!taskEditor.getTask().phantom) {
             return true;
         }
 
         if (
             clonedTaskField.confirmedOverwrite === clonedTask
-            || !formPanel.isDirty()
+            || !taskEditor.isDirty()
         ) {
             delete clonedTaskField.confirmedOverwrite;
             return true;
@@ -144,7 +173,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     onClonedTaskSelect: function(clonedTaskField, clonedTask) {
-        var formPanel = this.getTaskEditor(),
+        var taskWindow = this.getTaskWindow(),
+            formPanel = taskWindow.getMainView(),
             form = formPanel.getForm(),
             fields = clonedTask.getFields(),
             fieldsLength = fields.length, fieldIndex = 0, field, fieldName, formField;
@@ -185,6 +215,49 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         });
     },
 
+    onTaskFormTaskChange: function(form, task, oldTask) {
+        var me = this,
+            skillsField = form.getSkillsSelectorField(),
+            attachmentsField = form.getAttachmentsField(),
+            parentTaskField = form.getParentTaskField(),
+            footer = form.getFooter(),
+            statusField = footer.down('checkboxfield[name=Status]');
+
+        form.reset();
+        statusField.setValue(task.get('Status') ? task.get('Status') : 'shared');
+        form.loadRecord(task);
+        skillsField.setValue(task.get('Skills'));
+        attachmentsField.setValue(task.get('Attachments'));
+
+        form.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
+        footer.down('button[action=submit]').setText(task.phantom ? 'Create' : 'Save');
+
+        // clear previous filters
+        parentTaskField.getStore().clearFilter();
+        // filter out subtasks and current task
+        parentTaskField
+            .getStore()
+            .filterBy(
+                rec => rec.get('ParentTaskID') === null && rec.getId() !== task.getId()
+            );
+
+        if (task.get('ParentTaskID')) {
+            parentTaskStore = parentTaskField.getStore();
+            //load parent task if store does not contain the record
+            if (!parentTaskStore.getById(task.get('ParentTaskID'))) {
+                parentTaskStore.source.load({
+                    url: Slate.API.buildUrl('/cbl/tasks/'+task.get('ParentTaskID')),
+                    params: {
+                        summary: true
+                    },
+                    addRecords: true,
+                    callback: function (records) {
+                        parentTaskField.setValue(task.get('ParentTaskID'));
+                    }
+                });
+            }
+        }
+    },
 
     showTaskDetails: function(task) {
         var me = this,
@@ -200,12 +273,12 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     saveTask: function() {
         var me = this,
-            form = me.getTaskEditor(),
+            taskWindow = me.getTaskWindow(),
+            form = taskWindow.getMainView(),
+            record = form.getRecord(),
             skillsField = form.getSkillsSelectorField(),
             attachmentsField = form.getAttachmentsField(),
             statusField = form.getFooter().down('checkboxfield[name=Status]'),
-            record = form.getRecord(),
-            gridSelection = me.getTasksManager().getSelection()[0],
             errors;
 
         form.updateRecord(record);
@@ -229,7 +302,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             return;
         }
 
-        form.setLoading('Saving task&hellip;');
+        taskWindow.setLoading('Saving task&hellip;');
         record.save({
             success: function(savedTask) {
                 var tasksStore = me.getTasksStore();
@@ -238,13 +311,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 tasksStore.mergeData([savedTask]);
                 tasksStore.endUpdate();
 
-                form.setLoading(false);
-                form.hide();
+                taskWindow.setLoading(false);
+                taskWindow.hide();
 
                 Ext.toast('Task succesfully saved!');
             },
             failure: function(savedTask, operation) {
-                form.setLoading(false);
+                taskWindow.setLoading(false);
                 Ext.Msg.show({
                     title: 'Failed to save task',
                     message: Ext.util.Format.htmlEncode(operation.getError()),
@@ -255,21 +328,26 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         });
     },
 
-    editTask: function(taskRecord) {
+    editTask: function({ task, animateTarget }) {
         var me = this,
-            taskEditor = me.getTaskEditor();
+            taskWindow = me.getTaskWindow({
+                ownerCmp: me.getTasksManager()
+            }),
+            taskEditor = taskWindow.getMainView();
 
-        taskEditor.setClonedTaskDisplayField({ hidden: !taskRecord });
-        taskEditor.setClonedTaskField({ hidden: !!taskRecord });
-
-        if (!taskRecord) {
-            taskRecord = me.getTaskModel().create({
-                SectionID: 0
-            });
+        if (!task || (typeof task == 'object' && !task.isModel)) {
+            task = me.getTaskModel().create(Ext.apply({
+                SectionID: 0,
+                Status: 'shared'
+            }, task || null));
         }
 
-        taskEditor.setTask(taskRecord);
-        taskEditor.show();
+        taskWindow.animateTarget = animateTarget;
+        taskEditor.setClonedTaskDisplayField({ hidden: !task });
+        taskEditor.setClonedTaskField({ hidden: !!task });
+        taskEditor.setTask(task);
+
+        taskWindow.show();
     },
 
     deleteTask: function(taskRecord) {
