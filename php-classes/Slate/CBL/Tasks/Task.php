@@ -75,7 +75,10 @@ class Task extends \VersionedRecord
             'type' => 'require-relationship',
             'required' => false
         ],
-        'Title'
+        'Title',
+        'Status' => [
+            'validator' => [__CLASS__, 'validateTaskStatus']
+        ]
     ];
 
     public static $relationships = [
@@ -197,5 +200,14 @@ class Task extends \VersionedRecord
         ));
 
         return DB::affectedRows() > 0;
+    }
+
+    protected static function validateTaskStatus(\RecordValidator $RecordValidator, Task $Record, $options = [], $validatorKey)
+    {
+        if (!$RecordValidator->hasErrors($validatorKey)) {
+            if ($Record->Status === 'private' && !$Record->SectionID) {
+                $RecordValidator->addError($validatorKey, 'Tasks not assigned to a section must be made "public".');
+            }
+        }
     }
 }
