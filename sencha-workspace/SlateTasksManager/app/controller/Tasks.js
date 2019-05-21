@@ -229,18 +229,28 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             return;
         }
 
+        form.setLoading('Saving task&hellip;');
         record.save({
-            success: function(rec) {
-                me.getTaskEditor().close();
-                me.getTasksStore().reload({
-                    callback: function() {
-                        // update task details window if record is updated.
-                        if (gridSelection && gridSelection.getId() === rec.getId()) {
-                            me.getTaskDetails().updateTask(rec);
-                        }
-                    }
-                });
+            success: function(savedTask) {
+                var tasksStore = me.getTasksStore();
+
+                tasksStore.beginUpdate();
+                tasksStore.mergeData([savedTask]);
+                tasksStore.endUpdate();
+
+                form.setLoading(false);
+                form.hide();
+
                 Ext.toast('Task succesfully saved!');
+            },
+            failure: function(savedTask, operation) {
+                form.setLoading(false);
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
             }
         });
     },
