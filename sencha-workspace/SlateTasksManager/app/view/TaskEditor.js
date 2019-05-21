@@ -27,6 +27,7 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
         var me = this,
             skillsField = me.getSkillsSelectorField(),
             attachmentsField = me.getAttachmentsField(),
+            parentTaskField = me.getParentTaskField(),
             footer = me.getFooter(),
             statusField = footer.down('checkboxfield[name=Status]');
 
@@ -39,6 +40,14 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
 
         me.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
         footer.down('button[action=submit]').setText(task.phantom ? 'Create' : 'Save');
+        // clear previous filters
+        parentTaskField
+            .getStore()
+            .clearFilter();
+        // filter out subtasks and current task
+        parentTaskField
+            .getStore()
+            .filterBy(rec => rec.get('ParentTaskID') === null && rec.getId() !== task.getId());
 
         if (task.get('ParentTaskID')) {
             parentTaskField = me.getParentTaskField();
