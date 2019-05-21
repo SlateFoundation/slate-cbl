@@ -51,7 +51,6 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
             .filterBy(rec => rec.get('ParentTaskID') === null && rec.getId() !== task.getId());
 
         if (task.get('ParentTaskID')) {
-            parentTaskField = me.getParentTaskField();
             parentTaskStore = parentTaskField.getStore();
             //load parent task if store does not contain the record
             if (!parentTaskStore.getById(task.get('ParentTaskID'))) {
