@@ -6,6 +6,7 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
         task: null,
         floating: true,
         closable: true,
+        draggable: true,
         sectionField: {
             $value: false
         },
