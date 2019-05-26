@@ -5,6 +5,7 @@
 3. Open a pull request aganist the `develop` branch in the [SlateFoundation/slate-cbl](https://github.com/SlateFoundation/slate-cbl) repository
 
 ## Tips for Quality Pull Requests
+
 - Adhere to Chris Beams' guide on [How to Write a Git Commit Message](http://chris.beams.io/posts/git-commit/)
 - Describe and link to any relevant issues or materials that prompted the changes
 - Explain any complexity being added that may be non-obvious

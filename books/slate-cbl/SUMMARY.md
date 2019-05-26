@@ -26,4 +26,3 @@
   * [Contributing Improvements](development/contributing.md)
   * [Making a Release](development/releases.md)
   * [Deploying a Release](development/deployment.md)
-

@@ -23,25 +23,25 @@
 - Spreadsheet file that organizes content areas, competencies and standards for upload into the CBL tool
 - Organized with each content area on a separate worksheet
 - [Example of competency map](https://docs.google.com/spreadsheets/u/2/d/1LnjTF5i2CeQrR9EQLB0llomtkpJ_xx38oyjat8wr2_g/edit)
-- Currently, concrete content areas like English and Math have the same year-over-year competencies and standards with the number of demonstrations required remaining the same at all levels. In the future, standards and number of demonstrations will need to be specified by level. 
+- Currently, concrete content areas like English and Math have the same year-over-year competencies and standards with the number of demonstrations required remaining the same at all levels. In the future, standards and number of demonstrations will need to be specified by level.
 
 ### Demonstration
 
 - A project, piece of work or artifact where students show evidence of competence in one or more competencies
 - Demonstrations can include a single standard, multiple standards within a single content area or competency, or multiple standards across different content areas and competencies
-- The task database extends the demonstration model to support creation up front and assigning 
+- The task database extends the demonstration model to support creation up front and assigning
 
 ### Level (aka Portfolio)
 
 - Students begin each competency on a specific level and progress when the criteria to complete that level has been met
-- Some schools use levels roughly equivalent to traditional grade levels while others set the levels based on a scale independent of grade levels (such as Portfolio years) 
+- Some schools use levels roughly equivalent to traditional grade levels while others set the levels based on a scale independent of grade levels (such as Portfolio years)
 - Future plans: Introduce the ability to set each students’ starting level for each competency independently
 
 ### Continua
 
 - The level that each standard is rated on
 - Must be developed and defined consistently to ensure consistency across all evaluators (not trivial at all but B21 willingly shares their continua)
-- Ranges from 1-12 for Building21's model 
+- Ranges from 1-12 for Building21's model
 - [Example of a continua](https://docs.google.com/spreadsheets/d/1ecDsgv0X8NzjUi-0D9b2oF3tqYx-THfaHTtdSmL-2u4/edit#gid=720733250)
 
 ### Rating
@@ -90,7 +90,7 @@
 ### Expiration Date
 
 - The date a task can no longer be submitted
-- When this date arrives, the submit button is deactivated for students 
+- When this date arrives, the submit button is deactivated for students
 - In order to submit after this date, the teacher must change the Expiration date to a date in the future
 
 ### Subtask
