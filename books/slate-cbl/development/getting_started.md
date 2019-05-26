@@ -1,5 +1,7 @@
 # Getting Started with Development
 
+## Launch local development studio
+
 1. Install habitat
 
     ```bash
@@ -32,7 +34,9 @@
     ./pull
     ```
 
-1. Launch habitat studio
+1. Launch Habitat studio
+
+    If you're working in *Visual Studio Code*, just run the task `studio:launch` to open a configured and persistent studio. Otherwise you'll need to launch a Habitat studio manually from a terminal.
 
     On Linux, just run:
 
@@ -43,10 +47,68 @@
     On Mac or Windows, prefix this command with additional options to expose the development web server outside the studio:
 
     ```bash
-    HAB_DOCKER_OPTS="-p 3901:3901" hab studio enter
+    HAB_DOCKER_OPTS="-p 7080:7080 -p 7081:7081" hab studio enter
     ```
 
-Read the notes printed to your terminal at the end of the studio startup process for instructions on how to access applications in your browser and on what commands are available.
+    Review the notes printed to your terminal at the end of the studio startup process for a list of all available studio commands.
+
+## Bootstrap backend
+
+1. Start environment services
+
+    Use the studio command `start-all` to launch the http server (nginx), the application runtime (php-fpm), and a local mysql server:
+
+    ```bash
+    start-all
+    ```
+
+    At this point, you should be able to open [localhost:7080](http://localhost:7080) and see the error message `Page not found`.
+
+1. Build environment
+
+    To build the entire environment and load it, use the studio command `update-site`:
+
+    ```bash
+    update-site
+    ```
+
+    At this point, [localhost:7080](http://localhost:7080) should display the current build of the site
+
+1. Load fixture data into site database (optional)
+
+    ```bash
+    # clone fixture branch into git-ignored .data/ directory
+    git clone -b cbl/full https://github.com/SlateFoundation/slate-fixtures.git .data/fixtures
+
+    # ensure at least empty database exists
+    echo 'CREATE DATABASE IF NOT EXISTS `default`' | shell-mysql
+
+    # load all .sql files from fixture
+    cat .data/fixtures/*.sql | load-sql -
+    ```
+
+1. Enable user registration form (optional)
+
+    ```bash
+    # ensure directory exists for `Emergence\People\RegistrationRequestHandler` class configuration fragments
+    mkdir -p php-config/Emergence/People/RegistrationRequestHandler.config.d
+
+    # write fragment enabling registration
+    echo '<?php Emergence\People\RegistrationRequestHandler::$enableRegistration = true;' > php-config/Emergence/People/RegistrationRequestHandler.config.php
+
+    # rebuild environment
+    update-site
+    ```
+
+    After visiting [`/register`](http://localhost:7080/register) and creating a new user account, you can use the studio command `promote-user` to upgrade the user account you just registered to the highest access level:
+
+    ```bash
+    promote-user <myuser>
+    ```
+
+## Develop backend code
+
+After editing code in the working tree, run the studio command `update-site` to rebuild and update the environment. A `watch-site` command is also available to automatically rebuild and update the environment as changes are made to the working tree.
 
 ## Client-side UI application documentation
 

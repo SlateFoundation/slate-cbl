@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-caddy_port="3901"
+caddy_port="7081"
 caddy_root="http://localhost:${caddy_port}"
 
 
