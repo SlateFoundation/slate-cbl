@@ -52,7 +52,7 @@
 
     Review the notes printed to your terminal at the end of the studio startup process for a list of all available studio commands.
 
-## Bootstrap backend
+## Bootstrap and develop backend
 
 1. Start environment services
 
@@ -106,9 +106,31 @@
     promote-user <myuser>
     ```
 
-## Develop backend code
-
 After editing code in the working tree, run the studio command `update-site` to rebuild and update the environment. A `watch-site` command is also available to automatically rebuild and update the environment as changes are made to the working tree.
+
+## Bootstrap and develop frontend apps
+
+Each frontend Sencha application needs to be built at least once with the Sencha CMD build tool to scaffold/update a set of loader files. After that, you can just edit files the working tree and reload the browser. The two exceptions where you need to build again are changing the list of packages or changing the list of override files.
+
+There is a shortcut studio command for building each frontend application:
+
+- `build-enroll-admin`
+- `build-demos-teacher`
+- `build-demos-student`
+- `build-tasks-manager`
+- `build-tasks-teacher`
+- `build-tasks-student`
+
+Once built, the live-editable version of each app can be accessed via the static web server that the studio runs on port `7081`. The backend host must be provided to the apps via the `?apiHost` query parameter. Any remote backend with CORS enabled will work, or you can use the local backend:
+
+- [`localhost:7081/SlateStudentCompetenciesAdmin/?apiHost=localhost:7080`](http://localhost:7081/SlateStudentCompetenciesAdmin/?apiHost=localhost:7080)
+- [`localhost:7081/SlateDemonstrationsTeacher/?apiHost=localhost:7080`](http://localhost:7081/SlateDemonstrationsTeacher/?apiHost=localhost:7080)
+- [`localhost:7081/SlateDemonstrationsStudent/?apiHost=localhost:7080`](http://localhost:7081/SlateDemonstrationsStudent/?apiHost=localhost:7080)
+- [`localhost:7081/SlateTasksManager/?apiHost=localhost:7080`](http://localhost:7081/SlateTasksManager/?apiHost=localhost:7080)
+- [`localhost:7081/SlateTasksTeacher/?apiHost=localhost:7080`](http://localhost:7081/SlateTasksTeacher/?apiHost=localhost:7080)
+- [`localhost:7081/SlateTasksStudent/?apiHost=localhost:7080`](http://localhost:7081/SlateTasksStudent/?apiHost=localhost:7080)
+
+## Develop Frontend
 
 ## Client-side UI application documentation
 
