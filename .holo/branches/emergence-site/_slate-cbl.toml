@@ -1,4 +1,6 @@
 [holomapping]
-holosource = "-layer"
-files = "*/**"
+files = [
+    "*/**",
+    "!.vscode"
+]
 after = [ "slate" ]
