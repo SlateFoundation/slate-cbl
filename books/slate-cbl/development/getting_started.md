@@ -90,10 +90,8 @@
 1. Enable user registration form (optional)
 
     ```bash
-    # ensure directory exists for `Emergence\People\RegistrationRequestHandler` class configuration fragments
-    mkdir -p php-config/Emergence/People/RegistrationRequestHandler.config.d
-
-    # write fragment enabling registration
+    # write class configuring enabling registration
+    mkdir -p php-config/Emergence/People
     echo '<?php Emergence\People\RegistrationRequestHandler::$enableRegistration = true;' > php-config/Emergence/People/RegistrationRequestHandler.config.php
 
     # rebuild environment
