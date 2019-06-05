@@ -47,7 +47,7 @@
     On Mac or Windows, prefix this command with additional options to expose the development web server outside the studio:
 
     ```bash
-    HAB_DOCKER_OPTS="-p 7080:7080 -p 7081:7081" hab studio enter
+    HAB_DOCKER_OPTS="-p 7080:7080 -p 7081:7081 -p 3306:3306" hab studio enter
     ```
 
     Review the notes printed to your terminal at the end of the studio startup process for a list of all available studio commands.
