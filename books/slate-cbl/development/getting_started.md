@@ -87,6 +87,15 @@
     cat .data/fixtures/*.sql | load-sql -
     ```
 
+    The standard fixture data includes the following users, all with passwords matching their usernames:
+
+    - `system`
+    - `admin`
+    - `teacher`
+    - `student`
+    - `teacher2`
+    - `student2`
+
 1. Enable user registration form (optional)
 
     ```bash
