@@ -8,9 +8,10 @@ describe('Admin login test', () => {
 
         cy.focused()
             .should('have.attr', 'name', '_LOGIN[username]')
-            .type('admin');
+            .type('admin')
+            .tab();
 
-        cy.focused().closest('form').find('input[type=password]')
+        cy.focused()
             .should('have.attr', 'name', '_LOGIN[password]')
             .type('admin{enter}');
 
