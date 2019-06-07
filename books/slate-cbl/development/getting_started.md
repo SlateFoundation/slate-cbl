@@ -137,8 +137,6 @@ Once built, the live-editable version of each app can be accessed via the static
 - [`localhost:7081/SlateTasksTeacher/?apiHost=localhost:7080`](http://localhost:7081/SlateTasksTeacher/?apiHost=localhost:7080)
 - [`localhost:7081/SlateTasksStudent/?apiHost=localhost:7080`](http://localhost:7081/SlateTasksStudent/?apiHost=localhost:7080)
 
-## Develop Frontend
-
 ## Client-side UI application documentation
 
 View the latest docs online at [http://slatefoundation.github.io/slate-cbl/](http://slatefoundation.github.io/slate-cbl/)
@@ -149,3 +147,17 @@ To update these docs, run `build.sh` and then `publish.sh` within `sencha-worksp
 
 You can connect to any remote slate-cbl instance that has CORS enabled by appending the query
 parameter `apiHost` when loading the page.
+
+## Running tests
+
+[Cypress](https://www.cypress.io/) is used to provide browser-level full-stack testing. The `package.json` file at the root of the repository specifies the dependencies for running the test suite and all the configuration/tests for Cypress are container in the `cypress/` tree at the root of the repository.
+
+To get started, from the root of the repository:
+
+```bash
+# install development tooling locally
+npm install
+
+# launch cypress app
+npm run cypress:open
+```
