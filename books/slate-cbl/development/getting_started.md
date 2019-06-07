@@ -80,9 +80,6 @@
     # clone fixture branch into git-ignored .data/ directory
     git clone -b cbl/competencies https://github.com/SlateFoundation/slate-fixtures.git .data/fixtures
 
-    # ensure at least empty database exists
-    echo 'CREATE DATABASE IF NOT EXISTS `default`' | shell-mysql
-
     # load all .sql files from fixture
     cat .data/fixtures/*.sql | load-sql -
     ```
