@@ -38,16 +38,16 @@
 
     If you're working in *Visual Studio Code*, just run the task `studio:launch` to open a configured and persistent studio. Otherwise you'll need to launch a Habitat studio manually from a terminal.
 
-    On Linux, just run:
+    On Mac or Windows, the `HAB_DOCKER_OPTS` environment variable must be configured to pass additional options through to Docker to expose the development web server outside the studio container:
+
+    ```bash
+    export HAB_DOCKER_OPTS="-p 7080:7080 -p 7081:7081 -p 3306:3306"
+    ```
+
+    Then on any system, launch the studio with:
 
     ```bash
     hab studio enter
-    ```
-
-    On Mac or Windows, prefix this command with additional options to expose the development web server outside the studio:
-
-    ```bash
-    HAB_DOCKER_OPTS="-p 7080:7080 -p 7081:7081 -p 3306:3306" hab studio enter
     ```
 
     Review the notes printed to your terminal at the end of the studio startup process for a list of all available studio commands.
