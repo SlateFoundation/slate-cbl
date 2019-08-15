@@ -1,7 +1,7 @@
 [holomapping]
 files = [
     "*/**",
-    "!.vscode",
+    "!.vscode/",
     "!books/",
     "!cypress/",
     "!sencha-workspace/tests/",
