@@ -1,0 +1,162 @@
+$level-color-unknown: dynamic(#666);
+
+$level-colors: dynamic(
+    $level-color-unknown, // 1
+    $level-color-unknown, // 2
+    $level-color-unknown, // 3
+    $level-color-unknown, // 4
+    $level-color-unknown, // 5
+    #d11141, // 6
+    #00aedb, // 7
+    #8e7cc3, // 8
+    #d94181, // 9
+    #ffa200, // 10
+    #5dc02a, // 11
+    #008cc1 // 12
+);
+
+$level-colors-light: dynamic(
+    lighten($level-color-unknown, 20%), // 1
+    lighten($level-color-unknown, 20%), // 2
+    lighten($level-color-unknown, 20%), // 3
+    lighten($level-color-unknown, 20%), // 4
+    lighten($level-color-unknown, 20%), // 5
+    lighten(nth($level-colors, 6), 20%), // 6
+    lighten(nth($level-colors, 7), 20%), // 7
+    lighten(nth($level-colors, 8), 20%), // 8
+    #ea97ba, // 9
+    #ffcc73, // 10
+    #a6dc8a, // 11
+    #73c0dd // 12
+);
+
+$level-colors-medium: dynamic(
+    lighten($level-color-unknown, 9%), // 1
+    lighten($level-color-unknown, 9%), // 2
+    lighten($level-color-unknown, 9%), // 3
+    lighten($level-color-unknown, 9%), // 4
+    lighten($level-color-unknown, 9%), // 5
+    lighten(nth($level-colors, 6), 9%), // 6
+    lighten(nth($level-colors, 7), 9%), // 7
+    lighten(nth($level-colors, 8), 9%), // 8
+    #e1679a, // 9
+    #ffb533, // 10
+    #7dcd55, // 11
+    #33a3cd // 12
+);
+
+$level-colors-dark: dynamic(
+    darken($level-color-unknown, 10%), // 1
+    darken($level-color-unknown, 10%), // 2
+    darken($level-color-unknown, 10%), // 3
+    darken($level-color-unknown, 10%), // 4
+    darken($level-color-unknown, 10%), // 5
+    darken(nth($level-colors, 6), 10%), // 6
+    darken(nth($level-colors, 7), 10%), // 7
+    darken(nth($level-colors, 8), 10%), // 8
+    #ca274f, // 9
+    #ff7d00, // 10
+    #38a719, // 11
+    #005ea8 // 12
+);
+
+
+@mixin level-colors($colors, $colors-light, $colors-medium, $colors-dark) {
+    .cbl-skill-demo-counted {
+        color: white;
+        background-color: $level-color-unknown;
+    }
+
+    @for $n from 1 through length($colors) {
+        .cbl-level-#{$n} {
+            $color:        nth($colors,        $n);
+            $color-light:  nth($colors-light,  $n);
+            $color-medium: nth($colors-medium, $n);
+            $color-dark:   nth($colors-dark,   $n);
+
+            // generic utility classes:
+            .cbl-level-colored,
+            &.cbl-level-colored {
+                color: white;
+                background-color: $color;
+            }
+
+            .cbl-level-colored-light,
+            &.cbl-level-colored-light {
+                color: white;
+                background-color: $color-light;
+            }
+            .cbl-level-colored-medium,
+            &.cbl-level-colored-medium {
+                color: white;
+                background-color: $color-medium;
+            }
+            .cbl-level-colored-dark,
+            &.cbl-level-colored-dark {
+                color: white;
+                background-color: $color-dark;
+            }
+
+            // level progress meters:
+            .cbl-level-progress-meter,
+            &.cbl-level-progress-meter {
+                color: white;
+                background-color: $color-light;
+            }
+
+            .is-average-low,
+            &.is-average-low {
+                // background-image: url('slate-cbl/images/halted-progress.png');
+                background-image: repeating-linear-gradient(-45deg,
+                    transparent, transparent 10px,
+                    rgba($color-dark, .4) 11px,
+                    rgba($color-dark, .4) 20px,
+                    transparent 21px
+                );
+            }
+
+            .cbl-level-progress-bar {
+                @include background-image(linear-gradient(
+                    $color,
+                    $color-dark
+                ));
+            }
+
+            // skill progress indicators:
+            .cbl-skill-complete-indicator {
+                &.is-checked {
+                    border-color: $color;
+                    color: $color;
+                }
+            }
+
+            // demonstration cells:
+            .cbl-skill-demo-counted {
+                color: white;
+                background-color: $color;
+            }
+
+            &.cbl-grid-demos-cell .cbl-skill-demo-counted {
+                background-color: $color-medium;
+            }
+
+            // rating sliders:
+            &.slate-cbl-ratings-slider .x-slider-inner {
+                background-color: $color;
+            }
+        }
+    }
+}
+
+// optionally color demo cells based on rating
+@mixin rating-colors($colors, $colors-light, $colors-medium, $colors-dark) {
+    @for $n from 1 through length($level-colors) {
+        .cbl-level-colored,
+        .cbl-skill-demo,
+        .cbl-grid-demo {
+            &.cbl-rating-#{$n} {
+                background-color: nth($level-colors, $n) !important;
+            }
+        }
+    }
+}

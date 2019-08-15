@@ -1,4 +1,4 @@
 [holomapping]
-holosource = "-layer"
-files = "*/**"
-after = [ "slate" ]
+holosource = "=>emergence-layer"
+files = "**"
+after = "*"

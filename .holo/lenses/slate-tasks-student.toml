@@ -1,0 +1,18 @@
+[hololens]
+package = "holo/lens-sencha-app"
+
+[hololens.sencha]
+app = "SlateTasksStudent"
+
+[hololens.input]
+root = "sencha-workspace"
+files = [
+    "workspace.json",
+    "ext/**",
+    "packages/**",
+    "SlateTasksStudent/**",
+]
+
+[hololens.output]
+root = "webapp-builds/SlateTasksStudent"
+merge = "replace"
