@@ -1,6 +1,4 @@
 [holomapping]
-files = [
-    "*/**",
-    "!.vscode"
-]
-after = [ "slate" ]
+holosource = "=>emergence-layer"
+files = "**"
+after = "*"
