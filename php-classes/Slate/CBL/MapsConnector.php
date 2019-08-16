@@ -4,7 +4,7 @@ namespace Slate\CBL;
 
 use Exception;
 use SpreadsheetReader;
-use Emergence\Connectors\Job;
+use Emergence\Connectors\IJob;
 
 
 class MapsConnector extends \Emergence\Connectors\AbstractSpreadsheetConnector implements \Emergence\Connectors\ISynchronize
@@ -51,7 +51,7 @@ class MapsConnector extends \Emergence\Connectors\AbstractSpreadsheetConnector i
         return $config;
     }
 
-    public static function synchronize(Job $Job, $pretend = true)
+    public static function synchronize(IJob $Job, $pretend = true)
     {
         if ($Job->Status != 'Pending' && $Job->Status != 'Completed') {
             return static::throwError('Cannot execute job, status is not Pending or Complete');
@@ -91,7 +91,7 @@ class MapsConnector extends \Emergence\Connectors\AbstractSpreadsheetConnector i
         return true;
     }
 
-    public static function pullMaps(Job $Job, SpreadsheetReader $spreadsheet, $pretend = true)
+    public static function pullMaps(IJob $Job, SpreadsheetReader $spreadsheet, $pretend = true)
     {
         $indexColumns = static::getStackedConfig('indexColumns');
         $contentAreaColumns = static::getStackedConfig('contentAreaColumns');
