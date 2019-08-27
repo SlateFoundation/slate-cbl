@@ -13,5 +13,5 @@ files = [
 ]
 
 [hololens.output]
-root = "sencha-workspace/packages/slate-cbl-admin/build"
+root = "webapp-plugin-builds/slate-cbl-admin"
 merge = "replace"
