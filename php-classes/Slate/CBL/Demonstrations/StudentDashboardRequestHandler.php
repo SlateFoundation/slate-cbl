@@ -42,7 +42,7 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
     {
         $GLOBALS['Session']->requireAuthentication();
 
-        return static::sendResponse(SenchaApp::load('SlateDemonstrationsStudent')->render(), 'webapps/SlateDemonstrationsStudent');
+        return static::sendResponse(SenchaApp::load('SlateDemonstrationsStudent')->render());
     }
 
     public static function handleBootstrapRequest()

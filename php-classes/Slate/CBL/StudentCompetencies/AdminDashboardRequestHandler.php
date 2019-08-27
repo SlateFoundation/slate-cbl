@@ -31,7 +31,7 @@ class AdminDashboardRequestHandler extends \Emergence\Site\RequestHandler
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');
 
-        return static::sendResponse(SenchaApp::load('SlateStudentCompetenciesAdmin')->render(), 'webapps/SlateStudentCompetenciesAdmin');
+        return static::sendResponse(SenchaApp::load('SlateStudentCompetenciesAdmin')->render());
     }
 
     public static function handleBootstrapRequest()
