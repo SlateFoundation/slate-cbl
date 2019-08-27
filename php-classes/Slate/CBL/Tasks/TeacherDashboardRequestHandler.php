@@ -33,7 +33,7 @@ class TeacherDashboardRequestHandler extends \Emergence\Site\RequestHandler
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');
 
-        return static::sendResponse(SenchaApp::load('SlateTasksTeacher')->render(), 'webapps/SlateTasksTeacher');
+        return static::sendResponse(SenchaApp::load('SlateTasksTeacher')->render());
     }
 
     public static function handleBootstrapRequest()

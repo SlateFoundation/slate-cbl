@@ -32,7 +32,7 @@ class ManagerRequestHandler extends \Emergence\Site\RequestHandler
     {
         $GLOBALS['Session']->requireAccountLevel('Staff');
 
-        return static::sendResponse(SenchaApp::load('SlateTasksManager')->render(), 'webapps/SlateTasksManager');
+        return static::sendResponse(SenchaApp::load('SlateTasksManager')->render());
     }
 
     public static function handleBootstrapRequest()
