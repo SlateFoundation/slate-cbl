@@ -7,9 +7,12 @@ pkg = "slate-cbl-admin"
 [hololens.input]
 root = "sencha-workspace"
 files = [
-    "workspace.json",
+    "packages/slate-cbl-admin/**",
+    "packages/slate-core-data/**",
+    "packages/emergence-apikit/**",
+    "packages/jarvus-apikit/**",
     "ext/**",
-    "packages/**",
+    "workspace.json",
 ]
 
 [hololens.output]
