@@ -1,0 +1,86 @@
+.slate-cbl-ratings-slider {
+    .x-slider-inner {
+        height: 10px;
+        margin: 10px 0;
+    }
+
+    .x-slider-ct-horz {
+        background: none;
+        cursor: pointer;
+        position: relative;
+
+        &:active {
+            cursor: ew-resize;
+            cursor: col-resize;
+        }
+    }
+
+    .x-slider-horz {
+        padding: 0 16px 0 32px;
+    }
+
+    .x-slider-horz,
+    .x-slider-horz .x-slider-end,
+    .x-slider-horz .x-slider-inner {
+        background-image: none;
+    }
+
+    .x-slider-thumb {
+        background: white;
+        border: 1px solid transparent;
+        border-radius: 100%;
+        box-shadow: 0 1px 1px rgba(black, .3);
+        cursor: pointer;
+        cursor: ew-resize;
+        cursor: col-resize;
+        height: 28px;
+        margin-left: -16px;
+        margin-top: -9px;
+        width: 28px;
+
+        color: $color;
+        font-weight: bold;
+        line-height: 25px;
+        text-align: center;
+
+        > small {
+            font-size: 9px;
+            letter-spacing: .5px;
+            vertical-align: 1px;
+        }
+
+        &.x-item-disabled {
+            opacity: 0.5;
+        }
+    }
+
+    .slate-cbl-ratings-thumb-parked:hover {
+        border: 1px dashed #666;
+        cursor: pointer;
+        cursor: context-menu;
+    }
+
+    &.x-form-readonly {
+        .x-slider-ct-horz,
+        .x-slider-ct-horz:active,
+        .x-slider-thumb,
+        .slate-cbl-ratings-thumb-parked:hover {
+            cursor: auto;
+        }
+    }
+}
+
+
+.slate-cbl-ratings-slider-miscratingstip {
+    padding: 0;
+
+    .x-tip-body {
+        border: none;
+        padding: 0;
+    }
+
+    .x-menu {
+        border: none;
+        padding: 0;
+    }
+}

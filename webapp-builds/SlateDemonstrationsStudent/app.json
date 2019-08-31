@@ -1,0 +1,8 @@
+{
+  "id": "61a6bcaa-4b26-47f9-a65c-28df8d3a5eff",
+  "js": [{ "path": "app.js" }],
+  "css": [
+    { "remote": false, "exclude": ["fashion"], "path": "resources/SlateDemonstrationsStudent-all_1.css" },
+    { "remote": false, "exclude": ["fashion"], "path": "resources/SlateDemonstrationsStudent-all_2.css" }
+  ]
+}

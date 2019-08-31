@@ -1,0 +1,16 @@
+{
+  "id": "d15f4c54-083a-4dca-a783-5197aa4da80e",
+  "js": [{ "path": "app.js" }],
+  "css": [
+    {
+      "remote": false,
+      "exclude": ["fashion"],
+      "path": "resources/SlateStudentCompetenciesAdmin-all_1.css"
+    },
+    {
+      "remote": false,
+      "exclude": ["fashion"],
+      "path": "resources/SlateStudentCompetenciesAdmin-all_2.css"
+    }
+  ]
+}

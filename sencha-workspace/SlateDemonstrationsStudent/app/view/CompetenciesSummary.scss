@@ -1,0 +1,18 @@
+.slate-demonstrations-student-competenciessummary {
+    margin: 0 1.5% 3% 0;
+    width: percentage(2/3) - 1.5;
+
+    .cbl-level-progress-meter {
+        height: 3em;
+    }
+
+    .stats {
+        th {
+            padding-top: 1.125em;
+        }
+
+        td {
+            padding-bottom: .625em;
+        }
+    }
+}

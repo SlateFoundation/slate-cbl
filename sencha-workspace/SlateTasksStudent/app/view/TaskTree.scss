@@ -1,0 +1,191 @@
+@mixin slate-tasktree-item-status($status, $color) {
+    &.slate-tasktree-status-#{$status} {
+        .slate-tasktree-nub {
+            background-color: darken($color, 5);
+
+            &.is-clickable:hover {
+                background-color: darken($color, 15);
+            }
+        }
+
+        .slate-tasktree-status {
+            background-color: $color;
+        }
+
+        .slate-tasktree-date {
+            background-color: lighten($color, 10);
+        }
+    }
+}
+
+.slate-tasktree-list {
+    background-color: #e3e3e3;
+    list-style: none;
+    margin: 0;
+    padding: 1em;
+}
+
+.slate-tasktree-item {
+    margin: 0;
+
+    .flex-ct {
+        align-items: stretch;
+        display: flex;
+    }
+
+    > .flex-ct {
+        position: relative; // sit above subtasks
+    }
+
+    + .slate-tasktree-item {
+        margin-top: .75em;
+    }
+
+    &,
+    .slate-tasktree-sublist & {
+        @include slate-tasktree-item-status('unassigned',   $slate-task-color-unassigned);
+        @include slate-tasktree-item-status('due',          $slate-task-color-due);
+        @include slate-tasktree-item-status('completed',    $slate-task-color-completed);
+        @include slate-tasktree-item-status('revision',     $slate-task-color-revision);
+        @include slate-tasktree-item-status('late',         $slate-task-color-late);
+    }
+}
+
+.slate-tasktree-nub {
+    align-items: center;
+    background-color: #ccc;
+    border-radius: .25em 0 0 .25em;
+    display: flex;
+    font-size: 1.5em;
+    font-weight: bold;
+    justify-content: center;
+    width: 1em;
+
+    &.is-clickable {
+        cursor: pointer;
+
+        &::before {
+            content: '\002b'; // plus sign
+            transition: 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeOutCirc
+            transform: rotate(-360deg);
+        }
+    }
+
+    .is-expanded &.is-clickable {
+        &::before {
+            content: '\2212'; // minus sign
+            transform: none;
+        }
+    }
+}
+
+.slate-tasktree-data {
+    background-color: white;
+    cursor: pointer;
+    flex: 1;
+
+    &:hover,
+    &:focus {
+        background-color: mix($base-color, white, 10%);
+    }
+}
+
+.slate-tasktree-category {
+    border-radius: 0 .4375em 0 0;
+    color: $muted-color;
+    font-size: .75em;
+    margin-bottom: -.75em;
+    padding: .625em .875em 0;
+    text-transform: uppercase;
+
+    &:empty {
+        display: none;
+    }
+}
+
+.slate-tasktree-text {
+    align-items: center;
+    border-radius: 0 .25em .25em 0;
+    display: flex;
+    line-height: (4/3);
+    padding: .5em .625em;
+    transition: border-radius 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeOutCirc
+
+    .is-expanded & {
+        border-radius: 0 .25em 0 0;
+    }
+}
+
+.slate-tasktree-title {
+    flex: 1;
+}
+
+.slate-tasktree-sublist {
+    list-style: none;
+    margin: 0 0 0 1.5em;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    transform: translateX(-1.5em);
+    transition: 250ms cubic-bezier(0.075, 0.820, 0.165, 1.000); // easeOutCirc
+
+    .slate-tasktree-item {
+        margin: 1px 0 0;
+    }
+
+    .slate-tasktree-nub {
+        border-radius: 0;
+    }
+
+    .slate-tasktree-text {
+        border-radius: 0;
+    }
+
+    > :last-child {
+        .slate-tasktree-nub {
+            border-radius: 0 0 0 .25em;
+        }
+
+        .slate-tasktree-text {
+            border-radius: 0 0 .4375em 0;
+        }
+    }
+
+    .is-expanded & {
+        opacity: 1;
+        transform: none;
+    }
+
+    .slate-tasktree-item:not(.is-expanded) & {
+        height: 0 !important;
+    }
+}
+
+.slate-tasktree-status,
+.slate-tasktree-date {
+    align-items: center;
+    display: flex;
+    font-size: .8125em;
+    justify-content: center;
+    padding: .125em .5em;
+}
+
+.slate-tasktree-status {
+    background-color: #ccc;
+    border-radius: .25em 0 0 .25em;
+    margin-left: 1em;
+}
+
+.slate-tasktree-nodate {
+    border-radius: .25em;
+}
+
+.slate-tasktree-date {
+    background-color: #eee;
+    border-radius: 0 .25em .25em 0;
+    font-weight: bold;
+
+    &:empty {
+        display: none;
+    }
+}

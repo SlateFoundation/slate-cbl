@@ -1,0 +1,5 @@
+x-activeRecord: Slate\CBL\Demonstrations\Demonstration
+description: |
+  A demonstration records something a student did or submitted at a particular point in time.
+
+  Ratings for one or more [skills](#models::slate-cbl-skill) are stored in the [DemonstrationSkill](#models::slate-cbl-demonstrations-demonstrationskill) model.

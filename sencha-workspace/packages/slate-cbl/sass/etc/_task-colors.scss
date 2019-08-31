@@ -1,0 +1,23 @@
+$slate-task-color-unassigned:   dynamic(white);
+$slate-task-color-due:          dynamic(#bedc94);
+$slate-task-color-completed:    dynamic(#a2dff6);
+$slate-task-color-revision:     dynamic(#fcf58b);
+$slate-task-color-late:         dynamic(#f38e79);
+
+$slate-task-statuses:
+    'unassigned',
+    'due',
+    'completed',
+    'revision',
+    'late';
+
+$slate-task-colors:
+    $slate-task-color-unassigned,
+    $slate-task-color-due,
+    $slate-task-color-completed,
+    $slate-task-color-revision,
+    $slate-task-color-late;
+
+// use literal string because Fashion tries to interpret the repeating-linear-gradient function
+$slate-task-pattern-needsrated:     dynamic(#{'repeating-linear-gradient(-45deg, transparent, transparent .5em, rgba(0,0,0,.125) .2em, rgba(0,0,0,.125) 1em)'});
+$slate-task-pattern-needsrated-sm:  dynamic(#{'repeating-linear-gradient(-45deg, transparent, transparent .25em, rgba(0,0,0,.1875) .25em, rgba(0,0,0,.1875) .5em)'});

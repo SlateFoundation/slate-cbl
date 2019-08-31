@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\Tasks\StudentTask
+description: |
+  A student task records the assignment of a [task](#models::slate-cbl-tasks-task) to a student.

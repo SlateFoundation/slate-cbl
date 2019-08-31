@@ -1,0 +1,94 @@
+$cbl-progress-missed-color: dynamic(red);
+
+.slate-demonstrations-student-dashboard {
+    .cbl-levelslegend {
+        text-align: right;
+        margin: 0 0 2em 0;
+    }
+}
+
+// TODO: refactor to common place under slate-cbl/etc ?
+.cbl-level-progress-meter {
+    background-color: #ccc;
+    font-weight: bold;
+    height: 2.5em;
+    position: relative;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(black, .8);
+}
+
+.is-average-low {
+    // background-image: url('slate-cbl/images/halted-progress.png');
+    background-image: repeating-linear-gradient(-45deg,
+        transparent, transparent 10px,
+        rgba(black, .1) 10px,
+        rgba(black, .1) 20px,
+        transparent 20px
+    );
+
+    .cbl-progress-bar {
+        box-shadow: inset -1px 0 0 rgba(black, .3);
+    }
+}
+
+.cbl-level-progress-bar {
+    box-shadow: inset -1px 0 0 rgba(black, .2);
+    height: 100%;
+
+    &[style*="100%"] {
+        box-shadow: none;
+    }
+
+    .is-average-low & {
+        opacity: .6;
+    }
+
+    &.cbl-level-progress-missed {
+        background-color: $cbl-progress-missed-color;
+        @include background-image(linear-gradient(
+            $cbl-progress-missed-color,
+            adjust-color($cbl-progress-missed-color,
+                $hue: 10.53923deg,
+                $saturation: 0.96819%,
+                $lightness: -8.03922%
+            )
+        ));
+        opacity: .75;
+        position: absolute;
+        top: 0;
+    }
+}
+
+
+.cbl-level-progress-label {
+    left: .5em;
+    position: absolute;
+    top: 50%;
+    @include translateY(-50%);
+
+    &.no-select {
+        left: 1em;
+    }
+}
+
+.cbl-level-progress-percent {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    @include translate(-50%, -50%);
+}
+
+.cbl-level-progress-average {
+    font-size: .75em;
+    right: 1em;
+    position: absolute;
+    top: 50%;
+    @include translateY(-50%);
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: subpixel-antialiased;
+
+    .is-average-low & {
+        background: red;
+        padding: 0 .3em;
+    }
+}

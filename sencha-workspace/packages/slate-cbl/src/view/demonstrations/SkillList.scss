@@ -1,0 +1,152 @@
+.skill-list {
+    border-bottom: 2px solid $border-color;
+    margin: 0;
+    table-layout: fixed;
+
+    .slate-window & {
+        margin: 0 -16px;
+    }
+
+    th, td {
+        padding: 0.5em;
+    }
+
+    .skill-list-demo-detail-data {
+        padding: 0;
+    }
+
+    .x-view-item-focused {
+        outline: none !important;
+    }
+}
+
+.skill-list-header-row {
+
+}
+
+.skill-list-header {
+    background: none;
+    border-bottom: 2px solid $border-color;
+    font-size: .75em;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.skill-list-demo:last-child {
+    .skill-list-demo-detail-ct {
+        border-bottom: 0;
+    }
+}
+
+.skill-list-demo-row {
+    cursor: pointer;
+
+    .skill-list-demo-highlighted & td {
+        background-color: rgba(255,215,0, 0.5);
+    }
+}
+
+.skill-list-demo-data {
+    background: #eee;
+    @include ellipsis;
+
+    tr:nth-child(4n-1) & {
+        background: #e0e0e0;
+    }
+}
+
+.skill-list-demo-index {
+    text-align: right;
+    width: 3.25em;
+
+    td&::before {
+        color: #666;
+        content: '\f0da'; // fa-caret-right
+        display: inline-block;
+        float: left;
+        font-family: FontAwesome;
+        font-size: 14px;
+        margin: (1em/6) .25em;
+        transition: transform 150ms;
+        -mox-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .x-item-selected td&::before {
+        transform: rotate(90deg);
+    }
+}
+
+.skill-list-demo-date {
+    white-space: nowrap;
+    width: 16%;
+}
+
+.skill-list-demo-level {
+    width: 10%;
+
+    .cbl-level-colored {
+        border-radius: 3px;
+        font-weight: bold;
+        margin-right: .5em;
+        text-align: center;
+        text-shadow: 0 1px 1px rgba(black, .8);
+    }
+}
+
+.skill-list-demo-experience {
+
+}
+
+.skill-list-demo-context {
+
+}
+
+.skill-list-demo-task {
+
+}
+
+.skill-list-demo-detail-row {
+
+}
+
+.skill-list-demo-detail-ct {
+    background-color: rgba(white, .5);
+    border: 1px solid #ccc;
+    border-width: 1px 0;
+    border-left: .375em solid rgba($base-color, .4);
+    box-shadow: inset 0 8px 8px -8px rgba(black, .15);
+    display: none;
+    line-height: $font-size * 1.5;
+    overflow: hidden;
+    padding: 0.75em 1em;
+
+    .x-item-selected & {
+        display: block;
+    }
+
+    a {
+        overflow-wrap: break-word; // standard
+        word-wrap: break-word; // Edge
+    }
+}
+
+.skill-list-emptytext-row {
+
+}
+
+.skill-list-emptytext-cell {
+    color: #777;
+    font-style: italic;
+    text-align: center;
+}
+
+.skill-list-demo-meta {
+    color: #777;
+    font-size: .875em;
+
+    a {
+        color: inherit;
+        text-decoration: underline;
+    }
+}
