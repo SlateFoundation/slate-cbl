@@ -1,0 +1,33 @@
+// visual extensions to the boundlists that appear, e.g., in a combo box
+.slate-boundlist {
+    .x-boundlist-item {
+        // box-shadow: 0 -1px 0 rgba(black, .1);
+        line-height: (4/3);
+        padding: .2em .6em .3em;
+
+        &:first-child {
+            box-shadow: 0;
+        }
+    }
+}
+
+.slate-boundlist-primary {
+    font-size: .9em;
+    font-weight: bold;
+}
+
+.slate-boundlist-secondary {
+    color: $muted-color;
+    font-size: .8em;
+
+    .slate-boundlist-datum {
+        &::after {
+            content: '\00b7'; // &middot;
+            margin: 0 .25em;
+        }
+
+        &:last-child::after {
+            content: none;
+        }
+    }
+}

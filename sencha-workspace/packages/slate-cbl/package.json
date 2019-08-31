@@ -1,0 +1,20 @@
+{
+    "name": "slate-cbl",
+    "type": "code",
+    "creator": "anonymous",
+    "summary": "Short summary",
+    "detailedDescription": "Long description of package",
+    "version": "1.0.0",
+    "compatVersion": "1.0.0",
+    "format": "1",
+    "local": true,
+    "requires": [
+        "emergence-apikit",
+        "jarvus-ext-glyphs",
+        "jarvus-ext-actionevents",
+        "jarvus-lazydata",
+        "slate-core-data",
+        "slate-ui-classic",
+        "slate-cbl-colors"
+    ]
+}

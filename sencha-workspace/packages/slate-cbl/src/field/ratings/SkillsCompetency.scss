@@ -1,0 +1,21 @@
+.slate-cbl-ratings-skillscompetency {
+    h4 {
+        margin: 0 0 .25em;
+    }
+
+    & + & {
+        margin-top: 1em;
+    }
+
+    .competency-descriptor:not(:empty)::before {
+        content: '—';
+    }
+
+    .competency-statement {
+        border: none;
+        color: #666;
+        font-style: italic;
+        margin: 0;
+        padding: 0;
+    }
+}

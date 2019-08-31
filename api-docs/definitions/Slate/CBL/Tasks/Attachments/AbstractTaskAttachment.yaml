@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\Tasks\Attachments\AbstractTaskAttachment
+description: |
+  An attachment is a material included in a task, student task, or student task submission.

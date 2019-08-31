@@ -1,0 +1,15 @@
+$jarvus-aggregrid-border-color:       dynamic(#ccc);
+
+$jarvus-aggregrid-cell-bg-color:      dynamic(#fff);
+$jarvus-aggregrid-cell-padding:       dynamic(.5em);
+$jarvus-aggregrid-cell-width:         dynamic(70px);
+
+$jarvus-aggregrid-rowheader-bg-color: dynamic(#ddd);
+$jarvus-aggregrid-rowheader-width:    dynamic(280px);
+
+$jarvus-aggregrid-colheader-bg-color: dynamic(#f5f5f5);
+$jarvus-aggregrid-colheader-width:    dynamic(223px);
+
+
+// default values for generic variables
+$link-color:    dynamic($base-color);

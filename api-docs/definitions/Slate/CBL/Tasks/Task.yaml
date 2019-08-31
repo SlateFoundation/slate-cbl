@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\Tasks\Task
+description: |
+  A task is a planned demonstration that can be assigned to one or more students via the [StudentTask](#models::slate-cbl-tasks-studenttask) model.

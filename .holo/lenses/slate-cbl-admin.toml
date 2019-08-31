@@ -1,0 +1,20 @@
+[hololens]
+package = "holo/lens-sencha-package"
+
+[hololens.sencha]
+pkg = "slate-cbl-admin"
+
+[hololens.input]
+root = "sencha-workspace"
+files = [
+    "packages/slate-cbl-admin/**",
+    "packages/slate-core-data/**",
+    "packages/emergence-apikit/**",
+    "packages/jarvus-apikit/**",
+    "ext/**",
+    "workspace.json",
+]
+
+[hololens.output]
+root = "webapp-plugin-builds/slate-cbl-admin"
+merge = "replace"

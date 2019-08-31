@@ -1,0 +1,89 @@
+@for $n from 1 through length($level-colors) {
+    .slate-progress-color-#{$n} {
+        &.slate-progress-meter {
+            background-color: nth($level-colors-light, $n);
+        }
+
+        .slate-progress-bar {
+            background-color: nth($level-colors-dark, $n);
+        }
+    }
+}
+
+.slate-cbl-sutdent-overallprogress {
+    position: relative;
+}
+
+.slate-cbl-sutdent-overallprogress-cursor {
+    $pointer-color: $color;
+    $pointer-offset: -.75;
+    $pointer-size: .75em;
+
+    background-color: rgba($color, .6);
+    bottom: 0;
+    left: 38.2%;
+    position: absolute;
+    top: 1.875em;
+    width: .375em;
+
+    &::before,
+    &::after {
+        border-left: $pointer-size solid transparent;
+        border-right: $pointer-size solid transparent;
+        content: '';
+        display: block;
+        height: 0;
+        left: 50%;
+        margin-left: -1 * $pointer-size;
+        position: absolute;
+        width: 0;
+    }
+
+    &::before {
+        border-top: $pointer-size solid $pointer-color;
+        top: $pointer-size * $pointer-offset;
+    }
+
+    &::after {
+        border-bottom: $pointer-size solid $pointer-color;
+        bottom: $pointer-size * $pointer-offset;
+    }
+}
+
+.slate-cbl-student-overallprogress-courses {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slate-cbl-student-overallprogress-course {
+    margin: 1em 0;
+
+    &:first-child {
+        .slate-cbl-student-overallprogress-course-title {
+            font-size: 1.5em;
+        }
+    }
+}
+
+.slate-cbl-student-overallprogress-course-title {
+    font-size: 1.125em;
+    margin: 1em 0 .25em;
+}
+
+.slate-progress-meter-stack {
+    display: flex;
+
+    .slate-progress-meter {
+        flex: 1;
+    }
+}
+
+.slate-progress-meter {
+    background-color: #ccc;
+}
+
+.slate-progress-bar {
+    background-color: #999;
+    height: 2.75em;
+}

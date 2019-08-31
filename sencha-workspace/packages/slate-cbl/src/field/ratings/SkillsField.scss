@@ -1,0 +1,27 @@
+.slate-cbl-skillratingsfield {
+    .slate-cbl-ratings-slider {
+        .slate-cbl-ratings-slider-bullet::before {
+            content: '\2022'; // bullet
+            font-size: large;
+            font-weight: bold;
+            margin-right: 0.5em;
+        }
+
+        &.slate-cbl-ratings-slider-removable {
+            .slate-cbl-ratings-slider-bullet::before {
+                color: #c00;
+                content: '\00d7'; // times
+                cursor: pointer;
+                pointer-events: auto;
+            }
+        }
+
+        &.x-item-disabled {
+            opacity: 1;
+
+            .x-slider {
+                display: none;
+            }
+        }
+    }
+}

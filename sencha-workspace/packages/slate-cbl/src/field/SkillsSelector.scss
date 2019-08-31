@@ -1,0 +1,43 @@
+.slate-cbl-skillsselector {
+    .x-tagfield-item:not(.x-tagfield-item-deselectable) {
+        padding: 0 5px;
+
+        .x-tagfield-item-close {
+            display: none;
+        }
+    }
+
+    &.slate-cbl-skillsselector-hidepermanent {
+        .x-tagfield-item:not(.x-tagfield-item-deselectable) {
+            display: none;
+        }
+    }
+}
+
+.slate-cbl-skillsselector-list {
+    .x-list-plain {
+        display: table;
+    }
+
+    .x-boundlist-item {
+        display: table-row;
+
+        & > * {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        &:not(:last-child) > * {
+            border-bottom: 1px dotted #aaa;
+        }
+
+        &.x-boundlist-selected:not(.x-boundlist-deselectable) {
+            background-color: #ddd;
+        }
+    }
+
+    .code {
+        font-family: $mono-font;
+        padding-right: 1em;
+    }
+}

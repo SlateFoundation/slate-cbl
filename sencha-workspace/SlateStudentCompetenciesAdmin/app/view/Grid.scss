@@ -1,0 +1,36 @@
+.slate-studentcompetencies-admin-grid {
+    .jarvus-aggregrid-cell {
+        color: #ddd;
+        font-weight: bold;
+        text-align: center;
+
+        &.cbl-level-increasable {
+            cursor: n-resize;
+        }
+
+        &.cbl-level-maxxed {
+            cursor: default;
+
+            &.cbl-level-phantom {
+                cursor: s-resize;
+            }
+        }
+
+        &:not(.cbl-level-phantom) {
+            opacity: 0.4;
+        }
+
+        &.cbl-level-phantom {
+            color: white;
+            text-shadow: 0 1px 1px black;
+
+            &:after {
+                content: '⇡';
+            }
+        }
+    }
+}
+
+.slate-studentcompetencies-admin-grid-popover {
+    margin: 0;
+}

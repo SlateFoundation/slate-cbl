@@ -1,0 +1,3 @@
+x-activeRecord: Slate\CBL\ContentArea
+description: |
+  A content area is the top-level container for [competencies](#models::slate-cbl-competency)/[skills](#models::slate-cbl-skill), generally named after broad academic subjects.

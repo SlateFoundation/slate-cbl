@@ -1,0 +1,151 @@
+@mixin slate-todolist-item-status($status, $color) {
+    &.slate-todolist-status-#{$status} {
+        .slate-todolist-item-date {
+            color: darken($color, 15);
+            font-weight: bold;
+        }
+    }
+}
+
+.slate-todolist {
+    .fa {
+        font-size: 14px;
+    }
+
+    .fa-2x{
+        font-size: 28px;
+    }
+}
+
+.slate-todolist-section {
+    margin-bottom: 20px;
+}
+
+.slate-todolist-section-content {
+    border-radius: 0 0 0.25em 0.25em;
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.166);
+    overflow: hidden;
+}
+
+.slate-todolist-itemgroup-header {
+    background-color: #e3e3e3;
+    display: flex;
+}
+
+.slate-todolist-itemgroup-title {
+    @include ellipsis;
+    flex: 1;
+    font-family: $body-font;
+    font-size: .875em;
+    font-weight: 300;
+    margin: 0;
+    padding: .5em 1.25em;
+    text-transform: uppercase;
+}
+
+.slate-todolist-itemgroup-actions {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slate-todolist-itemgroup-action {
+    align-items: stretch;
+    display: flex;
+
+    > button {
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        color: $link-color;
+        font-size: .75em;
+        font-weight: bold;
+        letter-spacing: .05em;
+        margin: 0;
+        text-transform: uppercase;
+
+        &:hover,
+        &:focus {
+            background-color: rgba($link-color, .2);
+        }
+
+        &:active {
+            background-color: $link-color;
+            color: white;
+        }
+    }
+}
+
+.slate-todolist-list {
+    background-color: #fafafa;
+    list-style: none;
+    margin: 0;
+    padding: 0 1em;
+}
+
+.slate-todolist-item {
+    align-items: flex-start;
+    display: flex;
+    margin: 0;
+    padding: (2em/3) 0;
+
+    + .slate-todolist-item {
+        border-top: 1px solid #e3e3e3;
+    }
+
+    @include slate-todolist-item-status('unassigned',   $slate-task-color-unassigned);
+    @include slate-todolist-item-status('due',          $slate-task-color-due);
+    @include slate-todolist-item-status('completed',    $slate-task-color-completed);
+    @include slate-todolist-item-status('revision',     $slate-task-color-revision);
+    @include slate-todolist-item-status('late',         $slate-task-color-late);
+}
+
+.slate-todolist-item-checkbox {
+    display: block;
+    margin-top: .25em;
+    cursor: pointer;
+
+    .is-readonly & {
+        cursor: not-allowed;
+    }
+}
+
+.slate-todolist-item-text {
+    flex: 1;
+    line-height: (4/3);
+    margin: 0 1em;
+}
+
+.slate-todolist-item-title {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    word-wrap: break-word;
+    cursor: default;
+
+    input& {
+        width: 100%;
+    }
+}
+
+.slate-todolist-item-category {
+    color: $muted-color;
+    font-size: .75em;
+    margin-top: .25em;
+    text-transform: uppercase;
+}
+
+.slate-todolist-item-date {
+    color: $muted-color;
+    font-size: .75em;
+    margin-top: .3125em;
+}
+
+.slate-todolist-date-trigger {
+    cursor: pointer;
+}
+
+.slate-todolist-new-item-text {
+    width: 100%;
+}

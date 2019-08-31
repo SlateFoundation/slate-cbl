@@ -1,0 +1,190 @@
+@keyframes slate-demonstrations-student-competencycard-slidein {
+    from { opacity: 0; transform: translateY(-.3333em); }
+        to { opacity: 1; transform: none; }
+}
+
+.slate-demonstrations-student-competencycard {
+    background: none;
+    display: inline-block;
+    margin: 0 1.5% 3%;
+    vertical-align: top;
+    width: 47%;
+
+    .explainer {
+        background-color: rgba(white, .4);
+        color: $muted-color;
+        font-style: italic;
+        margin: 0;
+        padding: 1em 3em;
+
+        p {
+            margin: 0 0 1em;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .stats {
+        background-color: rgba(mix($base-color, white), .25);
+        box-shadow:
+            0 -1px 0 rgba(black, .1),
+            inset 0 -1px 0 rgba(black, .1);
+        line-height: (4/3);
+        margin: 0;
+        position: relative;
+        table-layout: fixed;
+        width: 100%;
+
+        td, th {
+            text-align: center;
+        }
+
+        th {
+            background: none;
+            border: 0;
+            color: mix($base-color, $muted-color);
+            font-size: .75em;
+            font-weight: normal;
+            letter-spacing: .05em;
+            padding: .75em 0 0;
+            text-transform: uppercase;
+        }
+
+        td {
+            color: mix($base-color, $color);
+            font-size: 1.25em;
+            padding: 0 0 (1em/3);
+        }
+    }
+
+    .cbl-skill-meter {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .cbl-skill {
+        border-top: 1px solid $border-color;
+        clear: both;
+        padding: 1em 1em 1.5em;
+        position: relative;
+
+        &:hover {
+            background-color: rgba(white, .95);
+            border-color: transparent;
+            box-shadow: 0 0 0 1px darken($border-color, 10);
+
+            .cbl-skill-description {
+                display: block;
+            }
+        }
+    }
+
+    .cbl-skill-name {
+        color: inherit;
+        font: inherit;
+        margin: 0;
+        width: 100%;
+    }
+
+    .cbl-skill-demos {
+        display: flex;
+        margin: .5em 0 0 2em;
+        padding: 0;
+
+        &:empty {
+            margin: 0;
+        }
+    }
+
+    .cbl-skill-demo {
+        border: 1px solid rgba(black, .2);
+        border-radius: 2px;
+        display: block;
+        flex: 1;
+        padding: .25em;
+
+        + .cbl-skill-demo {
+            margin-left: .25em;
+        }
+    }
+
+    .cbl-skill-demo-empty {
+        background-color: rgba(white, .3333);
+    }
+
+    .cbl-skill-demo[data-demonstration] {
+        border-color: $text-color;
+        cursor: pointer;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 0 1px 1px rgba(black, .8);
+
+        &:hover,
+        &:focus {
+            box-shadow: inset 0 0 0 2px rgba(white, .5);
+        }
+
+        &.cbl-skill-demo-missed {
+            background-color: mix($text-color, $page-bg-color, 17%);
+            color: mix($text-color, $page-bg-color, 67%);
+            font-weight: normal;
+            text-shadow: none;
+        }
+    }
+
+    .cbl-skill-description {
+        animation: slate-demonstrations-student-competencycard-slidein .2s;
+        background: rgba(white, .97);
+        border: 1px solid darken($border-color, 10);
+        border-top-width: 0;
+        box-shadow: 0 1em 1em -1em rgba(black, .4);
+        display: none;
+        left: -1px;
+        margin-top: -.5em;
+        padding: 0 3em 1.5em;
+        position: absolute;
+        right: -1px;
+        top: 100%;
+        z-index: 1;
+
+        p {
+            color: $muted-color;
+            font-style: italic;
+            margin: 0;
+        }
+    }
+
+    @for $n from 2 through 10 {
+        .cbl-skill-span-#{$n} {
+            flex: $n;
+        }
+    }
+
+    .cbl-skill-demo-overridden {
+        display: none;
+    }
+
+    .cbl-skill-complete-indicator {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        box-shadow: none;
+        height: 1.5em;
+        list-style: none;
+        margin-left: 1em;
+        text-align: center;
+        width: 1.5em;
+
+        i {
+            display: none;
+        }
+
+        &.is-checked i {
+            display: inline-block;
+        }
+    }
+}

@@ -1,0 +1,222 @@
+.jarvus-aggregrid {
+    display: flex;
+    max-width: 100%;
+
+    table {
+        margin: 0;
+        table-layout: fixed;
+        width: auto;
+    }
+
+    td,
+    th {
+        background-color: $jarvus-aggregrid-cell-bg-color;
+        border: 1px solid $jarvus-aggregrid-border-color;
+        border-width: 1px 0 0 1px;
+        max-width: $jarvus-aggregrid-cell-width;
+        overflow: hidden;
+        padding: $jarvus-aggregrid-cell-padding;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: $jarvus-aggregrid-cell-width;
+    }
+
+    .jarvus-aggregrid-cornercell,
+    .jarvus-aggregrid-rowheaders-table,
+    .jarvus-aggregrid-rowheader {
+        width: $jarvus-aggregrid-rowheader-width;
+    }
+
+    .jarvus-aggregrid-cornercell {
+        border-top: 0;
+        height: 150px;
+    }
+
+    .jarvus-aggregrid-rowheader {
+        background-color: $jarvus-aggregrid-rowheader-bg-color;
+    }
+
+    .jarvus-aggregrid-expander-table {
+        width: 100%;
+    }
+
+    .jarvus-aggregrid-expander-cell {
+        background-color: #333;
+        border: none;
+        padding: 0;
+    }
+
+    .jarvus-aggregrid-subrow {
+        .jarvus-aggregrid-rowheader {
+            background-color: $jarvus-aggregrid-cell-bg-color;
+            font-weight: normal;
+            padding-left: 1.75em;
+        }
+    }
+
+    .jarvus-aggregrid-colheader {
+        border: none;
+        height: 150px;
+        overflow: visible;
+        padding: 0;
+        vertical-align: bottom;
+
+        .jarvus-aggregrid-header-clip {
+            height: 100%;
+            overflow: hidden;
+            width: 300%;
+        }
+
+        .jarvus-aggregrid-header-link {
+            background-color: $jarvus-aggregrid-colheader-bg-color;
+            border-bottom: 1px solid #ccc;
+            bottom: -125px;
+            color: $color;
+            display: block;
+            height: 57px;
+            left: 49px;
+            line-height: 1;
+            padding: 20px 30px 20px 40px;
+            position: relative;
+            text-align: left;
+            transform: rotate(-55deg);
+            transform-origin: bottom left;
+            width: 223px;
+
+            &:hover,
+            &:focus {
+                background-color: mix($link-color, $jarvus-aggregrid-colheader-bg-color, 10%);
+                text-decoration: none;
+            }
+        }
+
+        &:first-child a {
+            border-top: 1px solid #ccc;
+        }
+    }
+
+    .jarvus-aggregrid-cell {
+        border-color: $color;
+        text-align: center;
+
+        &:first-child {
+            border-left: 0;
+        }
+    }
+}
+
+.jarvus-aggregrid-scroll-control {
+    align-items: center;
+    background: #ddd;
+    box-sizing: border-box;
+    cursor: w-resize;
+    display: flex;
+    font-size: 1.5em;
+    height: 150px;
+    justify-content: center;
+    left: $jarvus-aggregrid-rowheader-width;
+    padding: .125em;
+    position: absolute;
+    top: 0;
+    width: .5em;
+    z-index: 1;
+
+    &:hover,
+    &:focus {
+        background-color: #ccc;
+    }
+
+    &::before {
+        content: '\00ab';
+    }
+
+    &.scroll-right {
+        cursor: e-resize;
+        left: auto;
+        right: 0;
+
+        &::before {
+            content: '\00bb';
+        }
+    }
+
+    &.is-disabled {
+        background-color: #e5e5e5;
+        color: #bbb;
+        cursor: default;
+    }
+}
+
+.jarvus-aggregrid-rowheaders-ct {
+    border-bottom: 1px solid $jarvus-aggregrid-border-color;
+    width: $jarvus-aggregrid-rowheader-width;
+    overflow-y: hidden;
+}
+
+.jarvus-aggregrid-row {
+    cursor: pointer;
+}
+
+.jarvus-aggregrid-rowheader {
+    .is-expandable > &::before {
+        content: '\f0da'; // fa-caret-right
+        display: inline-block;
+        float: left;
+        font-family: 'FontAwesome';
+        margin-right: .25em;
+        text-align: center;
+        transition: 250ms;
+        width: 1em;
+    }
+
+    .is-expanded &::before {
+        transform: rotate(90deg);
+    }
+
+    .jarvus-aggregrid-subrow &::before {
+        display: none;
+    }
+
+    &:hover {
+        .edit-row {
+            display: inline-block;
+        }
+    }
+}
+
+.jarvus-aggregrid-expander-ct {
+    background-color: transparent;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: 250ms;
+
+    .is-expanded + .jarvus-aggregrid-expander & {
+        opacity: 1;
+    }
+}
+
+.jarvus-aggregrid-header-text {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .edit-row {
+        display: none;
+        position: absolute;
+        right: .0625em;
+    }
+}
+
+.jarvus-aggregrid-scroller {
+    border: 1px solid;
+    border-width: 0 0 1px 1px;
+    flex: 1;
+    overflow: auto;
+}
+
+.jarvus-aggregrid-data-table {
+    border-right: 1px solid;
+}

@@ -1,0 +1,30 @@
+[hololens]
+package = "holo/lens-sencha-app"
+
+[hololens.sencha]
+app = "SlateTasksTeacher"
+
+[hololens.input]
+root = "sencha-workspace"
+files = [
+    "SlateTasksTeacher/**",
+    "packages/jarvus-routing/**",
+    "packages/slate-theme/**",
+    "packages/slate-cbl/**",
+    "packages/slate-cbl-colors/**",
+    "packages/slate-core-data/**",
+    "packages/slate-ui-classic/**",
+    "packages/emergence-apikit/**",
+    "packages/jarvus-apikit/**",
+    "packages/jarvus-ext-glyphs/**",
+    "packages/jarvus-ext-actionevents/**",
+    "packages/jarvus-lazydata/**",
+    "packages/jarvus-aggregrid/**",
+    "packages/jarvus-hotfixes/**",
+    "ext/**",
+    "workspace.json",
+]
+
+[hololens.output]
+root = "webapp-builds/SlateTasksTeacher"
+merge = "replace"

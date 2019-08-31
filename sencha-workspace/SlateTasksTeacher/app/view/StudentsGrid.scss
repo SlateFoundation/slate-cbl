@@ -1,0 +1,236 @@
+$slate-studentsgrid-border-color:       dynamic(#ccc);
+
+$slate-studentsgrid-cell-bg-color:      dynamic(#fff);
+$slate-studentsgrid-cell-padding:       dynamic(.5em);
+$slate-studentsgrid-cell-width:         dynamic(70px);
+
+$slate-studentsgrid-rowheader-bg-color: dynamic(#ddd);
+$slate-studentsgrid-rowheader-width:    dynamic(280px);
+
+$slate-studentsgrid-colheader-bg-color: dynamic(#f5f5f5);
+$slate-studentsgrid-colheader-width:    dynamic(223px);
+
+
+$g: 'slate-studentsgrid'; // 'shorthand' for selectors
+
+.#{$g} {
+    display: flex;
+    max-width: 100%;
+
+    table {
+        margin: 0;
+        table-layout: fixed;
+        width: auto;
+    }
+
+    td,
+    th {
+        background-color: $slate-studentsgrid-cell-bg-color;
+        border: 1px solid $slate-studentsgrid-border-color;
+        border-width: 1px 0 0 1px;
+        max-width: $slate-studentsgrid-cell-width;
+        overflow: hidden;
+        padding: $slate-studentsgrid-cell-padding;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: $slate-studentsgrid-cell-width;
+    }
+
+    .#{$g}-cornercell,
+    .#{$g}-rowheaders-table,
+    .#{$g}-rowheader {
+        width: $slate-studentsgrid-rowheader-width;
+    }
+
+    .#{$g}-cornercell {
+        border-top: 0;
+        height: 150px;
+    }
+
+    .#{$g}-rowheader {
+        background-color: $slate-studentsgrid-rowheader-bg-color;
+    }
+
+    .#{$g}-expander-table {
+        width: 100%;
+    }
+
+    .#{$g}-expander-cell {
+        background-color: #999;
+        border: none;
+        padding: 0;
+    }
+
+    .#{$g}-subrow {
+        .#{$g}-rowheader {
+            background-color: $slate-studentsgrid-cell-bg-color;
+            font-weight: normal;
+            padding-left: 1.75em;
+        }
+    }
+
+    .#{$g}-colheader {
+        border: none;
+        height: 150px;
+        overflow: visible;
+        padding: 0;
+        vertical-align: bottom;
+
+        .#{$g}-header-clip {
+            height: 100%;
+            overflow: hidden;
+            width: 300%;
+        }
+
+        .#{$g}-header-link {
+            background-color: $slate-studentsgrid-colheader-bg-color;
+            border-bottom: 1px solid #ccc;
+            bottom: -125px;
+            color: $color;
+            display: block;
+            height: 57px;
+            left: 49px;
+            line-height: 1;
+            padding: 20px 30px 20px 40px;
+            position: relative;
+            text-align: left;
+            transform: rotate(-55deg);
+            transform-origin: bottom left;
+            width: 223px;
+
+            &:hover,
+            &:focus {
+                background-color: mix($link-color, $slate-studentsgrid-colheader-bg-color, 10%);
+                text-decoration: none;
+            }
+        }
+
+        &:first-child a {
+            border-top: 1px solid #ccc;
+        }
+    }
+
+    .#{$g}-cell {
+        border-color: $color;
+        text-align: center;
+
+        &:first-child {
+            border-left: 0;
+        }
+    }
+}
+
+.#{$g}-scroll-control {
+    align-items: center;
+    background: #ddd;
+    box-sizing: border-box;
+    cursor: w-resize;
+    display: flex;
+    font-size: 1.5em;
+    height: 150px;
+    justify-content: center;
+    left: $slate-studentsgrid-rowheader-width;
+    padding: .125em;
+    position: absolute;
+    top: 0;
+    width: .5em;
+    z-index: 1;
+
+    &:hover,
+    &:focus {
+        background-color: #ccc;
+    }
+
+    &::before {
+        content: '\00ab';
+    }
+
+    &.scroll-right {
+        cursor: e-resize;
+        left: auto;
+        right: 0;
+
+        &::before {
+            content: '\00bb';
+        }
+    }
+
+    &.is-disabled {
+        background-color: #e5e5e5;
+        color: #bbb;
+        cursor: default;
+    }
+}
+
+.#{$g}-rowheaders-ct {
+    border-bottom: 1px solid $slate-studentsgrid-border-color;
+    width: $slate-studentsgrid-rowheader-width;
+}
+
+.#{$g}-row {
+    cursor: pointer;
+}
+
+.#{$g}-rowheader {
+    &::before {
+        content: '\f0da'; // fa-caret-right
+        display: inline-block;
+        float: left;
+        font-family: 'FontAwesome';
+        margin-right: .25em;
+        text-align: center;
+        transition: 250ms;
+        width: 1em;
+    }
+
+    .is-expanded &::before {
+        transform: rotate(90deg);
+    }
+
+    .#{$g}-subrow &::before {
+        display: none;
+    }
+}
+
+.#{$g}-expander-ct {
+    background-color: transparent;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: 250ms;
+
+    .is-expanded + .#{$g}-expander & {
+        height: 123px; // TODO don't hardcode this, obviously should be set in JS
+        opacity: 1;
+    }
+}
+
+.#{$g}-header-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.#{$g}-scroller {
+    border: 1px solid;
+    border-width: 0 0 1px 1px;
+    flex: 1;
+    overflow: auto;
+}
+
+.#{$g}-data-table {
+    border-right: 1px solid;
+}
+
+.#{$g}-cell {
+    &.slate-task-status-unassigned  { background-color: $slate-task-color-unassigned; }
+    &.slate-task-status-due         { background-color: $slate-task-color-due; }
+    &.slate-task-status-completed   { background-color: $slate-task-color-completed; }
+    &.slate-task-status-revision    { background-color: $slate-task-color-revision; }
+    &.slate-task-status-late        { background-color: $slate-task-color-late; }
+
+    &.slate-task-status-needsrated {
+        background-image: $slate-task-pattern-needsrated;
+    }
+}
