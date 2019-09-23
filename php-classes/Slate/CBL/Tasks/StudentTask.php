@@ -300,9 +300,11 @@ class StudentTask extends \VersionedRecord
 
     public function getSubmissionTimestamp()
     {
+        $submissions = $this->Submissions;
+
         if (
             $this->TaskStatus != 'assigned'
-            && ($Submission = end($this->Submissions))
+            && ($Submission = end($submissions))
         ) {
             return $Submission->Created;
         }
