@@ -183,6 +183,10 @@ class StudentTask extends \VersionedRecord
     {
         $User = $User ?: $this->getUserFromEnvironment();
 
+        if ($User === null && php_sapi_name() === 'cli') {
+            return true;
+        }
+
         return $User && (
             $User->ID == $this->StudentID
             || in_array($this->StudentID, GuardianRelationship::getWardIds($User))
@@ -300,9 +304,11 @@ class StudentTask extends \VersionedRecord
 
     public function getSubmissionTimestamp()
     {
+        $submissions = $this->Submissions;
+
         if (
             $this->TaskStatus != 'assigned'
-            && ($Submission = end($this->Submissions))
+            && ($Submission = end($submissions))
         ) {
             return $Submission->Created;
         }
