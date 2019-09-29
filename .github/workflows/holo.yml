@@ -3,7 +3,7 @@ name: Projections
 on:
   push:
     tags:
-      - 'v2.*'
+      - 'v3.*'
   schedule:
     - cron: '0 * * * *'
 
