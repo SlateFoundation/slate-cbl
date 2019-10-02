@@ -13,7 +13,7 @@ describe('Student demonstrations test', () => {
     it('View single dempnstration rubric as student', () => {
 
         // Open homepage and login as 'student' via modal
-        cy.visit('http://localhost:7080/');
+        cy.visit('/');
 
         cy.get('#login-modal').should('not.be.visible');
         cy.contains('Log In').click();
@@ -33,29 +33,32 @@ describe('Student demonstrations test', () => {
         cy.get('.slate-omnibar ul.omnibar-items .omnibar-item:nth-child(5n) a').contains('Student');
 
         // Open student demonstrations dashboard
-        cy.visit('http://localhost:7080/cbl/dashboards/demonstrations/student');
+        cy.visit('/cbl/dashboards/demonstrations/student');
 
         // Verify student redirect
         cy.location('hash').should('eq', '#me');
         cy.get('.slate-appcontainer-bodyWrap .slate-placeholder ')
             .contains('Select a content area to load demonstrations dashboard');
 
-        // Click into 'Rubric' selector
-        cy.get('.slate-cbl-contentareaselector .x-form-arrow-trigger').then(($el) => {
+        cy.window().then((win) => {
 
-            // Get the id of the core selector element
-            var selectorId = $el[0].id.replace('-trigger-picker', '');
+            // Get the selector element
+            var selectorEl = win.Ext.ComponentQuery.query('slate-cbl-contentareaselector')[0];
 
-            // Open the selector
-            $el.click();
+            // Click the selector
+            cy.get('#' + selectorEl.el.dom.id).click();
+
+            // Get the picker element
+            var pickerEl = selectorEl.getPicker();
+
 
             // Verify and click first element of selector dropdown
-            cy.get('#' + selectorId + '-picker-listEl li:first-child')
+            cy.get('#' + pickerEl.id + ' li:first-child')
                 .contains('English Language Arts')
                 .click();
 
             // Verify content loads
             cy.get('.slate-demonstrations-student-competenciessummary span').contains('English Language Arts');
-        });
+        })
     });
 });
