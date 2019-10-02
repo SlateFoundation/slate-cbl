@@ -37,17 +37,14 @@ describe('Student demonstrations test', () => {
 
         cy.window().then((win) => {
 
-            // het the selector element
+            // get the selector element
             var selectorEl = win.Ext.ComponentQuery.query('slate-cbl-contentareaselector')[0];
 
             // click the selector
             cy.get('#' + selectorEl.el.dom.id).click();
 
-            // get the picker element
-            var pickerEl = selectorEl.getPicker();
-
-            // verify and click first element of selector dropdown
-            cy.get('#' + pickerEl.id + ' li:first-child')
+            // verify and click first element of picker dropdown
+            cy.get('#' + selectorEl.getPicker().id + ' li:first-child')
                 .contains('English Language Arts')
                 .click();
 
