@@ -25,7 +25,7 @@ describe('Student demonstrations test', () => {
         });
     });
 
-    it('View single dempnstration rubric as student', () => {
+    it('View single demonstration rubric as student', () => {
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/demonstrations/student');
