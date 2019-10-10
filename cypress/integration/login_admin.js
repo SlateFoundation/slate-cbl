@@ -11,7 +11,7 @@ describe('Admin login test', () => {
     });
 
     it('Should toggle login modal display', () => {
-        cy.visit('http://localhost:7080/');
+        cy.visit('/');
 
         // should be visible after Log In click
         cy.get('#login-modal').should('not.be.visible');
@@ -29,27 +29,8 @@ describe('Admin login test', () => {
         cy.get('#login-modal').should('not.be.visible');
     });
 
-    it('Should login via Modal', () => {
-        cy.visit('http://localhost:7080/');
-
-        cy.get('#login-modal').should('not.be.visible');
-        cy.contains('Log In').click();
-
-        cy.contains('#login-modal').should('not.have.attr', 'display');
-        cy.focused()
-            .should('have.attr', 'name', '_LOGIN[username]')
-            .type('admin')
-            .tab();
-
-        cy.focused()
-            .should('have.attr', 'name', '_LOGIN[password]')
-            .type('admin{enter}');
-
-        cy.location('pathname').should('eq', '/');
-    });
-
     it('Should show login error notification', () => {
-        cy.visit('http://localhost:7080/');
+        cy.visit('/');
 
         cy.get('#login-modal').should('not.be.visible');
         cy.contains('Log In').click();
@@ -66,5 +47,24 @@ describe('Admin login test', () => {
         cy.contains('Sorry!')
             .parents('div')
             .should('have.attr', 'class', 'notify error');
+    });
+
+    it('Should login via Modal', () => {
+        cy.visit('/');
+
+        cy.get('#login-modal').should('not.be.visible');
+        cy.contains('Log In').click();
+
+        cy.contains('#login-modal').should('not.have.attr', 'display');
+        cy.focused()
+            .should('have.attr', 'name', '_LOGIN[username]')
+            .type('admin')
+            .tab();
+
+        cy.focused()
+            .should('have.attr', 'name', '_LOGIN[password]')
+            .type('admin{enter}');
+
+        cy.location('pathname').should('eq', '/');
     });
 });
