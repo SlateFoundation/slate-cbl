@@ -10,22 +10,12 @@ describe('Teacher demonstrations test', () => {
         }
     });
 
-    // authenticate as 'student' user
+    // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.visit('/');
-        cy.request({
-            method: 'POST',
-            url: '/login/?format=json',
-            form: true,
-            body: {
-                '_LOGIN[username]': 'teacher',
-                '_LOGIN[password]': 'teacher',
-                '_LOGIN[returnMethod]': 'POST'
-            }
-        });
+        cy.loginAs('teacher');
     });
 
-    it('View single demonstration rubric as student', () => {
+    it('View single demonstration rubric as teacher', () => {
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/demonstrations/teacher');

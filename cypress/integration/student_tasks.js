@@ -12,17 +12,7 @@ describe('Student tasks test', () => {
 
     // authenticate as 'student' user
     beforeEach(() => {
-        cy.visit('/');
-        cy.request({
-            method: 'POST',
-            url: '/login/?format=json',
-            form: true,
-            body: {
-                '_LOGIN[username]': 'student',
-                '_LOGIN[password]': 'student',
-                '_LOGIN[returnMethod]': 'POST'
-            }
-        });
+        cy.loginAs('student');
     });
 
     it('View single task as student', () => {

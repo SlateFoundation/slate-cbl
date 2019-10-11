@@ -38,3 +38,18 @@ Cypress.Commands.add('upload_file', (fileName, fileType = ' ', selector) => {
         })
     })
   })
+
+// Login command
+Cypress.Commands.add('loginAs', (user) => {
+  cy.visit('/');
+  cy.request({
+      method: 'POST',
+      url: '/login/?format=json',
+      form: true,
+      body: {
+          '_LOGIN[username]': user,
+          '_LOGIN[password]': user,
+          '_LOGIN[returnMethod]': 'POST'
+      }
+  });
+});

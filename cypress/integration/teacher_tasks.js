@@ -10,19 +10,9 @@ describe('Teacher demonstrations test', () => {
         }
     });
 
-    // authenticate as 'student' user
+    // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.visit('/');
-        cy.request({
-            method: 'POST',
-            url: '/login/?format=json',
-            form: true,
-            body: {
-                '_LOGIN[username]': 'teacher',
-                '_LOGIN[password]': 'teacher',
-                '_LOGIN[returnMethod]': 'POST'
-            }
-        });
+        cy.loginAs('teacher');
     });
 
     it('View single tasks as teacher', () => {
