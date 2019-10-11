@@ -20,10 +20,10 @@ describe('Teacher demonstrations test', () => {
         cy.get('.slate-appcontainer-bodyWrap .slate-placeholder ')
             .contains('Select a list of students and a content area to load progress dashboard');
 
-        cy.window().then((win) => {
+        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
 
             // get the selector element
-            var selectorEl = win.Ext.ComponentQuery.query('slate-cbl-contentareaselector')[0];
+            var selectorEl = extQuerySelector('slate-cbl-contentareaselector');
 
             // click the selector
             cy.get('#' + selectorEl.el.dom.id).click();
