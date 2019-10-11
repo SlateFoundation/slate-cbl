@@ -23,13 +23,13 @@ describe('Student demonstrations test', () => {
         cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
 
             // get the selector element
-            var selectorEl = extQuerySelector('slate-cbl-contentareaselector');
+            var contentAreaSelector = extQuerySelector('slate-cbl-contentareaselector');
 
             // click the selector
-            cy.get('#' + selectorEl.el.dom.id).click();
+            cy.get('#' + contentAreaSelector.el.dom.id).click();
 
             // verify and click first element of picker dropdown
-            cy.get('#' + selectorEl.getPicker().id + ' li:first-child')
+            cy.get('#' + contentAreaSelector.getPicker().id + ' li:first-child')
                 .contains('English Language Arts')
                 .click();
 
