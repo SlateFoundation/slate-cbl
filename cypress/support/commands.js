@@ -77,3 +77,10 @@ Cypress.Commands.add('loadDatabase', () => {
     cy.exec(`cat .data/fixtures/*.sql | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1 default`);
   }
 });
+
+// Ext command getter
+Cypress.Commands.add('withExt', () => {
+  cy.window().then((win) => {
+    return win.Ext;
+  });
+});
