@@ -81,6 +81,11 @@ Cypress.Commands.add('loadDatabase', () => {
 // Ext command getter
 Cypress.Commands.add('withExt', () => {
   cy.window().then((win) => {
-    return win.Ext;
+    const Ext = win.Ext;
+    return {
+      Ext: win.Ext,
+      extQuerySelector: query => Ext.ComponentQuery.query(query)[0],
+      extQuerySelectorAll: query => Ext.ComponentQuery.query(query)
+    };
   });
 });
