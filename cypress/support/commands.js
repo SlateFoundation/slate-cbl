@@ -53,3 +53,27 @@ Cypress.Commands.add('loginAs', (user) => {
       }
   });
 });
+
+// Drop and load database in one step
+Cypress.Commands.add('resetDatabase', () => {
+  cy.dropDatabase();
+  cy.loadDatabase();
+});
+
+// Drops the entire
+Cypress.Commands.add('dropDatabase', () => {
+  const studioContainer = Cypress.env('STUDIO_CONTAINER');
+
+  if (studioContainer) {
+      cy.exec(`echo 'DROP DATABASE IF EXISTS \`default\`; CREATE DATABASE \`default\`;' | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1`);
+  }
+});
+
+// Reload the original data fixtures
+Cypress.Commands.add('loadDatabase', () => {
+  const studioContainer = Cypress.env('STUDIO_CONTAINER');
+
+  if (studioContainer) {
+    cy.exec(`cat .data/fixtures/*.sql | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1 default`);
+  }
+});
