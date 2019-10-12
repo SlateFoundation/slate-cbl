@@ -18,6 +18,25 @@ describe('Teacher demonstrations test', () => {
         // verify teacher redirect
         cy.location('hash').should('eq', '');
 
-        // TODO - check for page content
+        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
+            .contains('Select a section to load tasks dashboard');
+
+        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+
+            // get the selector element
+            var sectionSelector = extQuerySelector('slate-cbl-sectionselector');
+
+            // click the selector
+            cy.get('#' + sectionSelector.el.dom.id).click();
+
+            // verify and click first element of picker dropdown
+            cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
+                .contains('Math Studio')
+                .click();
+
+            // verify content loads
+            var studentGrid = extQuerySelector('slate-studentsgrid');
+            cy.get('#' + studentGrid.el.dom.id).contains('Student Slate');
+        });
     });
 });
