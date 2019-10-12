@@ -17,7 +17,7 @@ describe('Student demonstrations test', () => {
 
         // verify student redirect
         cy.location('hash').should('eq', '#me');
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder ')
+        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
             .contains('Select a content area to load demonstrations dashboard');
 
         cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
