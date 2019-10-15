@@ -22,19 +22,39 @@ describe('Teacher demonstrations test', () => {
 
         cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
 
-            // get the selector element
-            var contentAreaSelector = extQuerySelector('slate-cbl-contentareaselector');
+            // get the 'Rubric' selector element
+            var rubricSelector = extQuerySelector('slate-cbl-contentareaselector');
 
             // click the selector
-            cy.get('#' + contentAreaSelector.el.dom.id).click();
+            cy.get('#' + rubricSelector.el.dom.id).click();
 
             // verify and click first element of picker dropdown
-            cy.get('#' + contentAreaSelector.getPicker().id + ' li:first-child')
+            cy.get('#' + rubricSelector.getPicker().id + ' .x-boundlist-item')
                 .contains('English Language Arts')
                 .click();
 
+            // verify hash updates
+            cy.location('hash').should('eq', '#ELA');
+
+            // get the 'Students' selector element
+            var studentSelector = extQuerySelector('slate-cbl-studentslistselector');
+
+            // click the selector
+            cy.get('#' + studentSelector.el.dom.id)
+                .click()
+                .focused()
+                .type('ELA');
+
+            // verify and click first element of picker dropdown
+            cy.get('#' + studentSelector.getPicker().id + ' .x-boundlist-item')
+                .contains('ELA-001')
+                .click();
+
+            // verify hash updates
+            cy.location('hash').should('eq', '#ELA/section:ELA-001');
+
             // verify content loads
-            cy.get('.slate-demonstrations-student-competenciessummary span').contains('English Language Arts');
+            cy.get('.cbl-grid-competencies').contains('Reading Critically');
         });
     });
 });
