@@ -78,7 +78,7 @@
 
     ```bash
     # clone fixture branch into git-ignored .data/ directory
-    git clone -b cbl/competencies https://github.com/SlateFoundation/slate-fixtures.git .data/fixtures
+    git clone -b cbl/demo https://github.com/SlateFoundation/slate-fixtures.git .data/fixtures
 
     # load all .sql files from fixture
     cat .data/fixtures/*.sql | load-sql -
