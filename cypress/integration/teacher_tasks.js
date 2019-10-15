@@ -29,14 +29,17 @@ describe('Teacher demonstrations test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
-            // verify and click first element of picker dropdown
+            // click ELA Studeio element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('Math Studio')
+                .contains('ELA Studio')
                 .click();
+
+            // verify hash
+            cy.location('hash').should('eq', '#ELA-001/all');
 
             // verify content loads
             var studentGrid = extQuerySelector('slate-studentsgrid');
-            cy.get('#' + studentGrid.el.dom.id).contains('Student Slate');
+            cy.get('#' + studentGrid.el.dom.id).contains('ELA Task One');
         });
     });
 });
