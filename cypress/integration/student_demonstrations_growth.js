@@ -40,40 +40,30 @@ describe('Student competency growth calculation test', () => {
                 .find('td[data-ref="growthEl"]')
                 .contains('1.3 yr');
 
-            // TODO: fix component query to select card by competency id
-            var studentCompetencyCards = extQuerySelectorAll('slate-demonstrations-student-competencycard');
+            // validate ELA.6 metrics
+            var competencyCard = extQuerySelector('slate-demonstrations-student-competencycard{getCompetency().get("Code")=="ELA.6"}');
+            var competencyCardId = '#' + competencyCard.id;
 
-            // validate the growth calculation for each card
-            studentCompetencyCards.forEach(function(competencyCard) {
+            // check baseline rating calculation
+            cy.get(competencyCardId)
+                .find('span[data-ref="codeEl"]')
+                .contains('ELA.6');
 
-                // TODO - add support for additional cards
-                if (competencyCard.competency.id != 6) {
-                    return;
-                }
+            cy.get(competencyCardId)
+                .find('td[data-ref="baselineRatingEl"]')
+                .contains('9.5');
 
-                var competencyCardId = '#' + competencyCard.id;
+            cy.get(competencyCardId)
+                .find('td[data-ref="averageEl"]')
+                .contains('10');
 
-                // check baseline rating calculation
-                cy.get(competencyCardId)
-                    .find('span[data-ref="codeEl"]')
-                    .contains('ELA.6');
+            cy.get(competencyCardId)
+                .find('td[data-ref="growthEl"]')
+                .contains('1.5 yr');
 
-                cy.get(competencyCardId)
-                    .find('td[data-ref="baselineRatingEl"]')
-                    .contains('9.5');
-
-                cy.get(competencyCardId)
-                    .find('td[data-ref="averageEl"]')
-                    .contains('10');
-
-                cy.get(competencyCardId)
-                    .find('td[data-ref="growthEl"]')
-                    .contains('1.5 yr');
-
-                cy.get(competencyCardId)
-                    .find('div[data-ref="meterPercentEl"]')
-                    .contains('67%');
-            });
+            cy.get(competencyCardId)
+                .find('div[data-ref="meterPercentEl"]')
+                .contains('67%');
         });
     });
 });
