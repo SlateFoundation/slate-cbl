@@ -1,4 +1,4 @@
-describe('Admin login test', () => {
+describe('Registration and user profile test', () => {
 
     // reset database before tests
     before(() => {
