@@ -18,6 +18,32 @@ describe('Student tasks test', () => {
         // verify student redirect
         cy.location('hash').should('eq', '#me/all');
 
-        // TODO - check for page content
+        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+
+            // get current tasks list
+            var currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
+
+            // verify content has finished loading
+            cy.get('#' + currentTasksTree.id)
+                .contains('ELA Task One')
+
+            // get the course section element
+            var courseSectionSelector = extQuerySelector('slate-cbl-sectionselector');
+
+            // click the selector
+            cy.get('#' + courseSectionSelector.el.dom.id).click();
+
+            // click ELA Studio element of picker dropdown
+            cy.get('#' + courseSectionSelector.getPicker().id + ' .x-boundlist-item')
+                .contains('ELA Studio')
+                .click();
+
+            // verify hash
+            cy.location('hash').should('eq', '#me/ELA-001');
+
+            // verify content loads
+            cy.get('#' + currentTasksTree.id)
+                .contains('ELA Task One')
+        });
     });
 });

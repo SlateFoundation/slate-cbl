@@ -29,7 +29,7 @@ describe('Teacher demonstrations test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
-            // click ELA Studeio element of picker dropdown
+            // click ELA Studio element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
                 .contains('ELA Studio')
                 .click();
