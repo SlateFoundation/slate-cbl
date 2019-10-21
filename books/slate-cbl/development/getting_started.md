@@ -77,11 +77,7 @@
 1. Load fixture data into site database (optional)
 
     ```bash
-    # clone fixture branch into git-ignored .data/ directory
-    git clone -b cbl/demo https://github.com/SlateFoundation/slate-fixtures.git .data/fixtures
-
-    # load all .sql files from fixture
-    cat .data/fixtures/*.sql | load-sql -
+    cat cypress/fixtures/database/*.sql | load-sql -
     ```
 
     The standard fixture data includes the following users, all with passwords matching their usernames:

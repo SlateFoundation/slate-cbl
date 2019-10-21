@@ -74,7 +74,7 @@ Cypress.Commands.add('loadDatabase', () => {
   const studioContainer = Cypress.env('STUDIO_CONTAINER');
 
   if (studioContainer) {
-    cy.exec(`cat .data/fixtures/*.sql | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1 default`);
+    cy.exec(`cat cypress/fixtures/database/*.sql | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1 default`);
   }
 });
 
