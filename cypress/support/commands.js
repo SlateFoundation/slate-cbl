@@ -65,7 +65,7 @@ Cypress.Commands.add('dropDatabase', () => {
   const studioContainer = Cypress.env('STUDIO_CONTAINER');
 
   if (studioContainer) {
-      cy.exec(`echo 'DROP DATABASE IF EXISTS \`default\`; CREATE DATABASE IF NOT EXISTS \`default\`;' | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1`);
+      cy.exec(`echo 'DROP DATABASE IF EXISTS \`default\`; CREATE DATABASE \`default\`;' | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1`);
   }
 });
 
