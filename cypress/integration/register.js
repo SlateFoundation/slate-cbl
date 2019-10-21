@@ -1,12 +1,8 @@
-describe('Admin login test', () => {
+describe('Registration and user profile test', () => {
 
     // reset database before tests
     before(() => {
-        const studioContainer = Cypress.env('STUDIO_CONTAINER');
-
-        if (studioContainer) {
-            cy.exec(`echo 'DROP DATABASE IF EXISTS \`default\`;' | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1`);
-        }
+        cy.dropDatabase();
     });
 
     it('Register and set up profile', () => {
