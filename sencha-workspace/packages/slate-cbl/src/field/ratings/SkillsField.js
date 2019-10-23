@@ -373,7 +373,9 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 // fetch level or queue for loading
                 studentCompetency = studentCompetenciesStore.getByCompetencyId(competencyId);
 
-                if (studentCompetency) {
+                if (demonstrationSkill.TargetLevel) {
+                    level = demonstrationSkill.TargetLevel;
+                } else if (studentCompetency) {
                     level = studentCompetency.get('Level');
                 } else {
                     level = null;
@@ -518,16 +520,16 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                 var valueSkillsMap = me.valueSkillsMap,
                     competencyLevels = {},
                     studentCompetenciesLength = studentCompetenciesStore.getCount(),
-                    studentCompetencyIndex = 0, studentCompetency, competencyId, level,
+                    studentCompetencyIndex = 0, studentCompetency, competencyId, defaultLevel,
                     competencyContainer, ratingFields, ratingFieldsLength, ratingFieldIndex, ratingField, skillData;
 
                 for (; studentCompetencyIndex < studentCompetenciesLength; studentCompetencyIndex++) {
                     studentCompetency = studentCompetenciesStore.getAt(studentCompetencyIndex);
                     competencyId = studentCompetency.get('CompetencyID');
-                    level = studentCompetency.get('Level');
+                    defaultLevel = studentCompetency.get('Level');
 
-                    if ((competencyLevels[competencyId]||0) < level) {
-                        competencyLevels[competencyId] = level;
+                    if ((competencyLevels[competencyId]||0) < defaultLevel) {
+                        competencyLevels[competencyId] = defaultLevel;
                     }
                 }
 
@@ -538,7 +540,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                         continue;
                     }
 
-                    level = competencyLevels[competencyId];
+                    defaultLevel = competencyLevels[competencyId];
                     competencyContainer = competencyContainers[competencyId];
 
                     if (!competencyContainer) {
@@ -549,14 +551,19 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
                     ratingFieldsLength = ratingFields.getCount();
                     ratingFieldIndex = 0;
 
+                    // use default / current target level for phantom skills
                     for (; ratingFieldIndex < ratingFieldsLength; ratingFieldIndex++) {
                         ratingField = ratingFields.getAt(ratingFieldIndex);
-                        ratingField.setLevel(level);
-
                         skillData = valueSkillsMap[ratingField.getSkill().getId()];
 
                         if (skillData) {
-                            skillData.TargetLevel = level;
+                            if (!skillData.TargetLevel) {
+                                skillData.TargetLevel = defaultLevel;
+                            }
+
+                            ratingField.setLevel(skillData.TargetLevel);
+                        } else {
+                            ratingField.setLevel(defaultLevel);
                         }
                     }
                 }
