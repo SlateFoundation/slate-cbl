@@ -63,18 +63,26 @@ Cypress.Commands.add('resetDatabase', () => {
 // Drops the entire
 Cypress.Commands.add('dropDatabase', () => {
   const studioContainer = Cypress.env('STUDIO_CONTAINER');
+  const studioSSH = Cypress.env('STUDIO_SSH');
+  const studioDocker = studioSSH
+    ? `ssh ${studioSSH} docker`
+    : 'docker'
 
   if (studioContainer) {
-      cy.exec(`echo 'DROP DATABASE IF EXISTS \`default\`; CREATE DATABASE \`default\`;' | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1`);
+      cy.exec(`echo 'DROP DATABASE IF EXISTS \`default\`; CREATE DATABASE \`default\`;' | ${studioDocker} exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1`);
   }
 });
 
 // Reload the original data fixtures
 Cypress.Commands.add('loadDatabase', () => {
   const studioContainer = Cypress.env('STUDIO_CONTAINER');
+  const studioSSH = Cypress.env('STUDIO_SSH');
+  const studioDocker = studioSSH
+    ? `ssh ${studioSSH} docker`
+    : 'docker'
 
   if (studioContainer) {
-    cy.exec(`cat cypress/fixtures/database/*.sql | docker exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1 default`);
+    cy.exec(`cat cypress/fixtures/database/*.sql | ${studioDocker} exec -i ${studioContainer} hab pkg exec core/mysql mysql -u root -h 127.0.0.1 default`);
   }
 });
 
