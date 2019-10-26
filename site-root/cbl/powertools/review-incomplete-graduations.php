@@ -53,54 +53,54 @@ $graduations = Slate\CBL\StudentCompetency::getAllByQuery(
     </thead>
 
     <tbody>
-        <?php foreach ($graduations as $StudentCompetency): ?>
-        <?php
-        $previous = Slate\CBL\StudentCompetency::getAllByWhere([
-            'StudentID' => $StudentCompetency->StudentID,
-            'CompetencyID' => $StudentCompetency->CompetencyID,
-            'Level' => [
-                'operator' => '<',
-                'value' => $StudentCompetency->Level
-            ]
-        ], [
-            'order' => ['Level' => 'DESC']
-        ]);
+        <?php foreach ($graduations as $StudentCompetency) : ?>
+            <?php
+            $previous = Slate\CBL\StudentCompetency::getAllByWhere([
+                'StudentID' => $StudentCompetency->StudentID,
+                'CompetencyID' => $StudentCompetency->CompetencyID,
+                'Level' => [
+                    'operator' => '<',
+                    'value' => $StudentCompetency->Level
+                ]
+            ], [
+                'order' => ['Level' => 'DESC']
+            ]);
 
-        $restorable =
-            $StudentCompetency->EnteredVia == 'graduation'
-            && !$previous[0]->isLevelComplete();
+            $restorable =
+                $StudentCompetency->EnteredVia == 'graduation'
+                && !$previous[0]->isLevelComplete();
 
-        ?>
-        <tr class="<?= $restorable ? 'restorable' : '' ?>">
-            <td><?=$StudentCompetency->ID?></td>
-            <td>
-                <?=$StudentCompetency->Creator->Username?>
-                @ <?=date('Y-m-d H:i:s', $StudentCompetency->Created)?>
-            </td>
-            <td><?=$StudentCompetency->Student->Username?></td>
-            <td><?=$StudentCompetency->Level?></td>
-            <td>
-                <pre><?=var_export($StudentCompetency->getData(), true)?></pre>
-            </td>
-            <td>
-                <table>
-                    <?php foreach ($previous as $PreviousStudentCompetency): ?>
-                    <tr class="<?=$PreviousStudentCompetency->isLevelComplete() ? 'complete' : 'incomplete'?>">
-                        <td><?=$PreviousStudentCompetency->Level?></td>
-                        <td><?=$PreviousStudentCompetency->EnteredVia?></td>
-                        <td>
-                            <?=$PreviousStudentCompetency->Creator->Username?>
-                            @ <?=date('Y-m-d H:i:s', $PreviousStudentCompetency->Created)?>
-                        </td>
-                    </tr>
-                    <?php endforeach ?>
-                </table>
-            </td>
-            <?php if ($restorable): ?>
-                <td class="<?=$restored ? 'restored' : 'unrestored'?>"><?=$restoreTo?></td>
-            <?php endif ?>
-        </tr>
-        <?php flush() ?>
+            ?>
+            <tr class="<?= $restorable ? 'restorable' : '' ?>">
+                <td><?=$StudentCompetency->ID?></td>
+                <td>
+                    <?=$StudentCompetency->Creator->Username?>
+                    @ <?=date('Y-m-d H:i:s', $StudentCompetency->Created)?>
+                </td>
+                <td><?=$StudentCompetency->Student->Username?></td>
+                <td><?=$StudentCompetency->Level?></td>
+                <td>
+                    <pre><?=var_export($StudentCompetency->getData(), true)?></pre>
+                </td>
+                <td>
+                    <table>
+                        <?php foreach ($previous as $PreviousStudentCompetency) : ?>
+                        <tr class="<?=$PreviousStudentCompetency->isLevelComplete() ? 'complete' : 'incomplete'?>">
+                            <td><?=$PreviousStudentCompetency->Level?></td>
+                            <td><?=$PreviousStudentCompetency->EnteredVia?></td>
+                            <td>
+                                <?=$PreviousStudentCompetency->Creator->Username?>
+                                @ <?=date('Y-m-d H:i:s', $PreviousStudentCompetency->Created)?>
+                            </td>
+                        </tr>
+                        <?php endforeach ?>
+                    </table>
+                </td>
+                <?php if ($restorable) : ?>
+                    <td class="<?=$restored ? 'restored' : 'unrestored'?>"><?=$restoreTo?></td>
+                <?php endif ?>
+            </tr>
+            <?php flush() ?>
         <?php endforeach ?>
     </tbody>
 </table>
