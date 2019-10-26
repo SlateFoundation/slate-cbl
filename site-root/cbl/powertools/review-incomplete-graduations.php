@@ -46,9 +46,11 @@ $graduations = Slate\CBL\StudentCompetency::getAllByQuery(
             <th>StudentCompetencyID</th>
             <th>Created</th>
             <th>Student</th>
+            <th>Competency</th>
             <th>Level</th>
-            <th>Data</th>
-            <th>History</th>
+            <th>Via</th>
+            <th>Baseline</th>
+            <th>Previous</th>
         </tr>
     </thead>
 
@@ -78,10 +80,10 @@ $graduations = Slate\CBL\StudentCompetency::getAllByQuery(
                     @ <?=date('Y-m-d H:i:s', $StudentCompetency->Created)?>
                 </td>
                 <td><?=$StudentCompetency->Student->Username?></td>
+                <td><?=$StudentCompetency->Competency->Code?></td>
                 <td><?=$StudentCompetency->Level?></td>
-                <td>
-                    <pre><?=var_export($StudentCompetency->getData(), true)?></pre>
-                </td>
+                <td><?=$StudentCompetency->EnteredVia?></td>
+                <td><?=$StudentCompetency->BaselineRating?></td>
                 <td>
                     <table>
                         <?php foreach ($previous as $PreviousStudentCompetency) : ?>
