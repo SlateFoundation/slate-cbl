@@ -54,3 +54,7 @@
 	path = sencha-workspace/packages.remote/slate-ui-classic
 	url = https://github.com/SlateFoundation/slate-ui-classic.git
 	branch = master
+[submodule "cypress/fixtures/database"]
+	path = cypress/fixtures/database
+	url = https://github.com/SlateFoundation/slate-fixtures.git
+	branch = cbl/demo

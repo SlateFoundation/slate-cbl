@@ -9,35 +9,35 @@
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}/sencha-workspace",
-            "url": "http://localhost:3901/SlateDemonstrationsStudent/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:7081/SlateDemonstrationsStudent/?cache=1&apiHost=localhost:7080"
         },
         {
             "name": "Launch SlateDemonstrationsTeacher",
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}/sencha-workspace",
-            "url": "http://localhost:3901/SlateDemonstrationsTeacher/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:7081/SlateDemonstrationsTeacher/?cache=1&apiHost=localhost:7080"
         },
         {
             "name": "Launch SlateTasksStudent",
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}/sencha-workspace",
-            "url": "http://localhost:3901/SlateTasksStudent/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:7081/SlateTasksStudent/?cache=1&apiHost=localhost:7080"
         },
         {
             "name": "Launch SlateTasksTeacher",
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}/sencha-workspace",
-            "url": "http://localhost:3901/SlateTasksTeacher/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:7081/SlateTasksTeacher/?cache=1&apiHost=localhost:7080"
         },
         {
             "name": "Launch SlateTasksManager",
             "type": "chrome",
             "request": "launch",
             "webRoot": "${workspaceFolder}/sencha-workspace",
-            "url": "http://localhost:3901/SlateTasksManager/?cache=1&apiHost=cbl-develop.dev01.slatepowered.net"
+            "url": "http://localhost:7081/SlateTasksManager/?cache=1&apiHost=localhost:7080"
         },
         {
             "name": "Attach to Chrome",
@@ -45,7 +45,7 @@
             "request": "attach",
             "port": 9222,
             "webRoot": "${workspaceFolder}/sencha-workspace",
-            "url": "http://localhost:3901"
+            "url": "http://localhost:7081"
         }
     ]
 }

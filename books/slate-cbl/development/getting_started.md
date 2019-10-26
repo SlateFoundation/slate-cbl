@@ -38,16 +38,16 @@
 
     If you're working in *Visual Studio Code*, just run the task `studio:launch` to open a configured and persistent studio. Otherwise you'll need to launch a Habitat studio manually from a terminal.
 
-    On Mac or Windows, the `HAB_DOCKER_OPTS` environment variable must be configured to pass additional options through to Docker to expose the development web server outside the studio container:
+    The `HAB_DOCKER_OPTS` environment variable must be configured to pass additional options through to Docker to expose the development web server outside the studio container:
 
     ```bash
-    export HAB_DOCKER_OPTS="-p 7080:7080 -p 7081:7081 -p 3306:3306"
+    export HAB_DOCKER_OPTS="-p 7080:7080 -p 7081:7081 -p 3306:3306 --name emergence-studio"
     ```
 
-    Then on any system, launch the studio with:
+    Then launch the studio (forcing Docker mode):
 
     ```bash
-    hab studio enter
+    hab studio enter -D
     ```
 
     Review the notes printed to your terminal at the end of the studio startup process for a list of all available studio commands.
@@ -77,11 +77,7 @@
 1. Load fixture data into site database (optional)
 
     ```bash
-    # clone fixture branch into git-ignored .data/ directory
-    git clone -b cbl/competencies https://github.com/SlateFoundation/slate-fixtures.git .data/fixtures
-
-    # load all .sql files from fixture
-    cat .data/fixtures/*.sql | load-sql -
+    cat cypress/fixtures/database/*.sql | load-sql -
     ```
 
     The standard fixture data includes the following users, all with passwords matching their usernames:
