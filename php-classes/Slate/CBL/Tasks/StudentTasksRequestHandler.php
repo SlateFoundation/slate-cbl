@@ -2,6 +2,8 @@
 
 namespace Slate\CBL\Tasks;
 
+use Exception;
+
 use DB;
 use JSON;
 use ActiveRecord;

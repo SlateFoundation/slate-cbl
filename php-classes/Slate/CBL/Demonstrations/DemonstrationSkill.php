@@ -83,6 +83,11 @@ class DemonstrationSkill extends \VersionedRecord
             $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must not be null for non-override');
         }
 
+        // target level can only be set on new records
+        if (!$this->isPhantom && $this->isFieldDirty('TargetLevel')) {
+            $this->_validator->addError('TargetLevel', 'TargetLevel cannot be changed on existing records');
+        }
+
         // save results
         return $this->finishValidation();
     }
