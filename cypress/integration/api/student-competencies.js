@@ -10,8 +10,7 @@ describe('/cbl/student-competencies API', () => {
         cy.loginAs('teacher');
     });
 
-    it('Validation prevents TargetLevel changes', () => {
-
+    it('Expected student competencies exist', () => {
         cy.request('/cbl/student-competencies?format=json').then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
@@ -29,8 +28,9 @@ describe('/cbl/student-competencies API', () => {
                 BaselineRating: 10
             });
 
-            cy.request('/cbl/student-competencies/1?format=json&include=completion,effectiveDemonstrationsData');
-        }).then(response => {
+        });
+
+        cy.request('/cbl/student-competencies/1?format=json&include=completion,effectiveDemonstrationsData').then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
 
@@ -79,34 +79,78 @@ describe('/cbl/student-competencies API', () => {
                 Override: false,
                 DemonstrationDate: 1570819947
             });
+        });
+    });
 
-            cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
-                data: [{
+    it('Can change DemonstratedLevel on existing student task rating', () => {
+        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
+            data: [{
+                ID: 1,
+                DemonstrationSkills: [{
                     ID: 1,
-                    DemonstrationSkills: [{
-                        ID: 1,
-                        SkillID: 1,
-                        TargetLevel: 10,
-                        DemonstratedLevel: 11
-                    }]
+                    SkillID: 1,
+                    DemonstratedLevel: 10
                 }]
-            });
+            }]
         }).then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
-            expect(response.body).property('data').to.be.an('array');
-            expect(response.body.data).to.have.length(1);
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
             expect(response.body.data[0]).property('Demonstration').to.be.an('object');
-            expect(response.body.data[0].Demonstration).property('DemonstrationSkills').to.be.an('array');
-            expect(response.body.data[0].Demonstration.DemonstrationSkills).to.have.length(1);
+            expect(response.body.data[0].Demonstration).property('DemonstrationSkills').to.be.an('array').that.has.length(1);
             expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.be.an('object');
             expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.include({
                 ID: 1,
                 SkillID: 1,
-                DemonstratedLevel: 11,
+                DemonstratedLevel: 10,
                 TargetLevel: 9,
-                Override: false,
-                Removable: false
+                Override: 0
+            });
+        });
+    });
+
+    it('Validation prevents TargetLevel changes to existing StudentTask rating', () => {
+        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
+            data: [{
+                ID: 1,
+                DemonstrationSkills: [{
+                    ID: 1,
+                    SkillID: 1,
+                    TargetLevel: 10,
+                    DemonstratedLevel: 11
+                }]
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array');
+            expect(response.body).property('message', 'TargetLevel cannot be changed on existing records');
+            expect(response.body).property('success', false);
+            expect(response.body).property('failed').to.be.an('array').that.has.length(1);
+            expect(response.body.failed[0]).to.be.an('object').that.has.all.keys('record', 'validationErrors');
+            expect(response.body.failed[0].record).to.be.an('object');
+            expect(response.body.failed[0].validationErrors).to.be.an('object').that.has.all.keys('Demonstration');
+            expect(response.body.failed[0].validationErrors.Demonstration).to.be.an('object').that.has.all.keys('DemonstrationSkills');
+            expect(response.body.failed[0].validationErrors.Demonstration.DemonstrationSkills).to.be.an('array').that.has.length(1);
+            expect(response.body.failed[0].validationErrors.Demonstration.DemonstrationSkills[0]).to.be.an('object').that.has.property('TargetLevel', 'TargetLevel cannot be changed on existing records')
+
+        });
+    });
+
+    it('Rating remains unchanged after invalid edit', () => {
+        cy.request('/cbl/student-tasks/1?format=json&include=Demonstration.DemonstrationSkills').then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('object');
+            expect(response.body.data).property('Demonstration').to.be.an('object');
+            expect(response.body.data.Demonstration).property('DemonstrationSkills').to.be.an('array').that.has.length(1);
+            expect(response.body.data.Demonstration.DemonstrationSkills[0]).to.be.an('object');
+            expect(response.body.data.Demonstration.DemonstrationSkills[0]).to.include({
+                ID: 1,
+                SkillID: 1,
+                DemonstratedLevel: 10,
+                TargetLevel: 9,
+                Override: false
             });
         });
     });
