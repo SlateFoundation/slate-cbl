@@ -46,7 +46,7 @@ describe('Teacher demonstrations test', () => {
                 .type('ELA');
 
             // verify and click first element of picker dropdown
-            cy.get('#' + studentSelector.getPicker().id + ' .x-boundlist-item')
+            cy.get('#' + studentSelector.getPicker().id)
                 .contains('ELA-001')
                 .click();
 
