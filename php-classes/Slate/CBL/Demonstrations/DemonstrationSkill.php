@@ -7,6 +7,8 @@ use Slate\CBL\StudentCompetency;
 
 class DemonstrationSkill extends \VersionedRecord
 {
+    public static $allowTargetLevelChanges = false;
+
     // ActiveRecord configuration
     public static $tableName = 'cbl_demonstration_skills';
     public static $singularNoun = 'demonstration skill';
@@ -84,7 +86,7 @@ class DemonstrationSkill extends \VersionedRecord
         }
 
         // target level can only be set on new records
-        if (!$this->isPhantom && $this->isFieldDirty('TargetLevel')) {
+        if (!static::$allowTargetLevelChanges && !$this->isPhantom && $this->isFieldDirty('TargetLevel')) {
             $this->_validator->addError('TargetLevel', 'TargetLevel cannot be changed on existing records');
         }
 
