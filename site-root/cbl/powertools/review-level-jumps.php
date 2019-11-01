@@ -1,8 +1,10 @@
 <?php
 
+use Slate\CBL\Demonstrations\DemonstrationSkill;
+
 $GLOBALS['Session']->requireAccountLevel('Developer');
 
-$jumpedDemoSkills = Slate\CBL\Demonstrations\DemonstrationSkill::getAllByQuery(
+$jumpedDemoSkills = DemonstrationSkill::getAllByQuery(
     '
     SELECT Current.*
       FROM cbl_demonstration_skills Current
@@ -16,6 +18,11 @@ $minModifiedTime = strtotime('2019-08-20');
 $totalRestored = 0;
 set_time_limit(0);
 ob_end_flush();
+
+if (!empty($_POST['execute'])) {
+    DemonstrationSkill::$allowTargetLevelChanges = true;
+}
+
 ?>
 
 <?php if (empty($_POST['execute'])) : ?>
