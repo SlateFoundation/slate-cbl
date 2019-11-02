@@ -55,6 +55,30 @@ describe('Teacher demonstrations test', () => {
 
             // verify content loads
             cy.get('.cbl-grid-competencies').contains('Reading Critically');
+
+            // click the selector
+            cy.get('#' + studentSelector.el.dom.id)
+                .click()
+                .focused()
+                .type('{selectall}{backspace}{downarrow}');
+
+            // expand list to all sections
+            cy.get('#' + studentSelector.getPicker().id)
+                .contains('Show all sections')
+                .scrollIntoView()
+                .closest('button')
+                .click('center')
+
+            // verify and click empty section element of picker dropdown
+            cy.get('#' + studentSelector.getPicker().id)
+                .contains('ELA-EMPTY')
+                .click();
+
+            // verify hash updates
+            cy.location('hash').should('eq', '#ELA/section:ELA-EMPTY');
+
+            // verify content loads
+            cy.get('.cbl-grid-main').should('be.empty');
         });
     });
 });
