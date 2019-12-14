@@ -3,7 +3,6 @@ pkg_maintainer="Chris Alfano <chris@jarv.us>"
 pkg_license=("MIT")
 pkg_build_deps=(
   core/git
-  jarvus/underscore
   jarvus/sencha-cmd/6.5.2.15
 )
 
@@ -43,7 +42,6 @@ do_before() {
 do_build() {
   pushd "${PLAN_CONTEXT}" > /dev/null
 
-  build_line "Running sencha ant production build"
   sencha ant \
     -Dapp.output.base="${CACHE_PATH}" \
     -Dbuild.temp.dir="/tmp" \
@@ -54,21 +52,11 @@ do_build() {
     production \
     build
 
-  build_line "Making app.json readable"
-  underscore --in "${CACHE_PATH}/app.json" --out "${CACHE_PATH}/app.json" --outfmt stringify print
-
-  build_line "Removing absolute path prefixes sometimes saved inappropriately by cmd"
-  for file in "${CACHE_PATH}/app.json" "${CACHE_PATH}/index.html"; do
-    sed -i "s#${CACHE_PATH}/##g" "${file}"
-  done
-
   popd > /dev/null
 }
 
 do_install() {
   cp -r "${CACHE_PATH}" "${pkg_prefix}/app"
-
-  underscore extract name --outfmt text --in "${PLAN_CONTEXT}/app.json" > "${pkg_prefix}/APP_NAME"
 }
 
 do_strip() {
