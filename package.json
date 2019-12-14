@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Development tooling for slate-cbl",
   "devDependencies": {
-    "cypress-plugin-tab": "^1.0.1",
-    "cypress": "^3.3.1"
+    "cypress": "^3.6.0",
+    "cypress-plugin-tab": "^1.0.1"
   },
   "scripts": {
     "cypress:open": "cypress open"

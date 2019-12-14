@@ -51,7 +51,7 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
         } elseif ($Student = static::getRequestedStudent()) {
             $conditions['StudentID'] = $Student->ID;
             $filterObjects['Student'] = $Student;
-        } elseif ($students = static::getRequestedStudents()) {
+        } elseif (is_array($students = static::getRequestedStudents())) {
             $conditions['StudentID'] = [
                 'values' => array_map(function ($Student) {
                     return $Student->ID;

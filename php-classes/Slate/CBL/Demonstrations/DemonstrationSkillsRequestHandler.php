@@ -27,7 +27,7 @@ class DemonstrationSkillsRequestHandler extends \Slate\CBL\RecordsRequestHandler
         } elseif ($Student = static::getRequestedStudent()) {
             $studentIds = [$Student->ID];
             $filterObjects['Student'] = $Student;
-        } elseif ($students = static::getRequestedStudents()) {
+        } elseif (is_array($students = static::getRequestedStudents())) {
             $studentIds = array_map(function ($Student) {
                 return $Student->ID;
             }, $students);
@@ -66,18 +66,22 @@ class DemonstrationSkillsRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
 
         // apply filters, combining efficiently
-        if ($skillIds) {
+        if (is_array($skillIds)) {
             $conditions['SkillID'] = [ 'values' => $skillIds ];
         }
 
-        if ($studentIds) {
+        if (is_array($studentIds)) {
             try {
                 $demonstrationIds = DB::allValues(
                     'ID',
-                    'SELECT ID FROM `%s` WHERE StudentID IN (%s)',
+                    'SELECT ID FROM `%s` WHERE StudentID %s',
                     [
                         Demonstration::$tableName,
-                        implode(',', $studentIds)
+                        (
+                            count ($studentIds)
+                                ? 'IN ('.implode(',', $studentIds).')'
+                                : '= FALSE'
+                        )
                     ]
                 );
             } catch (TableNotFoundException $e) {

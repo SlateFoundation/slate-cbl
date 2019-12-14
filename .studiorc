@@ -1,6 +1,6 @@
 #!/bin/bash
-hab pkg install --channel="emergence-studio-0.6" emergence/studio/0.6
-source "$(hab pkg path emergence/studio/0.6)/studio.sh"
+hab pkg install emergence/studio
+source "$(hab pkg path emergence/studio)/studio.sh"
 hab pkg install chakijs/studio
 source "$(hab pkg path chakijs/studio)/studio.sh"
 

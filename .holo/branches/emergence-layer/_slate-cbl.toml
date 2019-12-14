@@ -13,6 +13,6 @@ files = [
     "!sencha-workspace/packages.remote/",
     "!sencha-workspace/.sencha/",
     "!sencha-workspace/workspace.json",
-    "sencha-workspace/plan.abstract.sh"
+    "!sencha-workspace/plan.abstract.sh"
 ]
 after = "*"

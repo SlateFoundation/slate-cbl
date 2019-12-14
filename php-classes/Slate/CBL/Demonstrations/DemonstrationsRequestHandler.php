@@ -28,7 +28,7 @@ class DemonstrationsRequestHandler extends \Slate\CBL\RecordsRequestHandler
         } elseif ($Student = static::getRequestedStudent()) {
             $studentIds = [$Student->ID];
             $filterObjects['Student'] = $Student;
-        } elseif ($students = static::getRequestedStudents()) {
+        } elseif (is_array($students = static::getRequestedStudents())) {
             $studentIds = array_map(function ($Student) {
                 return $Student->ID;
             }, $students);
@@ -67,13 +67,13 @@ class DemonstrationsRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
 
         // apply filters, combining efficiently
-        if ($studentIds) {
+        if (is_array($studentIds)) {
             $conditions['StudentID'] = [ 'values' => $studentIds ];
         }
 
-        if ($skillIds) {
+        if (is_array($skillIds)) {
             try {
-                if ($studentIds) {
+                if (is_array($studentIds)) {
                     $demonstrationIds = DB::allValues(
                         'DemonstrationID',
                         '
@@ -81,14 +81,22 @@ class DemonstrationsRequestHandler extends \Slate\CBL\RecordsRequestHandler
                               FROM `%s` DemonstrationSkill
                               JOIN `%s` Demonstration
                                 ON Demonstration.ID = DemonstrationSkill.DemonstrationID
-                             WHERE DemonstrationSkill.SkillID IN (%s)
-                               AND Demonstration.StudentID IN (%s)
+                             WHERE DemonstrationSkill.SkillID %s
+                               AND Demonstration.StudentID %s
                         ',
                         [
                             DemonstrationSkill::$tableName,
                             Demonstration::$tableName,
-                            implode(',', $skillIds),
-                            implode(',', $studentIds)
+                            (
+                                count ($skillIds)
+                                    ? 'IN ('.implode(',', $skillIds).')'
+                                    : '= FALSE'
+                            ),
+                            (
+                                count ($studentIds)
+                                    ? 'IN ('.implode(',', $studentIds).')'
+                                    : '= FALSE'
+                            )
                         ]
                     );
                 } else {
@@ -97,11 +105,15 @@ class DemonstrationsRequestHandler extends \Slate\CBL\RecordsRequestHandler
                         '
                             SELECT DISTINCT DemonstrationID
                               FROM `%s`
-                             WHERE SkillID IN (%s)
+                             WHERE SkillID %s
                         ',
                         [
                             DemonstrationSkill::$tableName,
-                            implode(',', $skillIds)
+                            (
+                                count ($skillIds)
+                                    ? 'IN ('.implode(',', $skillIds).')'
+                                    : '= FALSE'
+                            )
                         ]
                     );
                 }

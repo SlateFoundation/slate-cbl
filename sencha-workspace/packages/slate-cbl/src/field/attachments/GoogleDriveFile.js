@@ -9,9 +9,9 @@ Ext.define('Slate.cbl.field.attachments.GoogleDriveFile', {
     editTpl: '<span></span>',
     removeTpl: '<span></span>',
 
-    applyValueToConfig: function(value) {
+    applyValueToConfig: function({ File: driveFile }) {
         return Ext.apply(this.callParent(arguments), {
-            url: 'https://drive.google.com/open?id=' + value.File.DriveID
+            url: `https://drive.google.com/open?id=${driveFile && driveFile.DriveID}`
         });
     },
 

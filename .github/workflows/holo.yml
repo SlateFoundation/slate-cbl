@@ -37,7 +37,7 @@ jobs:
           --silent \
           -H "Authorization: Token ${VFS_DEV_TOKEN}" \
           -H "Accept: application/json" \
-          "http://v3.cbl.slate.is/site-admin/sources/slate-cbl/pull" \
+          "http://v3.cbl.slate.is/site-admin/sources/slate-cbl/pull?fetch=true" \
           | jq '.'
 
         # sync VFS to git
