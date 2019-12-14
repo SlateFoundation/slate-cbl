@@ -198,7 +198,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
 
     proxy: {
         type: 'slate-cbl-tasks',
-        include: ['Assignees', 'Attachments', 'Skills', 'ClonedTask']
+        include: ['Assignees', 'Attachments.File', 'Skills', 'ClonedTask']
     },
 
     // TODO: review if still needed
