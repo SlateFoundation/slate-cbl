@@ -41,7 +41,7 @@
     The `HAB_DOCKER_OPTS` environment variable must be configured to pass additional options through to Docker to expose the development web server outside the studio container:
 
     ```bash
-    export HAB_DOCKER_OPTS="-p 7080:7080 -p 7081:7081 -p 3306:3306 --name emergence-studio"
+    export HAB_DOCKER_OPTS="-p 7080:80 -p 7081:7081 -p 3306:3306 --name emergence-studio"
     ```
 
     Then launch the studio (forcing Docker mode):
