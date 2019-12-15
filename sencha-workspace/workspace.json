@@ -1,4 +1,10 @@
 {
+    "site": {
+        "sass": {
+            "dir": "${workspace.dir}/slate-frame/sass"
+        }
+    },
+
     /**
      * An object containing key value pair framework descriptors.
      *

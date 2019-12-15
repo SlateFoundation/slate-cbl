@@ -5,6 +5,9 @@ package = "holo/lens-sencha-app"
 workspace = "sencha-workspace"
 app = "SlateDemonstrationsTeacher"
 
+[hololens.sencha.ant]
+args = "-Dworkspace.site.sass.dir=${workspace.dir}/../site-root/sass"
+
 [hololens.input]
 files = [
     "sencha-workspace/SlateDemonstrationsTeacher/**",
