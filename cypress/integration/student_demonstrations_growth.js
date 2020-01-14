@@ -130,6 +130,8 @@ describe('Student competency growth calculation test', () => {
     };
 
     it('compare growth calculations', () => {
+        cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
+
         const compareCompetencyValues = (code, competencyCardId, {baseline, growth, average}) => {
             // check baseline rating calculation
             cy.get(`#${competencyCardId}`)
@@ -156,104 +158,22 @@ describe('Student competency growth calculation test', () => {
                 studentUsernames.forEach(studentUsername => {
                     const studentContentAreas = Object.keys(growthCalculationsByStudent[studentUsername]);
                     studentContentAreas.forEach(studentContentArea => {
-                        cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${studentContentArea}`)
-                            .then(() => {
-                                cy.wait(5000).then(() => {
-                                    const studentCompetencySuffixes = Object.keys(growthCalculationsByStudent[studentUsername][studentContentArea]);
+                        cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${studentContentArea}`);
+                        cy.wait('@studentCompetencyData').its('status').should('be', 200); // ensure that API has loaded required data
 
-                                    studentCompetencySuffixes.forEach(studentCompetencySuffix => {
+                        const studentCompetencySuffixes = Object.keys(growthCalculationsByStudent[studentUsername][studentContentArea]);
+                        studentCompetencySuffixes.forEach(studentCompetencySuffix => {
+                            // ensure competency card elements have rendered
+                            cy.get('li.slate-demonstrations-student-competencycard')
+                                .then(() => {
+                                    const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${studentContentArea}.${studentCompetencySuffix}"}`);
 
-                                        const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${studentContentArea}.${studentCompetencySuffix}"}`);
-
-                                        let {id: competencyCardId} = card;
-
-                                        compareCompetencyValues(`${studentContentArea}.${studentCompetencySuffix}`, competencyCardId, growthCalculationsByStudent[studentUsername][studentContentArea][studentCompetencySuffix]);
-                                    });
+                                    compareCompetencyValues(`${studentContentArea}.${studentCompetencySuffix}`, card.id, growthCalculationsByStudent[studentUsername][studentContentArea][studentCompetencySuffix]);
                                 });
-                            });
+                        });
                     });
                 });
             });
         });
     });
 });
-
-
-                // cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
-                //     // const competencySummaryCardId = '.slate-demonstrations-student-competenciessummary';
-
-                //     for (let i = 0; i < Object.keys(growthCalculationsByStudent[studentUsername][firstContentArea]).length; i++) {
-
-                //         const code = competencies[i],
-                //             expectedValues = expectedCompetencyValues[i],
-                //             competencyCard = getCompetencyCard(code),
-                //             {id: competencyCardId} = competencyCard;
-
-
-                //         // cy.get(competencyCardId)
-                //         //     .find('div[data-ref="meterPercentEl"]')
-                //         //     .contains('67%');
-
-                //     }
-                // });
-
-// it('View sample students progress', () => {
-
-//     // open student demonstrations dashboard
-//     cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${contentAreaCode}`);
-
-//     // verify teacher redirect
-//     cy.get('.slate-demonstrations-student-competenciessummary .slate-simplepanel-title')
-//         .contains('English Language Arts');
-
-//     cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
-//         const getCompetencyCard = code => {
-//             return extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${code}"}`);
-//         };
-
-//         // validate section overview metrics
-//         var competencySummaryCardId = '.slate-demonstrations-student-competenciessummary';
-
-//         // cy.get(competencySummaryCardId)
-//         //     .find('div[data-ref="meterPercentEl"]')
-//         //     .contains('59%');
-
-//         // cy.get(competencySummaryCardId)
-//         //     .find('td[data-ref="missedEl"]')
-//         //     .contains('1');
-
-//         // cy.get(competencySummaryCardId)
-//         //     .find('td[data-ref="averageEl"]')
-//         //     .contains('7.4');
-
-//         // cy.get(competencySummaryCardId)
-//         //     .find('td[data-ref="growthEl"]')
-//         //     .contains('1 yr');
-
-//         // const competencies = [
-//         //     'ELA.1',
-//         //     'ELA.2',
-//         //     'ELA.3',
-//         //     'ELA.4',
-//         //     'ELA.5',
-//         //     'ELA.6',
-//         //     'ELA.7',
-//         // ];
-//         // const expectedCompetencyValues = [
-//         //     {baseline: 7.3, performanceLevel: 7.3, growth: null},
-//         //     {baseline: null, performanceLevel: 7.3, growth: null},
-//         //     {baseline: 5.5, performanceLevel: 8, growth: 2.5},
-//         //     {baseline: 5.7, performanceLevel: 6.5, growth: 0.8},
-//         //     {baseline: null, performanceLevel: 7.4, growth: null},
-//         //     {baseline: null, performanceLevel: 8, growth: null},
-//         //     {baseline: 7, performanceLevel: 7.4, growth: 0.4}
-//         // ];
-
-
-
-//         // validate Demonstration Metrics
-//         // var competencyCard = extQuerySelector('slate-demonstrations-student-competencycard{getCompetency().get("Code")=="ELA.6"}');
-//         // var competencyCardId = '#' + competencyCard.id;
-
-//     });
-// });
