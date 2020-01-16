@@ -1,0 +1,118 @@
+{
+    "student": {
+        "ELA": {
+            "1": {
+                "baseline": 10,
+                "average": 9.3,
+                "growth": -0.8,
+                "percentage": 33
+            },
+            "2": {
+                "baseline": 10,
+                "average": 10.8,
+                "growth": 0.8,
+                "percentage": 27
+            },
+            "6": {
+                "baseline": 9.5,
+                "average": 10,
+                "growth": 0.5,
+                "percentage": 67
+            }
+        }
+    },
+    "student3": {
+        "ELA": {
+            "1": {
+                "baseline": 7.3,
+                "average": 7.3,
+                "growth": null,
+                "percentage": 33
+            },
+            "2": {
+                "baseline": null,
+                "average": 7.3,
+                "growth": null,
+                "percentage": 40
+            },
+            "3": {
+                "baseline": 5.5,
+                "average": 8,
+                "growth": 2.5,
+                "percentage": 100
+            },
+            "4": {
+                "baseline": 5.7,
+                "average": 6.5,
+                "growth": 0.8,
+                "percentage": 100
+            },
+            "5": {
+                "baseline": null,
+                "average": 7.4,
+                "growth": null,
+                "percentage": 83
+            },
+            "6": {
+                "baseline": null,
+                "average": 8,
+                "growth": null,
+                "percentage": 33
+            },
+            "7": {
+                "baseline": 7,
+                "average": 7.4,
+                "growth": 0.4,
+                "percentage": 63
+            }
+        },
+        "SS": {
+            "1": {
+                "baseline": 9.4,
+                "average": 9,
+                "growth": -0.4,
+                "percentage": 40
+            },
+            "2": {
+                "baseline": null,
+                "average": 8,
+                "growth": null,
+                "percentage": 50
+            }
+        },
+        "SCI": {
+            "1": {
+                "baseline": 9.1,
+                "average": 9.4,
+                "growth": 0.2,
+                "percentage": 38
+            },
+            "2": {
+                "baseline": 9.3,
+                "average": 8,
+                "growth": -1.3,
+                "percentage": 25
+            },
+            "3": {
+                "baseline": 9.7,
+                "average": 7,
+                "growth": null,
+                "percentage": 33
+            },
+            "4": {
+                "baseline": 9.7,
+                "average": 10,
+                "growth": 0.3,
+                "percentage": 67
+            }
+        },
+        "HOS": {
+            "4": {
+                "baseline": 9,
+                "average": 9.3,
+                "growth": 0.3,
+                "percentage": 100
+            }
+        }
+    }
+}
