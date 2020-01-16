@@ -6,7 +6,7 @@ class PerformanceLevelMinusBaseline implements IGrowthCalculator
 {
     public static function calculateGrowth(StudentCompetency $StudentCompetency)
     {
-        $baseline = $this->BaselineRating;
+        $baseline = $StudentCompetency->BaselineRating;
 
         // need two ratings, or a rating and baseline to calc growth
         $skillsWithRatings = 0;
