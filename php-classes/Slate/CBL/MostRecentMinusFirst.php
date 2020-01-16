@@ -2,7 +2,7 @@
 
 namespace Slate\CBL;
 
-class MostRecentMinusirst implements IGrowthCalculator
+class MostRecentMinusFirst implements IGrowthCalculator
 {
     public static function calculateGrowth(StudentCompetency $StudentCompetency)
     {
