@@ -21,6 +21,7 @@ class StudentCompetency extends \ActiveRecord
 
     public static $getDemonstrationConditions;
     public static $isLevelComplete;
+    public static $growthCalculatorClass = MostRecentMinusFirst::class;
 
 
     // ActiveRecord configuration
@@ -525,21 +526,8 @@ class StudentCompetency extends \ActiveRecord
     public function getGrowth()
     {
         if ($this->competencyGrowth === null) {
-            $baseline = $this->BaselineRating;
-
-            // need two ratings, or a rating and baseline to calc growth
-            $skillsWithRatings = 0;
-            foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrations) {
-                if (count($demonstrations) + ($baseline ? 1 : 0) >= 2) {
-                    $skillsWithRatings++;
-                }
-            }
-
-            if ($skillsWithRatings * 2 < $this->Competency->getTotalSkills()) {
-                $this->competencyGrowth = false;
-            } else {
-                $this->competencyGrowth = $this->getDemonstrationsAverage() - $baseline;
-            }
+            $growthCalculationClass = static::$growthCalculatorClass;
+            $this->competencyGrowth = $growthCalculationClass::calculateGrowth($this);
         }
 
         return $this->competencyGrowth === false ? null : $this->competencyGrowth;
