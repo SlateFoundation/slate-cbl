@@ -21,7 +21,7 @@ class StudentCompetency extends \ActiveRecord
 
     public static $getDemonstrationConditions;
     public static $isLevelComplete;
-    public static $growthCalculatorClass = MostRecentMinusFirst::class;
+    public static $growthCalculatorClass = Calculators\Growth\MostRecentMinusFirst::class;
 
 
     // ActiveRecord configuration

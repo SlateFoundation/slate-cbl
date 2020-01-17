@@ -1,6 +1,8 @@
 <?php
 
-namespace Slate\CBL;
+namespace Slate\CBL\Calculators\Growth;
+
+use Slate\CBL\StudentCompetency;
 
 interface IGrowthCalculator
 {
