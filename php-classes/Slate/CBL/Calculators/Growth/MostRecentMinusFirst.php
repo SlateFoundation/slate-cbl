@@ -9,7 +9,7 @@ class MostRecentMinusFirst implements IGrowthCalculator
     public static function calculateGrowth(StudentCompetency $StudentCompetency)
     {
         $demonstrationData = $StudentCompetency->getDemonstrationData();
-        $growthData = array_filter(array_map(function($demonstrations) {
+        $growthData = array_filter(array_map(function($demonstrations) use ($StudentCompetency) {
             // filter out overrides and missed demonstrations
             $demonstrations = array_filter($demonstrations, function ($demonstration) {
                 return $demonstration['DemonstratedLevel'] && empty($demonstration['Override']);
