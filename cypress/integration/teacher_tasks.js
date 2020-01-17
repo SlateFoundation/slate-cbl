@@ -1,4 +1,4 @@
-describe('Teacher demonstrations test', () => {
+describe('Teacher tasks test', () => {
 
     // load sample database before tests
     before(() => {

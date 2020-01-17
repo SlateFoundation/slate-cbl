@@ -15,17 +15,17 @@ describe('/cbl/student-competencies API', () => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
             expect(response.body).property('data').to.be.an('array');
-            expect(response.body.data).to.have.length(38);
+            expect(response.body.data).to.have.length(64);
             expect(response.body.data[0]).to.include({
-                ID: 38,
+                ID: 64,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: 1570829655,
-                CreatorID: 3,
-                StudentID: 4,
-                CompetencyID: 7,
-                Level: 11,
+                Created: 1546398245,
+                CreatorID: 1,
+                StudentID: 7,
+                CompetencyID: 11,
+                Level: 10,
                 EnteredVia: 'graduation',
-                BaselineRating: 10
+                BaselineRating: 9
             });
 
         });
@@ -38,7 +38,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data).to.include({
                 ID: 1,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: 1546401845,
+                Created: 1546398245,
                 CreatorID: 2,
                 StudentID: 4,
                 CompetencyID: 1,
@@ -68,7 +68,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data.effectiveDemonstrationsData['1'][0]).to.include({
                 ID: 1,
                 Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
-                Created: 1546401845,
+                Created: 1546398245,
                 CreatorID: 3,
                 Modified: null,
                 ModifierID: null,
@@ -77,7 +77,7 @@ describe('/cbl/student-competencies API', () => {
                 TargetLevel: 9,
                 DemonstratedLevel: 9,
                 Override: false,
-                DemonstrationDate: 1570819947
+                DemonstrationDate: 1546300860
             });
         });
     });

@@ -10,60 +10,61 @@ describe('Student competency growth calculation test', () => {
         cy.loginAs('teacher');
     });
 
-    it('View sample students progress', () => {
 
-        // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/demonstrations/student#student/ELA');
+    it('compare growth calculations', () => {
+        cy.readFile('cypress/fixtures/growth-calculations.json')
+            .then((growthCalculationsByStudent) => {
+                cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
 
-        // verify teacher redirect
-        cy.get('.slate-demonstrations-student-competenciessummary .slate-simplepanel-title')
-            .contains('English Language Arts');
+                const compareCompetencyValues = (code, competencyCardId, {baseline, growth, average}) => {
+                    // check baseline rating calculation
+                    cy.get(`#${competencyCardId}`)
+                        .find('span[data-ref="codeEl"]')
+                        .contains(code);
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+                    cy.get(`#${competencyCardId}`)
+                        .find('td[data-ref="baselineRatingEl"]')
+                        .contains(baseline === null ? '—' : baseline);
 
-            // validate section overview metrics
-            var competencySummaryCardId = '.slate-demonstrations-student-competenciessummary';
+                    cy.get(`#${competencyCardId}`)
+                        .find('td[data-ref="averageEl"]')
+                        .contains(average === null ? '—' : average);
 
-            cy.get(competencySummaryCardId)
-                .find('div[data-ref="meterPercentEl"]')
-                .contains('74%');
+                    cy.get(`#${competencyCardId}`)
+                        .find('td[data-ref="growthEl"]')
+                        .contains(growth === null ? '—' : `${growth} yr`);
 
-            cy.get(competencySummaryCardId)
-                .find('td[data-ref="missedEl"]')
-                .contains('0');
+                };
 
-            cy.get(competencySummaryCardId)
-                .find('td[data-ref="averageEl"]')
-                .contains('10');
+                cy.visit('/cbl/dashboards/demonstrations/student').then(() => {
+                    cy.withExt().then(({extQuerySelector}) => {
+                        const studentUsernames = Object.keys(growthCalculationsByStudent);
+                        studentUsernames.forEach(studentUsername => {
+                            const studentContentAreas = Object.keys(growthCalculationsByStudent[studentUsername]);
+                            studentContentAreas.forEach(studentContentArea => {
+                                cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${studentContentArea}`);
+                                // ensure that API has loaded required data
+                                cy.wait('@studentCompetencyData')
+                                    .its('status')
+                                    .should('be', 200)
+                                    .then(() => {
 
-            cy.get(competencySummaryCardId)
-                .find('td[data-ref="growthEl"]')
-                .contains('1.3 yr');
+                                        const studentCompetencySuffixes = Object.keys(growthCalculationsByStudent[studentUsername][studentContentArea]);
+                                        studentCompetencySuffixes.forEach(studentCompetencySuffix => {
+                                            // ensure competency card elements have rendered
+                                            cy.get('li.slate-demonstrations-student-competencycard')
+                                                .then(() => {
+                                                    const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${studentContentArea}.${studentCompetencySuffix}"}`);
 
-            // validate ELA.6 metrics
-            var competencyCard = extQuerySelector('slate-demonstrations-student-competencycard{getCompetency().get("Code")=="ELA.6"}');
-            var competencyCardId = '#' + competencyCard.id;
+                                                    compareCompetencyValues(`${studentContentArea}.${studentCompetencySuffix}`, card.id, growthCalculationsByStudent[studentUsername][studentContentArea][studentCompetencySuffix]);
+                                                });
+                                        });
+                                    });
 
-            // check baseline rating calculation
-            cy.get(competencyCardId)
-                .find('span[data-ref="codeEl"]')
-                .contains('ELA.6');
-
-            cy.get(competencyCardId)
-                .find('td[data-ref="baselineRatingEl"]')
-                .contains('9.5');
-
-            cy.get(competencyCardId)
-                .find('td[data-ref="averageEl"]')
-                .contains('10');
-
-            cy.get(competencyCardId)
-                .find('td[data-ref="growthEl"]')
-                .contains('1.5 yr');
-
-            cy.get(competencyCardId)
-                .find('div[data-ref="meterPercentEl"]')
-                .contains('67%');
-        });
+                            });
+                        });
+                    });
+                });
+            });
     });
 });
