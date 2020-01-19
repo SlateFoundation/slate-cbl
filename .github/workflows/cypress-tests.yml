@@ -15,9 +15,7 @@ jobs:
       with:
         path: /hab/cache/artifacts
         key: hab-cache-artifacts
-    - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
+    - uses: actions/checkout@v2
     # TODO: wrap the next three steps an an emergence-studio action
     - name: 'Stop default mysql service'
       run: sudo service mysql stop
