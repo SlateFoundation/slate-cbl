@@ -47,6 +47,7 @@ jobs:
       run: |
         until sudo test -f /hab/svc/php-runtime/config/fpm-exec; do sleep .1; done
         sudo hab pkg exec emergence/php-runtime emergence-php-load $(hab pkg exec jarvus/hologit git-holo project emergence-site)
+        sudo chown runner:docker -R /hab/cache/artifacts
     - name: Check out database fixtures submodule
       run: git submodule update --init cypress/fixtures/database
     - name: Run Cypress tests
