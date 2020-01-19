@@ -46,7 +46,9 @@ jobs:
         HOLO_CACHE_TO: origin
       run: |
         until sudo test -f /hab/svc/php-runtime/config/fpm-exec; do sleep .1; done
-        sudo hab pkg exec emergence/php-runtime emergence-php-load $(hab pkg exec jarvus/hologit git-holo project emergence-site)
+        SITE_TREE="$(hab pkg exec jarvus/hologit git-holo project emergence-site)"
+        [ -n "${SITE_TREE}" ] || exit 1
+        sudo hab pkg exec emergence/php-runtime emergence-php-load "${SITE_TREE}"
         sudo chown runner:docker -R /hab/cache/artifacts
     - name: Check out database fixtures submodule
       run: git submodule update --init cypress/fixtures/database
