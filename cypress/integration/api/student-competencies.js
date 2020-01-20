@@ -57,8 +57,7 @@ describe('/cbl/student-competencies API', () => {
                 demonstrationsMissed: 0,
                 demonstrationsComplete: 12,
                 demonstrationsAverage: 10,
-                demonstrationsRequired: 12,
-                growth: 2
+                demonstrationsRequired: 12
             });
 
             expect(response.body.data).property('effectiveDemonstrationsData').to.be.an('object');
