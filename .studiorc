@@ -1,7 +1,6 @@
 #!/bin/bash
-hab pkg install emergence/studio
+hab pkg install emergence/studio chakijs/studio
 source "$(hab pkg path emergence/studio)/studio.sh"
-hab pkg install chakijs/studio
 source "$(hab pkg path chakijs/studio)/studio.sh"
 
 

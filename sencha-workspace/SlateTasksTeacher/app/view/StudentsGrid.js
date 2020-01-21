@@ -122,7 +122,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
             columnTplData.$cls = 'slate-studentsgrid-cell';
 
             if (studentUsername) {
-                columnTplData.$href = (location.hostname == 'localhost' ? '../SlateTasksStudent/' + location.search : Slate.API.buildUrl('/cbl/dashboards/tasks/student')) + '#' + studentUsername + '/all';
+                columnTplData.$href = (location.pathname.match(/^\/Slate([A-Z][a-z]+)+\/$/) ? '../SlateTasksStudent/' + location.search : Slate.API.buildUrl('/cbl/dashboards/tasks/student')) + '#' + studentUsername + '/all';
             }
 
             return columnTplData;

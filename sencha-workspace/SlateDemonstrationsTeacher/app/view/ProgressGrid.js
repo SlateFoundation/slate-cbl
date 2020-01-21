@@ -539,7 +539,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
     buildRenderData: function() {
         var me = this,
             contentArea = me.getContentArea(),
-            studentDashboardLink = location.hostname == 'localhost' ? ('../SlateDemonstrationsStudent/' + location.search) : Slate.API.buildUrl('/cbl/dashboards/demonstrations/student'), // eslint-disable-line no-extra-parens
+            studentDashboardLink = location.pathname.match(/^\/Slate([A-Z][a-z]+)+\/$/) ? ('../SlateDemonstrationsStudent/' + location.search) : Slate.API.buildUrl('/cbl/dashboards/demonstrations/student'), // eslint-disable-line no-extra-parens
 
             students = me.getStudentsStore().getRange(),
             studentsLength = students.length, studentIndex, student,
