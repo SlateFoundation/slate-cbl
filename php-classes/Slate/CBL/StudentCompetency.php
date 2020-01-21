@@ -21,6 +21,7 @@ class StudentCompetency extends \ActiveRecord
 
     public static $getDemonstrationConditions;
     public static $isLevelComplete;
+    public static $growthCalculatorClass = Calculators\Growth\MostRecentMinusFirst::class;
 
 
     // ActiveRecord configuration
@@ -525,36 +526,8 @@ class StudentCompetency extends \ActiveRecord
     public function getGrowth()
     {
         if ($this->competencyGrowth === null) {
-            $demonstrationData = $this->getDemonstrationData();
-
-            $growthData = array_filter(array_map(function($demonstrations) {
-                // filter out overrides and missed demonstrations
-                $demonstrations = array_filter($demonstrations, function ($demonstration) {
-                    return $demonstration['DemonstratedLevel'] && empty($demonstration['Override']);
-                });
-
-                // growth can only be calculated if 2 ratings are available, or 1 rating and a baseline
-                if (count($demonstrations) + ($this->BaselineRating ? 1 : 0) < 2) {
-                    return null;
-                }
-
-                $lastRating = end($demonstrations);
-                if ($this->BaselineRating) {
-                    return $lastRating['DemonstratedLevel'] - $this->BaselineRating;
-                } else {
-                    $firstRating = reset($demonstrations);
-
-                    return $lastRating['DemonstratedLevel'] - $firstRating['DemonstratedLevel'];
-                }
-            }, $demonstrationData));
-
-            $totalGrowthSkills = count($growthData);
-
-            if ($totalGrowthSkills && $totalGrowthSkills * 2 >= $this->Competency->getTotalSkills()) {
-                $this->competencyGrowth = array_sum($growthData) / $totalGrowthSkills;
-            } else {
-                $this->competencyGrowth = false;
-            }
+            $growthCalculationClass = static::$growthCalculatorClass;
+            $this->competencyGrowth = $growthCalculationClass::calculateGrowth($this);
         }
 
         return $this->competencyGrowth === false ? null : $this->competencyGrowth;
