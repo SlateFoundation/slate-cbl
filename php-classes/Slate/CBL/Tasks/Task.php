@@ -72,7 +72,10 @@ class Task extends \VersionedRecord
 
     public static $validators = [
         'Section' => 'require-relationship',
-        'Title'
+        'Title',
+        'ParentTaskID' => [
+            'validator' => [__CLASS__, 'validateParentTask']
+        ]
     ];
 
     public static $relationships = [
@@ -194,5 +197,14 @@ class Task extends \VersionedRecord
         ));
 
         return DB::affectedRows() > 0;
+    }
+
+    protected static function validateParentTask($validator, Task $Task, $options)
+    {
+        if (!$validator->hasErrors('ParentTask') && $Task->ParentTaskID) {
+            if ($Task->ParentTaskID === $Task->ID) {
+                $validator->addError('ParentTask', 'ParentTaskID and TaskID must be different.');
+            }
+        }
     }
 }

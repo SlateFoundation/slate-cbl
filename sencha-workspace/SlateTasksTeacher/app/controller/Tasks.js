@@ -365,6 +365,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
             formPanel.setTask(task);
             formWindow.show();
+            formPanel.getParentTaskField().getStore().filter(function(parentTask) {
+                return parentTask.getId() !== task.getId();
+            });
         } else if (typeof task == 'number') {
             formPanel.setTask(null);
             formWindow.show();
@@ -374,6 +377,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 success: function(loadedTask) {
                     formPanel.setTask(loadedTask);
                     formWindow.setLoading(false);
+                    formPanel.getParentTaskField().getStore().filter(function(parentTask) {
+                        return parentTask.getId() !== loadedTask.getId();
+                    });
                 },
                 failure: function(loadedTask, operation) {
                     formWindow.hide();
