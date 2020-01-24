@@ -290,6 +290,8 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
             skillIds.push(skillId);
         }
 
+        // disallow closing of cards with atleast one rating
+        card.setClosable(!skillsLength);
 
         // reset rating fields for skills not in value
         for (; cardIndex < cardsLength; cardIndex++) {
