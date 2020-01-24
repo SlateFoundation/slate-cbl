@@ -11,8 +11,8 @@ class PerformanceLevelMinusBaseline implements IGrowthCalculator
         $baseline = round($StudentCompetency->BaselineRating, 1);
         $performanceLevel = round($StudentCompetency->getDemonstrationsAverage(), 1);
 
-        // performance level must > 0
-        if (!$performanceLevel) {
+        // baseline & performance level must > 0
+        if (!$performanceLevel || !$baseline) {
             return false;
         }
 
