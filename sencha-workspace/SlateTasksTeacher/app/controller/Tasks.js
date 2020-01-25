@@ -365,8 +365,11 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
             formPanel.setTask(task);
             formWindow.show();
-            formPanel.getParentTaskField().getStore().filter(function(parentTask) {
-                return parentTask.getId() !== task.getId();
+            formPanel.getParentTaskField().getStore().filter({
+                id: 'exclude-self',
+                property: 'ID',
+                operator: '!=',
+                value: task.getId()
             });
         } else if (typeof task == 'number') {
             formPanel.setTask(null);
@@ -377,8 +380,11 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 success: function(loadedTask) {
                     formPanel.setTask(loadedTask);
                     formWindow.setLoading(false);
-                    formPanel.getParentTaskField().getStore().filter(function(parentTask) {
-                        return parentTask.getId() !== loadedTask.getId();
+                    formPanel.getParentTaskField().getStore().filter({
+                        id: 'exclude-self',
+                        property: 'ID',
+                        operator: '!=',
+                        value: loadedTask.getId()
                     });
                 },
                 failure: function(loadedTask, operation) {
