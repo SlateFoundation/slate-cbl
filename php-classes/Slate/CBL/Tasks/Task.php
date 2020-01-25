@@ -201,9 +201,12 @@ class Task extends \VersionedRecord
 
     protected static function validateParentTask($validator, Task $Task, $options)
     {
-        if (!$validator->hasErrors('ParentTask') && $Task->ParentTaskID) {
-            if ($Task->ParentTaskID === $Task->ID) {
-                $validator->addError('ParentTask', 'ParentTaskID and TaskID must be different.');
+        if (!$validator->hasErrors('ParentTaskID') && $Task->ParentTaskID) {
+            if ($Task->ParentTaskID == $Task->ID) {
+                $validator->addError('ParentTaskID', 'A task cannot be its own parent');
+
+                // clear immediately to prevent validation loop
+                $Task->ParentTaskID = null;
             }
         }
     }
