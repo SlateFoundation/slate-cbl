@@ -363,6 +363,12 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 Section: section.getData()
             }, task || null));
 
+            formPanel.getParentTaskField().getStore().filter({
+                id: 'exclude-self',
+                property: 'ID',
+                operator: '!=',
+                value: task.getId()
+            });
             formPanel.setTask(task);
             formWindow.show();
         } else if (typeof task == 'number') {
@@ -372,6 +378,12 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
             TaskModel.load(task, {
                 success: function(loadedTask) {
+                    formPanel.getParentTaskField().getStore().filter({
+                        id: 'exclude-self',
+                        property: 'ID',
+                        operator: '!=',
+                        value: loadedTask.getId()
+                    });
                     formPanel.setTask(loadedTask);
                     formWindow.setLoading(false);
                 },
