@@ -32,7 +32,7 @@ return [
 
         if (!empty($input['content_area'])) {
             if (!$ContentArea = Slate\CBL\ContentArea::getByCode($input['content_area'])) {
-                throw new Exception('content area not found');
+                throw new OutOfBoundsException('content area not found');
             }
 
             $query['content_area'] = $ContentArea->Code;
@@ -87,7 +87,7 @@ return [
         if ($query['level']) {
             $conditions['Level'] = $query['level'];
         }
-        
+
 #        if ($query['only_highest']) {
 #            $conditions[] = sprintf(
 #                'NOT EXISTS (
@@ -116,7 +116,7 @@ return [
                         ON Competency.ID = StudentCompetency.CompetencyID
                      WHERE StudentID = %u
                        AND (%s)
-                     ORDER BY %s 
+                     ORDER BY %s
                 ',
                 [
                     Slate\CBL\StudentCompetency::$tableName,
@@ -209,7 +209,7 @@ return [
 
                     $finishedPortfolio = null;
                 }
-                
+
                 if (!$record) {
                     break;
                 }
