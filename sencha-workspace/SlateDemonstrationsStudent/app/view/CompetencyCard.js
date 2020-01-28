@@ -73,7 +73,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                         '</tpl>',
                     '</td>',
                     '<td id="{id}-growthEl" data-ref="growthEl">',
-                        '<tpl if="growth">',
+                        '<tpl if="growth || growth === 0">',
                             '{growth:number(values.growthFormat)}',
                         '<tpl else>',
                             '&mdash;',
