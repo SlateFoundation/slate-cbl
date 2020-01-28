@@ -22,6 +22,7 @@ class StudentCompetency extends \ActiveRecord
     public static $getDemonstrationConditions;
     public static $isLevelComplete;
     public static $growthCalculatorClass = Calculators\Growth\MostRecentMinusFirst::class;
+    public static $averagePrecision = 1;
 
 
     // ActiveRecord configuration
@@ -148,6 +149,11 @@ class StudentCompetency extends \ActiveRecord
 
         // call parent
         parent::save($deep);
+    }
+
+    public function getBaselineRating()
+    {
+        return round($this->BaselineRating, static::$averagePrecision);
     }
 
     public function getCompletion()
@@ -403,7 +409,7 @@ class StudentCompetency extends \ActiveRecord
                         }
                     }
                 }
-                $this->demonstrationsAverage = $totalScore / $this->getDemonstrationsLogged();
+                $this->demonstrationsAverage = round($totalScore / $this->getDemonstrationsLogged(), static::$averagePrecision);
             }
         }
 
