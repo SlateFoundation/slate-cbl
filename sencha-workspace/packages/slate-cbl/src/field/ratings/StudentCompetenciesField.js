@@ -256,7 +256,8 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
             cards = tabPanel.query('slate-cbl-ratings-studentcompetency'),
             cardsLength = cards.length,
             cardIndex = 0,
-            card;
+            card,
+            permanentCards = [];
 
         // defer until competencies store is loaded
         if (!competenciesStore.isLoaded()) {
@@ -286,6 +287,10 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
                 card = competencyCardsMap[competencyId] = me.addCompetencyCard(competency.get('Code'));
             }
 
+            if (permanentCards.indexOf(competencyId) === -1) {
+                permanentCards.push(competencyId);
+            }
+
             card.setSkillValue(skillId, skillData.DemonstratedLevel, skillData.TargetLevel);
             skillIds.push(skillId);
         }
@@ -296,6 +301,10 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
             cards[cardIndex].resetSkills(skillIds);
         }
 
+        // disallow closing of cards with atleast one rating
+        permanentCards.forEach(function(competencyId) {
+            competencyCardsMap[competencyId].setClosable(false);
+        });
 
         // activate first card if grid is active
         if (tabPanel.getActiveTab() === me.getCompetenciesGrid()) {
