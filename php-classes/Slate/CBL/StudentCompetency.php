@@ -130,19 +130,7 @@ class StudentCompetency extends \ActiveRecord
             && !$this->BaselineRating
             && $this->isPhantom
             && $this->StudentID && $this->CompetencyID && $this->Level
-            && (
-                $Previous = static::getByWhere([
-                    'StudentID' => $this->StudentID,
-                    'CompetencyID' => $this->CompetencyID,
-                    'Level' => [
-                        'operator' => '<',
-                        'value' => $this->Level
-                    ]
-                ], [
-                    'order' => 'Level DESC',
-                    'limit' => 1
-                ])
-            )
+            && ($Previous = $this->getPrevious())
         ) {
             $this->BaselineRating = $Previous->getDemonstrationsAverage();
         }
@@ -537,6 +525,23 @@ class StudentCompetency extends \ActiveRecord
         }
 
         return $this->competencyGrowth === false ? null : $this->competencyGrowth;
+    }
+
+    private $previous;
+    public function getPrevious()
+    {
+        if ($this->previous === null) {
+            $this->previous = static::getByWhere([
+                'StudentID' => $this->StudentID,
+                'CompetencyID' => $this->CompetencyID,
+                'Level' => [
+                    'operator' => '<',
+                    'value' => $this->Level
+                ]
+            ], [ 'order' => ['Level' => 'DESC'] ]);
+        }
+
+        return $this->previous;
     }
 
     private $next;
