@@ -7,7 +7,7 @@ use Slate\CBL\StudentCompetency;
 use Slate\People\Student;
 
 
-$GLOBALS['Session']->requireAccountLevel('Developer');
+$GLOBALS['Session']->requireAccountLevel('Administrator');
 
 $students = [];
 if (isset($_REQUEST['students'])) {
