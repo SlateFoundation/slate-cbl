@@ -10,7 +10,7 @@ use Slate\People\Student;
 $GLOBALS['Session']->requireAccountLevel('Administrator');
 
 $students = [];
-if (isset($_REQUEST['students'])) {
+if (!empty($_REQUEST['students'])) {
     $students = Student::getAllByListIdentifier($_REQUEST['students']);
     $studentIds = array_map(function($s){
         return $s->ID;
@@ -18,7 +18,7 @@ if (isset($_REQUEST['students'])) {
 }
 
 $contentArea = null;
-if (isset($_REQUEST['content_area'])) {
+if (!empty($_REQUEST['content_area'])) {
     $contentArea = ContentArea::getByHandle($_REQUEST['content_area']);
 }
 
