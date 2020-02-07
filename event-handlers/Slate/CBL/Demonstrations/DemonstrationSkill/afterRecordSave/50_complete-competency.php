@@ -29,11 +29,3 @@ if (
         'EnteredVia' => 'graduation'
     ], true);
 }
-
-if (
-    StudentCompetency::$autoBaseline
-    && !$StudentCompetency->BaselineRating
-) {
-    $StudentCompetency->BaselineRating = $StudentCompetency->calculateStartingRating();
-    $StudentCompetency->save();
-}
