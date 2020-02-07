@@ -399,6 +399,17 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             }, skill));
         }
 
-        return tplData;
+        // sort Skill's by Code
+        return tplData.sort((skillA, skillB) => {
+            return (
+                skillA.Code > skillB.Code ?
+                    1 :
+                    (
+                        skillA.Code === skillB.Code ?
+                            0 :
+                            -1
+                    )
+            );
+        });
     }
 });
