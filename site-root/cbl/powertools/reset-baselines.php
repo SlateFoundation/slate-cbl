@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             continue;
         }
 
-        $StudentCompetency->BaselineRating = $Previous->getDemonstrationsAverage();
+        $StudentCompetency->BaselineRating = max($Previous->getBaselineRating(), $Previous->getDemonstrationsAverage());
         $StudentCompetency->save();
         $updated[] = $StudentCompetency->ID;
     }
@@ -90,84 +90,114 @@ $contentAreaValue = empty($_REQUEST['content_area']) ? '' : $_REQUEST['content_a
 
 <html>
     <body>
-    <?=print_r($failed, true)?>
-    <form method="get">
-        <input type="text" name="students" value="<?=$studentsValue?>"/>
-        <select name="content_area">
-            <?php foreach (ContentArea::getAll() as $ContentArea) : ?>
-                <option value="<?=$ContentArea->Code?>" <?=$contentAreaValue === $ContentArea->Code ? 'selected="selected"' : ''?>><?=$ContentArea->Title?></option>
-            <?php endforeach ?>
-        </select>
-        <button>Filter</button>
-    </form>
-    <form method="post">
-        <input type="text" name="students" value="<?=$studentsValue?>" hidden="hidden"/>
-        <input type="text" name="content_area" value="<?=$contentAreaValue?>" hidden="hidden"/>
-        <button>Update Selected Student Competencies</button>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>StudentCompetencyID</th>
-                    <th>Created</th>
-                    <th>Student</th>
-                    <th>Competency</th>
-                    <th>Level</th>
-                    <th>Via</th>
-                    <th>Current Baseline</th>
-                    <th>Previous Performance Level</th>
-                    <th>Update</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($studentCompetencies as $StudentCompetency) : ?>
-                    <?php
-                    if (!$Previous = $StudentCompetency->getPrevious()) {
-                        continue;
-                    }
-                    $justUpdated = in_array($StudentCompetency->ID, $updated);
-
-                    $restorable =
-                        $Previous->getDemonstrationsAverage() &&
-                        $StudentCompetency->getBaselineRating() != $Previous->getDemonstrationsAverage();
-
-
-                    $inputAttribs = $restorable ? '' : 'disabled="disabled"';
-                    $tdClass =
-                        $justUpdated ?
-                            'restored' :
-                            '';
-                    $trClass =
-                        $restorable ?
-                            'restorable' :
-                            '';
-                    ?>
-
-                    <tr class="<?=$trClass?>">
-                        <td><?=$StudentCompetency->ID?></td>
-                        <td>
-                            <?=$StudentCompetency->Creator->Username?>
-                            @ <?=date('Y-m-d H:i:s', $StudentCompetency->Created)?>
-                        </td>
-                        <td><?=$StudentCompetency->Student->Username?></td>
-                        <td><?=$StudentCompetency->Competency->Code?></td>
-                        <td><?=$StudentCompetency->Level?></td>
-                        <td><?=$StudentCompetency->EnteredVia?></td>
-                        <td class="<?=$tdClass?>"><?=$StudentCompetency->getBaselineRating()?></td>
-                        <td><?=$Previous->getDemonstrationsAverage()?></td>
-                        <td>
-                            <input
-                                type="checkbox"
-                                name="update[]"
-                                value="<?=$StudentCompetency->ID?>"
-                                <?=$inputAttribs?>
-                            />
-                        </td>
-                    </tr>
-                    <?php flush() ?>
+        <?=print_r($failed, true)?>
+        <form method="get">
+            <input type="text" name="students" value="<?=$studentsValue?>"/>
+            <select name="content_area">
+                <?php foreach (ContentArea::getAll() as $ContentArea) : ?>
+                    <option value="<?=$ContentArea->Code?>" <?=$contentAreaValue === $ContentArea->Code ? 'selected="selected"' : ''?>><?=$ContentArea->Title?></option>
                 <?php endforeach ?>
-            </tbody>
-        </table>
-        <button>Update Selected Student Competencies</button>
-    </form>
+            </select>
+            <button>Filter</button>
+        </form>
+        <form method="post">
+            <input type="text" name="students" value="<?=$studentsValue?>" hidden="hidden"/>
+            <input type="text" name="content_area" value="<?=$contentAreaValue?>" hidden="hidden"/>
+            <button>Update Selected Student Competencies</button>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>StudentCompetencyID</th>
+                        <th>Created</th>
+                        <th>Student</th>
+                        <th>Competency</th>
+                        <th>Level</th>
+                        <th>Via</th>
+                        <th>Current Baseline</th>
+                        <th>Previous Baseline</th>
+                        <th>Previous Performance Level</th>
+                        <th>Update To</th>
+                        <th>
+                            <label>Select/Deselect All
+                                <input type="checkbox" name="selectall" id="selectall" />
+                            </label>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($studentCompetencies as $StudentCompetency) : ?>
+                        <?php
+                        if (!$Previous = $StudentCompetency->getPrevious()) {
+                            continue;
+                        }
+                        $justUpdated = in_array($StudentCompetency->ID, $updated);
+                        $suggestedBaseline = max(
+                            $Previous->getDemonstrationsAverage(),
+                            $Previous->getBaselineRating()
+                        );
+
+                        // must have either previous PL/Baseline that does not match current Baseline
+                        $restorable =
+                            $suggestedBaseline &&
+                            $StudentCompetency->getBaselineRating() != $suggestedBaseline;
+
+                        $inputAttribs = $restorable ? '' : 'disabled="disabled"';
+                        $tdClass =
+                            $justUpdated ?
+                                'restored' :
+                                '';
+                        $trClass =
+                            $restorable ?
+                                'restorable' :
+                                '';
+                        ?>
+
+                        <tr class="<?=$trClass?>">
+                            <td><?=$StudentCompetency->ID?></td>
+                            <td>
+                                <?=$StudentCompetency->Creator->Username?>
+                                @ <?=date('Y-m-d H:i:s', $StudentCompetency->Created)?>
+                            </td>
+                            <td><?=$StudentCompetency->Student->Username?></td>
+                            <td><?=$StudentCompetency->Competency->Code?></td>
+                            <td><?=$StudentCompetency->Level?></td>
+                            <td><?=$StudentCompetency->EnteredVia?></td>
+                            <td class="<?=$tdClass?>"><?=$StudentCompetency->getBaselineRating()?></td>
+                            <td><?=$Previous->getBaselineRating()?></td>
+                            <td><?=$Previous->getDemonstrationsAverage()?></td>
+                            <td>
+                                <?=$suggestedBaseline?>
+                            </td>
+                            <td>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="update[]"
+                                        value="<?=$StudentCompetency->ID?>"
+                                        <?=$inputAttribs?>
+                                    />
+                                </label>
+                            </td>
+                        </tr>
+                        <?php flush() ?>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+            <button>Update Selected Student Competencies</button>
+        </form>
+
+        <script type="text/javascript">
+
+            var selectAllField = document.getElementById('selectall'),
+                enabledCheckFields = document.querySelectorAll('input[name=update\\[\\]]:enabled');
+
+            selectAllField.addEventListener('change', function() {
+                enabledCheckFields.forEach(function(field) {
+                    field.checked = selectAllField.checked;
+                });
+            });
+
+        </script>
     </body>
+
 </html>
