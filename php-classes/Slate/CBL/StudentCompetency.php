@@ -144,7 +144,7 @@ class StudentCompetency extends \ActiveRecord
                 ])
             )
         ) {
-            $this->BaselineRating = $Previous->getDemonstrationsAverage();
+            $this->BaselineRating = max($Previous->getBaselineRating(), $Previous->getDemonstrationsAverage());
         }
 
         // call parent
