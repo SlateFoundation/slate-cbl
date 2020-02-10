@@ -3,11 +3,13 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
     xtype: 'slate-demonstrations-student-competencycard',
     requires: [
         'Ext.util.Format',
+        'Ext.util.Sortable',
 
         /* global Slate */
         'Slate.cbl.util.Config',
         'Slate.cbl.util.format.PreventOrphans',
         'Slate.ui.SimplePanel', // using its CSS classes
+        'Slate.sorter.Code'
     ],
 
 
@@ -359,7 +361,8 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             skillsLength = skills.length,
             skillIndex = 0, skill,
             requirements, demonstrationsRequired, demonstrations, demonstrationsCount, lastDemonstration, isSkillComplete,
-            tplData = [];
+            tplData = [],
+            sorter;
 
         for (; skillIndex < skillsLength; skillIndex++) {
             skill = skills[skillIndex];
@@ -399,6 +402,13 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             }, skill));
         }
 
-        return tplData;
+        // sort by Skill Code
+        sorter = new Slate.sorter.Code({
+            codeFn: function(item) {
+                return item.Code;
+            }
+        });
+
+        return Ext.Array.sort(tplData, Ext.util.Sortable.createComparator([sorter]));
     }
 });
