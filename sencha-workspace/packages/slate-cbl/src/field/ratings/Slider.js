@@ -22,9 +22,9 @@ Ext.define('Slate.cbl.field.ratings.Slider', {
         skill: null,
         level: null,
 
-        minRating: 8,
-        maxRating: 13,
-        menuRatings: [7, 6, 5, 4, 3, 2, 1, 0],
+        minRating: 5,
+        maxRating: 12,
+        menuRatings: [4, 3, 2, 1, 0],
         removable: false
     },
 
