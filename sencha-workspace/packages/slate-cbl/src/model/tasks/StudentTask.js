@@ -116,7 +116,8 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
             {
                 name: 'TaskStatus',
                 type: 'string',
-                allowNull: true
+                allowNull: true,
+                defaultValue: 'assigned'
             },
             {
                 name: 'DemonstrationID',
