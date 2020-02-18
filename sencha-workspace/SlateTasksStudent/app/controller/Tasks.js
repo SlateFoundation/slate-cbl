@@ -43,7 +43,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     ],
 
     stores: [
-        'Tasks'
+        'Tasks',
+        'Terms'
     ],
 
     models: [
@@ -78,6 +79,19 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         submitBtn: 'slate-cbl-tasks-studenttaskform ^ window button[action=submit]'
     },
 
+    listen: {
+        store: {
+            '#Sections': {
+                load: 'onSectionsLoad'
+            },
+            '#Terms': {
+                load: 'onTermsLoad'
+            },
+            '#Tasks': {
+                load: 'onTasksLoad'
+            }
+        }
+    },
 
     // entry points
     control: {
@@ -102,6 +116,11 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
     },
 
+    // controller lifecycle
+    onLaunch: function () {
+        // load terms store
+        this.getTermsStore().load();
+    },
 
     // event handlers
     onStudentChange: function(dashboardCt, studentUsername) {
@@ -111,8 +130,51 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         tasksStore.loadIfDirty();
     },
 
+    onTermsLoad: function(store) {
+        var me = this,
+            menu = me.getFilterMenu(),
+            currentMasterTerm = store.getCurrentMasterTerm(),
+            currentMasterTermLeft = currentMasterTerm && currentMasterTerm.get('Left'),
+            currentMasterTermRight = currentMasterTerm && currentMasterTerm.get('Right'),
+            currentMasterTermIds = [];
+
+        store.getRange().forEach(function(term) {
+            if (
+                term.get('Left') >= currentMasterTermLeft &&
+                term.get('Right') <= currentMasterTermRight
+            ) {
+                currentMasterTermIds.push(term.getId());
+            }
+        });
+
+        menu.setCurrentYearTermIds(currentMasterTermIds);
+    },
+
+    onSectionsLoad: function(store) {
+        var me = this,
+            menu = me.getFilterMenu(),
+            enrolledSectionIds = store.collect('ID');
+
+        menu.setCurrentSectionIds(enrolledSectionIds);
+    },
+
+    onTasksLoad: function(store) {
+        this.filterRecords();
+    },
+
     onSectionChange: function(dashboardCt, sectionCode) {
-        var tasksStore = this.getTasksStore();
+        var me = this,
+            tasksStore = me.getTasksStore(),
+            menu = me.getFilterMenu(),
+            sectionMenuItems = menu.query('[filterGroup=Section]');
+
+        sectionMenuItems.forEach(function(item) {
+            if (sectionCode) {
+                item.hide();
+            } else {
+                item.show();
+            }
+        });
 
         tasksStore.setSection(sectionCode);
         tasksStore.loadIfDirty();
@@ -125,22 +187,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     // TODO: audit and optimize
     // TODO: use store filters?
     onFilterItemCheckChange: function() {
-        var me = this,
-            menu = me.getFilterMenu(),
-            statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
-            timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
-            store = me.getTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
-            i = 0,
-            rec;
-
-        for (; i < recLength; i++) {
-            rec = recs[i];
-            rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
-        }
-
-        me.getTaskTree().refresh();
+        this.filterRecords();
     },
 
     // TODO: audit and optimize
@@ -277,20 +324,58 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
     },
 
+    filterRecords: function() {
+        var me = this,
+            menu = me.getFilterMenu(),
+            sectionFilters = menu.query('menucheckitem[filterGroup=Section][checked]{isVisible()}'),
+            statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
+            timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
+            store = me.getTasksStore(),
+            recs = store.getRange(),
+            recLength = recs.length,
+            i = 0,
+            rec;
+
+        for (; i < recLength; i++) {
+            rec = recs[i];
+            rec.set(
+                'filtered',
+                (
+                    me.filterRecord(rec, statusFilters) ||
+                    me.filterRecord(rec, timelineFilters) ||
+                    me.filterRecord(rec, sectionFilters, true) // true to intersect section filters
+                )
+            );
+        }
+
+        me.getTaskTree().refresh();
+    },
+
     /**
      * Passes a record through a group of filters.
      * @param {Ext.data.Model} rec- The record to be tested.
      * @param {Array} filterGroup - An array of objects with a filter function.
+     * @param {boolean} intersectFilters - Set this to true to have filters intersect.
      * @returns {boolean} filtered - true if this rec should be filtered
      */
     // TODO: audit and optimize
-    filterRecord: function(rec, filterGroup) {
-        var filterGroupLength = filterGroup.length,
+    filterRecord: function(rec, filterGroup, intersectFilters) {
+        var menu = this.getFilterMenu(),
+            filterGroupLength = filterGroup.length,
             filtered = filterGroupLength !== 0, // if no filters, return false
             i = 0;
 
         for (; i < filterGroupLength; i++) {
-            filtered = filtered && filterGroup[i].filterFn(rec);
+            if (intersectFilters === true) {
+                if (i === 0) {
+                    filtered = false;
+                } else if (filtered === true) {
+                    break;
+                }
+                filtered = filtered || filterGroup[i].filterFn(rec, menu);
+            } else {
+                filtered = filtered && filterGroup[i].filterFn(rec, menu);
+            }
         }
 
         return filtered;
