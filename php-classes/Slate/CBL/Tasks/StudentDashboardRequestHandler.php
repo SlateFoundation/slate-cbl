@@ -4,6 +4,7 @@ namespace Slate\CBL\Tasks;
 
 use Emergence\WebApps\SenchaApp;
 use Google\API as GoogleAPI;
+use Slate\Term;
 
 class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {
@@ -44,7 +45,8 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
                  'domain' => GoogleAPI::$domain,
                  'developerKey' => GoogleAPI::$developerKey,
                  'clientId' => GoogleAPI::$clientId
-            ]
+            ],
+            'currentYearTermIds' => array_map('intval', Term::getClosest()->getMaster()->getContainedTermIDs())
         ]);
     }
 }
