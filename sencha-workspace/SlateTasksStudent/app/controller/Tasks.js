@@ -44,7 +44,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     stores: [
         'Tasks',
-        'Terms',
         'SectionParticipants'
     ],
 
@@ -81,10 +80,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     listen: {
+        controller: {
+            '#': {
+                bootstrapdataload: 'onBootstrapDataLoad'
+            }
+        },
         store: {
-            '#Terms': {
-                load: 'onTermsLoad'
-            },
             '#Tasks': {
                 load: 'onTasksLoad'
             },
@@ -117,12 +118,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
     },
 
-    // controller lifecycle
-    onLaunch: function () {
-        // load terms store
-        this.getTermsStore().load();
-    },
-
     // event handlers
     onStudentChange: function(dashboardCt, studentUsername) {
         var tasksStore = this.getTasksStore(),
@@ -135,26 +130,14 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         sectionParticipantsStore.loadIfDirty();
     },
 
-    // todo: deprecate, and attach data to bootstrap request
-    onTermsLoad: function(store) {
-        var me = this,
-            menu = me.getFilterMenu(),
-            currentMasterTerm = store.getCurrentMasterTerm(),
-            currentMasterTermLeft = currentMasterTerm && currentMasterTerm.get('Left'),
-            currentMasterTermRight = currentMasterTerm && currentMasterTerm.get('Right'),
-            currentMasterTermIds = [];
+    onBootstrapDataLoad: function(app, bootstrapData) {
+        var menu = this.getFilterMenu(),
+            currentYearTermIds = bootstrapData.currentYearTermIds;
 
-        store.getRange().forEach(function(term) {
-            // get current master term children
-            if (
-                term.get('Left') >= currentMasterTermLeft &&
-                term.get('Right') <= currentMasterTermRight
-            ) {
-                currentMasterTermIds.push(term.getId());
+        // show and load student selector for privileged users
+        if (currentYearTermIds) {
+            menu.setCurrentYearTermIds(currentYearTermIds);
             }
-        });
-
-        menu.setCurrentYearTermIds(currentMasterTermIds);
     },
 
     onSectionParticipantsLoad: function(store) {
