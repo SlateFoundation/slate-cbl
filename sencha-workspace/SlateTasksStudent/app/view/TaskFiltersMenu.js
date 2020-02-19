@@ -25,14 +25,17 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
             filterGroup: 'Section',
             filterFn: function(rec, menu) {
                 return menu.getCurrentYearTermIds().indexOf(rec.get('Task')['Section']['TermID']) === -1;
-            }
+            },
+            checked: true
         },
         {
             text: 'Currently Enrolled Sections',
             filterGroup: 'Section',
             filterFn: function(rec, menu) {
-                return menu.getCurrentSectionIds().indexOf(rec.get('CourseSectionID')) > -1;
-            }
+                console.log(rec);
+                return menu.getCurrentlyEnrolledSectionIds().indexOf(rec.get('Task')['SectionID']) === -1;
+            },
+            checked: true
         },
         {
             xtype: 'component',
@@ -44,14 +47,16 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
             filterGroup: 'Status',
             filterFn: function(rec) {
                 return rec.get('TaskStatus') !== 'assigned';
-            }
+            },
+            checked: true
         },
         {
             text: 'Revision Tasks',
             filterGroup: 'Status',
             filterFn: function(rec) {
                 return rec.get('TaskStatus') !== 're-assigned';
-            }
+            },
+            checked: true
         },
         {
             text: 'Submitted Tasks',
