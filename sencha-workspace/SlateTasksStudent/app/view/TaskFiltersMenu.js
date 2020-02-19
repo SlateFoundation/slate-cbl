@@ -10,7 +10,7 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
 
     config: {
         currentYearTermIds: [],
-        currentSectionIds: []
+        currentlyEnrolledSectionIds: []
     },
 
     items: [

@@ -44,7 +44,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     stores: [
         'Tasks',
-        'Terms'
+        'Terms',
+        'SectionParticipants'
     ],
 
     models: [
@@ -81,14 +82,14 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     listen: {
         store: {
-            '#Sections': {
-                load: 'onSectionsLoad'
-            },
             '#Terms': {
                 load: 'onTermsLoad'
             },
             '#Tasks': {
                 load: 'onTasksLoad'
+            },
+            '#SectionParticipants': {
+                load: 'onSectionParticipantsLoad'
             }
         }
     },
@@ -124,12 +125,17 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
     // event handlers
     onStudentChange: function(dashboardCt, studentUsername) {
-        var tasksStore = this.getTasksStore();
+        var tasksStore = this.getTasksStore(),
+            sectionParticipantsStore = this.getSectionParticipantsStore();
 
         tasksStore.setStudent(studentUsername || '*current');
+        sectionParticipantsStore.setStudent(studentUsername || '*current');
+
         tasksStore.loadIfDirty();
+        sectionParticipantsStore.loadIfDirty();
     },
 
+    // todo: deprecate, and attach data to bootstrap request
     onTermsLoad: function(store) {
         var me = this,
             menu = me.getFilterMenu(),
@@ -139,6 +145,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             currentMasterTermIds = [];
 
         store.getRange().forEach(function(term) {
+            // get current master term children
             if (
                 term.get('Left') >= currentMasterTermLeft &&
                 term.get('Right') <= currentMasterTermRight
@@ -150,12 +157,51 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         menu.setCurrentYearTermIds(currentMasterTermIds);
     },
 
-    onSectionsLoad: function(store) {
+    onSectionParticipantsLoad: function(store) {
         var me = this,
             menu = me.getFilterMenu(),
-            enrolledSectionIds = store.collect('ID');
+            now = new Date(),
+            currentlyEnrolledSectionIds = [];
 
-        menu.setCurrentSectionIds(enrolledSectionIds);
+        // get "current" enrollments
+        store.getRange().forEach(function(enrollment) {
+
+            if (
+                ( // enrollment/term start date is earlier than current date or null
+                    (
+                        enrollment.get('StartDate') &&
+                        enrollment.get('StartDate') <= now
+                    ) ||
+                    (
+                        enrollment.get('StartDate') === null &&
+                        (
+                            enrollment.get('Section')['TermID'] === null ||
+                            enrollment.get('Section')['Term']['StartDate'] === null ||
+                            new Date(enrollment.get('Section')['Term']['StartDate']) <= now
+                        )
+                    )
+                ) &&
+                (
+                    (
+                        enrollment.get('EndDate') &&
+                        enrollment.get('EndDate') >= now
+                    ) ||
+                    (
+                        enrollment.get('EndDate') === null &&
+                        (
+                            enrollment.get('Section')['TermID'] === null ||
+                            enrollment.get('Section')['Term']['EndDate'] === null ||
+                            new Date(enrollment.get('Section')['Term']['EndDate']) >= now
+                        )
+                    )
+                )
+            ) {
+                currentlyEnrolledSectionIds.push(enrollment.get('CourseSectionID'));
+            }
+        });
+
+        menu.setCurrentlyEnrolledSectionIds(currentlyEnrolledSectionIds);
+        me.filterRecords();
     },
 
     onTasksLoad: function(store) {
@@ -170,9 +216,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
 
         sectionMenuItems.forEach(function(item) {
             if (sectionCode) {
-                item.hide();
+                item.disable().hide();
             } else {
-                item.show();
+                item.enable().show();
             }
         });
 
@@ -327,7 +373,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     filterRecords: function() {
         var me = this,
             menu = me.getFilterMenu(),
-            sectionFilters = menu.query('menucheckitem[filterGroup=Section][checked]{isVisible()}'),
+            sectionFilters = menu.query('menucheckitem[filterGroup=Section][checked]{isDisabled() === false}'),
             statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
             timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
             store = me.getTasksStore(),
