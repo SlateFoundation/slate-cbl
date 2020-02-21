@@ -5,8 +5,12 @@ Ext.define('SlateTasksStudent.store.Tasks', {
     model: 'Slate.cbl.model.tasks.StudentTask',
 
     config: {
+        statusFilter: null,
+        timelineFilter: null,
+        sectionFilter: null,
+
         remoteSort: false,
-        remoteFilter: false,
+        // remoteFilter: false,
 
         sorters: [{
             sorterFn: function(task1, task2) {
@@ -57,5 +61,24 @@ Ext.define('SlateTasksStudent.store.Tasks', {
                 'Task.Section'
             ]
         }
+    },
+
+    updateStatusFilter: function(status) {
+        if (Array.isArray(status)) {
+            status = status.join(',');
+        }
+
+        this.getProxy().setExtraParam('taskstatus', status);
+        this.dirty = true;
+    },
+
+    updateTimelineFilter: function(timeline) {
+        this.getProxy().setExtraParam('timeline_filter[]', timeline);
+        this.dirty = true;
+    },
+
+    updateSectionFilter: function(section) {
+        this.getProxy().setExtraParam('section_filter[]', section);
+        this.dirty = true;
     }
 });

@@ -115,6 +115,9 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         },
         submitBtn: {
             click: 'onSubmitClick'
+        },
+        taskTree: {
+            render: 'onTaskTreeRender'
         }
     },
 
@@ -188,7 +191,12 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     onTasksLoad: function(store) {
-        this.filterRecords();
+        // this.filterRecords();
+    },
+
+    onTaskTreeRender: function() {
+        // filter records when tree renders, due to default filters
+        return this.filterRecords();
     },
 
     onSectionChange: function(dashboardCt, sectionCode) {
@@ -360,25 +368,34 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
             timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
             store = me.getTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
-            i = 0,
-            rec;
+            statuses = [],
+            timelines = [],
+            sections = [];
 
-        for (; i < recLength; i++) {
-            rec = recs[i];
-            rec.set(
-                'filtered',
-                (
-                    me.filterRecord(rec, statusFilters) ||
-                    me.filterRecord(rec, timelineFilters) ||
-                    me.filterRecord(rec, sectionFilters, true) // true to intersect section filters
-                )
+        // set status filters
+        statusFilters.forEach(function(filter) {
+            statuses = statuses.concat(
+                Array.isArray(filter.getValue()) ?
+                    filter.getValue() :
+                    [filter.getValue()]
             );
-        }
+        });
+        store.setStatusFilter(statuses);
 
-        me.getTaskTree().refresh();
+        // set timeline filters
+        timelineFilters.forEach(function(filter) {
+            timelines.push(filter.getValue());
+        });
+        store.setTimelineFilter(timelines);
+
+        sectionFilters.forEach(function(filter) {
+            sections.push(filter.getValue());
+        });
+        store.setSectionFilter(sections);
+
+        store.loadIfDirty();
     },
+
 
     /**
      * Passes a record through a group of filters.
