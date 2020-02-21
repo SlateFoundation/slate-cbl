@@ -79,22 +79,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         submitBtn: 'slate-cbl-tasks-studenttaskform ^ window button[action=submit]'
     },
 
-    listen: {
-        controller: {
-            '#': {
-                bootstrapdataload: 'onBootstrapDataLoad'
-            }
-        },
-        store: {
-            '#Tasks': {
-                load: 'onTasksLoad'
-            },
-            '#SectionParticipants': {
-                load: 'onSectionParticipantsLoad'
-            }
-        }
-    },
-
     // entry points
     control: {
         dashboardCt: {
@@ -122,81 +106,18 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     },
 
     // event handlers
-    onStudentChange: function(dashboardCt, studentUsername) {
-        var tasksStore = this.getTasksStore(),
-            sectionParticipantsStore = this.getSectionParticipantsStore();
-
-        tasksStore.setStudent(studentUsername || '*current');
-        sectionParticipantsStore.setStudent(studentUsername || '*current');
-
-        tasksStore.loadIfDirty();
-        sectionParticipantsStore.loadIfDirty();
-    },
-
-    onBootstrapDataLoad: function(app, bootstrapData) {
-        var menu = this.getFilterMenu(),
-            currentYearTermIds = bootstrapData.currentYearTermIds;
-
-        // show and load student selector for privileged users
-        if (currentYearTermIds) {
-            menu.setCurrentYearTermIds(currentYearTermIds);
-            }
-    },
-
-    onSectionParticipantsLoad: function(store) {
-        var me = this,
-            menu = me.getFilterMenu(),
-            now = new Date(),
-            currentlyEnrolledSectionIds = [];
-
-        // get "current" enrollments
-        store.getRange().forEach(function(enrollment) {
-
-            if (
-                ( // enrollment/term start date is earlier than current date or null
-                    (
-                        enrollment.get('StartDate') &&
-                        enrollment.get('StartDate') <= now
-                    ) ||
-                    (
-                        enrollment.get('StartDate') === null &&
-                        (
-                            enrollment.get('Section')['TermID'] === null ||
-                            enrollment.get('Section')['Term']['StartDate'] === null ||
-                            new Date(enrollment.get('Section')['Term']['StartDate']) <= now
-                        )
-                    )
-                ) &&
-                (
-                    (
-                        enrollment.get('EndDate') &&
-                        enrollment.get('EndDate') >= now
-                    ) ||
-                    (
-                        enrollment.get('EndDate') === null &&
-                        (
-                            enrollment.get('Section')['TermID'] === null ||
-                            enrollment.get('Section')['Term']['EndDate'] === null ||
-                            new Date(enrollment.get('Section')['Term']['EndDate']) >= now
-                        )
-                    )
-                )
-            ) {
-                currentlyEnrolledSectionIds.push(enrollment.get('CourseSectionID'));
-            }
-        });
-
-        menu.setCurrentlyEnrolledSectionIds(currentlyEnrolledSectionIds);
-        me.filterRecords();
-    },
-
-    onTasksLoad: function(store) {
-        // this.filterRecords();
-    },
-
     onTaskTreeRender: function() {
         // filter records when tree renders, due to default filters
         return this.filterRecords();
+    },
+
+    onStudentChange: function(dashboardCt, studentUsername) {
+        var me = this,
+            tasksStore = me.getTasksStore();
+
+
+        tasksStore.setStudent(studentUsername || '*current');
+        me.filterRecords();
     },
 
     onSectionChange: function(dashboardCt, sectionCode) {
@@ -214,39 +135,30 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
 
         tasksStore.setSection(sectionCode);
-        tasksStore.loadIfDirty();
+        me.filterRecords();
     },
 
     onTaskTreeItemClick: function(tasksTree, studentTask, itemEl) {
         this.openTaskWindow(studentTask, { animateTarget: itemEl });
     },
 
-    // TODO: audit and optimize
     // TODO: use store filters?
     onFilterItemCheckChange: function() {
         this.filterRecords();
     },
 
-    // TODO: audit and optimize
     onFilterViewAllClick: function() {
         var me = this,
             menu = me.getFilterMenu(),
             checkedFilters = menu.query('menucheckitem[checked]'),
             checkedFiltersLength = checkedFilters.length,
-            store = this.getTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
             i = 0;
 
         for (; i < checkedFiltersLength; i++) {
             checkedFilters[i].setChecked(false, true);
         }
 
-        for (i = 0; i < recLength; i++) {
-            recs[i].set('filtered', false);
-        }
-
-        me.getTaskTree().refresh();
+        me.filterRecords();
     },
 
     onSaveClick: function(saveBtn) {
@@ -361,6 +273,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
     },
 
+    // TODO: use store filters?
     filterRecords: function() {
         var me = this,
             menu = me.getFilterMenu(),
@@ -394,36 +307,5 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         store.setSectionFilter(sections);
 
         store.loadIfDirty();
-    },
-
-
-    /**
-     * Passes a record through a group of filters.
-     * @param {Ext.data.Model} rec- The record to be tested.
-     * @param {Array} filterGroup - An array of objects with a filter function.
-     * @param {boolean} intersectFilters - Set this to true to have filters intersect.
-     * @returns {boolean} filtered - true if this rec should be filtered
-     */
-    // TODO: audit and optimize
-    filterRecord: function(rec, filterGroup, intersectFilters) {
-        var menu = this.getFilterMenu(),
-            filterGroupLength = filterGroup.length,
-            filtered = filterGroupLength !== 0, // if no filters, return false
-            i = 0;
-
-        for (; i < filterGroupLength; i++) {
-            if (intersectFilters === true) {
-                if (i === 0) {
-                    filtered = false;
-                } else if (filtered === true) {
-                    break;
-                }
-                filtered = filtered || filterGroup[i].filterFn(rec, menu);
-            } else {
-                filtered = filtered && filterGroup[i].filterFn(rec, menu);
-            }
-        }
-
-        return filtered;
     }
 });

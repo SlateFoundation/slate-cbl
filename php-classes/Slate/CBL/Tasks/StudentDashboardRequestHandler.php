@@ -45,8 +45,7 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
                  'domain' => GoogleAPI::$domain,
                  'developerKey' => GoogleAPI::$developerKey,
                  'clientId' => GoogleAPI::$clientId
-            ],
-            'currentYearTermIds' => array_map('intval', Term::getClosest()->getMaster()->getContainedTermIDs())
+            ]
         ]);
     }
 }
