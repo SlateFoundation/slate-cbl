@@ -42,10 +42,6 @@
 	url = https://github.com/JarvusInnovations/emergence-apikit.git
 	branch = master
 
-[submodule "saki-grid-multisearch"]
-	path = sencha-workspace/packages.remote/saki-grid-multisearch-5
-	url = git@github.com:JarvusInnovations/saki-grid-multisearch.git
-	branch = master
 [submodule "jarvus-lazydata"]
 	path = sencha-workspace/packages.remote/jarvus-lazydata
 	url = https://github.com/JarvusInnovations/jarvus-lazydata.git
