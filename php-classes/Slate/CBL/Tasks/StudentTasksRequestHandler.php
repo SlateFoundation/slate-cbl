@@ -214,6 +214,31 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             }
         }
 
+        $includeArchived = static::getRequestedArchiveFilter();
+        if (!$includeArchived) {
+            $archivedTaskIds = DB::allValues(
+                'ID',
+                '
+                    SELECT ID
+                      FROM `%s`
+                     WHERE Status = "archived"
+                ',
+                [ Task::$tableName ]
+            );
+
+            if (!empty($archivedTaskIds)) {
+                if (isset($conditions['TaskID'])) {
+                    $conditions['TaskID']['values'] = array_diff($conditions['TaskID']['values'], $archivedTaskIds);
+                } else {
+                    $conditions['TaskID'] = [
+                        'operator' => 'NOT IN',
+                        'values' => $archivedTaskIds
+                    ];
+                }
+            }
+        }
+
+
         return $conditions;
     }
 
@@ -356,7 +381,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         }
 
         $recordClass = static::$recordClass;
-        $validStatuses = $recordClass::getFieldOptions('TaskStatus', 'values');
+        $validStatuses = array_merge(['un-archived'], $recordClass::getFieldOptions('TaskStatus', 'values'));
         $requestedStatuses = $_REQUEST[$fieldName];
 
         if (!is_array($requestedStatuses)) {
@@ -409,5 +434,18 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         }
 
         return $sections;
+    }
+
+    public static function getRequestedArchiveFilter($fieldName = 'include_archived')
+    {
+        if (empty($_REQUEST[$fieldName])) {
+            return null;
+        }
+
+        if ($_REQUEST[$fieldName] === 'false') {
+            $_REQUEST[$fieldName] = false;
+        }
+
+        return !!$_REQUEST[$fieldName];
     }
 }
