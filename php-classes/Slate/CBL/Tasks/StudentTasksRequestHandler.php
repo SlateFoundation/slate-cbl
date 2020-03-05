@@ -214,8 +214,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             }
         }
 
-        $includeArchived = static::getRequestedArchiveFilter();
-        if (!$includeArchived) {
+        if (!$includeArchived = static::getRequestedArchiveFilter()) {
             $archivedTaskIds = DB::allValues(
                 'ID',
                 '
@@ -381,7 +380,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         }
 
         $recordClass = static::$recordClass;
-        $validStatuses = array_merge(['un-archived'], $recordClass::getFieldOptions('TaskStatus', 'values'));
+        $validStatuses = $recordClass::getFieldOptions('TaskStatus', 'values');
         $requestedStatuses = $_REQUEST[$fieldName];
 
         if (!is_array($requestedStatuses)) {

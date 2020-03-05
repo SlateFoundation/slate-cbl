@@ -281,7 +281,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
             timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
             archivedTaskFilter = menu.down('menucheckitem[filterGroup=Archive]'),
-            includeArchivedTasks = !archivedTaskFilter || !archivedTaskFilter.checked,
+            includeArchivedTasks = archivedTaskFilter && archivedTaskFilter.checked,
             store = me.getTasksStore(),
             statuses = [],
             timelines = [],
