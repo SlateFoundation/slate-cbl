@@ -5,7 +5,7 @@ describe('Student tasks test', () => {
         cy.resetDatabase();
     });
 
-    xit('View single task as student', () => {
+    it('View single task as student', () => {
         cy.loginAs('student');
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/student');
@@ -53,8 +53,6 @@ describe('Student tasks test', () => {
     });
 
     it('Filters Student Tasks Properly', () => {
-
-
         const expectedFilterLengths = {
             // section filters
             'Current Year any Term': 8,
@@ -125,7 +123,7 @@ describe('Student tasks test', () => {
             cy.get('.slate-appcontainer')
                 .should('be.visible')
                 .then(() => {
-                    var currentTasksTree = extQuerySelector('slate-tasks-student-tasktree'),
+                    const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree'),
                         filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu'),
                         _selectFilter = (filterText, filterId = filterMenu.id) => {
                             return cy.get('#' + filterId)
@@ -155,30 +153,30 @@ describe('Student tasks test', () => {
 
                     cy.get('#' + currentTasksTree.id)
                         .contains('Filter')
-                        .click();
+                        .click()
+                        .then(() => {
+                            for (let [filter, length] of Object.entries(expectedFilterLengths)) {
+                                _viewAll();
+                                _selectFilter(filter);
+                                cy.wait(['@allStudentTasksData', '@studentTasksData'])
+                                    .then((xhrs) => {
+                                        xhrs.forEach(x => expect(x.status).to.equal(200));
 
-                    for (let [filter, length] of Object.entries(expectedFilterLengths)) {
-                        _viewAll();
-                        _selectFilter(filter);
-                        cy.wait(['@allStudentTasksData', '@studentTasksData'])
-                            .then((xhrs) => {
-                                xhrs.forEach(x => expect(x.status).to.equal(200));
-                                cy.contains('Loading Tasks')
-                                    .should('not.be.visible')
-                                    .then(() => {
-                                        cy.get('#' + currentTasksTree.id)
-                                            .then(($tasksTree) => {
-                                                expect(
-                                                    $tasksTree.find('li.slate-tasktree-item').length
-                                                ).to.equal(length)
+                                        cy.contains('Loading Tasks')
+                                            .should('not.be.visible')
+                                            .then(() => {
+                                                cy.get('#' + currentTasksTree.id)
+                                                    .should(($tasksTree) => {
+                                                        expect(
+                                                            $tasksTree.find('li.slate-tasktree-item').length
+                                                        ).to.equal(length)
+                                                    });
                                             });
+
                                     });
-
-                            });
-                    }
+                            }
+                        });
                 });
-
-
         });
     });
 });
