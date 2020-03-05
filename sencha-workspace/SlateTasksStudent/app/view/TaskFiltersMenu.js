@@ -59,8 +59,7 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
         },
         {
             text: 'Un-archived Tasks',
-            filterGroup: 'Status',
-            value: 'unarchived'
+            filterGroup: 'Archive'
         },
         {
             xtype: 'component',

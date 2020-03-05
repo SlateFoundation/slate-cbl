@@ -280,6 +280,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             sectionFilters = menu.query('menucheckitem[filterGroup=Section][checked]{isDisabled() === false}'),
             statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
             timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
+            archivedTaskFilter = menu.down('menucheckitem[filterGroup=Archive]'),
+            includeArchivedTasks = !archivedTaskFilter || !archivedTaskFilter.checked,
             store = me.getTasksStore(),
             statuses = [],
             timelines = [],
@@ -305,6 +307,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             sections.push(filter.getValue());
         });
         store.setSectionFilter(sections);
+
+        store.getProxy().setExtraParam('include_archived', includeArchivedTasks);
 
         store.loadIfDirty();
     }
