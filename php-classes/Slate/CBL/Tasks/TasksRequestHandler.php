@@ -21,6 +21,12 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
 
     public static $recordClass =  Task::class;
+    public static $defaultBrowseConditions = [
+        'Status' => [
+            'operator' => '!=',
+            'value' => 'archived'
+        ]
+    ];
     public static $browseOrder = ['Created' => 'DESC'];
 
     protected static function buildBrowseConditions(array $conditions = array(), array &$filterObjects = [])

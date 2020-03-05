@@ -13,6 +13,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
     requires: [
         'SlateTasksTeacher.view.StudentsGrid',
         'SlateTasksTeacher.view.GridLegend',
+        'SlateTasksTeacher.view.GridToolbar',
 
         'Slate.cbl.field.SectionSelector',
         'Slate.cbl.field.CohortSelector',
@@ -96,6 +97,15 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
         gridLegend: false,
 
 
+        /**
+         * @cfg {SlateTasksTeacher.view.GridToolbar|Object|boolean}
+         * Instance or configuration for grid toolbar component.
+         *
+         * Setting boolean values change visibility.
+         */
+        gridToolbar: false,
+
+
         fullWidth: true,
         header: {
             title: 'Classroom Tasks',
@@ -139,6 +149,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
         me.setPlaceholderItem(!sectionSet);
         me.setStudentsGrid(sectionSet);
         me.setGridLegend(sectionSet);
+        me.setGridToolbar(sectionSet);
         Ext.resumeLayouts(true);
 
         me.fireEvent('selectedsectionchange', me, section, oldSection);
@@ -178,6 +189,16 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
         return Ext.factory(gridLegend, 'SlateTasksTeacher.view.GridLegend', oldGridLegend);
     },
 
+    applyGridToolbar: function(gridToolbar, oldGridToolbar) {
+        if (typeof gridToolbar === 'boolean') {
+            gridToolbar = {
+                hidden: !gridToolbar
+            };
+        }
+
+        return Ext.factory(gridToolbar, 'SlateTasksTeacher.view.GridToolbar', oldGridToolbar);
+    },
+
 
     // component lifecycle
     initItems: function() {
@@ -187,6 +208,7 @@ Ext.define('SlateTasksTeacher.view.Dashboard', {
 
         me.add([
             me.getStudentsGrid(),
+            me.getGridToolbar(),
             me.getGridLegend()
         ]);
     }

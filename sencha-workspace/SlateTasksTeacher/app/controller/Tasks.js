@@ -39,6 +39,17 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         '</strong>'
     ],
 
+    archiveNotificationBodyTpl: [
+        '<tpl for="task">',
+            '<tpl if="Status === \'archived\'">',
+                'Archived',
+            '<tpl else>',
+                'Un-Archived',
+            '</tpl>',
+            ' task',
+            ' <strong>{Title}</strong>',
+        '</tpl>'
+    ],
 
     // dependencies
     views: [
@@ -99,7 +110,9 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         formPanel: 'slate-cbl-tasks-taskform',
         clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
         statusField: 'slate-cbl-tasks-taskform ^ window field[name=Status]',
-        submitBtn: 'slate-cbl-tasks-taskform ^ window button[action=submit]'
+        submitBtn: 'slate-cbl-tasks-taskform ^ window button[action=submit]',
+        archiveBtn: 'slate-cbl-tasks-taskform ^ window button[action=archive]',
+        unarchiveBtn: 'slate-cbl-tasks-taskform ^ window button[action=un-archive]'
     },
 
 
@@ -135,6 +148,12 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         },
         submitBtn: {
             click: 'onSubmitClick'
+        },
+        archiveBtn: {
+            click: 'onArchiveClick'
+        },
+        unarchiveBtn: {
+            click: 'onUnArchiveClick'
         },
         studentsGrid: {
             rowheaderclick: 'onRowHeaderClick',
@@ -307,6 +326,131 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
 
                 // close window
                 formWindow.hide();
+                formWindow.setLoading(false);
+            },
+            failure: function(savedTask, operation) {
+                formWindow.setLoading(false);
+
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
+    },
+
+    onArchiveClick: function(archiveBtn) {
+        var me = this,
+            formWindow = archiveBtn.up('window'),
+            formPanel = formWindow.getMainView(),
+            task = formPanel.getRecord(),
+            wasPhantom = task.phantom;
+
+        formPanel.updateRecord(task);
+        task.set({
+            Status: 'archived'
+        });
+
+        // ensure task doesn't become dirty when no changes are made to the form
+        if (!task.dirty) {
+            return;
+        }
+
+        formWindow.setLoading('Saving task&hellip;');
+
+        task.save({
+            include: 'StudentTasks',
+            success: function(savedTask) {
+                var tasksStore = me.getTasksStore(),
+                    parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+                    tplData = {
+                        task: savedTask.getData()
+                    };
+
+                // show notification to user
+                Ext.toast(
+                    Ext.XTemplate.getTpl(me, 'archiveNotificationBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+                );
+
+                // update loaded tasks data
+                tasksStore.beginUpdate();
+                tasksStore.mergeData([savedTask]);
+
+                if (parentTask) {
+                    parentTask.get('ChildTasks').push(savedTask);
+                }
+
+                tasksStore.endUpdate();
+
+                // close window
+                // formWindow.hide();
+                formPanel.setTask(null);
+                formPanel.setTask(savedTask);
+                formWindow.setLoading(false);
+            },
+            failure: function(savedTask, operation) {
+                formWindow.setLoading(false);
+
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
+    },
+
+    onUnArchiveClick: function(archiveBtn) {
+        var me = this,
+            formWindow = archiveBtn.up('window'),
+            formPanel = formWindow.getMainView(),
+            task = formPanel.getRecord(),
+            wasPhantom = task.phantom;
+
+        formPanel.updateRecord(task);
+        task.set({
+            Status: 'private'
+        });
+
+        // ensure task doesn't become dirty when no changes are made to the form
+        if (!task.dirty) {
+            return;
+        }
+
+        formWindow.setLoading('Saving task&hellip;');
+
+        task.save({
+            include: 'StudentTasks',
+            success: function(savedTask) {
+                var tasksStore = me.getTasksStore(),
+                    parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+                    tplData = {
+                        task: savedTask.getData()
+                    };
+
+                // show notification to user
+                Ext.toast(
+                    Ext.XTemplate.getTpl(me, 'archiveNotificationBodyTpl').apply(tplData),
+                    Ext.XTemplate.getTpl(me, 'saveNotificationTitleTpl').apply(tplData)
+                );
+
+                // update loaded tasks data
+                tasksStore.beginUpdate();
+                tasksStore.mergeData([savedTask]);
+
+                if (parentTask) {
+                    parentTask.get('ChildTasks').push(savedTask);
+                }
+
+                tasksStore.endUpdate();
+
+                // update form panel
+                formPanel.setTask(null);
+                formPanel.setTask(savedTask);
                 formWindow.setLoading(false);
             },
             failure: function(savedTask, operation) {
