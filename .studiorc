@@ -41,7 +41,7 @@ build-all() {
     build-demos-teacher
     build-tasks-student
     build-tasks-teacher
-    build-tasks-manager
+    # build-tasks-manager
 }
 
 
