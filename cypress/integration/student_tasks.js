@@ -89,13 +89,13 @@ describe('Student tasks test', () => {
 
                     cy.get('#' + currentTasksTree.id)
                         .contains('Filter')
-                        .click();
+                        .click({ force: true });
 
                     var filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
 
                     cy.get('#' + filterMenu.id)
                         .contains('View All')
-                        .click();
+                        .click({ force: true });
 
                     cy.wait('@studentTasksData')
                         .should(xhr => {
@@ -140,13 +140,13 @@ describe('Student tasks test', () => {
 
             cy.get('#' + currentTasksTree.id)
                 .contains('Filter')
-                .click();
+                .click({ force: true });
 
             const filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
 
             cy.get('#' + filterMenu.id)
                 .contains('View All')
-                .click();
+                .click({ force: true });
 
             // verify content has finished loading
             cy.get('#' + currentTasksTree.id)
@@ -155,14 +155,14 @@ describe('Student tasks test', () => {
 
             cy.get('#' + currentTasksTree.id)
                 .contains('(Due Today)')
-                .click()
+                .click({ force: true })
                 .then(() => {
 
                     const slateWindow = extQuerySelector('slate-cbl-tasks-studenttaskform ^ window');
 
                     cy.get('#' + slateWindow.id)
                         .contains('Submit Assignment')
-                        .click();
+                        .click({ force: true });
 
                     cy.wait('@studentTasksSave')
                         .its('status')
@@ -195,27 +195,27 @@ describe('Student tasks test', () => {
 
                     cy.get('#' + currentTasksTree.id)
                         .contains('Filter')
-                        .click();
+                        .click({ force: true });
 
                     const filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
 
                     cy.get('#' + filterMenu.id)
                         .contains('View All')
-                        .click();
+                        .click({ force: true });
 
                     cy.get('#' + currentTasksTree.id)
                         .contains('(Due This Week)')
-                        .click()
+                        .click({ force: true })
                         .then(() => {
                             const slateWindow = extQuerySelector('slate-cbl-tasks-studenttaskform ^ window');
 
                             cy.get('#' + slateWindow.id)
                                 .contains('label', 'Re-assign')
-                                .click();
+                                .click({ force : true });
 
                             cy.get('#' + slateWindow.id)
                                 .contains('Save Assignment')
-                                .click();
+                                .click({ force: true });
                         });
 
 
@@ -284,7 +284,7 @@ describe('Student tasks test', () => {
                         .then(() => {
                             cy.get('#' + currentTasksTree.id)
                                 .contains('Filter')
-                                .click()
+                                .click({ force: true })
                                 .then(() => {
                                     for (let [filter, length] of Object.entries(expectedFilterLengths)) {
                                         _viewAll();
