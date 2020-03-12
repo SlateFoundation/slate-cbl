@@ -11,11 +11,6 @@ describe('/cbl/student-competencies API', () => {
     });
 
     it('Expected student competencies exist', () => {
-        let createdTimestamp = Cypress.moment(1546398245*1000);
-        if (Cypress.moment().isDST()) {
-            createdTimestamp = createdTimestamp.add(1, 'hours');
-        }
-        createdTimestamp = parseInt(createdTimestamp.format('X'), 10);
         cy.request('/cbl/student-competencies?format=json').then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
@@ -24,7 +19,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data[0]).to.include({
                 ID: 64,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: createdTimestamp,
+                Created: 1546401845,
                 CreatorID: 1,
                 StudentID: 7,
                 CompetencyID: 11,
@@ -43,7 +38,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data).to.include({
                 ID: 1,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: createdTimestamp,
+                Created: 1546401845,
                 CreatorID: 2,
                 StudentID: 4,
                 CompetencyID: 1,
@@ -72,7 +67,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data.effectiveDemonstrationsData['1'][0]).to.include({
                 ID: 1,
                 Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
-                Created: createdTimestamp,
+                Created: 1546401845,
                 CreatorID: 3,
                 Modified: null,
                 ModifierID: null,
@@ -81,7 +76,7 @@ describe('/cbl/student-competencies API', () => {
                 TargetLevel: 9,
                 DemonstratedLevel: 9,
                 Override: false,
-                DemonstrationDate: 1546300860
+                DemonstrationDate: 1546304460
             });
         });
     });
