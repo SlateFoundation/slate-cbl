@@ -197,18 +197,18 @@ describe('Student tasks test', () => {
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/student#student/');
 
+        cy.wait(['@bootstrapData', '@studentTasksData'])
+            .should((xhrs) => {
+                xhrs.forEach(
+                    xhr => {
+                        expect(xhr.status).to.equal(200);
+                    }
+                )
+            });
+
         cy.withExt().then(({ extQuerySelector }) => {
             cy.get('.slate-appcontainer')
                 .should('be.visible');
-
-            cy.wait(['@bootstrapData', '@studentTasksData'])
-                .should((xhrs) => {
-                    xhrs.forEach(
-                        xhr => {
-                            expect(xhr.status).to.equal(200);
-                        }
-                    )
-                });
 
             const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
 
