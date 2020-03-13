@@ -70,65 +70,64 @@ describe('Student tasks test', () => {
         // verify student redirect
         cy.location('hash').should('eq', '#me/all');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
-            cy.wait(['@studentTasksData', '@studentTodosData'])
-                .should((xhrs) => {
-                    xhrs.forEach(
-                        xhr => {
-                            expect(xhr.status).to.equal(200);
-                            expect(xhr.response.body.success).to.be.true;
-                        }
-                    );
+        cy.wait(['@studentTasksData', '@studentTodosData'])
+            .should((xhrs) => {
+                xhrs.forEach(
+                    xhr => {
+                        expect(xhr.status).to.equal(200);
+                        expect(xhr.response.body.success).to.be.true;
+                    }
+                );
+            });
 
-                    var todoList = extQuerySelector('slate-tasks-student-todolist');
+        cy.withExt().then(({ extQuerySelector }) => {
+            var todoList = extQuerySelector('slate-tasks-student-todolist');
 
-                    cy.get('#'+todoList.id)
-                        .find('.slate-todolist-section')
-                        .should(($todoListSection) => {
-                            expect(
-                                $todoListSection.length
-                            ).to.equal(3);
-                        })
+            cy.get('#'+todoList.id)
+                .find('.slate-todolist-section')
+                .should(($todoListSection) => {
+                    expect(
+                        $todoListSection.length
+                    ).to.equal(3);
                 })
-                .then(() => {
-                    // get current tasks list
-                    var currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
 
-                    cy.get('#' + currentTasksTree.id)
-                        .contains('Filter')
-                        .click({ force: true });
+            // get current tasks list
+            var currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
 
-                    var filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
+            cy.get('#' + currentTasksTree.id)
+                .contains('Filter')
+                .click({ force: true });
 
-                    cy.get('#' + filterMenu.id)
-                        .contains('View All')
-                        .click({ force: true });
+            var filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
 
-                    cy.wait('@studentTasksData')
-                        .should(xhr => {
-                            expect(xhr.status).to.equal(200);
-                        });
+            cy.get('#' + filterMenu.id)
+                .contains('View All')
+                .click({ force: true });
 
-                    // verify content has finished loading
-                    cy.get('#' + currentTasksTree.id)
-                        .contains('ELA Task One')
+            cy.wait('@studentTasksData')
+                .should(xhr => {
+                    expect(xhr.status).to.equal(200);
+                });
 
-                    // get the course section element
-                    var courseSectionSelector = extQuerySelector('slate-cbl-sectionselector');
+            // verify content has finished loading
+            cy.get('#' + currentTasksTree.id)
+                .contains('ELA Task One')
 
-                    // click the selector
-                    cy.get('#' + courseSectionSelector.el.dom.id).click();
+            // get the course section element
+            var courseSectionSelector = extQuerySelector('slate-cbl-sectionselector');
 
-                    // click ELA Studio element of picker dropdown
-                    cy.get('#' + courseSectionSelector.getPicker().id)
-                        .contains('ELA Studio')
-                        .click({force: true}); // test sometimes fails because the element is not visible
+            // click the selector
+            cy.get('#' + courseSectionSelector.el.dom.id).click();
 
-                    cy.wait('@studentTasksData')
-                        .should(({status}) => {
-                            expect(status).to.equal(200);
-                        });
-                    });
+            // click ELA Studio element of picker dropdown
+            cy.get('#' + courseSectionSelector.getPicker().id)
+                .contains('ELA Studio')
+                .click({force: true}); // test sometimes fails because the element is not visible
+
+            cy.wait('@studentTasksData')
+                .should(({status}) => {
+                    expect(status).to.equal(200);
+                });
         });
     });
 
@@ -226,6 +225,12 @@ describe('Student tasks test', () => {
             cy.get('#' + currentTasksTree.id)
                 .contains('(Due This Week)')
                 .click({ force: true });
+
+            cy.wait('@studentTasksData')
+                .should(xhr => {
+                    expect(xhr.status).to.equal(200);
+                    expect(xhr.response.body.success).to.be.true;
+                });
 
             cy.get('.slate-window')
                 .contains('label', 'Re-assign')
