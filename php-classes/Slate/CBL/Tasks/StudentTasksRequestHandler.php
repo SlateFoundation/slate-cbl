@@ -214,7 +214,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             }
         }
 
-        if (!$includeArchived = static::getRequestedArchiveFilter()) {
+        if (!$Task && !$includeArchived = static::getRequestedArchiveFilter()) { // do not filter archived when retreiving singular task
             $archivedTaskIds = DB::allValues(
                 'ID',
                 '
@@ -226,8 +226,8 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             );
 
             if (!empty($archivedTaskIds)) {
-                if (isset($conditions['TaskID'])) {
-                    $conditions['TaskID']['values'] = array_diff($conditions['TaskID']['values'], $archivedTaskIds);
+                if (isset($conditions['TaskID']['values'])) {
+                        $conditions['TaskID']['values'] = array_diff($conditions['TaskID']['values'], $archivedTaskIds);
                 } else {
                     $conditions['TaskID'] = [
                         'operator' => 'NOT IN',
