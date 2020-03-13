@@ -1,9 +1,3 @@
-Cypress.on('uncaught:exception', (err, runnable) => {
-    // returning false here prevents Cypress from
-    // failing the test
-    return false
-});
-
 describe('Student tasks test', () => {
 
     // load sample database before tests
@@ -61,6 +55,8 @@ describe('Student tasks test', () => {
 
     beforeEach(() => {
         cy.server().route('GET', '/cbl/dashboards/tasks/student/bootstrap*').as('bootstrapData');
+        cy.server().route('GET', '/cbl/skills*').as('skillsData');
+        cy.server().route('GET', '/cbl/competencies*').as('competenciesData');
         cy.server().route('GET', '/cbl/student-tasks*').as('studentTasksData');
         cy.server().route('GET', '/cbl/todos/*groups*').as('studentTodosData');
         cy.server().route('POST', '/cbl/student-tasks/save*').as('studentTasksSave');
@@ -77,7 +73,12 @@ describe('Student tasks test', () => {
         cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
             cy.wait(['@studentTasksData', '@studentTodosData'])
                 .should((xhrs) => {
-                    xhrs.forEach(xhr => expect(xhr.status).to.equal(200));
+                    xhrs.forEach(
+                        xhr => {
+                            expect(xhr.status).to.equal(200);
+                            expect(xhr.response.body.success).to.be.true;
+                        }
+                    );
 
                     var todoList = extQuerySelector('slate-tasks-student-todolist');
 
@@ -161,24 +162,34 @@ describe('Student tasks test', () => {
 
             cy.get('#' + currentTasksTree.id)
                 .contains('(Due Today)')
-                .click({ force: true })
-                .then(() => {
+                .click({ force: true });
 
-                    const slateWindow = extQuerySelector('slate-cbl-tasks-studenttaskform ^ window');
-
-                    cy.get('#' + slateWindow.id)
-                        .contains('Submit Assignment')
-                        .click();
-
-                    cy.wait('@studentTasksSave')
-                        .its('status')
-                        .should('eq', 200);
-
-                    cy.get('#' + currentTasksTree.id)
-                        .contains('Submitted');
+            cy.wait(['@skillsData', '@competenciesData'])
+                .should((xhrs) => {
+                    xhrs.forEach(
+                        xhr => {
+                            expect(xhr.status).to.equal(200);
+                            expect(xhr.response.body.success).to.be.true;
+                        }
+                    );
                 });
 
+            cy.get('.slate-window')
+                .contains('Submit Assignment')
+                .should((btn) => {
+                    expect(btn).to.be.visible;
+                    expect(btn.attr('aria-disabled')).to.not.be.true;
+                })
+                .click({ force: true })
 
+            cy.wait('@studentTasksSave')
+                .should(xhr => {
+                    expect(xhr.status).to.equal(200);
+                    expect(xhr.response.body.success).to.be.true;
+                });
+
+            cy.get('#' + currentTasksTree.id)
+                .contains('Submitted');
         });
     });
 
@@ -189,50 +200,54 @@ describe('Student tasks test', () => {
 
         cy.withExt().then(({ extQuerySelector }) => {
             cy.get('.slate-appcontainer')
-                .should('be.visible')
-                .then(() => {
-                    cy.wait(['@bootstrapData', '@studentTasksData'])
-                        .should((xhrs) => {
-                            xhrs.forEach(xhr => expect(xhr.status).to.equal(200));
-                        });
+                .should('be.visible');
 
-                    const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
-
-
-                    cy.get('#' + currentTasksTree.id)
-                        .contains('Filter')
-                        .click({ force: true });
-
-                    const filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
-
-                    cy.get('#' + filterMenu.id)
-                        .contains('View All')
-                        .click({ force: true });
-
-                    cy.get('#' + currentTasksTree.id)
-                        .contains('(Due This Week)')
-                        .click({ force: true })
-                        .then(() => {
-                            const slateWindow = extQuerySelector('slate-cbl-tasks-studenttaskform ^ window');
-
-                            cy.get('#' + slateWindow.id)
-                                .contains('label', 'Re-assign')
-                                .click({ force : true });
-
-                            cy.get('#' + slateWindow.id)
-                                .contains('Save Assignment')
-                                .click({ force: true });
-                        });
-
-
-                    cy.wait('@studentTasksSave')
-                        .its('status')
-                        .should('eq', 200);
-
-                    cy.get('#' + currentTasksTree.id)
-                        .contains('.slate-tasktree-status', 'Revision');
-
+            cy.wait(['@bootstrapData', '@studentTasksData'])
+                .should((xhrs) => {
+                    xhrs.forEach(
+                        xhr => {
+                            expect(xhr.status).to.equal(200);
+                        }
+                    )
                 });
+
+            const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
+
+            cy.get('#' + currentTasksTree.id)
+                .contains('Filter')
+                .click({ force: true });
+
+            const filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
+
+            cy.get('#' + filterMenu.id)
+                .contains('View All')
+                .click({ force: true });
+
+            cy.get('#' + currentTasksTree.id)
+                .contains('(Due This Week)')
+                .click({ force: true });
+
+            cy.get('.slate-window')
+                .contains('label', 'Re-assign')
+                .click({ force: true })
+
+            cy.get('.slate-window')
+                .contains('Save Assignment')
+                .should((btn) => {
+                    expect(btn).to.be.visible;
+                    expect(btn.attr('aria-disabled')).to.not.be.true;
+                })
+                .click({ force: true });
+
+            cy.wait('@studentTasksSave')
+                .should(xhr => {
+                    expect(xhr.status).to.equal(200);
+                    expect(xhr.response.body.success).to.be.true;
+                });
+
+            cy.get('#' + currentTasksTree.id)
+                .contains('.slate-tasktree-status', 'Revision');
+
         });
 
     });
@@ -244,9 +259,9 @@ describe('Student tasks test', () => {
             'Currently Enrolled Sections': 7,
 
             // status filters
-            'Due Tasks': 4,
-            'Revision Tasks': 1,
-            'Submitted Tasks': 1,
+            'Due Tasks': 4, // will fail if previous test fails
+            'Revision Tasks': 1, // will fail if previous test fails
+            'Submitted Tasks': 1, // will fail if previous test fails
             'Completed Tasks': 2,
             'Archived Tasks': 9,
 
@@ -286,39 +301,37 @@ describe('Student tasks test', () => {
                                     expect($tasksTree.find('li.slate-tasktree-item').length)
                                         .to.equal(4);
                                 });
-                        })
-                        .then(() => {
-                            cy.get('#' + currentTasksTree.id)
-                                .contains('Filter')
-                                .click({ force: true })
-                                .then(() => {
-                                    for (let [filter, length] of Object.entries(expectedFilterLengths)) {
-                                        _viewAll();
-                                        cy.wait('@studentTasksData')
-                                            .its('status')
-                                            .should(status => {
-                                                expect(status).to.equal(200);
-                                            })
-                                            .then(() => {
-                                                _selectFilter(filter);
-
-                                                cy.wait('@studentTasksData')
-                                                    .should(d => {
-                                                        expect(d.status).to.equal(200);
-                                                    })
-                                                    .and(() => {
-                                                        cy.get('#' + currentTasksTree.id)
-                                                            .should(($tasksTree) => {
-                                                                expect(
-                                                                    $tasksTree.find('li.slate-tasktree-item').length
-                                                                ).to.equal(length)
-                                                            });
-                                                    });
-                                            });
-                                    }
-                                });
                         });
 
+                    cy.get('#' + currentTasksTree.id)
+                        .contains('Filter')
+                        .click({ force: true })
+                        .then(() => {
+                            for (let [filter, length] of Object.entries(expectedFilterLengths)) {
+                                _viewAll();
+                                cy.wait('@studentTasksData')
+                                    .its('status')
+                                    .should(status => {
+                                        expect(status).to.equal(200);
+                                    })
+                                    .then(() => {
+                                        _selectFilter(filter);
+
+                                        cy.wait('@studentTasksData')
+                                            .should(d => {
+                                                expect(d.status).to.equal(200);
+                                            })
+                                            .and(() => {
+                                                cy.get('#' + currentTasksTree.id)
+                                                    .should(($tasksTree) => {
+                                                        expect(
+                                                            $tasksTree.find('li.slate-tasktree-item').length
+                                                        ).to.equal(length)
+                                                    });
+                                            });
+                                    });
+                            }
+                        });
                 });
         });
     });
