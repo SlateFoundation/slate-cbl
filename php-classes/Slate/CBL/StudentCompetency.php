@@ -132,7 +132,7 @@ class StudentCompetency extends \ActiveRecord
             && $this->StudentID && $this->CompetencyID && $this->Level
             && ($Previous = $this->getPrevious())
         ) {
-            $this->BaselineRating = $Previous->getDemonstrationsAverage();
+            $this->BaselineRating = max($Previous->getBaselineRating(), $Previous->getDemonstrationsAverage());
         }
 
         // call parent

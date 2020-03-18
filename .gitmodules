@@ -1,4 +1,4 @@
-[submodule "sencha-workspace/ext-6.2.0.981"]
+[submodule "ext-6.2.0.981"]
 	path = sencha-workspace/ext
 	url = https://github.com/JarvusInnovations/extjs.git
 	branch = workspace/6.2
@@ -10,12 +10,16 @@
 
 [submodule "slate-theme"]
 	path = sencha-workspace/packages.remote/slate-theme
-	url = https://github.com/SlateFoundation/slate-theme.git
-	branch = ext/6
+	url = https://github.com/SlateFoundation/slate.git
+	branch = subpackages/extjs-theme/v2
 [submodule "slate-core-data"]
 	path = sencha-workspace/packages.remote/slate-core-data
-	url = https://github.com/SlateFoundation/slate-core-data.git
-	branch = master
+	url = https://github.com/SlateFoundation/slate.git
+	branch = subpackages/extjs-core-data/v2
+[submodule "slate-ui-classic"]
+	path = sencha-workspace/packages.remote/slate-ui-classic
+	url = https://github.com/SlateFoundation/slate.git
+	branch = subpackages/extjs-ui-classic/v2
 
 [submodule "jarvus-routing"]
 	path = sencha-workspace/packages.remote/jarvus-routing
@@ -42,18 +46,10 @@
 	url = https://github.com/JarvusInnovations/emergence-apikit.git
 	branch = master
 
-[submodule "saki-grid-multisearch"]
-	path = sencha-workspace/packages.remote/saki-grid-multisearch-5
-	url = git@github.com:JarvusInnovations/saki-grid-multisearch.git
-	branch = master
 [submodule "jarvus-lazydata"]
 	path = sencha-workspace/packages.remote/jarvus-lazydata
 	url = https://github.com/JarvusInnovations/jarvus-lazydata.git
 	branch = ext/6/2/0/981
-[submodule "slate-ui-classic"]
-	path = sencha-workspace/packages.remote/slate-ui-classic
-	url = https://github.com/SlateFoundation/slate-ui-classic.git
-	branch = master
 [submodule "cypress/fixtures/database"]
 	path = cypress/fixtures/database
 	url = https://github.com/SlateFoundation/slate-fixtures.git
