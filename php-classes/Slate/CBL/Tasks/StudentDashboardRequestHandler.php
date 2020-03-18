@@ -4,6 +4,7 @@ namespace Slate\CBL\Tasks;
 
 use Emergence\WebApps\SenchaApp;
 use Google\API as GoogleAPI;
+use Slate\Term;
 
 class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 {

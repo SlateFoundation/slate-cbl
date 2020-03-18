@@ -51,7 +51,7 @@ class Task extends \VersionedRecord
         'Status' => [
             'type' => 'enum',
             'notnull' => true,
-            'values' => ['private', 'shared', 'deleted'],
+            'values' => ['private', 'shared', 'archived', 'deleted'],
             'default' => 'private'
         ],
         'Instructions' => [

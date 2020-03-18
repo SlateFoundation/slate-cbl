@@ -185,6 +185,24 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
 
             footer: [
                 {
+                    xtype: 'button',
+                    text: 'Archive Task',
+                    scale: 'large',
+                    action: 'archive',
+                    margin: '0 0 0 16',
+                    hidden: true,
+                    reference: 'archiveTask'
+                },
+                {
+                    xtype: 'button',
+                    text: 'Un-Archive Task',
+                    scale: 'large',
+                    action: 'un-archive',
+                    margin: '0 0 0 16',
+                    hidden: true,
+                    reference: 'unarchiveTask'
+                },
+                {
                     name: 'Status',
 
                     xtype: 'checkboxfield',
@@ -218,6 +236,13 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                 if (task.phantom) {
                     me.getForm().clearInvalid();
                 }
+
+                me.getFooter().child('[reference=archiveTask]')[
+                    task.phantom || task.get('Status') === 'archived' ? 'hide' : 'show'
+                ]();
+                me.getFooter().child('[reference=unarchiveTask]')[
+                    !task.phantom && task.get('Status') === 'archived' ? 'show' : 'hide'
+                ]();
 
                 me.setTitle(
                     task.phantom
