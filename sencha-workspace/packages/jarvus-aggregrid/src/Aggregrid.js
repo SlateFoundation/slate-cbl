@@ -742,7 +742,7 @@ Ext.define('Jarvus.aggregrid.Aggregrid', {
             row = rowMapper(record, rowsStore);
             column = columnMapper(record, columnsStore);
 
-            if (!row || !column) {
+            if (!row || !column || !groups[row.getId()] || !groups[row.getId()][column.getId()]) {
                 ungroupedRecords.push(record);
                 continue;
             }

@@ -3,6 +3,7 @@
 namespace Slate\CBL\Tasks;
 
 use Exception;
+use OutOfBoundsException;
 
 use DB;
 use JSON;
@@ -17,6 +18,10 @@ use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
+
+use Slate\Courses\Section;
+
+use Slate\Term;
 
 class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 {
@@ -71,12 +76,165 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
             if (count($taskIds)) {
                 $conditions['TaskID'] = [ 'values' => $taskIds ];
-            } else {
+            } elseif (!in_array('FALSE', $conditions)) {
                 // block all results if no tasks match
                 $conditions[] = 'FALSE';
             }
 
             $filterObjects['CourseSection'] = $Section;
+        } elseif ($Sections = static::getRequestedSections()) {
+            // get student in question -- default to session user
+            if (!$Student) {
+                $Student = $Session->Person;
+            }
+
+            $sectionConditions = [];
+            foreach ($Sections as $section) {
+                switch ($section) {
+                    case '*currentyear':
+                        $MasterTerm = Term::getClosest()->getMaster();
+                        $sectionConditions[] = sprintf('Term.ID IN (%s)', join(', ', $MasterTerm->getContainedTermIDs()));
+                        break;
+
+                    case '*currentlyenrolled':
+                        if (empty($Student) || empty($Student->CurrentSections)) {
+                            $sectionConditions[] = 'FALSE';
+                        } else {
+                            $sectionConditions[] = sprintf('Section.ID IN (%s)',
+                                join(', ',
+                                    array_map(function($section) {
+                                        return $section->ID;
+                                    }, $Student->CurrentSections)
+                                )
+                            );
+                        }
+
+                        break;
+
+                    default:
+                        throw new OutOfBoundsExceptions('section_filter value: '. $section . ' not valid.');
+                }
+            }
+
+            $taskIds = DB::allValues(
+                'TaskID',
+                'SELECT Task.ID as TaskID
+                   FROM `%s` Task
+                   JOIN `%s` Section
+                     ON Section.ID = Task.SectionID
+                   JOIN `%s` Term
+                     ON Term.ID = Section.TermID
+                  WHERE (%s)',
+                [
+                    Task::$tableName,
+                    Section::$tableName,
+                    Term::$tableName,
+                    join(' AND ', $sectionConditions)
+                ]
+            );
+
+
+            if (count($taskIds)) {
+                $conditions['TaskID'] = [ 'values' => $taskIds ];
+            } elseif (!in_array('FALSE', $conditions)) {
+                // block all results if no tasks match
+                $conditions[] = 'FALSE';
+            }
+        }
+
+        if ($Status = static::getRequestedStatus()) {
+            if (is_array($Status)) {
+                $conditions['TaskStatus'] = [
+                    'values' => $Status,
+                    'operator' => 'IN'
+                ];
+            } else {
+                $conditions['TaskStatus'] = $Status;
+            }
+        }
+
+        $Timelines = static::getRequestedTimelines();
+        if (!empty($Timelines)) {
+            $timelineConditions = [];
+            foreach ($Timelines as $timeline) {
+                switch ($timeline) {
+                    case '*late':
+                        $timelineConditions[] = '(IFNULL(StudentTask.DueDate, Task.DueDate) < CURDATE())';
+                        break;
+
+                    case '*recent':
+                        $timelineConditions[] = '(IFNULL(StudentTask.DueDate, Task.DueDate) BETWEEN DATE_SUB(CURDATE(), INTERVAL 2 WEEK) AND DATE_ADD(CURDATE(), INTERVAL 2 WEEK))';
+                        break;
+
+                    case '*today':
+                        $timelineConditions[] = '(IFNULL(StudentTask.DueDate, Task.DueDate) = CURDATE())';
+                        break;
+
+                    case '*currentweek':
+                        $timelineConditions[] = '(IFNULL(StudentTask.DueDate, Task.DueDate) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 WEEK))';
+                        break;
+
+                    case '*nextweek':
+                        $timelineConditions[] = '(IFNULL(StudentTask.DueDate, Task.DueDate) BETWEEN DATE_ADD(CURDATE(), INTERVAL 1 WEEK) AND DATE_ADD(CURDATE(), INTERVAL 2 WEEK))';
+                        break;
+
+                    case '*nodate':
+                        $timelineConditions[] = '(IFNULL(StudentTask.DueDate, Task.DueDate) IS NULL)';
+                        break;
+
+                    default:
+                        throw new OutOfBoundsException('timeline filter: '. $timeline . ' is invalid.');
+                }
+            }
+
+            $studentTaskIds = DB::allValues(
+                'StudentTaskID',
+                '
+                    SELECT StudentTask.ID as StudentTaskID
+                      FROM `%1$s` StudentTask
+                      JOIN `%2$s` Task
+                        ON Task.ID = StudentTask.TaskID
+                     WHERE (%3$s)
+                ',
+                [
+                    StudentTask::$tableName,
+                    Task::$tableName,
+                    join(' OR ', $timelineConditions)
+                ]
+            );
+
+            if (!empty($studentTaskIds)) {
+                $conditions['ID'] = [
+                    'values' => $studentTaskIds,
+                    'operator' => 'IN'
+                ];
+            } elseif (!in_array('FALSE', $conditions)) {
+                // block all results if no tasks match
+                $conditions[] = 'FALSE';
+            }
+        }
+
+        if (!$Task && !$includeArchived = static::getRequestedArchiveFilter()) { // do not filter archived when retreiving singular task
+            $archivedTaskIds = DB::allValues(
+                'ID',
+                '
+                    SELECT ID
+                      FROM `%s`
+                     WHERE Status = "archived"
+                ',
+                [ Task::$tableName ]
+            );
+
+            if (!empty($archivedTaskIds)) {
+                if (isset($conditions['TaskID']['values'])) {
+                        $conditions['TaskID']['values'] = array_diff($conditions['TaskID']['values'], $archivedTaskIds);
+                } else {
+                    $conditions['TaskID'] = [
+                        'operator' => 'NOT IN',
+                        'values' => $archivedTaskIds
+                    ];
+                }
+            }
         }
 
 
@@ -106,10 +264,12 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             unset($requestData['Comments']);
         }
 
+        // \MICS::dump($requestData, 'request data before');
 
         // apply default field handling
         parent::applyRecordDelta($StudentTask, $requestData);
 
+        // \MICS::dump($requestData, 'request data after');
 
         // apply status
         if (!empty($submitting)) {
@@ -181,5 +341,110 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         }
 
         return parent::checkWriteAccess($Record, $suppressLogin);
+    }
+
+    public static function getRequestedTimelines($fieldName = 'timeline_filter')
+    {
+        if (empty($_REQUEST[$fieldName])) {
+            return null;
+        }
+
+        $requestedTimeline = $_REQUEST[$fieldName];
+        if (!is_array($requestedTimeline)) {
+            $requestedTimeline = explode(',', $requestedTimeline);
+        }
+
+        $validTimelines = [
+            '*late',
+            '*recent',
+            '*today',
+            '*currentweek',
+            '*nextweek',
+            '*nodate'
+        ];
+        $timelines = [];
+        foreach ($requestedTimeline as $value) {
+            if (!in_array($value, $validTimelines)) {
+                throw new OutOfBoundsException('timeline_filter value: '.$value . ' invalid.');
+            }
+            $timelines[] = $value;
+        }
+
+        return $timelines;
+    }
+
+    public static function getRequestedStatus($fieldName = 'taskstatus')
+    {
+        if (empty($_REQUEST[$fieldName])) {
+            return null;
+        }
+
+        $recordClass = static::$recordClass;
+        $validStatuses = $recordClass::getFieldOptions('TaskStatus', 'values');
+        $requestedStatuses = $_REQUEST[$fieldName];
+
+        if (!is_array($requestedStatuses)) {
+            $requestedStatuses = explode(',', $requestedStatuses);
+        }
+
+        $statuses = [];
+        foreach ($requestedStatuses as $value) {
+            if (!in_array($value, $validStatuses)) {
+                throw new OutOfBoundsException('status filter: '. $value . ' is not valid.');
+            }
+
+            $statuses[] = $value;
+        }
+        // if (is_array($_REQUEST[$fieldName])) {
+        // } else {
+        //     $status = $_REQUEST[$fieldName];
+        //     if (!in_array($status, $validStatuses)) {
+        //         throw new OutOfBoundsException('status filter: '. $status . ' is not valid.');
+        //     }
+
+        //     $statuses[] = $status;
+        // }
+
+        return count($statuses) === 1 ? array_pop($statuses) : $statuses;
+
+    }
+
+    public static function getRequestedSections($fieldName = 'section_filter')
+    {
+        if (empty($_REQUEST[$fieldName])) {
+            return null;
+        }
+
+        $requestedSections = $_REQUEST[$fieldName];
+        if (!is_array($requestedSections)) {
+            $requestedSections = explode(',', $requestedSections);
+        }
+
+        $validSectionFilters = [
+            '*currentyear',
+            '*currentlyenrolled'
+        ];
+        $sections = [];
+        foreach ($requestedSections as $section) {
+            if (!in_array($section, $validSectionFilters)) {
+                throw new OutOfBoundsException('section_filter value: '.$section.' invalid.');
+            }
+            $sections[] = $section;
+        }
+
+        return $sections;
+    }
+
+    public static function getRequestedArchiveFilter($fieldName = 'include_archived')
+    {
+        if (empty($_REQUEST[$fieldName])) {
+            return null;
+        }
+
+        if ($_REQUEST[$fieldName] === 'false') {
+            $_REQUEST[$fieldName] = false;
+        }
+
+        return !!$_REQUEST[$fieldName];
     }
 }

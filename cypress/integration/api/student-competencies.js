@@ -19,7 +19,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data[0]).to.include({
                 ID: 64,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: 1546398245,
+                Created: 1546401845,
                 CreatorID: 1,
                 StudentID: 7,
                 CompetencyID: 11,
@@ -38,7 +38,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data).to.include({
                 ID: 1,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: 1546398245,
+                Created: 1546401845,
                 CreatorID: 2,
                 StudentID: 4,
                 CompetencyID: 1,
@@ -67,7 +67,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data.effectiveDemonstrationsData['1'][0]).to.include({
                 ID: 1,
                 Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
-                Created: 1546398245,
+                Created: 1546401845,
                 CreatorID: 3,
                 Modified: null,
                 ModifierID: null,
@@ -76,7 +76,7 @@ describe('/cbl/student-competencies API', () => {
                 TargetLevel: 9,
                 DemonstratedLevel: 9,
                 Override: false,
-                DemonstrationDate: 1546300860
+                DemonstrationDate: 1546304460
             });
         });
     });

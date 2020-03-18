@@ -26,6 +26,19 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
                 filters: [{
                     property: 'ParentTaskID',
                     value: null
+                }],
+                sorters: [{
+                    sorterFn: function(a, b) {
+                        return (
+                            a.get('Status') === b.get('Status') ?
+                            0 :
+                            (
+                                a.get('Status') === 'archived' ?
+                                1 :
+                                -1
+                            )
+                        )
+                    }
                 }]
             },
             subRowsStore: 'Tasks',
@@ -40,7 +53,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
             subRowHeaderField: null,
             rowHeaderTpl: [
                 '<tpl for=".">',
-                    '{Title}',
+                    '{Title} <tpl if="Status === \'archived\'">(archived)</tpl>',
                     '<button class="button small edit-row">Edit</button>',
                 '</tpl>'
             ],

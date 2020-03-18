@@ -12,35 +12,54 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
         {
             xtype: 'component',
             cls: 'slate-menu-header',
+            html: 'Sections',
+            filterGroup: 'Section'
+        },
+        {
+            text: 'Current Year any Term',
+            filterGroup: 'Section',
+            value: '*currentyear',
+            checked: true
+        },
+        {
+            text: 'Currently Enrolled Sections',
+            filterGroup: 'Section',
+            value: '*currentlyenrolled',
+            checked: true
+        },
+        {
+            xtype: 'component',
+            cls: 'slate-menu-header',
             html: 'Status'
         },
         {
             text: 'Due Tasks',
             filterGroup: 'Status',
-            filterFn: function(rec) {
-                return rec.get('TaskStatus') !== 'assigned';
-            }
+            value: 'assigned',
+            checked: true
         },
         {
             text: 'Revision Tasks',
             filterGroup: 'Status',
-            filterFn: function(rec) {
-                return rec.get('TaskStatus') !== 're-assigned';
-            }
+            value: 're-assigned',
+            checked: true
         },
         {
             text: 'Submitted Tasks',
             filterGroup: 'Status',
-            filterFn: function(rec) {
-                return !(rec.get('TaskStatus') === 'submitted' || rec.get('TaskStatus') === 're-submitted');
-            }
+            value: [
+                'submitted',
+                're-submitted'
+            ]
         },
         {
             text: 'Completed Tasks',
             filterGroup: 'Status',
-            filterFn: function(rec) {
-                return rec.get('TaskStatus') !== 'completed';
-            }
+            value: 'completed'
+        },
+        {
+            text: 'Archived Tasks',
+            filterGroup: 'Archive'
         },
         {
             xtype: 'component',
@@ -50,36 +69,32 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
         {
             text: 'Past Due',
             filterGroup: 'Timeline',
-            filterFn: function(studentTask) {
-                return !studentTask.get('IsLate');
-            }
+            value: '*late'
+        },
+        {
+            text: 'Due (recently/upcoming)',
+            filterGroup: 'Timeline',
+            value: '*recent'
         },
         {
             text: 'Due Today',
             filterGroup: 'Timeline',
-            filterFn: function(rec) {
-                var dueDate = rec.get('EffectiveDueDate');
-
-                return !dueDate || dueDate.toDateString() !== (new Date()).toDateString();
-            }
+            value: '*today'
         },
         {
             text: 'Due This Week',
             filterGroup: 'Timeline',
-            filterFn: function(rec) {
-                var dueDate = rec.get('EffectiveDueDate');
-
-                return !dueDate || Ext.Date.getWeekOfYear(dueDate) !== Ext.Date.getWeekOfYear(new Date());
-            }
+            value: '*currentweek'
         },
         {
             text: 'Due Next Week',
             filterGroup: 'Timeline',
-            filterFn: function(rec) {
-                var dueDate = rec.get('EffectiveDueDate');
-
-                return !dueDate || Ext.Date.getWeekOfYear(dueDate) !== Ext.Date.getWeekOfYear(new Date())+1;
-            }
+            value: '*nextweek'
+        },
+        {
+            text: 'Due (no date)',
+            filterGroup: 'Timeline',
+            value: '*nodate'
         },
         { xtype: 'menuseparator' },
         {

@@ -43,7 +43,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     ],
 
     stores: [
-        'Tasks'
+        'Tasks',
+        'SectionParticipants'
     ],
 
     models: [
@@ -78,7 +79,6 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         submitBtn: 'slate-cbl-tasks-studenttaskform ^ window button[action=submit]'
     },
 
-
     // entry points
     control: {
         dashboardCt: {
@@ -99,70 +99,66 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         },
         submitBtn: {
             click: 'onSubmitClick'
+        },
+        taskTree: {
+            render: 'onTaskTreeRender'
         }
     },
 
-
     // event handlers
+    onTaskTreeRender: function() {
+        // filter records when tree renders, due to default filters
+        return this.filterRecords();
+    },
+
     onStudentChange: function(dashboardCt, studentUsername) {
-        var tasksStore = this.getTasksStore();
+        var me = this,
+            tasksStore = me.getTasksStore();
+
 
         tasksStore.setStudent(studentUsername || '*current');
-        tasksStore.loadIfDirty();
+        me.filterRecords();
     },
 
     onSectionChange: function(dashboardCt, sectionCode) {
-        var tasksStore = this.getTasksStore();
+        var me = this,
+            tasksStore = me.getTasksStore(),
+            menu = me.getFilterMenu(),
+            sectionMenuItems = menu.query('[filterGroup=Section]');
+
+        sectionMenuItems.forEach(function(item) {
+            if (sectionCode) {
+                item.disable().hide();
+            } else {
+                item.enable().show();
+            }
+        });
 
         tasksStore.setSection(sectionCode);
-        tasksStore.loadIfDirty();
+        me.filterRecords();
     },
 
     onTaskTreeItemClick: function(tasksTree, studentTask, itemEl) {
         this.openTaskWindow(studentTask, { animateTarget: itemEl });
     },
 
-    // TODO: audit and optimize
     // TODO: use store filters?
     onFilterItemCheckChange: function() {
-        var me = this,
-            menu = me.getFilterMenu(),
-            statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
-            timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
-            store = me.getTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
-            i = 0,
-            rec;
-
-        for (; i < recLength; i++) {
-            rec = recs[i];
-            rec.set('filtered', me.filterRecord(rec, statusFilters) || me.filterRecord(rec, timelineFilters));
-        }
-
-        me.getTaskTree().refresh();
+        this.filterRecords();
     },
 
-    // TODO: audit and optimize
     onFilterViewAllClick: function() {
         var me = this,
             menu = me.getFilterMenu(),
             checkedFilters = menu.query('menucheckitem[checked]'),
             checkedFiltersLength = checkedFilters.length,
-            store = this.getTasksStore(),
-            recs = store.getRange(),
-            recLength = recs.length,
             i = 0;
 
         for (; i < checkedFiltersLength; i++) {
             checkedFilters[i].setChecked(false, true);
         }
 
-        for (i = 0; i < recLength; i++) {
-            recs[i].set('filtered', false);
-        }
-
-        me.getTaskTree().refresh();
+        me.filterRecords();
     },
 
     onSaveClick: function(saveBtn) {
@@ -277,22 +273,43 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         });
     },
 
-    /**
-     * Passes a record through a group of filters.
-     * @param {Ext.data.Model} rec- The record to be tested.
-     * @param {Array} filterGroup - An array of objects with a filter function.
-     * @returns {boolean} filtered - true if this rec should be filtered
-     */
-    // TODO: audit and optimize
-    filterRecord: function(rec, filterGroup) {
-        var filterGroupLength = filterGroup.length,
-            filtered = filterGroupLength !== 0, // if no filters, return false
-            i = 0;
+    // TODO: use store filters?
+    filterRecords: function() {
+        var me = this,
+            menu = me.getFilterMenu(),
+            sectionFilters = menu.query('menucheckitem[filterGroup=Section][checked]{isDisabled() === false}'),
+            statusFilters = menu.query('menucheckitem[filterGroup=Status][checked]'),
+            timelineFilters = menu.query('menucheckitem[filterGroup=Timeline][checked]'),
+            archivedTaskFilter = menu.down('menucheckitem[filterGroup=Archive]'),
+            includeArchivedTasks = archivedTaskFilter && archivedTaskFilter.checked,
+            store = me.getTasksStore(),
+            statuses = [],
+            timelines = [],
+            sections = [];
 
-        for (; i < filterGroupLength; i++) {
-            filtered = filtered && filterGroup[i].filterFn(rec);
-        }
+        // set status filters
+        statusFilters.forEach(function(filter) {
+            statuses = statuses.concat(
+                Array.isArray(filter.getValue()) ?
+                    filter.getValue() :
+                    [filter.getValue()]
+            );
+        });
+        store.setStatusFilter(statuses);
 
-        return filtered;
+        // set timeline filters
+        timelineFilters.forEach(function(filter) {
+            timelines.push(filter.getValue());
+        });
+        store.setTimelineFilter(timelines);
+
+        sectionFilters.forEach(function(filter) {
+            sections.push(filter.getValue());
+        });
+        store.setSectionFilter(sections);
+
+        store.getProxy().setExtraParam('include_archived', includeArchivedTasks);
+
+        store.loadIfDirty();
     }
 });

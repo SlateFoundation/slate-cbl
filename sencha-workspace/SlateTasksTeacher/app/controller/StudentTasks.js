@@ -106,6 +106,9 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         },
         saveBtn: {
             click: 'onSaveClick'
+        },
+        'slate-gridtoolbar checkbox[name=include_archived]': {
+            change: 'onIncludeArchivedToolbarOptionChange'
         }
     },
 
@@ -226,6 +229,14 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
                 });
             }
         });
+    },
+
+    onIncludeArchivedToolbarOptionChange: function(field) {
+        var me = this,
+            tasksStore = me.getStudentTasksStore();
+
+        tasksStore.getProxy().setExtraParam('include_archived', field.getValue());
+        tasksStore.load();
     },
 
 
