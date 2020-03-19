@@ -186,33 +186,44 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             store = me.getStore(),
             items = [],
 
-            rootTasks = store.queryBy(function(studentTask) {
-                return !studentTask.get('Task').ParentTaskID;
+            topLevelTaskIds = [],
+            topLevelTasks = store.queryBy(function(studentTask) {
+                if (!studentTask.get('Task').ParentTaskID) {
+                    topLevelTaskIds.push(studentTask.get('TaskID'));
+                    return true;
+                }
+                return false;
             }),
-            rootTasksLength = rootTasks.getCount(),
-            rootTasksIndex = 0,
-            rootTask, rootTaskId, subTasks;
+            topLevelTasksLength = topLevelTasks.getCount(),
+            topLevelTasksIndex = 0,
+
+            orphanedTasks = store.queryBy(function(studentTask) {
+                return topLevelTaskIds.indexOf(studentTask.get('TaskID')) === -1;
+            }),
+            orphanedTasksLength = orphanedTasks.getCount(),
+            orphanedTasksIndex = 0,
+            topLevelTask, topLevelTaskId, subTasks;
 
         // build tree of top-level tasks and subtasks
-        for (; rootTasksIndex < rootTasksLength; rootTasksIndex++) {
-            rootTask = rootTasks.getAt(rootTasksIndex);
-            rootTaskId = rootTask.get('TaskID');
+        for (; topLevelTasksIndex < topLevelTasksLength; topLevelTasksIndex++) {
+            topLevelTask = topLevelTasks.getAt(topLevelTasksIndex);
+            topLevelTaskId = topLevelTask.get('TaskID');
 
             subTasks = store.queryBy(function(studentTask) { // eslint-disable-line no-loop-func
-                return studentTask.get('Task').ParentTaskID == rootTaskId && !studentTask.get('filtered');
+                return studentTask.get('Task').ParentTaskID == topLevelTaskId && !studentTask.get('filtered');
             });
 
-            if (subTasks.getCount() > 0) {
-                rootTask.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
-            }
+            items.push({
+                studentTask: topLevelTask.getData(),
+                expanded: Boolean(expandedTasks[topLevelTask.getId()]),
+                subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
+            });
+        }
 
-            if (!rootTask.get('filtered')) {
-                items.push({
-                    studentTask: rootTask.getData(),
-                    expanded: Boolean(expandedTasks[rootTask.getId()]),
-                    subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
-                });
-            }
+        for (; orphanedTasksIndex < orphanedTasksLength; orphanedTasksIndex++) {
+            items.push({
+                studentTask: orphanedTasks.getAt(orphanedTasksIndex).getData()
+            });
         }
 
         // render markup
