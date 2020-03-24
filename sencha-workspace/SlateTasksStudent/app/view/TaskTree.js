@@ -222,11 +222,28 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             });
         }
 
-        for (; orphanedTasksIndex < orphanedTasksLength; orphanedTasksIndex++) {
-            items.push({
-                studentTask: orphanedTasks.getAt(orphanedTasksIndex).getData()
-            });
-        }
+        items = items.sort(function(taskA, taskB) {
+            taskADue = taskA.studentTask.EffectiveDueDate;
+            taskBDue = taskB.studentTask.EffectiveDueDate;
+
+            if (taskADue === taskBDue) {
+                if (taskA.studentTask.Task.Title === taskB.studentTask.Task.Title) {
+                    return 0;
+                }
+
+                return ('' + taskA.studentTask.Task.Title).localeCompare(taskB.studentTask.Task.Title);
+            }
+
+            if (!taskADue || !taskBDue) {
+                if (!taskADue) {
+                    return 1;
+                }
+
+                return -1;
+            }
+
+            return taskADue - taskBDue;
+        });
 
         // render markup
         me.setData({
