@@ -186,36 +186,38 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             store = me.getStore(),
             items = [],
 
-            topLevelTaskIds = [],
-            topLevelTasks = store.queryBy(function(studentTask) {
-                if (!studentTask.get('Task').ParentTaskID) {
-                    topLevelTaskIds.push(studentTask.get('TaskID'));
-                    return true;
-                }
-                return false;
+            parentTasks = store.queryBy(function(studentTask) {
+                return !studentTask.get('Task').ParentTaskID;
             }),
-            topLevelTasksLength = topLevelTasks.getCount(),
-            topLevelTasksIndex = 0,
+            parentTaskIds = parentTasks.collect('TaskID'),
+            parentTasksLength = parentTasks.getCount(),
+            parentTasksIndex = 0,
 
             orphanedTasks = store.queryBy(function(studentTask) {
-                return topLevelTaskIds.indexOf(studentTask.get('TaskID')) === -1;
+                return parentTaskIds.indexOf(studentTask.get('TaskID')) === -1;
             }),
             orphanedTasksLength = orphanedTasks.getCount(),
             orphanedTasksIndex = 0,
-            topLevelTask, topLevelTaskId, subTasks;
+            parentTask, parentTaskId, subTasks;
+
+        for (; orphanedTasksIndex < orphanedTasksLength; orphanedTasksIndex++) {
+            items.push({
+                studentTask: orphanedTasks.getAt(orphanedTasksIndex).getData()
+            });
+        }
 
         // build tree of top-level tasks and subtasks
-        for (; topLevelTasksIndex < topLevelTasksLength; topLevelTasksIndex++) {
-            topLevelTask = topLevelTasks.getAt(topLevelTasksIndex);
-            topLevelTaskId = topLevelTask.get('TaskID');
+        for (; parentTasksIndex < parentTasksLength; parentTasksIndex++) {
+            parentTask = parentTasks.getAt(parentTasksIndex);
+            parentTaskId = parentTask.get('TaskID');
 
             subTasks = store.queryBy(function(studentTask) { // eslint-disable-line no-loop-func
-                return studentTask.get('Task').ParentTaskID == topLevelTaskId && !studentTask.get('filtered');
+                return studentTask.get('Task').ParentTaskID == parentTaskId;
             });
 
             items.push({
-                studentTask: topLevelTask.getData(),
-                expanded: Boolean(expandedTasks[topLevelTask.getId()]),
+                studentTask: parentTask.getData(),
+                expanded: Boolean(expandedTasks[parentTask.getId()]),
                 subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
             });
         }
