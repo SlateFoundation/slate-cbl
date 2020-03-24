@@ -19,7 +19,7 @@ Ext.define('SlateTasksStudent.view.TaskFiltersMenu', {
             text: 'Current Year',
             filterGroup: 'Section',
             value: '*currentyear',
-            checked: true
+            checked: false
         },
         {
             text: 'Current Term',
