@@ -20,6 +20,7 @@ use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
 
 use Slate\Courses\Section;
+use Slate\Courses\SectionParticipant;
 
 use Slate\Term;
 
@@ -90,55 +91,97 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
             $sectionConditions = [];
             foreach ($Sections as $section) {
+                if (empty($Student)) {
+                    $sectionConditions = false;
+                    break;
+                }
+
                 switch ($section) {
                     case '*currentyear':
-                        $MasterTerm = Term::getClosest()->getMaster();
-                        $sectionConditions[] = sprintf('Term.ID IN (%s)', join(', ', $MasterTerm->getContainedTermIDs()));
+                        $termIds = Term::getClosestMasterContainedTermIDs();
+
+                        if (empty($termIds)) {
+                            $sectionConditions = false;
+                            break 2;
+                        }
+
+                        $sectionConditions[] = sprintf(
+                            'Section.TermID IN (%s)',
+                            join(', ', $termIds)
+                        );
                         break;
 
-                    case '*currentlyenrolled':
-                        if (empty($Student) || empty($Student->CurrentSections)) {
-                            $sectionConditions[] = 'FALSE';
-                        } else {
-                            $sectionConditions[] = sprintf('Section.ID IN (%s)',
-                                join(', ',
-                                    array_map(function($section) {
-                                        return $section->ID;
-                                    }, $Student->CurrentSections)
-                                )
-                            );
+                    case '*enrolled':
+                        $enrollments = SectionParticipant::getAllByWhere([
+                            'PersonID' => $Student->ID
+                        ]);
+
+                        if (empty($enrollments)) {
+                            $sectionConditions = false;
+                            break 2;
                         }
+
+                        $sectionConditions[] = sprintf('Section.ID IN (%s)',
+                            join(', ',
+                                array_map(
+                                    function($enrollment) {
+                                        return $enrollment->CourseSectionID;
+                                    },
+                                    $enrollments
+                                )
+                            )
+                        );
+
+                        break;
+
+                    case '*currentterm':
+                        $termIds = Term::getClosestConcurrentTermIDs();
+
+                        if (empty($termIds)) {
+                            $sectionConditions = false;
+                            break 2;
+                        }
+
+                        $sectionConditions[] = sprintf(
+                            'Section.TermID IN (%s)',
+                            join(', ', $termIds)
+                        );
 
                         break;
 
                     default:
-                        throw new OutOfBoundsExceptions('section_filter value: '. $section . ' not valid.');
+                        throw new OutOfBoundsException('section_filter value: '. $section . ' not valid.');
                 }
             }
 
-            $taskIds = DB::allValues(
-                'TaskID',
-                'SELECT Task.ID as TaskID
-                   FROM `%s` Task
-                   JOIN `%s` Section
-                     ON Section.ID = Task.SectionID
-                   JOIN `%s` Term
-                     ON Term.ID = Section.TermID
-                  WHERE (%s)',
-                [
-                    Task::$tableName,
-                    Section::$tableName,
-                    Term::$tableName,
-                    join(' AND ', $sectionConditions)
-                ]
-            );
+            if ($sectionConditions === false) {
+                if (!in_array('FALSE', $conditions)) {
+                    $conditions[] = 'FALSE';
+                }
+            } else {
+                $taskIds = DB::allValues(
+                    'TaskID',
+                    'SELECT Task.ID as TaskID
+                       FROM `%s` Task
+                       JOIN `%s` Section
+                         ON Section.ID = Task.SectionID
+                       JOIN `%s` Term
+                         ON Term.ID = Section.TermID
+                      WHERE (%s)',
+                    [
+                        Task::$tableName,
+                        Section::$tableName,
+                        Term::$tableName,
+                        join(' AND ', $sectionConditions)
+                    ]
+                );
 
-
-            if (count($taskIds)) {
-                $conditions['TaskID'] = [ 'values' => $taskIds ];
-            } elseif (!in_array('FALSE', $conditions)) {
-                // block all results if no tasks match
-                $conditions[] = 'FALSE';
+                if (count($taskIds)) {
+                    $conditions['TaskID'] = [ 'values' => $taskIds ];
+                } elseif (!in_array('FALSE', $conditions)) {
+                    // block all results if no tasks match
+                    $conditions[] = 'FALSE';
+                }
             }
         }
 
@@ -422,7 +465,8 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
         $validSectionFilters = [
             '*currentyear',
-            '*currentlyenrolled'
+            '*currentterm',
+            '*enrolled'
         ];
         $sections = [];
         foreach ($requestedSections as $section) {
