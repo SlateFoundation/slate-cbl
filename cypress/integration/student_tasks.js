@@ -260,15 +260,16 @@ describe('Student tasks test', () => {
     it('Filters Student Tasks', () => {
         const expectedFilterLengths = {
             // section filters
-            'Current Year any Term': 8,
-            'Currently Enrolled Sections': 7,
+            'Current Year': 9,
+            'Current Term': 8,
+            'Enrolled Sections': 9,
 
             // status filters
-            'Due Tasks': 4, // will fail if previous test fails
+            'Due Tasks': 6, // will fail if previous test fails
             'Revision Tasks': 1, // will fail if previous test fails
             'Submitted Tasks': 1, // will fail if previous test fails
             'Completed Tasks': 2,
-            'Archived Tasks': 9,
+            'Archived Tasks': 11,
 
             // timeline filters
             'Past Due': 1,
@@ -276,7 +277,7 @@ describe('Student tasks test', () => {
             'Due This Week': 2,
             'Due Next Week': 1,
             'Due (recently/upcoming)': 4,
-            'Due (no date)': 4
+            'Due (no date)': 6
         };
 
         cy.loginAs('teacher');
