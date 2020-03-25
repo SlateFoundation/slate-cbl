@@ -20,6 +20,7 @@ use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 use Slate\CBL\Tasks\Attachments\GoogleDriveFile;
 
 use Slate\Courses\Section;
+use Slate\Courses\SectionParticipant;
 
 use Slate\Term;
 
@@ -111,16 +112,23 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
                         break;
 
                     case '*enrolled':
-                        if (empty($Student->ActiveSections)) {
+                        $enrollments = SectionParticipant::getAllByWhere([
+                            'PersonID' => $Student->ID
+                        ]);
+
+                        if (empty($enrollments)) {
                             $sectionConditions = false;
                             break 2;
                         }
 
                         $sectionConditions[] = sprintf('Section.ID IN (%s)',
                             join(', ',
-                                array_map(function($section) {
-                                    return $section->ID;
-                                }, $Student->ActiveSections)
+                                array_map(
+                                    function($enrollment) {
+                                        return $enrollment->CourseSectionID;
+                                    },
+                                    $enrollments
+                                )
                             )
                         );
 
