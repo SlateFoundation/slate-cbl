@@ -97,17 +97,16 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
                 switch ($section) {
                     case '*currentyear':
-                        if (empty($Student->CurrentMasterSections)) {
+                        $termIds = Term::getClosestMasterContainedTermIDs();
+
+                        if (empty($termIds)) {
                             $sectionConditions = false;
                             break 2;
                         }
 
-                        $sectionConditions[] = sprintf('Section.ID IN (%s)',
-                            join(', ',
-                                array_map(function($section) {
-                                    return $section->ID;
-                                }, $Student->CurrentMasterSections)
-                            )
+                        $sectionConditions[] = sprintf(
+                            'Section.TermID IN (%s)',
+                            join(', ', $termIds)
                         );
                         break;
 
@@ -128,17 +127,16 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
                         break;
 
                     case '*currentterm':
-                        if (empty($Student->CurrentSections)) {
+                        $termIds = Term::getClosestConcurrentTermIDs();
+
+                        if (empty($termIds)) {
                             $sectionConditions = false;
                             break 2;
                         }
 
-                        $sectionConditions[] = sprintf('Section.ID IN (%s)',
-                            join(', ',
-                                array_map(function($section) {
-                                    return $section->ID;
-                                }, $Student->CurrentSections)
-                            )
+                        $sectionConditions[] = sprintf(
+                            'Section.TermID IN (%s)',
+                            join(', ', $termIds)
                         );
 
                         break;
