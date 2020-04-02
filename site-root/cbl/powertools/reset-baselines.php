@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$studentCompetencies = [];
+$rows = [];
 if (!empty($students) && !empty($contentArea)) {
     $studentCompetencies = StudentCompetency::getAllByQuery(
         '
@@ -76,7 +76,6 @@ if (!empty($students) && !empty($contentArea)) {
          ]
     );
 
-    $rows = [];
     foreach ($studentCompetencies as $StudentCompetency) {
         if (!$Previous = $StudentCompetency->getPrevious()) {
             continue;
