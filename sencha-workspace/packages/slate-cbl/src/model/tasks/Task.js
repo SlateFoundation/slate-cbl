@@ -216,7 +216,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
 
     validators: [
         {
-            type: 'min',
+            type: 'range',
             field: 'SectionID',
             min: 1,
             emptyMessage: 'SectionID is required'

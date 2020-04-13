@@ -1,29 +1,31 @@
 Ext.define('SlateTasksManager.view.TaskEditor', {
-    extend: 'Slate.cbl.view.modals.CreateTask',
+    extend: 'Slate.cbl.view.tasks.TaskForm',
     xtype: 'slatetasksmanager-task-editor',
 
     config: {
-        task: null
+        task: null,
+        floating: true,
+        closable: true
     },
 
     enableAssignments: false,
 
     updateTask: function(task, oldTask) {
         var me = this,
-            form = me.down('slate-modalform'),
-            skillsField = form.down('slate-skillsfield'),
-            attachmentsField = form.down('slate-tasks-attachmentsfield'),
-            statusField = me.down('#status');
+            skillsField = me.getSkillsSelectorField(),
+            attachmentsField = me.getAttachmentsField(),
+            footer = me.getFooter(),
+            statusField = footer.down('checkboxfield[name=Status]');
 
-        form.reset();
+        me.reset();
         statusField.setValue(task.get('Status') ? task.get('Status') : 'shared');
-        form.loadRecord(task);
-        skillsField.setSkills(task.get('Skills'));
-        attachmentsField.setAttachments(task.get('Attachments'));
+        me.loadRecord(task);
+        skillsField.setValue(task.get('Skills'));
+        attachmentsField.setValue(task.get('Attachments'));
 
 
         me.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
-        me.down('button[action=save]').setText(task.phantom ? 'Create' : 'Save');
+        footer.down('button[action=submit]').setText(task.phantom ? 'Create' : 'Save');
 
         if (task.get('ParentTaskID')) {
             parentTaskField = form.down('slate-tasks-titlefield[name=ParentTaskID]');

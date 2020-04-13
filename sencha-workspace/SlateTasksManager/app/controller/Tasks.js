@@ -6,19 +6,19 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     ],
 
     views: [
-        'TasksManager'
-        // 'TaskEditor',
+        'TasksManager',
+        'TaskEditor'
         // 'TaskDetails'
     ],
 
     stores: [
-        'Tasks@Slate.cbl.store.tasks',
         // 'ParentTasks',
         // 'Skills@Slate.cbl.store'
+        'Tasks'
     ],
 
     models: [
-        'Task@Slate.cbl.model.tasks'
+        // 'Task@Slate.cbl.model.tasks'
     ],
 
     config: {
@@ -30,13 +30,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slate-tasks-manager'
             },
 
-            // taskEditor: {
-            //     selector: 'slatetasksmanager-task-editor',
-            //     autoCreate: true,
+            taskEditor: {
+                selector: 'slatetasksmanager-task-editor',
+                autoCreate: true,
 
-            //     xtype: 'slatetasksmanager-task-editor'
-            // },
-            // taskDetails: 'slate-tasks-manager-details',
+                xtype: 'slatetasksmanager-task-editor'
+            },
+            taskDetails: 'slate-tasks-manager-details',
             // taskEditorForm: 'slatetasksmanager-task-editor slate-modalform',
             // skillsField: 'slate-skillsfield',
             // attachmentsField: 'slate-tasks-attachmentsfield',
@@ -44,46 +44,47 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         }
     },
 
-    // control: {
-    //     'slate-tasks-manager toolbar button[action=delete]': {
-    //         click: 'onDeleteTaskClick'
-    //     },
-    //     'slate-tasks-manager toolbar button[action=edit]': {
-    //         click: 'onEditTaskClick'
-    //     },
-    //     'slate-tasks-manager toolbar button[action=create]': {
-    //         click: 'onCreateTaskClick'
-    //     },
-    //     'slatetasksmanager-task-editor button[action=save]': {
-    //         click: 'onSaveTaskClick'
-    //     },
-    //     // TODO: clonable was deleted from the form, due this another way
-    //     'slatetasksmanager-task-editor slate-tasks-titlefield[clonable]': {
-    //         select: 'onClonableTitleFieldSelect'
-    //     },
-    //     tasksManager: {
-    //         rowdblclick: 'onEditTaskClick',
-    //         select: 'onTaskManagerRecordSelect'
-    //     }
-    // },
+    control: {
+        // 'slate-tasks-manager toolbar button[action=delete]': {
+        //     click: 'onDeleteTaskClick'
+        // },
+        'slate-tasks-manager toolbar button[action=edit]': {
+            click: 'onEditTaskClick'
+        },
+        // 'slate-tasks-manager toolbar button[action=create]': {
+        //     click: 'onCreateTaskClick'
+        // },
+        'slatetasksmanager-task-editor button[action=submit]': {
+            click: 'onSaveTaskClick'
+        },
+        // // TODO: clonable was deleted from the form, due this another way
+        // 'slatetasksmanager-task-editor slate-tasks-titlefield[clonable]': {
+        //     select: 'onClonableTitleFieldSelect'
+        // },
+        tasksManager: {
+            rowdblclick: 'onEditTaskClick',
+            select: 'onTaskManagerRecordSelect'
+        }
+    },
 
     onLaunch: function () {
         this.getTasksManager().render('slateapp-viewport');
+        this.getTasksStore().load();
     },
 
     // onCreateTaskClick: function() {
     //     return this.editTask();
     // },
 
-    // onEditTaskClick: function() {
-    //     var me = this,
-    //         selection = me.getTasksManager().getSelection()[0];
+    onEditTaskClick: function() {
+        var me = this,
+            selection = me.getTasksManager().getSelection()[0];
 
-    //     if (!selection) {
-    //         return Ext.Msg.alert('Edit Task', 'Nothing selected. Please select a task to edit.');
-    //     }
-    //     return me.editTask(selection);
-    // },
+        if (!selection) {
+            return Ext.Msg.alert('Edit Task', 'Nothing selected. Please select a task to edit.');
+        }
+        return me.editTask(selection);
+    },
 
     // onDeleteTaskClick: function() {
     //     var me = this,
@@ -105,9 +106,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     //     });
     // },
 
-    // onSaveTaskClick: function() {
-    //     return this.saveTask();
-    // },
+    onSaveTaskClick: function() {
+        return this.saveTask();
+    },
 
     // onClonableTitleFieldSelect: function(combo) {
     //     var me = this,
@@ -122,80 +123,80 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     //     });
     // },
 
-    // onTaskManagerRecordSelect: function() {
-    //     this.showTaskDetails();
-    // },
+    onTaskManagerRecordSelect: function() {
+        this.showTaskDetails();
+    },
 
-    // showTaskDetails: function(task) {
-    //     var me = this,
-    //         taskDetails = me.getTaskDetails(),
-    //         taskManager = me.getTasksManager();
+    showTaskDetails: function(task) {
+        var me = this,
+            taskDetails = me.getTaskDetails(),
+            taskManager = me.getTasksManager();
 
-    //     if (!task && !(task = taskManager.getSelection()[0])) {
-    //         return;
-    //     }
+        if (!task && !(task = taskManager.getSelection()[0])) {
+            return;
+        }
 
-    //     taskDetails.setTask(task);
-    // },
+        taskDetails.setTask(task);
+    },
 
-    // saveTask: function() {
-    //     var me = this,
-    //         form = me.getTaskEditorForm(),
-    //         skillsField = me.getSkillsField(),
-    //         attachmentsField = me.getAttachmentsField(),
-    //         statusField = me.getTaskStatusField(),
-    //         record = form.getRecord(),
-    //         gridSelection = me.getTasksManager().getSelection()[0],
-    //         errors;
+    saveTask: function() {
+        var me = this,
+            form = me.getTaskEditor(),
+            skillsField = form.getSkillsSelectorField(),
+            attachmentsField = form.getAttachmentsField(),
+            statusField = form.getFooter().down('checkboxfield[name=Status]'),
+            record = form.getRecord(),
+            gridSelection = me.getTasksManager().getSelection()[0],
+            errors;
 
-    //     form.updateRecord(record);
+        form.updateRecord(record);
 
-    //     record.set({
-    //         Status: statusField.getSubmitValue(),
-    //         Skills: skillsField.getSkills(false), // returnRecords
-    //         Attachments: attachmentsField.getAttachments(false) // returnRecords
-    //     });
+        record.set({
+            Status: statusField.getSubmitValue(),
+            Skills: skillsField.getValue(),
+            Attachments: attachmentsField.getValue()
+        });
 
-    //     errors = record.validate();
+        errors = record.validate();
 
-    //     if (errors.length) {
-    //         Ext.each(errors.items, function(item) {
-    //             var itemField = form.down('[name='+item.field +']');
+        if (errors.length) {
+            Ext.each(errors.items, function(item) {
+                var itemField = form.down('[name='+item.field +']');
 
-    //             if (itemField) {
-    //                 itemField.markInvalid(item.message);
-    //             }
-    //         });
-    //         return;
-    //     }
+                if (itemField) {
+                    itemField.markInvalid(item.message);
+                }
+            });
+            return;
+        }
 
-    //     record.save({
-    //         success: function(rec) {
-    //             me.getTaskEditor().close();
-    //             me.getTasksStore().reload({
-    //                 callback: function() {
-    //                     // update task details window if record is updated.
-    //                     if (gridSelection && gridSelection.getId() === rec.getId()) {
-    //                         me.getTaskDetails().updateTask(rec);
-    //                     }
-    //                 }
-    //             });
-    //             Ext.toast('Task succesfully saved!');
-    //         }
-    //     });
-    // },
+        record.save({
+            success: function(rec) {
+                me.getTaskEditor().close();
+                me.getTasksStore().reload({
+                    callback: function() {
+                        // update task details window if record is updated.
+                        if (gridSelection && gridSelection.getId() === rec.getId()) {
+                            me.getTaskDetails().updateTask(rec);
+                        }
+                    }
+                });
+                Ext.toast('Task succesfully saved!');
+            }
+        });
+    },
 
-    // editTask: function(taskRecord) {
-    //     var me = this,
-    //         taskEditor = me.getTaskEditor();
+    editTask: function(taskRecord) {
+        var me = this,
+            taskEditor = me.getTaskEditor();
 
-    //     if (!taskRecord) {
-    //         taskRecord = me.getTaskModel().create();
-    //     }
+        if (!taskRecord) {
+            taskRecord = me.getTaskModel().create();
+        }
 
-    //     taskEditor.setTask(taskRecord);
-    //     taskEditor.show();
-    // },
+        taskEditor.setTask(taskRecord);
+        taskEditor.show();
+    },
 
     // deleteTask: function(taskRecord) {
     //     var store = this.getTasksStore();
