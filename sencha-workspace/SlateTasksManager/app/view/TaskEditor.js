@@ -5,7 +5,12 @@ Ext.define('SlateTasksManager.view.TaskEditor', {
     config: {
         task: null,
         floating: true,
-        closable: true
+        closable: true,
+        parentTaskField: {
+            $value: {
+                store: 'ParentTasks'
+            }
+        },
     },
 
     enableAssignments: false,
