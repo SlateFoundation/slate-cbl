@@ -79,6 +79,9 @@ class Task extends \VersionedRecord
         'Title',
         'Status' => [
             'validator' => [__CLASS__, 'validateTaskStatus']
+        ],
+        'ParentTaskID' => [
+            'validator' => [__CLASS__, 'validateParentTask']
         ]
     ];
 
