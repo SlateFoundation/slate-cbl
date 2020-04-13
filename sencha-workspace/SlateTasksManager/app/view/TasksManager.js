@@ -3,8 +3,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     xtype: 'slate-tasks-manager',
     requires: [
         'SlateTasksManager.view.AppHeader',
-        'SlateTasksManager.view.TaskDetails',
-        'Ext.saki.grid.MultiSearch'
+        'SlateTasksManager.view.TaskDetails'
     ],
 
 
@@ -29,24 +28,8 @@ Ext.define('SlateTasksManager.view.TasksManager', {
         }
     ],
 
-    plugins: [
-        {
-            ptype: 'saki-gms',
-            pluginId: 'gms',
-            iconColumn: false
-        }
-    ],
-
     columns: {
         defaults: {
-            filterField: {
-                xtype: 'textfield',
-                triggers: {
-                    search: {
-                        cls: 'x-form-search-trigger'
-                    }
-                }
-            },
             flex: 1
         },
         items: [
