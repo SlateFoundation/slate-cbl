@@ -96,11 +96,20 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     onEditTaskClick: function({ el }) {
         var me = this,
-            task = me.getTasksManager().getSelection()[0];
+            task = me.getTasksManager().getSelection()[0],
+            taskWindow = me.getTaskWindow(),
+            taskEditor = taskWindow.getMainView(),
+            lastEditedTask = taskEditor.getTask();
 
         if (!task) {
             return Ext.Msg.alert('Edit Task', 'Nothing selected. Please select a task to edit.');
         }
+
+        // fix issue with editing phantom tasks
+        if (lastEditedTask && task.getId() === lastEditedTask.getId()) {
+            taskEditor.setTask(null);
+        }
+
         return me.editTask({
             task,
             animateTarget: el
@@ -224,39 +233,42 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             statusField = footer.down('checkboxfield[name=Status]');
 
         form.reset();
-        statusField.setValue(task.get('Status') ? task.get('Status') : 'shared');
-        form.loadRecord(task);
-        skillsField.setValue(task.get('Skills'));
-        attachmentsField.setValue(task.get('Attachments'));
 
-        form.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
-        footer.down('button[action=submit]').setText(task.phantom ? 'Create' : 'Save');
+        if (task) {
+            statusField.setValue(task.get('Status') ? task.get('Status') : 'shared');
+            form.loadRecord(task);
+            skillsField.setValue(task.get('Skills'));
+            attachmentsField.setValue(task.get('Attachments'));
 
-        // clear previous filters
-        parentTaskField.getStore().clearFilter();
-        // filter out subtasks and current task
-        parentTaskField
-            .getStore()
-            .filterBy(
-                rec => rec.get('ParentTaskID') === null && rec.getId() !== task.getId()
-            );
+            form.setTitle((task.phantom ? 'Create' : 'Edit') + ' Task');
+            footer.down('button[action=submit]').setText(task.phantom ? 'Create' : 'Save');
+            // clear previous filters
+            parentTaskField.getStore().clearFilter();
+            // filter out subtasks and current task
+            parentTaskField
+                .getStore()
+                .filterBy(
+                    rec => rec.get('ParentTaskID') === null && rec.getId() !== task.getId()
+                );
 
-        if (task.get('ParentTaskID')) {
-            parentTaskStore = parentTaskField.getStore();
-            //load parent task if store does not contain the record
-            if (!parentTaskStore.getById(task.get('ParentTaskID'))) {
-                parentTaskStore.source.load({
-                    url: Slate.API.buildUrl('/cbl/tasks/'+task.get('ParentTaskID')),
-                    params: {
-                        summary: true
-                    },
-                    addRecords: true,
-                    callback: function (records) {
-                        parentTaskField.setValue(task.get('ParentTaskID'));
-                    }
-                });
+            if (task.get('ParentTaskID')) {
+                parentTaskStore = parentTaskField.getStore();
+                //load parent task if store does not contain the record
+                if (!parentTaskStore.getById(task.get('ParentTaskID'))) {
+                    parentTaskStore.source.load({
+                        url: Slate.API.buildUrl('/cbl/tasks/'+task.get('ParentTaskID')),
+                        params: {
+                            summary: true
+                        },
+                        addRecords: true,
+                        callback: function (records) {
+                            parentTaskField.setValue(task.get('ParentTaskID'));
+                        }
+                    });
+                }
             }
         }
+
     },
 
     showTaskDetails: function(task) {

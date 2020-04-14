@@ -11,6 +11,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     header: false,
 
     componentCls: 'slate-tasks-manager',
+    minHeight: 500,
 
     dockedItems: [
         {
