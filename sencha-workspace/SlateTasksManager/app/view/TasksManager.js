@@ -3,8 +3,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     xtype: 'slate-tasks-manager',
     requires: [
         'SlateTasksManager.view.AppHeader',
-        'SlateTasksManager.view.TaskDetails',
-        'Ext.saki.grid.MultiSearch'
+        'SlateTasksManager.view.TaskDetails'
     ],
 
 
@@ -12,6 +11,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     header: false,
 
     componentCls: 'slate-tasks-manager',
+    minHeight: 500,
 
     dockedItems: [
         {
@@ -29,24 +29,8 @@ Ext.define('SlateTasksManager.view.TasksManager', {
         }
     ],
 
-    plugins: [
-        {
-            ptype: 'saki-gms',
-            pluginId: 'gms',
-            iconColumn: false
-        }
-    ],
-
     columns: {
         defaults: {
-            filterField: {
-                xtype: 'textfield',
-                triggers: {
-                    search: {
-                        cls: 'x-form-search-trigger'
-                    }
-                }
-            },
             flex: 1
         },
         items: [
@@ -56,7 +40,11 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             },
             {
                 text: 'Subtask of&hellip;',
-                dataIndex: 'ParentTaskTitle'
+                dataIndex: 'ParentTask',
+                xtype: 'templatecolumn',
+                tpl: [
+                    '<tpl for="ParentTask">{Title}</tpl>'
+                ]
             },
             {
                 text: 'Type of Exp.',
@@ -68,13 +56,17 @@ Ext.define('SlateTasksManager.view.TasksManager', {
                 dataIndex: 'Skills',
                 xtype: 'templatecolumn',
                 tpl: [
-                    '<tpl for="Skills" between=", ">{Code}</tpl>'
+                    '<tpl for="Skills">{.}</tpl>'
                 ]
             },
             {
                 text: 'Created by',
-                dataIndex: 'CreatorFullName',
-                width: 160
+                dataIndex: 'Creator',
+                width: 160,
+                xtype: 'templatecolumn',
+                tpl: [
+                    '<tpl for="Creator">{FirstName} {LastName}</tpl>'
+                ]
             },
             {
                 text: 'Created',
