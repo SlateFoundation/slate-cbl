@@ -233,16 +233,19 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
             if (task) {
                 me.loadRecord(task);
 
-                if (task.phantom) {
+                if (task.phantom || !task.get('SectionID')) {
                     me.getForm().clearInvalid();
-                }
+                    me.getFooter().child('[reference=archiveTask]').hide();
+                    me.getFooter().child('[reference=unarchiveTask]').hide();
+                } else {
+                    me.getFooter().child('[reference=archiveTask]')[
+                        task.phantom || task.get('Status') === 'archived' ? 'hide' : 'show'
+                    ]();
+                    me.getFooter().child('[reference=unarchiveTask]')[
+                        !task.phantom && task.get('Status') === 'archived' ? 'show' : 'hide'
+                    ]();
 
-                me.getFooter().child('[reference=archiveTask]')[
-                    task.phantom || task.get('Status') === 'archived' ? 'hide' : 'show'
-                ]();
-                me.getFooter().child('[reference=unarchiveTask]')[
-                    !task.phantom && task.get('Status') === 'archived' ? 'show' : 'hide'
-                ]();
+                }
 
                 me.setTitle(
                     task.phantom

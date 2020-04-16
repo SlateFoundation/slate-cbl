@@ -1,0 +1,8 @@
+{
+  "id": "d074c9c2-1a36-4ad4-b19b-1b0614519fc1",
+  "js": [{ "path": "app.js" }],
+  "css": [
+    { "remote": false, "exclude": ["fashion"], "path": "resources/SlateTasksManager-all_1.css" },
+    { "remote": false, "exclude": ["fashion"], "path": "resources/SlateTasksManager-all_2.css" }
+  ]
+}
