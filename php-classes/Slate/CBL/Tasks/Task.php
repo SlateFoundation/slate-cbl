@@ -4,6 +4,7 @@ namespace Slate\CBL\Tasks;
 
 use DB;
 use HandleBehavior;
+use RecordValidator;
 use Emergence\People\Person;
 use Slate\Courses\Section;
 use Slate\CBL\Skill;
@@ -71,8 +72,14 @@ class Task extends \VersionedRecord
     ];
 
     public static $validators = [
-        'Section' => 'require-relationship',
+        'Section' => [
+            'type' => 'require-relationship',
+            'required' => false
+        ],
         'Title',
+        'Status' => [
+            'validator' => [__CLASS__, 'validateTaskStatus']
+        ],
         'ParentTaskID' => [
             'validator' => [__CLASS__, 'validateParentTask']
         ]
@@ -199,7 +206,7 @@ class Task extends \VersionedRecord
         return DB::affectedRows() > 0;
     }
 
-    protected static function validateParentTask($validator, Task $Task, $options)
+    protected static function validateParentTask(RecordValidator $validator, Task $Task, $options)
     {
         if (!$validator->hasErrors('ParentTaskID') && $Task->ParentTaskID) {
             if ($Task->ParentTaskID == $Task->ID) {
@@ -207,6 +214,15 @@ class Task extends \VersionedRecord
 
                 // clear immediately to prevent validation loop
                 $Task->ParentTaskID = null;
+            }
+        }
+    }
+
+    protected static function validateTaskStatus(RecordValidator $RecordValidator, Task $Record, $options = [], $validatorKey)
+    {
+        if (!$RecordValidator->hasErrors($validatorKey)) {
+            if ($Record->Status === 'private' && !$Record->SectionID) {
+                $RecordValidator->addError($validatorKey, 'Tasks not assigned to a section must be made "public".');
             }
         }
     }
