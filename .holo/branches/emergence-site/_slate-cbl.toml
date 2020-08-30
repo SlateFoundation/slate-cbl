@@ -4,6 +4,8 @@ files = [
     "!.github/",
     "!.vscode/",
     "!books/",
+    "!php-config/Git.config.d/",
+    "!script/",
 
     # exclude the submodules we're using temporarily to support local dev
     # -- they would overwrite the trees coming in the right way through projection
