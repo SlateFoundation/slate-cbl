@@ -541,7 +541,30 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             $parentTaskConditions['StudentID'] = $conditions['StudentID'];
         }
 
-        $includedTaskParents = StudentTask::getAllByWhere($parentTaskConditions);
+        // include all parent tasks, unless it is archived
+        $parentTaskIds = array_diff($parentTaskIds, $taskIds);
+        $includedTaskParents = [];
+        if (!empty($parentTaskIds)) {
+            $parentTaskConditionsMapped = StudentTask::mapConditions($parentTaskConditions, true);
+            $includedTaskParents = StudentTask::getAllByQuery(
+                'SELECT %2$s.*
+                   FROM `%1$s` %2$s
+                   JOIN `%3$s` %4$s
+                     ON (%2$s.TaskID = %4$s.ID)
+                  WHERE %4$s.Status != "archived"
+                    AND %6$s
+                ',
+                [
+                    StudentTask::$tableName,
+                    StudentTask::getTableAlias(),
+                    Task::$tableName,
+                    Task::getTableAlias(),
+                    join(',', $parentTaskIds),
+                    join(' AND ', $parentTaskConditionsMapped)
+                ]
+            );
+        }
+
         $responseData['data'] = array_merge($responseData['data'], $includedTaskParents);
 
         return $responseData;
