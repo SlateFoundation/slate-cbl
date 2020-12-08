@@ -35,10 +35,10 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
 
     // component configuration
     componentCls: 'slate-cbl-ratings-studentcompetency',
-    padding: '16 75',
+    padding: '16',
 
     // container configuration
-    defaultType: 'slate-cbl-ratings-slider',
+    defaultType: 'slate-cbl-ratings-rater',
     layout: 'anchor',
     defaults: {
         anchor: '100%',
@@ -48,13 +48,27 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
         {
             dock: 'top',
 
-            xtype: 'component',
-            itemId: 'competencyInfo',
+            xtype: 'container',
+            layout: 'hbox',
             hidden: true,
-            tpl: [
-                '<h4 class="competency-descriptor">{Descriptor}</h4>',
-                '<blockquote class="competency-statement">{Statement}</blockquote>'
-            ]
+            itemId: 'competencyInfo',
+            items: [{
+                flex: 1,
+                xtype: 'component',
+                itemId: 'competencyInfoHeader',
+                tpl: [
+                    '<header class="competency-header">',
+                        '<h4 class="competency-descriptor">{Descriptor}</h4>',
+                        '<blockquote class="competency-statement">{Statement}</blockquote>',
+                    '</header>',
+                ]
+            }, {
+                xtype: 'button',
+                margin: '0 0 0 16',
+                text: 'Remove',
+                tooltip: 'Remove this competency from the demonstration',
+                glyph: 'xf00d', // fa-times
+            }],
         }
     ],
 
@@ -81,6 +95,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
     updateStudentCompetency: function(studentCompetency) {
         var me = this,
             competencyInfoCmp = me.getDockedComponent('competencyInfo'),
+            competencyInfoHeader = competencyInfoCmp.getComponent('competencyInfoHeader'),
             skillValueQueue = me.skillValueQueue,
             skillFieldsMap = me.skillFieldsMap = {},
             currentLevel, competencyData, skills,
@@ -94,7 +109,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
             currentLevel = studentCompetency.get('Level');
             competencyData = studentCompetency.get('Competency');
             me.setSelectedCompetency(competencyData.Code);
-            competencyInfoCmp.setData(competencyData);
+            competencyInfoHeader.setData(competencyData);
             competencyInfoCmp.show();
 
             skills = competencyData.Skills || [];

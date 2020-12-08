@@ -1,0 +1,19 @@
+.slate-cbl-ratings-rater {
+    .x-btn-icon-el-default-large.x-btn-glyph { // TODO replace selector?
+        font-size: 14px;
+    }
+}
+
+.slate-cbl-ratings-rater-clear-btn {
+    .x-btn-inner {
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+}
+
+.slate-cbl-ratings-rater-menu-btn {
+    // matching framework selector
+    .x-btn-arrow-right > .x-btn-icon.x-btn-no-text.x-btn-button-default-large {
+        padding-right: 0;
+    }
+}
