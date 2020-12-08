@@ -140,7 +140,7 @@ jobs:
     - name: Load fixtures into database
       run: |
         (
-          echo 'DROP DATABASE `slate`;'
+          echo 'DROP DATABASE IF EXISTS `slate`;'
           echo 'CREATE DATABASE `slate`;'
           echo 'USE `slate`;'
           cat slate-fixtures-cbl-demo/*.sql
