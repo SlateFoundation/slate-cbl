@@ -2,26 +2,31 @@
 package = "holo/lens-sencha-app"
 
 [hololens.sencha]
+workspace = "sencha-workspace"
 app = "SlateDemonstrationsStudent"
 
+[hololens.sencha.ant]
+args = "-Dworkspace.site.sass.dir=${workspace.dir}/../site-root/sass"
+
 [hololens.input]
-root = "sencha-workspace"
 files = [
-    "SlateDemonstrationsStudent/**",
-    "packages/jarvus-routing/**",
-    "packages/slate-theme/**",
-    "packages/slate-cbl/**",
-    "packages/slate-cbl-colors/**",
-    "packages/slate-core-data/**",
-    "packages/slate-ui-classic/**",
-    "packages/emergence-apikit/**",
-    "packages/jarvus-apikit/**",
-    "packages/jarvus-ext-glyphs/**",
-    "packages/jarvus-ext-actionevents/**",
-    "packages/jarvus-lazydata/**",
-    "packages/jarvus-hotfixes/**",
-    "ext/**",
-    "workspace.json",
+    "sencha-workspace/SlateDemonstrationsStudent/**",
+    "sencha-workspace/packages/jarvus-routing/**",
+    "sencha-workspace/packages/slate-theme/**",
+    "sencha-workspace/packages/slate-cbl/**",
+    "sencha-workspace/packages/slate-cbl-colors/**",
+    "sencha-workspace/packages/slate-core-data/**",
+    "sencha-workspace/packages/slate-ui-classic/**",
+    "sencha-workspace/packages/emergence-apikit/**",
+    "sencha-workspace/packages/jarvus-apikit/**",
+    "sencha-workspace/packages/jarvus-ext-glyphs/**",
+    "sencha-workspace/packages/jarvus-ext-actionevents/**",
+    "sencha-workspace/packages/jarvus-lazydata/**",
+    "sencha-workspace/packages/jarvus-hotfixes/**",
+    "sencha-workspace/ext/**",
+    "sencha-workspace/workspace.json",
+    "site-root/sass/**/_variables.scss",
+    "site-root/sass/**/_variables-*.scss",
 ]
 
 [hololens.output]
