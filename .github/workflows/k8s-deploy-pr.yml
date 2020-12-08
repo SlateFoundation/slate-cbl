@@ -127,6 +127,20 @@ jobs:
         set -e
         kubectl wait --for condition=ready "pod/${POD_NAME}" --timeout=30s
 
+    - name: Download fixtures
+      run: |
+        wget https://codeload.github.com/SlateFoundation/slate-fixtures/zip/cbl/demo -O slate-fixtures.zip
+        unzip slate-fixtures.zip
+
+    - name: Load fixtures into database
+      run: |
+        (
+          echo 'DROP DATABASE `slate`;'
+          echo 'CREATE DATABASE `slate`;'
+          echo 'USE `slate`;'
+          cat slate-fixtures-cbl-demo/*.sql
+        ) | kubectl -n slate-cbl exec -i "${POD_NAME}" -- hab pkg exec slate/slate-cbl-composite mysql
+
     - name: Mark deployment as failed
       if: failure()
       run: |
