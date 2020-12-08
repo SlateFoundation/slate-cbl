@@ -132,6 +132,11 @@ jobs:
         wget https://codeload.github.com/SlateFoundation/slate-fixtures/zip/cbl/demo -O slate-fixtures.zip
         unzip slate-fixtures.zip
 
+    - name: Wait for MySQL to be Ready
+      run: |
+        set -e
+        until kubectl exec "${POD_NAME}" -- hab pkg exec slate/slate-cbl-composite mysqladmin ping; do sleep .5; done;
+
     - name: Load fixtures into database
       run: |
         (
