@@ -18,7 +18,7 @@ env:
   PR_NAME: pr-${{ github.event.number }}
   KUBE_HOSTNAME: ${{ secrets.kube_hostname }}
 
-  DATABASE_NAME: slate-cbl
+  DATABASE_NAME: slate
 
   HAB_LICENSE: accept-no-persist
 
