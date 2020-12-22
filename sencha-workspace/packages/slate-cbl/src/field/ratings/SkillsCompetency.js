@@ -9,7 +9,6 @@ Ext.define('Slate.cbl.field.ratings.SkillsCompetency', {
         'Slate.cbl.model.Competency',
         'Slate.sorter.Code',
         'Slate.ui.override.AddSorted',
-        'Slate.cbl.field.ratings.Rater',
     ],
 
 
