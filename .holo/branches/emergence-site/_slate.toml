@@ -1,3 +1,4 @@
 [holomapping]
+holosource = "=>emergence-skeleton"
 files = "**"
 before = "*"
