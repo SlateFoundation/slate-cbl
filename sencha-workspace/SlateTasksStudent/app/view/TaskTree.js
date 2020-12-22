@@ -186,34 +186,64 @@ Ext.define('SlateTasksStudent.view.TaskTree', {
             store = me.getStore(),
             items = [],
 
-            rootTasks = store.queryBy(function(studentTask) {
+            parentTasks = store.queryBy(function(studentTask) {
                 return !studentTask.get('Task').ParentTaskID;
             }),
-            rootTasksLength = rootTasks.getCount(),
-            rootTasksIndex = 0,
-            rootTask, rootTaskId, subTasks;
+            parentTaskIds = parentTasks.collect('TaskID'),
+            parentTasksLength = parentTasks.getCount(),
+            parentTasksIndex = 0,
+
+            orphanedTasks = store.queryBy(function(studentTask) {
+                return parentTaskIds.indexOf(studentTask.get('TaskID')) === -1;
+            }),
+            orphanedTasksLength = orphanedTasks.getCount(),
+            orphanedTasksIndex = 0,
+            parentTask, parentTaskId, subTasks;
+
+        for (; orphanedTasksIndex < orphanedTasksLength; orphanedTasksIndex++) {
+            items.push({
+                studentTask: orphanedTasks.getAt(orphanedTasksIndex).getData()
+            });
+        }
 
         // build tree of top-level tasks and subtasks
-        for (; rootTasksIndex < rootTasksLength; rootTasksIndex++) {
-            rootTask = rootTasks.getAt(rootTasksIndex);
-            rootTaskId = rootTask.get('TaskID');
+        for (; parentTasksIndex < parentTasksLength; parentTasksIndex++) {
+            parentTask = parentTasks.getAt(parentTasksIndex);
+            parentTaskId = parentTask.get('TaskID');
 
             subTasks = store.queryBy(function(studentTask) { // eslint-disable-line no-loop-func
-                return studentTask.get('Task').ParentTaskID == rootTaskId && !studentTask.get('filtered');
+                return studentTask.get('Task').ParentTaskID == parentTaskId;
             });
 
-            if (subTasks.getCount() > 0) {
-                rootTask.set('filtered', false); // do not filter parent tasks that have unfiltered subtasks
+            items.push({
+                studentTask: parentTask.getData(),
+                expanded: Boolean(expandedTasks[parentTask.getId()]),
+                subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
+            });
+        }
+
+        items = items.sort(function(taskA, taskB) {
+            taskADue = taskA.studentTask.EffectiveDueDate;
+            taskBDue = taskB.studentTask.EffectiveDueDate;
+
+            if (taskADue === taskBDue) {
+                if (taskA.studentTask.Task.Title === taskB.studentTask.Task.Title) {
+                    return 0;
+                }
+
+                return ('' + taskA.studentTask.Task.Title).localeCompare(taskB.studentTask.Task.Title);
             }
 
-            if (!rootTask.get('filtered')) {
-                items.push({
-                    studentTask: rootTask.getData(),
-                    expanded: Boolean(expandedTasks[rootTask.getId()]),
-                    subTasks: Ext.Array.pluck(subTasks.getRange(), 'data')
-                });
+            if (!taskADue || !taskBDue) {
+                if (!taskADue) {
+                    return 1;
+                }
+
+                return -1;
             }
-        }
+
+            return taskADue - taskBDue;
+        });
 
         // render markup
         me.setData({
