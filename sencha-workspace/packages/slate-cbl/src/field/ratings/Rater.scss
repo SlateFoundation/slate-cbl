@@ -1,7 +1,6 @@
 .slate-cbl-ratings-rater {
     .x-btn-icon-el-default-large.x-btn-glyph { // TODO replace selector?
         font-size: 14px;
-<<<<<<< HEAD
         opacity: .9;
     }
 
@@ -65,8 +64,6 @@
     //         //     background-color: nth($level-colors-dark, $n);
     //         // }
     //     }
-=======
->>>>>>> 6e40fea9623ff48eb7b28deb85824ae9457a601b
     }
 }
 
@@ -78,7 +75,6 @@
 }
 
 .slate-cbl-ratings-rater-menu-btn {
-<<<<<<< HEAD
     // match the framework selectors
 
     .x-btn-arrow-right > .x-btn-icon.x-btn-no-text.x-btn-button-default-large {
@@ -96,10 +92,4 @@
         padding: 0;
         width: 14px;
     }
-=======
-    // matching framework selector
-    .x-btn-arrow-right > .x-btn-icon.x-btn-no-text.x-btn-button-default-large {
-        padding-right: 0;
-    }
->>>>>>> 6e40fea9623ff48eb7b28deb85824ae9457a601b
 }
