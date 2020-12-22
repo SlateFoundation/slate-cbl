@@ -1,13 +1,18 @@
 [holomapping]
 files = [
     "*/**",
+
+    # exclude CI and developer assets
     "!.github/",
     "!.vscode/",
     "!books/",
+    "!fixtures/",
+    "!habitat/",
+    "!helm-chart/",
     "!php-config/Git.config.d/",
     "!script/",
 
-    # exclude the submodules we're using temporarily to support local dev
+    # exclude submodules that support local Sencha app development
     # -- they would overwrite the trees coming in the right way through projection
     "!sencha-workspace/ext",
     "!sencha-workspace/packages.remote/",
