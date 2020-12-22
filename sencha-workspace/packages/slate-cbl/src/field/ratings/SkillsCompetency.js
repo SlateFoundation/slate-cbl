@@ -5,6 +5,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsCompetency', {
         'Ext.util.Format',
 
         /* global Slate */
+        'Slate.cbl.field.ratings.Rater',
         'Slate.cbl.model.Competency',
         'Slate.sorter.Code',
         'Slate.ui.override.AddSorted'
