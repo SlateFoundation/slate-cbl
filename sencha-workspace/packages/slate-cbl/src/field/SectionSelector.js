@@ -19,6 +19,7 @@ Ext.define('Slate.cbl.field.SectionSelector', {
     componentCls: 'slate-cbl-sectionselector',
 
     listConfig: {
+        cls: 'slate-cbl-sectionselector-list',
         maxWidth: 512,
         minWidth: 256
     },
@@ -37,7 +38,7 @@ Ext.define('Slate.cbl.field.SectionSelector', {
                 '</div>',
             '</tpl>',
 
-            '<div class="x-boundlist-item">{recordTitle}</div>',
+            '<div class="x-boundlist-item"><small class="code">{Code}</small> {recordTitle}</div>',
         '</tpl>'
     ]
 });

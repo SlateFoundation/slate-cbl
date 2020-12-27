@@ -68,7 +68,12 @@ Ext.define('Slate.cbl.field.StudentsListSelector', {
                 '</div>',
             '</tpl>',
 
-            '<div class="x-boundlist-item">{label}</div>',
+            '<div class="x-boundlist-item">',
+                '<tpl if="code">',
+                    '<small class="code">{code}</small> ',
+                '</tpl>',
+                '{label}',
+            '</div>',
         '</tpl>'
     ],
 
