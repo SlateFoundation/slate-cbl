@@ -325,6 +325,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         store.setSectionFilter(sections);
 
         store.getProxy().setExtraParam('include_archived', includeArchivedTasks);
+        store.getProxy().setExtraParam('include_filtered_parent_tasks', true);
 
         store.loadIfDirty();
     }
