@@ -53,8 +53,6 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     {{- include "slate-cbl.labels" . | nindent 4 }}
-    app: {{ .Release.Name }}
-    name: {{ .Release.Name }}-app
 spec:
   selector:
     {{- include "slate-cbl.selectorLabels" . | nindent 4 }}
