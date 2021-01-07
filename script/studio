@@ -18,6 +18,7 @@ STUDIO_NAME="${STUDIO_NAME:-slate-cbl-studio}"
 export HAB_DOCKER_OPTS="
     --name ${STUDIO_NAME}
     -p 2190:80
+    -p 2191:7081
     -p 2196:3306
     -v $(cd ~/.ssh; pwd)/known_hosts:/root/.ssh/known_hosts:ro
     --env STUDIO_DEVELOPER_UID=$(id -u)
