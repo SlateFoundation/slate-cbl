@@ -124,13 +124,29 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         var me = this,
             tasksStore = me.getTasksStore(),
             menu = me.getFilterMenu(),
-            sectionMenuItems = menu.query('[filterGroup=Section]');
+            sectionMenuItems = menu.query('[filterGroup=Section]'),
+            statusMenuItems = menu.query('[filterGroup=Status]');
 
         sectionMenuItems.forEach(function(item) {
             if (sectionCode) {
                 item.disable().hide();
             } else {
                 item.enable().show();
+            }
+        });
+
+        statusMenuItems.forEach(function(item) {
+            if (sectionCode) {
+                item.setChecked(
+                    item.getValue() !== 'archived'
+                );
+            } else {
+                item.setChecked(
+                    [
+                        'assigned',
+                        're-assigned',
+                    ].indexOf(item.getValue()) > -1
+                );
             }
         });
 
@@ -309,6 +325,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         store.setSectionFilter(sections);
 
         store.getProxy().setExtraParam('include_archived', includeArchivedTasks);
+        store.getProxy().setExtraParam('include_filtered_parent_tasks', true);
 
         store.loadIfDirty();
     }

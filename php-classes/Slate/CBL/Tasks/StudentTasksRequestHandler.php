@@ -280,6 +280,15 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             }
         }
 
+        if (static::getRequestedIncludeFilteredParentTasks()) {
+            $beforeRespond = static::$beforeRespond;
+            static::$beforeRespond = function($responseId, &$responseData, $responseMode) use ($beforeRespond, $conditions) {
+                $responseData = call_user_func([static::class, 'includeFilteredParentTasks'], $conditions, $responseData);
+                if (is_callable($beforeRespond)) {
+                    call_user_func($beforeRespond, $responseId, $responseData, $responseMode);
+                }
+            };
+        }
 
         return $conditions;
     }
@@ -490,5 +499,74 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         }
 
         return !!$_REQUEST[$fieldName];
+    }
+
+    public static function getRequestedIncludeFilteredParentTasks($fieldName = 'include_filtered_parent_tasks')
+    {
+        if (empty($_REQUEST[$fieldName])) {
+            return null;
+        }
+
+        if ($_REQUEST[$fieldName] === 'false') {
+            $_REQUEST[$fieldName] = false;
+        }
+
+        return (bool) $_REQUEST[$fieldName];
+    }
+
+    protected static function includeFilteredParentTasks($conditions, $responseData)
+    {
+        $taskIds = [];
+        $parentTaskIds = [];
+
+        foreach ($responseData['data'] as $record) {
+            $taskIds[] = $record->TaskID;
+            if (
+                $record->Task->ParentTaskID &&
+                !in_array($record->Task->ParentTaskID, $taskIds) &&
+                !in_array($record->Task->ParentTaskID, $parentTaskIds)
+            ) {
+                $parentTaskIds[] = $record->Task->ParentTaskID;
+            }
+        }
+
+        $parentTaskConditions = [
+            'TaskID' => [
+                'values' => array_diff($parentTaskIds, $taskIds),
+                'operator' => 'IN'
+            ]
+        ];
+
+        if (isset($conditions['StudentID'])) {
+            $parentTaskConditions['StudentID'] = $conditions['StudentID'];
+        }
+
+        // include all parent tasks, unless it is archived
+        $parentTaskIds = array_diff($parentTaskIds, $taskIds);
+        $includedTaskParents = [];
+        if (!empty($parentTaskIds)) {
+            $parentTaskConditionsMapped = StudentTask::mapConditions($parentTaskConditions, true);
+            $includedTaskParents = StudentTask::getAllByQuery(
+                'SELECT %2$s.*
+                   FROM `%1$s` %2$s
+                   JOIN `%3$s` %4$s
+                     ON (%2$s.TaskID = %4$s.ID)
+                  WHERE %4$s.Status != "archived"
+                    AND %6$s
+                ',
+                [
+                    StudentTask::$tableName,
+                    StudentTask::getTableAlias(),
+                    Task::$tableName,
+                    Task::getTableAlias(),
+                    join(',', $parentTaskIds),
+                    join(' AND ', $parentTaskConditionsMapped)
+                ]
+            );
+        }
+
+        $responseData['data'] = array_merge($responseData['data'], $includedTaskParents);
+
+        return $responseData;
     }
 }
