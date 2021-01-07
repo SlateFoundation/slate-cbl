@@ -3,4 +3,10 @@
         font-size: 0.75em;
         float: right;
     }
+
+    .code {
+        float: right;
+        font-family: $mono-font;
+        margin-left: 1em;
+    }
 }
