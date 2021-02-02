@@ -35,6 +35,11 @@ class DemonstrationSkill extends \VersionedRecord
             'unsigned' => true,
             'default' => null
         ],
+        'EvidenceWeight' => [
+            'type' => 'tinyint',
+            'unsigned' => true,
+            'default' => 1
+        ],
         'Override' => [
             'type' => 'boolean',
             'default' => false
