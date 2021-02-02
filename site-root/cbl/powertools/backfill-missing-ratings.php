@@ -101,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $expiredStudentTaskIds[] = $expiredTask->ID;
         if ($expiredTask->DemonstrationID === null) {
             $expiredTask->Demonstration = $expiredTask->getOrCreateDemonstration();
+            $expiredTask->Demonstration->CreatorID = $expiredTask->CreatorID;
             $expiredTask->save(true);
         }
     }
