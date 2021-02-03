@@ -9,6 +9,7 @@ use Slate\People\Student;
 
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
+use Slate\CBL\Demonstrations\OverrideDemonstration;
 
 class StudentCompetency extends \ActiveRecord
 {
@@ -240,9 +241,10 @@ class StudentCompetency extends \ActiveRecord
                         'SkillID',
                         '
                         SELECT DemonstrationSkill.*,
-                               Demonstration.Demonstrated AS DemonstrationDate
+                               Demonstration.Demonstrated AS DemonstrationDate,
+                               Demonstration.Class AS DemonstrationClass
                           FROM `%s` DemonstrationSkill
-                          JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration
+                          JOIN (SELECT ID, Demonstrated, Class FROM `%s` WHERE StudentID = %u) Demonstration
                             ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                          WHERE (%s)
                          ORDER BY SkillID, DemonstrationDate, DemonstrationID
@@ -287,14 +289,27 @@ class StudentCompetency extends \ActiveRecord
     {
         if ($this->demonstrationOpportunities === null) {
             $this->demonstrationOpportunities = 0;
-
+            $hasWildCard = false;
             foreach ($this->getDemonstrationsData() as $skillId => $demonstrationData) {
                 foreach ($demonstrationData as $demonstration) {
-                    if (empty($demonstration['Override'])) {
-                        $this->demonstrationOpportunities++;
+                    // skip overrides by class
+                    if ($demonstration['DemonstrationClass'] == OverrideDemonstration::class) {
+                        continue;
+                    }
+
+                    if ($demonstration['EvidenceWeight'] === null) {
+                        $hasWildcard = true;
+                        break;
+                    } else {
+                        $this->demonstrationOpportunities += $demonstration['EvidenceWeight'];
                     }
                 }
             }
+        }
+
+        if ($hasWildCard) {
+            // return total requirements
+            $this->demonstrationOpportunities = $this->getDemonstrationsRequired();
         }
 
         return $this->demonstrationOpportunities;
@@ -400,8 +415,11 @@ class StudentCompetency extends \ActiveRecord
 
             foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
                 foreach ($demonstrationData as $demonstration) {
-                    if (empty($demonstration['Override']) && !empty($demonstration['DemonstratedLevel'])) {
-                        $this->demonstrationsLogged++;
+                    if ( // ignore override
+                        $demonstration['DemonstrationClass'] !== OverrideDemonstration::class &&
+                        !empty($demonstration['DemonstratedLevel'])
+                    ) {
+                        $this->demonstrationsLogged += $demonstration['EvidenceWeight'];
                     }
                 }
             }
@@ -418,7 +436,10 @@ class StudentCompetency extends \ActiveRecord
 
             foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
                 foreach ($demonstrationData as $demonstration) {
-                    if (empty($demonstration['Override']) && empty($demonstration['DemonstratedLevel'])) {
+                    if (
+                        $demonstration['DemonstrationClass'] !== OverrideDemonstration::class &&
+                        empty($demonstration['DemonstratedLevel'])
+                    ) {
                         $this->demonstrationsMissed++;
                     }
                 }
@@ -440,10 +461,10 @@ class StudentCompetency extends \ActiveRecord
                 $skillCount = 0;
 
                 foreach ($demonstrationData as $demonstration) {
-                    if (!empty($demonstration['Override'])) {
+                    if ($demonstration['DemonstrationClass'] === OverrideDemonstration::class) {
                         $skillCount += $demonstrationsRequired;
                     } elseif (!empty($demonstration['DemonstratedLevel'])) {
-                        $skillCount++;
+                        $skillCount+= $demonstration['EvidenceWeight'];
                     }
                 }
 
@@ -463,7 +484,7 @@ class StudentCompetency extends \ActiveRecord
                 $totalScore = 0;
                 foreach ($effectiveDemonstrationsData as $skillId => $demonstrationsData) {
                     foreach ($demonstrationsData as $demonstration) {
-                        if (empty($demonstration['Override'])) {
+                        if ($demonstration['DemonstrationClass'] !== OverrideDemonstration::class) {
                             $totalScore += $demonstration['DemonstratedLevel'];
                         }
                     }
