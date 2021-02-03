@@ -36,11 +36,7 @@ class DemonstrationSkill extends \VersionedRecord
         'EvidenceWeight' => [
             'type' => 'tinyint',
             'unsigned' => true,
-            'default' => 1
-        ],
-        'Override' => [
-            'type' => 'boolean',
-            'default' => false
+            'default' => null
         ]
     ];
 
@@ -84,10 +80,10 @@ class DemonstrationSkill extends \VersionedRecord
         parent::validate($deep);
 
         // demonstrated level
-        if ($this->Override && $this->DemonstratedLevel !== null) {
+        if ($this->EvidenceWeight === null && $this->DemonstratedLevel !== null) {
             $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must be null for override');
-        } elseif (!$this->Override && $this->DemonstratedLevel === null) {
-            $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must not be null for non-override');
+        } elseif ($this->EvidenceWeight !== null && $this->DemonstratedLevel === null) {
+            $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must not be null for non-override!');
         }
 
         // target level can only be set on new records
