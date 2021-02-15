@@ -10,6 +10,7 @@ script/-studio-bootstrap
 
 
 unset DEBUG
+[ -n "${1}" ] && cd "${1}"
 
 
 echo
