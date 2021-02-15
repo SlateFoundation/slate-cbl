@@ -1,8 +1,0 @@
-site_name: Slate CBL Docs
-repo_url: https://github.com/SlateFoundation/slate-cbl
-site_url: https://slatefoundation.github.io/slate-cbl
-
-theme:
-  palette:
-    primary: "cyan"
-    accent: "orange"
