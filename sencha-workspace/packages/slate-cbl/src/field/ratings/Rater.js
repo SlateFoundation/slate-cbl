@@ -120,33 +120,73 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
     // field lifecycle
     initValue: function() {
         var me = this,
-            minRating = me.getMinRating(),
-            maxRating = me.getMaxRating(),
-            // i = minRating + 1,
             value = me.normalizeValue(me.value);
 
-        me.value = me.originalValue = value;
+        me.value = value;
 
-        console.info('TODO: initialize value:', value);
+        // normalize twice so value/originalValue aren't references to same object instance
+        me.originalValue = me.normalizeValue(value);
+
+        me.loadValue();
     },
 
     normalizeValue: function(value) {
         var me = this,
-            maxValue = me.maxValue;
+            maxValue = me.maxValue,
+            rating = value.DemonstratedLevel;
 
-        if (!value && value !== 0) {
-            return null;
+        if (!rating && rating !== 0) {
+            rating = null;
+        } else {
+            rating = Math.round(rating);
+    
+            if (rating >= maxValue) {
+                rating = maxValue;
+            } else if (rating < me.minValue && me.getMenuRatings().indexOf(rating) == -1) {
+                rating = null;
+            }
         }
 
-        value = Math.round(value);
+        // IMPORTANT: return a fresh object
+        return {
+            Class: value.Class || null,
+            DemonstratedLevel: rating,
+            TargetLevel: value.TargetLevel || null,
+        };
+    },
 
-        if (value >= maxValue) {
-            value = maxValue;
-        } else if (value < me.minValue && me.getMenuRatings().indexOf(value) == -1) {
-            value = null;
+    isEqual: function(value1, value2) {
+        if (!value1 || !value2) {
+            return false;
         }
 
-        return value;
+        if (value1.Class != value2.Class) {
+            return false;
+        }
+
+        if (value1.TargetLevel != value2.TargetLevel) {
+            return false;
+        }
+
+        if (value1.DemonstratedLevel != value2.DemonstratedLevel) {
+            return false;
+        }
+
+        return true;
+    },
+
+    onChange: function(value, oldValue) {
+        this.loadValue();
+        this.callParent(arguments);
+    },
+
+    loadValue: function() {
+        var me = this,
+            value = me.value;
+
+        console.info('loadValue', value);
+        me.setLevel(value.TargetLevel);
+        me.segmentedBtn.setValue(value.DemonstratedLevel);
     },
 
 

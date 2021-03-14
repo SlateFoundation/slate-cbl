@@ -291,7 +291,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetenciesField', {
                 permanentCards.push(competencyId);
             }
 
-            card.setSkillValue(skillId, skillData.DemonstratedLevel, skillData.TargetLevel);
+            card.setSkillValue(skillId, skillData);
             skillIds.push(skillId);
         }
 
