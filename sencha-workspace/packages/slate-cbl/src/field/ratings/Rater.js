@@ -16,6 +16,11 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
     isRatingField: true,
 
 
+    statics: {
+        menuGlyph: 'xf0c9', // fa-bars
+    },
+
+
     config: {
         // configuration:
         minRating: 5,
@@ -225,7 +230,7 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
             me.menuBtn = segmentedBtn.add({
                 value: 'MENU',
                 cls: 'slate-cbl-ratings-rater-menu-btn',
-                glyph: 'xf0c9', // fa-bars
+                glyph: this.self.menuGlyph,
                 menu: {
                     items: menuRatingItemsCfg,
                     plain: true,
@@ -238,9 +243,15 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
                                     return; // ignore uncheck events
                                 }
 
-                                me.menuBtn.value = menuItem.value;
-                                me.menuBtn.setPressed(true);
+                                var menuBtn = me.menuBtn;
+
+                                Ext.suspendLayouts();
+                                menuBtn.value = menuItem.value;
+                                menuBtn.setGlyph(null);
+                                menuBtn.setText(String(menuItem.value));
+                                menuBtn.setPressed(true);
                                 me.segmentedBtn.setValue(menuItem.value);
+                                Ext.resumeLayouts(true);
                             }
                         }
                     },
@@ -255,12 +266,16 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
                         var checkedItem;
                         
                         // return menu button back to MENU value on un-press
-                        if (!pressed && btn === me.menuBtn) {
+                        if (!pressed && btn === me.menuBtn && btn.value != 'MENU') {
+                            Ext.suspendLayouts();
                             btn.value = 'MENU';
-                            checkedItem = btn.down('[checked]');
+                            btn.setText(null);
+                            btn.setGlyph(me.self.menuGlyph);
+                            checkedItem = btn.menu.down('[checked]');
                             if (checkedItem) {
                                 checkedItem.setChecked(false, true);
                             }
+                            Ext.resumeLayouts(true);
                         }
 
                         // prevent selecting menu button with no value set yet
