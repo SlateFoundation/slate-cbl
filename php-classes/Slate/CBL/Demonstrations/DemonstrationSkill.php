@@ -36,7 +36,7 @@ class DemonstrationSkill extends \VersionedRecord
         'EvidenceWeight' => [
             'type' => 'tinyint',
             'unsigned' => true,
-            'default' => null
+            'default' => 1
         ]
     ];
 
