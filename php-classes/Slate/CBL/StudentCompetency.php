@@ -254,7 +254,6 @@ class StudentCompetency extends \ActiveRecord
                             $demonstrationSkill['DemonstrationDate'] = strtotime($demonstrationSkill['DemonstrationDate']);
                             $demonstrationSkill['TargetLevel'] = intval($demonstrationSkill['TargetLevel']);
                             $demonstrationSkill['DemonstratedLevel'] = intval($demonstrationSkill['DemonstratedLevel']);
-                            $demonstrationSkill['DemonstrationClass'] = $demonstrationSkill['DemonstrationClass'];
                             $demonstrationSkill['EvidenceWeight'] = !empty($demonstrationSkill['EvidenceWeight']) ? intval($demonstrationSkill['EvidenceWeight']) : null;
                         }
                     }
