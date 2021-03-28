@@ -4,19 +4,34 @@ namespace Slate\CBL\Demonstrations;
 
 use DB;
 
+
+$tableName = DemonstrationSkill::$tableName;
+$historyTableName = DemonstrationSkill::getHistoryTableName();
+$columnName = 'Override';
+
+// skip if table doesn't exist yet or already has new column
+if (!static::tableExists($tableName)) {
+    printf("Skipping migration because table `%s` does not exist yet\n", $tableName);
+    return static::STATUS_SKIPPED;
+}
+
+if (!static::columnExists($tableName, $columnName)) {
+    printf("Skipping migration because column `%s`.%s does not exist\n", $tableName, $columnName);
+    return static::STATUS_SKIPPED;
+}
+
+// check for invalid records
 $invalidRecords = DB::oneValue(
     '
         SELECT COUNT(*) AS Total
-          FROM `%1$s` %2$s
-          JOIN `%3$s` %4$s
-            ON (%2$s.DemonstrationID = %4$s.ID)
-         WHERE IF (%4$s.Class = "%5$s", 1, 0) != %2$s.Override
+          FROM `%s` DemonstrationSkill
+          JOIN `%s` Demonstration
+            ON (DemonstrationSkill.DemonstrationID = Demonstration.ID)
+         WHERE IF (Demonstration.Class = "%s", 1, 0) != DemonstrationSkill.Override
     ',
     [
-        DemonstrationSkill::$tableName,
-        DemonstrationSkill::getTableAlias(),
+        $tableName,
         Demonstration::$tableName,
-        Demonstration::getTableAlias(),
         DB::escape(OverrideDemonstration::class)
     ]
 );
@@ -25,6 +40,18 @@ if (!empty($invalidRecords)) {
     printf("Found %u invalid records that have `Override` set, but are not associated with an `OverrideDemonstration`.\n", $invalidRecords);
     return static::STATUS_FAILED;
 }
+
+// apply migrations
+migrateRecords($tableName);
+migrateRecords($historyTableName);
+
+static::dropColumn($tableName, $columnName);
+static::dropColumn($historyTableName, $columnName);
+
+
+return static::STATUS_EXECUTED;
+
+
 function migrateRecords($tableName) {
 
     // migrate override records
@@ -39,7 +66,7 @@ function migrateRecords($tableName) {
             $tableName
         ]
     );
-    
+
     // migrate non override records
     printf("Migrating non Override records in `%s`\n", $tableName);
     DB::nonQuery(
@@ -53,20 +80,3 @@ function migrateRecords($tableName) {
         ]
     );
 }
-
-function deprecateColumn($tableName) {
-    // deprecate override column
-    printf("Deprecating column `%s`.Override\n", $tableName);
-    DB::nonQuery('ALTER TABLE %s DROP COLUMN Override', [
-        $tableName
-    ]);
-}
-
-migrateRecords(DemonstrationSkill::$tableName);
-migrateRecords(DemonstrationSkill::getHistoryTableName());
-
-deprecateColumn(DemonstrationSkill::$tableName);
-deprecateColumn(DemonstrationSkill::getHistoryTableName());
-
-
-return static::STATUS_EXECUTED;
