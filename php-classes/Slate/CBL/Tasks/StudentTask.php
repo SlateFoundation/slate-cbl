@@ -141,6 +141,32 @@ class StudentTask extends \VersionedRecord
         ]
     ];
 
+    public function getEffectiveDueDate()
+    {
+        if ($this->DueDate) {
+            return $this->DueDate;
+        }
+
+        if ($this->Task) {
+            return $this->Task->DueDate;
+        }
+
+        return null;
+    }
+
+    public function getEffectiveExpirationDate()
+    {
+        if ($this->ExpirationDate) {
+            return $this->ExpirationDate;
+        }
+
+        if ($this->Task) {
+            return $this->Task->ExpirationDate;
+        }
+
+        return null;
+    }
+
 
     public function getOrCreateDemonstration()
     {
