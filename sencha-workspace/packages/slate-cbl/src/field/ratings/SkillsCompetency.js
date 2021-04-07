@@ -5,9 +5,10 @@ Ext.define('Slate.cbl.field.ratings.SkillsCompetency', {
         'Ext.util.Format',
 
         /* global Slate */
+        'Slate.cbl.field.ratings.Rater',
         'Slate.cbl.model.Competency',
         'Slate.sorter.Code',
-        'Slate.ui.override.AddSorted'
+        'Slate.ui.override.AddSorted',
     ],
 
 
@@ -20,7 +21,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsCompetency', {
 
     // container properties
     layout: 'anchor',
-    defaultType: 'slate-cbl-ratings-slider',
+    defaultType: 'slate-cbl-ratings-rater',
     defaults: {
         anchor: '100%',
         excludeForm: true // exclude from any parent forms
