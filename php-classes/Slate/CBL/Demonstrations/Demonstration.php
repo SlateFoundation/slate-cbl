@@ -208,7 +208,7 @@ class Demonstration extends \VersionedRecord
         $skills = [];
         foreach ($skillsData as $skillData) {
             // skip if DemonstratedLevel and Override is unset or null -- these will be deleted
-            if (!isset($skillData['DemonstratedLevel']) && empty($skillData['Override'])) {
+            if (!isset($skillData['DemonstratedLevel']) && !empty($skillData['EvidenceWeight'])) {
                 continue;
             }
 
@@ -216,8 +216,8 @@ class Demonstration extends \VersionedRecord
                 throw new Exception('demonstration skill requires SkillID be set');
             }
 
-            $override = !empty($skillData['Override']);
-            $rating = $override ? null : $skillData['DemonstratedLevel'];
+            $rating = $skillData['DemonstratedLevel'];
+            $evidenceWeight = $skillData['EvidenceWeight'];
 
             if ($DemonstrationSkill = $existingSkills[$skillData['SkillID']]) {
                 if (!empty($skillData['TargetLevel'])) {
@@ -225,13 +225,14 @@ class Demonstration extends \VersionedRecord
                 }
 
                 $DemonstrationSkill->DemonstratedLevel = $rating;
-                $DemonstrationSkill->Override = $override;
+                $DemonstrationSkill->EvidenceWeight = $evidenceWeight;
+
             } else {
                 $DemonstrationSkill = DemonstrationSkill::create([
                     'Demonstration' => $this,
                     'SkillID' => $skillData['SkillID'],
                     'DemonstratedLevel' => $rating,
-                    'Override' => $override
+                    'EvidenceWeight' => $evidenceWeight
                 ]);
 
                 if (!empty($skillData['TargetLevel'])) {
