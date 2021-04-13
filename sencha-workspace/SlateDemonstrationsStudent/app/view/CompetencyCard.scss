@@ -1,6 +1,13 @@
 @keyframes slate-demonstrations-student-competencycard-slidein {
-    from { opacity: 0; transform: translateY(-.3333em); }
-        to { opacity: 1; transform: none; }
+    from {
+        opacity: 0;
+        transform: translateY(-.3333em);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 
 .slate-demonstrations-student-competencycard {
@@ -37,7 +44,8 @@
         table-layout: fixed;
         width: 100%;
 
-        td, th {
+        td,
+        th {
             text-align: center;
         }
 
@@ -106,7 +114,7 @@
         flex: 1;
         padding: .25em;
 
-        + .cbl-skill-demo {
+        +.cbl-skill-demo {
             margin-left: .25em;
         }
     }
@@ -168,15 +176,8 @@
     }
 
     .cbl-skill-complete-indicator {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-
-        box-shadow: none;
-        height: 1.5em;
         list-style: none;
-        margin-left: 1em;
-        text-align: center;
+        margin-left: .5em;
         width: 1.5em;
 
         i {
