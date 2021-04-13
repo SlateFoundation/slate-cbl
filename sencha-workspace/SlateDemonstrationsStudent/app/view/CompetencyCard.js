@@ -382,13 +382,13 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
             /* eslint-disable no-extra-parens */
             isSkillComplete = (
-                // skill is overridden
+                // mark complete if any override is present...
                 lastDemonstration && lastDemonstration.Override
 
-                // skill is filled and last demonstration isn't missed
+                // ...or every skill is marked with non-M demos
                 || (
                     demonstrationsCount >= demonstrationsRequired
-                    && (!lastDemonstration || lastDemonstration.DemonstratedLevel)
+                    && demonstrations.every((demo) => demo.DemonstratedLevel > 0)
                 )
             );
             /* eslint-enable no-extra-parens */
