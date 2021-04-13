@@ -10,6 +10,7 @@ $cbl-progress-missed-color: dynamic(red);
 // TODO: refactor to common place under slate-cbl/etc ?
 .cbl-level-progress-meter {
     background-color: #ccc;
+    box-shadow: 0 -1px 0 rgba(black, .2);
     font-weight: bold;
     height: 2.5em;
     position: relative;
