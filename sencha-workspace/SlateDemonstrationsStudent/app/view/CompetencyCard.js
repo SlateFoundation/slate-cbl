@@ -170,7 +170,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                     '</tpl>',
 
                     '<li class="cbl-skill-complete-indicator <tpl if="isLevelComplete">is-checked</tpl>">',
-                        '<i class="fa fa-2x fa-check-circle-o"></i>',
+                        '<i class="fa fa-2x fa-check"></i>',
                     '</li>',
                 '</ul>',
 

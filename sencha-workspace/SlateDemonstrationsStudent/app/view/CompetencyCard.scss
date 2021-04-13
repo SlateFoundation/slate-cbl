@@ -168,15 +168,8 @@
     }
 
     .cbl-skill-complete-indicator {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-
-        box-shadow: none;
-        height: 1.5em;
         list-style: none;
-        margin-left: 1em;
-        text-align: center;
+        margin-left: .5em;
         width: 1.5em;
 
         i {
