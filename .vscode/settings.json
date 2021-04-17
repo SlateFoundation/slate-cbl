@@ -5,5 +5,9 @@
     "emergence.studio.name": "slate-cbl-studio",
     "emergence.studio.port.http": 7080,
     "emergence.studio.port.frontend": 7081,
-    "emergence.studio.port.mysql": 3306
+    "emergence.studio.port.mysql": 3306,
+    "markdownlint.config": {
+        "default": true,
+        "MD007": { "indent": 4 }
+    }
 }
