@@ -1,41 +1,52 @@
 #!/bin/bash
-hab pkg install emergence/studio chakijs/studio
+
+# install dependent studios
+hab pkg install emergence/studio chakijs/studio jarvus/mkdocs-studio
+
+
+# disable studios printing their own help
+export STUDIO_NOHELP="yes"
+
 source "$(hab pkg path emergence/studio)/studio.sh"
 source "$(hab pkg path chakijs/studio)/studio.sh"
 
+export DOCS_HOLOBRANCH="docs-site"
+export DOCS_PARENT_SOURCE="slate"
+source "$(hab pkg path jarvus/mkdocs-studio)/studio.sh"
+
 
 # declare shortcuts for this repository's applications
-echo "    * Use 'build-demos-student' to build SlateDemonstrationsStudent for testing"
+STUDIO_HELP['build-demos-student']="Build SlateDemonstrationsStudent for local development and testing"
 build-demos-student() {
     build-app SlateDemonstrationsStudent
 }
 
-echo "    * Use 'build-demos-teacher' to build SlateDemonstrationsTeacher for testing"
+STUDIO_HELP['build-demos-teacher']="Build SlateDemonstrationsTeacher for local development and testing"
 build-demos-teacher() {
     build-app SlateDemonstrationsTeacher
 }
 
-echo "    * Use 'build-tasks-student' to build SlateTasksStudent for testing"
+STUDIO_HELP['build-tasks-student']="Build SlateTasksStudent for local development and testing"
 build-tasks-student() {
     build-app SlateTasksStudent
 }
 
-echo "    * Use 'build-tasks-teacher' to build SlateTasksTeacher for testing"
+STUDIO_HELP['build-tasks-teacher']="Build SlateTasksTeacher for local development and testing"
 build-tasks-teacher() {
     build-app SlateTasksTeacher
 }
 
-echo "    * Use 'build-tasks-manager' to build SlateTasksManager for testing"
+STUDIO_HELP['build-tasks-manager']="Build SlateTasksManager for local development and testing"
 build-tasks-manager() {
     build-app SlateTasksManager
 }
 
-echo "    * Use 'build-enroll-admin' to build SlateStudentCompetenciesAdmin for testing"
+STUDIO_HELP['build-enroll-admin']="Build SlateStudentCompetenciesAdmin for local development and testing"
 build-enroll-admin() {
     build-app SlateStudentCompetenciesAdmin
 }
 
-echo "    * Use 'build-all' to build all apps for testing"
+STUDIO_HELP['build-all']="Build all aps for local development and testing"
 build-all() {
     build-demos-student
     build-demos-teacher

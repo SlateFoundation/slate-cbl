@@ -5,6 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Listen for XDebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9000,
+            "pathMappings": {
+                "/hab/svc/php-runtime/var/site/php-classes/Slate/CBL": "${workspaceFolder:slate-cbl}/php-classes/Slate/CBL",
+                "/hab/svc/php-runtime/var/site/php-classes/Slate": "${workspaceFolder:slate}/php-classes/Slate",
+                "/hab/svc/php-runtime/var/site/php-classes/Emergence": "${workspaceFolder:emergence-skeleton-v1}/php-classes/Emergence",
+                "/hab/svc/php-runtime/var/site": "${workspaceFolder:slate-cbl}",
+                "/src/emergence-php-core": "${workspaceFolder:emergence-php-core}"
+            },
+            "ignore": [
+                "**/vendor/**/*"
+            ]
+        },
+        {
             "name": "Launch SlateDemonstrationsStudent",
             "type": "chrome",
             "request": "launch",

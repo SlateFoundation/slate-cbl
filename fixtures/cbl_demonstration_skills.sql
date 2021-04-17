@@ -319,20 +319,6 @@ INSERT INTO `cbl_demonstration_skills` VALUES (298,'Slate\\CBL\\Demonstrations\\
 INSERT INTO `cbl_demonstration_skills` VALUES (299,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,37,7,10,0,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (300,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,37,8,10,0,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (301,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,37,9,10,0,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (302,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,38,10,11,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (303,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,38,11,11,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (304,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,38,12,11,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (305,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,38,13,11,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (306,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,38,14,11,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (307,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,38,15,11,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (308,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,39,35,9,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (309,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,39,36,9,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (310,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,39,37,9,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (311,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,39,38,9,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (312,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,40,39,9,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (313,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,40,40,9,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (314,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,41,39,9,9,0);
-INSERT INTO `cbl_demonstration_skills` VALUES (315,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2019-01-02 03:04:05',3,NULL,NULL,41,40,9,9,0);
 
 
 CREATE TABLE `history_cbl_demonstration_skills` (
