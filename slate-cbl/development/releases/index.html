@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://slatefoundation.github.io/slate-cbl/slate-cbl/development/releases/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.0">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
     
     
       
@@ -20,7 +20,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.33e2939f.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.9299cb39.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -188,7 +188,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../development/getting-started/site/" class="md-tabs__link">
+      <a href="../../../development/getting-started/local-studio/" class="md-tabs__link">
         Development
       </a>
     </li>
@@ -324,8 +324,20 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../development/getting-started/site/" class="md-nav__link">
-        Core website
+      <a href="../../../development/getting-started/local-studio/" class="md-nav__link">
+        Local Studio Container
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../development/getting-started/virtual-multisite/" class="md-nav__link">
+        Virtual Multi-site Container
       </a>
     </li>
   
@@ -1027,11 +1039,13 @@
 <li>Open a pull request using the <code>releases/v2</code> branch as a base (the branch being merged <em>into</em>) and the <code>develop</code> branch as the compared branch (the branch being merged <em>from</em>)</li>
 <li>
 <p>Title the pull request in the format <code>Release: slate-cbl vX.Y.Z</code>, following semantic versioning practices:</p>
-<ul>
-<li>Increment only the patch number (Z) for bug fixes or minor improvements that do not change expected functionality</li>
+</li>
+<li>
+<p>Increment only the patch number (Z) for bug fixes or minor improvements that do not change expected functionality</p>
+</li>
 <li>Increment the minor release number (Y) and reset the patch number (Z) to zero if new features are being added or other changes made that a typical user would want to automatically upgrade to</li>
-<li>Increment the major release number (X) and reset the other numbers when changes are so significant that an automatic upgrade is not possible, or would not be desirable for typical users</li>
-</ul>
+<li>
+<p>Increment the major release number (X) and reset the other numbers when changes are so significant that an automatic upgrade is not possible, or would not be desirable for typical users</p>
 </li>
 <li>
 <p>Outline with markdown bullet points in the pull request&rsquo;s description the changes made in the release as the will manifest from a user&rsquo;s perspective. This outline serves as a draft for the release notes which may ultimately be presented to end users to prepare them for changes in their experience.</p>
@@ -1041,14 +1055,14 @@
 <li>Merge the pull request</li>
 <li>
 <p><a href="https://github.com/SlateFoundation/slate-cbl/releases/new">Create a new release</a></p>
-<ul>
-<li>For <em>Tag version</em> input the designated release version from the pull request in the format <code>vX.Y.Z</code> (include the <code>v</code> prefix)</li>
+</li>
+<li>
+<p>For <em>Tag version</em> input the designated release version from the pull request in the format <code>vX.Y.Z</code> (include the <code>v</code> prefix)</p>
+</li>
 <li>For <em>Target</em> select the <code>releases/v2</code> branch</li>
 <li>For <em>Release title</em> input the project name and version in the format <code>slate-cbl vX.Y.Z</code> (matching the pull request title, but without the <code>Release:</code> prefix)</li>
 <li>For <em>Describe this release</em>, copy the bullet point release notes drafted in the pull request</li>
 <li>Click <em>Publish release</em></li>
-</ul>
-</li>
 </ol>
                 
               
@@ -1121,7 +1135,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.d892486b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.7353b375.min.js"></script>
       
         <script src="https://unpkg.com/mermaid@8.5.0/dist/mermaid.min.js"></script>
       

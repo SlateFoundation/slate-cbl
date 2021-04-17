@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://slatefoundation.github.io/slate-cbl/slate-cbl/exports/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.0">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
     
     
       
@@ -20,7 +20,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.33e2939f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -188,7 +188,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../development/getting-started/site/" class="md-tabs__link">
+      <a href="../../development/getting-started/local-studio/" class="md-tabs__link">
         Development
       </a>
     </li>
@@ -324,8 +324,20 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/getting-started/site/" class="md-nav__link">
-        Core website
+      <a href="../../development/getting-started/local-studio/" class="md-nav__link">
+        Local Studio Container
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/getting-started/virtual-multisite/" class="md-nav__link">
+        Virtual Multi-site Container
       </a>
     </li>
   
@@ -1163,19 +1175,15 @@
 <h2 id="competencies-details-csv">Competencies-details (CSV)<a class="headerlink" href="#competencies-details-csv" title="Permanent link"> ¶</a></h2>
 <ul>
 <li>Organized with a unique row for each student for each competency (total number of rows for each student equals the total number of active or completed competency portfolio levels)</li>
-<li>Each competency lists the portfolio level, average performance level, growth, progress %, total evidence requirements, total opportunities, total completed evidence requirements, total rated evidence requirements (non M or Override) and total missed evidence requirements<ul>
+<li>Each competency lists the portfolio level, average performance level, growth, progress %, total evidence requirements, total opportunities, total completed evidence requirements, total rated evidence requirements (non M or Override) and total missed evidence requirements</li>
 <li>Growth is calculated by including only the skills that have multiple numerical ratings (not M or Override). For each skill, you subtract the oldest from the most recent demonstration and then average this skill growth with all the other skills in that competency and portfolio level that had multiple numerical logs (and thus could calculate growth). Skills that have only one demonstration can not have growth and thus are NULL for growth. If within a competency, only one skill has growth for the given portfolio level, the growth of the competency equals the growth of that one skill.</li>
-</ul>
-</li>
 <li>Example of download URL: /cbl/exports/competencies-details?students=group+class_of_2018</li>
 </ul>
 <h2 id="content-areas-csv">Content-areas (CSV)<a class="headerlink" href="#content-areas-csv" title="Permanent link"> ¶</a></h2>
 <ul>
 <li>Organized with a unique row for each student for each content area level (total number of rows for each student equals the total number of completed or active content area portfolio levels)</li>
-<li>Each content area row lists the portfolio level, performance level, growth, progress %, total evidence requirements, total opportunities, completed evidence requirements, rated evidence requirements (non M or Override), and missed evidence requirements<ul>
+<li>Each content area row lists the portfolio level, performance level, growth, progress %, total evidence requirements, total opportunities, completed evidence requirements, rated evidence requirements (non M or Override), and missed evidence requirements</li>
 <li>Growth is calculated by including only the skills that have two or more numerical ratings (not M or Override). For each skill, you subtract the oldest from the most recent demonstration and then average this skill growth with all the other skills that have growth in the given competency at that level. Then, you average the growth for each competency to calculate the growth for the content area. This means that if a single skill within a competency is the only one that has growth, the growth for that skill is treated as the competency growth and factors strongly into the averaging. If no skill in a competency has growth (they&rsquo;re all NULL), then the competency growth is NULL and should not count towards the content-area growth average.</li>
-</ul>
-</li>
 <li>Example of download URL: /cbl/exports/content-areas?students=group+class_of_2018</li>
 </ul>
 <h2 id="tasks-csv">Tasks (CSV)<a class="headerlink" href="#tasks-csv" title="Permanent link"> ¶</a></h2>
@@ -1255,7 +1263,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d892486b.min.js"></script>
+      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
       
         <script src="https://unpkg.com/mermaid@8.5.0/dist/mermaid.min.js"></script>
       
