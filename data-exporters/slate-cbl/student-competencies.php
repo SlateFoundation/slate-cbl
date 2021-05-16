@@ -79,13 +79,14 @@ return [
                     DB::escape($query['content_area'])
                 ]
             );
-
-            $conditions['CompetencyID'] = [
-                'values' => array_keys($competencyCodes)
-            ];
         } else {
             $competencyCodes = DB::valuesTable('ID', 'Code', 'SELECT Competency.ID, Competency.Code FROM `%s` Competency WHERE Competency.Status = "active"', Slate\CBL\Competency::$tableName);
         }
+
+        $conditions['CompetencyID'] = [
+            'values' => array_keys($competencyCodes)
+        ];
+
         natcasesort($competencyCodes);
         $order[] = 'FIELD(StudentCompetency.CompetencyID, '.implode(',', array_keys($competencyCodes)).')';
 
