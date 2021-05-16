@@ -5,6 +5,7 @@ return [
     'description' => 'Each row represents a competency that a student has been enrolled in and their progress within it',
     'filename' => 'student-competencies',
     'headers' => [
+        'ID',
         'PersonID' => 'Person ID',
         'StudentFullName' => 'Student',
         'StudentNumber' => 'Student Number',
@@ -136,6 +137,7 @@ return [
                 $demonstrationsAverage = round($StudentCompetency->getDemonstrationsAverage(), 1);
 
                 yield [
+                    'ID' => $StudentCompetency->ID,
                     'PersonID' => $Student->ID,
                     'StudentFullName' => $Student->FullName,
                     'StudentNumber' => $Student->StudentNumber,
