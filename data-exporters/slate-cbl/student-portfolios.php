@@ -167,6 +167,7 @@ return [
                             'totalRequired' => 0,
                             'totalMissed' => 0,
                             'totalComplete' => 0,
+                            'totalOpportunities' => 0,
                             'averageValues' => [],
                             'growthValues' => []
                         ];
