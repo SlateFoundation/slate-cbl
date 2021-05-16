@@ -6,6 +6,7 @@ return [
     'filename' => 'student-tasks',
     'headers' => [
         'ID',
+        'PersonID' => 'Person ID',
         'StudentFullName' => 'Student',
         'StudentNumber' => 'Student Number',
         'TaskTitle' => 'Task Title',
@@ -263,6 +264,7 @@ return [
 
             yield [
                 'ID' => $StudentTask->ID,
+                'PersonID' => $StudentTask->Student->ID,
                 'StudentFullName' => $StudentTask->Student->FullName,
                 'StudentNumber' => $StudentTask->Student->StudentNumber,
                 'TaskTitle' => $StudentTask->Task->Title,
