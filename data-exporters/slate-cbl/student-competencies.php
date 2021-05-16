@@ -71,6 +71,7 @@ return [
                       JOIN `%s` Competency
                         ON Competency.ContentAreaID = ContentArea.ID
                      WHERE ContentArea.Code = "%s"
+                       AND Competency.Status = "active"
                 ',
                 [
                     Slate\CBL\ContentArea::$tableName,
@@ -83,7 +84,7 @@ return [
                 'values' => array_keys($competencyCodes)
             ];
         } else {
-            $competencyCodes = DB::valuesTable('ID', 'Code', 'SELECT Competency.ID, Competency.Code FROM `%s` Competency', Slate\CBL\Competency::$tableName);
+            $competencyCodes = DB::valuesTable('ID', 'Code', 'SELECT Competency.ID, Competency.Code FROM `%s` Competency WHERE Competency.Status = "active"', Slate\CBL\Competency::$tableName);
         }
         natcasesort($competencyCodes);
         $order[] = 'FIELD(StudentCompetency.CompetencyID, '.implode(',', array_keys($competencyCodes)).')';
