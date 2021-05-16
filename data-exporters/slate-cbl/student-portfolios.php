@@ -211,7 +211,7 @@ return [
                         'StudentFullName' => $Student->FullName,
                         'StudentNumber' => $Student->StudentNumber,
                         'ContentAreaCode' => Slate\CBL\ContentArea::getByID($finishedPortfolio['ContentAreaID'])->Code,
-                        'Level' => $finishedPortfolio['Level'],
+                        'Level' => intval($finishedPortfolio['Level']),
                         'DemonstrationsAverage' => $average,
                         'Growth' => $growth,
                         'Progress' => round(100 * ($finishedPortfolio['totalRequired'] ? $finishedPortfolio['totalComplete']/$finishedPortfolio['totalRequired'] : 1)) . '%',
