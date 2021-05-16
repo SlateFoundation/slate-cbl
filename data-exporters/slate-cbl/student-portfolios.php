@@ -215,7 +215,7 @@ return [
                         'Level' => intval($finishedPortfolio['Level']),
                         'DemonstrationsAverage' => $average,
                         'Growth' => $growth,
-                        'Progress' => round(100 * ($finishedPortfolio['totalRequired'] ? $finishedPortfolio['totalComplete']/$finishedPortfolio['totalRequired'] : 1)) . '%',
+                        'Progress' => ($finishedPortfolio['totalRequired'] ? $finishedPortfolio['totalComplete']/$finishedPortfolio['totalRequired'] : 1),
                         'DemonstrationsRequired' => $finishedPortfolio['totalRequired'],
                         'DemonstrationsComplete' => $finishedPortfolio['totalComplete'],
                         'DemonstrationsMissed' => $finishedPortfolio['totalMissed'],
