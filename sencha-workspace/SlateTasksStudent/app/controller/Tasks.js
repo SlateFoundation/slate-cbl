@@ -177,6 +177,7 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
         }
 
         me.filterRecords();
+        menu.hide();
     },
 
     onSaveClick: function(saveBtn) {
