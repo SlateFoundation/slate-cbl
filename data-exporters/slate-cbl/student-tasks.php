@@ -258,10 +258,6 @@ return [
             $skillCodes = array_unique($skillCodes);
             natcasesort($skillCodes);
 
-            $dueDate = $StudentTask->DueDate ? date('m/d/Y', $StudentTask->DueDate) : $StudentTask->Task->DueDate ? date('m/d/Y', $StudentTask->Task->DueDate) : null;
-            $expirationDate = $StudentTask->ExpirationDate ? date('m/d/Y', $StudentTask->ExpirationDate) : $StudentTask->Task->ExpirationDate ? date('m/d/Y', $StudentTask->Task->ExpirationDate) : null;
-            $assignedDate = date('m/d/Y', $StudentTask->Created);
-
             yield [
                 'ID' => $StudentTask->ID,
                 'PersonID' => $StudentTask->Student->ID,
@@ -273,10 +269,10 @@ return [
                 'Created' =>  $StudentTask->Task->Created ? date('m/d/Y H:i:s P', $StudentTask->Task->Created) : null,
                 'SectionTitle' => $StudentTask->Task->Section->Title,
                 'Status' => $StudentTask->TaskStatus,
-                'DueDate' => $dueDate,
-                'ExpirationDate' => $expirationDate,
+                'DueDate' => $StudentTask->getEffectiveDueDate(),
+                'ExpirationDate' => $StudentTask->getEffectiveExpirationDate(),
                 'SubmittedDate' => $submissionTimestamp ? date('m/d/Y', $submissionTimestamp) : null,
-                'AssignedDate' => $assignedDate,
+                'AssignedDate' => date('m/d/Y', $StudentTask->Created),
                 'SkillCodes' => implode(', ', $skillCodes),
                 'CourseCode' => $StudentTask->Task->Section->Course->Code,
                 'TermTitle' => $StudentTask->Task->Section->Term->Title,
