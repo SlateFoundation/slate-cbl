@@ -24,6 +24,11 @@ class Competency extends \VersionedRecord
         ]
         ,'Descriptor'
         ,'Statement' => 'clob'
+        ,'Status' => [
+            'type' => 'enum',
+            'values' => ['draft', 'active', 'archived'],
+            'default' => 'active'
+        ]
     ];
 
     public static $relationships = [

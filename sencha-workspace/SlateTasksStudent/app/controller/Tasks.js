@@ -166,15 +166,18 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
     onFilterViewAllClick: function() {
         var me = this,
             menu = me.getFilterMenu(),
-            checkedFilters = menu.query('menucheckitem[checked]'),
-            checkedFiltersLength = checkedFilters.length,
-            i = 0;
+            filters = menu.query('menucheckitem'),
+            filtersLength = filters.length,
+            i = 0,
+            checked;
 
-        for (; i < checkedFiltersLength; i++) {
-            checkedFilters[i].setChecked(false, true);
+        for (; i < filtersLength; i++) {
+          checked = filters[i].filterGroup === 'Status' || filters[i].filterGroup === 'Archive';
+          filters[i].setChecked(checked, true);
         }
 
         me.filterRecords();
+        menu.hide();
     },
 
     onSaveClick: function(saveBtn) {

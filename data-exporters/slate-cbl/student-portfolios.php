@@ -70,11 +70,26 @@ return [
                           JOIN `%s` Competency
                             ON Competency.ContentAreaID = ContentArea.ID
                          WHERE ContentArea.Code = "%s"
+                          AND Competency.Status = "active"
                     ',
                     [
                         Slate\CBL\ContentArea::$tableName,
                         Slate\CBL\Competency::$tableName,
                         DB::escape($query['content_area'])
+                    ]
+                )
+            ];
+        } else {
+            $conditions['CompetencyID'] = [
+                'values' => DB::allValues(
+                    'ID',
+                    '
+                        SELECT Competency.ID
+                          FROM `%s` Competency
+                         WHERE Competency.Status = "active"
+                    ',
+                    [
+                        Slate\CBL\Competency::$tableName
                     ]
                 )
             ];
@@ -152,6 +167,7 @@ return [
                             'totalRequired' => 0,
                             'totalMissed' => 0,
                             'totalComplete' => 0,
+                            'totalOpportunities' => 0,
                             'averageValues' => [],
                             'growthValues' => []
                         ];
@@ -180,13 +196,19 @@ return [
                 // yield finished portfolio
                 if ($finishedPortfolio) {
                     if (count($finishedPortfolio['averageValues'])) {
-                        $average = round(array_sum($finishedPortfolio['averageValues']) / count($finishedPortfolio['averageValues']), 2);
+                        $average = round(
+                            array_sum($finishedPortfolio['averageValues']) / count($finishedPortfolio['averageValues']),
+                            Slate\CBL\StudentCompetency::$averagePrecision
+                        );
                     } else {
                         $average = null;
                     }
 
                     if (count($finishedPortfolio['growthValues'])) {
-                        $growth = round(array_sum($finishedPortfolio['growthValues']) / count($finishedPortfolio['growthValues']), 2);
+                        $growth = round(
+                            array_sum($finishedPortfolio['growthValues']) / count($finishedPortfolio['growthValues']),
+                            Slate\CBL\StudentCompetency::$averagePrecision
+                        );
                     } else {
                         $growth = null;
                     }
@@ -196,10 +218,15 @@ return [
                         'StudentFullName' => $Student->FullName,
                         'StudentNumber' => $Student->StudentNumber,
                         'ContentAreaCode' => Slate\CBL\ContentArea::getByID($finishedPortfolio['ContentAreaID'])->Code,
-                        'Level' => $finishedPortfolio['Level'],
+                        'Level' => intval($finishedPortfolio['Level']),
                         'DemonstrationsAverage' => $average,
                         'Growth' => $growth,
-                        'Progress' => round(100 * ($finishedPortfolio['totalRequired'] ? $finishedPortfolio['totalComplete']/$finishedPortfolio['totalRequired'] : 1)) . '%',
+                        'Progress' => round(
+                            $finishedPortfolio['totalRequired']
+                                ? $finishedPortfolio['totalComplete'] / $finishedPortfolio['totalRequired']
+                                : 1,
+                            2
+                        ),
                         'DemonstrationsRequired' => $finishedPortfolio['totalRequired'],
                         'DemonstrationsComplete' => $finishedPortfolio['totalComplete'],
                         'DemonstrationsMissed' => $finishedPortfolio['totalMissed'],

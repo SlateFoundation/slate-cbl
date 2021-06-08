@@ -20,6 +20,11 @@ class ContentArea extends \ActiveRecord
             ,'unique' => true
         ]
         ,'Title' => 'string'
+        ,'Status' => [
+            'type' => 'enum',
+            'values' => ['draft', 'active', 'archived'],
+            'default' => 'active'
+        ]
     ];
 
     public static $relationships = [

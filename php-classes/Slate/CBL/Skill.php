@@ -22,6 +22,11 @@ class Skill extends \VersionedRecord
         ,'Descriptor' => 'clob'
         ,'Statement' => 'clob'
         ,'DemonstrationsRequired' => 'json'
+        ,'Status' => [
+            'type' => 'enum',
+            'values' => ['draft', 'active', 'archived'],
+            'default' => 'active'
+        ]
     ];
 
     public static $relationships = [
