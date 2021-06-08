@@ -5,11 +5,13 @@ return [
     'description' => 'Each row represents an assignment of a task to a student',
     'filename' => 'student-tasks',
     'headers' => [
+        'ID',
+        'PersonID' => 'Person ID',
         'StudentFullName' => 'Student',
         'StudentNumber' => 'Student Number',
         'TaskTitle' => 'Task Title',
         'TaskExperienceType' => 'Experience Type',
-        'CreatorFullName' => 'Teacher Assigned',
+        'CreatorUsername' => 'Teacher Assigned',
         'Created',
         'SectionTitle' => 'Course Section',
         'Status' => 'Current Status of task',
@@ -18,17 +20,72 @@ return [
         'SubmittedDate' => 'Submitted date',
         'SkillCodes' => 'Skills Codes',
         'CourseCode' => 'Course Code',
-        'TermTitle' => 'Term'
+        'TermTitle' => 'Term Title',
+        'TermHandle' => 'Term Handle'
     ],
     'readQuery' => function (array $input) {
         $query = [
             'students' => 'all',
             'date_after' => null,
-            'date_before' => null
+            'date_before' => null,
+            'submitted_date_after' => null,
+            'submitted_date_before' => null,
+            'term' => null,
+            'created_within_term' => true,
+            'submitted_within_term' => true
         ];
 
         if (!empty($input['students'])) {
             $query['students'] = $input['students'];
+        }
+
+        // Term currently overrides {submitted_}date_{before|after} input
+        $Term = null;
+        if (!empty($input['term'])) {
+            if ($input['term'] === '*current') {
+                $Term = Slate\Term::getCurrent();
+            } elseif ($input['term'] === '*current-master') {
+                $Term = Slate\Term::getCurrent();
+                $Term = $Term ? $Term->getMaster() : null;
+            } else {
+                $Term = Slate\Term::getByHandle($input['term']);
+            }
+
+            if (!$Term) {
+                throw new RangeException('term could not be found');
+            }
+
+            $query['term'] = $Term;
+
+            if (isset($input['created_within_term'])) {
+                $created_within_term = $input['created_within_term'];
+            } else { // default
+                $created_within_term = $query['submitted_within_term'];
+            }
+
+            if (isset($input['submitted_within_term'])) {
+                $submitted_within_term = $input['submitted_within_term'];
+            } else {
+                $submitted_within_term = $query['submitted_within_term'];
+            }
+
+            if (empty($created_within_term) && empty($submitted_within_term)) {
+                throw new RangeException('created_within_term or submitted_within_term must be selected with term filter');
+            }
+
+            if (!empty($created_within_term)) {
+                $query['date_after'] = $Term->StartDate;
+                $query['date_before'] = $Term->EndDate;
+                unset($input['date_after']);
+                unset($input['date_before']);
+            }
+
+            if (!empty($submitted_within_term)) {
+                $query['submitted_date_after'] = $Term->StartDate;
+                $query['submitted_date_before'] = $Term->EndDate;
+                unset($input['submitted_date_after']);
+                unset($input['submitted_date_before']);
+            }
         }
 
         if (!empty($input['date_after'])) {
@@ -45,6 +102,22 @@ return [
             }
 
             $query['date_before'] = date('Y-m-d H:i:s', $date);
+        }
+
+        if (!empty($input['submitted_date_after'])) {
+            if (!$date = strtotime($input['submitted_date_after'])) {
+                throw new RangeException('submitted_date_after could not be parsed as a date');
+            }
+
+            $query['submitted_date_after'] = date('Y-m-d H:i:s', $date);
+        }
+
+        if (!empty($input['submitted_date_before'])) {
+            if (!$date = strtotime($input['submitted_date_before'])) {
+                throw new RangeException('submitted_date_before could not be parsed as a date');
+            }
+
+            $query['submitted_date_before'] = date('Y-m-d H:i:s', $date);
         }
 
         return $query;
@@ -67,30 +140,70 @@ return [
         // build StudentTask conditions
         $conditions = [];
         $order = [];
+        $dateConditions = [];
+        $joinStatement = '';
+
+        $studentTaskTableAlias = Slate\CBL\Tasks\StudentTask::getTableAlias();
 
         if (count($studentIds)) {
-            $conditions['StudentID'] = [ 'values' => $studentIds ];
+            $conditions['StudentID'] = [
+                'values' => $studentIds,
+                'operator' => 'IN'
+            ];
             $order[] = 'FIELD(StudentID, '.implode(',', $studentIds).')';
         } else {
             $conditions[] = 'FALSE';
         }
 
-        if ($query['date_after'] && $query['date_before']) {
-            $conditions['Created'] = [
-                'operator' => 'BETWEEN',
-                'min' => $query['date_after'],
-                'max' => $query['date_before']
-            ];
-        } elseif ($query['date_after']) {
-            $conditions['Created'] = [
-                'operator' => '>=',
-                'value' => $query['date_after']
-            ];
-        } elseif ($query['date_before']) {
-            $conditions['Created'] = [
-                'operator' => '<=',
-                'value' => $query['date_before']
-            ];
+        if (!empty($query['date_after']) || !empty($query['date_before'])) {
+            $createdConditions = [];
+            if ($query['date_after'] && $query['date_before']) {
+                $createdConditions['Created'] = [
+                    'operator' => 'BETWEEN',
+                    'min' => $query['date_after'],
+                    'max' => $query['date_before']
+                ];
+            } elseif ($query['date_after']) {
+                $createdConditions['Created'] = [
+                    'operator' => '>=',
+                    'value' => $query['date_after']
+                ];
+            } elseif ($query['date_before']) {
+                $createdConditions['Created'] = [
+                    'operator' => '<=',
+                    'value' => $query['date_before']
+                ];
+            }
+
+            $dateConditions = array_values(Slate\CBL\Tasks\StudentTask::mapConditions($createdConditions, true));
+        }
+
+        if (!empty($query['submitted_date_after']) || !empty($query['submitted_date_before'])) {
+            $submissionConditions = [];
+            $submissionTableAlias = Slate\CBL\Tasks\StudentTaskSubmission::getTableAlias();
+            $submissionTableName = Slate\CBL\Tasks\StudentTaskSubmission::$tableName;
+
+            $joinStatement .= " LEFT JOIN `{$submissionTableName}` $submissionTableAlias ON $submissionTableAlias.StudentTaskID = $studentTaskTableAlias.ID ";
+
+            $submissionConditions = [];
+            if ($query['submitted_date_after'] && $query['submitted_date_before']) {
+                $submissionConditions['Created'] = [
+                    'operator' => 'BETWEEN',
+                    'min' => $query['submitted_date_after'],
+                    'max' => $query['submitted_date_before']
+                ];
+            } elseif ($query['submitted_date_after']) {
+                $submissionConditions['Created'] = [
+                    'operator' => '>=',
+                    'value' => $query['submitted_date_after']
+                ];
+            } elseif ($query['submitted_date_before']) {
+                $submissionConditions['Created'] = [
+                    'operator' => '<=',
+                    'value' => $query['submitted_date_before']
+                ];
+            }
+            $dateConditions = array_merge($dateConditions, array_values(Slate\CBL\Tasks\StudentTaskSubmission::mapConditions($submissionConditions, true)));
         }
 
         $order[] = 'ID';
@@ -102,14 +215,19 @@ return [
         // build rows
         $result = DB::query(
             '
-                SELECT StudentTask.*
-                    FROM `%s` StudentTask
-                    WHERE (%s)
-                    ORDER BY %s
+                SELECT DISTINCT %2$s.*
+                    FROM `%1$s` %2$s
+                    %3$s
+                    WHERE ((%4$s)
+                      AND ((%5$s)))
+                    ORDER BY %6$s
             ',
             [
                 Slate\CBL\Tasks\StudentTask::$tableName,
+                $studentTaskTableAlias,
+                !empty($joinStatement) ? ($joinStatement) : '',
                 count($conditions) ? join(') AND (', $conditions) : 'TRUE',
+                !empty($dateConditions) ? join(') OR (', $dateConditions) : 'TRUE',
                 implode(',', $order)
             ]
         );
@@ -119,7 +237,9 @@ return [
             $submissionTimestamp = $StudentTask->getSubmissionTimestamp();
 
             // start with list of skill codes for task, cached between records
-            if (!$skillCodes = $taskSkillCodes[$studentTask->TaskID]) {
+            if (isset($taskSkillCodes[$StudentTask->TaskID])) {
+                $skillCodes = $taskSkillCodes[$StudentTask->TaskID];
+            } else {
                 $skillCodes = [];
 
                 foreach ($StudentTask->Task->Skills as $Skill) {
@@ -139,20 +259,24 @@ return [
             natcasesort($skillCodes);
 
             yield [
+                'ID' => $StudentTask->ID,
+                'PersonID' => $StudentTask->Student->ID,
                 'StudentFullName' => $StudentTask->Student->FullName,
                 'StudentNumber' => $StudentTask->Student->StudentNumber,
                 'TaskTitle' => $StudentTask->Task->Title,
                 'TaskExperienceType' => $StudentTask->Task->ExperienceType,
-                'CreatorFullName' => $StudentTask->Creator->FullName,
-                'Created' =>  $StudentTask->Created ? date('m/d/Y', $StudentTask->Created) : '',
+                'CreatorUsername' => $StudentTask->Creator->Username,
+                'Created' =>  $StudentTask->Task->Created ? date('m/d/Y H:i:s P', $StudentTask->Task->Created) : null,
                 'SectionTitle' => $StudentTask->Task->Section->Title,
                 'Status' => $StudentTask->TaskStatus,
-                'DueDate' => $StudentTask->getEffectiveDueDate() ? date('m/d/Y', $StudentTask->getEffectiveDueDate()) : '',
-                'ExpirationDate' => $StudentTask->getEffectiveExpirationDate() ? date('m/d/Y', $StudentTask->getEffectiveExpirationDate()) : '',
-                'SubmittedDate' => $submissionTimestamp ? date('m/d/Y', $submissionTimestamp) : '',
+                'DueDate' => $StudentTask->getEffectiveDueDate() ? date('m/d/Y', $StudentTask->getEffectiveDueDate()) : null,
+                'ExpirationDate' => $StudentTask->getEffectiveExpirationDate() ? date('m/d/Y', $StudentTask->getEffectiveExpirationDate()) : null,
+                'SubmittedDate' => $submissionTimestamp ? date('m/d/Y', $submissionTimestamp) : null,
+                'AssignedDate' => date('m/d/Y', $StudentTask->Created),
                 'SkillCodes' => implode(', ', $skillCodes),
                 'CourseCode' => $StudentTask->Task->Section->Course->Code,
-                'TermTitle' => $StudentTask->Task->Section->Term->Title
+                'TermTitle' => $StudentTask->Task->Section->Term->Title,
+                'TermHandle' => $StudentTask->Task->Section->Term->Handle
             ];
         }
 
