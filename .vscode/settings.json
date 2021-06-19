@@ -9,5 +9,8 @@
     "markdownlint.config": {
         "default": true,
         "MD007": { "indent": 4 }
-    }
+    },
+    "eslint.workingDirectories": [
+        "./vue/advanced-portfolio-manager"
+    ]
 }
