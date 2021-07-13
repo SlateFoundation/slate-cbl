@@ -13,12 +13,15 @@ class ExportsRequestHandler extends \RequestHandler
         $GLOBALS['Session']->requireAccountLevel('Staff');
 
         $scripts = [];
+
+        /* Removing per SCHOOL-83 - Delete all deprecated exports under /cbl/exports
         foreach (Emergence_FS::getAggregateChildren('site-root/cbl/exports') as $scriptName => $scriptFile) {
             preg_match('/(.+\.csv)\.php/', $scriptName, $matches);
             if (!empty($matches)) {
                 $scripts[$matches[1]] = $scriptFile;
             }
         }
+        */
 
         return static::respond('index', [
             'data' => $scripts
