@@ -1,0 +1,7 @@
+extra:
+  studio:
+    name: slate-cbl-studio
+    web_port: 2190
+    static_port: 2191
+    docs_port: 2198
+    mysql_port: 2196
