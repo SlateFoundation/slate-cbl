@@ -9,14 +9,14 @@
       
       
       
-        <link rel="canonical" href="https://slatefoundation.github.io/slate-cbl/development/getting-started/cbl-webapps/">
+        <link rel="canonical" href="https://slatefoundation.github.io/slate-cbl/development/getting-started/content-editor/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.2">
     
     
       
-        <title>CBL webapps - Slate CBL Docs</title>
+        <title>Content Editor webapp - Slate CBL Docs</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cbl-webapps" class="md-skip">
+        <a href="#content-editor-webapp" class="md-skip">
           Skip to content
         </a>
       
@@ -99,7 +99,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              CBL webapps
+              Content Editor webapp
             
           </span>
         </div>
@@ -356,6 +356,18 @@
             
   
   
+  
+    <li class="md-nav__item">
+      <a href="../cbl-webapps/" class="md-nav__link">
+        CBL webapps
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
     
   
   
@@ -368,12 +380,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          CBL webapps
+          Content Editor webapp
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        CBL webapps
+        Content Editor webapp
       </a>
       
         
@@ -389,6 +401,13 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#code-layout" class="md-nav__link">
+    Code layout
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#running-live-changes" class="md-nav__link">
@@ -415,18 +434,6 @@
   
 </nav>
       
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../content-editor/" class="md-nav__link">
-        Content Editor webapp
-      </a>
     </li>
   
 
@@ -1090,6 +1097,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#code-layout" class="md-nav__link">
+    Code layout
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#running-live-changes" class="md-nav__link">
     Running live changes
   </a>
@@ -1122,37 +1136,45 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/SlateFoundation/slate-cbl/edit/develop/docs/development/getting-started/cbl-webapps.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/SlateFoundation/slate-cbl/edit/develop/docs/development/getting-started/content-editor.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="cbl-webapps">CBL webapps<a class="headerlink" href="#cbl-webapps" title="Permanent link"> ¶</a></h1>
+                <h1 id="content-editor-webapp">Content Editor webapp<a class="headerlink" href="#content-editor-webapp" title="Permanent link"> ¶</a></h1>
+<h2 id="code-layout">Code layout<a class="headerlink" href="#code-layout" title="Permanent link"> ¶</a></h2>
+<ul>
+<li><code>sencha-workspace/</code><ul>
+<li><code>packages/</code><ul>
+<li><code>emergence-cms/</code>: Primary location for content editor UI code</li>
+<li><code>emr-skeleton-theme/</code>: The Sencha theme used when rendering the content editor</li>
+</ul>
+</li>
+<li><code>EmergenceContentEditor/</code>: A thin Sencha application used to make development easier and to provide a build target for generating the theme</li>
+</ul>
+</li>
+<li><code>html-templates/</code><ul>
+<li><code>webapps/EmergenceContentEditor/sencha.tpl</code>: A template for rendering the content editor embedded in the site&rsquo;s design frame</li>
+<li><code>html-templates/blog/blogPostEdit.tpl</code>: A wrapper around <code>sencha.tpl</code> to provide the content editor UI on the blog post edit form</li>
+<li><code>html-templates/pages/pageEdit.tpl</code>: A wrapper around <code>sencha.tpl</code> to provide the content editor UI on the page edit form</li>
+</ul>
+</li>
+</ul>
 <h2 id="running-live-changes">Running live changes<a class="headerlink" href="#running-live-changes" title="Permanent link"> ¶</a></h2>
-<p>Each frontend Sencha application needs to be built at least once with the Sencha CMD build tool to scaffold/update a set of loader files. After that, you can just edit files the working tree and reload the browser. The two exceptions where you need to build again are changing the list of packages or changing the list of override files.</p>
-<p>There is a shortcut studio command for building each frontend application:</p>
-<ul>
-<li><code>build-enroll-admin</code></li>
-<li><code>build-demos-teacher</code></li>
-<li><code>build-demos-student</code></li>
-<li><code>build-tasks-manager</code></li>
-<li><code>build-tasks-teacher</code></li>
-<li><code>build-tasks-student</code></li>
-</ul>
-<p>Once built, the live-editable version of each app can be accessed via the static web server that the studio runs on port <code>2191</code>. The backend host must be provided to the apps via the <code>?apiHost</code> query parameter. Any remote backend with CORS enabled will work, or you can use the local backend:</p>
-<ul>
-<li><a href="http://localhost:2191/SlateStudentCompetenciesAdmin/?apiHost=localhost:2190"><code>localhost:2191/SlateStudentCompetenciesAdmin/?apiHost=localhost:2190</code></a></li>
-<li><a href="http://localhost:2191/SlateDemonstrationsTeacher/?apiHost=localhost:2190"><code>localhost:2191/SlateDemonstrationsTeacher/?apiHost=localhost:2190</code></a></li>
-<li><a href="http://localhost:2191/SlateDemonstrationsStudent/?apiHost=localhost:2190"><code>localhost:2191/SlateDemonstrationsStudent/?apiHost=localhost:2190</code></a></li>
-<li><a href="http://localhost:2191/SlateTasksManager/?apiHost=localhost:2190"><code>localhost:2191/SlateTasksManager/?apiHost=localhost:2190</code></a></li>
-<li><a href="http://localhost:2191/SlateTasksTeacher/?apiHost=localhost:2190"><code>localhost:2191/SlateTasksTeacher/?apiHost=localhost:2190</code></a></li>
-<li><a href="http://localhost:2191/SlateTasksStudent/?apiHost=localhost:2190"><code>localhost:2191/SlateTasksStudent/?apiHost=localhost:2190</code></a></li>
-</ul>
+<p>The frontend Sencha application needs to be built at least once with the Sencha CMD build tool to scaffold/update a set of loader files. After that, you can just edit files the working tree and reload the browser. The two exceptions where you need to build again are changing the list of packages or changing the list of override files.</p>
+<p>Before the frontend application can be built to run from live changes, you&rsquo;ll need to ensure all submodules are initialized:</p>
+<div class="highlight"><pre><span></span><code>git submodule update --init
+</code></pre></div>
+<p>Then, use the shortcut studio command for building the frontend application:</p>
+<div class="highlight"><pre><span></span><code>build-content-editor
+</code></pre></div>
+<p>Once built, the live-editable version of the app can be accessed via the static web server that the studio runs on port <code>2191</code>. The backend host must be provided to the apps via the <code>?apiHost</code> query parameter. Any remote backend with CORS enabled will work, or you can use the local backend:</p>
+<p><a href="http://localhost:2191/EmergenceContentEditor/?apiHost=localhost:2190"><code>localhost:2191/EmergenceContentEditor/?apiHost=localhost:2190</code></a></p>
 <h2 id="working-with-breakpoints">Working with breakpoints<a class="headerlink" href="#working-with-breakpoints" title="Permanent link"> ¶</a></h2>
 <p>By default, the Sencha framework will automatically append random cache buster values to every loaded <code>.js</code> source. This helps ensures that your latest code always runs, but will also prevent any breakpoints you set from persisting across reloads.</p>
 <p>With the <strong>Disable cache</strong> option of the network inspector activated, you can disable this built-in cache buster by appending <code>&amp;cache=1</code> to the current page&rsquo;s query string.</p>
 <h2 id="connecting-to-remote-server">Connecting to remote server<a class="headerlink" href="#connecting-to-remote-server" title="Permanent link"> ¶</a></h2>
-<p>You can connect to any remote slate-cbl instance that has CORS enabled by appending the query parameter <code>apiHost</code> when loading the page. If the remote instance requires HTTPS, append <code>apiSSL=1</code> as well.</p>
+<p>You can connect to any remote instance that has CORS enabled by appending the query parameter <code>apiHost</code> when loading the page. If the remote instance requires HTTPS, append <code>apiSSL=1</code> as well.</p>
                 
               
               
@@ -1172,7 +1194,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../virtual-multisite/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Virtual Multi-site Container" rel="prev">
+        <a href="../cbl-webapps/" class="md-footer__link md-footer__link--prev" aria-label="Previous: CBL webapps" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -1181,20 +1203,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Virtual Multi-site Container
+              CBL webapps
             </div>
           </div>
         </a>
       
       
         
-        <a href="../content-editor/" class="md-footer__link md-footer__link--next" aria-label="Next: Content Editor webapp" rel="next">
+        <a href="../../testing/e2e/" class="md-footer__link md-footer__link--next" aria-label="Next: End-to-end (E2E) testing" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Content Editor webapp
+              End-to-end (E2E) testing
             </div>
           </div>
           <div class="md-footer__button md-icon">
