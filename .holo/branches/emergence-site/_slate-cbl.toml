@@ -6,6 +6,8 @@ files = [
     "!.github/",
     "!.vscode/",
     "!books/",
+    "!cypress/",
+    "!docs/",
     "!fixtures/",
     "!habitat/",
     "!helm-chart/",
