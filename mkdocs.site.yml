@@ -1,18 +1,7 @@
 site_name: Slate CBL Docs
-repo_url: https://github.com/SlateFoundation/slate-cbl
 site_url: https://slatefoundation.github.io/slate-cbl
 
 theme:
   palette:
     primary: "cyan"
     accent: "orange"
-
-extra:
-  repository:
-    name: slate-cbl
-    url: git@github.com:SlateFoundation/slate-cbl.git
-  studio:
-    web_port: 2190
-    static_port: 2191
-    docs_port: 2198
-    mysql_port: 2196
