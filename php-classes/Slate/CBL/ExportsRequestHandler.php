@@ -1,5 +1,6 @@
 <?php
-// TODO: delete this
+// TODO: delete this now that all references to it have been removed?
+// If so, also remove ./site-root/cbl/exports/_index.php and the ./site-root/cbl/exports folder.
 
 namespace Slate\CBL;
 
