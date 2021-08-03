@@ -1,9 +1,7 @@
 {
-    "baseUrl": "http://localhost:7080",
+    "baseUrl": "http://localhost:2190",
     "env": {
-        "STUDIO_SSH": null,
-        "STUDIO_CONTAINER": "emergence-studio"
-    },
-    "viewportWidth": 1200,
-    "viewportHeight": 660
+        "STUDIO_CONTAINER": "slate-cbl-studio",
+        "TEST_USER": "teacher"
+    }
 }
