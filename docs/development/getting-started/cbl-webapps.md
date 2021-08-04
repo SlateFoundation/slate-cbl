@@ -1,5 +1,7 @@
 # CBL webapps
 
+## Running live changes
+
 Each frontend Sencha application needs to be built at least once with the Sencha CMD build tool to scaffold/update a set of loader files. After that, you can just edit files the working tree and reload the browser. The two exceptions where you need to build again are changing the list of packages or changing the list of override files.
 
 There is a shortcut studio command for building each frontend application:
@@ -20,6 +22,12 @@ Once built, the live-editable version of each app can be accessed via the static
 - [`localhost:{{ studio.static_port }}/SlateTasksTeacher/?apiHost=localhost:{{ studio.web_port }}`](http://localhost:{{ studio.static_port }}/SlateTasksTeacher/?apiHost=localhost:{{ studio.web_port }})
 - [`localhost:{{ studio.static_port }}/SlateTasksStudent/?apiHost=localhost:{{ studio.web_port }}`](http://localhost:{{ studio.static_port }}/SlateTasksStudent/?apiHost=localhost:{{ studio.web_port }})
 
-## Connecting to a server
+## Working with breakpoints
+
+By default, the Sencha framework will automatically append random cache buster values to every loaded `.js` source. This helps ensures that your latest code always runs, but will also prevent any breakpoints you set from persisting across reloads.
+
+With the **Disable cache** option of the network inspector activated, you can disable this built-in cache buster by appending `&cache=1` to the current page's query string.
+
+## Connecting to remote server
 
 You can connect to any remote slate-cbl instance that has CORS enabled by appending the query parameter `apiHost` when loading the page. If the remote instance requires HTTPS, append `apiSSL=1` as well.

@@ -1,4 +1,4 @@
-describe('Student tasks test', () => {
+describe.skip('Student tasks test', () => {
 
     // load sample database before tests
     before(() => {

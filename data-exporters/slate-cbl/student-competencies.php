@@ -5,6 +5,7 @@ return [
     'description' => 'Each row represents a competency that a student has been enrolled in and their progress within it',
     'filename' => 'student-competencies',
     'headers' => [
+        'ID',
         'PersonID' => 'Person ID',
         'StudentFullName' => 'Student',
         'StudentNumber' => 'Student Number',
@@ -71,6 +72,7 @@ return [
                       JOIN `%s` Competency
                         ON Competency.ContentAreaID = ContentArea.ID
                      WHERE ContentArea.Code = "%s"
+                       AND Competency.Status = "active"
                 ',
                 [
                     Slate\CBL\ContentArea::$tableName,
@@ -78,13 +80,14 @@ return [
                     DB::escape($query['content_area'])
                 ]
             );
-
-            $conditions['CompetencyID'] = [
-                'values' => array_keys($competencyCodes)
-            ];
         } else {
-            $competencyCodes = DB::valuesTable('ID', 'Code', 'SELECT Competency.ID, Competency.Code FROM `%s` Competency', Slate\CBL\Competency::$tableName);
+            $competencyCodes = DB::valuesTable('ID', 'Code', 'SELECT Competency.ID, Competency.Code FROM `%s` Competency WHERE Competency.Status = "active"', Slate\CBL\Competency::$tableName);
         }
+
+        $conditions['CompetencyID'] = [
+            'values' => array_keys($competencyCodes)
+        ];
+
         natcasesort($competencyCodes);
         $order[] = 'FIELD(StudentCompetency.CompetencyID, '.implode(',', array_keys($competencyCodes)).')';
 
@@ -131,9 +134,17 @@ return [
                 $StudentCompetency = Slate\CBL\StudentCompetency::instantiateRecord($record);
                 $demonstrationsComplete = $StudentCompetency->getDemonstrationsComplete();
                 $demonstrationsRequired = $StudentCompetency->getDemonstrationsRequired();
-                $demonstrationsAverage = round($StudentCompetency->getDemonstrationsAverage(), 1);
+                $demonstrationsAverage = round(
+                    $StudentCompetency->getDemonstrationsAverage(),
+                    Slate\CBL\StudentCompetency::$averagePrecision
+                );
+                $growth = round(
+                    $StudentCompetency->getGrowth(),
+                    Slate\CBL\StudentCompetency::$averagePrecision
+                );
 
                 yield [
+                    'ID' => $StudentCompetency->ID,
                     'PersonID' => $Student->ID,
                     'StudentFullName' => $Student->FullName,
                     'StudentNumber' => $Student->StudentNumber,
@@ -141,7 +152,7 @@ return [
                     'Level' => $StudentCompetency->Level,
                     'BaselineRating' => round($StudentCompetency->BaselineRating, 1),
                     'DemonstrationsAverage' => $demonstrationsAverage ?: null,
-                    'Growth' => round($StudentCompetency->getGrowth(), 1) ?: null,
+                    'Growth' => $growth ?: null,
                     'Progress' => round($demonstrationsRequired ? $demonstrationsComplete/$demonstrationsRequired : 1, 2),
                     'DemonstrationsRequired' => $demonstrationsRequired,
                     'DemonstrationsComplete' => $demonstrationsComplete,
