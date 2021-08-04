@@ -170,7 +170,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                     '</tpl>',
 
                     '<li class="cbl-skill-complete-indicator <tpl if="isLevelComplete">is-checked</tpl>">',
-                        '<i class="fa fa-2x fa-check-circle-o"></i>',
+                        '<i class="fa fa-2x fa-check"></i>',
                     '</li>',
                 '</ul>',
 
@@ -181,7 +181,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
 
     // component template methods
-    getElConfig: function() {
+    getElConfig: function () {
         var config = this.callParent();
 
         config['data-competency'] = this.getCompetency().getId();
@@ -189,7 +189,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         return config;
     },
 
-    initRenderData: function() {
+    initRenderData: function () {
         var me = this,
             competency = me.getCompetency();
 
@@ -215,7 +215,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
 
     // config handlers
-    updateCompetency: function(competency) {
+    updateCompetency: function (competency) {
         var me = this,
             htmlEncode = Ext.util.Format.htmlEncode,
             studentCompetency = competency.get('currentStudentCompetency'),
@@ -252,7 +252,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         Ext.resumeLayouts(true);
     },
 
-    updateLevel: function(newLevel, oldLevel) {
+    updateLevel: function (newLevel, oldLevel) {
         var me = this;
 
         if (oldLevel) {
@@ -274,11 +274,11 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
     },
 
-    applyPercentComplete: function(percentComplete) {
+    applyPercentComplete: function (percentComplete) {
         return percentComplete || 0;
     },
 
-    updatePercentComplete: function(percentComplete) {
+    updatePercentComplete: function (percentComplete) {
         var me = this;
 
         if (me.rendered) {
@@ -290,11 +290,11 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
     },
 
-    applyPercentMissed: function(percentMissed) {
+    applyPercentMissed: function (percentMissed) {
         return percentMissed || 0;
     },
 
-    updatePercentMissed: function(percentMissed) {
+    updatePercentMissed: function (percentMissed) {
         var me = this;
 
         if (me.rendered) {
@@ -303,7 +303,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
     },
 
-    updateDemonstrationsAverage: function(demonstrationsAverage) {
+    updateDemonstrationsAverage: function (demonstrationsAverage) {
         var me = this;
 
         if (me.rendered) {
@@ -311,13 +311,13 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
     },
 
-    updateIsAverageLow: function(isAverageLow) {
+    updateIsAverageLow: function (isAverageLow) {
         if (this.rendered) {
             this.meterEl.toggleCls('is-average-low', isAverageLow);
         }
     },
 
-    updateBaselineRating: function(baselineRating) {
+    updateBaselineRating: function (baselineRating) {
         var me = this;
 
         if (me.rendered) {
@@ -325,7 +325,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         }
     },
 
-    updateGrowth: function(growth) {
+    updateGrowth: function (growth) {
         var me = this;
 
         if (me.rendered) {
@@ -335,7 +335,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
 
     // event handlers
-    onDemoCellClick: function(ev, target) {
+    onDemoCellClick: function (ev, target) {
         target = Ext.get(target);
 
         this.fireEvent(
@@ -352,7 +352,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
 
     // internal methods
-    buildSkillsTplData: function(competency) {
+    buildSkillsTplData: function (competency) {
         var studentCompetency = competency.get('currentStudentCompetency'),
             level = studentCompetency && studentCompetency.get('Level'),
             demonstrationsBySkill = studentCompetency && studentCompetency.get('effectiveDemonstrationsData'),
@@ -382,13 +382,13 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
             /* eslint-disable no-extra-parens */
             isSkillComplete = (
-                // skill is overridden
+                // mark complete if any override is present...
                 lastDemonstration && lastDemonstration.Override
 
-                // skill is filled and last demonstration isn't missed
+                // ...or every skill is marked with non-M demos
                 || (
                     demonstrationsCount >= demonstrationsRequired
-                    && (!lastDemonstration || lastDemonstration.DemonstratedLevel)
+                    && demonstrations.every((demo) => demo.DemonstratedLevel > 0)
                 )
             );
             /* eslint-enable no-extra-parens */
@@ -404,7 +404,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
 
         // sort by Skill Code
         sorter = new Slate.sorter.Code({
-            codeFn: function(item) {
+            codeFn: function (item) {
                 return item.Code;
             }
         });
