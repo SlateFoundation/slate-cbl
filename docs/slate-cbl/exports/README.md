@@ -1,5 +1,11 @@
 # Data Exports
 
+!!! warning "Deprecated exports"
+
+    These exports (under `/site-root/cbl/exports/`) were all removed in [slate-cbl#587](https://github.com/SlateFoundation/slate-cbl/pull/587) in favor of the new upstream pluggable `/data-exporters/` tree
+
+    This doc content should all be adapted/rewritten to the new set of exports under `data-exporters/slate-cbl/**`
+
 ## Demonstrations-legacy \(CSV\)
 
 * Lists all the information entered for a specific demonstration in a single row
