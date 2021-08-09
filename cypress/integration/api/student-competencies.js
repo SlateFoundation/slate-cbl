@@ -11,21 +11,24 @@ describe('/cbl/student-competencies API', () => {
     });
 
     it('Expected student competencies exist', () => {
-        cy.request('/cbl/student-competencies?format=json').then(response => {
+        cy.request('/cbl/student-competencies?format=json&limit=0').then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
+            expect(response.body).property('success').to.be.true;
+            expect(response.body).property('total').to.eq(635);
+            expect(response.body).property('limit').to.eq(0);
             expect(response.body).property('data').to.be.an('array');
-            expect(response.body.data).to.have.length(64);
+            expect(response.body.data).to.have.length(635);
             expect(response.body.data[0]).to.include({
-                ID: 64,
+                ID: 635,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: 1546401845,
-                CreatorID: 1,
-                StudentID: 7,
-                CompetencyID: 11,
-                Level: 10,
-                EnteredVia: 'graduation',
-                BaselineRating: 9
+                Created: 1628468422,
+                CreatorID: 2,
+                StudentID: 6,
+                CompetencyID: 40,
+                Level: 9,
+                EnteredVia: 'enrollment',
+                BaselineRating: null
             });
 
         });
