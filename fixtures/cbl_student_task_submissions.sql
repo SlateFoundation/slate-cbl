@@ -10,7 +10,7 @@ CREATE TABLE `cbl_student_task_submissions` (
   `ModifierID` int(10) unsigned DEFAULT NULL,
   `StudentTaskID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `cbl_student_task_submissions` VALUES (1,'Slate\\CBL\\Tasks\\StudentTaskSubmission','2019-01-02 03:04:05',4,NULL,NULL,1);
 INSERT INTO `cbl_student_task_submissions` VALUES (2,'Slate\\CBL\\Tasks\\StudentTaskSubmission','2019-01-02 03:04:05',4,NULL,NULL,3);
