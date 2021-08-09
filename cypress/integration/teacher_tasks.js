@@ -33,9 +33,9 @@ describe('Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
-            // click ELA Studio element of picker dropdown
+            // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('ELA Studio')
+                .contains('English Language Arts')
                 .click();
 
             cy.wait('@studentTasksData')
@@ -71,9 +71,9 @@ describe('Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
-            // click ELA Studio element of picker dropdown
+            // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('ELA Studio')
+                .contains('English Language Arts')
                 .click();
 
             // verify student tasks load
@@ -133,9 +133,9 @@ describe('Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
-            // click ELA Studio element of picker dropdown
+            // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('ELA Studio')
+                .contains('English Language Arts')
                 .click();
 
             // verify studetn tasks load
