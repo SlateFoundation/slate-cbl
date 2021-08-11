@@ -1,7 +1,7 @@
 describe('Teacher demonstrations test', () => {
   // load sample database before tests
   before(() => {
-    cy.resetDatabase();
+    // cy.resetDatabase();
   });
 
   // authenticate as 'teacher' user
@@ -62,18 +62,18 @@ describe('Teacher demonstrations test', () => {
 
       // expand list to all sections
       cy.get('#' + studentSelector.getPicker().id)
-        .contains('USER GROUPS')
+        .contains('Show all sections')
         .scrollIntoView()
         .closest('button')
         .click('center');
 
       // verify and click empty section element of picker dropdown
       cy.get('#' + studentSelector.getPicker().id)
-        .contains('ELA-EMPTY')
-        .click();
+        .contains('Class of 2019')
+        .click({force: true});
 
       // verify hash updates
-      cy.location('hash').should('eq', '#ELA/section:ELA-EMPTY');
+      cy.location('hash').should('eq', '#ELA/group:class_of_2019');
 
       // verify content loads
       cy.get('.cbl-grid-main').should('be.empty');
