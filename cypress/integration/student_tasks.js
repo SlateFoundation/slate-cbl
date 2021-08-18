@@ -1,353 +1,349 @@
-describe('Student tasks test', () => {
+const dayjs = require('dayjs')
 
-  const todaysDate = (numOfDays) => {
-    let today = new Date();
-    const dd = +String(today.getDate());
-    const mm = String(today.getMonth() + 1);
-    const yyyy = today.getFullYear();
-    today = `${yyyy}-${mm}-${dd + numOfDays}`;
-    return today
-  };
 
-    // load sample database before tests
-    before(() => {
-        cy.resetDatabase();
+describe.skip('Student tasks test', () => {
 
-        // create time relative tasks
-        cy.loginAs('teacher');
-        // create some relatively due tasks
-        cy.request('POST', `/cbl/tasks/save?format=json`, {
-            data: [{
-                Title: 'Test Task (Due Today)',
-                DueDate: todaysDate(0),
-                SectionID: 2,
-                Assignees: {
-                    'student': true
-                }
-            }, {
-                Title: 'Test Task (Due This Week)',
-                DueDate: todaysDate(7),
-                SectionID: 2,
-                Assignees: {
-                    'student': true
-                }
-            }, {
-                Title: 'Test Task (Due Recently)',
-                DueDate: todaysDate(-9),
-                SectionID: 2,
-                Assignees: {
-                    'student': true
-                }
-            }, {
-                Title: 'Test Task (Due Next Week)',
-                DueDate: todaysDate(8),
-                SectionID: 2,
-                Assignees: {
-                    'student': true
-                }
-            }, {
-                Title: 'Test Task (No Due Date)',
-                SectionID: 2,
-                Assignees: {
-                    'student': true
-                }
-            }, {
-                Title: 'Test Task (Archived)',
-                SectionID: 2,
-                Status: 'archived',
-                Assignees: {
-                    'student': true
-                }
-            }]
+
+  // load sample database before tests
+  before(() => {
+    cy.resetDatabase();
+
+    // create time relative tasks
+    cy.loginAs('teacher');
+    // create some relatively due tasks
+    cy.request('POST', `/cbl/tasks/save?format=json`, {
+      data: [
+        {
+          Title: 'Test Task (Due Today)',
+          DueDate: dayjs().format('YYYY-MM--DD'),
+          SectionID: 2,
+          Assignees: {
+            student: true,
+          },
+        },
+        {
+          Title: 'Test Task (Due This Week)',
+          DueDate: dayjs().add(5, 'day').format('YYYY-MM--DD'),
+          SectionID: 2,
+          Assignees: {
+            student: true,
+          },
+        },
+        {
+          Title: 'Test Task (Due Recently)',
+          DueDate: dayjs().subtract(9, 'day').format('YYYY-MM--DD'),
+          SectionID: 2,
+          Assignees: {
+            student: true,
+          },
+        },
+        {
+          Title: 'Test Task (Due Next Week)',
+          DueDate: dayjs().add(10, 'day').format('YYYY-MM--DD'),
+          SectionID: 2,
+          Assignees: {
+            student: true,
+          },
+        },
+        {
+          Title: 'Test Task (No Due Date)',
+          SectionID: 2,
+          Assignees: {
+            student: true,
+          },
+        },
+        {
+          Title: 'Test Task (Archived)',
+          SectionID: 2,
+          Status: 'archived',
+          Assignees: {
+            student: true,
+          },
+        },
+      ],
+    });
+  });
+
+  beforeEach(() => {
+    cy.server()
+      .route('GET', '/cbl/dashboards/tasks/student/bootstrap*')
+      .as('bootstrapData');
+    cy.server().route('GET', '/cbl/skills*').as('skillsData');
+    cy.server().route('GET', '/cbl/competencies*').as('competenciesData');
+    cy.server().route('GET', '/cbl/student-tasks*').as('studentTasksData');
+    cy.server().route('GET', '/cbl/todos/*groups*').as('studentTodosData');
+    cy.server()
+      .route('POST', '/cbl/student-tasks/save*')
+      .as('studentTasksSave');
+  });
+
+  it('View single task as student', () => {
+    cy.loginAs('student');
+    // open student demonstrations dashboard
+    cy.visit('/cbl/dashboards/tasks/student');
+
+    // verify student redirect
+    cy.location('hash').should('eq', '#me/all');
+
+    cy.wait(['@studentTasksData', '@studentTodosData']).should((xhrs) => {
+      xhrs.forEach((xhr) => {
+        expect(xhr.status).to.equal(200);
+        expect(xhr.response.body.success).to.be.true;
+      });
+    });
+
+    cy.withExt().then(({ extQuerySelector }) => {
+      var todoList = extQuerySelector('slate-tasks-student-todolist');
+
+      cy.get('#' + todoList.id)
+        .find('.slate-todolist-section')
+        .should(($todoListSection) => {
+          expect($todoListSection.length).to.equal(2);
         });
+
+      // get current tasks list
+      var currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
+
+      cy.get('#' + currentTasksTree.id)
+        .contains('Filter')
+        .click({ force: true });
+
+      var filterMenu = currentTasksTree.down(
+        'slate-tasks-student-taskfiltersmenu'
+      );
+
+      cy.get('#' + filterMenu.id)
+        .contains('View All')
+        .click({ force: true });
+
+      cy.wait('@studentTasksData').should((xhr) => {
+        expect(xhr.status).to.equal(200);
+      });
+
+      // verify content has finished loading
+      cy.get('#' + currentTasksTree.id).contains('ELA Task One');
+
+      // get the course section element
+      var courseSectionSelector = extQuerySelector('slate-cbl-sectionselector');
+
+      // click the selector
+      cy.get('#' + courseSectionSelector.el.dom.id).click();
+
+      // click ELA Studio element of picker dropdown
+      cy.get('#' + courseSectionSelector.getPicker().id)
+        .contains('ELA Task Two')
+        .click({ force: true }); // test sometimes fails because the element is not visible
+
+      cy.wait('@studentTasksData').should(({ status }) => {
+        expect(status).to.equal(200);
+      });
+    });
+  });
+
+  it('Submit task as student', () => {
+    cy.loginAs('student');
+    // open student demonstrations dashboard
+    cy.visit('/cbl/dashboards/tasks/student');
+
+    // verify student redirect
+    cy.location('hash').should('eq', '#me/all');
+
+    cy.withExt().then(({ extQuerySelector }) => {
+      // get current tasks list
+      const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
+
+      cy.get('#' + currentTasksTree.id)
+        .contains('Filter')
+        .click({ force: true });
+
+      const filterMenu = currentTasksTree.down(
+        'slate-tasks-student-taskfiltersmenu'
+      );
+
+      cy.get('#' + filterMenu.id)
+        .contains('View All')
+        .click({ force: true });
+
+      // verify content has finished loading
+      cy.get('#' + currentTasksTree.id).contains('ELA Task One');
+
+      cy.get('#' + currentTasksTree.id)
+        .contains('(Due Today)')
+        .click({ force: true });
+
+      cy.wait(['@skillsData', '@competenciesData']).should((xhrs) => {
+        xhrs.forEach((xhr) => {
+          expect(xhr.status).to.equal(200);
+          expect(xhr.response.body.success).to.be.true;
+        });
+      });
+
+      cy.get('.slate-window')
+        .contains('Submit Assignment')
+        .should((btn) => {
+          expect(btn).to.be.visible;
+          expect(btn.attr('aria-disabled')).to.not.be.true;
+        })
+        .click({ force: true });
+
+      cy.wait('@studentTasksSave').should((xhr) => {
+        expect(xhr.status).to.equal(200);
+        expect(xhr.response.body.success).to.be.true;
+      });
+
+      cy.get('#' + currentTasksTree.id).contains('Submitted');
+    });
+  });
+
+  it('Re-Assign task as teacher', () => {
+    cy.loginAs('teacher');
+    // open student demonstrations dashboard
+    cy.visit('/cbl/dashboards/tasks/student#student/');
+
+    cy.wait(['@bootstrapData', '@studentTasksData']).should((xhrs) => {
+      xhrs.forEach((xhr) => {
+        expect(xhr.status).to.equal(200);
+      });
     });
 
-    beforeEach(() => {
-        cy.server().route('GET', '/cbl/dashboards/tasks/student/bootstrap*').as('bootstrapData');
-        cy.server().route('GET', '/cbl/skills*').as('skillsData');
-        cy.server().route('GET', '/cbl/competencies*').as('competenciesData');
-        cy.server().route('GET', '/cbl/student-tasks*').as('studentTasksData');
-        cy.server().route('GET', '/cbl/todos/*groups*').as('studentTodosData');
-        cy.server().route('POST', '/cbl/student-tasks/save*').as('studentTasksSave');
+    cy.withExt().then(({ extQuerySelector }) => {
+      cy.get('.slate-appcontainer').should('be.visible');
+
+      const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
+
+      cy.get('#' + currentTasksTree.id)
+        .contains('Filter')
+        .click({ force: true });
+
+      const filterMenu = currentTasksTree.down(
+        'slate-tasks-student-taskfiltersmenu'
+      );
+
+      cy.get('#' + filterMenu.id)
+        .contains('View All')
+        .click({ force: true });
+
+      cy.get('#' + currentTasksTree.id)
+        .contains('(Due This Week)')
+        .click({ force: true });
+
+      cy.wait('@studentTasksData').should((xhr) => {
+        expect(xhr.status).to.equal(200);
+        expect(xhr.response.body.success).to.be.true;
+      });
+
+      cy.get('.slate-window')
+        .contains('label', 'Re-assign')
+        .click({ force: true });
+
+      cy.get('.slate-window')
+        .contains('Save Assignment')
+        .should((btn) => {
+          expect(btn).to.be.visible;
+          expect(btn.attr('aria-disabled')).to.not.be.true;
+        })
+        .click({ force: true });
+
+      cy.wait('@studentTasksSave').should((xhr) => {
+        expect(xhr.status).to.equal(200);
+        expect(xhr.response.body.success).to.be.true;
+      });
+
+      cy.get('#' + currentTasksTree.id).contains(
+        '.slate-tasktree-status',
+        'Revision'
+      );
     });
+  });
 
-    it('View single task as student', () => {
-        cy.loginAs('student');
-        // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/tasks/student');
+  it('Filters Student Tasks', () => {
+    const expectedFilterLengths = {
+      // section filters
+      'Current Year': 9,
+      'Current Term': 8,
+      'Enrolled Sections': 9,
 
-        // verify student redirect
-        cy.location('hash').should('eq', '#me/all');
+      // status filters
+      'Due Tasks': 6, // will fail if previous test fails
+      'Revision Tasks': 1, // will fail if previous test fails
+      'Submitted Tasks': 1, // will fail if previous test fails
+      'Completed Tasks': 2,
+      'Archived Tasks': 11,
 
-        cy.wait(['@studentTasksData', '@studentTodosData'])
-            .should((xhrs) => {
-                xhrs.forEach(
-                    xhr => {
-                        expect(xhr.status).to.equal(200);
-                        expect(xhr.response.body.success).to.be.true;
-                    }
-                );
+      // timeline filters
+      'Past Due': 1,
+      'Due Today': 1,
+      'Due This Week': 2,
+      'Due Next Week': 1,
+      'Due (recently/upcoming)': 4,
+      'Due (no date)': 6,
+    };
+
+    cy.loginAs('teacher');
+
+    cy.visit('/cbl/dashboards/tasks/student#student/all');
+
+    cy.withExt().then(({ Ext, extQuerySelector, extQuerySelectorAll }) => {
+      cy.get('.slate-appcontainer')
+        .should('be.visible')
+        .then(() => {
+          const currentTasksTree = extQuerySelector(
+              'slate-tasks-student-tasktree'
+            ),
+            filterMenu = currentTasksTree.down(
+              'slate-tasks-student-taskfiltersmenu'
+            ),
+            _selectFilter = (filterText, filterId = filterMenu.id) => {
+              return cy
+                .get('#' + filterId)
+                .contains(filterText)
+                .click({ force: true }); // force click if element isn't visible
+            },
+            _viewAll = () => {
+              return _selectFilter('View All');
+            };
+
+          cy.wait('@studentTasksData').should((xhr) => {
+            expect(xhr.status).to.equal(200);
+            cy.get('#' + currentTasksTree.id).should(($tasksTree) => {
+              expect($tasksTree.find('li.slate-tasktree-item').length).to.equal(
+                1
+              );
             });
+          });
 
-        cy.withExt().then(({ extQuerySelector }) => {
-            var todoList = extQuerySelector('slate-tasks-student-todolist');
-
-            cy.get('#'+todoList.id)
-                .find('.slate-todolist-section')
-                .should(($todoListSection) => {
-                    expect(
-                        $todoListSection.length
-                    ).to.equal(2);
-                })
-
-            // get current tasks list
-            var currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
-
-            cy.get('#' + currentTasksTree.id)
-                .contains('Filter')
-                .click({ force: true });
-
-            var filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
-
-            cy.get('#' + filterMenu.id)
-                .contains('View All')
-                .click({ force: true });
-
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                });
-
-            // verify content has finished loading
-            cy.get('#' + currentTasksTree.id)
-                .contains('ELA Task One')
-
-            // get the course section element
-            var courseSectionSelector = extQuerySelector('slate-cbl-sectionselector');
-
-            // click the selector
-            cy.get('#' + courseSectionSelector.el.dom.id).click();
-
-            // click ELA Studio element of picker dropdown
-            cy.get('#' + courseSectionSelector.getPicker().id)
-                .contains('ELA Studio')
-                .click({force: true}); // test sometimes fails because the element is not visible
-
-            cy.wait('@studentTasksData')
-                .should(({status}) => {
+          cy.get('#' + currentTasksTree.id)
+            .contains('Filter')
+            .click({ force: true })
+            .then(() => {
+              for (let [filter, length] of Object.entries(
+                expectedFilterLengths
+              )) {
+                _viewAll();
+                cy.wait('@studentTasksData')
+                  .its('status')
+                  .should((status) => {
                     expect(status).to.equal(200);
-                });
-        });
-    });
-
-    it('Submit task as student', () => {
-        cy.loginAs('student');
-        // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/tasks/student');
-
-        // verify student redirect
-        cy.location('hash').should('eq', '#me/all');
-
-        cy.withExt().then(({extQuerySelector}) => {
-
-            // get current tasks list
-            const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
-
-            cy.get('#' + currentTasksTree.id)
-                .contains('Filter')
-                .click({ force: true });
-
-            const filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
-
-            cy.get('#' + filterMenu.id)
-                .contains('View All')
-                .click({ force: true });
-
-            // verify content has finished loading
-            cy.get('#' + currentTasksTree.id)
-                .contains('ELA Task One');
-
-
-            cy.get('#' + currentTasksTree.id)
-                .contains('(Due Today)')
-                .click({ force: true });
-
-            cy.wait(['@skillsData', '@competenciesData'])
-                .should((xhrs) => {
-                    xhrs.forEach(
-                        xhr => {
-                            expect(xhr.status).to.equal(200);
-                            expect(xhr.response.body.success).to.be.true;
-                        }
-                    );
-                });
-
-            cy.get('.slate-window')
-                .contains('Submit Assignment')
-                .should((btn) => {
-                    expect(btn).to.be.visible;
-                    expect(btn.attr('aria-disabled')).to.not.be.true;
-                })
-                .click({ force: true })
-
-            cy.wait('@studentTasksSave')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
-
-            cy.get('#' + currentTasksTree.id)
-                .contains('Submitted');
-        });
-    });
-
-    it('Re-Assign task as teacher', () => {
-        cy.loginAs('teacher');
-        // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/tasks/student#student/');
-
-        cy.wait(['@bootstrapData', '@studentTasksData'])
-            .should((xhrs) => {
-                xhrs.forEach(
-                    xhr => {
-                        expect(xhr.status).to.equal(200);
-                    }
-                )
-            });
-
-        cy.withExt().then(({ extQuerySelector }) => {
-            cy.get('.slate-appcontainer')
-                .should('be.visible');
-
-            const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree');
-
-            cy.get('#' + currentTasksTree.id)
-                .contains('Filter')
-                .click({ force: true });
-
-            const filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu');
-
-            cy.get('#' + filterMenu.id)
-                .contains('View All')
-                .click({ force: true });
-
-            cy.get('#' + currentTasksTree.id)
-                .contains('(Due This Week)')
-                .click({ force: true });
-
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
-
-            cy.get('.slate-window')
-                .contains('label', 'Re-assign')
-                .click({ force: true })
-
-            cy.get('.slate-window')
-                .contains('Save Assignment')
-                .should((btn) => {
-                    expect(btn).to.be.visible;
-                    expect(btn.attr('aria-disabled')).to.not.be.true;
-                })
-                .click({ force: true });
-
-            cy.wait('@studentTasksSave')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
-
-            cy.get('#' + currentTasksTree.id)
-                .contains('.slate-tasktree-status', 'Revision');
-
-        });
-
-    });
-
-    it('Filters Student Tasks', () => {
-        const expectedFilterLengths = {
-            // section filters
-            'Current Year': 9,
-            'Current Term': 8,
-            'Enrolled Sections': 9,
-
-            // status filters
-            'Due Tasks': 6, // will fail if previous test fails
-            'Revision Tasks': 1, // will fail if previous test fails
-            'Submitted Tasks': 1, // will fail if previous test fails
-            'Completed Tasks': 2,
-            'Archived Tasks': 11,
-
-            // timeline filters
-            'Past Due': 1,
-            'Due Today': 1,
-            'Due This Week': 2,
-            'Due Next Week': 1,
-            'Due (recently/upcoming)': 4,
-            'Due (no date)': 6
-        };
-
-        cy.loginAs('teacher');
-
-        cy.visit('/cbl/dashboards/tasks/student#student/all');
-
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
-            cy.get('.slate-appcontainer')
-                .should('be.visible')
-                .then(() => {
-                    const currentTasksTree = extQuerySelector('slate-tasks-student-tasktree'),
-                        filterMenu = currentTasksTree.down('slate-tasks-student-taskfiltersmenu'),
-                        _selectFilter = (filterText, filterId = filterMenu.id) => {
-                            return cy.get('#' + filterId)
-                                .contains(filterText)
-                                .click({ force: true}); // force click if element isn't visible
-                        },
-                        _viewAll = () => {
-                            return _selectFilter('View All');
-                        };
+                  })
+                  .then(() => {
+                    _selectFilter(filter);
 
                     cy.wait('@studentTasksData')
-                        .should(xhr => {
-                            expect(xhr.status).to.equal(200);
-                            cy.get('#' + currentTasksTree.id)
-                                .should(($tasksTree) => {
-                                    expect($tasksTree.find('li.slate-tasktree-item').length)
-                                        .to.equal(1);
-                                });
-                        });
-
-                    cy.get('#' + currentTasksTree.id)
-                        .contains('Filter')
-                        .click({ force: true })
-                        .then(() => {
-                            for (let [filter, length] of Object.entries(expectedFilterLengths)) {
-                                _viewAll();
-                                cy.wait('@studentTasksData')
-                                    .its('status')
-                                    .should(status => {
-                                        expect(status).to.equal(200);
-                                    })
-                                    .then(() => {
-                                        _selectFilter(filter);
-
-                                        cy.wait('@studentTasksData')
-                                            .should(d => {
-                                                expect(d.status).to.equal(200);
-                                            })
-                                            .and(() => {
-                                                cy.get('#' + currentTasksTree.id)
-                                                    .should(($tasksTree) => {
-                                                        expect(
-                                                            $tasksTree.find('li.slate-tasktree-item').length
-                                                        ).to.equal(length)
-                                                    });
-                                            });
-                                    });
-                            }
-                        });
-                });
+                      .should((d) => {
+                        expect(d.status).to.equal(200);
+                      })
+                      .and(() => {
+                        expect(
+                          cy
+                            .get('.slate-tasktree-list')
+                            .find('li.slate-tasktree-item')
+                            .should('have.length', 9)
+                        ).to.equal(length);
+                      });
+                  });
+              }
+            });
         });
     });
+  });
 });
