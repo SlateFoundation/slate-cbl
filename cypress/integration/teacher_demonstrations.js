@@ -1,7 +1,7 @@
 describe('Teacher demonstrations test', () => {
   // load sample database before tests
   before(() => {
-    // cy.resetDatabase();
+    cy.resetDatabase();
   });
 
   // authenticate as 'teacher' user
@@ -70,7 +70,8 @@ describe('Teacher demonstrations test', () => {
       // verify and click empty section element of picker dropdown
       cy.get('#' + studentSelector.getPicker().id)
         .contains('Class of 2019')
-        .click({force: true});
+        .scrollIntoView()
+        .click(); 
 
       // verify hash updates
       cy.location('hash').should('eq', '#ELA/group:class_of_2019');
