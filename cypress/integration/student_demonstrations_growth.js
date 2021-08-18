@@ -1,4 +1,4 @@
-describe.skip('Student competency growth calculation test', () => {
+describe('Student competency growth calculation test', () => {
 
     // load sample database before tests
     before(() => {

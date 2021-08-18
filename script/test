@@ -47,3 +47,6 @@ echo
 echo "==> test: executing \`cypress run\`…"
 (cd "${temp_path}" && npx cypress run)
 
+
+
+ 

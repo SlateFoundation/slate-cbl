@@ -1,9 +1,9 @@
-describe.skip('Teacher student competencies test', () => {
+describe('Teacher student competencies test', () => {
 
     // load sample database before tests
-    // before(() => {
-    //     cy.resetDatabase();
-    // });
+    before(() => {
+        cy.resetDatabase();
+    });
 
     // authenticate as 'teacher' user
     beforeEach(() => {
