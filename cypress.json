@@ -3,6 +3,5 @@
     "env": {
         "STUDIO_CONTAINER": "slate-cbl-studio",
         "TEST_USER": "teacher"
-    },
-    "execTimeout": 240000
+    }
 }
