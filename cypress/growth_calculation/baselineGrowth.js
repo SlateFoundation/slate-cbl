@@ -58,25 +58,19 @@ describe('Base line growth test', () => {
       // verify hash updates
       cy.location('hash').should('eq', '#student4');
 
-      cy.get('cy.get([data-ref="baselineRatingEl"]').then(($el)=>{
+      // get baseline score
+      cy.get('cy.get([data-ref="baselineRatingEl"]').then(($el) => {
         const baseLineScore = $el.text();
 
-        expect(baseLineScore).to.eq('6')
-      })
+        expect(baseLineScore).to.eq('6');
+      });
 
+      //get my growth score
+      cy.get('cy.get([data-ref="growthEl"]').then(($el) => {
+        const myGrowth = $el.text();
 
-      cy.get('cy.get([data-ref="baselineRatingEl"]').then(($el)=>{
-        const text = $el.text();
-
-        expect(text).to.eq('6')
-      })
-
-
-
-
-
-
-
+        expect(myGrowth).to.eq('0');
+      });
     });
   });
 });
