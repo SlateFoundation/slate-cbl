@@ -1,8 +1,8 @@
 describe('Base line growth test', () => {
   // load sample database before tests
-  before(() => {
-    cy.resetDatabase();
-  });
+  // before(() => {
+  //   cy.resetDatabase();
+  // });
 
   // authenticate as 'teacher' user
   beforeEach(() => {
@@ -16,11 +16,15 @@ describe('Base line growth test', () => {
     // verify teacher redirect
     cy.location('hash').should('eq', '#_');
 
-    cy.get('.slate-appcontainer-bodyWrap .slate-placeholder').contains('Select a list of students and a content area to load enrollments dashboard');
+    cy.get('.slate-appcontainer-bodyWrap .slate-placeholder').contains('Select a list of students and a content area to load progress dashboard');
 
     cy.withExt().then(({ Ext, extQuerySelector, extQuerySelectorAll }) => {
       // get the 'Rubric' selector element
+
       const rubricSelector = extQuerySelector('slate-cbl-contentareaselector');
+
+
+console.log(rubricSelector)
 
       // click the selector
       cy.get('#' + rubricSelector.el.dom.id).click();
@@ -40,7 +44,7 @@ describe('Base line growth test', () => {
       cy.get('#' + studentSelector.el.dom.id)
         .click()
         .focused()
-        .type('Example School');
+        .type('EXA');
 
       // verify and click first element of picker dropdown
       cy.get('#' + studentSelector.getPicker().id + ' .x-boundlist-item')
@@ -53,7 +57,7 @@ describe('Base line growth test', () => {
       // verify content loads
       cy.get('.slate-demonstrations-teacher-dashboard').contains('Student Slate');
 
-      cy.get('cy.get([data-student="27"]').click();
+      cy.get('[data-student="27"]').click();
 
       // verify hash updates
       cy.location('hash').should('eq', '#student4');

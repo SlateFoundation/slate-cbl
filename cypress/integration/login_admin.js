@@ -1,5 +1,4 @@
 describe('Admin login test', () => {
-
     // load sample database before tests
     before(() => {
         cy.resetDatabase();
@@ -30,18 +29,11 @@ describe('Admin login test', () => {
         cy.get('#login-modal').should('not.be.visible');
         cy.get('.mobile-hidden').contains('Log In').click();
 
-        cy.focused()
-            .should('have.attr', 'name', '_LOGIN[username]')
-            .type('admin')
-            .tab();
+        cy.focused().should('have.attr', 'name', '_LOGIN[username]').type('admin').tab();
 
-        cy.focused()
-            .should('have.attr', 'name', '_LOGIN[password]')
-            .type('incorrectpassword{enter}');
+        cy.focused().should('have.attr', 'name', '_LOGIN[password]').type('incorrectpassword{enter}');
 
-        cy.contains('Sorry!')
-            .parents('div')
-            .should('have.attr', 'class', 'notify error');
+        cy.contains('Sorry!').parents('div').should('have.attr', 'class', 'notify error');
     });
 
     it('Should login via Modal', () => {
@@ -51,14 +43,9 @@ describe('Admin login test', () => {
         cy.get('.mobile-hidden').contains('Log In').click();
 
         cy.get('#login-modal').should('not.have.attr', 'display');
-        cy.focused()
-            .should('have.attr', 'name', '_LOGIN[username]')
-            .type('admin')
-            .tab();
+        cy.focused().should('have.attr', 'name', '_LOGIN[username]').type('admin').tab();
 
-        cy.focused()
-            .should('have.attr', 'name', '_LOGIN[password]')
-            .type('admin{enter}');
+        cy.focused().should('have.attr', 'name', '_LOGIN[password]').type('admin{enter}');
 
         cy.location('pathname').should('eq', '/');
     });
