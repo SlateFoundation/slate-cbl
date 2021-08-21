@@ -1,4 +1,5 @@
 describe('Teacher student competencies test', () => {
+
     // load sample database before tests
     before(() => {
         cy.resetDatabase();
@@ -10,20 +11,38 @@ describe('Teacher student competencies test', () => {
     });
 
     it('View student competencies dashboard as teacher', () => {
+
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/student-competencies/admin');
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
 
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder').contains('Select a list of students and a content area to load enrollments dashboard');
 
-        cy.withExt().then(({ Ext, extQuerySelector, extQuerySelectorAll }) => {
+
+        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
+            .contains('Select a list of students and a content area to load enrollments dashboard');
+
+
+
+        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+
+
+
+
+
             // get the 'Rubric' selector element
             var rubricSelector = extQuerySelector('slate-cbl-contentareaselector');
 
+
+
+
+
             // click the selector
             cy.get('#' + rubricSelector.el.dom.id).click();
+
+
+            
 
             // verify and click first element of picker dropdown
             cy.get('#' + rubricSelector.getPicker().id + ' .x-boundlist-item')
