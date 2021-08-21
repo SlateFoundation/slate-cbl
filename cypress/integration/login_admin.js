@@ -10,7 +10,7 @@ describe('Admin login test', () => {
 
         // should be visible after Log In click
         cy.get('#login-modal').should('not.be.visible');
-        cy.get('.mobile-hidden').contains('Log In').click();
+        cy.get('[data-label="Log In"]').eq(1).contains('Log In').click();
         cy.get('#login-modal').should('be.visible');
 
         // Should be hidden after cancel click
