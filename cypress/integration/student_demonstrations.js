@@ -1,5 +1,4 @@
-describe('Student demonstrations test', () => {
-
+describe("Student demonstrations test", () => {
     // load sample database before tests
     before(() => {
         cy.resetDatabase();
@@ -7,34 +6,35 @@ describe('Student demonstrations test', () => {
 
     // authenticate as 'student' user
     beforeEach(() => {
-        cy.loginAs('student');
+        cy.loginAs("student");
     });
 
-    it('View single demonstration rubric as student', () => {
-
+    it("View single demonstration rubric as student", () => {
         // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/demonstrations/student');
+        cy.visit("/cbl/dashboards/demonstrations/student");
 
         // verify student redirect
-        cy.location('hash').should('eq', '#me');
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
-            .contains('Select a content area to load demonstrations dashboard');
+        cy.location("hash").should("eq", "#me");
+        cy.get(".slate-appcontainer-bodyWrap .slate-placeholder").contains(
+            "Select a content area to load demonstrations dashboard"
+        );
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
-
+        cy.withExt().then(({ Ext, extQuerySelector, extQuerySelectorAll }) => {
             // get the selector element
-            var contentAreaSelector = extQuerySelector('slate-cbl-contentareaselector');
+            var contentAreaSelector = extQuerySelector("slate-cbl-contentareaselector");
 
             // click the selector
-            cy.get('#' + contentAreaSelector.el.dom.id).click();
+            cy.get("#" + contentAreaSelector.el.dom.id).click();
 
             // verify and click first element of picker dropdown
-            cy.get('#' + contentAreaSelector.getPicker().id + ' li:first-child')
-                .contains('English Language Arts')
+            cy.get("#" + contentAreaSelector.getPicker().id + " li:first-child")
+                .contains("English Language Arts")
                 .click();
 
             // verify content loads
-            cy.get('.slate-demonstrations-student-competenciessummary span').contains('English Language Arts');
+            cy.get(".slate-demonstrations-student-competenciessummary span").contains(
+                "English Language Arts"
+            );
         });
     });
 });
