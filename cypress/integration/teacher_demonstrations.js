@@ -21,6 +21,7 @@ describe('Teacher demonstrations test', () => {
             .contains('Select a list of students and a content area to load progress dashboard');
 
         cy.withExt().then(({ Ext, extQuerySelector, extQuerySelectorAll }) => {
+            
             // get the 'Rubric' selector element
             var rubricSelector = extQuerySelector('slate-cbl-contentareaselector');
 
