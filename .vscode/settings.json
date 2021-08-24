@@ -9,5 +9,7 @@
     "markdownlint.config": {
         "default": true,
         "MD007": { "indent": 4 }
-    }
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+
 }
