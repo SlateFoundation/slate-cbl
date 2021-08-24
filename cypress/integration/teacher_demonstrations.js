@@ -1,4 +1,5 @@
 describe('Teacher demonstrations test', () => {
+
     // load sample database before tests
     before(() => {
         cy.resetDatabase();
@@ -10,12 +11,14 @@ describe('Teacher demonstrations test', () => {
     });
 
     it('View single demonstration rubric as teacher', () => {
+
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/demonstrations/teacher');
 
         // verify teacher redirect
         cy.location('hash').should('eq', '#_');
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder ').contains('Select a list of students and a content area to load progress dashboard');
+        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder ')
+            .contains('Select a list of students and a content area to load progress dashboard');
 
         cy.withExt().then(({ Ext, extQuerySelector, extQuerySelectorAll }) => {
             // get the 'Rubric' selector element
@@ -63,7 +66,7 @@ describe('Teacher demonstrations test', () => {
                 .contains('Show all sections')
                 .scrollIntoView()
                 .closest('button')
-                .click('center');
+                .click('center')
 
             // verify and click empty section element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
