@@ -9,7 +9,7 @@ module.exports = {
     "parserOptions": {
         "ecmaVersion": 6,
     },
-    "extends": "eslint:recommended",
+    "extends":["eslint:recommended", "prettier"],
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-spacing": [
@@ -251,6 +251,11 @@ module.exports = {
         "wrap-iife": "error",
         "wrap-regex": "error",
         "yield-star-spacing": "error",
-        "yoda": "error"
-    }
+        "yoda": "error",
+        "prettier/prettier": "error"
+
+    },
+    "plugins": [
+        "prettier"
+      ]
 };
