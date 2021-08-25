@@ -2,15 +2,15 @@
     "student": {
         "ELA": {
             "1": {
-                "baseline": 10,
+                "baseline": 10, 
                 "average": 9.3,
-                "growth": -1.5,
+                "growth": -0.7,
                 "percentage": 33
             },
             "2": {
                 "baseline": 10,
                 "average": 10.8,
-                "growth": 1,
+                "growth": 0.8,
                 "percentage": 27
             },
             "6": {
@@ -84,7 +84,7 @@
             "1": {
                 "baseline": 9.1,
                 "average": 9.4,
-                "growth": 0.4,
+                "growth": 0.3,
                 "percentage": 38
             },
             "2": {
@@ -96,7 +96,7 @@
             "3": {
                 "baseline": 9.7,
                 "average": 7,
-                "growth": null,
+                "growth": -2.7,
                 "percentage": 33
             },
             "4": {
@@ -112,6 +112,26 @@
                 "average": 9.3,
                 "growth": null,
                 "percentage": 100
+            }
+        }
+    },
+      "student4": {
+        "ELA": {
+            "1": {
+                "baseline": 6,
+                "average": 7.3,
+                "growth": 0,
+                "percentage": 33
+            }
+        }
+    },
+    "student5": {
+        "ELA": {
+            "7": {
+                "baseline": 5,
+                "average": 7.3,
+                "growth": 1.2,
+                "percentage": 33
             }
         }
     }
