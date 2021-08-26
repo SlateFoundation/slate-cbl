@@ -252,5 +252,316 @@ describe('Student competency growth calculation test', () => {
             growth: 0
         });
     });
-
+    
+    it.skip('One rating for all but one skill, progress < 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'ELA',
+            competency: 2,
+            baseline: NULL,
+            growth: NULL
+        });
+    });
+    
+    it.skip('One set of ERs thats low and hidden and one that is higher and displayed', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'ELA',
+            competency: 3,
+            baseline: 6,
+            growth: 1
+        });
+    });
+    
+    it.skip('One set of ER thats low and hidden and one that is higher and displayed with Ms', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'ELA',
+            competency: 4,
+            baseline: 6,
+            growth: 0.7
+        });
+    });
+    
+    it.skip('No full set of ER, Progress > 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'ELA',
+            competency: 5,
+            baseline: 6,
+            growth: 1
+        });
+    });
+    
+    it.skip('One rating for each skill except one which is an M', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'ELA',
+            competency: 6,
+            baseline: NULL,
+            growth: NULL
+        });
+    });
+    
+    it.skip('One full ER plus one additional rating, () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'ELA',
+            competency: 7,
+            baseline: 6,
+            growth: 0.4
+        });
+    });
+    
+    it.skip('One full ER plus one additional rating, less than 50%    ', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'SCI',
+            competency: 1,
+            baseline: 6.9,
+            growth: -0.3
+        });
+    });
+    
+    it.skip('No full set of ERs, Progress < 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'NGE',
+            competency: 1,
+            baseline: NULL,
+            growth: NULL
+        });
+    });
+    
+    it.skip('No full set of ER, Progress >= 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'HOS',
+            competency: 1,
+            baseline: 8.3,
+            growth: 0.8
+        });
+    });
+    
+    it.skip('One full ER, HW.1.4 is set to zero ER', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'HW',
+            competency: 1,
+            baseline: 8,
+            growth: 0
+        });
+    });
+    
+    it.skip('No full set of ER, HW.2.5 is set to zero ER, Progress < 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'HW',
+            competency: 2,
+            baseline: NULL,
+            growth: NULL
+        });
+    });
+    
+        
+    it.skip('No full set of ER, HW3.4 is set to zero ER, Progress >= 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'HW',
+            competency: 3,
+            baseline: 8,
+            growth: 1.2
+        });
+    });
+    
+    it.skip('All Ms', () => {
+        checkCompetencyCalculation({
+            student: 'student4',
+            contentArea: 'SCI',
+            competency: 3,
+            baseline: NULL,
+            growth: NULL
+        });
+    });
+    
+    it.skip('One rating for each skill.', () => {
+        checkCompetencyCalculation({
+            student: 'student5',
+            contentArea: 'ELA',
+            competency: 1,
+            baseline: 5,
+            growth: 1.5
+        });
+    });
+    
+       
+    it.skip('One rating for all but one skill, progress < 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student5',
+            contentArea: 'ELA',
+            competency: 2,
+            baseline: 5,
+            growth: 2
+        });
+    });
+    
+    it.skip('One set of ERs thats low and hidden and one that is higher and displayed', () => {
+        checkCompetencyCalculation({
+            student: 'student5',
+            contentArea: 'ELA',
+            competency: 3,
+            baseline: 5,
+            growth: 3.2
+        });
+    });
+    
+    it.skip('One set of ER thats low and hidden and one that is higher and displayed with Ms', () => {
+        checkCompetencyCalculation({
+            student: 'student5',
+            contentArea: 'ELA',
+            competency: 4,
+            baseline: 5,
+            growth: 2.5
+        });
+    });
+    
+    it.skip('No full set of ER, Progress > 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student5',
+            contentArea: 'ELA',
+            competency: 5,
+            baseline: 5,
+            growth: 2
+        });
+    });
+    
+    it.skip('One rating for each skill except one which is an M', () => {
+        checkCompetencyCalculation({
+            student: 'student5',
+            contentArea: 'ELA',
+            competency: 6,
+            baseline: 5,
+            growth: 3
+        });
+    });
+    
+    it.skip('One full ER plus one additional rating', () => {
+        checkCompetencyCalculation({
+            student: 'student5',
+            contentArea: 'ELA',
+            competency: 7,
+            baseline: 5,
+            growth: 1.2
+        });
+    });
+    
+    it.skip('One full ER plus one additional rating, less than 50%', () => {
+        checkCompetencyCalculation({
+            student: 'student5',
+            contentArea: 'SCI',
+            competency: 1,
+            baseline: 9.1,
+            growth: 0.3
+        });
+    });
+    
+    it.skip('One rating', () => {
+        checkCompetencyCalculation({
+            student: 'student3',
+            contentArea: 'SCI',
+            competency: 2,
+            baseline: 9.3,
+            growth: -1.3
+        });
+    });
+    
+    it.skip('One rating', () => {
+        checkCompetencyCalculation({
+            student: 'student3',
+            contentArea: 'SCI',
+            competency: 3,
+            baseline: 9.7,
+            growth: -2.7
+        });
+    });
+    
+    it.skip('More than 1 rating', () => {
+        checkCompetencyCalculation({
+            student: 'student3',
+            contentArea: 'SCI',
+            competency: 4,
+            baseline: 9.7,
+            growth: 0.3
+        });
+    });
+    
+    it.skip('One rating for each skill', () => {
+        checkCompetencyCalculation({
+            student: 'student',
+            contentArea: 'ELA',
+            competency: 1,
+            baseline: 10,
+            growth: -0.7
+        });
+    });
+    
+    it.skip('One rating for each skill', () => {
+        checkCompetencyCalculation({
+            student: 'student',
+            contentArea: 'ELA',
+            competency: 2,
+            baseline: 10,
+            growth: 0.8
+        });
+    });
+    
+    it.skip('One set of ERs thats low and hidden and one that is higher and displayed', () => {
+        checkCompetencyCalculation({
+            student: 'student3',
+            contentArea: 'HOS',
+            competency: 4,
+            baseline: 9,
+            growth: 0.3
+        });
+    });
+    
+    it.skip('More than 1 rating', () => {
+        checkCompetencyCalculation({
+            student: 'student',
+            contentArea: 'ELA',
+            competency: 2,
+            baseline: 10,
+            growth: 0.8
+        });
+    });
+    
+    it.skip('More than 1 rating', () => {
+        checkCompetencyCalculation({
+            student: 'student',
+            contentArea: 'ELA',
+            competency: 6,
+            baseline: 9.5,
+            growth: 0.5
+        });
+    });
+    
+    it.skip('All Ms. There are ratings but there is no performance level.', () => {
+        checkCompetencyCalculation({
+            student: 'student',
+            contentArea: 'ELA',
+            competency: 2,
+            baseline: 9,
+            growth: NULL
+        });
+    });
+    
+    it.skip('Performance level and baseline are the same.', () => {
+        checkCompetencyCalculation({
+            student: 'student',
+            contentArea: 'ELA',
+            competency: 3,
+            baseline: 9,
+            growth: 0
+        });
+    });
 });
