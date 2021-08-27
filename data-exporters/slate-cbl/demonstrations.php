@@ -84,7 +84,7 @@ return [
         $format = 'Y-m-d H:i:s';
 
         $from = $query['date_from'] ? date($format, strtotime($query['date_from'])) : null;
-        $to = $query['date_to'] ? date($format, strtotime($query['date_to'])) : null;
+        $to = $query['date_to'] ? date($format, strtotime($query['date_to'].'+1 day')) : null;
 
         if ($from && $to) {
             $demonstrationConditions[] = sprintf('Demonstrated BETWEEN "%s" AND "%s"', $from, $to);
