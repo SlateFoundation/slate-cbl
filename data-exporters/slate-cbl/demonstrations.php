@@ -15,6 +15,7 @@ return [
         'StudentID',
         'CreatorFullName' => 'Teacher FullName',
         'StudentNumber' => 'Student Number',
+        'StudentUsername' => 'Student Username',
         'StudentFullName' => 'Student FullName',
         'ExperienceType' => 'Experience Type',
         'Context',
@@ -98,6 +99,7 @@ return [
                     '%2$s.StudentID, '.
                     'CONCAT(%4$s.FirstName, " ", %4$s.LastName) AS CreatorFullName, '.
                     '%5$s.StudentNumber AS StudentNumber, '.
+                    '%5$s.Username AS StudentUsername, '.
                     'CONCAT(%5$s.FirstName, " ", %5$s.LastName) AS StudentFullName, '.
                     '%2$s.ExperienceType, '.
                     '%2$s.Context, '.
