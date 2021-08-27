@@ -11,7 +11,7 @@ return [
     'description' => 'Each row represents a demonstration',
     'filename' => 'demonstrations',
     'headers' => [
-        'ID',
+        'Demonstration Skill ID',
         'StudentID',
         'CreatorFullName' => 'Teacher FullName',
         'StudentNumber' => 'Student Number',
