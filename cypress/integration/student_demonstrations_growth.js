@@ -303,7 +303,7 @@ describe('Student competency growth calculation test', () => {
         });
     });
     
-    it.skip('One full ER plus one additional rating, () => {
+    it.skip('One full ER plus one additional rating', () => {
         checkCompetencyCalculation({
             student: 'student4',
             contentArea: 'ELA',
@@ -313,7 +313,7 @@ describe('Student competency growth calculation test', () => {
         });
     });
     
-    it.skip('One full ER plus one additional rating, less than 50%    ', () => {
+    it.skip('One full ER plus one additional rating, less than 50%', () => {
         checkCompetencyCalculation({
             student: 'student4',
             contentArea: 'SCI',
