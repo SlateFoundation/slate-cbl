@@ -5,6 +5,7 @@ use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
+use Slate\CBL\Tasks\StudentTask;
 
 return [
     'title' => 'Demonstrations',
@@ -12,6 +13,7 @@ return [
     'filename' => 'demonstrations',
     'headers' => [
         'ID' => 'Demonstration Skill ID',
+        'StudentTaskID' => 'Student Task ID',
         'StudentID',
         'CreatorFullName' => 'Teacher FullName',
         'StudentNumber' => 'Student Number',
@@ -128,6 +130,7 @@ return [
         while($row = $results->fetch_assoc()) {
             $rowId = $row['ID'];
             unset($row['ID']);
+
             $demonstrationSkills = DemonstrationSkill::getAllByWhere(['DemonstrationID' => $rowId]);
             for ($i = 0; $i < count($demonstrationSkills); $i++) {
 
@@ -150,6 +153,15 @@ return [
 
                 yield $row;
             }
+
+            $demonstrationTasks =  StudentTask::getAllByWhere(['DemonstrationID' => $rowId]);
+            for ($i = 0; $i < count($demonstrationTasks); $i++) {
+
+                $row['StudentTaskID'] = $demonstrationTasks[$i]->ID;
+
+                yield $row;
+            }
+
         }
 
         $results->free();
