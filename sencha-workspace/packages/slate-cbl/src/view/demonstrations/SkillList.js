@@ -45,12 +45,14 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
     tpl: [
         '<thead>',
             '<tr class="skill-list-header-row">',
-                '<th class="skill-list-header skill-list-demo-index">&nbsp;</th>',
+                // '<th class="skill-list-header skill-list-demo-index">&nbsp;</th>',
+                '<th class="skill-list-header skill-list-demo-caret"></th>',
                 '<th class="skill-list-header skill-list-demo-date">Date</th>',
                 '<th class="skill-list-header skill-list-demo-level">Rating</th>',
-                '<th class="skill-list-header skill-list-demo-experience">Exp. Type</th>',
-                '<th class="skill-list-header skill-list-demo-context">Exp. Name</th>',
-                '<th class="skill-list-header skill-list-demo-task">Perf. Task</th>',
+                '<th class="skill-list-header skill-list-demo-experience">Experience</th>',
+                // '<th class="skill-list-header skill-list-demo-experience">Exp. Type</th>',
+                // '<th class="skill-list-header skill-list-demo-context">Exp. Name</th>',
+                '<th class="skill-list-header skill-list-demo-task">Performance Task</th>',
             '</tr>',
         '</thead>',
 
@@ -58,14 +60,15 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
             '<tpl for=".">',
                 '<tbody class="skill-list-demo <tpl if="highlighted">{[this.owner.highlightedRowCls]}</tpl>" data-demonstration="{Demonstration.ID}" data-demonstration-skill="{ID}">',
                 '<tr class="skill-list-demo-row">',
-                    '<td class="skill-list-demo-data skill-list-demo-index">{[xindex]}</td>',
+                    // '<td class="skill-list-demo-data skill-list-demo-index">{[xindex]}</td>',
+                    '<td class="skill-list-demo-data skill-list-demo-caret"></td>',
                     '<td class="skill-list-demo-data skill-list-demo-date">{Demonstrated:date}</td>',
                     '<td class="skill-list-demo-data skill-list-demo-level">',
                         '<div',
                             ' class="cbl-level-colored cbl-level-{TargetLevel} <tpl if="!Override">cbl-rating-{DemonstratedLevel}</tpl>"',
                             ' title="',
                                 '<tpl if="Override">',
-                                    'Overriden',
+                                    '[Overridden]',
                                 '<tpl else>',
                                     '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
                                 '</tpl>',
@@ -79,28 +82,40 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                         '</div>',
                     '</td>',
                     '<tpl if="Override">',
-                        '<td colspan="3" class="skill-list-demo-data skill-list-override">Override</td>',
+                        '<td colspan="2" class="skill-list-demo-data skill-list-override">[Overridden]</td>',
                     '<tpl else>',
-                        '<td class="skill-list-demo-data skill-list-demo-type">{Demonstration.ExperienceType:htmlEncode}</td>',
-                        '<td class="skill-list-demo-data skill-list-demo-context">{Demonstration.Context:htmlEncode}</td>',
-                        '<td class="skill-list-demo-data skill-list-demo-task">{Demonstration.PerformanceType:htmlEncode}</td>',
+                        '<td class="skill-list-demo-data skill-list-demo-experience">',
+                            '<div class="skill-list-title">{Demonstration.Context:htmlEncode}</div>',
+                            '<small class="skill-list-subtitle">{Demonstration.ExperienceType:htmlEncode}</small>',
+                        '</td>',
+                        // '<td class="skill-list-demo-data skill-list-demo-type" data-qtip="{Demonstration.ExperienceType:htmlEncode}">{Demonstration.ExperienceType:htmlEncode}</td>',
+                        // '<td class="skill-list-demo-data skill-list-demo-context" data-qtip="{Demonstration.Context:htmlEncode}">{Demonstration.Context:htmlEncode}</td>',
+                        '<td class="skill-list-demo-data skill-list-demo-task">',
+                            '<a class="skill-list-linkable" href="#">',
+                                '<i class="linkable-icon fa fa-external-link-square"></i>',
+                                '<div class="linkable-content">',
+                                    '{Demonstration.PerformanceType:htmlEncode}',
+                                '</div>',
+                            '</a> ',
+                        '</td > ',
                     '</tpl>',
                 '</tr>',
                 '<tr class="skill-list-demo-detail-row" data-demonstration="{ID}">',
-                    '<td class="skill-list-demo-detail-data" colspan="6">',
+                    '<td class="skill-list-demo-detail-data" colspan="5">',
                         '<div class="skill-list-demo-detail-ct">',
-                            '<tpl if="Demonstration.ArtifactURL">',
-                                '<div class="skill-list-demo-artifact">',
-                                    '<strong>Artifact: </strong>',
-                                    '<a href="{Demonstration.ArtifactURL:htmlEncode}" target="_blank">{Demonstration.ArtifactURL:htmlEncode}</a>',
-                                '</div>',
-                            '</tpl>',
-                            '<tpl if="Demonstration.Comments">',
-                                '<div class="skill-list-demo-comments">',
-                                    '<strong>Comments: </strong>',
-                                    '{[Ext.util.Format.nl2br(Ext.util.Format.htmlEncode(values.Demonstration.Comments))]}',
-                                '</div>',
-                            '</tpl>',
+                            // '<pre>{[ JSON.stringify(values.Demonstration) ]}</pre>',
+                            // '<tpl if="Demonstration.ArtifactURL">',
+                            //     '<div class="skill-list-demo-artifact">',
+                            //         '<strong>Artifact: </strong>',
+                            //         '<a href="{Demonstration.ArtifactURL:htmlEncode}" target="_blank">{Demonstration.ArtifactURL:htmlEncode}</a>',
+                            //     '</div>',
+                            // '</tpl>',
+                            // '<tpl if="Demonstration.Comments">',
+                            //     '<div class="skill-list-demo-comments">',
+                            //         '<strong>Comments: </strong>',
+                            //         '{[Ext.util.Format.nl2br(Ext.util.Format.htmlEncode(values.Demonstration.Comments))]}',
+                            //     '</div>',
+                            // '</tpl>',
                             '<div class="skill-list-demo-meta">',
                                 'Demonstration #{DemonstrationID} &middot;&nbsp;',
                                 '<tpl for="Creator">',
@@ -116,14 +131,78 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                     '<a href="#delete">Delete</a>',
                                 '</tpl>',
                             '</div>',
-                        '</div>',
+
+                            '<hr class="skill-list-detail-separator">',
+
+                            `<div class="skill-list-detail-columns">
+                              <div class="skill-list-detail-col -artifacts">
+                                <h4 class="skill-list-detail-heading">Artifacts</h4>
+
+                                <ul class="skill-list-artifacts">
+                                  <li class="skill-list-artifact">
+                                    <a href="#" class="skill-list-artifact-link">
+                                      <i class="fa fa-link skill-list-artifact-icon"></i>
+                                      <div class="skill-list-artifact-label">Artifact title should go here and might be long enough to wrap</div>
+                                    </a>
+                                  </li>
+                                </ul>
+
+                                <h5 class="skill-list-detail-subheading">From [Student Name]</h5>
+                                <ul class="skill-list-artifacts">
+                                  <li class="skill-list-artifact">
+                                    <a href="#" class="skill-list-artifact-link">
+                                      <i class="fa fa-link skill-list-artifact-icon"></i>
+                                      <div class="skill-list-artifact-label">Student artifact</div>
+                                    </a>
+                                  </li>
+                                  <li class="skill-list-artifact">
+                                    <a href="#" class="skill-list-artifact-link">
+                                      <i class="fa fa-link skill-list-artifact-icon"></i>
+                                      <div class="skill-list-artifact-label">A second student artifact</div>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="skill-list-detail-col -comments">
+                                <h4 class="skill-list-detail-heading">Comments</h4>
+
+                                <ul class="skill-list-comments">
+                                  <li class="skill-list-comment">
+                                    <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/64/64" width="32" height="32" alt="Instructor Name">
+                                    <div class="skill-list-comment-body">
+                                      <div class="skill-list-comment-text">Here is a comment from the instructor.</div>
+                                      <time class="skill-list-comment-date" datetime="2021-08-31T13:00:00-0400">Tue, Aug 31, 2021 · 1:00 pm</time>
+                                    </div>
+                                  </li>
+                                </ul>
+
+                                <h5 class="skill-list-detail-subheading">From [Student Name]</h5>
+                                <ul class="skill-list-comments">
+                                  <li class="skill-list-comment">
+                                    <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/65/65" width="32" height="32" alt="Student Name">
+                                    <div class="skill-list-comment-body">
+                                      <div class="skill-list-comment-text">Student comment might go here.</div>
+                                      <time class="skill-list-comment-date" datetime="2021-08-31T13:00:00-0400">Tue, Aug 31, 2021 · 1:00 pm</time>
+                                    </div>
+                                  </li>
+                                  <li class="skill-list-comment">
+                                    <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/65/65" width="32" height="32" alt="Student Name">
+                                    <div class="skill-list-comment-body">
+                                      <div class="skill-list-comment-text">Perhaps the student left a second comment about the task.</div>
+                                      <time class="skill-list-comment-date" datetime="2021-08-31T13:00:00-0400">Tue, Aug 31, 2021 · 1:00 pm</time>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>`,
+                            '</div>',
                     '</td>',
                 '</tr>',
                 '</tbody>',
             '</tpl>',
         '<tpl else>',
             '<tr class="skill-list-emptytext-row">',
-                '<td class="skill-list-emptytext-cell" colspan="6">No demonstrations are logged yet for this skill</td>',
+                '<td class="skill-list-emptytext-cell" colspan="5">No demonstrations are logged yet for this skill</td>',
             '</tr>',
         '</tpl>'
     ],

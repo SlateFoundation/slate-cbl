@@ -17,6 +17,7 @@ Ext.define('SlateDemonstrationsTeacher.view.SkillFooter', {
         },
         {
             xtype: 'button',
+            glyph: 0xf055, // fa-plus-circle
             text: 'Submit Evidence',
             action: 'create-demonstration'
         }
