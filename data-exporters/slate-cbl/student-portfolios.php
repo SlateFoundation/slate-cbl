@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Student Portfolios',
+    'title' => 'Portfolio Progress',
     'description' => 'Each row represents a content area and portfolio level that a student has been enrolled in at least one competency within',
     'filename' => 'student-portfolios',
     'headers' => [

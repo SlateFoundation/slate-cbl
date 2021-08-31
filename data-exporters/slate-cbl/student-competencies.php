@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Student Competencies',
+    'title' => 'Competency Progress',
     'description' => 'Each row represents a competency that a student has been enrolled in and their progress within it',
     'filename' => 'student-competencies',
     'headers' => [

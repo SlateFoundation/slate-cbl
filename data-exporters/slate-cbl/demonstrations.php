@@ -8,7 +8,7 @@ use Slate\CBL\Demonstrations\DemonstrationSkill;
 use Slate\CBL\Tasks\StudentTask;
 
 return [
-    'title' => 'Demonstrations',
+    'title' => 'Ratings',
     'description' => 'Each row represents a demonstration',
     'filename' => 'demonstrations',
     'headers' => [
