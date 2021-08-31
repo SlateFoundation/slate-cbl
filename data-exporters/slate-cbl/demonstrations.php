@@ -9,7 +9,7 @@ use Slate\CBL\Tasks\StudentTask;
 
 return [
     'title' => 'Ratings',
-    'description' => 'Each row represents a demonstration',
+    'description' => 'Each row represents a demonstration rating',
     'filename' => 'demonstrations',
     'headers' => [
         'DemonstrationSkillID' => 'Demonstration Skill ID',
