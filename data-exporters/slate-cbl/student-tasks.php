@@ -12,18 +12,18 @@ return [
         'StudentUsername' => 'Student Username',
         'StudentFullName' => 'Student Name',
         'CreatorUsername' => 'Teacher Username',
-        'TaskTitle' => 'Task Title',
-        'TaskExperienceType' => 'Experience Type',
         'Created',
         'SectionTitle' => 'Section Name',
+        'CourseCode' => 'Course Code',
+        'TermTitle' => 'Term Title',
+        'TermHandle' => 'Term Handle',
+        'TaskTitle' => 'Task Title',
+        'TaskExperienceType' => 'Experience Type',
         'Status',
         'DueDate' => 'Due date',
         'ExpirationDate' => 'Expiration date',
         'SubmittedDate' => 'Submitted date',
-        'SkillCodes' => 'Skills Codes',
-        'CourseCode' => 'Course Code',
-        'TermTitle' => 'Term Title',
-        'TermHandle' => 'Term Handle'
+        'SkillCodes' => 'Skills Codes'
     ],
     'readQuery' => function (array $input) {
         $query = [
