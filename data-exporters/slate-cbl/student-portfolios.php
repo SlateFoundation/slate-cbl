@@ -6,9 +6,9 @@ return [
     'filename' => 'student-portfolios',
     'headers' => [
         'PersonID' => 'Student ID',
-        'StudentFullName' => 'Student Name',
         'StudentNumber' => 'Student Number',
         'StudentUsername' => 'Student Username',
+        'StudentFullName' => 'Student Name',
         'ContentAreaCode' => 'Content Area',
         'Level' => 'Portfolio',
         'DemonstrationsAverage' => 'Performance Level',
