@@ -5,8 +5,8 @@ return [
     'description' => 'Each row represents a competency that a student has been enrolled in and their progress within it',
     'filename' => 'student-competencies',
     'headers' => [
-        'ID',
-        'PersonID' => 'Person ID',
+        'ID' => 'Student Competency ID',
+        'PersonID' => 'Student ID',
         'StudentNumber' => 'Student Number',
         'StudentUsername' => 'Student Username',
         'StudentFullName' => 'Student Name',
