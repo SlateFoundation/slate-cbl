@@ -12,7 +12,8 @@ return [
     'description' => 'Each row represents a demonstration',
     'filename' => 'demonstrations',
     'headers' => [
-        'ID' => 'Demonstration Skill ID',
+        'DemonstrationSkillID' => 'Demonstration Skill ID',
+        'DemonstrationID' => 'Demonstration ID',
         'StudentTaskID' => 'Student Task ID',
         'StudentID',
         'CreatorFullName' => 'Teacher FullName',
@@ -130,6 +131,8 @@ return [
         while($row = $results->fetch_assoc()) {
             $rowId = $row['ID'];
             unset($row['ID']);
+            $row['DemonstrationID'] = $rowId;
+
 
             $demonstrationSkills = DemonstrationSkill::getAllByWhere(['DemonstrationID' => $rowId]);
             for ($i = 0; $i < count($demonstrationSkills); $i++) {
@@ -149,7 +152,7 @@ return [
                 }
 
                 $row['Level'] = $demonstrationSkills[$i]->TargetLevel;
-                $row['ID'] = $demonstrationSkills[$i]->ID;
+                $row['DemonstrationSkillID'] = $demonstrationSkills[$i]->ID;
 
                 yield $row;
             }
