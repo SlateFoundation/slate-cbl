@@ -72,7 +72,7 @@
                         default=$value
                         options=DB::allValues('Level', 'SELECT DISTINCT Level FROM cbl_student_competencies ORDER BY Level')
                         useKeyAsValue=no
-                        blankOption='any'
+                        blankOption='all'
                     }
                 {elseif is_bool($value)}
                     {checkbox
