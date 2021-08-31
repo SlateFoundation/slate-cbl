@@ -7,7 +7,6 @@ return [
     'headers' => [
         'StudentTaskID' => 'Student Task ID',
         'TaskID' => 'Task ID',
-        'PersonID' => 'Person ID',
         'StudentNumber' => 'Student Number',
         'StudentUsername' => 'Student Username',
         'StudentFullName' => 'Student Name',
@@ -265,7 +264,6 @@ return [
             yield [
                 'StudentTaskID' => $StudentTask->ID,
                 'TaskID' => $StudentTask->TaskID,
-                'PersonID' => $StudentTask->Student->ID,
                 'StudentNumber' => $StudentTask->Student->StudentNumber,
                 'StudentUsername' => $StudentTask->Student->Username,
                 'StudentFullName' => $StudentTask->Student->FullName,
