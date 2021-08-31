@@ -30,7 +30,9 @@ return [
         'Created',
         'Modified',
         'Rating',
-        'Level' => 'Portfolio'
+        'Level' => 'Portfolio',
+        'TermTitle' => 'Term Title',
+        'TermHandle' => 'Term Handle'
     ],
     'readQuery' => function (array $input) {
         $query = [
@@ -161,6 +163,8 @@ return [
             for ($i = 0; $i < count($demonstrationTasks); $i++) {
 
                 $row['StudentTaskID'] = $demonstrationTasks[$i]->ID;
+                $row['TermTitle'] = $demonstrationTasks[$i]->Task->Section->Term->Title;
+                $row['TermHandle'] = $demonstrationTasks[$i]->Task->Section->Term->Handle;
 
                 yield $row;
             }
