@@ -7,9 +7,9 @@ return [
     'headers' => [
         'ID',
         'PersonID' => 'Person ID',
-        'StudentFullName' => 'Student',
         'StudentNumber' => 'Student Number',
         'StudentUsername' => 'Student Username',
+        'StudentFullName' => 'Student',
         'CompetencyCode' => 'Competency',
         'Level' => 'Portfolio',
         'BaselineRating' => 'Baseline',
@@ -147,9 +147,9 @@ return [
                 yield [
                     'ID' => $StudentCompetency->ID,
                     'PersonID' => $Student->ID,
-                    'StudentFullName' => $Student->FullName,
                     'StudentNumber' => $Student->StudentNumber,
                     'StudentUsername' => $Student->Username,
+                    'StudentFullName' => $Student->FullName,
                     'CompetencyCode' => $StudentCompetency->Competency->Code,
                     'Level' => $StudentCompetency->Level,
                     'BaselineRating' => round($StudentCompetency->BaselineRating, 1),
