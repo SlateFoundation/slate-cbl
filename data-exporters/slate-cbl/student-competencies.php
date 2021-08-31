@@ -9,7 +9,7 @@ return [
         'PersonID' => 'Person ID',
         'StudentNumber' => 'Student Number',
         'StudentUsername' => 'Student Username',
-        'StudentFullName' => 'Student',
+        'StudentFullName' => 'Student Name',
         'CompetencyCode' => 'Competency',
         'Level' => 'Portfolio',
         'BaselineRating' => 'Baseline',
