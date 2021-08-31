@@ -5,7 +5,8 @@ return [
     'description' => 'Each row represents an assignment of a task to a student',
     'filename' => 'student-tasks',
     'headers' => [
-        'ID',
+        'StudentTaskID' => 'Student Task ID',
+        'TaskID' => 'Task ID',
         'PersonID' => 'Person ID',
         'StudentFullName' => 'Student',
         'StudentNumber' => 'Student Number',
@@ -260,7 +261,8 @@ return [
             natcasesort($skillCodes);
 
             yield [
-                'ID' => $StudentTask->ID,
+                'StudentTaskID' => $StudentTask->ID,
+                'TaskID' => $StudentTask->TaskID,
                 'PersonID' => $StudentTask->Student->ID,
                 'StudentFullName' => $StudentTask->Student->FullName,
                 'StudentNumber' => $StudentTask->Student->StudentNumber,
