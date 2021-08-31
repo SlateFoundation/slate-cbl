@@ -18,7 +18,7 @@ return [
         'CreatorFullName' => 'Teacher FullName',
         'StudentNumber' => 'Student Number',
         'StudentUsername' => 'Student Username',
-        'StudentFullName' => 'Student FullName',
+        'StudentFullName' => 'Student Name',
         'ExperienceType' => 'Experience Type',
         'Context',
         'PerformanceType' => 'Performance Type',
