@@ -11,8 +11,14 @@
         {/if}
 
         <form method="GET" action="/exports/{$scriptPath|escape}">
-            {foreach key=key item=value from=$script.query}
-                {$label = strtr(ucfirst($key), '_', ' ')}
+            {foreach key=key item=item from=$script.query}
+                {if is_array($item)}
+                  {$label = $item['label']}
+                  {$value = $item['value']}
+                {else}
+                  {$label = strtr(ucfirst($key), '_', ' ')}
+                  {$value = $item}
+                {/if}
 
                 {if $key == 'students'}
                     {field
