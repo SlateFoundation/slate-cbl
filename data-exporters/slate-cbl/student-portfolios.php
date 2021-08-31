@@ -5,9 +5,10 @@ return [
     'description' => 'Each row represents a content area and portfolio level that a student has been enrolled in at least one competency within',
     'filename' => 'student-portfolios',
     'headers' => [
-        'PersonID' => 'Person ID',
-        'StudentFullName' => 'Student',
+        'PersonID' => 'Student ID',
+        'StudentFullName' => 'Student Name',
         'StudentNumber' => 'Student Number',
+        'StudentUsername' => 'Student Username',
         'ContentAreaCode' => 'Content Area',
         'Level' => 'Portfolio',
         'DemonstrationsAverage' => 'Performance Level',
@@ -216,6 +217,7 @@ return [
                     yield [
                         'PersonID' => $Student->ID,
                         'StudentFullName' => $Student->FullName,
+                        'StudentUsername' => $Student->Username,
                         'StudentNumber' => $Student->StudentNumber,
                         'ContentAreaCode' => Slate\CBL\ContentArea::getByID($finishedPortfolio['ContentAreaID'])->Code,
                         'Level' => intval($finishedPortfolio['Level']),
