@@ -156,15 +156,13 @@ return [
                 $row['Level'] = $demonstrationSkills[$i]->TargetLevel;
                 $row['DemonstrationSkillID'] = $demonstrationSkills[$i]->ID;
 
-                yield $row;
-            }
+                $demonstrationTask =  StudentTask::getByWhere(['DemonstrationID' => $rowId, 'StudentID' => $row['StudentID']]);
+                if ($demonstrationTask !== null) {
 
-            $demonstrationTasks =  StudentTask::getAllByWhere(['DemonstrationID' => $rowId]);
-            for ($i = 0; $i < count($demonstrationTasks); $i++) {
-
-                $row['StudentTaskID'] = $demonstrationTasks[$i]->ID;
-                $row['TermTitle'] = $demonstrationTasks[$i]->Task->Section->Term->Title;
-                $row['TermHandle'] = $demonstrationTasks[$i]->Task->Section->Term->Handle;
+                    $row['StudentTaskID'] = $demonstrationTask->ID;
+                    $row['TermTitle'] = $demonstrationTask->Task->Section->Term->Title;
+                    $row['TermHandle'] = $demonstrationTask->Task->Section->Term->Handle;
+                }
 
                 yield $row;
             }
