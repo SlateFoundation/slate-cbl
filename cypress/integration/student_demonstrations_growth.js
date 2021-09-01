@@ -17,17 +17,23 @@ describe('Student competency growth calculation test', () => {
             .find('span[data-ref="codeEl"]')
             .contains(code);
 
-        cy.get(`#${competencyCardId}`)
-            .find('td[data-ref="baselineRatingEl"]')
-            .contains(baseline === null ? '—' : baseline);
+        if (baseline !== undefined) {
+            cy.get(`#${competencyCardId}`)
+                .find('td[data-ref="baselineRatingEl"]')
+                .contains(baseline === null ? '—' : baseline);
+        }
 
-        cy.get(`#${competencyCardId}`)
-            .find('td[data-ref="averageEl"]')
-            .contains(average === null ? '—' : average);
+        if (average !== undefined) {
+            cy.get(`#${competencyCardId}`)
+                .find('td[data-ref="averageEl"]')
+                .contains(average === null ? '—' : average);
+        }
 
-        cy.get(`#${competencyCardId}`)
-            .find('td[data-ref="growthEl"]')
-            .contains(growth === null ? '—' : `${growth} yr`);
+        if (growth !== undefined) {
+            cy.get(`#${competencyCardId}`)
+                .find('td[data-ref="growthEl"]')
+                .contains(growth === null ? '—' : `${growth} yr`);
+        }
 
     };
 
