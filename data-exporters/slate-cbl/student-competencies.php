@@ -24,14 +24,8 @@ return [
     'readQuery' => function (array $input) {
         $query = [
             'students' => 'all',
-            'content_area' => [
-              'label' => 'Competency Area',
-              'value' => null
-            ],
-            'level' => [
-              'label' => 'Porfolio',
-              'value' => 'all'
-            ]
+            'content_area' => null,
+            'level' => null
         ];
 
         if (!empty($input['students'])) {

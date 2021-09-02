@@ -11,14 +11,8 @@
         {/if}
 
         <form method="GET" action="/exports/{$scriptPath|escape}">
-            {foreach key=key item=item from=$script.query}
-                {if is_array($item)}
-                  {$label = $item['label']}
-                  {$value = $item['value']}
-                {else}
-                  {$label = strtr(ucfirst($key), '_', ' ')}
-                  {$value = $item}
-                {/if}
+            {foreach key=key item=value from=$script.query}
+                {$label = strtr(ucfirst($key), '_', ' ')}
 
                 {if $key == 'students'}
                     {field
@@ -60,7 +54,7 @@
                 {elseif $key == 'content_area'}
                     {selectField
                         inputName=$key
-                        label=$label
+                        label='Competency Area'
                         default=$value
                         options=DB::valuesTable('Code', 'Title', 'SELECT Code, Title FROM cbl_content_areas ORDER BY Code')
                         blankOption='any'
@@ -68,7 +62,7 @@
                 {elseif $key == 'level'}
                     {selectField
                         inputName=$key
-                        label=$label
+                        label='Portfolio'
                         default=$value
                         options=DB::allValues('Level', 'SELECT DISTINCT Level FROM cbl_student_competencies ORDER BY Level')
                         useKeyAsValue=no
