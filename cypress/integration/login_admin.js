@@ -1,4 +1,4 @@
-describe.skip('Admin login test', () => {
+describe('Admin login test', () => {
 
     // load sample database before tests
     before(() => {
