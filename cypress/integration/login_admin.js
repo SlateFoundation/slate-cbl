@@ -50,7 +50,7 @@ describe('Admin login test', () => {
         cy.get('#login-modal').should('not.be.visible');
         cy.get('.slate-omnibar.mobile-hidden').contains('Log In').click();
 
-        cy.contains('#login-modal').should('not.have.attr', 'display');
+        cy.get('#login-modal').should('not.have.attr', 'display');
         cy.focused()
             .should('have.attr', 'name', '_LOGIN[username]')
             .type('admin')
