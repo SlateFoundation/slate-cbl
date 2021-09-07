@@ -1,4 +1,4 @@
-describe.skip('Teacher student competencies test', () => {
+describe('Teacher student competencies test', () => {
 
     // load sample database before tests
     before(() => {
@@ -44,7 +44,7 @@ describe.skip('Teacher student competencies test', () => {
             cy.get('#' + studentSelector.el.dom.id)
                 .click()
                 .focused()
-                .type('ELA');
+                .type('EXA');
 
             // verify and click first element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id + ' .x-boundlist-item')
