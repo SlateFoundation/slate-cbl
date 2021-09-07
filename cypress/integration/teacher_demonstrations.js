@@ -47,7 +47,7 @@ describe('Teacher demonstrations test', () => {
 
             // verify and click first element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
-                .contains('ELA-001')
+                .contains('Example School')
                 .click();
 
             // verify hash updates
