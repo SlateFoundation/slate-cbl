@@ -76,7 +76,7 @@ describe('Teacher demonstrations test', () => {
                 .click();
 
             // verify hash updates
-            cy.location('hash').should('eq', '#ELA/section:ELA-EMPTY');
+            cy.location('hash').should('eq', '#ELA/group:class_of_2019');
 
             // verify content loads
             cy.get('.cbl-grid-main').should('be.empty');
