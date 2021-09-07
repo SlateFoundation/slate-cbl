@@ -71,7 +71,8 @@ describe('Teacher demonstrations test', () => {
 
             // verify and click empty section element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
-                .contains('ELA-EMPTY')
+                .contains('Class of 2019')
+                .scrollIntoView()
                 .click();
 
             // verify hash updates
