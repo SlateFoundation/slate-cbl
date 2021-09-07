@@ -52,7 +52,7 @@ describe('Teacher student competencies test', () => {
                 .click();
 
             // verify hash updates
-            cy.location('hash').should('eq', '#ELA/section:ELA-001');
+            cy.location('hash').should('eq', '#ELA/group:example_school');
 
             // verify content loads
             cy.get('.slate-studentcompetencies-admin-grid').contains('Student Slate');
