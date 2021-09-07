@@ -48,7 +48,7 @@ describe('Teacher student competencies test', () => {
 
             // verify and click first element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('ELA-001')
+                .contains('Example School')
                 .click();
 
             // verify hash updates
