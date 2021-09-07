@@ -43,7 +43,7 @@ describe('Teacher demonstrations test', () => {
             cy.get('#' + studentSelector.el.dom.id)
                 .click()
                 .focused()
-                .type('ELA');
+                .type('Exa');
 
             // verify and click first element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
