@@ -51,7 +51,7 @@ describe('Teacher demonstrations test', () => {
                 .click();
 
             // verify hash updates
-            cy.location('hash').should('eq', '#ELA/section:ELA-001');
+            cy.location('hash').should('eq', '#ELA/group:example_school');
 
             // verify content loads
             cy.get('.cbl-grid-competencies').contains('Reading Critically');
