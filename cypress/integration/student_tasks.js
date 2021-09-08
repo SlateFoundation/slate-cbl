@@ -88,7 +88,7 @@ const dayjs = require('dayjs')
                 .should(($todoListSection) => {
                     expect(
                         $todoListSection.length
-                    ).to.equal(3);
+                    ).to.equal(4);
                 })
 
             // get current tasks list
