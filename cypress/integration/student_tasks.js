@@ -305,7 +305,7 @@ const dayjs = require('dayjs')
                             cy.get('#' + currentTasksTree.id)
                                 .should(($tasksTree) => {
                                     expect($tasksTree.find('li.slate-tasktree-item').length)
-                                        .to.equal(4);
+                                        .to.equal(5);
                                 });
                         });
 
