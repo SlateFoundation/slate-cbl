@@ -1,4 +1,5 @@
-const dayjs = require('dayjs')
+describe('Student Tasks test', () => {
+    const dayjs = require('dayjs')
 
     // load sample database before tests
     before(() => {
