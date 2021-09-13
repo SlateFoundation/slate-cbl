@@ -1,4 +1,4 @@
-describe('Student Tasks test', () => {
+describe.skip('Student Tasks test', () => {
     const dayjs = require('dayjs')
 
     // load sample database before tests
