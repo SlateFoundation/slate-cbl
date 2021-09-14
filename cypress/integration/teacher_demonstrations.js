@@ -67,13 +67,13 @@ describe('Teacher demonstrations test', () => {
                 .contains('Show all sections')
                 .scrollIntoView()
                 .closest('button')
-                .click('center')
+                .click('center', { force: true })  //scrollIntoView does not appear to be working
 
             // verify and click empty section element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
                 .contains('Class of 2019')
                 .scrollIntoView()
-                .click();
+                .click({force: true}); //scrollIntoView does not appear to be working
 
             // verify hash updates
             cy.location('hash').should('eq', '#ELA/group:class_of_2019');
