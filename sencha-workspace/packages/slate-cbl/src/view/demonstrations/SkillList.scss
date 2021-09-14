@@ -166,40 +166,43 @@ hr.skill-list-detail-separator {
     margin: .5em 0;
 }
 
+.skill-list-detail-group {
+    background-color: white;
+    border-radius: .25em;
+    box-shadow: 0 2px 3px rgba(black, .05);
+    margin-bottom: .5em;
+    padding: .5em .75em;
+}
+
 .skill-list-detail-subheading {
     color: $muted-color;
     font-family: $body-font;
     font-size: .75em;
     letter-spacing: .05em;
-    margin: 1em 0;
+    margin: .5em 0;
     text-transform: uppercase;
 }
 
-.skill-list-artifacts,
+.skill-list-links,
 .skill-list-comments {
     margin: 0;
     padding: 0;
 }
 
-.skill-list-artifact {
-    display: inline-block;
-    margin-bottom: .5em;
+.skill-list-link-item {
+    display: block;
+}
 
-    &-link {
-        align-items: baseline;
-        background-color: rgba(white, .5);
-        border: 1px solid white;
-        border-radius: .25em;
-        box-shadow: 0 2px 3px rgba(black, .05);
-        display: flex;
-        padding: .5em .75em;
-        text-decoration: none !important;
+.skill-list-link {
+    align-items: baseline;
+    display: flex;
+    margin: 0 -.75em;
+    padding: .5em .75em;
+    text-decoration: none !important;
 
-        &:hover,
-        &:focus {
-            background-color: white;
-            border-color: rgba(black, .1);
-        }
+    &:hover,
+    &:focus {
+        background-color: rgba($link-color, .1);
     }
 
     &-icon {
@@ -213,11 +216,31 @@ hr.skill-list-detail-separator {
 
 .skill-list-comment {
     display: flex;
-    margin: 0 0 .5em;
+    margin: .5em 0;
 
     &-avatar {
         border-radius: 100%;
         margin-right: .5em;
+
+        &.-hidden {
+            visibility: hidden;
+        }
+    }
+
+    &-body {
+        flex: 1;
+    }
+
+    &-meta {
+        align-items: baseline;
+        display: flex;
+        font-size: .875em;
+        line-height: 1.5;
+    }
+
+    &-author {
+        font-weight: bold;
+        letter-spacing: .02em;
     }
 
     &-text {
@@ -225,9 +248,12 @@ hr.skill-list-detail-separator {
     }
 
     &-date {
-        display: block;
-        font-size: .75em;
+        margin-left: .5em;
         opacity: .5;
+    }
+
+    + .skill-list-comment {
+        margin-top: .75em;
     }
 }
 

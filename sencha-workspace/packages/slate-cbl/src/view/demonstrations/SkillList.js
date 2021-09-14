@@ -135,65 +135,115 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                             '<hr class="skill-list-detail-separator">',
 
                             `<div class="skill-list-detail-columns">
-                              <div class="skill-list-detail-col -artifacts">
-                                <h4 class="skill-list-detail-heading">Artifacts</h4>
+                                <div class="skill-list-detail-col -links">
+                                    <h4 class="skill-list-detail-heading">Links</h4>
 
-                                <ul class="skill-list-artifacts">
-                                  <li class="skill-list-artifact">
-                                    <a href="#" class="skill-list-artifact-link">
-                                      <i class="fa fa-link skill-list-artifact-icon"></i>
-                                      <div class="skill-list-artifact-label">Artifact title should go here and might be long enough to wrap</div>
-                                    </a>
-                                  </li>
-                                </ul>
+                                    <div class="skill-list-detail-group">
+                                        <h5 class="skill-list-detail-subheading">Artifacts</h5>
+                                        <ul class="skill-list-links">
+                                            <li class="skill-list-link-item">
+                                                <a href="#" class="skill-list-link">
+                                                    <i class="fa fa-link skill-list-link-icon"></i>
+                                                    <div class="skill-list-link-label">Artifact title should go here and might be long enough to wrap</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
 
-                                <h5 class="skill-list-detail-subheading">From [Student Name]</h5>
-                                <ul class="skill-list-artifacts">
-                                  <li class="skill-list-artifact">
-                                    <a href="#" class="skill-list-artifact-link">
-                                      <i class="fa fa-link skill-list-artifact-icon"></i>
-                                      <div class="skill-list-artifact-label">Student artifact</div>
-                                    </a>
-                                  </li>
-                                  <li class="skill-list-artifact">
-                                    <a href="#" class="skill-list-artifact-link">
-                                      <i class="fa fa-link skill-list-artifact-icon"></i>
-                                      <div class="skill-list-artifact-label">A second student artifact</div>
-                                    </a>
-                                  </li>
-                                </ul>
-                              </div>
+                                    <div class="skill-list-detail-group">
+                                        <h5 class="skill-list-detail-subheading">From [Teacher]</h5>
+                                        <ul class="skill-list-links">
+                                            <li class="skill-list-link-item">
+                                                <a href="#" class="skill-list-link">
+                                                    <i class="fa fa-link skill-list-link-icon"></i>
+                                                    <div class="skill-list-link-label">Teacher link</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="skill-list-detail-group">
+                                        <h5 class="skill-list-detail-subheading">From [Student Name]</h5>
+                                        <ul class="skill-list-links">
+                                            <li class="skill-list-link-item">
+                                                <a href="#" class="skill-list-link">
+                                                    <i class="fa fa-link skill-list-link-icon"></i>
+                                                    <div class="skill-list-link-label">Student link</div>
+                                                </a>
+                                            </li>
+                                            <li class="skill-list-link-item">
+                                                <a href="#" class="skill-list-link">
+                                                    <i class="fa fa-link skill-list-link-icon"></i>
+                                                    <div class="skill-list-link-label">A second student link</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
                               <div class="skill-list-detail-col -comments">
-                                <h4 class="skill-list-detail-heading">Comments</h4>
+                                    <h4 class="skill-list-detail-heading">Latest Comments</h4>
 
-                                <ul class="skill-list-comments">
-                                  <li class="skill-list-comment">
-                                    <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/64/64" width="32" height="32" alt="Instructor Name">
-                                    <div class="skill-list-comment-body">
-                                      <div class="skill-list-comment-text">Here is a comment from the instructor.</div>
-                                      <time class="skill-list-comment-date" datetime="2021-08-31T13:00:00-0400">Tue, Aug 31, 2021 · 1:00 pm</time>
-                                    </div>
-                                  </li>
-                                </ul>
+                                    <div class="skill-list-detail-group">
+                                        <ul class="skill-list-comments">
+                                            <li class="skill-list-comment">
+                                                <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/48/48" width="24" height="24" alt="Instructor Name">
+                                                <div class="skill-list-comment-body">
+                                                    <div class="skill-list-comment-meta">
+                                                        <span class="skill-list-comment-author">Teacher Name</span>
+                                                        <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">29m</time>
+                                                    </div>
+                                                    <div class="skill-list-comment-text">Here is a comment from the instructor.</div>
+                                                </div>
+                                            </li>
+                                            <li class="skill-list-comment">
+                                                <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/49/49" width="24" height="24" alt="Student Name">
+                                                <div class="skill-list-comment-body">
+                                                    <div class="skill-list-comment-meta">
+                                                        <span class="skill-list-comment-author">Student Name</span>
+                                                        <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">2h</time>
+                                                    </div>
+                                                    <div class="skill-list-comment-text">Perhaps the student left a second comment about the task.</div>
+                                                </div>
+                                            </li>
+                                            <li class="skill-list-comment">
+                                                <img class="skill-list-comment-avatar -hidden" src="http://www.fillmurray.com/49/49" width="24" height="24" alt="Student Name">
+                                                <div class="skill-list-comment-body">
+                                                    <div class="skill-list-comment-meta">
+                                                        <span class="skill-list-comment-author">Student Name</span>
+                                                        <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">1d</time>
+                                                    </div>
+                                                    <div class="skill-list-comment-text">Student comment might go here.</div>
+                                                </div>
+                                            </li>
+                                            <li class="skill-list-comment">
+                                                <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/48/48" width="24" height="24" alt="Instructor Name">
+                                                <div class="skill-list-comment-body">
+                                                    <div class="skill-list-comment-meta">
+                                                        <span class="skill-list-comment-author">Teacher Name</span>
+                                                        <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">4d</time>
+                                                    </div>
+                                                    <div class="skill-list-comment-text">Older teacher comment.</div>
+                                                </div>
+                                            </li>
+                                            <li class="skill-list-comment">
+                                                <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/49/49" width="24" height="24" alt="Student Name">
+                                                <div class="skill-list-comment-body">
+                                                    <div class="skill-list-comment-meta">
+                                                        <span class="skill-list-comment-author">Student Name</span>
+                                                        <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">1w</time>
+                                                    </div>
+                                                    <div class="skill-list-comment-text">Older student comment.</div>
+                                                </div>
+                                            </li>
+                                        </ul>
 
-                                <h5 class="skill-list-detail-subheading">From [Student Name]</h5>
-                                <ul class="skill-list-comments">
-                                  <li class="skill-list-comment">
-                                    <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/65/65" width="32" height="32" alt="Student Name">
-                                    <div class="skill-list-comment-body">
-                                      <div class="skill-list-comment-text">Student comment might go here.</div>
-                                      <time class="skill-list-comment-date" datetime="2021-08-31T13:00:00-0400">Tue, Aug 31, 2021 · 1:00 pm</time>
+                                        <div style="text-align: right">
+                                            <a href="#">See more&hellip;</a>
+                                        </div>
                                     </div>
-                                  </li>
-                                  <li class="skill-list-comment">
-                                    <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/65/65" width="32" height="32" alt="Student Name">
-                                    <div class="skill-list-comment-body">
-                                      <div class="skill-list-comment-text">Perhaps the student left a second comment about the task.</div>
-                                      <time class="skill-list-comment-date" datetime="2021-08-31T13:00:00-0400">Tue, Aug 31, 2021 · 1:00 pm</time>
-                                    </div>
-                                  </li>
-                                </ul>
-                              </div>
+
+                                </div>
                             </div>`,
                             '</div>',
                     '</td>',
