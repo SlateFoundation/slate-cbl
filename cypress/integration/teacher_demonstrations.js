@@ -71,12 +71,12 @@ describe('Teacher demonstrations test', () => {
 
             // verify and click empty section element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
-                .contains('Class of 2019')
+                .contains('Jarvus Innovations')
                 .scrollIntoView()
                 .click({force: true}); //scrollIntoView does not appear to be working
 
             // verify hash updates
-            cy.location('hash').should('eq', '#ELA/group:class_of_2019');
+            cy.location('hash').should('eq', '#ELA/group:jarvus');
 
             // verify content loads
             cy.get('.cbl-grid-main').should('be.empty');
