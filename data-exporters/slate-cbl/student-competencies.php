@@ -44,8 +44,6 @@ return [
             $query['level'] = $input['level'];
         }
 
-        $query['only_highest'] = !empty($input['only_highest']);
-
         return $query;
     },
     'buildRows' => function (array $query = [], array $config = []) {
@@ -93,22 +91,21 @@ return [
         $order[] = 'FIELD(StudentCompetency.CompetencyID, '.implode(',', array_keys($competencyCodes)).')';
 
         if ($query['level']) {
-            $conditions['Level'] = $query['level'];
-        }
-
-        if ($query['only_highest']) {
-            $conditions[] = sprintf(
-                'NOT EXISTS (
-                    SELECT 1
-                      FROM `%s` HigherStudentCompetency
-                     WHERE HigherStudentCompetency.StudentID = StudentCompetency.StudentID
-                       AND HigherStudentCompetency.CompetencyID = StudentCompetency.CompetencyID
-                       AND HigherStudentCompetency.Level > StudentCompetency.Level
-                )',
-                Slate\CBL\StudentCompetency::$tableName
-            );
-        } else {
-            array_unshift($order, 'Level');
+            if ($query['level']=='highest') {
+                $conditions[] = sprintf(
+                    'NOT EXISTS (
+                        SELECT 1
+                          FROM `%s` HigherStudentCompetency
+                        WHERE HigherStudentCompetency.StudentID = StudentCompetency.StudentID
+                          AND HigherStudentCompetency.CompetencyID = StudentCompetency.CompetencyID
+                          AND HigherStudentCompetency.Level > StudentCompetency.Level
+                    )',
+                    Slate\CBL\StudentCompetency::$tableName
+                );
+            } else {
+              $conditions['Level'] = $query['level'];
+              array_unshift($order, 'Level');
+            }
         }
 
         $conditions = Slate\CBL\StudentCompetency::mapConditions($conditions);
