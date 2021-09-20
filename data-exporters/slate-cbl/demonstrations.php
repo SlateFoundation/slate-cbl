@@ -27,7 +27,7 @@ return [
         'SectionCode' => 'Section Code',
         'Context' => 'Experience Name',
         'PerformanceType' => 'Task Title',
-        'ArtifactURL',
+        'ArtifactURL' => 'Artifact URL',
         'CreatorUsername' => 'Teacher Username',
         'Competency',
         'Standard' => 'Skill',
