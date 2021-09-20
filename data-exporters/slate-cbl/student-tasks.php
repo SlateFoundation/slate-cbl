@@ -9,6 +9,7 @@ return [
         'TaskID' => 'Task ID',
         'ParentTaskID' => 'Parent Task ID',
         'ClonedTaskID' => 'Cloned Task ID',
+        'StudentID' => 'Student ID',
         'StudentNumber' => 'Student Number',
         'StudentUsername' => 'Student Username',
         'StudentFullName' => 'Student Name',
@@ -31,8 +32,8 @@ return [
     'readQuery' => function (array $input) {
         $query = [
             'students' => 'all',
-            'date_after' => null,
-            'date_before' => null,
+            'date_created_from' => null,
+            'date_created_to' => null,
             'submitted_date_after' => null,
             'submitted_date_before' => null,
             'term' => null,
@@ -79,10 +80,10 @@ return [
             }
 
             if (!empty($created_within_term)) {
-                $query['date_after'] = $Term->StartDate;
-                $query['date_before'] = $Term->EndDate;
-                unset($input['date_after']);
-                unset($input['date_before']);
+                $query['date_created_from'] = $Term->StartDate;
+                $query['date_created_to'] = $Term->EndDate;
+                unset($input['date_created_from']);
+                unset($input['date_created_to']);
             }
 
             if (!empty($submitted_within_term)) {
@@ -93,20 +94,20 @@ return [
             }
         }
 
-        if (!empty($input['date_after'])) {
-            if (!$date = strtotime($input['date_after'])) {
-                throw new RangeException('date_after could not be parsed as a date');
+        if (!empty($input['date_created_from'])) {
+            if (!$date = strtotime($input['date_created_from'])) {
+                throw new RangeException('date_created_from could not be parsed as a date');
             }
 
-            $query['date_after'] = date('Y-m-d H:i:s', $date);
+            $query['date_created_from'] = date('Y-m-d H:i:s', $date);
         }
 
-        if (!empty($input['date_before'])) {
-            if (!$date = strtotime($input['date_before'])) {
-                throw new RangeException('date_before could not be parsed as a date');
+        if (!empty($input['date_created_to'])) {
+            if (!$date = strtotime($input['date_created_to'])) {
+                throw new RangeException('date_created_to could not be parsed as a date');
             }
 
-            $query['date_before'] = date('Y-m-d H:i:s', $date);
+            $query['date_created_to'] = date('Y-m-d H:i:s', $date);
         }
 
         if (!empty($input['submitted_date_after'])) {
@@ -160,23 +161,23 @@ return [
             $conditions[] = 'FALSE';
         }
 
-        if (!empty($query['date_after']) || !empty($query['date_before'])) {
+        if (!empty($query['date_created_from']) || !empty($query['date_created_to'])) {
             $createdConditions = [];
-            if ($query['date_after'] && $query['date_before']) {
+            if ($query['date_created_from'] && $query['date_created_to']) {
                 $createdConditions['Created'] = [
                     'operator' => 'BETWEEN',
-                    'min' => $query['date_after'],
-                    'max' => $query['date_before']
+                    'min' => $query['date_created_from'],
+                    'max' => $query['date_created_to']
                 ];
-            } elseif ($query['date_after']) {
+            } elseif ($query['date_created_from']) {
                 $createdConditions['Created'] = [
                     'operator' => '>=',
-                    'value' => $query['date_after']
+                    'value' => $query['date_created_from']
                 ];
-            } elseif ($query['date_before']) {
+            } elseif ($query['date_created_to']) {
                 $createdConditions['Created'] = [
                     'operator' => '<=',
-                    'value' => $query['date_before']
+                    'value' => $query['date_created_to']
                 ];
             }
 
@@ -268,6 +269,7 @@ return [
                 'TaskID' => $StudentTask->TaskID,
                 'ParentTaskID' => $StudentTask->Task->ParentTaskID,
                 'ClonedTaskID' => $StudentTask->Task->ClonedTaskID,
+                'StudentID' => $StudentTask->Student->ID,
                 'StudentNumber' => $StudentTask->Student->StudentNumber,
                 'StudentUsername' => $StudentTask->Student->Username,
                 'StudentFullName' => $StudentTask->Student->FullName,
