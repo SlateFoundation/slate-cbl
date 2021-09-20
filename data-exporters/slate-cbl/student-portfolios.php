@@ -33,7 +33,7 @@ return [
 
         if (!empty($input['content_area'])) {
             if (!$ContentArea = Slate\CBL\ContentArea::getByCode($input['content_area'])) {
-                throw new OutOfBoundsException('content area not found');
+                throw new OutOfBoundsException('competency area not found');
             }
 
             $query['content_area'] = $ContentArea->Code;
