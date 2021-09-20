@@ -34,8 +34,8 @@ return [
             'students' => 'all',
             'date_created_from' => null,
             'date_created_to' => null,
-            'submitted_date_after' => null,
-            'submitted_date_before' => null,
+            'date_submitted_from' => null,
+            'date_submitted_to' => null,
             'term' => null,
             'created_within_term' => true,
             'submitted_within_term' => true
@@ -87,10 +87,10 @@ return [
             }
 
             if (!empty($submitted_within_term)) {
-                $query['submitted_date_after'] = $Term->StartDate;
-                $query['submitted_date_before'] = $Term->EndDate;
-                unset($input['submitted_date_after']);
-                unset($input['submitted_date_before']);
+                $query['date_submitted_from'] = $Term->StartDate;
+                $query['date_submitted_to'] = $Term->EndDate;
+                unset($input['date_submitted_from']);
+                unset($input['date_submitted_to']);
             }
         }
 
@@ -110,20 +110,20 @@ return [
             $query['date_created_to'] = date('Y-m-d H:i:s', $date);
         }
 
-        if (!empty($input['submitted_date_after'])) {
-            if (!$date = strtotime($input['submitted_date_after'])) {
-                throw new RangeException('submitted_date_after could not be parsed as a date');
+        if (!empty($input['date_submitted_from'])) {
+            if (!$date = strtotime($input['date_submitted_from'])) {
+                throw new RangeException('date_submitted_from could not be parsed as a date');
             }
 
-            $query['submitted_date_after'] = date('Y-m-d H:i:s', $date);
+            $query['date_submitted_from'] = date('Y-m-d H:i:s', $date);
         }
 
-        if (!empty($input['submitted_date_before'])) {
-            if (!$date = strtotime($input['submitted_date_before'])) {
-                throw new RangeException('submitted_date_before could not be parsed as a date');
+        if (!empty($input['date_submitted_to'])) {
+            if (!$date = strtotime($input['date_submitted_to'])) {
+                throw new RangeException('date_submitted_to could not be parsed as a date');
             }
 
-            $query['submitted_date_before'] = date('Y-m-d H:i:s', $date);
+            $query['date_submitted_to'] = date('Y-m-d H:i:s', $date);
         }
 
         return $query;
@@ -184,7 +184,7 @@ return [
             $dateConditions = array_values(Slate\CBL\Tasks\StudentTask::mapConditions($createdConditions, true));
         }
 
-        if (!empty($query['submitted_date_after']) || !empty($query['submitted_date_before'])) {
+        if (!empty($query['date_submitted_from']) || !empty($query['date_submitted_to'])) {
             $submissionConditions = [];
             $submissionTableAlias = Slate\CBL\Tasks\StudentTaskSubmission::getTableAlias();
             $submissionTableName = Slate\CBL\Tasks\StudentTaskSubmission::$tableName;
@@ -192,21 +192,21 @@ return [
             $joinStatement .= " LEFT JOIN `{$submissionTableName}` $submissionTableAlias ON $submissionTableAlias.StudentTaskID = $studentTaskTableAlias.ID ";
 
             $submissionConditions = [];
-            if ($query['submitted_date_after'] && $query['submitted_date_before']) {
+            if ($query['date_submitted_from'] && $query['date_submitted_to']) {
                 $submissionConditions['Created'] = [
                     'operator' => 'BETWEEN',
-                    'min' => $query['submitted_date_after'],
-                    'max' => $query['submitted_date_before']
+                    'min' => $query['date_submitted_from'],
+                    'max' => date('Y-m-d H:i:s', strtotime($query['date_submitted_to'].'+1 day'))
                 ];
-            } elseif ($query['submitted_date_after']) {
+            } elseif ($query['date_submitted_from']) {
                 $submissionConditions['Created'] = [
                     'operator' => '>=',
-                    'value' => $query['submitted_date_after']
+                    'value' => $query['date_submitted_from']
                 ];
-            } elseif ($query['submitted_date_before']) {
+            } elseif ($query['date_submitted_to']) {
                 $submissionConditions['Created'] = [
                     'operator' => '<=',
-                    'value' => $query['submitted_date_before']
+                    'value' => $query['date_submitted_to']
                 ];
             }
             $dateConditions = array_merge($dateConditions, array_values(Slate\CBL\Tasks\StudentTaskSubmission::mapConditions($submissionConditions, true)));
