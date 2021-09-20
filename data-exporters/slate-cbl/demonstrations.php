@@ -23,6 +23,8 @@ return [
         'StudentUsername' => 'Student Username',
         'StudentFullName' => 'Student Name',
         'ExperienceType' => 'Experience Type',
+        'CourseCode' => 'Course Code',
+        'SectionCode' => 'Section Code',
         'Context',
         'PerformanceType' => 'Performance Type',
         'ArtifactURL',
@@ -163,6 +165,8 @@ return [
                 if ($demonstrationTask !== null) {
 
                     $row['StudentTaskID'] = $demonstrationTask->ID;
+                    $row['CourseCode'] = $demonstrationTask->Task->Section->Course->Code;
+                    $row['SectionCode'] = $demonstrationTask->Task->Section->Code;
                     $row['TermTitle'] = $demonstrationTask->Task->Section->Term->Title;
                     $row['TermHandle'] = $demonstrationTask->Task->Section->Term->Handle;
                 }
