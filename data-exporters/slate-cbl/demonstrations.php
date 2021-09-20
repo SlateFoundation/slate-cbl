@@ -16,7 +16,9 @@ return [
         'DemonstrationID' => 'Demonstration ID',
         'StudentTaskID' => 'Student Task ID',
         'StudentID',
-        'CreatorFullName' => 'Teacher FullName',
+        'CreatorID' => 'Teacher ID',
+        'CreatorUsername' => 'Teacher Username',
+        'CreatorFullName' => 'Teacher Name',
         'StudentNumber' => 'Student Number',
         'StudentUsername' => 'Student Username',
         'StudentFullName' => 'Student Name',
@@ -110,6 +112,7 @@ return [
                     '%2$s.Context, '.
                     '%2$s.PerformanceType, '.
                     '%2$s.ArtifactURL, '.
+                    '%4$s.ID AS CreatorID, ' .
                     '%4$s.Username AS CreatorUsername ' .
             ' FROM `%1$s` %2$s '.
             ' LEFT JOIN `%3$s` %4$s '.
