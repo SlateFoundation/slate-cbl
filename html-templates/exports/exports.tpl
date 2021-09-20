@@ -60,11 +60,12 @@
                         blankOption='any'
                     }
                 {elseif $key == 'level'}
+                    {$levels = DB::allValues('Level', 'SELECT DISTINCT Level FROM cbl_student_competencies ORDER BY Level')}
                     {selectField
                         inputName=$key
                         label='Portfolio'
                         default=$value
-                        options=DB::allValues('Level', 'SELECT DISTINCT Level FROM cbl_student_competencies ORDER BY Level')
+                        options=array_merge($levels, array('highest'))
                         useKeyAsValue=no
                         blankOption='all'
                     }
