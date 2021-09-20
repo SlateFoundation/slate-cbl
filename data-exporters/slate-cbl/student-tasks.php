@@ -167,7 +167,7 @@ return [
                 $createdConditions['Created'] = [
                     'operator' => 'BETWEEN',
                     'min' => $query['date_created_from'],
-                    'max' => $query['date_created_to']
+                    'max' => date('Y-m-d H:i:s', strtotime($query['date_created_to'].'+1 day'))
                 ];
             } elseif ($query['date_created_from']) {
                 $createdConditions['Created'] = [
