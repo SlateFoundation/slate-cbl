@@ -30,7 +30,9 @@ return [
         'DueDate' => 'Due date',
         'ExpirationDate' => 'Expiration date',
         'SubmittedDate' => 'Submitted date',
-        'SkillCodes' => 'Skills Codes'
+        'SkillCodes' => 'Skills Codes',
+        'TeacherAttachments' => 'Teacher Attachments',
+        'StudentAttachments' => 'Student Attachments'
     ],
     'readQuery' => function (array $input) {
         $query = [
@@ -267,6 +269,19 @@ return [
             $skillCodes = array_unique($skillCodes);
             natcasesort($skillCodes);
 
+            // add attachments
+            $attachments = [];
+            foreach ($StudentTask->Task->Attachments as $Attachment) {
+                $attachments[] = $Attachment->URL;
+            }
+            $teacherAttachments = !empty($attachments) ? '"'.implode('", "', $attachments).'"' : null;
+
+            $attachments = [];
+            foreach ($StudentTask->Attachments as $Attachment) {
+                $attachments[] = $Attachment->URL;
+            }
+            $studentAttachments = !empty($attachments) ? '"'.implode('", "', $attachments).'"' : null;
+
             yield [
                 'StudentTaskID' => $StudentTask->ID,
                 'TaskID' => $StudentTask->TaskID,
@@ -294,7 +309,9 @@ return [
                 'AssignedDate' => date('m/d/Y', $StudentTask->Created),
                 'SkillCodes' => implode(', ', $skillCodes),
                 'TermTitle' => $StudentTask->Task->Section->Term->Title,
-                'TermHandle' => $StudentTask->Task->Section->Term->Handle
+                'TermHandle' => $StudentTask->Task->Section->Term->Handle,
+                'TeacherAttachments' => $teacherAttachments,
+                'StudentAttachments' => $studentAttachments
             ];
         }
 
