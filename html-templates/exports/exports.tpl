@@ -54,19 +54,20 @@
                 {elseif $key == 'content_area'}
                     {selectField
                         inputName=$key
-                        label=$label
+                        label='Competency Area'
                         default=$value
                         options=DB::valuesTable('Code', 'Title', 'SELECT Code, Title FROM cbl_content_areas ORDER BY Code')
                         blankOption='any'
                     }
                 {elseif $key == 'level'}
+                    {$levels = DB::allValues('Level', 'SELECT DISTINCT Level FROM cbl_student_competencies ORDER BY Level')}
                     {selectField
                         inputName=$key
-                        label=$label
+                        label='Portfolio'
                         default=$value
-                        options=DB::allValues('Level', 'SELECT DISTINCT Level FROM cbl_student_competencies ORDER BY Level')
+                        options=array_merge($levels, array('highest'))
                         useKeyAsValue=no
-                        blankOption='any'
+                        blankOption='all'
                     }
                 {elseif is_bool($value)}
                     {checkbox
