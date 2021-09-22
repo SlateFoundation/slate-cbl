@@ -28,7 +28,6 @@ return [
         'Context' => 'Experience Name',
         'PerformanceType' => 'Task Title',
         'ArtifactURL' => 'Artifact URL',
-        'CreatorUsername' => 'Teacher Username',
         'Competency',
         'Standard' => 'Skill',
         'Created',
