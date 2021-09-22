@@ -23,6 +23,7 @@ class StudentCompetency extends \ActiveRecord
     public static $isLevelComplete;
     public static $growthCalculatorClass = Calculators\Growth\MostRecentMinusFirst::class;
     public static $averagePrecision = 1;
+    public static $progressPrecision = 2;
 
 
     // ActiveRecord configuration
@@ -116,6 +117,9 @@ class StudentCompetency extends \ActiveRecord
         ],
         'growth' => [
             'getter' => 'getGrowth'
+        ],
+        'progress' => [
+            'getter' => 'getProgress'
         ],
         'next' => [
             'getter' => 'getNext'
@@ -524,7 +528,19 @@ class StudentCompetency extends \ActiveRecord
             $this->competencyGrowth = $growthCalculationClass::calculateGrowth($this);
         }
 
-        return $this->competencyGrowth === false ? null : $this->competencyGrowth;
+        return $this->competencyGrowth === false ? null : round($this->competencyGrowth, static::$averagePrecision);
+    }
+
+    private $competencyProgress;
+    public function getProgress()
+    {
+        if ($this->competencyProgress === null) {
+            $required = $this->getDemonstrationsRequired();
+            $complete = $this->getDemonstrationsComplete();
+            $this->competencyProgress = $required ? $complete / $required : 1;
+        }
+
+        return $this->competencyProgress === false ? null : round($this->competencyProgress, static::$progressPrecision);
     }
 
     private $previous;
