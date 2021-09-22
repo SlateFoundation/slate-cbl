@@ -44,7 +44,8 @@ class StudentTask extends \VersionedRecord
         ],
         'DemonstrationID' => [
             'type' => 'uint',
-            'default' => null
+            'default' => null,
+            'index' => true
         ],
 
         // Task fields that can be overridden
