@@ -33,11 +33,32 @@ describe('Student Competencies Export', () => {
           expect(headers).to.have.property('content-type', 'text/csv; charset=utf-8')
           return csvtojson().fromString(body)
         }).then((records) => {
-          expect(records).to.have.length(7); // One per competency
-          // ELA.1 for student has Performance Level 9.3 ((8+9+10+10)/4 = 9.25 rounded to 9.3)
-          expect(records[0]['Performance Level']).to.equal('9.3');
-          // ELA.2 for student has Performance Level 9.3 ((11+11+11+10)/4 = 10.75 rounded to 10.8)
-          expect(records[1]['Performance Level']).to.equal('10.8');
+          expect(records, 'One row per competency skill').to.have.length(7);
+          expect(
+            records[0]['Performance Level'],
+            'ELA.1 for student has Performance Level 9.3 ((8+9+10+10)/4 = 9.25 rounded to 9.3)'
+          ).to.equal('9.3');
+          expect(
+            records[0]['Progress'],
+            'ELA.1 for student has 33% Progress (4/12 Demonstrations Required for Competency)'
+          ).to.equal('0.33');
+          expect(
+            records[0]['Growth'],
+            'ELA.1 for student has -1.5 growth'
+          ).to.equal('-1.5')
+
+          expect(
+            records[1]['Performance Level'],
+            'ELA.2 for student has Performance Level 9.3 ((11+11+11+10)/4 = 10.75 rounded to 10.8)'
+          ).to.equal('10.8')
+          expect(
+            records[1]['Progress'],
+            'ELA.2 for student has 33% Progress (4/15 Demonstrations Required for Competency)'
+          ).to.equal('0.27')
+          expect(
+            records[1]['Growth'],
+            'ELA.2 for student has 1 growth'
+          ).to.equal('1')
         })
       })
   })
