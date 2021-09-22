@@ -5,28 +5,38 @@ use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
+use Slate\CBL\Tasks\StudentTask;
 
 return [
-    'title' => 'Demonstrations',
-    'description' => 'Each row represents a demonstration',
+    'title' => 'Ratings',
+    'description' => 'Each row represents a demonstration rating',
     'filename' => 'demonstrations',
     'headers' => [
-        'ID',
+        'DemonstrationSkillID' => 'Demonstration Skill ID',
+        'DemonstrationID' => 'Demonstration ID',
+        'StudentTaskID' => 'Student Task ID',
+        'CreatorID' => 'Teacher ID',
+        'CreatorUsername' => 'Teacher Username',
+        'CreatorFullName' => 'Teacher Name',
         'StudentID',
-        'CreatorFullName' => 'Teacher FullName',
         'StudentNumber' => 'Student Number',
-        'StudentFullName' => 'Student FullName',
+        'StudentUsername' => 'Student Username',
+        'StudentFullName' => 'Student Name',
         'ExperienceType' => 'Experience Type',
-        'Context',
-        'PerformanceType' => 'Performance Type',
-        'ArtifactURL',
+        'CourseCode' => 'Course Code',
+        'SectionCode' => 'Section Code',
+        'Context' => 'Experience Name',
+        'PerformanceType' => 'Task Title',
+        'ArtifactURL' => 'Artifact URL',
         'CreatorUsername' => 'Teacher Username',
         'Competency',
         'Standard' => 'Skill',
         'Created',
         'Modified',
         'Rating',
-        'Level' => 'Portfolio'
+        'Level' => 'Portfolio',
+        'TermTitle' => 'Term Title',
+        'TermHandle' => 'Term Handle'
     ],
     'readQuery' => function (array $input) {
         $query = [
@@ -83,7 +93,7 @@ return [
         $format = 'Y-m-d H:i:s';
 
         $from = $query['date_from'] ? date($format, strtotime($query['date_from'])) : null;
-        $to = $query['date_to'] ? date($format, strtotime($query['date_to'])) : null;
+        $to = $query['date_to'] ? date($format, strtotime($query['date_to'].'+1 day')) : null;
 
         if ($from && $to) {
             $demonstrationConditions[] = sprintf('Demonstrated BETWEEN "%s" AND "%s"', $from, $to);
@@ -98,11 +108,13 @@ return [
                     '%2$s.StudentID, '.
                     'CONCAT(%4$s.FirstName, " ", %4$s.LastName) AS CreatorFullName, '.
                     '%5$s.StudentNumber AS StudentNumber, '.
+                    '%5$s.Username AS StudentUsername, '.
                     'CONCAT(%5$s.FirstName, " ", %5$s.LastName) AS StudentFullName, '.
                     '%2$s.ExperienceType, '.
                     '%2$s.Context, '.
                     '%2$s.PerformanceType, '.
                     '%2$s.ArtifactURL, '.
+                    '%4$s.ID AS CreatorID, ' .
                     '%4$s.Username AS CreatorUsername ' .
             ' FROM `%1$s` %2$s '.
             ' LEFT JOIN `%3$s` %4$s '.
@@ -126,6 +138,9 @@ return [
         while($row = $results->fetch_assoc()) {
             $rowId = $row['ID'];
             unset($row['ID']);
+            $row['DemonstrationID'] = $rowId;
+
+
             $demonstrationSkills = DemonstrationSkill::getAllByWhere(['DemonstrationID' => $rowId]);
             for ($i = 0; $i < count($demonstrationSkills); $i++) {
 
@@ -144,10 +159,21 @@ return [
                 }
 
                 $row['Level'] = $demonstrationSkills[$i]->TargetLevel;
-                $row['ID'] = $demonstrationSkills[$i]->ID;
+                $row['DemonstrationSkillID'] = $demonstrationSkills[$i]->ID;
+
+                $demonstrationTask =  StudentTask::getByWhere(['DemonstrationID' => $rowId, 'StudentID' => $row['StudentID']]);
+                if ($demonstrationTask !== null) {
+
+                    $row['StudentTaskID'] = $demonstrationTask->ID;
+                    $row['CourseCode'] = $demonstrationTask->Task->Section->Course->Code;
+                    $row['SectionCode'] = $demonstrationTask->Task->Section->Code;
+                    $row['TermTitle'] = $demonstrationTask->Task->Section->Term->Title;
+                    $row['TermHandle'] = $demonstrationTask->Task->Section->Term->Handle;
+                }
 
                 yield $row;
             }
+
         }
 
         $results->free();

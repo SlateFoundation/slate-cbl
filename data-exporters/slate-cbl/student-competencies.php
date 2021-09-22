@@ -1,14 +1,15 @@
 <?php
 
 return [
-    'title' => 'Student Competencies',
+    'title' => 'Competency Progress',
     'description' => 'Each row represents a competency that a student has been enrolled in and their progress within it',
     'filename' => 'student-competencies',
     'headers' => [
-        'ID',
-        'PersonID' => 'Person ID',
-        'StudentFullName' => 'Student',
+        'ID' => 'Student Competency ID',
+        'PersonID' => 'Student ID',
         'StudentNumber' => 'Student Number',
+        'StudentUsername' => 'Student Username',
+        'StudentFullName' => 'Student Name',
         'CompetencyCode' => 'Competency',
         'Level' => 'Portfolio',
         'BaselineRating' => 'Baseline',
@@ -33,7 +34,7 @@ return [
 
         if (!empty($input['content_area'])) {
             if (!$ContentArea = Slate\CBL\ContentArea::getByCode($input['content_area'])) {
-                throw new OutOfBoundsException('content area not found');
+                throw new OutOfBoundsException('competency area not found');
             }
 
             $query['content_area'] = $ContentArea->Code;
@@ -42,8 +43,6 @@ return [
         if (!empty($input['level'])) {
             $query['level'] = $input['level'];
         }
-
-        $query['only_highest'] = !empty($input['only_highest']);
 
         return $query;
     },
@@ -92,22 +91,21 @@ return [
         $order[] = 'FIELD(StudentCompetency.CompetencyID, '.implode(',', array_keys($competencyCodes)).')';
 
         if ($query['level']) {
-            $conditions['Level'] = $query['level'];
-        }
-
-        if ($query['only_highest']) {
-            $conditions[] = sprintf(
-                'NOT EXISTS (
-                    SELECT 1
-                      FROM `%s` HigherStudentCompetency
-                     WHERE HigherStudentCompetency.StudentID = StudentCompetency.StudentID
-                       AND HigherStudentCompetency.CompetencyID = StudentCompetency.CompetencyID
-                       AND HigherStudentCompetency.Level > StudentCompetency.Level
-                )',
-                Slate\CBL\StudentCompetency::$tableName
-            );
-        } else {
-            array_unshift($order, 'Level');
+            if ($query['level']=='highest') {
+                $conditions[] = sprintf(
+                    'NOT EXISTS (
+                        SELECT 1
+                          FROM `%s` HigherStudentCompetency
+                        WHERE HigherStudentCompetency.StudentID = StudentCompetency.StudentID
+                          AND HigherStudentCompetency.CompetencyID = StudentCompetency.CompetencyID
+                          AND HigherStudentCompetency.Level > StudentCompetency.Level
+                    )',
+                    Slate\CBL\StudentCompetency::$tableName
+                );
+            } else {
+              $conditions['Level'] = $query['level'];
+              array_unshift($order, 'Level');
+            }
         }
 
         $conditions = Slate\CBL\StudentCompetency::mapConditions($conditions);
@@ -146,8 +144,9 @@ return [
                 yield [
                     'ID' => $StudentCompetency->ID,
                     'PersonID' => $Student->ID,
-                    'StudentFullName' => $Student->FullName,
                     'StudentNumber' => $Student->StudentNumber,
+                    'StudentUsername' => $Student->Username,
+                    'StudentFullName' => $Student->FullName,
                     'CompetencyCode' => $StudentCompetency->Competency->Code,
                     'Level' => $StudentCompetency->Level,
                     'BaselineRating' => round($StudentCompetency->BaselineRating, 1),

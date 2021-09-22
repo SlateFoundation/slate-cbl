@@ -1,13 +1,14 @@
 <?php
 
 return [
-    'title' => 'Student Portfolios',
+    'title' => 'Portfolio Progress',
     'description' => 'Each row represents a content area and portfolio level that a student has been enrolled in at least one competency within',
     'filename' => 'student-portfolios',
     'headers' => [
-        'PersonID' => 'Person ID',
-        'StudentFullName' => 'Student',
+        'PersonID' => 'Student ID',
         'StudentNumber' => 'Student Number',
+        'StudentUsername' => 'Student Username',
+        'StudentFullName' => 'Student Name',
         'ContentAreaCode' => 'Content Area',
         'Level' => 'Portfolio',
         'DemonstrationsAverage' => 'Performance Level',
@@ -32,7 +33,7 @@ return [
 
         if (!empty($input['content_area'])) {
             if (!$ContentArea = Slate\CBL\ContentArea::getByCode($input['content_area'])) {
-                throw new OutOfBoundsException('content area not found');
+                throw new OutOfBoundsException('competency area not found');
             }
 
             $query['content_area'] = $ContentArea->Code;
@@ -216,6 +217,7 @@ return [
                     yield [
                         'PersonID' => $Student->ID,
                         'StudentFullName' => $Student->FullName,
+                        'StudentUsername' => $Student->Username,
                         'StudentNumber' => $Student->StudentNumber,
                         'ContentAreaCode' => Slate\CBL\ContentArea::getByID($finishedPortfolio['ContentAreaID'])->Code,
                         'Level' => intval($finishedPortfolio['Level']),
