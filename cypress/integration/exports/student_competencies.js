@@ -4,7 +4,7 @@ describe('Student Competencies Export', () => {
   it('Download and Verify Student Competencies Export via Form', () => {
     cy.loginAs('admin');
     cy.visit('/exports')
-      cy.contains('h2', 'Student Competencies')
+      cy.contains('h2', 'Competency Progress')
 
       // prepare for form submission that returns back a file
       // https://on.cypress.io/intercept
@@ -22,7 +22,7 @@ describe('Student Competencies Export', () => {
       cy.get('form[action="/exports/slate-cbl/student-competencies"]').within(() => {
         cy.get('input[name=students]').type('{selectall}{backspace}student');
         cy.get('select[name=content_area]').select('English Language Arts');
-        cy.get('input[name=only_highest]').check();
+        cy.get('select[name=level]').select('highest');
 
         cy.root().submit();
       })
