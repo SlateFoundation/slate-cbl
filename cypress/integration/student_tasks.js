@@ -427,6 +427,24 @@ describe('Student Tasks test', () => {
         })
     })
 
+    it('Completed Tasks Filter', ()=>{
+        _visitDashboardAsTeacher();
+        _setupTests()
+        .then(({ _deselectAllFilters, _selectFilter, _clickFilterButton, currentTasksTree }) => {
+            _clickFilterButton()
+            .then(_deselectAllFilters)
+            .then(() => _selectFilter('Completed Tasks'))
+            .then(({ response }) => {
+                cy.wait(500); // allow dom re-render
+                cy.get('#' + currentTasksTree.id)
+                    .find('ul.slate-tasktree-list')
+                    .children('li.slate-tasktree-item')
+                    .each(($item) => {
+                        cy.get($item).find('.slate-tasktree-status').contains('Completed'); // confirm the status text exists
+                    });
+            })
+        })
+    })
                                 expect(isAfter).to.be.true;
                             })
 
