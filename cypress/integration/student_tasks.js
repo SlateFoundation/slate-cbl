@@ -581,6 +581,27 @@ describe('Student Tasks test', () => {
             })
         })
     })
-    });
 
+    it('Due Tasks (no date) Filter', ()=>{
+        _visitDashboardAsTeacher();
+        _setupTests()
+        .then(({ _deselectAllFilters, _selectFilter, _clickFilterButton, currentTasksTree }) => {
+            _clickFilterButton()
+            .then(_deselectAllFilters)
+            .then(() => _selectFilter('Due (no date)'))
+            .then(({ response }) => {
+                cy.wait(500); // allow dom re-render
+                cy.get('#' + currentTasksTree.id)
+                    .find('ul.slate-tasktree-list')
+                    .children('li.slate-tasktree-item')
+                    .each(($item) => {
+                        // checking UI for strings in values array
+                        const values = ['Due', "Completed"]
+                        const regex = new RegExp(`${values.join('|')}`, 'g')
+                        cy.get($item).find('.slate-tasktree-status')
+                        .contains(regex); // confirm the status text exists
+                    });
+            })
+        })
+    })
 });
