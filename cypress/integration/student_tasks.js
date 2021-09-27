@@ -473,6 +473,44 @@ describe('Student Tasks test', () => {
                     });
             })
         })
+    })
+
+    //this test could be shorter if we make an API call and test the data instead of clicking on every li element
+    it('Due This Week Tasks Filter', ()=>{
+        _visitDashboardAsTeacher();
+        _setupTests()
+        .then(({ _deselectAllFilters, _selectFilter, _clickFilterButton, currentTasksTree }) => {
+            _clickFilterButton()
+            .then(_deselectAllFilters)
+            .then(() => _selectFilter('Due This Week'))
+            .then(({ response }) => {
+                cy.wait(500); // allow dom re-render
+                cy.get('#' + currentTasksTree.id)
+                    .find('ul.slate-tasktree-list')
+                    .children('li.slate-tasktree-item')
+                    .each(($item) => {
+                        cy.get($item)
+                        cy.get($item).click()
+                        //waiting 1 sec to ensure modal loads with data
+                        cy.wait(1000)
+                        // will need to use sencha to select component instead of current selector
+                        cy.get('#displayfield-1060-inputEl').then(($input) => {
+                            const taskDate = $input.text()
+                            let inOneWeek = dayjs().add(8, 'day').format('YYYY-MM-DD')
+                            let yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD')
+                            const dateIsBetween = dayjs(taskDate).isBetween(yesterday, dayjs(inOneWeek));
+                            expect(dateIsBetween).to.be.true;
+                            // will need to use sencha to select component instead of current selector
+                            cy.get('#tool-1091-toolEl')
+                            .click()
+                            cy.wait(1000)
+                            //waiting 1 sec to ensure modal is closed before next li element is clicked
+                        })
+                    });
+            })
+        })
+    })
+
                                 expect(isAfter).to.be.true;
                             })
 
