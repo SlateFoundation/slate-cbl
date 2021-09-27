@@ -546,9 +546,41 @@ describe('Student Tasks test', () => {
         })
     })
 
-                        });
-                })
+    //this test could be shorter if we make an API call and test the data instead of clicking on every li
+    it('Due Recently Upcoming Tasks Filter', ()=>{
+        _visitDashboardAsTeacher();
+        _setupTests()
+        .then(({ _deselectAllFilters, _selectFilter, _clickFilterButton, currentTasksTree }) => {
+            _clickFilterButton()
+            .then(_deselectAllFilters)
+            .then(() => _selectFilter('Due Next Week'))
+            .then(({ response }) => {
+                cy.wait(500); // allow dom re-render
+                cy.get('#' + currentTasksTree.id)
+                    .find('ul.slate-tasktree-list')
+                    .children('li.slate-tasktree-item')
+                    .each(($item) => {
+                        cy.get($item)
+                        cy.get($item).click()
+                        //waiting 1 sec to ensure modal loads with data
+                        cy.wait(1000)
+                        // will need to use sencha to select component instead of current selector
+                        cy.get('#displayfield-1060-inputEl').then(($input) => {
+                            const taskDate = $input.text()
+                            let lastTenDays = dayjs().subtract(10, 'day').format('YYYY-MM-DD')
+                            let nextTenDays = dayjs().add(10, 'day').format('YYYY-MM-DD')
+                            const dateIsBetween = dayjs(taskDate).isBetween(lastTenDays, dayjs(nextTenDays));
+                            expect(dateIsBetween).to.be.true;
+                            // will need to use sencha to select component instead of current selector
+                            cy.get('#tool-1091-toolEl')
+                            .click()
+                            cy.wait(1000)
+                                //waiting 1 sec to ensure modal is closed before next li element is clicked
+                        })
+                    });
+            })
         })
+    })
     });
 
 });
