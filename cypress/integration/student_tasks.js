@@ -408,6 +408,12 @@ describe('Student Tasks test', () => {
                                     isAfter,
                                     $date,
                                 });
+                                expect(isAfter, 'Due date is before current date').to.equal(true);
+                            })
+                        })
+                })
+        })
+    });
     it('Submitted Tasks Filter', ()=>{
         _visitDashboardAsTeacher();
         _setupTests()
