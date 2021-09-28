@@ -466,16 +466,13 @@ describe('Student Tasks test', () => {
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
                     .each(($item) => {
-                        cy.get($item).click()
-                        //waiting 1 sec to ensure modal loads with data
-                        cy.wait(1000)
-                        // will need to use sencha to select component instead of current selector
-                        cy.get('#slate-window-1049-body').contains(dayjs().format('YYYY-MM-DD'))
-                       // will need to use sencha to select component instead of current selector
-                        cy.get('#tool-1091-toolEl')
-                        .click()
-                        cy.wait(1000)
-                        //waiting 1 sec to ensure modal is closed before next li element is clicked
+                        cy.get($item).find('.slate-tasktree-date').should( $date => {
+                            let today = dayjs(),
+                                date = dayjs($date.text(), 'MMM, DD YYYY'),
+                                dueToday = today.isSame(date, 'day');
+
+                            expect(dueToday, 'Due date is same as current date').to.equal(true);
+                        })
                     });
             })
         })
