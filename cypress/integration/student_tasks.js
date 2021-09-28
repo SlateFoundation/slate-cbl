@@ -598,11 +598,9 @@ describe('Student Tasks test', () => {
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
                     .each(($item) => {
-                        // checking UI for strings in values array
-                        const values = ['Due', "Completed"]
-                        const regex = new RegExp(`${values.join('|')}`, 'g')
-                        cy.get($item).find('.slate-tasktree-status')
-                        .contains(regex); // confirm the status text exists
+                        cy.get($item).find('.slate-tasktree-date').should( $date => {
+                            expect($date.text(), 'The date should be empty').to.be.empty;
+                        })
                     });
             })
         })
