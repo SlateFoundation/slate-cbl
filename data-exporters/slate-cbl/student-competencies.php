@@ -130,16 +130,6 @@ return [
 
             while ($record = $result->fetch_assoc()) {
                 $StudentCompetency = Slate\CBL\StudentCompetency::instantiateRecord($record);
-                $demonstrationsComplete = $StudentCompetency->getDemonstrationsComplete();
-                $demonstrationsRequired = $StudentCompetency->getDemonstrationsRequired();
-                $demonstrationsAverage = round(
-                    $StudentCompetency->getDemonstrationsAverage(),
-                    Slate\CBL\StudentCompetency::$averagePrecision
-                );
-                $growth = round(
-                    $StudentCompetency->getGrowth(),
-                    Slate\CBL\StudentCompetency::$averagePrecision
-                );
 
                 yield [
                     'ID' => $StudentCompetency->ID,
@@ -149,12 +139,12 @@ return [
                     'StudentFullName' => $Student->FullName,
                     'CompetencyCode' => $StudentCompetency->Competency->Code,
                     'Level' => $StudentCompetency->Level,
-                    'BaselineRating' => round($StudentCompetency->BaselineRating, 1),
-                    'DemonstrationsAverage' => $demonstrationsAverage ?: null,
-                    'Growth' => $growth ?: null,
-                    'Progress' => round($demonstrationsRequired ? $demonstrationsComplete/$demonstrationsRequired : 1, 2),
-                    'DemonstrationsRequired' => $demonstrationsRequired,
-                    'DemonstrationsComplete' => $demonstrationsComplete,
+                    'BaselineRating' => $StudentCompetency->getBaselineRating(),
+                    'DemonstrationsAverage' => $StudentCompetency->getDemonstrationsAverage() ?: null,
+                    'Growth' => $StudentCompetency->getGrowth() ?: null,
+                    'Progress' => $StudentCompetency->getProgress() ?: null,
+                    'DemonstrationsRequired' => $StudentCompetency->getDemonstrationsRequired(),
+                    'DemonstrationsComplete' => $StudentCompetency->getDemonstrationsComplete(),
                     'DemonstrationsMissed' => $StudentCompetency->getDemonstrationsMissed(),
                     'DemonstrationOpportunities' => $StudentCompetency->getDemonstrationOpportunities()
                 ];
