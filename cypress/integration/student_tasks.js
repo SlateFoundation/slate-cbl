@@ -521,21 +521,13 @@ describe('Student Tasks test', () => {
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
                     .each(($item) => {
-                        cy.get($item)
-                        cy.get($item).click()
-                        //waiting 1 sec to ensure modal loads with data
-                        cy.wait(1000)
-                        // will need to use sencha to select component instead of current selector
-                        cy.get('#displayfield-1060-inputEl').then(($input) => {
-                            const taskDate = $input.text()
-                            let inOneWeek = dayjs().add(6, 'day').format('YYYY-MM-DD')
-                            const isAfter = dayjs(taskDate).isAfter(inOneWeek);
-                            expect(isAfter).to.be.true;
-                            // will need to use sencha to select component instead of current selector
-                            cy.get('#tool-1091-toolEl')
-                            .click()
-                            cy.wait(1000)
-                                //waiting 1 sec to ensure modal is closed before next li element is clicked
+                        cy.get($item).find('.slate-tasktree-date').should( $date => {
+                              const date = dayjs($date.text(), 'MMM, DD YYYY'),
+                                inOneWeek = dayjs().add(7, 'day').format('MMM, DD YYYY'),
+                                isAfter = dayjs(date).isAfter(inOneWeek);
+                                console.log({date, inOneWeek, isAfter})
+
+                                 expect(isAfter).to.be.true;
                         })
                     });
             })
