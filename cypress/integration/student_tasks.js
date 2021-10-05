@@ -548,22 +548,13 @@ describe('Student Tasks test', () => {
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
                     .each(($item) => {
-                        cy.get($item)
-                        cy.get($item).click()
-                        //waiting 1 sec to ensure modal loads with data
-                        cy.wait(1000)
-                        // will need to use sencha to select component instead of current selector
-                        cy.get('#displayfield-1060-inputEl').then(($input) => {
-                            const taskDate = $input.text()
-                            let lastTenDays = dayjs().subtract(10, 'day').format('YYYY-MM-DD')
-                            let nextTenDays = dayjs().add(10, 'day').format('YYYY-MM-DD')
-                            const dateIsBetween = dayjs(taskDate).isBetween(lastTenDays, dayjs(nextTenDays));
-                            expect(dateIsBetween).to.be.true;
-                            // will need to use sencha to select component instead of current selector
-                            cy.get('#tool-1091-toolEl')
-                            .click()
-                            cy.wait(1000)
-                                //waiting 1 sec to ensure modal is closed before next li element is clicked
+                        cy.get($item).find('.slate-tasktree-date').should( $date => {
+                              const date = dayjs($date.text(), 'MMM, DD YYYY'),
+                               lastTenDays = dayjs().subtract(10, 'day').format('MMM, DD YYYY'),
+                               nextTenDays = dayjs().add(10, 'day').format('MMM, DD YYYY'),
+                               dateIsBetween = dayjs(date).isBetween(lastTenDays, dayjs(nextTenDays));
+
+                              expect(dateIsBetween).to.be.true;
                         })
                     });
             })
