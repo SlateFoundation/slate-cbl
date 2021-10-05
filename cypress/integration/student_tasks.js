@@ -177,7 +177,7 @@ describe('Student Tasks test', () => {
                 .then(_deselectAllFilters)
                 .then(() => _selectFilter('Due'))
                 .then(() => {
-                    cy.wait(500) // wait for dom to re-render
+                    cy.wait(2000) // wait for dom to re-render
                         .then(() => {
                             cy.get('#' + currentTasksTree.id)
                                 .contains('Revision Workflow')
