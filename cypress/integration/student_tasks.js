@@ -454,7 +454,6 @@ describe('Student Tasks test', () => {
         })
     })
 
-    //this test could be shorter if we make an API call and test the data instead of clicking on every li element
     it('Due Today Tasks Filter', ()=>{
         _visitDashboardAsTeacher();
         _setupTests()
@@ -480,7 +479,6 @@ describe('Student Tasks test', () => {
         })
     })
 
-    //this test could be shorter if we make an API call and test the data instead of clicking on every li element
     it('Due This Week Tasks Filter', ()=>{
         _visitDashboardAsTeacher();
         _setupTests()
@@ -507,7 +505,6 @@ describe('Student Tasks test', () => {
         })
     })
 
-    //this test could be shorter if we make an API call and test the data instead of clicking on every li element
     it('Due Next Week Tasks Filter', ()=>{
         _visitDashboardAsTeacher();
         _setupTests()
@@ -534,7 +531,6 @@ describe('Student Tasks test', () => {
         })
     })
 
-    //this test could be shorter if we make an API call and test the data instead of clicking on every li
     it('Due Recently Upcoming Tasks Filter', ()=>{
         _visitDashboardAsTeacher();
         _setupTests()
