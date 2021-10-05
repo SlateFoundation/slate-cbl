@@ -287,6 +287,7 @@ describe('Student Tasks test', () => {
                 })
             });
     });
+
     // todo: ensure we create data that should NOT included in filter
     it('Currently Term, Enrolled Sections Filter', () => {
         let studentUsername = 'student';
@@ -414,6 +415,7 @@ describe('Student Tasks test', () => {
                 })
         })
     });
+
     it('Submitted Tasks Filter', ()=>{
         _visitDashboardAsTeacher();
         _setupTests()
