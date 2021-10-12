@@ -274,13 +274,13 @@ return [
             foreach ($StudentTask->Task->Attachments as $Attachment) {
                 $attachments[] = $Attachment->URL;
             }
-            $teacherAttachments = !empty($attachments) ? '"'.implode('", "', $attachments).'"' : null;
+            $teacherAttachments = !empty($attachments) ? implode(',', $attachments) : null;
 
             $attachments = [];
             foreach ($StudentTask->Attachments as $Attachment) {
                 $attachments[] = $Attachment->URL;
             }
-            $studentAttachments = !empty($attachments) ? '"'.implode('", "', $attachments).'"' : null;
+            $studentAttachments = !empty($attachments) ? implode(',', $attachments) : null;
 
             yield [
                 'StudentTaskID' => $StudentTask->ID,
