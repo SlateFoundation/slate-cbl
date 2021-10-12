@@ -174,8 +174,8 @@ class StudentTask extends \VersionedRecord
         if (!$this->Demonstration) {
             $this->Demonstration = ExperienceDemonstration::create([
                 'StudentID' => $this->StudentID,
-                'PerformanceType' => $this->Task->Title,
-                'Context' => $this->Task->Section->Title,
+                'PerformanceType' => $this->Task->getTitle(),
+                'Context' => $this->Task->Section->getTitle(),
                 'ExperienceType' => $this->Task->ExperienceType
             ]);
         }
