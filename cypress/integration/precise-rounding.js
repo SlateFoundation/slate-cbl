@@ -1,25 +1,18 @@
 const csvtojson = require('csvtojson');
-const dayjs = require('dayjs');
-const isBetween = require('dayjs/plugin/isBetween');
-
-dayjs.extend(isBetween);
+const testCases = require('../fixtures/precise-rounding.json')
 
 describe('Confirm rounding is consistent across UI, API, and exports', () => {
-
-    it('Compare UI, CSV, API data against test case', () => {
-        cy.readFile('cypress/fixtures/precise-rounding.json')
-        .then((testCaseByStudent) => {
-            testCaseByStudent.forEach((testCase)=> {
-                checkAPIDataAgainstTestCase(testCase)
-                getAndDisplayUIData(testCase);
-                checkCSVDataAgainstTestCase(testCase);
-            })
+    testCases.forEach((testCase) => {
+        it(`${testCase.caseTitle}`, () => {
+            checkAPIDataAgainstTestCase(testCase)
+            getAndDisplayUIData(testCase);
+            checkCSVDataAgainstTestCase(testCase);
         });
     });
-})
+});
 
-   // API Tests
-   const checkAPIDataAgainstTestCase = ({student, contentArea, competency, baseline, growth, progress, performanceLevel}) => {
+// API Tests
+const checkAPIDataAgainstTestCase = ({student, contentArea, competency, baseline, growth, progress, performanceLevel}) => {
     cy.loginAs('teacher');
     cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
     cy.visit(`/cbl/dashboards/demonstrations/student#${student}/${contentArea}`);
@@ -140,25 +133,26 @@ const checkCSVDataAgainstTestCase = ({student, contentArea, competency, baseline
             return record.Competency === `${contentArea}.${competency}`
         });
 
-        const expectedPerformanceLevel = +studentCompetencyRow[0]['Performance Level']
-        const expectedGrowth =  +studentCompetencyRow[0]['Growth']
-        const expectedBaseLine = +studentCompetencyRow[0]['Baseline']
-        const expectedProgress = +studentCompetencyRow[0]['Progress']
+        let csvPerformanceLevel = studentCompetencyRow[0]['Performance Level']
+        let csvGrowth =  studentCompetencyRow[0]['Growth']
+        let csvBaseLine = studentCompetencyRow[0]['Baseline']
+        let csvProgress = studentCompetencyRow[0]['Progress']
 
-        expect(expectedPerformanceLevel,
-        `${contentArea}.${competency} for ${student}  CSV Performance Level Value ${expectedPerformanceLevel}: Test Doc Perfomance Level Value ${performanceLevel}`
+        // csv returns all strings, so we must expect string values
+        expect(csvPerformanceLevel,
+        `${contentArea}.${competency} for ${student}  CSV Performance Level Value ${csvPerformanceLevel}: Test Doc Perfomance Level Value ${performanceLevel}`
         ).to.equal(performanceLevel);
 
-        expect(expectedGrowth,
-            `${contentArea}.${competency} for ${student} CSV Growth Value ${expectedGrowth}: Test Doc Growth Value ${growth}`
+        expect(csvGrowth,
+            `${contentArea}.${competency} for ${student} CSV Growth Value ${csvGrowth}: Test Doc Growth Value ${growth}`
         ).to.equal(growth);
 
-        expect(expectedBaseLine,
-            `${contentArea}.${competency} for ${student} CSV Baseline Value ${expectedBaseLine}: Test Doc Baseline Value ${baseline}`
+        expect(csvBaseLine,
+            `${contentArea}.${competency} for ${student} CSV Baseline Value ${csvBaseLine}: Test Doc Baseline Value ${baseline}`
         ).to.equal(baseline);
 
-        expect(expectedProgress,
-            `${contentArea}.${competency} for ${student} CSV Completion Percentage Value ${expectedProgress}: Test Doc Completion Percentage Value ${progress}`
+        expect(csvProgress,
+            `${contentArea}.${competency} for ${student} CSV Completion Percentage Value ${csvProgress}: Test Doc Completion Percentage Value ${progress}`
             ).to.equal(progress/100); // progress is represented as decimal in export
     });
     });
