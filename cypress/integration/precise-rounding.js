@@ -4,102 +4,19 @@ const isBetween = require('dayjs/plugin/isBetween');
 
 dayjs.extend(isBetween);
 
-
-
 describe('Confirm rounding is consistent across UI, API, and exports', () => {
 
-  it('Student 5 ELA Competency 7', () => {
-      checkAPIDataAgainstTestCase(testCaseOne);
-      getAndDisplayUIData(testCaseOne);
-      checkCSVDataAgainstTestCase(testCaseOne);
+    it('Compare UI, CSV, API data against test case', () => {
+        cy.readFile('cypress/fixtures/precise-rounding.json')
+        .then((testCaseByStudent) => {
+            testCaseByStudent.forEach((testCase)=> {
+                checkAPIDataAgainstTestCase(testCase)
+                getAndDisplayUIData(testCase);
+                checkCSVDataAgainstTestCase(testCase);
+            })
+        });
     });
-
-    it('One rating for each skill.', () => {
-       checkAPIDataAgainstTestCase(testCaseTwo);
-       getAndDisplayUIData(testCaseTwo);
-       checkCSVDataAgainstTestCase(testCaseTwo);
-    });
-
-    it('One rating for all but one skill, progress < 50%', () => {
-        checkAPIDataAgainstTestCase(testCaseThree);
-        getAndDisplayUIData(testCaseThree);
-        checkCSVDataAgainstTestCase(testCaseThree);
-    });
-
-    it('One set of ERs thats low and hidden and one that is higher and displayed', () => {
-        checkAPIDataAgainstTestCase(testCaseFour);
-        getAndDisplayUIData(testCaseFour);
-        checkCSVDataAgainstTestCase(testCaseFour);
-    });
-
-    it('One set of ER thats low and hidden and one that is higher and displayed with Ms', () => {
-        checkAPIDataAgainstTestCase(testCaseFive);
-        getAndDisplayUIData(testCaseFive);
-        checkCSVDataAgainstTestCase(testCaseFive);
-    });
-
-    it('No full set of ER, Progress > 50%', () => {
-        checkAPIDataAgainstTestCase(testCaseSix);
-        getAndDisplayUIData(testCaseSix);
-        checkCSVDataAgainstTestCase(testCaseSix);
-    });
-
-    it('One rating for each skill except one which is an M', () => {
-        checkAPIDataAgainstTestCase(testCaseSeven);
-        getAndDisplayUIData(testCaseSeven);
-        checkCSVDataAgainstTestCase(testCaseSeven);
-    });
-
-    it('One full ER plus one additional rating', () => {
-        checkAPIDataAgainstTestCase(testCaseEight);
-        getAndDisplayUIData(testCaseEight);
-        checkCSVDataAgainstTestCase(testCaseEight);
-    });
-
-    it('One full ER plus one additional rating, less than 50%', () => {
-        checkAPIDataAgainstTestCase(testCaseNine);
-        getAndDisplayUIData(testCaseNine);
-        checkCSVDataAgainstTestCase(testCaseNine);
-    });
-
-    it('No full set of ERs, Progress < 50%', () => {
-        checkAPIDataAgainstTestCase(testCaseTen);
-        getAndDisplayUIData(testCaseTen);
-        checkCSVDataAgainstTestCase(testCaseTen);
-    });
-
-    it('No full set of ER, Progress >= 50%', () => {
-        checkAPIDataAgainstTestCase(testCaseEleven);
-        getAndDisplayUIData(testCaseEleven);
-        checkCSVDataAgainstTestCase(testCaseEleven);
-    });
-
-    it('One full ER, HW.1.4 is set to zero ER', () => {
-        checkAPIDataAgainstTestCase(testCaseTwelve);
-        getAndDisplayUIData(testCaseTwelve);
-        checkCSVDataAgainstTestCase(testCaseTwelve);
-    });
-
-    it('No full set of ER, HW.2.5 is set to zero ER, Progress < 50%', () => {
-        checkAPIDataAgainstTestCase(testCaseThirteen);
-        getAndDisplayUIData(testCaseThirteen);
-        checkCSVDataAgainstTestCase(testCaseThirteen);
-    });
-
-    it('No full set of ER, HW3.4 is set to zero ER, Progress >= 50%', () => {
-        checkAPIDataAgainstTestCase(testCaseFourteen);
-        getAndDisplayUIData(testCaseFourteen);
-        checkCSVDataAgainstTestCase(testCaseFourteen);
-    });
-
-    it('All Ms', () => {
-        checkAPIDataAgainstTestCase(testCaseFifteen);
-        getAndDisplayUIData(testCaseFifteen);
-        checkCSVDataAgainstTestCase(testCaseFifteen);
-    });
-});
-
-
+})
 
    // API Tests
    const checkAPIDataAgainstTestCase = ({student, contentArea, competency, baseline, growth, progress, performanceLevel}) => {
@@ -127,7 +44,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
         ).to.equal(growth);
 
         // API doesnt have a progress property
-        // expect(    ,
+        // expect(  ???  ,
         //     `${contentArea}.${competency} for ${student} API Completion Percentage Value ${expectedProgress}: Test Doc Completion Percentage Value ${progress}`
         //     ).to.equal(progress);
 
