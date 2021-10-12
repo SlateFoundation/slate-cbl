@@ -65,8 +65,8 @@ foreach ($taskRatings as $taskRating) {
             'StudentID' => $StudentTask->StudentID,
             'Demonstrated' => $StudentTask->Submitted ?: null,
             'ExperienceType' => $StudentTask->ExperienceType,
-            'PerformanceType' => $StudentTask->Task->Title,
-            'Context' => $StudentTask->Section->Title
+            'PerformanceType' => $StudentTask->Task->getTitle(),
+            'Context' => $StudentTask->Section->getTitle()
         ]);
         $Demonstration->save(false);
 
