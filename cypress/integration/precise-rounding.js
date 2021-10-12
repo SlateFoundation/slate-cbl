@@ -157,7 +157,7 @@ const testCaseFifteen = {
 describe('Confirm rounding is consistent across UI, API, and exports', () => {
 
     // API Tests
-    const checkAPIDataAgainstDocsTestData = ({student, contentArea, competency, baseline, growth, progress, performanceLevel}) => {
+    const checkAPIDataAgainstTestCase = ({student, contentArea, competency, baseline, growth, progress, performanceLevel}) => {
         cy.loginAs('teacher');
         cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
         cy.visit(`/cbl/dashboards/demonstrations/student#${student}/${contentArea}`);
@@ -193,7 +193,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
     };
 
     // UI Tests
-    const checkUIDataAgainstDocsTestData = (code, competencyCardId, { baseline, growth, progress, performanceLevel }) => {
+    const checkUIDataAgainstTestCase = (code, competencyCardId, { baseline, growth, progress, performanceLevel }) => {
         // check baseline rating calculation
         cy.get(`#${competencyCardId}`)
             .find('span[data-ref="codeEl"]')
@@ -238,7 +238,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                     cy.withExt().then(({extQuerySelector}) => {
                         const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${contentArea}.${competency}"}`);
 
-                        checkUIDataAgainstDocsTestData(`${contentArea}.${competency}`, card.id, {
+                        checkUIDataAgainstTestCase(`${contentArea}.${competency}`, card.id, {
                             baseline,
                             growth,
                             progress,
@@ -250,7 +250,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
   };
 
     // CSV Tests
-    const checkCSVDataAgainstDocsTestData = ({student, contentArea, competency, baseline, growth, progress, performanceLevel} ) => {
+    const checkCSVDataAgainstTestCase = ({student, contentArea, competency, baseline, growth, progress, performanceLevel} ) => {
         cy.loginAs('admin');
         cy.visit('/exports');
 
@@ -304,92 +304,92 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
 
 
   it('Student 5 ELA Competency 7', () => {
-      checkAPIDataAgainstDocsTestData(testCaseOne);
+      checkAPIDataAgainstTestCase(testCaseOne);
       getAndDisplayUIData(testCaseOne);
-      checkCSVDataAgainstDocsTestData(testCaseOne);
+      checkCSVDataAgainstTestCase(testCaseOne);
     });
 
     it('One rating for each skill.', () => {
-       checkAPIDataAgainstDocsTestData(testCaseTwo);
+       checkAPIDataAgainstTestCase(testCaseTwo);
        getAndDisplayUIData(testCaseTwo);
-       checkCSVDataAgainstDocsTestData(testCaseTwo);
+       checkCSVDataAgainstTestCase(testCaseTwo);
     });
 
     it('One rating for all but one skill, progress < 50%', () => {
-        checkAPIDataAgainstDocsTestData(testCaseThree);
+        checkAPIDataAgainstTestCase(testCaseThree);
         getAndDisplayUIData(testCaseThree);
-        checkCSVDataAgainstDocsTestData(testCaseThree);
+        checkCSVDataAgainstTestCase(testCaseThree);
     });
 
     it('One set of ERs thats low and hidden and one that is higher and displayed', () => {
-        checkAPIDataAgainstDocsTestData(testCaseFour);
+        checkAPIDataAgainstTestCase(testCaseFour);
         getAndDisplayUIData(testCaseFour);
-        checkCSVDataAgainstDocsTestData(testCaseFour);
+        checkCSVDataAgainstTestCase(testCaseFour);
     });
 
     it('One set of ER thats low and hidden and one that is higher and displayed with Ms', () => {
-        checkAPIDataAgainstDocsTestData(testCaseFive);
+        checkAPIDataAgainstTestCase(testCaseFive);
         getAndDisplayUIData(testCaseFive);
-        checkCSVDataAgainstDocsTestData(testCaseFive);
+        checkCSVDataAgainstTestCase(testCaseFive);
     });
 
     it('No full set of ER, Progress > 50%', () => {
-        checkAPIDataAgainstDocsTestData(testCaseSix);
+        checkAPIDataAgainstTestCase(testCaseSix);
         getAndDisplayUIData(testCaseSix);
-        checkCSVDataAgainstDocsTestData(testCaseSix);
+        checkCSVDataAgainstTestCase(testCaseSix);
     });
 
     it('One rating for each skill except one which is an M', () => {
-        checkAPIDataAgainstDocsTestData(testCaseSeven);
+        checkAPIDataAgainstTestCase(testCaseSeven);
         getAndDisplayUIData(testCaseSeven);
-        checkCSVDataAgainstDocsTestData(testCaseSeven);
+        checkCSVDataAgainstTestCase(testCaseSeven);
     });
 
     it('One full ER plus one additional rating', () => {
-        checkAPIDataAgainstDocsTestData(testCaseEight);
+        checkAPIDataAgainstTestCase(testCaseEight);
         getAndDisplayUIData(testCaseEight);
-        checkCSVDataAgainstDocsTestData(testCaseEight);
+        checkCSVDataAgainstTestCase(testCaseEight);
     });
 
     it('One full ER plus one additional rating, less than 50%', () => {
-        checkAPIDataAgainstDocsTestData(testCaseNine);
+        checkAPIDataAgainstTestCase(testCaseNine);
         getAndDisplayUIData(testCaseNine);
-        checkCSVDataAgainstDocsTestData(testCaseNine);
+        checkCSVDataAgainstTestCase(testCaseNine);
     });
 
     it('No full set of ERs, Progress < 50%', () => {
-        checkAPIDataAgainstDocsTestData(testCaseTen);
+        checkAPIDataAgainstTestCase(testCaseTen);
         getAndDisplayUIData(testCaseTen);
-        checkCSVDataAgainstDocsTestData(testCaseTen);
+        checkCSVDataAgainstTestCase(testCaseTen);
     });
 
     it('No full set of ER, Progress >= 50%', () => {
-        checkAPIDataAgainstDocsTestData(testCaseEleven);
+        checkAPIDataAgainstTestCase(testCaseEleven);
         getAndDisplayUIData(testCaseEleven);
-        checkCSVDataAgainstDocsTestData(testCaseEleven);
+        checkCSVDataAgainstTestCase(testCaseEleven);
     });
 
     it('One full ER, HW.1.4 is set to zero ER', () => {
-        checkAPIDataAgainstDocsTestData(testCaseTwelve);
+        checkAPIDataAgainstTestCase(testCaseTwelve);
         getAndDisplayUIData(testCaseTwelve);
-        checkCSVDataAgainstDocsTestData(testCaseTwelve);
+        checkCSVDataAgainstTestCase(testCaseTwelve);
     });
 
     it('No full set of ER, HW.2.5 is set to zero ER, Progress < 50%', () => {
-        checkAPIDataAgainstDocsTestData(testCaseThirteen);
+        checkAPIDataAgainstTestCase(testCaseThirteen);
         getAndDisplayUIData(testCaseThirteen);
-        checkCSVDataAgainstDocsTestData(testCaseThirteen);
+        checkCSVDataAgainstTestCase(testCaseThirteen);
     });
 
     it('No full set of ER, HW3.4 is set to zero ER, Progress >= 50%', () => {
-        checkAPIDataAgainstDocsTestData(testCaseFourteen);
+        checkAPIDataAgainstTestCase(testCaseFourteen);
         getAndDisplayUIData(testCaseFourteen);
-        checkCSVDataAgainstDocsTestData(testCaseFourteen);
+        checkCSVDataAgainstTestCase(testCaseFourteen);
     });
 
     it('All Ms', () => {
-        checkAPIDataAgainstDocsTestData(testCaseFifteen);
+        checkAPIDataAgainstTestCase(testCaseFifteen);
         getAndDisplayUIData(testCaseFifteen);
-        checkCSVDataAgainstDocsTestData(testCaseFifteen);
+        checkCSVDataAgainstTestCase(testCaseFifteen);
     });
 });
