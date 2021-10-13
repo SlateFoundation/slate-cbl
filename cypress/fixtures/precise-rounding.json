@@ -2,150 +2,150 @@
     { "caseTitle": "testCaseOne",
         "student": "student5",
         "contentArea": "ELA",
-        "competency": 7,
-        "baseline": 5,
-        "growth": 1.3,
-        "progress": 63,
-        "performanceLevel": 6.2
+        "competency": "7",
+        "baseline": "5",
+        "growth": "1.3",
+        "progress": "63",
+        "performanceLevel": "6.2"
     },
 
     {"caseTitle": "testCaseTwo",
         "student": "student4",
         "contentArea": "ELA",
-        "competency": 1,
-        "baseline": 6,
-        "growth": 0,
-        "progress": 33,
-        "performanceLevel": 6
+        "competency": "1",
+        "baseline": "6",
+        "growth": "0",
+        "progress": "33",
+        "performanceLevel": "6"
     },
 
     {"caseTitle": "testCaseThree",
         "student": "student4",
         "contentArea": "ELA",
-        "competency": 2,
+        "competency": "2",
         "baseline": null,
         "growth": null,
-        "progress": 40,
-        "performanceLevel": 6
+        "progress": "40",
+        "performanceLevel": "6"
     },
 
     { "caseTitle":  "testCaseFour",
         "student": "student4",
         "contentArea": "ELA",
-        "competency": 3,
-        "baseline": 6,
-        "growth": 1,
-        "progress": 100,
-        "performanceLevel": 7
+        "competency": "3",
+        "baseline": "6",
+        "growth": "1",
+        "progress": "100",
+        "performanceLevel": "7"
     },
 
     { "caseTitle": "testCaseFive",
         "student": "student4",
         "contentArea": "ELA",
-        "competency": 4,
-        "baseline": 6,
-        "growth": 0.7,
-        "progress": 100,
-        "performanceLevel": 6.7
+        "competency": "4",
+        "baseline": "6",
+        "growth": "0.7",
+        "progress": "100",
+        "performanceLevel": "6.7"
     },
 
     { "caseTitle": "testCaseSix",
         "student": "student4",
         "contentArea": "ELA",
-        "competency": 5,
-        "baseline": 6,
-        "growth": 1,
-        "progress": 83,
-        "performanceLevel": 7
+        "competency": "5",
+        "baseline": "6",
+        "growth": "1",
+        "progress": "83",
+        "performanceLevel": "7"
     },
 
     { "caseTitle": "testCaseSeven",
         "student": "student4",
         "contentArea": "ELA",
-        "competency": 6,
+        "competency": "6",
         "baseline": null,
         "growth": null,
-        "progress": 33,
-        "performanceLevel": 7
+        "progress": "33",
+        "performanceLevel": "7"
     },
 
     { "caseTitle": "testCaseEight",
         "student": "student4",
         "contentArea": "ELA",
-        "competency": 7,
-        "baseline": 6,
-        "growth": 0.4,
-        "progress": 63,
-        "performanceLevel": 6.4
+        "competency": "7",
+        "baseline": "6",
+        "growth": "0.4",
+        "progress": "63",
+        "performanceLevel": "6.4"
     },
 
     { "caseTitle": "testCaseNine",
         "student": "student4",
         "contentArea": "SCI",
-        "competency": 1,
-        "baseline": 6.9,
-        "growth": -0.3,
-        "progress": 38,
-        "performanceLevel": 6.6
+        "competency": "1",
+        "baseline": "6.9",
+        "growth": "-0.3",
+        "progress": "38",
+        "performanceLevel": "6.6"
     },
 
     { "caseTitle": "testCaseTen",
         "student": "student4",
         "contentArea": "NGE",
-        "competency": 1,
+        "competency": "1",
         "baseline": null,
         "growth": null,
-        "progress": 35,
-        "performanceLevel": 9.4
+        "progress": "35",
+        "performanceLevel":"9.4"
     },
 
     { "caseTitle": "testCaseEleven",
         "student": "student4",
         "contentArea": "HOS",
-        "competency": 1,
-        "baseline": 8.3,
-        "growth": 0.8,
-        "progress": 45,
-        "performanceLevel": 9.1
+        "competency": "1",
+        "baseline": "8.3",
+        "growth": "0.8",
+        "progress": "45",
+        "performanceLevel": "9.1"
     },
 
     { "caseTitle":  "testCaseTwelve",
         "student": "student4",
         "contentArea": "HW",
-        "competency": 1,
-        "baseline": 8,
-        "growth": 0,
-        "progress": 33,
-        "performanceLevel": 8
+        "competency": "1",
+        "baseline": "8",
+        "growth": "0",
+        "progress": "33",
+        "performanceLevel": "8"
     },
 
     { "caseTitle": "testCaseThirteen",
         "student": "student4",
         "contentArea": "HW",
-        "competency": 2,
+        "competency": "2",
         "baseline": null,
         "growth": null,
-        "progress": 42,
-        "performanceLevel": 8.4
+        "progress": "42",
+        "performanceLevel": "8.4"
     },
 
     { "caseTitle": "testCaseFourteen",
         "student": "student4",
         "contentArea": "HW",
-        "competency": 3,
-        "baseline": 8,
-        "growth": 1.2,
-        "progress": 56,
-        "performanceLevel": 9.2
+        "competency": "3",
+        "baseline": "8",
+        "growth": "1.2",
+        "progress": "56",
+        "performanceLevel": "9.2"
     },
 
     { "caseTitle":  "testCaseFifteen",
         "student": "student4",
         "contentArea": "SCI",
-        "competency": 3,
+        "competency": "3",
         "baseline": null,
         "growth": null,
         "progress": "0",
-        "performanceLevel": "-"
+        "performanceLevel": "null"
     }
 ]
