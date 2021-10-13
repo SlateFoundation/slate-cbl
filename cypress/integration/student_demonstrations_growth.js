@@ -12,7 +12,7 @@ describe.skip('Student competency growth calculation test', () => {
 
 
     it('compare growth calculations', () => {
-        cy.readFile('cypress/fixtures/growth-calculations.json')
+        cy.readFile('cypress/fixtures/student-competency-calculations.json')
             .then((growthCalculationsByStudent) => {
                 cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
 
