@@ -54,7 +54,8 @@ class DemonstrationSkill extends \VersionedRecord
         'Skill' => [
             'type' => 'one-one',
             'class' => Skill::class
-        ]
+        ],
+        // TODO: configure LatestComments, TaskAttachments, and TaskSubmissions relationships
     ];
 
     public static $validators = [
@@ -71,6 +72,7 @@ class DemonstrationSkill extends \VersionedRecord
     public static $dynamicFields = [
         'Demonstration',
         'Skill'
+        // TODO: add LatestComments, TaskAttachments, and TaskSubmissions to link to expose new relationships
     ];
 
     public function validate($deep = true)
