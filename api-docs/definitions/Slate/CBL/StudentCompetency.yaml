@@ -1,0 +1,7 @@
+x-activeRecord: Slate\CBL\StudentCompetency
+description: |
+  A `StudentCompetency` record captures a student's state on a particular competency+level combination.
+
+  In addition to the data stored via this database model, the `StudentCompetency` class also hosts the core
+  calculation workflow methods for student progress, performance, and growth since they are based on the
+  intersection of Student+Competency+Level.
