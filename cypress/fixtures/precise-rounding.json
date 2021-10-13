@@ -325,7 +325,7 @@
         "test_doc_growth":"0.5",
         "growth": "1.5",
         "progress": "67",
-        "performanceLevel": 10
+        "performanceLevel": "10"
     },
 
     { "caseTitle":  "testCaseThirtyOne",
