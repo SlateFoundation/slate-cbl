@@ -1,5 +1,6 @@
 [
-    { "caseTitle": "testCaseOne",
+    {
+        "caseTitle": "testCaseOne",
         "student": "student5",
         "contentArea": "ELA",
         "competency": "7",
@@ -9,7 +10,8 @@
         "performanceLevel": "6.2"
     },
 
-    {"caseTitle": "testCaseTwo",
+    {
+        "caseTitle": "testCaseTwo",
         "student": "student4",
         "contentArea": "ELA",
         "competency": "1",
@@ -20,7 +22,8 @@
         "performanceLevel": "6"
     },
 
-    {"caseTitle": "testCaseThree",
+    {
+        "caseTitle": "testCaseThree",
         "student": "student4",
         "contentArea": "ELA",
         "competency": "2",
@@ -31,7 +34,8 @@
         "performanceLevel": "6"
     },
 
-    { "caseTitle":  "testCaseFour",
+    {
+        "caseTitle":  "testCaseFour",
         "student": "student4",
         "contentArea": "ELA",
         "competency": "3",
@@ -42,7 +46,8 @@
         "performanceLevel": "7"
     },
 
-    { "caseTitle": "testCaseFive",
+    {
+        "caseTitle": "testCaseFive",
         "student": "student4",
         "contentArea": "ELA",
         "competency": "4",
@@ -54,7 +59,8 @@
         "performanceLevel": "6.7"
     },
 
-    { "caseTitle": "testCaseSix",
+    {
+        "caseTitle": "testCaseSix",
         "student": "student4",
         "contentArea": "ELA",
         "competency": "5",
@@ -65,7 +71,8 @@
         "performanceLevel": "7"
     },
 
-    { "caseTitle": "testCaseSeven",
+    {
+        "caseTitle": "testCaseSeven",
         "student": "student4",
         "contentArea": "ELA",
         "competency": "6",
@@ -76,7 +83,8 @@
         "performanceLevel": "7"
     },
 
-    { "caseTitle": "testCaseEight",
+    {
+        "caseTitle": "testCaseEight",
         "student": "student4",
         "contentArea": "ELA",
         "competency": "7",
@@ -88,7 +96,8 @@
         "performanceLevel": "6.4"
     },
 
-    { "caseTitle": "testCaseNine",
+    {
+        "caseTitle": "testCaseNine",
         "student": "student4",
         "contentArea": "SCI",
         "competency": "1",
@@ -100,7 +109,8 @@
         "performanceLevel": "6.6"
     },
 
-    { "caseTitle": "testCaseTen",
+    {
+        "caseTitle": "testCaseTen",
         "student": "student4",
         "contentArea": "NGE",
         "competency": "1",
@@ -111,7 +121,8 @@
         "performanceLevel":"9.4"
     },
 
-    { "caseTitle": "testCaseEleven",
+    {
+        "caseTitle": "testCaseEleven",
         "student": "student4",
         "contentArea": "HOS",
         "competency": "1",
@@ -123,7 +134,8 @@
         "performanceLevel": "9.1"
     },
 
-    { "caseTitle":  "testCaseTwelve",
+    {
+        "caseTitle":  "testCaseTwelve",
         "student": "student4",
         "contentArea": "HW",
         "competency": "1",
@@ -134,7 +146,8 @@
         "performanceLevel": "8"
     },
 
-    { "caseTitle": "testCaseThirteen",
+    {
+        "caseTitle": "testCaseThirteen",
         "student": "student4",
         "contentArea": "HW",
         "competency": "2",
@@ -145,7 +158,8 @@
         "performanceLevel": "8.4"
     },
 
-    { "caseTitle": "testCaseFourteen",
+    {
+        "caseTitle": "testCaseFourteen",
         "student": "student4",
         "contentArea": "HW",
         "competency": "3",
@@ -157,7 +171,8 @@
         "performanceLevel": "9.2"
     },
 
-    { "caseTitle":  "testCaseFifteen",
+    {
+        "caseTitle":  "testCaseFifteen",
         "student": "student4",
         "contentArea": "SCI",
         "competency": "3",
@@ -168,7 +183,8 @@
         "performanceLevel": null
     },
 
-    { "caseTitle":  "testCaseSixteen",
+    {
+        "caseTitle":  "testCaseSixteen",
         "student": "student5",
         "contentArea": "ELA",
         "competency": "1",
@@ -179,7 +195,8 @@
     },
 
 
-    { "caseTitle":  "testCaseSeventeen",
+    {
+        "caseTitle":  "testCaseSeventeen",
         "student": "student5",
         "contentArea": "ELA",
         "competency": "2",
@@ -189,7 +206,8 @@
         "performanceLevel": "7"
     },
 
-    { "caseTitle":  "testCaseEighteen",
+    {
+        "caseTitle":  "testCaseEighteen",
         "student": "student5",
         "contentArea": "ELA",
         "competency": "3",
@@ -199,7 +217,8 @@
         "performanceLevel": "8.2"
     },
 
-    { "caseTitle":  "testCaseNineteen",
+    {
+        "caseTitle":  "testCaseNineteen",
         "student": "student5",
         "contentArea": "ELA",
         "competency": "4",
@@ -209,7 +228,8 @@
         "performanceLevel": "7.5"
     },
 
-    { "caseTitle":  "testCaseTwenty",
+    {
+        "caseTitle":  "testCaseTwenty",
         "student": "student5",
         "contentArea": "ELA",
         "competency": "5",
@@ -219,7 +239,8 @@
         "performanceLevel": "7"
     },
 
-    { "caseTitle":  "testCaseTwentyOne",
+    {
+        "caseTitle":  "testCaseTwentyOne",
         "student": "student5",
         "contentArea": "ELA",
         "competency": "6",
@@ -229,7 +250,8 @@
         "performanceLevel": "8"
     },
 
-    { "caseTitle":  "testCaseTwentyTwo",
+    {
+        "caseTitle":  "testCaseTwentyTwo",
         "student": "student5",
         "contentArea": "ELA",
         "competency": "7",
@@ -240,7 +262,8 @@
         "performanceLevel": "6.2"
     },
 
-    { "caseTitle":  "testCaseTwentyThree",
+    {
+        "caseTitle":  "testCaseTwentyThree",
         "student": "student3",
         "contentArea": "SCI",
         "competency": "1",
@@ -251,7 +274,8 @@
         "performanceLevel": "9.4"
     },
 
-    { "caseTitle":  "testCaseTwentyFour",
+    {
+        "caseTitle":  "testCaseTwentyFour",
         "student": "student3",
         "contentArea": "SCI",
         "competency": "2",
@@ -261,7 +285,8 @@
         "performanceLevel": "8"
     },
 
-    { "caseTitle":  "testCaseTwentyFive",
+    {
+        "caseTitle":  "testCaseTwentyFive",
         "student": "student3",
         "contentArea": "SCI",
         "competency": "3",
@@ -272,7 +297,8 @@
         "performanceLevel": "7"
     },
 
-    { "caseTitle":  "testCaseTwentySix",
+    {
+        "caseTitle":  "testCaseTwentySix",
         "student": "student3",
         "contentArea": "SCI",
         "competency": "4",
@@ -282,7 +308,8 @@
         "performanceLevel": "10"
     },
 
-    { "caseTitle":  "testCaseTwentySeven",
+    {
+        "caseTitle":  "testCaseTwentySeven",
         "student": "student",
         "contentArea": "ELA",
         "competency": "1",
@@ -293,7 +320,8 @@
         "performanceLevel": "9.3"
     },
 
-    { "caseTitle":  "testCaseTwentyEight",
+    {
+        "caseTitle":  "testCaseTwentyEight",
         "student": "student",
         "contentArea": "ELA",
         "competency": "2",
@@ -304,7 +332,8 @@
         "performanceLevel": "10.8"
     },
 
-    { "caseTitle":  "testCaseTwentyNine",
+    {
+        "caseTitle":  "testCaseTwentyNine",
         "student": "student3",
         "contentArea": "HOS",
         "competency": "4",
@@ -317,7 +346,8 @@
     },
 
 
-    { "caseTitle":  "testCaseThirty",
+    {
+        "caseTitle":  "testCaseThirty",
         "student": "student",
         "contentArea": "ELA",
         "competency": "6",
@@ -328,7 +358,8 @@
         "performanceLevel": "10"
     },
 
-    { "caseTitle":  "testCaseThirtyOne",
+    {
+        "caseTitle":  "testCaseThirtyOne",
         "student": "student2",
         "contentArea": "ELA",
         "competency": "2",
@@ -339,7 +370,8 @@
         "performanceLevel": null
     },
 
-    { "caseTitle":  "testCaseThirtyTwo",
+    {
+        "caseTitle":  "testCaseThirtyTwo",
         "student": "student2",
         "contentArea": "ELA",
         "competency": "3",
