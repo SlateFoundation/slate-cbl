@@ -337,12 +337,14 @@
         "student": "student3",
         "contentArea": "HOS",
         "competency": "4",
-        "test_doc_baseline":"9",
-        "baseline": null,
+        "test_doc_baseline": null,
+        "baseline": "9",
         "test_doc_growth":"0.3",
         "growth": "0",
-        "progress": "0",
-        "performanceLevel": null
+        "progress": "100",
+        "test_doc_progress": "0",
+        "performanceLevel": "9.3",
+        "test_doc_performanceLevel": null
     },
 
 
