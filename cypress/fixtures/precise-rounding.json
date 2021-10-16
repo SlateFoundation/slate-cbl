@@ -350,6 +350,7 @@
 
     {
         "caseTitle":  "testCaseThirty",
+        "caseTitle":  "testCaseThirtyOne",
         "student": "student",
         "contentArea": "ELA",
         "competency": "6",
@@ -361,7 +362,7 @@
     },
 
     {
-        "caseTitle":  "testCaseThirtyOne",
+        "caseTitle":  "testCaseThirtyTwo",
         "student": "student2",
         "contentArea": "ELA",
         "competency": "2",
@@ -373,7 +374,7 @@
     },
 
     {
-        "caseTitle":  "testCaseThirtyTwo",
+        "caseTitle":  "testCaseThirtyThree",
         "student": "student2",
         "contentArea": "ELA",
         "competency": "3",
