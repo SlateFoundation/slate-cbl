@@ -2,6 +2,10 @@ const csvtojson = require('csvtojson');
 const testCases = require('../fixtures/precise-rounding.json')
 
 describe('Confirm rounding is consistent across UI, API, and exports', () => {
+    before(() => {
+        cy.resetDatabase();
+    });
+
     testCases.forEach((testCase) => {
         it(`${testCase.caseTitle}`, () => {
             checkAPIDataAgainstTestCase(testCase)
@@ -20,30 +24,43 @@ const checkAPIDataAgainstTestCase = ({student, contentArea, competency, baseline
     cy.wait('@studentCompetencyData')
 
     .should(({ xhr }) => {
-        const data = JSON.parse(xhr.response).data
-        const studentData = data.filter((datum)=> datum.CompetencyID === competency);
-        const expectedBaseLine =  studentData[0].BaselineRating
-        const expectedGrowth = studentData[0].growth
-        const expectedPerformanceLevel = studentData[0].demonstrationsAverage
+        const { data, ContentArea: { Competencies: competencies } } = JSON.parse(xhr.response)
+        const { ID: competencyId } = competencies.filter(datum => datum.Code === `${contentArea}.${competency}`).pop();
+        const studentData = data.filter(datum => datum.CompetencyID === competencyId) // filter by CompetencyID
+            .sort((sc1, sc2) => sc1.Level - sc2.Level).pop(); // sort by highest level last, and use that
+
+        expect(studentData).to.not.be.null;
+
+        const apiBaseLine =  studentData.BaselineRating ? Math.round(studentData.BaselineRating * 10) / 10 : studentData.BaselineRating
+        const apiGrowth = studentData.growth
+        const apiProgress = studentData.demonstrationsRequired ? (
+            studentData.demonstrationsComplete ?
+                Math.round(studentData.demonstrationsComplete / studentData.demonstrationsRequired * 100) :
+                0
+        ) : 1;
+        const apiPerformanceLevel = studentData.demonstrationsAverage
 
         cy.wrap(xhr).its('status').should('eq', 200);
 
-        expect(expectedBaseLine,
-            `${contentArea}.${competency} for ${student} API Baseline Value ${expectedBaseLine}: Test Doc Baseline Value ${baseline}`
+        // convert api baseline to string, if it is not null
+        expect(apiBaseLine ? `${apiBaseLine}` : apiBaseLine,
+            `${contentArea}.${competency} for ${student} API Baseline Value ${apiBaseLine}: Fixtures data Baseline Value ${baseline}`
         ).to.equal(baseline);
 
-        expect(expectedGrowth,
-            `${contentArea}.${competency} for ${student} API Growth Value ${expectedGrowth}: Test Doc Growth Value ${growth}`
+        // convert api growth to string
+        expect(`${apiGrowth}`,
+            `${contentArea}.${competency} for ${student} API Growth Value ${apiGrowth}: Fixtures data Growth Value ${growth}`
         ).to.equal(growth);
 
-        // API doesnt have a progress property
-        // expect(  ???  ,
-        //     `${contentArea}.${competency} for ${student} API Completion Percentage Value ${expectedProgress}: Test Doc Completion Percentage Value ${progress}`
-        //     ).to.equal(progress);
+        // convert api calculated progress into string
+        expect(`${apiProgress}`,
+            `${contentArea}.${competency} for ${student} API Completion Percentage Value ${apiProgress}: Fixtures data Completion Percentage Value ${progress}`
+            ).to.equal(progress);
 
-        expect(expectedPerformanceLevel,
-            `${contentArea}.${competency} for ${student}  API Performance Level Value ${expectedPerformanceLevel}: Test Doc Perfomance Level Value ${performanceLevel}`
-            ).to.equal(performanceLevel);
+        // compare null comparisons without converting to string
+        expect(apiPerformanceLevel === null ? apiPerformanceLevel : `${apiPerformanceLevel}`,
+            `${contentArea}.${competency} for ${student}  API Performance Level Value ${apiPerformanceLevel}: Fixtures data Perfomance Level Value ${performanceLevel}`
+        ).to.equal(performanceLevel);
      });
 };
 
@@ -116,7 +133,7 @@ const checkCSVDataAgainstTestCase = ({student, contentArea, competency, baseline
     }).as('records');
 
     cy.get('form[action="/exports/slate-cbl/student-competencies"]').within(() => {
-        cy.get('input[name=students]').type(`{selectall}{backspace}${student}`);
+        cy.get('input[name=students]').clear().type(`${student}`);
         cy.get('select[name=content_area]').select(contentArea);
         cy.get('select[name=level]').select('highest');
         cy.root().submit();
@@ -128,32 +145,47 @@ const checkCSVDataAgainstTestCase = ({student, contentArea, competency, baseline
         expect(headers).to.have.property('content-type', 'text/csv; charset=utf-8')
         return csvtojson().fromString(body)
     }).then((records) => {
-
         const studentCompetencyRow = records.filter((record)=> {
             return record.Competency === `${contentArea}.${competency}`
-        });
+        }).pop();
 
-        let csvPerformanceLevel = studentCompetencyRow[0]['Performance Level']
-        let csvGrowth =  studentCompetencyRow[0]['Growth']
-        let csvBaseLine = studentCompetencyRow[0]['Baseline']
-        let csvProgress = studentCompetencyRow[0]['Progress']
+        const csvPerformanceLevel = studentCompetencyRow['Performance Level']
+        const csvGrowth = studentCompetencyRow.Growth
+        const csvBaseLine = studentCompetencyRow.Baseline
+        const csvProgress = studentCompetencyRow.Progress
 
-        // csv returns all strings, so we must expect string values
-        expect(csvPerformanceLevel,
-        `${contentArea}.${competency} for ${student}  CSV Performance Level Value ${csvPerformanceLevel}: Test Doc Perfomance Level Value ${performanceLevel}`
+        // csv represents null as empty string
+        expect(csvPerformanceLevel === '' ? null : csvPerformanceLevel,
+            `${contentArea}.${competency} for ${student}  CSV Performance Level Value ${csvPerformanceLevel}: Fixtures data Perfomance Level Value ${performanceLevel}`
         ).to.equal(performanceLevel);
 
-        expect(csvGrowth,
-            `${contentArea}.${competency} for ${student} CSV Growth Value ${csvGrowth}: Test Doc Growth Value ${growth}`
+        // csv represents 0 growth as an empty string
+        expect(`${csvGrowth === '' ? 0 : csvGrowth}`,
+            `${contentArea}.${competency} for ${student} CSV Growth Value ${csvGrowth}: Fixtures data Growth Value ${growth}`
         ).to.equal(growth);
 
-        expect(csvBaseLine,
-            `${contentArea}.${competency} for ${student} CSV Baseline Value ${csvBaseLine}: Test Doc Baseline Value ${baseline}`
-        ).to.equal(baseline);
+        // if csv value = 0, baseline could = NULL OR 0.
+        // this needs to be resolved -- the CSV should probably differentiate
+        if (csvBaseLine === '0') {
+            expect(baseline,
+                `${contentArea}.${competency} for ${student} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
+            ).to.be.oneOf(['0', null])
+        } else {
+            expect(`${csvBaseLine}`,
+                `${contentArea}.${competency} for ${student} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
+            ).to.equal(baseline);
+        }
 
-        expect(csvProgress,
-            `${contentArea}.${competency} for ${student} CSV Completion Percentage Value ${csvProgress}: Test Doc Completion Percentage Value ${progress}`
-            ).to.equal(progress/100); // progress is represented as decimal in export
+        // csv represents 0 progress as empty string
+        if (csvProgress === '') {
+            expect(progress,
+                `${contentArea}.${competency} for ${student} CSV Completion Percentage Value ${csvProgress}: Fixtures data Completion Percentage Value ${progress}`
+            ).to.equal('0'); // progress is represented as decimal in export
+        } else {
+            expect(`${csvProgress}`,
+                `${contentArea}.${competency} for ${student} CSV Completion Percentage Value ${csvProgress}: Fixtures data Completion Percentage Value ${progress}`
+            ).to.equal(`${progress/100}`); // progress is represented as decimal in export
+        }
     });
     });
 };
