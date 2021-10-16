@@ -327,9 +327,9 @@
         "competency": "2",
         "baseline": "10",
         "test_doc_growth":"0.8",
-        "growth": "1",
-        "progress": "27",
-        "performanceLevel": "10.8"
+        "growth": "",
+        "progress": "",
+        "performanceLevel": ""
     },
 
     {
