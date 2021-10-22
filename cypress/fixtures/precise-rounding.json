@@ -326,7 +326,8 @@
         "contentArea": "ELA",
         "competency": "2",
         "baseline": "10",
-        "growth": "0.8",
+        "growth":"1",
+        "test_doc_growth": "0.8",
         "progress": "27",
         "performanceLevel": "10.8"
     },
