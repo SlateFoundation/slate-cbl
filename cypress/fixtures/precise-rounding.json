@@ -1,397 +1,286 @@
-[
-    {
-        "caseTitle": "testCaseOne",
-        "student": "student5",
-        "contentArea": "ELA",
-        "competency": "7",
-        "baseline": "5",
-        "growth": "1.3",
-        "progress": "63",
-        "performanceLevel": "6.2"
+{
+    "student": {
+        "ELA": {
+            "1": {
+                "caseTitle": "testCaseOne",
+                "baseline": "10",
+                "test_doc_growth": "-0.7",
+                "growth": "-1.5",
+                "progress": "33",
+                "performanceLevel": "9.3"
+            },
+
+            "2": {
+                "caseTitle": "testCaseTwo",
+                "baseline": "10",
+                "growth": "1",
+                "test_doc_growth": "0.8",
+                "progress": "27",
+                "performanceLevel": "10.8"
+            },
+
+            "6": {
+                "caseTitle": "testCaseThree",
+                "baseline": "9.5",
+                "test_doc_growth": "0.5",
+                "growth": "1.5",
+                "progress": "67",
+                "performanceLevel": "10"
+            }
+        }
     },
+    "student2": {
+        "ELA": {
+            "2": {
+                "caseTitle": "testCaseFour",
+                "baseline": "9",
+                "test_doc_growth": null,
+                "growth": "0",
+                "progress": "0",
+                "performanceLevel": null
+            },
 
-    {
-        "caseTitle": "testCaseTwo",
-        "student": "student4",
-        "contentArea": "ELA",
-        "competency": "1",
-        "test_doc_baseline": "6",
-        "baseline":null,
-        "growth": "0",
-        "progress": "33",
-        "performanceLevel": "6"
+            "3": {
+                "caseTitle": "testCaseFive",
+                "baseline": "9",
+                "growth": "0",
+                "progress": "33",
+                "performanceLevel": "9"
+            }
+        }
     },
-
-    {
-        "caseTitle": "testCaseThree",
-        "student": "student4",
-        "contentArea": "ELA",
-        "competency": "2",
-        "baseline": null,
-        "test_doc_growth": null,
-        "growth": "0",
-        "progress": "40",
-        "performanceLevel": "6"
+    "student3": {
+        "SCI": {
+            "1": {
+                "caseTitle": "testCaseSix",
+                "baseline": "9.1",
+                "test_doc_growth": "0.3",
+                "growth": "0.4",
+                "progress": "38",
+                "performanceLevel": "9.4"
+            },
+            "2": {
+                "caseTitle": "testCaseSeven",
+                "baseline": "9.3",
+                "growth": "-1.3",
+                "progress": "25",
+                "performanceLevel": "8"
+            },
+            "3": {
+                "caseTitle": "testCaseEight",
+                "baseline": "9.7",
+                "test_doc_growth": "-2.7",
+                "growth": "0",
+                "progress": "33",
+                "performanceLevel": "7"
+            },
+            "4": {
+                "caseTitle": "testCaseNine",
+                "competency": "4",
+                "baseline": "9.7",
+                "growth": "0.3",
+                "progress": "67",
+                "performanceLevel": "10"
+            }
+        },
+        "HOS": {
+            "4": {
+                "caseTitle": "testCaseTen",
+                "test_doc_baseline": null,
+                "baseline": "9",
+                "test_doc_growth": "0.3",
+                "growth": "0",
+                "progress": "100",
+                "test_doc_progress": "0",
+                "performanceLevel": "9.3",
+                "test_doc_performanceLevel": null
+            }
+        }
     },
+    "student4": {
+        "ELA": {
+            "1": {
+                "caseTitle": "testCaseEleven",
+                "test_doc_baseline": "6",
+                "baseline": null,
+                "growth": "0",
+                "progress": "33",
+                "performanceLevel": "6"
+            },
 
-    {
-        "caseTitle":  "testCaseFour",
-        "student": "student4",
-        "contentArea": "ELA",
-        "competency": "3",
-        "test_doc_baseline": "6",
-        "baseline": null,
-        "growth": "1",
-        "progress": "100",
-        "performanceLevel": "7"
+            "2": {
+                "caseTitle": "testCaseTwelve",
+                "baseline": null,
+                "test_doc_growth": null,
+                "growth": "0",
+                "progress": "40",
+                "performanceLevel": "6"
+            },
+
+            "3": {
+                "caseTitle": "testCaseThirTeen",
+                "test_doc_baseline": "6",
+                "baseline": null,
+                "growth": "1",
+                "progress": "100",
+                "performanceLevel": "7"
+            },
+
+            "4": {
+                "caseTitle": "testCaseFourTeen",
+                "test_doc_baseline": "6",
+                "baseline": null,
+                "test_doc_growth": "0.7",
+                "growth": "1",
+                "progress": "100",
+                "performanceLevel": "6.7"
+            },
+
+            "5": {
+                "caseTitle": "testCaseFifteen",
+                "test_doc_baseline": "6",
+                "baseline": null,
+                "growth": "1",
+                "progress": "83",
+                "performanceLevel": "7"
+            },
+            "6": {
+                "caseTitle": "testCaseSixTeen",
+                "baseline": null,
+                "test_doc_growth": null,
+                "growth": "0",
+                "progress": "33",
+                "performanceLevel": "7"
+            },
+            "7": {
+                "caseTitle": "testCaseSevenTeen",
+                "test_doc_baseline": "6",
+                "baseline": null,
+                "test_doc_growth": "0.4",
+                "growth": "0",
+                "progress": "63",
+                "performanceLevel": "6.4"
+            }
+        },
+        "SCI": {
+            "1": {
+                "caseTitle": "testCaseEightTeen",
+                "test_doc_baseline": "6.9",
+                "baseline": null,
+                "test_doc_growth": "-0.3",
+                "growth": "0",
+                "progress": "38",
+                "performanceLevel": "6.6"
+            },
+            "3": {
+                "caseTitle": "testCaseNineTeen",
+                "baseline": null,
+                "test_doc_growth": null,
+                "growth": "0",
+                "progress": "0",
+                "performanceLevel": null
+            }
+        },
+        "NGE": {
+            "1": {
+                "caseTitle": "testCaseTwenty",
+                "baseline": null,
+                "test_doc_growth": null,
+                "growth": "-1.3",
+                "progress": "35",
+                "performanceLevel": "9.4"
+            }
+        },
+        "HOS": {
+            "1": {
+                "caseTitle": "testCaseTwentyOne",
+                "test_doc_baseline": "8.3",
+                "baseline": null,
+                "test_doc_growth": "0.8",
+                "growth": "0",
+                "progress": "45",
+                "performanceLevel": "9.1"
+            }
+        },
+        "HW": {
+            "1": {
+                "caseTitle": "testCaseTwentyTwo",
+                "test_doc_baseline": "8",
+                "baseline": null,
+                "growth": "0",
+                "progress": "33",
+                "performanceLevel": "8"
+            },
+            "2": {
+                "caseTitle": "testCaseTwentyThree",
+                "baseline": null,
+                "test_doc_growth": null,
+                "growth": "0",
+                "progress": "42",
+                "performanceLevel": "8.4"
+            },
+            "3": {
+                "caseTitle": "testCaseTwentyfour",
+                "test_doc_baseline": "8",
+                "baseline": null,
+                "test_doc_growth": "1.2",
+                "growth": "2.5",
+                "progress": "56",
+                "performanceLevel": "9.2"
+            }
+        }
     },
-
-    {
-        "caseTitle": "testCaseFive",
-        "student": "student4",
-        "contentArea": "ELA",
-        "competency": "4",
-        "test_doc_baseline": "6",
-        "baseline": null,
-        "test_doc_growth": "0.7",
-        "growth": "1",
-        "progress": "100",
-        "performanceLevel": "6.7"
-    },
-
-    {
-        "caseTitle": "testCaseSix",
-        "student": "student4",
-        "contentArea": "ELA",
-        "competency": "5",
-        "test_doc_baseline": "6",
-        "baseline": null,
-        "growth": "1",
-        "progress": "83",
-        "performanceLevel": "7"
-    },
-
-    {
-        "caseTitle": "testCaseSeven",
-        "student": "student4",
-        "contentArea": "ELA",
-        "competency": "6",
-        "baseline": null,
-        "test_doc_growth": null,
-        "growth": "0",
-        "progress": "33",
-        "performanceLevel": "7"
-    },
-
-    {
-        "caseTitle": "testCaseEight",
-        "student": "student4",
-        "contentArea": "ELA",
-        "competency": "7",
-        "test_doc_baseline": "6",
-        "baseline": null,
-        "test_doc_growth": "0.4",
-        "growth": "0",
-        "progress": "63",
-        "performanceLevel": "6.4"
-    },
-
-    {
-        "caseTitle": "testCaseNine",
-        "student": "student4",
-        "contentArea": "SCI",
-        "competency": "1",
-        "test_doc_baseline": "6.9",
-        "baseline": null,
-        "test_doc_growth": "-0.3",
-        "growth": "0",
-        "progress": "38",
-        "performanceLevel": "6.6"
-    },
-
-    {
-        "caseTitle": "testCaseTen",
-        "student": "student4",
-        "contentArea": "NGE",
-        "competency": "1",
-        "baseline": null,
-        "test_doc_growth":null,
-        "growth": "-1.3",
-        "progress": "35",
-        "performanceLevel":"9.4"
-    },
-
-    {
-        "caseTitle": "testCaseEleven",
-        "student": "student4",
-        "contentArea": "HOS",
-        "competency": "1",
-        "test_doc_baseline": "8.3",
-        "baseline": null,
-        "test_doc_growth":"0.8",
-        "growth": "0",
-        "progress": "45",
-        "performanceLevel": "9.1"
-    },
-
-    {
-        "caseTitle":  "testCaseTwelve",
-        "student": "student4",
-        "contentArea": "HW",
-        "competency": "1",
-        "test_doc_baseline": "8",
-        "baseline": null,
-        "growth": "0",
-        "progress": "33",
-        "performanceLevel": "8"
-    },
-
-    {
-        "caseTitle": "testCaseThirteen",
-        "student": "student4",
-        "contentArea": "HW",
-        "competency": "2",
-        "baseline": null,
-        "test_doc_growth":null,
-        "growth": "0",
-        "progress": "42",
-        "performanceLevel": "8.4"
-    },
-
-    {
-        "caseTitle": "testCaseFourteen",
-        "student": "student4",
-        "contentArea": "HW",
-        "competency": "3",
-        "test_doc_baseline": "8",
-        "baseline": null,
-        "test_doc_growth":"1.2",
-        "growth": "2.5",
-        "progress": "56",
-        "performanceLevel": "9.2"
-    },
-
-    {
-        "caseTitle":  "testCaseFifteen",
-        "student": "student4",
-        "contentArea": "SCI",
-        "competency": "3",
-        "baseline": null,
-        "test_doc_growth":null,
-        "growth": "0",
-        "progress": "0",
-        "performanceLevel": null
-    },
-
-    {
-        "caseTitle":  "testCaseSixteen",
-        "student": "student5",
-        "contentArea": "ELA",
-        "competency": "1",
-        "baseline": "5",
-        "growth": "1.5",
-        "progress": "33",
-        "performanceLevel": "6.5"
-    },
-
-
-    {
-        "caseTitle":  "testCaseSeventeen",
-        "student": "student5",
-        "contentArea": "ELA",
-        "competency": "2",
-        "baseline": "5",
-        "growth": "2",
-        "progress": "40",
-        "performanceLevel": "7"
-    },
-
-    {
-        "caseTitle":  "testCaseEighteen",
-        "student": "student5",
-        "contentArea": "ELA",
-        "competency": "3",
-        "baseline": "5",
-        "growth": "3.2",
-        "progress": "100",
-        "performanceLevel": "8.2"
-    },
-
-    {
-        "caseTitle":  "testCaseNineteen",
-        "student": "student5",
-        "contentArea": "ELA",
-        "competency": "4",
-        "baseline": "5",
-        "growth": "2.5",
-        "progress": "100",
-        "performanceLevel": "7.5"
-    },
-
-    {
-        "caseTitle":  "testCaseTwenty",
-        "student": "student5",
-        "contentArea": "ELA",
-        "competency": "5",
-        "baseline": "5",
-        "growth": "2",
-        "progress": "83",
-        "performanceLevel": "7"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentyOne",
-        "student": "student5",
-        "contentArea": "ELA",
-        "competency": "6",
-        "baseline": "5",
-        "growth": "3",
-        "progress": "33",
-        "performanceLevel": "8"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentyTwo",
-        "student": "student5",
-        "contentArea": "ELA",
-        "competency": "7",
-        "baseline": "5",
-        "test_doc_growth":"1.2",
-        "growth": "1.3",
-        "progress": "63",
-        "performanceLevel": "6.2"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentyThree",
-        "student": "student3",
-        "contentArea": "SCI",
-        "competency": "1",
-        "baseline": "9.1",
-        "test_doc_growth":"0.3",
-        "growth": "0.4",
-        "progress": "38",
-        "performanceLevel": "9.4"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentyFour",
-        "student": "student3",
-        "contentArea": "SCI",
-        "competency": "2",
-        "baseline": "9.3",
-        "growth": "-1.3",
-        "progress": "25",
-        "performanceLevel": "8"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentyFive",
-        "student": "student3",
-        "contentArea": "SCI",
-        "competency": "3",
-        "baseline": "9.7",
-        "test_doc_growth":"-2.7",
-        "growth": "0",
-        "progress": "33",
-        "performanceLevel": "7"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentySix",
-        "student": "student3",
-        "contentArea": "SCI",
-        "competency": "4",
-        "baseline": "9.7",
-        "growth": "0.3",
-        "progress": "67",
-        "performanceLevel": "10"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentySeven",
-        "student": "student",
-        "contentArea": "ELA",
-        "competency": "1",
-        "baseline": "10",
-        "test_doc_growth":"-0.7",
-        "growth": "-1.5",
-        "progress": "33",
-        "performanceLevel": "9.3"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentyEight",
-        "student": "student",
-        "contentArea": "ELA",
-        "competency": "2",
-        "baseline": "10",
-        "growth":"1",
-        "test_doc_growth": "0.8",
-        "progress": "27",
-        "performanceLevel": "10.8"
-    },
-
-    {
-        "caseTitle":  "testCaseTwentyNine",
-        "student": "student3",
-        "contentArea": "HOS",
-        "competency": "4",
-        "test_doc_baseline": null,
-        "baseline": "9",
-        "test_doc_growth":"0.3",
-        "growth": "0",
-        "progress": "100",
-        "test_doc_progress": "0",
-        "performanceLevel": "9.3",
-        "test_doc_performanceLevel": null
-    },
-
-
-    {
-        "caseTitle":  "testCaseThirty",
-        "student": "student",
-        "contentArea": "ELA",
-        "competency": "2",
-        "baseline": "10",
-        "test_doc_growth":"0.8",
-        "growth": "1",
-        "progress": "27",
-        "performanceLevel": "10.8"
-    },
-
-    {
-        "caseTitle":  "testCaseThirtyOne",
-        "student": "student",
-        "contentArea": "ELA",
-        "competency": "6",
-        "baseline": "9.5",
-        "test_doc_growth":"0.5",
-        "growth": "1.5",
-        "progress": "67",
-        "performanceLevel": "10"
-    },
-
-    {
-        "caseTitle":  "testCaseThirtyTwo",
-        "student": "student2",
-        "contentArea": "ELA",
-        "competency": "2",
-        "baseline": "9",
-        "test_doc_growth":null,
-        "growth": "0",
-        "progress": "0",
-        "performanceLevel": null
-    },
-
-    {
-        "caseTitle":  "testCaseThirtyThree",
-        "student": "student2",
-        "contentArea": "ELA",
-        "competency": "3",
-        "baseline": "9",
-        "growth": "0",
-        "progress": "33",
-        "performanceLevel": "9"
+    "student5": {
+        "ELA": {
+            "1": {
+                "caseTitle": "testCaseTwentyfive",
+                "baseline": "5",
+                "growth": "1.5",
+                "progress": "33",
+                "performanceLevel": "6.5"
+            },
+            "2": {
+                "caseTitle": "testCaseTwentySix",
+                "baseline": "5",
+                "growth": "2",
+                "progress": "40",
+                "performanceLevel": "7"
+            },
+            "3": {
+                "caseTitle": "testCaseTwentySeven",
+                "baseline": "5",
+                "growth": "3.2",
+                "progress": "100",
+                "performanceLevel": "8.2"
+            },
+            "4": {
+                "caseTitle": "testCaseTwentyEight",
+                "baseline": "5",
+                "growth": "2.5",
+                "progress": "100",
+                "performanceLevel": "7.5"
+            },
+            "5": {
+                "caseTitle": "testCaseTwentyNine",
+                "baseline": "5",
+                "growth": "2",
+                "progress": "83",
+                "performanceLevel": "7"
+            },
+            "6": {
+                "caseTitle": "testCaseThirty",
+                "baseline": "5",
+                "growth": "3",
+                "progress": "33",
+                "performanceLevel": "8"
+            },
+            "7": {
+                "caseTitle": "testCaseThirtyOne",
+                "baseline": "5",
+                "growth": "1.3",
+                "progress": "63",
+                "performanceLevel": "6.2"
+            }
+        }
     }
-]
+}
