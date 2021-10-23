@@ -2,7 +2,6 @@
     "student": {
         "ELA": {
             "1": {
-                "caseTitle": "testCaseOne",
                 "baseline": "10",
                 "test_doc_growth": "-0.7",
                 "growth": "-1.5",
@@ -11,7 +10,6 @@
             },
 
             "2": {
-                "caseTitle": "testCaseTwo",
                 "baseline": "10",
                 "growth": "1",
                 "test_doc_growth": "0.8",
@@ -20,7 +18,6 @@
             },
 
             "6": {
-                "caseTitle": "testCaseThree",
                 "baseline": "9.5",
                 "test_doc_growth": "0.5",
                 "growth": "1.5",
@@ -32,7 +29,6 @@
     "student2": {
         "ELA": {
             "2": {
-                "caseTitle": "testCaseFour",
                 "baseline": "9",
                 "test_doc_growth": null,
                 "growth": "0",
@@ -41,7 +37,6 @@
             },
 
             "3": {
-                "caseTitle": "testCaseFive",
                 "baseline": "9",
                 "growth": "0",
                 "progress": "33",
@@ -52,7 +47,6 @@
     "student3": {
         "SCI": {
             "1": {
-                "caseTitle": "testCaseSix",
                 "baseline": "9.1",
                 "test_doc_growth": "0.3",
                 "growth": "0.4",
@@ -60,14 +54,12 @@
                 "performanceLevel": "9.4"
             },
             "2": {
-                "caseTitle": "testCaseSeven",
                 "baseline": "9.3",
                 "growth": "-1.3",
                 "progress": "25",
                 "performanceLevel": "8"
             },
             "3": {
-                "caseTitle": "testCaseEight",
                 "baseline": "9.7",
                 "test_doc_growth": "-2.7",
                 "growth": "0",
@@ -75,7 +67,6 @@
                 "performanceLevel": "7"
             },
             "4": {
-                "caseTitle": "testCaseNine",
                 "competency": "4",
                 "baseline": "9.7",
                 "growth": "0.3",
@@ -85,7 +76,6 @@
         },
         "HOS": {
             "4": {
-                "caseTitle": "testCaseTen",
                 "test_doc_baseline": null,
                 "baseline": "9",
                 "test_doc_growth": "0.3",
@@ -100,7 +90,6 @@
     "student4": {
         "ELA": {
             "1": {
-                "caseTitle": "testCaseEleven",
                 "test_doc_baseline": "6",
                 "baseline": null,
                 "growth": "0",
@@ -109,7 +98,6 @@
             },
 
             "2": {
-                "caseTitle": "testCaseTwelve",
                 "baseline": null,
                 "test_doc_growth": null,
                 "growth": "0",
@@ -118,7 +106,6 @@
             },
 
             "3": {
-                "caseTitle": "testCaseThirTeen",
                 "test_doc_baseline": "6",
                 "baseline": null,
                 "growth": "1",
@@ -127,7 +114,6 @@
             },
 
             "4": {
-                "caseTitle": "testCaseFourTeen",
                 "test_doc_baseline": "6",
                 "baseline": null,
                 "test_doc_growth": "0.7",
@@ -137,7 +123,6 @@
             },
 
             "5": {
-                "caseTitle": "testCaseFifteen",
                 "test_doc_baseline": "6",
                 "baseline": null,
                 "growth": "1",
@@ -145,7 +130,6 @@
                 "performanceLevel": "7"
             },
             "6": {
-                "caseTitle": "testCaseSixTeen",
                 "baseline": null,
                 "test_doc_growth": null,
                 "growth": "0",
@@ -153,7 +137,6 @@
                 "performanceLevel": "7"
             },
             "7": {
-                "caseTitle": "testCaseSevenTeen",
                 "test_doc_baseline": "6",
                 "baseline": null,
                 "test_doc_growth": "0.4",
@@ -164,7 +147,6 @@
         },
         "SCI": {
             "1": {
-                "caseTitle": "testCaseEightTeen",
                 "test_doc_baseline": "6.9",
                 "baseline": null,
                 "test_doc_growth": "-0.3",
@@ -173,7 +155,6 @@
                 "performanceLevel": "6.6"
             },
             "3": {
-                "caseTitle": "testCaseNineTeen",
                 "baseline": null,
                 "test_doc_growth": null,
                 "growth": "0",
@@ -183,7 +164,6 @@
         },
         "NGE": {
             "1": {
-                "caseTitle": "testCaseTwenty",
                 "baseline": null,
                 "test_doc_growth": null,
                 "growth": "-1.3",
@@ -193,7 +173,6 @@
         },
         "HOS": {
             "1": {
-                "caseTitle": "testCaseTwentyOne",
                 "test_doc_baseline": "8.3",
                 "baseline": null,
                 "test_doc_growth": "0.8",
@@ -204,7 +183,6 @@
         },
         "HW": {
             "1": {
-                "caseTitle": "testCaseTwentyTwo",
                 "test_doc_baseline": "8",
                 "baseline": null,
                 "growth": "0",
@@ -212,7 +190,6 @@
                 "performanceLevel": "8"
             },
             "2": {
-                "caseTitle": "testCaseTwentyThree",
                 "baseline": null,
                 "test_doc_growth": null,
                 "growth": "0",
@@ -220,7 +197,6 @@
                 "performanceLevel": "8.4"
             },
             "3": {
-                "caseTitle": "testCaseTwentyfour",
                 "test_doc_baseline": "8",
                 "baseline": null,
                 "test_doc_growth": "1.2",
@@ -233,49 +209,42 @@
     "student5": {
         "ELA": {
             "1": {
-                "caseTitle": "testCaseTwentyfive",
                 "baseline": "5",
                 "growth": "1.5",
                 "progress": "33",
                 "performanceLevel": "6.5"
             },
             "2": {
-                "caseTitle": "testCaseTwentySix",
                 "baseline": "5",
                 "growth": "2",
                 "progress": "40",
                 "performanceLevel": "7"
             },
             "3": {
-                "caseTitle": "testCaseTwentySeven",
                 "baseline": "5",
                 "growth": "3.2",
                 "progress": "100",
                 "performanceLevel": "8.2"
             },
             "4": {
-                "caseTitle": "testCaseTwentyEight",
                 "baseline": "5",
                 "growth": "2.5",
                 "progress": "100",
                 "performanceLevel": "7.5"
             },
             "5": {
-                "caseTitle": "testCaseTwentyNine",
                 "baseline": "5",
                 "growth": "2",
                 "progress": "83",
                 "performanceLevel": "7"
             },
             "6": {
-                "caseTitle": "testCaseThirty",
                 "baseline": "5",
                 "growth": "3",
                 "progress": "33",
                 "performanceLevel": "8"
             },
             "7": {
-                "caseTitle": "testCaseThirtyOne",
                 "baseline": "5",
                 "growth": "1.3",
                 "progress": "63",
