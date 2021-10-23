@@ -6,7 +6,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
         cy.resetDatabase();
     });
 
-    it.skip('Check API Data Against Test Case', () => {
+    it('Check API Data Against Test Case', () => {
         cy.loginAs('teacher');
         cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
         cy.visit(`/cbl/dashboards/demonstrations/student`).then(()=>{
@@ -63,7 +63,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
     })
 
 
-    it.skip('Check UI Data Against Test Case', () => {
+    it('Check UI Data Against Test Case', () => {
         cy.loginAs('teacher');
         cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
         cy.visit(`/cbl/dashboards/demonstrations/student`).then(()=>{
