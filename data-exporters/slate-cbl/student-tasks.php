@@ -226,7 +226,7 @@ return [
         // build rows
         $result = DB::query(
             '
-                SELECT DISTINCT %2$s.*
+                SELECT %2$s.*
                     FROM `%1$s` %2$s
                     %3$s
                     WHERE ((%4$s)
