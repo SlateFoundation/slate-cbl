@@ -1,3 +1,17 @@
+body {
+  font-family: Lato;
+}
+
+// %heading {
+//   font-family: Sanchez;
+// }
+
+// @for $i from 1 through 6 {
+//   .h#{$i} {
+//     @extend %heading;
+//   }
+// }
+
 .btn-unstyled {
   background: unset;
   border: unset;

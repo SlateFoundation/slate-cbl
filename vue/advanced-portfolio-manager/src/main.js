@@ -30,7 +30,7 @@ Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 
 Vue.use(BootstrapVue);
 
-Vue.config.productionTip = false;
+window.Vue = Vue;
 
 new Vue({
   render: (h) => h(App),

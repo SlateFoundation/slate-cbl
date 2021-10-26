@@ -6,10 +6,10 @@
       <b-row class="mb-2">
         <b-col>
           <h1 class="h4 my-1">
-            Alysha Abernathy
+            {{ student }}
           </h1>
           <h2 class="h5 text-muted m-0">
-            ELA.2: Expressing Ideas
+            {{ skill }}
           </h2>
         </b-col>
         <b-col sm="auto">
@@ -95,3 +95,19 @@
     </ol>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    skill: {
+      type: String,
+      default: 'Select a skill',
+    },
+
+    student: {
+      type: String,
+      default: 'Select a student',
+    },
+  },
+};
+</script>
