@@ -21,7 +21,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
             pageSize: 0,
             proxy: {
                 type: 'slate-cbl-demonstrationskills',
-                include: ['Creator', 'Demonstration', 'Competency', 'LatestComments', 'TaskAttachments', 'TaskSubmissions']
+                include: ['Creator', 'Demonstration', 'Competency', 'LatestComments', 'TaskAttachments', 'TaskSubmissions','Demonstration.StudentTask.Comments.Creator']
             }
         },
         selectionModel: {
@@ -182,7 +182,30 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                 </div>
 
                               <div class="skill-list-detail-col -comments">
-                                    <h4 class="skill-list-detail-heading">Latest Comments</h4>
+
+                            <tpl if="Demonstration.StudentTask.Comments && Demonstration.StudentTask.Comments.length">
+                              <h3>there be comments</h3>
+                                <div class="skill-list-detail-group">
+                                  <ul class="skill-list-comments">
+                                    <tpl for="Demonstration.StudentTask.Comments">
+                                     {%debugger%}
+                                      <li class="skill-list-comment">
+                                      <img class="skill-list-comment-avatar" src="{[Slate.API.buildUrl("/people/"+values.Creator.ID+"/thumbnail/112x112/cropped")]}" width="24" height="24" alt="Instructor Name">
+                                      <div class="skill-list-comment-body">
+                                          <div class="skill-list-comment-meta">
+                                              <span class="skill-list-comment-author">{Creator.FirstName} {Creator.LastName}</span>
+                                              <time class="skill-list-comment-date" datetime="{Created}" title="{Created:date("Y")}">{Created} -- {Ext.Date.format(Created, Ext.Date.patterns.ShortDate)}</time>
+                                          </div>
+                                          <div class="skill-list-comment-text">{Message}</div>
+                                      </div>
+                                      </li>
+                                      </ul>
+                                      </tpl>
+                              </div>
+                            </tpl>
+
+
+                                    <h4 class="skill-list-detail-heading">Latest ihi Comments</h4>
 
                                     <div class="skill-list-detail-group">
                                         <ul class="skill-list-comments">
