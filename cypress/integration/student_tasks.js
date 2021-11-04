@@ -416,24 +416,83 @@ describe('Student Tasks test', () => {
         })
     });
 
-    it('Submitted Tasks Filter', ()=>{
+    it('Submitted Tasks Filter', () => {
+        const taskTitle = 'Test Task (Submitted)';
+        // create the task as teacher and assign to student
         _visitDashboardAsTeacher();
-        _setupTests()
-        .then(({ _deselectAllFilters, _selectFilter, _clickFilterButton, currentTasksTree }) => {
-            _clickFilterButton()
-            .then(_deselectAllFilters)
-            .then(() => _selectFilter('Submitted Tasks'))
-            .then(({ response }) => {
-                cy.wait(500); // allow dom re-render
-                cy.get('#' + currentTasksTree.id)
-                    .find('ul.slate-tasktree-list')
-                    .children('li.slate-tasktree-item')
-                    .each(($item) => {
-                        cy.get($item).find('.slate-tasktree-status').contains('Submitted'); // confirm the status text exists
-                    });
-            })
+        cy.request('POST', `/cbl/tasks/save?format=json`, {
+            data: [{
+                Title: taskTitle,
+                DueDate: dayjs().format('YYYY-MM--DD'),
+                SectionID: 2,
+                Assignees: {
+                    'student': true
+                }
+            }]
+        });
+
+        // login as student, and submit
+        _visitDashboardAsStudent();
+        _setupTests().then(({ _clickFilterButton, _selectFilter, _deselectAllFilters, currentTasksTree }) => {
+            return _clickFilterButton()
+                .then(_deselectAllFilters)
+                .then(() => _selectFilter('Due'))
+                .then(() => {
+                    cy.wait(2000) // wait for dom to re-render
+                        .then(() => {
+                            cy.get('#' + currentTasksTree.id)
+                                .contains(taskTitle)
+                                .click({ force: true })
+
+                            cy.wait(['@skillsData', '@competenciesData'])
+                                .should((xhrs) => {
+                                    xhrs.forEach(
+                                        xhr => {
+                                            expect(xhr.status).to.equal(200);
+                                            expect(xhr.response.body.success).to.be.true;
+                                        }
+                                    );
+                                });
+
+                            cy.get('.slate-window')
+                                .contains('Submit Assignment')
+                                .should((btn) => {
+                                    expect(btn).to.be.visible;
+                                    expect(btn.attr('aria-disabled')).to.not.be.true;
+                                })
+                                .click({ force: true })
+
+                            cy.wait('@studentTasksSave')
+                                .should(xhr => {
+                                    expect(xhr.status).to.equal(200);
+                                    expect(xhr.response.body.success).to.be.true;
+                                });
+
+                            cy.get('#' + currentTasksTree.id)
+                                .contains('Submitted');
+
+                        });
+                })
         })
-    })
+        .then(() => {
+            _visitDashboardAsTeacher();
+            _setupTests()
+                .then(({ _deselectAllFilters, _selectFilter, _clickFilterButton, currentTasksTree }) => {
+                    _clickFilterButton()
+                    .then(_deselectAllFilters)
+                    .then(() => _selectFilter('Submitted Tasks'))
+                    .then(({ response }) => {
+                        cy.wait(500); // allow dom re-render
+                        cy.get('#' + currentTasksTree.id)
+                            .find('ul.slate-tasktree-list')
+                            .children('li.slate-tasktree-item')
+                            .each(($item) => {
+                                cy.get($item).find('.slate-tasktree-status').contains('Submitted'); // confirm the status text exists
+                            });
+                    })
+                })
+        })
+    });
 
     it('Completed Tasks Filter', ()=>{
         _visitDashboardAsTeacher();
