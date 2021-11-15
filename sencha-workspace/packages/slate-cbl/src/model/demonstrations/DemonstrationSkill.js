@@ -70,22 +70,7 @@ Ext.define('Slate.cbl.model.demonstrations.DemonstrationSkill', {
             dateFormat: 'timestamp',
             allowNull: true,
             persist: false
-        },
-        {
-            name: 'LatestComments',
-            allowNull: true,
-            persist: false
-        },
-        {
-            name: 'TaskAttachments',
-            allowNull: true,
-            persist: false
-        },
-        {
-            name: 'TaskSubmissions',
-            allowNull: true,
-            persist: false
-        },
+        }
     ],
 
     proxy: 'slate-cbl-demonstrationskills',
