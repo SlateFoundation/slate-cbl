@@ -23,7 +23,17 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
             pageSize: 0,
             proxy: {
                 type: 'slate-cbl-demonstrationskills',
-                include: ['Creator', 'Demonstration', 'Competency', 'LatestComments', 'TaskAttachments', 'TaskSubmissions','Demonstration.StudentTask.Comments.Creator']
+                include: [
+                    'Creator',
+                    'Demonstration',
+                    'Competency',
+                    'LatestComments',
+                    'TaskAttachments',
+                    'TaskSubmissions',
+                    'Demonstration.StudentTask.Comments.Creator',
+                    'Demonstration.StudentTask.Task.Attachments',
+                    'Demonstration.StudentTask.Attachments'
+                ]
             }
         },
         selectionModel: {
@@ -105,19 +115,6 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                 '<tr class="skill-list-demo-detail-row" data-demonstration="{ID}">',
                     '<td class="skill-list-demo-detail-data" colspan="5">',
                         '<div class="skill-list-demo-detail-ct">',
-                            // '<pre>{[ JSON.stringify(values.Demonstration) ]}</pre>',
-                            // '<tpl if="Demonstration.ArtifactURL">',
-                            //     '<div class="skill-list-demo-artifact">',
-                            //         '<strong>Artifact: </strong>',
-                            //         '<a href="{Demonstration.ArtifactURL:htmlEncode}" target="_blank">{Demonstration.ArtifactURL:htmlEncode}</a>',
-                            //     '</div>',
-                            // '</tpl>',
-                            // '<tpl if="Demonstration.Comments">',
-                            //     '<div class="skill-list-demo-comments">',
-                            //         '<strong>Comments: </strong>',
-                            //         '{[Ext.util.Format.nl2br(Ext.util.Format.htmlEncode(values.Demonstration.Comments))]}',
-                            //     '</div>',
-                            // '</tpl>',
                             '<div class="skill-list-demo-meta">',
                                 'Demonstration #{DemonstrationID} &middot;&nbsp;',
                                 '<tpl for="Creator">',
@@ -137,146 +134,85 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                             '<hr class="skill-list-detail-separator">',
 
                             `<div class="skill-list-detail-columns">
-                                <div class="skill-list-detail-col -links">
-                                    <h4 class="skill-list-detail-heading">Links</h4>
+                                <tpl if="this.linksExist(Demonstration)">
+                                    <div class="skill-list-detail-col -links">
+                                        <h4 class="skill-list-detail-heading">Links</h4>
 
-                                    <div class="skill-list-detail-group">
-                                        <h5 class="skill-list-detail-subheading">Artifacts</h5>
-                                        <ul class="skill-list-links">
-                                            <li class="skill-list-link-item">
-                                                <a href="#" class="skill-list-link">
-                                                    <i class="fa fa-link skill-list-link-icon"></i>
-                                                    <div class="skill-list-link-label">Artifact title should go here and might be long enough to wrap</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="skill-list-detail-group">
-                                        <h5 class="skill-list-detail-subheading">From [Teacher]</h5>
-                                        <ul class="skill-list-links">
-                                            <li class="skill-list-link-item">
-                                                <a href="#" class="skill-list-link">
-                                                    <i class="fa fa-link skill-list-link-icon"></i>
-                                                    <div class="skill-list-link-label">Teacher link</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="skill-list-detail-group">
-                                        <h5 class="skill-list-detail-subheading">From [Student Name]</h5>
-                                        <ul class="skill-list-links">
-                                            <li class="skill-list-link-item">
-                                                <a href="#" class="skill-list-link">
-                                                    <i class="fa fa-link skill-list-link-icon"></i>
-                                                    <div class="skill-list-link-label">Student link</div>
-                                                </a>
-                                            </li>
-                                            <li class="skill-list-link-item">
-                                                <a href="#" class="skill-list-link">
-                                                    <i class="fa fa-link skill-list-link-icon"></i>
-                                                    <div class="skill-list-link-label">A second student link</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                              <div class="skill-list-detail-col -comments">
-
-                            <tpl if="Demonstration.StudentTask.Comments && Demonstration.StudentTask.Comments.length">
-                              <h4 class="skill-list-detail-heading">Latest Comments</h4>
-                                <div class="skill-list-detail-group">
-                                  <ul class="skill-list-comments">
-                                    <tpl for="Demonstration.StudentTask.Comments">
-                                     {%debugger%}
-                                     {% var createDate = new Date(values.Created*1000) %}
-                                      <li class="skill-list-comment">
-                                      <img class="skill-list-comment-avatar" src="{[Slate.API.buildUrl("/people/"+values.Creator.ID+"/thumbnail/112x112/cropped")]}" width="24" height="24" alt="Instructor Name">
-                                      <div class="skill-list-comment-body">
-                                          <div class="skill-list-comment-meta">
-                                              <span class="skill-list-comment-author">{Creator.FirstName} {Creator.LastName}</span>
-                                              <time
-                                                  class="skill-list-comment-date"
-                                                  datetime="{[Ext.Date.format(createDate,"Y-m-d\\\\TH:i:s")]}"
-                                                  title="{[Ext.Date.format(createDate,"F j, Y \\\\a\\\\t g:ia")]}">
-                                                  {[Ext.util.Format.fuzzyTime(createDate,true)]}
-                                              </time>
+                                        <tpl if="Demonstration.ArtifactURL">
+                                            <div class="skill-list-detail-group">
+                                                <h5 class="skill-list-detail-subheading">Artifacts</h5>
+                                                <ul class="skill-list-links">
+                                                    <li class="skill-list-link-item">
+                                                        <a href="{Demonstration.ArtifactURL}" class="skill-list-link">
+                                                            <i class="fa fa-link skill-list-link-icon"></i>
+                                                            <div class="skill-list-link-label">{Demonstration.ArtifactURL}</div>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </tpl>
+                                        <tpl if="Demonstration.StudentTask.Task.Attachments && Demonstration.StudentTask.Task.Attachments.length">
+                                            <div class="skill-list-detail-group">
+                                                <h5 class="skill-list-detail-subheading">Task Attachments</h5>
+                                                <ul class="skill-list-links">
+                                                    <tpl for="Demonstration.StudentTask.Task.Attachments">
+                                                        <li class="skill-list-link-item">
+                                                            <a href="{URL}" target="_blank" class="skill-list-link">
+                                                                <i class="fa fa-link skill-list-link-icon"></i>
+                                                                <div class="skill-list-link-label">{URL:ellipsis(40)}</div>
+                                                            </a>
+                                                        </li>
+                                                    </tpl>
+                                                </ul>
                                           </div>
-                                          <div class="skill-list-comment-text">{Message}</div>
-                                      </div>
-                                    </li>
-                                  </ul>
+                                        </tpl>
+                                        <tpl if="Demonstration.StudentTask.Attachments && Demonstration.StudentTask.Attachments.length">
+                                            <div class="skill-list-detail-group">
+                                                <h5 class="skill-list-detail-subheading">Task Submissions</h5>
+                                                <ul class="skill-list-links">
+                                                    <tpl for="Demonstration.StudentTask.Attachments">
+                                                        <li class="skill-list-link-item">
+                                                            <a href="{URL}" target="_blank" class="skill-list-link">
+                                                                <i class="fa fa-link skill-list-link-icon"></i>
+                                                                <div class="skill-list-link-label">{URL:ellipsis(40)}</div>
+                                                            </a>
+                                                        </li>
+                                                    </tpl>
+                                                </ul>
+                                            </div>
+                                        </tpl>
+
+                                    </div>
                                 </tpl>
-                              </div>
-                            </tpl>`,
-
-
-                            //         `<h4 class="skill-list-detail-heading">Latest Comments</h4>
-
-                            //         <div class="skill-list-detail-group">
-                            //             <ul class="skill-list-comments">
-                            //                 <li class="skill-list-comment">
-                            //                     <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/48/48" width="24" height="24" alt="Instructor Name">
-                            //                     <div class="skill-list-comment-body">
-                            //                         <div class="skill-list-comment-meta">
-                            //                             <span class="skill-list-comment-author">Teacher Name</span>
-                            //                             <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">29m</time>
-                            //                         </div>
-                            //                         <div class="skill-list-comment-text">Here is a comment from the instructor.</div>
-                            //                     </div>
-                            //                 </li>
-                            //                 <li class="skill-list-comment">
-                            //                     <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/49/49" width="24" height="24" alt="Student Name">
-                            //                     <div class="skill-list-comment-body">
-                            //                         <div class="skill-list-comment-meta">
-                            //                             <span class="skill-list-comment-author">Student Name</span>
-                            //                             <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">2h</time>
-                            //                         </div>
-                            //                         <div class="skill-list-comment-text">Perhaps the student left a second comment about the task.</div>
-                            //                     </div>
-                            //                 </li>
-                            //                 <li class="skill-list-comment">
-                            //                     <img class="skill-list-comment-avatar -hidden" src="http://www.fillmurray.com/49/49" width="24" height="24" alt="Student Name">
-                            //                     <div class="skill-list-comment-body">
-                            //                         <div class="skill-list-comment-meta">
-                            //                             <span class="skill-list-comment-author">Student Name</span>
-                            //                             <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">1d</time>
-                            //                         </div>
-                            //                         <div class="skill-list-comment-text">Student comment might go here.</div>
-                            //                     </div>
-                            //                 </li>
-                            //                 <li class="skill-list-comment">
-                            //                     <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/48/48" width="24" height="24" alt="Instructor Name">
-                            //                     <div class="skill-list-comment-body">
-                            //                         <div class="skill-list-comment-meta">
-                            //                             <span class="skill-list-comment-author">Teacher Name</span>
-                            //                             <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">4d</time>
-                            //                         </div>
-                            //                         <div class="skill-list-comment-text">Older teacher comment.</div>
-                            //                     </div>
-                            //                 </li>
-                            //                 <li class="skill-list-comment">
-                            //                     <img class="skill-list-comment-avatar" src="http://www.fillmurray.com/49/49" width="24" height="24" alt="Student Name">
-                            //                     <div class="skill-list-comment-body">
-                            //                         <div class="skill-list-comment-meta">
-                            //                             <span class="skill-list-comment-author">Student Name</span>
-                            //                             <time class="skill-list-comment-date" datetime="2021-09-01T13:00:00-0400" title="September 1, 2021 at 1:00pm">1w</time>
-                            //                         </div>
-                            //                         <div class="skill-list-comment-text">Older student comment.</div>
-                            //                     </div>
-                            //                 </li>
-                            //             </ul>
-
-                            //             <div style="text-align: right">
-                            //                 <a href="#">See more&hellip;</a>
-                            //             </div>
-                            //         </div>
-
-                            //     </div>
-                            // </div>`,
-                            '</div>',
+                                <tpl if="Demonstration.StudentTask.Comments && Demonstration.StudentTask.Comments.length">
+                                    <div class="skill-list-detail-col -comments">
+                                        <h4 class="skill-list-detail-heading">Latest Comments</h4>
+                                        <div class="skill-list-detail-group">
+                                            <ul class="skill-list-comments">
+                                                <tpl for="Demonstration.StudentTask.Comments">
+                                                {% var createDate = new Date(values.Created*1000) %}
+                                                <li class="skill-list-comment">
+                                                    <img class="skill-list-comment-avatar" src="{[Slate.API.buildUrl("/people/"+values.Creator.ID+"/thumbnail/112x112/cropped")]}" width="24" height="24" alt="Instructor Name">
+                                                    <div class="skill-list-comment-body">
+                                                        <div class="skill-list-comment-meta">
+                                                            <span class="skill-list-comment-author">{Creator.FirstName} {Creator.LastName}</span>
+                                                            <time
+                                                                class="skill-list-comment-date"
+                                                                datetime="{[Ext.Date.format(createDate,"Y-m-d\\\\TH:i:s")]}"
+                                                                title="{[Ext.Date.format(createDate,"F j, Y \\\\a\\\\t g:ia")]}">
+                                                                {[Ext.util.Format.fuzzyTime(createDate,true)]}
+                                                            </time>
+                                                        </div>
+                                                        <div class="skill-list-comment-text">{Message}</div>
+                                                    </div>
+                                                </li>
+                                                </tpl>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </tpl>
+                            </div>
+                        </div>`,
                     '</td>',
                 '</tr>',
                 '</tbody>',
@@ -285,7 +221,12 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
             '<tr class="skill-list-emptytext-row">',
                 '<td class="skill-list-emptytext-cell" colspan="5">No demonstrations are logged yet for this skill</td>',
             '</tr>',
-        '</tpl>'
+        '</tpl>',
+        {
+        linksExist: function(d) {
+            return d.ArtifactURL != null || d.StudentTask.Task.Attachments && d.StudentTask.Task.Attachments.length || d.StudentTask.Attachments && d.StudentTask.Attachments.length;
+        }
+      }
     ],
 
 
@@ -357,4 +298,5 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
         // cancel selection
         return false;
     }
+
 });
