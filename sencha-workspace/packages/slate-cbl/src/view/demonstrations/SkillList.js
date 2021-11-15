@@ -27,9 +27,6 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                     'Creator',
                     'Demonstration',
                     'Competency',
-                    'LatestComments',
-                    'TaskAttachments',
-                    'TaskSubmissions',
                     'Demonstration.StudentTask.Comments.Creator',
                     'Demonstration.StudentTask.Task.Attachments',
                     'Demonstration.StudentTask.Attachments'
