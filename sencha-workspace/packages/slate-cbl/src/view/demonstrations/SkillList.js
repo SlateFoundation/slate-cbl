@@ -10,7 +10,8 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
         'Jarvus.util.format.FuzzyTime',
 
         'Slate.cbl.util.Config',
-        'Slate.cbl.store.demonstrations.DemonstrationSkills'
+        'Slate.cbl.store.demonstrations.DemonstrationSkills',
+        'Slate.cbl.model.tasks.Attachment'
     ],
 
 
@@ -156,7 +157,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                         <li class="skill-list-link-item">
                                                             <a href="{URL}" target="_blank" class="skill-list-link">
                                                                 <i class="fa fa-link skill-list-link-icon"></i>
-                                                                <div class="skill-list-link-label">{URL:ellipsis(40)}</div>
+                                                                <div class="skill-list-link-label">{[this.linkText(values)]}</div>
                                                             </a>
                                                         </li>
                                                     </tpl>
@@ -171,7 +172,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                         <li class="skill-list-link-item">
                                                             <a href="{URL}" target="_blank" class="skill-list-link">
                                                                 <i class="fa fa-link skill-list-link-icon"></i>
-                                                                <div class="skill-list-link-label">{URL:ellipsis(40)}</div>
+                                                                <div class="skill-list-link-label">{[this.linkText(values)]}</div>
                                                             </a>
                                                         </li>
                                                     </tpl>
@@ -220,10 +221,13 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
             '</tr>',
         '</tpl>',
         {
-        linksExist: function(d) {
-            return d.ArtifactURL != null || d.StudentTask.Task.Attachments && d.StudentTask.Task.Attachments.length || d.StudentTask.Attachments && d.StudentTask.Attachments.length;
+            linksExist: function(d) {
+                return d.ArtifactURL != null || d.StudentTask.Task.Attachments && d.StudentTask.Task.Attachments.length || d.StudentTask.Attachments && d.StudentTask.Attachments.length;
+            },
+            linkText: function(attachment) {
+                return Slate.cbl.model.tasks.Attachment.getField('title').calculate(attachment);
+            }
         }
-      }
     ],
 
 
