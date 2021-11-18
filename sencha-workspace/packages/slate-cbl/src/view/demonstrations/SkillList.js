@@ -164,22 +164,24 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                 </ul>
                                           </div>
                                         </tpl>
-                                        <tpl if="Demonstration.StudentTask.Attachments && Demonstration.StudentTask.Attachments.length">
+                                        {% var attachments = this.getActiveAttachments(values.Demonstration.StudentTask.Attachments) %}
+                                        <tpl if={attachments.length}>
                                             <div class="skill-list-detail-group">
                                                 <h5 class="skill-list-detail-subheading">Task Submissions</h5>
                                                 <ul class="skill-list-links">
                                                     <tpl for="Demonstration.StudentTask.Attachments">
-                                                        <li class="skill-list-link-item">
-                                                            <a href="{URL}" target="_blank" class="skill-list-link">
-                                                                <i class="fa fa-link skill-list-link-icon"></i>
-                                                                <div class="skill-list-link-label">{[this.linkText(values)]}</div>
-                                                            </a>
-                                                        </li>
+                                                    <tpl if="Status != 'removed'">
+                                                            <li class="skill-list-link-item">
+                                                                <a href="{URL}" target="_blank" class="skill-list-link">
+                                                                    <i class="fa fa-link skill-list-link-icon"></i>
+                                                                    <div class="skill-list-link-label">{[this.linkText(values)]}</div>
+                                                                </a>
+                                                            </li>
+                                                         </tpl>
                                                     </tpl>
                                                 </ul>
                                             </div>
                                         </tpl>
-
                                     </div>
                                 </tpl>
                                 <tpl if="Demonstration.StudentTask.Comments && Demonstration.StudentTask.Comments.length">
@@ -222,7 +224,11 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
         '</tpl>',
         {
             linksExist: function(d) {
+                var submissionAttachments = d.StudentTask.Attachments.filter(a => a.status !== 'removed');
                 return d.ArtifactURL != null || d.StudentTask.Task.Attachments && d.StudentTask.Task.Attachments.length || d.StudentTask.Attachments && d.StudentTask.Attachments.length;
+            },
+            getActiveAttachments: function(attachments) {
+                return attachments.filter(a => a.status !== 'removed');
             },
             linkText: function(attachment) {
                 return Slate.cbl.model.tasks.Attachment.getField('title').calculate(attachment);
