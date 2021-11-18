@@ -221,10 +221,6 @@ class GoogleDriveFile extends AbstractTaskAttachment
 
             foreach ($attachments as $Attachment) {
                 if (!$Attachment->isA(__CLASS__)) {
-                    $Logger->error(
-                        'Attachment is not a GoogleDriveFile, skipping.',
-                        ['attachment' => $Attachment]
-                    );
                     continue;
                 }
 
