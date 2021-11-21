@@ -131,5 +131,16 @@ describe('Comptency dashboard ratings test', () => {
 
             // check modal that appears with name and demonstration total selected and then disappears
 
+            // checking UI for Reading Critically
+            cy.get('#ext-element-12').contains('33%').click()
+            cy.get('#ext-element-528').contains('11')
+            cy.get('#ext-element-599').contains('12')
+            cy.get('#ext-element-670').contains('10')
+            cy.get('#ext-element-741').contains('9')
+            cy.get('#ext-element-19').contains('10.5')
 
+            // checking UI for Expressing Ideas
+            cy.get('#ext-element-91').contains('13%').click()
+            cy.get('#ext-element-817').contains('10')
+            cy.get('#ext-element-880').contains('12')
 })
