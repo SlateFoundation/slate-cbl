@@ -10,7 +10,7 @@ describe('Comptency dashboard ratings test', () => {
         cy.loginAs('teacher');
     });
 
-    it('XXXXXXXx', () => {
+    it('Checking Dashboard Ratings', () => {
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/demonstrations/teacher');
@@ -54,14 +54,16 @@ describe('Comptency dashboard ratings test', () => {
             cy.location('hash').should('eq', '#ELA/group:example_school');
 
             // verify content loads
+            cy.wait(6000)
+
             cy.get('.cbl-grid-competencies').contains('Reading Critically');
 
             // add descriptive data attribute
             cy.get('[data-ref=btnWrap]').click()
 
-            cy.get('[name=StudentID]').type('Slate, Student')
+            cy.get('[name=StudentID]').type('Cross, Clarisa')
 
-            cy.get('[name=ExperienceType]').type('Studiooooooooooo', { force: true }) //input element may be hidden
+            cy.get('[name=ExperienceType]').type('Studio', { force: true }) //input element may be hidden
 
             cy.get('[name=Context]').type('Test', { force: true }) //input element may be hidden
 
