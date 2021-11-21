@@ -71,8 +71,6 @@ describe('Comptency dashboard ratings test', () => {
 
             cy.get('[name=ArtifactURL]').type('https://google.com', { force: true }) //input element may be hidden
 
-            // add descriptive data attribute
-            cy.get('.x-field x-form-item x-form-item-default x-form-type-text x-docked x-field-default').type('ELA.1')
 
             //click English Language Arts course
             cy.get('#gridview-1038-record-391').click()
@@ -145,4 +143,6 @@ describe('Comptency dashboard ratings test', () => {
             cy.get('#ext-element-91').contains('13%').click()
             cy.get('#ext-element-817').contains('10')
             cy.get('#ext-element-880').contains('12')
+        })
+    })
 })
