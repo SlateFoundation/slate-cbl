@@ -72,36 +72,64 @@ describe('Comptency dashboard ratings test', () => {
             // add descriptive data attribute
             cy.get('.x-field x-form-item x-form-item-default x-form-type-text x-docked x-field-default').type('ELA.1')
 
-        //     const competencyField = extQuerySelector('slate-cbl-competenciesgrid')
-        //    // slate-cbl-ratings-studentcompetenciesfield-competenciestabs
-        //    //slate-cbl-ratings-studentcompetenciesfield
+            //click English Language Arts course
+            cy.get('#gridview-1038-record-391').click()
 
-        //     cy.get('#' + competencyField.el.dom.id)
-        //         .click()
-        //         .focused()
-        //         .type('ELA.1')
+            //get modal and check if ELA.1 is showing to click
+            cy.get('#slate-window-1028-body').contains('ELA.1').click()
 
+            //check that ELA.1 is showing Reading Critically competencies
+            cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Reading Critically')
 
+            //select a competency
+            cy.get('#slate-cbl-ratings-slider-1059-thumb-3').click({force: true})
 
+            cy.get('#slate-cbl-ratings-slider-1061-thumb-9').click({force: true})
 
+            //add competency
+            cy.get('#tab-1039').click()
 
+            //get modal and check if ELA.2 is showing to click
+            cy.get('#slate-window-1028-body').contains('ELA.2').click()
 
+            //check that ELA.2 is showing Expressing Ideas competencies
+            cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Expressing Ideas')
 
+            //select a competency
+            cy.get("#slate-cbl-ratings-slider-1068-thumb-2").click({force: true})
 
+            cy.get("#slate-cbl-ratings-slider-1069-thumb-5").click({force: true})
 
+            cy.get("#slate-cbl-ratings-slider-1070-thumb-7").click({force: true})
 
+            //add competency
+            cy.get('#tab-1039').click()
 
+            //unselect English Language Arts course that was selected
+            cy.get('#slate-cbl-competenciesgrid-1034-bodyWrap').contains('English Language Arts').click()
 
+            //click Habits of Success course
+            cy.get('#gridview-1038-record-445').click()
 
+            //get modal and check if HOS.1 is showing to click
+            cy.get('#slate-window-1028-body').contains('HOS.1').click()
 
+            //check that HOS.1 is showing Personal Work Habits competencies
+            cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Personal Work Habits')
 
+            //select a competency
+            cy.get("#slate-cbl-ratings-slider-1077-thumb-1").click({force: true})
 
+            cy.get("#slate-cbl-ratings-slider-1078-thumb-3").click({force: true})
 
-        })
+            cy.get("#slate-cbl-ratings-slider-1079-thumb-5").click({force: true})
 
+            //type comment into text area
+            cy.get('#textarea-1040-inputEl').type('test test test')
 
-    })
+            cy.get('#button-1042').click({force: true})
 
+            // check modal that appears with name and demonstration total selected and then disappears
 
 
 })
