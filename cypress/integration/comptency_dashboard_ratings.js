@@ -56,21 +56,25 @@ describe('Comptency dashboard ratings test', () => {
             // verify content loads
             cy.wait(6000)
 
+            // confirm correct page has loaded
             cy.get('.cbl-grid-competencies').contains('Reading Critically');
 
-            // add descriptive data attribute
+            // click buttton to open modal
             cy.get('[data-ref=btnWrap]').click()
 
+            // enter a students name
             cy.get('[name=StudentID]').type('Cross, Clarisa')
 
+            // enter an experience type
             cy.get('[name=ExperienceType]').type('Studio', { force: true }) //input element may be hidden
 
             cy.get('[name=Context]').type('Test', { force: true }) //input element may be hidden
 
+            // enter performance type
             cy.get('[name=PerformanceType]').type('Debate', { force: true }) //input element may be hidden
 
+            // enter a url address
             cy.get('[name=ArtifactURL]').type('https://google.com', { force: true }) //input element may be hidden
-
 
             //click English Language Arts course
             cy.get('#gridview-1038-record-391').click()
@@ -81,9 +85,10 @@ describe('Comptency dashboard ratings test', () => {
             //check that ELA.1 is showing Reading Critically competencies
             cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Reading Critically')
 
-            //select a competency
+            //select a competency score on the slider
             cy.get('#slate-cbl-ratings-slider-1059-thumb-3').click({force: true})
 
+            //select a competency score on the slider
             cy.get('#slate-cbl-ratings-slider-1061-thumb-9').click({force: true})
 
             //add competency
@@ -95,11 +100,13 @@ describe('Comptency dashboard ratings test', () => {
             //check that ELA.2 is showing Expressing Ideas competencies
             cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Expressing Ideas')
 
-            //select a competency
+            //select a competency score on the slider
             cy.get("#slate-cbl-ratings-slider-1068-thumb-2").click({force: true})
 
+            //select a competency score on the slider
             cy.get("#slate-cbl-ratings-slider-1069-thumb-5").click({force: true})
 
+            //select a competency score on the slider
             cy.get("#slate-cbl-ratings-slider-1070-thumb-7").click({force: true})
 
             //add competency
@@ -117,32 +124,51 @@ describe('Comptency dashboard ratings test', () => {
             //check that HOS.1 is showing Personal Work Habits competencies
             cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Personal Work Habits')
 
-            //select a competency
+            //select a competency score on the slider
             cy.get("#slate-cbl-ratings-slider-1077-thumb-1").click({force: true})
 
+            //select a competency score on the slider
             cy.get("#slate-cbl-ratings-slider-1078-thumb-3").click({force: true})
 
+            //select a competency score on the slider
             cy.get("#slate-cbl-ratings-slider-1079-thumb-5").click({force: true})
 
             //type comment into text area
             cy.get('#textarea-1040-inputEl').type('test test test')
 
+            // click save demonstration button
             cy.get('#button-1042').click({force: true})
 
-            // check modal that appears with name and demonstration total selected and then disappears
+            // todo: check modal that appears with name and demonstration total selected and then disappears
 
-            // checking UI for Reading Critically
+            // get percentage of compentencies selected on the Reading Critically column and click
             cy.get('#ext-element-12').contains('33%').click()
+
+            // check the slider score for the 'Choose and apply reading strategies' competency
             cy.get('#ext-element-528').contains('11')
+
+            // check the slider score for the  'Evaluate the main ideas or themes' competency
             cy.get('#ext-element-599').contains('12')
+
+            // check the slider score for the 'Analyze context, point of view, and purpose; competency
             cy.get('#ext-element-670').contains('10')
+
+            // check the slider score for the 'Analyze craft' competency
             cy.get('#ext-element-741').contains('9')
+
+            // check the average score of the four comptency scores chosen (11 + 12 + 10 + 9 / 4) === 10.5
             cy.get('#ext-element-19').contains('10.5')
 
-            // checking UI for Expressing Ideas
+            // get the percentage of compentencies selected on the Habits of Success column and click
             cy.get('#ext-element-91').contains('13%').click()
+
+            // check the slider score for the 'Identify a core message and audience' competency
             cy.get('#ext-element-817').contains('10')
+
+            // check the slider score for the 'Develop and organize the message' competency
             cy.get('#ext-element-880').contains('12')
+
+            // check the average score of the two comptency scores chosen (10 + 12 / 2) === 11
         })
     })
 })
