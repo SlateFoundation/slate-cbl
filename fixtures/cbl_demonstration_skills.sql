@@ -2407,6 +2407,38 @@ INSERT INTO `cbl_demonstration_skills` VALUES (2434,'Slate\\CBL\\Demonstrations\
 INSERT INTO `cbl_demonstration_skills` VALUES (2435,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-08-09 00:22:59',2,'2021-08-09 00:25:11',2,197,205,9,12,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (2436,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-08-09 00:24:10',2,NULL,NULL,198,206,9,12,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (2437,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-08-09 00:35:08',1,NULL,NULL,199,207,9,12,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2438,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:44:05',2,NULL,NULL,200,158,9,5,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2439,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:46:55',2,NULL,NULL,201,163,9,5,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2440,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:47:02',2,NULL,NULL,202,163,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2441,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:47:22',2,NULL,NULL,203,164,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2442,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:47:44',2,NULL,NULL,204,165,9,7,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2443,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:49:39',2,NULL,NULL,205,158,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2444,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:50:11',2,NULL,NULL,206,159,9,6,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2445,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:50:11',2,NULL,NULL,206,160,9,7,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2446,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:50:11',2,NULL,NULL,206,161,9,8,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2447,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 13:50:57',2,NULL,NULL,207,159,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2448,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:03:40',2,NULL,NULL,208,158,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2449,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:03:45',2,NULL,NULL,209,159,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2450,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:03:50',2,NULL,NULL,210,160,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2451,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:03:56',2,NULL,NULL,211,161,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2452,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:04:06',2,NULL,NULL,212,163,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2453,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:04:10',2,NULL,NULL,213,164,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2454,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:04:15',2,NULL,NULL,214,165,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2455,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:13:57',2,NULL,NULL,215,167,9,9,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2456,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:13:57',2,NULL,NULL,215,168,9,9,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2457,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:14:20',2,NULL,NULL,216,167,9,10,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2458,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:27:15',2,NULL,NULL,217,169,9,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2459,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:29:17',2,NULL,NULL,218,170,9,7,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2460,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:29:38',2,NULL,NULL,219,170,9,6,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2461,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:35:36',2,NULL,NULL,220,169,9,9,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2462,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:35:36',2,NULL,NULL,220,170,9,10,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2463,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:35:59',2,NULL,NULL,221,169,9,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2464,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:35:59',2,NULL,NULL,221,170,9,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2465,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:41:50',2,NULL,NULL,222,169,9,NULL,1);
+INSERT INTO `cbl_demonstration_skills` VALUES (2466,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:45:02',2,NULL,NULL,223,28,10,10,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2467,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:45:02',2,NULL,NULL,223,29,10,8,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2468,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:45:02',2,NULL,NULL,223,30,10,7,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2469,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:45:16',2,NULL,NULL,224,28,10,NULL,1);
 
 
 CREATE TABLE `history_cbl_demonstration_skills` (
