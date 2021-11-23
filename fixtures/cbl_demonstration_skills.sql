@@ -2439,7 +2439,8 @@ INSERT INTO `cbl_demonstration_skills` VALUES (2466,'Slate\\CBL\\Demonstrations\
 INSERT INTO `cbl_demonstration_skills` VALUES (2467,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:45:02',2,NULL,NULL,223,29,10,8,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (2468,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:45:02',2,NULL,NULL,223,30,10,7,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (2469,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:45:16',2,NULL,NULL,224,28,10,NULL,1);
-INSERT INTO `cbl_demonstration_skills` VALUES (2470,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-16 17:46:26',3,NULL,NULL,200,1,9,8,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2470,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-23 20:23:25',3,NULL,NULL,225,1,9,8,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2471,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-23 21:10:08',3,NULL,NULL,226,2,9,8,0);
 
 CREATE TABLE `history_cbl_demonstration_skills` (
   `RevisionID` int(10) unsigned NOT NULL AUTO_INCREMENT,

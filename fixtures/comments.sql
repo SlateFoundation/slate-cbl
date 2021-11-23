@@ -19,12 +19,9 @@ CREATE TABLE `comments` (
   FULLTEXT KEY `FULLTEXT` (`Message`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO `comments` VALUES (1,'Emergence\\Comments\\Comment','2021-11-09 20:06:58',3,'2021-11-16 21:19:33',4,'Slate\\CBL\\Tasks\\StudentTask',1,'cf52cd294a55',NULL,'Hello, I am a teacher and this is my comment');
-INSERT INTO `comments` VALUES (2,'Emergence\\Comments\\Comment','2021-11-09 20:10:56',3,'2021-11-09 20:12:11',24,'Slate\\CBL\\Tasks\\StudentTask',69,'f45d12374390',NULL,'Hello Student, this is teacher. Here is my comment');
-INSERT INTO `comments` VALUES (3,'Emergence\\Comments\\Comment','2021-11-09 20:12:11',24,'2021-11-09 20:12:11',24,'Slate\\CBL\\Tasks\\StudentTask',69,'ba54d702a247',NULL,'Hey Teacher! Student here, this is my comment');
-INSERT INTO `comments` VALUES (4,'Emergence\\Comments\\Comment','2021-11-16 17:46:04',3,'2021-11-16 17:47:52',24,'Slate\\CBL\\Tasks\\StudentTask',29,'b08c646d2a11',NULL,'Hello, this is a comment from Teacher on  \"Milestone.1: Reading Strategies in Internment\"');
-INSERT INTO `comments` VALUES (5,'Emergence\\Comments\\Comment','2021-11-16 17:47:52',24,'2021-11-16 17:47:52',24,'Slate\\CBL\\Tasks\\StudentTask',29,'ba96ec57eb68',NULL,'Hello, this is a comment from Edmund Ebel on \"Milestone.1: Reading Strategies in Internment\"');
-INSERT INTO `comments` VALUES (6,'Emergence\\Comments\\Comment','2021-11-16 21:19:33',4,'2021-11-16 21:19:33',4,'Slate\\CBL\\Tasks\\StudentTask',1,'d6a3e850a561',NULL,'Hello, I am Slate Student and this is my comment');
+INSERT INTO `comments` VALUES (1,'Emergence\\Comments\\Comment','2021-11-23 20:19:40',3,'2021-11-23 20:20:46',24,'Slate\\CBL\\Tasks\\StudentTask',29,'d07fd511db55',NULL,'Hello, this is Slate Teacher.   Edmund, I am reassigning this task.');
+INSERT INTO `comments` VALUES (2,'Emergence\\Comments\\Comment','2021-11-23 20:20:46',24,'2021-11-23 20:20:46',24,'Slate\\CBL\\Tasks\\StudentTask',29,'e5e0f65714f5',NULL,'Hello, this is Edmund Ebel and this is my comment');
+INSERT INTO `comments` VALUES (3,'Emergence\\Comments\\Comment','2021-11-23 21:11:18',24,'2021-11-23 21:11:18',24,'Slate\\CBL\\Tasks\\StudentTask',37,'d0bc22f5d988',NULL,'This task has a submission attachment with a very long URL that could potentially break formatting');
 
 CREATE TABLE `history_comments` (
   `RevisionID` int(10) unsigned NOT NULL AUTO_INCREMENT,
