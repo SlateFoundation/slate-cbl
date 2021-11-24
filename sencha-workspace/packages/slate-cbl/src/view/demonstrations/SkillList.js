@@ -141,7 +141,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                 <h5 class="skill-list-detail-subheading">Artifacts</h5>
                                                 <ul class="skill-list-links">
                                                     <li class="skill-list-link-item">
-                                                        <a href="{Demonstration.ArtifactURL}" class="skill-list-link">
+                                                        <a href="{Demonstration.ArtifactURL}" target="_blank" class="skill-list-link">
                                                             <i class="fa fa-link skill-list-link-icon"></i>
                                                             <div class="skill-list-link-label">{Demonstration.ArtifactURL}</div>
                                                         </a>
