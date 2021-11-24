@@ -26,10 +26,11 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                 type: 'slate-cbl-demonstrationskills',
                 include: [
                     'Creator',
-                    'Demonstration',
+                    'Demonstration.Student',
                     'Competency',
                     'Demonstration.StudentTask.Comments.Creator',
                     'Demonstration.StudentTask.Task.Attachments',
+                    'Demonstration.StudentTask.Task.Section',
                     'Demonstration.StudentTask.Attachments'
                 ]
             }
@@ -101,7 +102,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                         // '<td class="skill-list-demo-data skill-list-demo-type" data-qtip="{Demonstration.ExperienceType:htmlEncode}">{Demonstration.ExperienceType:htmlEncode}</td>',
                         // '<td class="skill-list-demo-data skill-list-demo-context" data-qtip="{Demonstration.Context:htmlEncode}">{Demonstration.Context:htmlEncode}</td>',
                         '<td class="skill-list-demo-data skill-list-demo-task">',
-                            '<a class="skill-list-linkable" href="#">',
+                            '<a href="{[Slate.API.buildUrl("/cbl/dashboards/tasks/student#"+values.Demonstration.Student.Username+"/"+values.Demonstration.StudentTask.Task.Section.Code)]}" target="_blank" class="skill-list-linkable">',
                                 '<i class="linkable-icon fa fa-external-link-square"></i>',
                                 '<div class="linkable-content">',
                                     '{Demonstration.PerformanceType:htmlEncode}',
