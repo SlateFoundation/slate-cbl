@@ -18,9 +18,9 @@ files = [
     "packages/jarvus-apikit/**",
     "packages/jarvus-ext-glyphs/**",
     "packages/jarvus-ext-actionevents/**",
+    "packages/jarvus-fuzzytime/**",
     "packages/jarvus-lazydata/**",
     "packages/jarvus-hotfixes/**",
-    "packages/jarvus-fuzzytime/**",
     "ext/**",
     "workspace.json",
 ]

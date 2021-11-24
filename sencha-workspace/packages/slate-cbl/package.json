@@ -12,6 +12,7 @@
         "emergence-apikit",
         "jarvus-ext-glyphs",
         "jarvus-ext-actionevents",
+        "jarvus-fuzzytime",
         "jarvus-lazydata",
         "slate-core-data",
         "slate-ui-classic",
