@@ -105,7 +105,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                             '<a href="{[Slate.API.buildUrl("/cbl/dashboards/tasks/student#"+values.Demonstration.Student.Username+"/"+values.Demonstration.StudentTask.Task.Section.Code)]}" target="_blank" class="skill-list-linkable">',
                                 '<i class="linkable-icon fa fa-external-link-square"></i>',
                                 '<div class="linkable-content">',
-                                    '{Demonstration.PerformanceType:htmlEncode}',
+                                    '{Demonstration.StudentTask.Task.Title:htmlEncode}',
                                 '</div>',
                             '</a> ',
                         '</td > ',
