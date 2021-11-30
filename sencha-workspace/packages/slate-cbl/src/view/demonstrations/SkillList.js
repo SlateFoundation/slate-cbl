@@ -102,7 +102,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                         // '<td class="skill-list-demo-data skill-list-demo-type" data-qtip="{Demonstration.ExperienceType:htmlEncode}">{Demonstration.ExperienceType:htmlEncode}</td>',
                         // '<td class="skill-list-demo-data skill-list-demo-context" data-qtip="{Demonstration.Context:htmlEncode}">{Demonstration.Context:htmlEncode}</td>',
                         '<td class="skill-list-demo-data skill-list-demo-task">',
-                            '<a href="{[Slate.API.buildUrl("/cbl/dashboards/tasks/student#"+values.Demonstration.Student.Username+"/"+values.Demonstration.StudentTask.Task.Section.Code)]}" target="_blank" class="skill-list-linkable">',
+                            '<a href="{[this.getStudentTaskLink(values.Demonstration)]}" target="_blank" class="skill-list-linkable">',
                                 '<i class="linkable-icon fa fa-external-link-square"></i>',
                                 '<div class="linkable-content">',
                                     '{Demonstration.StudentTask.Task.Title:htmlEncode}',
@@ -224,6 +224,9 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
             '</tr>',
         '</tpl>',
         {
+            getStudentTaskLink: function(d) {
+                return Slate.API.buildUrl("/cbl/dashboards/tasks/student#"+d.Student.Username+"/"+d.StudentTask.Task.Section.Code+"/"+d.StudentTask.ID);
+            },
             linksExist: function(d) {
                 var submissionAttachments = d.StudentTask.Attachments.filter(a => a.status !== 'removed');
                 return d.ArtifactURL != null || d.StudentTask.Task.Attachments && d.StudentTask.Task.Attachments.length || d.StudentTask.Attachments && d.StudentTask.Attachments.length;
