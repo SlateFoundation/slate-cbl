@@ -96,7 +96,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                             '<small class="skill-list-subtitle">{Demonstration.ExperienceType:htmlEncode}</small>',
                         '</td>',
                         '<td class="skill-list-demo-data skill-list-demo-task">',
-                            '<tpl if="Demonstration.StudentTask.Task">',
+                            '<tpl if="Demonstration.StudentTask">',
                                 '<a href="{[this.getStudentTaskLink(values.Demonstration)]}" target="_blank" class="skill-list-linkable">',
                                     '<i class="linkable-icon fa fa-external-link-square"></i>',
                                     '<div class="linkable-content">',
