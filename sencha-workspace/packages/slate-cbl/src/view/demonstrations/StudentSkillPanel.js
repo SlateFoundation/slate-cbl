@@ -43,7 +43,6 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
             loadSummaries: false
         },
         skillSelector: {
-            fieldLabel: 'Skill',
             matchFieldWidth: true,
             lazyAutoLoad: false,
             allowBlank: false,
