@@ -159,8 +159,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                 </ul>
                                           </div>
                                         </tpl>
-                                        {% var attachments = this.getActiveAttachments(values.Demonstration.StudentTask.Attachments) %}
-                                        <tpl if={attachments.length}>
+                                        <tpl if="this.hasActiveAttachments(values.Demonstration.StudentTask.Attachments) == true">
                                             <div class="skill-list-detail-group">
                                                 <h5 class="skill-list-detail-subheading">Task Submissions</h5>
                                                 <ul class="skill-list-links">
@@ -225,8 +224,8 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                 var submissionAttachments = d.StudentTask.Attachments.filter(a => a.status !== 'removed');
                 return d.ArtifactURL != null || d.StudentTask.Task.Attachments && d.StudentTask.Task.Attachments.length || d.StudentTask.Attachments && d.StudentTask.Attachments.length;
             },
-            getActiveAttachments: function(attachments) {
-                return attachments.filter(a => a.status !== 'removed');
+            hasActiveAttachments: function(attachments) {
+                return attachments.filter(a => a.status !== 'removed').length > 0;
             },
             linkText: function(attachment) {
                 return Slate.cbl.model.tasks.Attachment.getField('title').calculate(attachment);
