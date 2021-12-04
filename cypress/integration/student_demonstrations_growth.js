@@ -45,9 +45,8 @@ describe.skip('Student competency growth calculation test', () => {
                                 cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${studentContentArea}`);
                                 // ensure that API has loaded required data
                                 cy.wait('@studentCompetencyData')
-                                    .its('status')
-                                    .should('be', 200)
-                                    .then(() => {
+                                    .then((res) => {
+                                        expect(res.status).to.eq(200)
 
                                         const studentCompetencySuffixes = Object.keys(growthCalculationsByStudent[studentUsername][studentContentArea]);
                                         studentCompetencySuffixes.forEach(studentCompetencySuffix => {
