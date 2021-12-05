@@ -1,4 +1,4 @@
-describe.skip('Student competency growth calculation test', () => {
+describe('Student competency growth calculation test', () => {
 
     // load sample database before tests
     before(() => {
@@ -45,17 +45,17 @@ describe.skip('Student competency growth calculation test', () => {
                                 cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${studentContentArea}`);
                                 // ensure that API has loaded required data
                                 cy.wait('@studentCompetencyData')
-                                    .then((res) => {
-                                        expect(res.status).to.eq(200)
+                                    .its('status')
+                                    .should('eq', 200)
+                                    .then(() => {
 
-                                        const studentCompetencySuffixes = Object.keys(growthCalculationsByStudent[studentUsername][studentContentArea]);
-                                        studentCompetencySuffixes.forEach(studentCompetencySuffix => {
+                                        const studentCompetencies = Object.keys(growthCalculationsByStudent[studentUsername][studentContentArea]);
+                                        studentCompetencies.forEach(studentCompetency => {
                                             // ensure competency card elements have rendered
                                             cy.get('li.slate-demonstrations-student-competencycard')
                                                 .then(() => {
-                                                    const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${studentContentArea}.${studentCompetencySuffix}"}`);
-
-                                                    compareCompetencyValues(`${studentContentArea}.${studentCompetencySuffix}`, card.id, growthCalculationsByStudent[studentUsername][studentContentArea][studentCompetencySuffix]);
+                                                    const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${studentCompetency}"}`);
+                                                    compareCompetencyValues(`${studentCompetency}`, card.id, growthCalculationsByStudent[studentUsername][studentContentArea][studentCompetency]);
                                                 });
                                         });
                                     });

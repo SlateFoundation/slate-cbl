@@ -38,7 +38,7 @@
             "ELA.2": {
                 "baseline": null,
                 "average": "7.3",
-                "growth": null,
+                "growth": "0",
                 "progress": "40"
             },
             "ELA.3": {
@@ -56,13 +56,13 @@
             "ELA.5": {
                 "baseline": null,
                 "average": "7.4",
-                "growth": null,
+                "growth": "0",
                 "progress": "83"
             },
             "ELA.6": {
                 "baseline": null,
                 "average": "8",
-                "growth": null,
+                "growth": "0",
                 "progress": "33"
             },
             "ELA.7": {
@@ -82,7 +82,7 @@
             "SS.2": {
                 "baseline": null,
                 "average": "8",
-                "growth": null,
+                "growth": "0",
                 "progress": "50"
             }
         },
@@ -102,7 +102,7 @@
             "SCI.3": {
                 "baseline": "9.7",
                 "average": "7",
-                "growth": null,
+                "growth": "0",
                 "progress": "33"
             },
             "SCI.4": {
@@ -116,7 +116,7 @@
             "HOS.4": {
                 "baseline": "9",
                 "average": "9.3",
-                "growth": null,
+                "growth": "0",
                 "progress": "100"
             }
         }
