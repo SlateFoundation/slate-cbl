@@ -211,6 +211,8 @@ hr.skill-list-detail-separator {
 
     &-label {
         line-height: 1.25;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 }
 
@@ -245,6 +247,8 @@ hr.skill-list-detail-separator {
 
     &-text {
         line-height: 1.25;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     &-date {
