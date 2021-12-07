@@ -146,17 +146,19 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                 </ul>
                                             </div>
                                         </tpl>
-                                        <tpl if="Demonstration.StudentTask.Task.Attachments && Demonstration.StudentTask.Task.Attachments.length">
+                                        <tpl if="this.hasActiveAttachments(values.Demonstration.StudentTask.Task.Attachments) == true">
                                             <div class="skill-list-detail-group">
                                                 <h5 class="skill-list-detail-subheading">Task Attachments</h5>
                                                 <ul class="skill-list-links">
                                                     <tpl for="Demonstration.StudentTask.Task.Attachments">
-                                                        <li class="skill-list-link-item">
-                                                            <a href="{URL}" target="_blank" class="skill-list-link">
-                                                                <i class="fa fa-link skill-list-link-icon"></i>
-                                                                <div class="skill-list-link-label">{[this.linkText(values)]}</div>
-                                                            </a>
-                                                        </li>
+                                                        <tpl if="Status != 'removed'">
+                                                            <li class="skill-list-link-item">
+                                                                <a href="{URL}" target="_blank" class="skill-list-link">
+                                                                    <i class="fa fa-link skill-list-link-icon"></i>
+                                                                    <div class="skill-list-link-label">{[this.linkText(values)]}</div>
+                                                                </a>
+                                                            </li>
+                                                        </tpl>
                                                     </tpl>
                                                 </ul>
                                           </div>
