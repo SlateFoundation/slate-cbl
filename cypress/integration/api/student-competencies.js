@@ -41,7 +41,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data).to.include({
                 ID: 1,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: 1546401845,
+                Created: 1546398245,
                 CreatorID: 2,
                 StudentID: 4,
                 CompetencyID: 1,
@@ -70,7 +70,7 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body.data.effectiveDemonstrationsData['1'][0]).to.include({
                 ID: 1,
                 Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
-                Created: 1546401845,
+                Created: 1546398245,
                 CreatorID: 3,
                 Modified: null,
                 ModifierID: null,
