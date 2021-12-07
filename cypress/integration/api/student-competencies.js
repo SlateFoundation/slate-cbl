@@ -15,17 +15,17 @@ describe('/cbl/student-competencies API', () => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
             expect(response.body).property('success').to.be.true;
-            expect(response.body).property('total').to.eq(635);
+            expect(response.body).property('total').to.eq(643);
             expect(response.body).property('limit').to.eq(0);
             expect(response.body).property('data').to.be.an('array');
-            expect(response.body.data).to.have.length(635);
+            expect(response.body.data).to.have.length(643);
             expect(response.body.data[0]).to.include({
-                ID: 635,
+                ID: 643,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: 1628468422,
+                Created: 1637588605,
                 CreatorID: 2,
                 StudentID: 6,
-                CompetencyID: 40,
+                CompetencyID: 32,
                 Level: 9,
                 EnteredVia: 'enrollment',
                 BaselineRating: null
