@@ -16,7 +16,7 @@ CREATE TABLE `cbl_student_tasks` (
   `ExpirationDate` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `StudentTask` (`TaskID`,`StudentID`),
-  KEY `DemonstrationID` (`DemonstrationID`)
+  UNIQUE KEY `DemonstrationID` (`DemonstrationID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `cbl_student_tasks` VALUES (1,'Slate\\CBL\\Tasks\\StudentTask','2019-01-02 03:04:05',3,NULL,NULL,1,4,'completed',1,NULL,NULL);
