@@ -8,7 +8,7 @@ Ext.define('Slate.cbl.field.ContentAreaSelector', {
 
     config: {
         fieldLabel: 'Competency Area',
-        labelWidth: 60,
+        labelWidth: 130,
 
         displayField: 'Title',
         valueField: 'Code',
