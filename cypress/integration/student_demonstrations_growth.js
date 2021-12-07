@@ -32,7 +32,7 @@ describe('Student competency growth calculation test', () => {
 
                     cy.get(`#${competencyCardId}`)
                         .find('td[data-ref="growthEl"]')
-                        .contains(growth === null ? '—' : `${growth} yr`);
+                        .contains(growth === null ? '—' : `${growth} lvl`);
 
                 };
 
