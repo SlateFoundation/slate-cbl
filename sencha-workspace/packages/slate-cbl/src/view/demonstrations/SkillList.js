@@ -168,7 +168,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                 <h5 class="skill-list-detail-subheading">Task Submissions</h5>
                                                 <ul class="skill-list-links">
                                                     <tpl for="Demonstration.StudentTask.Attachments">
-                                                    <tpl if="Status != 'removed'">
+                                                        <tpl if="Status != 'removed'">
                                                             <li class="skill-list-link-item">
                                                                 <a href="{URL}" target="_blank" class="skill-list-link">
                                                                     <i class="fa fa-link skill-list-link-icon"></i>
