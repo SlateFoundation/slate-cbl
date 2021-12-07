@@ -138,9 +138,9 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                 <h5 class="skill-list-detail-subheading">Artifacts</h5>
                                                 <ul class="skill-list-links">
                                                     <li class="skill-list-link-item">
-                                                        <a href="{Demonstration.ArtifactURL}" target="_blank" class="skill-list-link">
+                                                        <a href="{Demonstration.ArtifactURL:htmlEncode}" target="_blank" class="skill-list-link">
                                                             <i class="fa fa-link skill-list-link-icon"></i>
-                                                            <div class="skill-list-link-label">{Demonstration.ArtifactURL}</div>
+                                                            <div class="skill-list-link-label">{Demonstration.ArtifactURL:htmlEncode}</div>
                                                         </a>
                                                     </li>
                                                 </ul>
@@ -153,9 +153,9 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                     <tpl for="Demonstration.StudentTask.Task.Attachments">
                                                         <tpl if="Status != 'removed'">
                                                             <li class="skill-list-link-item">
-                                                                <a href="{URL}" target="_blank" class="skill-list-link">
+                                                                <a href="{URL:htmlEncode}" target="_blank" class="skill-list-link">
                                                                     <i class="fa fa-link skill-list-link-icon"></i>
-                                                                    <div class="skill-list-link-label">{[this.linkText(values)]}</div>
+                                                                    <div class="skill-list-link-label">{[fm.htmlEncode(this.linkText(values))]}</div>
                                                                 </a>
                                                             </li>
                                                         </tpl>
@@ -170,9 +170,9 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                     <tpl for="Demonstration.StudentTask.Attachments">
                                                         <tpl if="Status != 'removed'">
                                                             <li class="skill-list-link-item">
-                                                                <a href="{URL}" target="_blank" class="skill-list-link">
+                                                                <a href="{URL:htmlEncode}" target="_blank" class="skill-list-link">
                                                                     <i class="fa fa-link skill-list-link-icon"></i>
-                                                                    <div class="skill-list-link-label">{[this.linkText(values)]}</div>
+                                                                    <div class="skill-list-link-label">{[fm.htmlEncode(this.linkText(values))]}</div>
                                                                 </a>
                                                             </li>
                                                          </tpl>
@@ -201,7 +201,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                                 {[Ext.util.Format.fuzzyTime(createDate,true)]}
                                                             </time>
                                                         </div>
-                                                        <div class="skill-list-comment-text">{Message}</div>
+                                                        <div class="skill-list-comment-text">{Message:htmlEncode}</div>
                                                     </div>
                                                 </li>
                                                 </tpl>
