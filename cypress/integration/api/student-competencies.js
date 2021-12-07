@@ -79,7 +79,7 @@ describe('/cbl/student-competencies API', () => {
                 TargetLevel: 9,
                 DemonstratedLevel: 9,
                 Override: false,
-                DemonstrationDate: 1546304460
+                DemonstrationDate: 1546300860
             });
         });
     });
