@@ -1,4 +1,4 @@
-describe.skip('Teacher demonstrations test', () => {
+describe('Teacher demonstrations test', () => {
 
     // load sample database before tests
     before(() => {
@@ -43,15 +43,15 @@ describe.skip('Teacher demonstrations test', () => {
             cy.get('#' + studentSelector.el.dom.id)
                 .click()
                 .focused()
-                .type('ELA');
+                .type('Exa');
 
             // verify and click first element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
-                .contains('ELA-001')
+                .contains('Example School')
                 .click();
 
             // verify hash updates
-            cy.location('hash').should('eq', '#ELA/section:ELA-001');
+            cy.location('hash').should('eq', '#ELA/group:example_school');
 
             // verify content loads
             cy.get('.cbl-grid-competencies').contains('Reading Critically');
@@ -67,15 +67,16 @@ describe.skip('Teacher demonstrations test', () => {
                 .contains('Show all sections')
                 .scrollIntoView()
                 .closest('button')
-                .click('center')
+                .click('center', { force: true })  //scrollIntoView does not appear to be working
 
             // verify and click empty section element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
-                .contains('ELA-EMPTY')
-                .click();
+                .contains('Jarvus Innovations')
+                .scrollIntoView()
+                .click({force: true}); //scrollIntoView does not appear to be working
 
             // verify hash updates
-            cy.location('hash').should('eq', '#ELA/section:ELA-EMPTY');
+            cy.location('hash').should('eq', '#ELA/group:jarvus');
 
             // verify content loads
             cy.get('.cbl-grid-main').should('be.empty');

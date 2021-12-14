@@ -1,4 +1,4 @@
-describe.skip('Teacher student competencies test', () => {
+describe('Teacher student competencies test', () => {
 
     // load sample database before tests
     before(() => {
@@ -44,15 +44,15 @@ describe.skip('Teacher student competencies test', () => {
             cy.get('#' + studentSelector.el.dom.id)
                 .click()
                 .focused()
-                .type('ELA');
+                .type('EXA');
 
             // verify and click first element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('ELA-001')
+                .contains('Example School')
                 .click();
 
             // verify hash updates
-            cy.location('hash').should('eq', '#ELA/section:ELA-001');
+            cy.location('hash').should('eq', '#ELA/group:example_school');
 
             // verify content loads
             cy.get('.slate-studentcompetencies-admin-grid').contains('Student Slate');
