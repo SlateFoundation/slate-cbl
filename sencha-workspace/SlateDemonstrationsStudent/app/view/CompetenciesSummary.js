@@ -23,7 +23,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
         // optional config
         percentFormat: '0%',
         averageFormat: '0.#',
-        growthFormat: '0.# yr',
+        growthFormat: '0.#',
     },
 
 
@@ -65,15 +65,21 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
                     '</td>',
                     '<td id="{id}-growthEl" data-ref="growthEl">',
                         '<tpl if="growth">',
-                            '{growth:number(values.growthFormat)}',
+                            '{[ this.renderGrowth(values.growth,values.growthFormat) ]}',
                         '<tpl else>',
                             '&mdash;',
                         '</tpl>',
                     '</td>',
                 '</tbody>',
             '</table>',
-        '</div>'
+        '</div>',
+        {
+            renderGrowth: function(growth, format) {
+                return Ext.util.Format.sign(growth,"-","+","") + Ext.util.Format.number(Math.abs(growth), format);
+            }
+        }
     ],
+
     childEls: [
         'contentAreaTitleEl',
         'meterEl',
@@ -177,7 +183,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetenciesSummary', {
         var me = this;
 
         if (me.rendered) {
-            me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
+            me.growthEl.update(Ext.util.Format.sign(growth,"-","+","") + Ext.util.Format.number(Math.abs(growth), me.getGrowthFormat()));
         }
     }
 });
