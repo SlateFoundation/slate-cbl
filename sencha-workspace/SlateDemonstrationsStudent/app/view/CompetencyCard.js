@@ -76,7 +76,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                     '</td>',
                     '<td id="{id}-growthEl" data-ref="growthEl">',
                         '<tpl if="growth || growth === 0">',
-                            '{growth:number(values.growthFormat)}',
+                            '{[ this.renderGrowth(values.growth,values.growthFormat) ]}',
                         '<tpl else>',
                             '&mdash;',
                         '</tpl>',
@@ -93,8 +93,15 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '<tpl if="skills">',
                 '{% values.skillsTpl.applyOut(values.skills, out); %}',
             '</tpl>',
-        '</ul>'
+        '</ul>',
+        {
+          renderGrowth: function(growth, format) {
+            console.log(format);
+            return Ext.util.Format.sign(growth,"-","+","") + Ext.util.Format.number(Math.abs(growth), format);
+          }
+        }
     ],
+
 
     childEls: [
         'codeEl',
