@@ -238,7 +238,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
         competenciesSummary.setConfig({
             level: isFinite(lowestLevel) ? lowestLevel : null,
-            percentComplete: totalRequired ? 100 * totalComplete / totalRequired : null,
+            percentComplete: totalRequired === 0 ? 100 : 100 * totalComplete / totalRequired,
             percentMissed: totalRequired ? 100 * totalMissed / totalRequired : null,
             missed: totalRequired ? totalMissed : null,
             average: averageValues.length ? Ext.Array.sum(averageValues) / averageValues.length : null,
