@@ -20,7 +20,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         // optional config
         percentFormat: '0%',
         averageFormat: '0.#',
-        growthFormat: '0.# lvl',
+        growthFormat: '0.#',
 
         // input-dependent state
         level: null,
