@@ -334,7 +334,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this;
 
         if (me.rendered) {
-            me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
+          me.growthEl.update(Ext.util.Format.sign(growth,"-","+","") + Ext.util.Format.number(Math.abs(growth), me.getGrowthFormat()));
         }
     },
 
