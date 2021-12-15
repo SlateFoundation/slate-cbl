@@ -95,13 +95,11 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '</tpl>',
         '</ul>',
         {
-          renderGrowth: function(growth, format) {
-            console.log(format);
-            return Ext.util.Format.sign(growth,"-","+","") + Ext.util.Format.number(Math.abs(growth), format);
-          }
+            renderGrowth: function(growth, format) {
+                return Ext.util.Format.sign(growth,"-","+","") + Ext.util.Format.number(Math.abs(growth), format);
+            }
         }
     ],
-
 
     childEls: [
         'codeEl',
