@@ -11,9 +11,20 @@ describe('Teacher demonstrations test', () => {
     });
 
     it('View single demonstration rubric as teacher', () => {
+        // set up XHR monitors
+        cy.intercept('GET', '/cbl/dashboards/demonstrations/teacher/bootstrap').as('getBootstrapData');
+        cy.intercept('GET', '/cbl/content-areas?summary=true').as('getCompetencyAreas');
+        cy.intercept('GET', '/people/*student-lists').as('getMyStudentLists');
+        cy.intercept('GET', '/people/*student-lists?sections=all').as('getAllStudentLists');
+        cy.intercept('GET', '/cbl/student-competencies?*').as('getStudentCompetencies');
+
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/demonstrations/teacher');
+
+        // ensure bootstrap data is loaded
+        cy.wait('@getBootstrapData');
+        cy.get('@getBootstrapData.all').should('have.length', 1);
 
         // verify teacher redirect
         cy.location('hash').should('eq', '#_');
@@ -27,6 +38,10 @@ describe('Teacher demonstrations test', () => {
 
             // click the selector
             cy.get('#' + rubricSelector.el.dom.id).click();
+
+            // ensure competency areas are loaded
+            cy.wait('@getCompetencyAreas');
+            cy.get('@getCompetencyAreas.all').should('have.length', 1);
 
             // verify and click first element of picker dropdown
             cy.get('#' + rubricSelector.getPicker().id + ' .x-boundlist-item')
@@ -45,10 +60,18 @@ describe('Teacher demonstrations test', () => {
                 .focused()
                 .type('Exa');
 
+            // ensure student lists are loaded
+            cy.wait('@getMyStudentLists');
+            cy.get('@getMyStudentLists.all').should('have.length', 1);
+
             // verify and click first element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
                 .contains('Example School')
                 .click();
+
+            // ensure student competencies are loaded
+            cy.wait('@getStudentCompetencies');
+            cy.get('@getStudentCompetencies.all').should('have.length', 1);
 
             // verify hash updates
             cy.location('hash').should('eq', '#ELA/group:example_school');
@@ -69,11 +92,19 @@ describe('Teacher demonstrations test', () => {
                 .closest('button')
                 .click('center', { force: true })  //scrollIntoView does not appear to be working
 
+            // ensure student lists are loaded
+            cy.wait('@getAllStudentLists');
+            cy.get('@getAllStudentLists.all').should('have.length', 1);
+
             // verify and click empty section element of picker dropdown
             cy.get('#' + studentSelector.getPicker().id)
                 .contains('Jarvus Innovations')
                 .scrollIntoView()
                 .click({force: true}); //scrollIntoView does not appear to be working
+
+            // ensure student competencies are loaded
+            cy.wait('@getStudentCompetencies');
+            cy.get('@getStudentCompetencies.all').should('have.length', 2);
 
             // verify hash updates
             cy.location('hash').should('eq', '#ELA/group:jarvus');
