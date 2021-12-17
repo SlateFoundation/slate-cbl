@@ -769,7 +769,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
             countDirty = count != node.renderedCount;
             averageDirty = average != node.renderedAverage;
             levelDirty = level != renderedLevel;
-            demonstrationsRequired = competency.getTotalDemonstrationsRequired(level);
+            demonstrationsRequired = competency.totalDemonstrationsRequired[level] || competency.totalDemonstrationsRequired.default;
 
             if (countDirty || averageDirty) {
                 percentComplete = demonstrationsRequired === 0 ? 100 : 100 * (count || 0) / demonstrationsRequired;
