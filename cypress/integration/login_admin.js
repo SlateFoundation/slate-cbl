@@ -1,4 +1,4 @@
-describe.skip('Admin login test', () => {
+describe('Admin login test', () => {
 
     // load sample database before tests
     before(() => {
@@ -10,7 +10,7 @@ describe.skip('Admin login test', () => {
 
         // should be visible after Log In click
         cy.get('#login-modal').should('not.be.visible');
-        cy.contains('Log In').click();
+        cy.get('.slate-omnibar.mobile-hidden').contains('Log In').click();
         cy.get('#login-modal').should('be.visible');
 
         // Should be hidden after cancel click
@@ -18,7 +18,7 @@ describe.skip('Admin login test', () => {
         cy.get('#login-modal').should('not.be.visible');
 
         // Should be hidden after X click
-        cy.contains('Log In').click();
+        cy.get('.slate-omnibar.mobile-hidden').contains('Log In').click();
         cy.get('#login-modal').should('be.visible');
         cy.get('.modal-close-button').click();
         cy.get('#login-modal').should('not.be.visible');
@@ -28,7 +28,7 @@ describe.skip('Admin login test', () => {
         cy.visit('/');
 
         cy.get('#login-modal').should('not.be.visible');
-        cy.contains('Log In').click();
+        cy.get('.slate-omnibar.mobile-hidden').contains('Log In').click();
 
         cy.focused()
             .should('have.attr', 'name', '_LOGIN[username]')
@@ -48,9 +48,9 @@ describe.skip('Admin login test', () => {
         cy.visit('/');
 
         cy.get('#login-modal').should('not.be.visible');
-        cy.contains('Log In').click();
+        cy.get('.slate-omnibar.mobile-hidden').contains('Log In').click();
 
-        cy.contains('#login-modal').should('not.have.attr', 'display');
+        cy.get('#login-modal').should('not.have.attr', 'display');
         cy.focused()
             .should('have.attr', 'name', '_LOGIN[username]')
             .type('admin')

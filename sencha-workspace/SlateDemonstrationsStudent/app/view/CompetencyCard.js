@@ -226,7 +226,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             demonstrationsAverage = studentCompetency.get('demonstrationsAverage');
             level = studentCompetency.get('Level');
             demonstrationsRequired = competency.getTotalDemonstrationsRequired(level);
-            percentComplete = demonstrationsRequired ? 100 * studentCompetency.get('demonstrationsComplete') / demonstrationsRequired : null;
+            percentComplete = demonstrationsRequired === 0 ? 100 : 100 * studentCompetency.get('demonstrationsComplete') / demonstrationsRequired;
         }
 
         Ext.suspendLayouts();

@@ -1,4 +1,5 @@
-describe.skip('Student tasks test', () => {
+describe.skip('Student Tasks test', () => {
+    const dayjs = require('dayjs')
 
     // load sample database before tests
     before(() => {
@@ -10,28 +11,28 @@ describe.skip('Student tasks test', () => {
         cy.request('POST', `/cbl/tasks/save?format=json`, {
             data: [{
                 Title: 'Test Task (Due Today)',
-                DueDate: Cypress.moment().format('YYYY-MM-DD'),
+                DueDate: dayjs().format('YYYY-MM--DD'),
                 SectionID: 2,
                 Assignees: {
                     'student': true
                 }
             }, {
                 Title: 'Test Task (Due This Week)',
-                DueDate: Cypress.moment().add(5, 'days').format('YYYY-MM-DD'),
+                DueDate: dayjs().add(5, 'day').format('YYYY-MM--DD'),
                 SectionID: 2,
                 Assignees: {
                     'student': true
                 }
             }, {
                 Title: 'Test Task (Due Recently)',
-                DueDate: Cypress.moment().subtract(9, 'days').format('YYYY-MM-DD'),
+                DueDate: dayjs().subtract(9, 'day').format('YYYY-MM--DD'),
                 SectionID: 2,
                 Assignees: {
                     'student': true
                 }
             }, {
                 Title: 'Test Task (Due Next Week)',
-                DueDate: Cypress.moment().add(8, 'days').format('YYYY-MM-DD'),
+                DueDate: dayjs().add(8, 'day').format('YYYY-MM--DD'),
                 SectionID: 2,
                 Assignees: {
                     'student': true
@@ -88,7 +89,7 @@ describe.skip('Student tasks test', () => {
                 .should(($todoListSection) => {
                     expect(
                         $todoListSection.length
-                    ).to.equal(3);
+                    ).to.equal(4);
                 })
 
             // get current tasks list
@@ -305,7 +306,7 @@ describe.skip('Student tasks test', () => {
                             cy.get('#' + currentTasksTree.id)
                                 .should(($tasksTree) => {
                                     expect($tasksTree.find('li.slate-tasktree-item').length)
-                                        .to.equal(4);
+                                        .to.equal(5);
                                 });
                         });
 
