@@ -886,6 +886,8 @@ $include-slate-model-course-sectionparticipant: dynamic(false);;
 $include-slate-model-person-globalrecipient: dynamic(false);;
 $include-slate-model-person-group: dynamic(false);;
 $include-slate-model-person-person: dynamic(false);;
+$include-slate-model-person-relationship: dynamic(false);;
+$include-slate-model-person-relationshiptemplate: dynamic(false);;
 $include-slate-model-progress-sectioninterimreport: dynamic(false);;
 $include-slate-model-progress-sectiontermreport: dynamic(false);;
 $include-slate-proxy-api: dynamic(false);;
@@ -897,6 +899,7 @@ $include-slate-proxy-courses-sectionparticipants: dynamic(false);;
 $include-slate-proxy-courses-sections: dynamic(false);;
 $include-slate-proxy-people-globalrecipients: dynamic(false);;
 $include-slate-proxy-people-people: dynamic(false);;
+$include-slate-proxy-people-relationships: dynamic(false);;
 $include-slate-proxy-progress-sectioninterimreports: dynamic(false);;
 $include-slate-proxy-progress-sectiontermreports: dynamic(false);;
 $include-slate-sorter-code: dynamic(false);;
@@ -910,9 +913,12 @@ $include-slate-store-people-advisors: dynamic(false);;
 $include-slate-store-people-globalrecipients: dynamic(false);;
 $include-slate-store-people-groups: dynamic(false);;
 $include-slate-store-people-people: dynamic(false);;
+$include-slate-store-people-relationshiptemplates: dynamic(false);;
+$include-slate-store-people-relationships: dynamic(false);;
 $include-slate-store-people-students: dynamic(false);;
 $include-slate-store-progress-sectioninterimreports: dynamic(false);;
 $include-slate-store-progress-sectiontermreports: dynamic(false);;
+$include-slate-validator-callbackvalidator: dynamic(false);;
 
 
 /* ======================== ETC ======================== */
