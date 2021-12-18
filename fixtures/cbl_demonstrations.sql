@@ -238,7 +238,8 @@ INSERT INTO `cbl_demonstrations` VALUES (221,'Slate\\CBL\\Demonstrations\\Experi
 INSERT INTO `cbl_demonstrations` VALUES (222,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2021-11-22 14:41:50',2,NULL,NULL,6,'2021-11-22 14:41:41',NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `cbl_demonstrations` VALUES (223,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2021-11-22 14:45:02',2,NULL,NULL,6,'2021-11-22 14:44:31',NULL,NULL,'Studio','Testing overrides','Annotated Writing');
 INSERT INTO `cbl_demonstrations` VALUES (224,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2021-11-22 14:45:16',2,NULL,NULL,6,'2021-11-22 14:45:08',NULL,NULL,NULL,NULL,NULL);
-
+INSERT INTO `cbl_demonstrations` VALUES (225,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2021-11-23 20:23:25',3,'2021-11-23 20:27:04',3,24,'2021-11-23 20:23:25','https://slate.is/task-artifact',NULL,'Studio','The Art of Resistance','Milestone.1: Reading Strategies in Internment');
+INSERT INTO `cbl_demonstrations` VALUES (226,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2021-11-23 21:10:08',3,NULL,NULL,24,'2021-11-23 21:10:08',NULL,NULL,'Studio','The Art of Resistance','Milestone.3: Main Idea and Themes of Internment');
 
 CREATE TABLE `history_cbl_demonstrations` (
   `RevisionID` int(10) unsigned NOT NULL AUTO_INCREMENT,

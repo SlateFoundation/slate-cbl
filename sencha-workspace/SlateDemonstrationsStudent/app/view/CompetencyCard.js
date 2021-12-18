@@ -135,7 +135,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                                 ' data-demonstration="{DemonstrationID}"',
                                 ' title="',
                                     '<tpl if="Override">',
-                                        'Overriden',
+                                        '[Overridden]',
                                     '<tpl else>',
                                         '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
                                     '</tpl>',
