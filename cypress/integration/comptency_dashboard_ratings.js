@@ -2,15 +2,18 @@ describe('Comptency dashboard ratings test', () => {
 
     // load sample database before tests
     before(() => {
-        // cy.resetDatabase();
+        cy.resetDatabase();
     });
 
      // authenticate as 'teacher' user
      beforeEach(() => {
         cy.loginAs('teacher');
+        cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
+        cy.server().route('GET', '/cbl/competencies*').as('competencyData');
+        cy.server().route('POST', '/cbl/demonstrations/save*').as('saveDemonstration');
     });
 
-    it('Checking Dashboard Ratings', () => {
+    it('Can log a demonstration and verify the UI calculations', () => {
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/demonstrations/teacher');
@@ -53,122 +56,177 @@ describe('Comptency dashboard ratings test', () => {
             // verify hash updates
             cy.location('hash').should('eq', '#ELA/group:example_school');
 
-            // verify content loads
-            cy.wait(6000)
+            // student competency data loads when student + rubric selectors set
+            cy.wait('@studentCompetencyData')
+                .should(({ xhr }) => {
+                    const { ContentArea: { Competencies: competencies }} = JSON.parse(xhr.response);
 
-            // confirm correct page has loaded
-            cy.get('.cbl-grid-competencies').contains('Reading Critically');
+                    // verify Competencies have rendered on the page
+                    cy.get('.cbl-grid-competencies').contains(competencies[0].Descriptor);
+                    cy.get('.cbl-grid-competencies .cbl-grid-progress-row').should('have.length', competencies.length);
+                });
 
-            // click buttton to open modal
-            cy.get('[data-ref=btnWrap]').click()
+            // click '+' button to submit evidence
+            cy.get('a[role=button] span.fa-plus').click()
 
-            // enter a students name
-            cy.get('[name=StudentID]').type('Cross, Clarisa')
+            // competency data loads when opening evidence submission form
+            cy.wait('@competencyData')
+                .should(({ xhr }) => {
+                    const { data: competencies, related: { ContentArea: contentAreas } } = JSON.parse(xhr.response);
 
-            // enter an experience type
-            cy.get('[name=ExperienceType]').type('Studio', { force: true }) //input element may be hidden
+                    const firstCompetency = competencies[0];
+                    const secondCompetency = competencies[1];
+                    // const randomCompetency = competencies[competencies.length - Math.floor(Math.random() * (competencies.length - 2) + 2)];
+                    const demonstrationForm = extQuerySelector('slate-cbl-demonstrations-demonstrationform')
+                    const competencyGrid = extQuerySelector('slate-cbl-competenciesgrid')
+                    const competencyCodeTextfield = demonstrationForm.getRatingsField().down('textfield')
 
-            cy.get('[name=Context]').type('Test', { force: true }) //input element may be hidden
+                    // competency grid in form should have 1 table for each content area
+                    cy.get('#' + competencyGrid.getId())
+                        .find('table')
+                        .should('have.length', contentAreas.length);
 
-            // enter performance type
-            cy.get('[name=PerformanceType]').type('Debate', { force: true }) //input element may be hidden
+                    // input values into demonstration form
+                    cy.get('#' + demonstrationForm.getId())
+                        .within(() => {
+                            // enter a students name
+                            cy.get('[name=StudentID]').type('Cross, Clarisa')
 
-            // enter a url address
-            cy.get('[name=ArtifactURL]').type('https://google.com', { force: true }) //input element may be hidden
+                            // enter an experience type
+                            cy.get('[name=ExperienceType]').type('Studio', { force: true }) //input element may be hidden
 
-            //click English Language Arts course
-            cy.get('#gridview-1038-record-391').click()
+                            cy.get('[name=Context]').type('Test', { force: true }) //input element may be hidden
 
-            //get modal and check if ELA.1 is showing to click
-            cy.get('#slate-window-1028-body').contains('ELA.1').click()
+                            // enter performance type
+                            cy.get('[name=PerformanceType]').type('Debate', { force: true }) //input element may be hidden
 
-            //check that ELA.1 is showing Reading Critically competencies
-            cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Reading Critically')
+                            // enter a url address
+                            cy.get('[name=ArtifactURL]').type('https://google.com', { force: true }) //input element may be hidden
+                        })
 
-            //select a competency score on the slider
-            cy.get('#slate-cbl-ratings-slider-1059-thumb-3').click({force: true})
+                    cy.get('#' + competencyCodeTextfield.getId()).type(firstCompetency.Code);
 
-            //select a competency score on the slider
-            cy.get('#slate-cbl-ratings-slider-1061-thumb-9').click({force: true})
+                    // comptency grid should only show the competency we typed
+                    cy.get('#' + competencyGrid.getId())
+                        .find('table')
+                        .should('have.length', 1);
 
-            //add competency
-            cy.get('#tab-1039').click()
+                    // compentency grid should only contain
+                    cy.get('#' + competencyGrid.getId())
+                        .contains(firstCompetency.Descriptor)
+                        .click()
 
-            //get modal and check if ELA.2 is showing to click
-            cy.get('#slate-window-1028-body').contains('ELA.2').click()
+                    cy.wait('@studentCompetencyData')
+                        .then(() => {
+                            const studentCompetencyRatings = extQuerySelector('slate-cbl-ratings-studentcompetency');
+                            let studentCompetencyRatingSliders = extQuerySelectorAll('slate-cbl-ratings-slider');
 
-            //check that ELA.2 is showing Expressing Ideas competencies
-            cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Expressing Ideas')
+                            // verify competency statement is shown
+                            cy.get('#' + studentCompetencyRatings.getId())
+                                .contains(firstCompetency.Statement)
 
-            //select a competency score on the slider
-            cy.get("#slate-cbl-ratings-slider-1068-thumb-2").click({force: true})
+                            expect(studentCompetencyRatingSliders).to.have.length(firstCompetency.skillIds.length);
 
-            //select a competency score on the slider
-            cy.get("#slate-cbl-ratings-slider-1069-thumb-5").click({force: true})
+                            const { minRating, maxRating } = studentCompetencyRatingSliders[0].getConfig();
+                            // get array of visible ratings
+                            const visibleRatings = Array.from({length: maxRating - minRating + 1 }, (_, i) => i + minRating)
+                            const totalRatings = visibleRatings.length + 1; // 1 for menu
+                            const ratingWidth = studentCompetencyRatingSliders[0].innerEl.getWidth() / totalRatings;
 
-            //select a competency score on the slider
-            cy.get("#slate-cbl-ratings-slider-1070-thumb-7").click({force: true})
+                            const _selectRating = (raterId, rating) => {
+                                const selectedRatingPos = visibleRatings.indexOf(rating)
+                                cy.get('#' + raterId)
+                                    .click({ x: (ratingWidth * (selectedRatingPos + 1) + ratingWidth * .5 ), y: 5, force: true })
+                            };
 
-            //add competency
-            cy.get('#tab-1039').click()
+                            studentCompetencyRatingSliders.forEach((studentCompetencyRatingSlider, i) => {
+                                _selectRating(studentCompetencyRatingSlider.innerEl.getId(), 12); // rate each skill with 12
+                            });
 
-            //unselect English Language Arts course that was selected
-            cy.get('#slate-cbl-competenciesgrid-1034-bodyWrap').contains('English Language Arts').click()
+                            // add another competency
+                            const addCompetencyButton = extQuerySelector('tabpanel tab[text="Add competency"]')
 
-            //click Habits of Success course
-            cy.get('#gridview-1038-record-445').click()
+                            cy.get('#' + addCompetencyButton.getId())
+                                .click({ force: true })
 
-            //get modal and check if HOS.1 is showing to click
-            cy.get('#slate-window-1028-body').contains('HOS.1').click()
+                            cy.get('#' + competencyCodeTextfield.getId()).type(secondCompetency.Code);
 
-            //check that HOS.1 is showing Personal Work Habits competencies
-            cy.get("#slate-cbl-ratings-studentcompetenciesfield-1031-bodyEl").contains('Personal Work Habits')
+                             // comptency grid should only show the competency we typed
+                             cy.get('#' + competencyGrid.getId())
+                                .find('table')
+                                .should('have.length', 1);
 
-            //select a competency score on the slider
-            cy.get("#slate-cbl-ratings-slider-1077-thumb-1").click({force: true})
+                            // compentency grid should only contain one
+                            cy.get('#' + competencyGrid.getId())
+                                .contains(secondCompetency.Descriptor)
+                                .click()
 
-            //select a competency score on the slider
-            cy.get("#slate-cbl-ratings-slider-1078-thumb-3").click({force: true})
+                            // triggered by clicking competency in grid
+                            cy.wait('@studentCompetencyData')
+                                .then(() => {
+                                    studentCompetencyRatingSliders = extQuerySelectorAll(`slate-cbl-ratings-studentcompetency[title="${secondCompetency.Code}"] slate-cbl-ratings-slider`);
+                                    expect(studentCompetencyRatingSliders).to.have.length(secondCompetency.skillIds.length);
 
-            //select a competency score on the slider
-            cy.get("#slate-cbl-ratings-slider-1079-thumb-5").click({force: true})
+                                    studentCompetencyRatingSliders.forEach((studentCompetencyRatingSlider, i) => {
+                                        _selectRating(studentCompetencyRatingSlider.innerEl.getId(), 10); // rate each skill with 10
+                                    });
+                                })
 
-            //type comment into text area
-            cy.get('#textarea-1040-inputEl').type('test test test')
+                            cy.get('#' + addCompetencyButton.getId())
+                                .click({ force: true })
+                        })
 
-            // click save demonstration button
-            cy.get('#button-1042').click({force: true})
+                        const textarea = extQuerySelector('slate-cbl-demonstrations-demonstrationform textarea');
+                        const saveBtn = extQuerySelector('button[text="Save Demonstration"]');
 
-            // todo: check modal that appears with name and demonstration total selected and then disappears
+                        // type comment into text area
+                        cy.get('#' + textarea.getId())
+                            .type('test test test')
 
-            // get percentage of compentencies selected on the Reading Critically column and click
-            cy.get('#ext-element-12').contains('33%').click()
+                        cy.get('#' + saveBtn.getId())
+                            .click({ force: true })
 
-            // check the slider score for the 'Choose and apply reading strategies' competency
-            cy.get('#ext-element-528').contains('11')
+                        cy.wait('@saveDemonstration')
+                            .should(({ xhr }) => {
+                                // confirm completion %, avg, and level
+                                const { data } = JSON.parse(xhr.response)
+                                const savedRecord = data[0];
+                                debugger;
+                                // check the saved object
+                                expect(savedRecord).to.have.property('StudentID')
 
-            // check the slider score for the  'Evaluate the main ideas or themes' competency
-            cy.get('#ext-element-599').contains('12')
+                                const { StudentID: studentId } = savedRecord;
 
-            // check the slider score for the 'Analyze context, point of view, and purpose; competency
-            cy.get('#ext-element-670').contains('10')
+                                cy.get(`tr.cbl-grid-progress-row[data-competency="${firstCompetency.ID}"] td.cbl-grid-progress-cell[data-student=${studentId}]`)
+                                    .within(($el) => {
+                                        cy.get($el.first()).click({ force: true })
 
-            // check the slider score for the 'Analyze craft' competency
-            cy.get('#ext-element-741').contains('9')
+                                        // NOTE: the followoing assertions can fail if the fixture data changes
+                                        cy.contains('33%') // we input 1 rating for each skill (4/12 = 33%)
+                                        cy.contains('Y4') // Level 4 Progress
+                                        cy.contains('12') // Avg of 12
+                                    });
 
-            // check the average score of the four comptency scores chosen (11 + 12 + 10 + 9 / 4) === 10.5
-            cy.get('#ext-element-19').contains('10.5')
+                                cy.get(`tr.cbl-grid-progress-row[data-competency="${secondCompetency.ID}"] td.cbl-grid-progress-cell[data-student=${studentId}]`)
+                                    .within(($el) => {
+                                        cy.get($el.first()).click({ force: true })
 
-            // get the percentage of compentencies selected on the Habits of Success column and click
-            cy.get('#ext-element-91').contains('13%').click()
+                                        // NOTE: the followoing assertions can fail if the fixture data changes
+                                        cy.contains('33%') // we input 1 rating for each skill (4/12 = 33%)
+                                        cy.contains('Y4') // Level 4 Progress
+                                        cy.contains('10') // Avg of 12
+                                    });
 
-            // check the slider score for the 'Identify a core message and audience' competency
-            cy.get('#ext-element-817').contains('10')
 
-            // check the slider score for the 'Develop and organize the message' competency
-            cy.get('#ext-element-880').contains('12')
-
-            // check the average score of the two comptency scores chosen (10 + 12 / 2) === 11
+                                // NOTE: the following assertions can fail if the fixture data changes
+                                // "12" rating on each skill in the first competency
+                                cy.get(`tr.cbl-grid-skills-row[data-competency="${firstCompetency.ID}"] [data-student="${studentId}"] li[title="12"]`)
+                                .should('have.length', firstCompetency.skillIds.length);
+                                // "10" rating on each skill in the first competency
+                                cy.get(`tr.cbl-grid-skills-row[data-competency="${secondCompetency.ID}"] [data-student="${studentId}"] li[title="10"]`)
+                                    .should('have.length', secondCompetency.skillIds.length);
+                            });
+                });
         })
     })
 })
