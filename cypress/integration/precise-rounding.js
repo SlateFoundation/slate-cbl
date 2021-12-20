@@ -118,7 +118,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
             if (growth !== undefined) {
                 cy.get(`#${competencyCardId}`)
                 .find('td[data-ref="growthEl"]')
-                .contains(growth === null ? '—' : `${growth} lvl`);
+                .contains(growth === null ? '—' : (growth <= 0 ? '' : '+') + growth);
             }
 
             if (progress !== undefined) {
