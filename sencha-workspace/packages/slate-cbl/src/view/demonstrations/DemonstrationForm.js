@@ -25,12 +25,12 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
 
 
         hidden: true,
-        title: 'Log Demonstration',
+        title: 'Submit Evidence',
 
         footer: [
             {
                 xtype: 'button',
-                text: 'Save Demonstration',
+                text: 'Save Evidence',
                 scale: 'large',
                 action: 'submit'
             },
@@ -50,7 +50,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         {
             xtype: 'datefield',
             name: 'Demonstrated',
-            fieldLabel: 'Demonstrated',
+            fieldLabel: 'Date',
             displayField: 'Demonstrated',
             valueField: 'Demonstrated'
         },
@@ -91,7 +91,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
         {
             xtype: 'textfield',
             name: 'ArtifactURL',
-            fieldLabel: 'Artifact (URL)',
+            fieldLabel: 'Attachment (URL)',
 
             allowBlank: true,
             regex: /^https?:\/\/.+/i,
@@ -115,7 +115,7 @@ Ext.define('Slate.cbl.view.demonstrations.DemonstrationForm', {
                 me.getForm().clearInvalid();
             }
 
-            me.setTitle(demonstration.phantom ? 'Log Demonstration' : 'Edit Demonstration #'+demonstration.getId());
+            me.setTitle(demonstration.phantom ? 'Submit Evidence' : 'Edit Evidence #'+demonstration.getId());
             me.setStudentSelector(demonstration.phantom);
             me.getRatingsField().setSelectedStudent(me.getStudentSelector().getSelectedRecord());
             me.getFooter().getComponent('continueField').setHidden(!demonstration.phantom);

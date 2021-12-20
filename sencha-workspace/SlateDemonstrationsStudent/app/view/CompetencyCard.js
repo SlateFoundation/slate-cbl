@@ -20,7 +20,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         // optional config
         percentFormat: '0%',
         averageFormat: '0.#',
-        growthFormat: '0.# yr',
+        growthFormat: '0.#',
 
         // input-dependent state
         level: null,
@@ -76,7 +76,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                     '</td>',
                     '<td id="{id}-growthEl" data-ref="growthEl">',
                         '<tpl if="growth || growth === 0">',
-                            '{growth:number(values.growthFormat)}',
+                            '{[ this.renderGrowth(values.growth,values.growthFormat) ]}',
                         '<tpl else>',
                             '&mdash;',
                         '</tpl>',
@@ -93,7 +93,12 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             '<tpl if="skills">',
                 '{% values.skillsTpl.applyOut(values.skills, out); %}',
             '</tpl>',
-        '</ul>'
+        '</ul>',
+        {
+            renderGrowth: function(growth, format) {
+                return Ext.util.Format.sign(growth,"-","+","") + Ext.util.Format.number(Math.abs(growth), format);
+            }
+        }
     ],
 
     childEls: [
@@ -329,7 +334,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
         var me = this;
 
         if (me.rendered) {
-            me.growthEl.update(Ext.util.Format.number(growth, me.getGrowthFormat()));
+          me.growthEl.update(Ext.util.Format.sign(growth,"-","+","") + Ext.util.Format.number(Math.abs(growth), me.getGrowthFormat()));
         }
     },
 

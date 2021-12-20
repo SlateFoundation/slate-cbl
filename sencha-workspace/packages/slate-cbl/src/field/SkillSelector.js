@@ -9,7 +9,7 @@ Ext.define('Slate.cbl.field.SkillSelector', {
     config: {
         loadSummaries: true,
 
-        fieldLabel: 'Standard',
+        fieldLabel: 'Skill',
         labelWidth: 75,
 
         displayField: 'Descriptor',
