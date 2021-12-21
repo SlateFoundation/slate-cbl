@@ -8,6 +8,7 @@ use Exception;
 use Slate\CBL\Competency;
 use Slate\CBL\StudentCompetency;
 use Slate\CBL\Skill;
+use Slate\CBL\Tasks\StudentTask;
 
 use Slate\People\Student;
 
@@ -53,6 +54,12 @@ class Demonstration extends \VersionedRecord
             'class' => DemonstrationSkill::class,
             'foreign' => 'DemonstrationID',
             'prune' => 'delete'
+        ],
+        'StudentTask' => [
+          'type' => 'one-one',
+          'class' => StudentTask::class,
+          'local' => 'ID',
+          'foreign' => 'DemonstrationID'
         ]
     ];
 
@@ -65,7 +72,8 @@ class Demonstration extends \VersionedRecord
         'Competencies' => ['getter' => 'getCompetencies'],
         'StudentCompetencies' => ['getter' => 'getStudentCompetencies'],
         'AffectedStudentCompetencies' => ['getter' => 'getAffectedStudentCompetencies'],
-        'DemonstrationSkills'
+        'DemonstrationSkills',
+        'StudentTask'
     ];
 
     public function save($deep = true)

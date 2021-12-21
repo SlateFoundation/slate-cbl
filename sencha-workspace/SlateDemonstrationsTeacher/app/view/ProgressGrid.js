@@ -159,7 +159,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                         '<tpl if="Override"> data-span="{[xcount - xindex + 1]}"</tpl>',
                                         ' title="',
                                             '<tpl if="Override">',
-                                                'Overriden',
+                                                '[Overridden]',
                                             '<tpl else>',
                                                 '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
                                             '</tpl>',
