@@ -5,20 +5,20 @@ Ext.define('Slate.cbl.util.Config', {
     config: {
         levels: {
             9: {
-                title: 'Year 1',
-                abbreviation: 'Y1'
+                title: 'Portfolio 1',
+                abbreviation: 'P1'
             },
             10: {
-                title: 'Year 2',
-                abbreviation: 'Y2'
+                title: 'Portfolio 2',
+                abbreviation: 'P2'
             },
             11: {
-                title: 'Year 3',
-                abbreviation: 'Y3'
+                title: 'Portfolio 3',
+                abbreviation: 'P3'
             },
             12: {
-                title: 'Year 4',
-                abbreviation: 'Y4'
+                title: 'Portfolio 4',
+                abbreviation: 'P4'
             }
         },
         ratings: {}

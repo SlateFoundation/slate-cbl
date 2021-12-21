@@ -52,7 +52,7 @@ Ext.define('Slate.cbl.view.demonstrations.StudentSkillPanel', {
         skillStatement: true,
         demonstrationSkillsList: true,
 
-        title: 'Standard Overview'
+        title: 'Skill History'
     },
 
 
