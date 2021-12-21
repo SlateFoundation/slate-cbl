@@ -15,7 +15,7 @@ Ext.define('Slate.cbl.field.SkillsSelector', {
         showPermanentTags: true,
         loadSummaries: true,
 
-        fieldLabel: 'Standards',
+        fieldLabel: 'Skills',
         labelWidth: 75,
 
         displayField: 'Code',
