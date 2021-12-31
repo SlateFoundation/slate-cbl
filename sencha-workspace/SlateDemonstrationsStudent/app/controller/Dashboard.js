@@ -24,7 +24,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         competenciesSummary: 'slate-demonstrations-student-competenciessummary',
         recentProgress: 'slate-demonstrations-student-recentprogress',
         levelsLegend: 'slate-cbl-levelslegend',
-        cardsCt: 'slate-demonstrations-student-cardsct'
+        cardsCt: 'slate-demonstrations-student-cardsct',
+        nonEnrollmentMessage: 'slate-demonstrations-student-dashboard container[itemId="non_enrollment_message"]'
     },
 
 
@@ -141,6 +142,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             recentProgress = me.getRecentProgress(),
             levelsLegend = me.getLevelsLegend(),
             cardsCt = me.getCardsCt(),
+            nonEnrollmentMessage = me.getNonEnrollmentMessage(),
 
             rawData = store.getProxy().getReader().rawData,
             contentAreaData = rawData.ContentArea,
@@ -254,11 +256,12 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
         Ext.resumeLayouts(true);
 
-        console.log(studentCompetenciesCount);
+        // show/hide components based on enrollment
         competenciesSummary.setVisible(studentEnrolled);
         recentProgress.setVisible(studentEnrolled);
         levelsLegend.setVisible(studentEnrolled);
         cardsCt.setVisible(studentEnrolled);
+        nonEnrollmentMessage.setVisible(!studentEnrolled);
 
 
         // finish load

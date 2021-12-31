@@ -104,6 +104,19 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
          *
          * Setting boolean values change visibility.
          */
+         nonEnrollmentMessage: {
+            xtype: 'container',
+            itemId: 'non_enrollment_message',
+            html: 'Not currently enrolled in this competency',
+            hidden: false
+      },
+
+        /**
+         * @cfg {Ext.container.Container|Object|boolean}
+         * Instance or configuration for cards container.
+         *
+         * Setting boolean values change visibility.
+         */
         cardsCt: {
             xtype: 'slate-demonstrations-student-cardsct',
             hidden: true
@@ -232,7 +245,8 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
             me.getCompetenciesSummary(),
             me.getRecentProgress(),
             me.getLegend(),
-            me.getCardsCt()
+            me.getCardsCt(),
+            me.getNonEnrollmentMessage()
         ]);
     }
 });
