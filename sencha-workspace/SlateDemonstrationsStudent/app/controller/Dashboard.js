@@ -257,12 +257,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         Ext.resumeLayouts(true);
 
         // show/hide components based on enrollment
-        competenciesSummary.setVisible(studentEnrolled);
-        recentProgress.setVisible(studentEnrolled);
-        levelsLegend.setVisible(studentEnrolled);
-        cardsCt.setVisible(studentEnrolled);
+        [competenciesSummary, recentProgress, levelsLegend, cardsCt ].forEach(cntr => cntr.setVisible(studentEnrolled));
         nonEnrollmentMessage.setVisible(!studentEnrolled);
-
 
         // finish load
         competenciesSummary.setLoading(false);
