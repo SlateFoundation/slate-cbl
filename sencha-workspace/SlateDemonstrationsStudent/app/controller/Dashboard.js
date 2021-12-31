@@ -23,6 +23,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         contentAreaSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-contentareaselector',
         competenciesSummary: 'slate-demonstrations-student-competenciessummary',
         recentProgress: 'slate-demonstrations-student-recentprogress',
+        levelsLegend: 'slate-cbl-levelslegend',
         cardsCt: 'slate-demonstrations-student-cardsct'
     },
 
@@ -138,6 +139,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         var me = this,
             competenciesSummary = me.getCompetenciesSummary(),
             recentProgress = me.getRecentProgress(),
+            levelsLegend = me.getLevelsLegend(),
             cardsCt = me.getCardsCt(),
 
             rawData = store.getProxy().getReader().rawData,
@@ -255,6 +257,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         console.log(studentCompetenciesCount);
         competenciesSummary.setVisible(studentEnrolled);
         recentProgress.setVisible(studentEnrolled);
+        levelsLegend.setVisible(studentEnrolled);
         cardsCt.setVisible(studentEnrolled);
 
 
