@@ -100,16 +100,14 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
         /**
          * @cfg {Ext.container.Container|Object|boolean}
-         * Instance or configuration for cards container.
-         *
-         * Setting boolean values change visibility.
+         * Instance or configuration for container containing non-enrollment message.
          */
-         nonEnrollmentMessage: {
+        nonEnrollmentMessage: {
             xtype: 'container',
             itemId: 'non_enrollment_message',
             html: 'Not currently enrolled in this competency',
             hidden: false
-      },
+        },
 
         /**
          * @cfg {Ext.container.Container|Object|boolean}
