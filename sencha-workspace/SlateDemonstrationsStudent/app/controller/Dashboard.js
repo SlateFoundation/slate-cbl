@@ -22,6 +22,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         studentSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-studentselector',
         contentAreaSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-contentareaselector',
         competenciesSummary: 'slate-demonstrations-student-competenciessummary',
+        recentProgress: 'slate-demonstrations-student-recentprogress',
         cardsCt: 'slate-demonstrations-student-cardsct'
     },
 
@@ -136,6 +137,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         // eslint-disable-next-line vars-on-top
         var me = this,
             competenciesSummary = me.getCompetenciesSummary(),
+            recentProgress = me.getRecentProgress(),
             cardsCt = me.getCardsCt(),
 
             rawData = store.getProxy().getReader().rawData,
@@ -147,6 +149,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
             studentCompetenciesStore = me.getStudentCompetenciesStore(),
             studentCompetenciesCount = studentCompetenciesStore.getCount(),
+            studentEnrolled = studentCompetenciesCount > 0,
             studentCompetencyIndex, studentCompetency, level, competencyId,
             competency, competencyCurrent, average, growth,
 
@@ -160,7 +163,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             growthValues = [],
 
             cardConfigs = [];
-
 
         // load content area and competencies
         delete contentAreaData.Competencies;
@@ -249,6 +251,11 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         cardsCt.add(cardConfigs);
 
         Ext.resumeLayouts(true);
+
+        console.log(studentCompetenciesCount);
+        competenciesSummary.setVisible(studentEnrolled);
+        recentProgress.setVisible(studentEnrolled);
+        cardsCt.setVisible(studentEnrolled);
 
 
         // finish load
