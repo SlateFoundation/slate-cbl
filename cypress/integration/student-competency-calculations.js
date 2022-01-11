@@ -19,10 +19,10 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                     // ensure that API has loaded required data
                     cy.wait('@studentCompetencyData')
                     .should(({ xhr }) => {
-                        const studentCompetencySuffixes = Object.keys(testCases[studentUsername][studentContentArea]);
-                        studentCompetencySuffixes.forEach(studentCompetencySuffix => {
+                        const studentCompetencyCodes = Object.keys(testCases[studentUsername][studentContentArea]);
+                        studentCompetencyCodes.forEach(studentCompetencyCode => {
                             const { data, ContentArea: { Competencies: competencies } } = JSON.parse(xhr.response)      
-                            const { ID: competencyId } = competencies.filter(datum => datum.Code === `${studentCompetencySuffix}`).pop()
+                            const { ID: competencyId } = competencies.filter(datum => datum.Code === `${studentCompetencyCode}`).pop()
                             const studentData = data.filter(datum => datum.CompetencyID === competencyId) // filter by CompetencyID
                             .sort((sc1, sc2) => sc1.Level - sc2.Level).pop(); // sort by highest level last, and use that
                             expect(studentData).to.not.be.null;
@@ -38,30 +38,30 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                             //convert api baseline to string, if it is not null
                             expect(
                               apiBaseLine ? `${apiBaseLine}` : apiBaseLine,
-                              `${studentCompetencySuffix} for ${studentUsername} API Baseline Value ${apiBaseLine}: Fixtures data Baseline Value ${testCases[studentUsername][studentContentArea][studentCompetencySuffix].baseline}`
+                              `${studentCompetencyCode} for ${studentUsername} API Baseline Value ${apiBaseLine}: Fixtures data Baseline Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].baseline}`
                             ).to.equal(
                               testCases[studentUsername][studentContentArea][
-                                studentCompetencySuffix
+                                studentCompetencyCode
                               ].baseline
                             );
 
                             // convert api growth to string
                             expect(
                               `${apiGrowth}`,
-                              `${studentCompetencySuffix} for ${studentUsername} API Growth Value ${apiGrowth}: Fixtures data Growth Value ${testCases[studentUsername][studentContentArea][studentCompetencySuffix].growth}`
+                              `${studentCompetencyCode} for ${studentUsername} API Growth Value ${apiGrowth}: Fixtures data Growth Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].growth}`
                             ).to.equal(
                               testCases[studentUsername][studentContentArea][
-                                studentCompetencySuffix
+                                studentCompetencyCode
                               ].growth
                             );
 
                             // convert api calculated progress into string
                             expect(
                               `${apiProgress}`,
-                              `${studentCompetencySuffix} for ${studentUsername} API Completion Percentage Value ${apiProgress}: Fixtures data Completion Percentage Value ${testCases[studentUsername][studentContentArea][studentCompetencySuffix].progress}`
+                              `${studentCompetencyCode} for ${studentUsername} API Completion Percentage Value ${apiProgress}: Fixtures data Completion Percentage Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].progress}`
                             ).to.equal(
                               testCases[studentUsername][studentContentArea][
-                                studentCompetencySuffix
+                                studentCompetencyCode
                               ].progress
                             );
 
@@ -70,10 +70,10 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                               apiPerformanceLevel === null
                                 ? apiPerformanceLevel
                                 : `${apiPerformanceLevel}`,
-                              `${studentCompetencySuffix} for ${studentUsername}  API Performance Level Value ${apiPerformanceLevel}: Fixtures data Perfomance Level Value ${testCases[studentUsername][studentContentArea][studentCompetencySuffix].average}`
+                              `${studentCompetencyCode} for ${studentUsername}  API Performance Level Value ${apiPerformanceLevel}: Fixtures data Perfomance Level Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].average}`
                             ).to.equal(
                               testCases[studentUsername][studentContentArea][
-                                studentCompetencySuffix
+                                studentCompetencyCode
                               ].average
                             );
                         })
@@ -98,17 +98,17 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                         cy.wait(500); // wait for dom to render
 
                         // ensure competency card elements have rendered
-                        const studentCompetencySuffixes = Object.keys(testCases[studentUsername][studentContentArea]);
-                        studentCompetencySuffixes.forEach(studentCompetencySuffix => {
+                        const studentCompetencyCodes = Object.keys(testCases[studentUsername][studentContentArea]);
+                        studentCompetencyCodes.forEach(studentCompetencyCode => {
                             cy.get('li.slate-demonstrations-student-competencycard')
                                 .then(() => {
                                     cy.withExt().then(({extQuerySelector}) => {
-                                        const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${studentCompetencySuffix}"}`);
-                                        const baseline = testCases[studentUsername][studentContentArea][studentCompetencySuffix].baseline
-                                        const growth = testCases[studentUsername][studentContentArea][studentCompetencySuffix].growth
-                                        const progress = testCases[studentUsername][studentContentArea][studentCompetencySuffix].progress
-                                        const performanceLevel = testCases[studentUsername][studentContentArea][studentCompetencySuffix].performanceLevel
-                                        checkUIDataAgainstTestCase(`${studentCompetencySuffix}`, card.id, {
+                                        const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${studentCompetencyCode}"}`);
+                                        const baseline = testCases[studentUsername][studentContentArea][studentCompetencyCode].baseline
+                                        const growth = testCases[studentUsername][studentContentArea][studentCompetencyCode].growth
+                                        const progress = testCases[studentUsername][studentContentArea][studentCompetencyCode].progress
+                                        const performanceLevel = testCases[studentUsername][studentContentArea][studentCompetencyCode].performanceLevel
+                                        checkUIDataAgainstTestCase(`${studentCompetencyCode}`, card.id, {
                                             baseline,
                                             growth,
                                             progress,
@@ -171,8 +171,8 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
         studentUsernames.forEach(studentUsername =>{
             const studentContentAreas = Object.keys(testCases[studentUsername])
             studentContentAreas.forEach(studentContentArea => {
-                const studentCompetencySuffixes = Object.keys(testCases[studentUsername][studentContentArea]);
-                studentCompetencySuffixes.forEach(studentCompetencySuffix => {
+                const studentCompetencyCodes = Object.keys(testCases[studentUsername][studentContentArea]);
+                studentCompetencyCodes.forEach(studentCompetencyCode => {
                     cy.get('form[action="/exports/slate-cbl/student-competencies"]').within(() => {
                         cy.get('input[name=students]').clear().type(`${studentUsername}`);
                         cy.get('select[name=content_area]').select(studentContentArea);
@@ -186,48 +186,48 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                             return csvtojson().fromString(body)
                         }).then((records) => {
                             const studentCompetencyRow = records.filter((record)=> {
-                                return record.Competency === `${studentCompetencySuffix}`
+                                return record.Competency === `${studentCompetencyCode}`
                             }).pop();
                             
                             const csvPerformanceLevel = studentCompetencyRow['Performance Level']
                             const csvGrowth = studentCompetencyRow.Growth
                             const csvBaseLine = studentCompetencyRow.Baseline
                             const csvProgress = studentCompetencyRow.Progress
-                            const baseline = testCases[studentUsername][studentContentArea][studentCompetencySuffix].baseline
-                            const growth = testCases[studentUsername][studentContentArea][studentCompetencySuffix].growth
-                            const progress = testCases[studentUsername][studentContentArea][studentCompetencySuffix].progress
-                            const performanceLevel = testCases[studentUsername][studentContentArea][studentCompetencySuffix].average;
+                            const baseline = testCases[studentUsername][studentContentArea][studentCompetencyCode].baseline
+                            const growth = testCases[studentUsername][studentContentArea][studentCompetencyCode].growth
+                            const progress = testCases[studentUsername][studentContentArea][studentCompetencyCode].progress
+                            const performanceLevel = testCases[studentUsername][studentContentArea][studentCompetencyCode].average;
 
                             // csv represents null as empty string
                             expect(csvPerformanceLevel === '' ? null : csvPerformanceLevel,
-                                `${studentContentArea}.${studentCompetencySuffix} for ${studentUsername}  CSV Performance Level Value ${csvPerformanceLevel}: Fixtures data Perfomance Level Value ${performanceLevel}`
+                                `${studentCompetencyCode} for ${studentUsername}  CSV Performance Level Value ${csvPerformanceLevel}: Fixtures data Perfomance Level Value ${performanceLevel}`
                             ).to.equal(performanceLevel);
 
                             // csv represents 0 growth as an empty string
                             expect(`${csvGrowth === '' ? 0 : csvGrowth}`,
-                                `${studentContentArea}.${studentCompetencySuffix} for ${studentUsername} CSV Growth Value ${csvGrowth}: Fixtures data Growth Value ${growth}`
+                                `${studentCompetencyCode} for ${studentUsername} CSV Growth Value ${csvGrowth}: Fixtures data Growth Value ${growth}`
                             ).to.equal(growth);
 
                             // if csv value = 0, baseline could = NULL OR 0.
                             // this needs to be resolved -- the CSV should probably differentiate
                             if (csvBaseLine === '0') {
                                 expect(baseline,
-                                    `${studentContentArea}.${studentCompetencySuffix} for ${studentUsername} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
+                                    `${studentCompetencyCode} for ${studentUsername} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
                                 ).to.be.oneOf(['0', null])
                             } else {
                                 expect(`${csvBaseLine}`,
-                                    `${studentContentArea}.${studentCompetencySuffix} for ${studentUsername} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
+                                    `${studentCompetencyCode} for ${studentUsername} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
                                 ).to.equal(baseline);
                             }
 
                             // csv represents 0 progress as empty string
                             if (csvProgress === '') {
                                 expect(progress,
-                                    `${studentContentArea}.${studentCompetencySuffix} for ${studentUsername} CSV Completion Percentage Value ${csvProgress}: Fixtures data Completion Percentage Value ${progress}`
+                                    `${studentCompetencyCode} for ${studentUsername} CSV Completion Percentage Value ${csvProgress}: Fixtures data Completion Percentage Value ${progress}`
                                 ).to.equal('0'); // progress is represented as decimal in export
                             } else {
                                 expect(`${csvProgress}`,
-                                    `${studentContentArea}.${studentCompetencySuffix} for ${studentUsername} CSV Completion Percentage Value ${csvProgress}: Fixtures data Completion Percentage Value ${progress}`
+                                    `${studentCompetencyCode} for ${studentUsername} CSV Completion Percentage Value ${csvProgress}: Fixtures data Completion Percentage Value ${progress}`
                                 ).to.equal(`${progress/100}`); // progress is represented as decimal in export
                             }
 
