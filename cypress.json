@@ -4,5 +4,5 @@
         "STUDIO_CONTAINER": "slate-cbl-studio",
         "TEST_USER": "teacher"
     },
-    "redirectionLimit":35
+    "redirectionLimit":100
 }
