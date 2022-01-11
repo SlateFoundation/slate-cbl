@@ -2,197 +2,202 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/email/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/migrations/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/getting-started/cbl-webapps/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/running-tests/e2e/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/workspace-setup/content-editor/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/workspace-setup/local-studio/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/workspace-setup/slate-admin/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/development/workspace-setup/virtual-multisite/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/getting-started/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/operations/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://slatefoundation.github.io/slate-cbl/operations/data-loading/contacts-spreadsheet/</loc>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/GLOSSARY/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/data/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/data/content-areas/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/data/demonstrations/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/data/student-competencies/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/data/tasks/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/development/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/development/contributing/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/development/deployment/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/development/releases/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/exports/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/logic/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/logic/growth/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/logic/missed-demonstrations/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/logic/student-competency-calculations/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/setup/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/setup/importing-competency-maps/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/user_interfaces/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/user_interfaces/competencies/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/user_interfaces/competencies/students/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/user_interfaces/competencies/teachers/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/user_interfaces/tasks/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/user_interfaces/tasks/database/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/user_interfaces/tasks/students/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/slate-cbl/user_interfaces/tasks/teachers/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://slatefoundation.github.io/slate-cbl/usage/</loc>
-         <lastmod>2021-10-12</lastmod>
+         <lastmod>2022-01-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
