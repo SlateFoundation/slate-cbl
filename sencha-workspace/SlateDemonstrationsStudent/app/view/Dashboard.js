@@ -103,7 +103,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
          * Instance or configuration for container containing non-enrollment message.
          */
         nonEnrollmentMessage: {
-            xtype: 'container',
+            xtype: 'component',
             itemId: 'non_enrollment_message',
             html: 'Not currently enrolled in this competency',
             hidden: false
