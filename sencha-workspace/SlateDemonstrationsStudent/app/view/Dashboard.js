@@ -105,6 +105,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         nonEnrollmentMessage: {
             xtype: 'component',
             itemId: 'non_enrollment_message',
+            cls: 'slate-placeholder',
             html: 'Not currently enrolled in this competency',
             hidden: true
         },
