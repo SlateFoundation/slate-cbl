@@ -6,6 +6,9 @@ set -e
 cd "$(dirname "$0")/.."
 
 
+script/-test-bootstrap
+
+
 temp_path="$(pwd)"
 temp_path="${temp_path:1}"
 temp_path="${temp_path//\//--}"
@@ -45,4 +48,4 @@ echo "==> test: setting up node_modules…"
 
 echo
 echo "==> test: executing \`cypress run\`…"
-(cd "${temp_path}" && npx cypress run)
+(cd "${temp_path}" && npx cypress run --browser chrome)
