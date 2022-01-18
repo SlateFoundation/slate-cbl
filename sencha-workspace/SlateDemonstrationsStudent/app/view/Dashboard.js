@@ -106,7 +106,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
             xtype: 'component',
             itemId: 'non_enrollment_message',
             html: 'Not currently enrolled in this competency',
-            hidden: false
+            hidden: true
         },
 
         /**
@@ -160,9 +160,22 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.setRecentProgress(contentAreaSet);
         me.setLegend(contentAreaSet);
         me.setCardsCt(contentAreaSet);
+        me.setNonEnrollmentMessage(contentAreaSet);
         Ext.resumeLayouts(true);
 
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
+    },
+
+    showSubComponents: function(shouldBeVisible) {
+      var me = this;
+
+      Ext.suspendLayouts();
+      me.setCompetenciesSummary(shouldBeVisible);
+      me.setRecentProgress(shouldBeVisible);
+      me.setLegend(shouldBeVisible);
+      me.setCardsCt(shouldBeVisible);
+      me.setNonEnrollmentMessage(!shouldBeVisible);
+      Ext.resumeLayouts(true);
     },
 
     applyLoadedContentArea: function(contentArea, oldContentArea) {
@@ -230,6 +243,16 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         }
 
         return Ext.factory(cardsCt, 'SlateDemonstrationsStudent.view.CardsContainer', oldCardsCt);
+    },
+
+    applyNonEnrollmentMessage: function(message, oldMessage) {
+        if (typeof message === 'boolean') {
+            message = {
+                hidden: !message
+            };
+        }
+
+        return Ext.factory(message, 'SlateDemonstrationsStudent.view.NonEnrollmentMessage', oldMessage);
     },
 
 
