@@ -25,7 +25,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         recentProgress: 'slate-demonstrations-student-recentprogress',
         levelsLegend: 'slate-cbl-levelslegend',
         cardsCt: 'slate-demonstrations-student-cardsct',
-        nonEnrollmentMessage: 'slate-demonstrations-student-dashboard container[itemId="non_enrollment_message"]'
+        nonEnrollmentMessage: 'slate-demonstrations-student-dashboard #non_enrollment_message'
     },
 
 
