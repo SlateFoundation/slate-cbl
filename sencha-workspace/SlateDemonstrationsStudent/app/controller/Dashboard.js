@@ -139,10 +139,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         // eslint-disable-next-line vars-on-top
         var me = this,
             competenciesSummary = me.getCompetenciesSummary(),
-            recentProgress = me.getRecentProgress(),
-            levelsLegend = me.getLevelsLegend(),
             cardsCt = me.getCardsCt(),
-            nonEnrollmentMessage = me.getNonEnrollmentMessage(),
 
             rawData = store.getProxy().getReader().rawData,
             contentAreaData = rawData.ContentArea,
