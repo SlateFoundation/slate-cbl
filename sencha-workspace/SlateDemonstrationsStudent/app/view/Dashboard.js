@@ -99,7 +99,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         legend: false,
 
         /**
-         * @cfg {Ext.container.Container|Object|boolean}
+         * @cfg {Ext.Component|Object|boolean}
          * Instance or configuration for container containing non-enrollment message.
          */
         nonEnrollmentMessage: {
