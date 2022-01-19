@@ -22,10 +22,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         studentSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-studentselector',
         contentAreaSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-contentareaselector',
         competenciesSummary: 'slate-demonstrations-student-competenciessummary',
-        recentProgress: 'slate-demonstrations-student-recentprogress',
-        levelsLegend: 'slate-cbl-levelslegend',
         cardsCt: 'slate-demonstrations-student-cardsct',
-        nonEnrollmentMessage: 'slate-demonstrations-student-dashboard #non_enrollment_message'
     },
 
 
