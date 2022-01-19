@@ -147,10 +147,11 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
             studentCompetenciesStore = me.getStudentCompetenciesStore(),
             studentCompetenciesCount = studentCompetenciesStore.getCount(),
-            studentEnrolled = studentCompetenciesCount > 0,
             studentCompetencyIndex, studentCompetency, level, competencyId,
             competency, competencyCurrent, average, growth,
 
+            // determine enrollment status by counting competencies
+            studentEnrolled = studentCompetenciesCount > 0,
 
             competencyLevels = {},
             lowestLevel = Infinity,
