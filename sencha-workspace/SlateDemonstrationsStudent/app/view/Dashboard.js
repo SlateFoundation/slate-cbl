@@ -5,6 +5,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'SlateDemonstrationsStudent.view.CompetenciesSummary',
         'SlateDemonstrationsStudent.view.RecentProgress',
         'SlateDemonstrationsStudent.view.CardsContainer',
+        'SlateDemonstrationsStudent.view.NonEnrollmentMessage',
 
         /* global Slate */
         'Slate.cbl.view.LevelsLegend',
