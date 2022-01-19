@@ -162,15 +162,15 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
     },
 
-    showSubComponents: function(shouldBeVisible) {
+    updateCardsForEnrollmentStatus: function(enrolled) {
       var me = this;
 
       Ext.suspendLayouts();
-      me.setCompetenciesSummary(shouldBeVisible);
-      me.setRecentProgress(shouldBeVisible);
-      me.setLegend(shouldBeVisible);
-      me.setCardsCt(shouldBeVisible);
-      me.setNonEnrollmentMessage(!shouldBeVisible);
+      me.setCompetenciesSummary(enrolled);
+      me.setRecentProgress(enrolled);
+      me.setLegend(enrolled);
+      me.setCardsCt(enrolled);
+      me.setNonEnrollmentMessage(!enrolled);
       Ext.resumeLayouts(true);
     },
 
