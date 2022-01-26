@@ -183,7 +183,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                     </div>
                                 </tpl>
                                 <tpl if="Demonstration.StudentTask.Comments && Demonstration.StudentTask.Comments.length">
-                                    <div class="skill-list-detail-col -comments">
+                                    <div class="skill-list-detail-col">
                                         <h4 class="skill-list-detail-heading">Latest Comments</h4>
                                         <div class="skill-list-detail-group">
                                             <ul class="skill-list-comments">
