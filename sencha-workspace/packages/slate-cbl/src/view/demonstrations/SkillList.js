@@ -146,7 +146,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                 </ul>
                                             </div>
                                         </tpl>
-                                        <tpl if="this.hasActiveAttachments(values.Demonstration.StudentTask.Task.Attachments) == true">
+                                        <tpl if="this.hasActiveTaskAttachments(values.Demonstration) == true">
                                             <div class="skill-list-detail-group">
                                                 <h5 class="skill-list-detail-subheading">Task Attachments</h5>
                                                 <ul class="skill-list-links">
@@ -163,7 +163,7 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                                 </ul>
                                           </div>
                                         </tpl>
-                                        <tpl if="this.hasActiveAttachments(values.Demonstration.StudentTask.Attachments) == true">
+                                        <tpl if="this.hasActiveStudentTaskAttachments(values.Demonstration) == true">
                                             <div class="skill-list-detail-group">
                                                 <h5 class="skill-list-detail-subheading">Task Submissions</h5>
                                                 <ul class="skill-list-links">
@@ -182,8 +182,8 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                         </tpl>
                                     </div>
                                 </tpl>
-                                <tpl if="Demonstration.StudentTask.Comments && Demonstration.StudentTask.Comments.length">
-                                    <div class="skill-list-detail-col -comments">
+                                <tpl if="Demonstration.StudentTask && Demonstration.StudentTask.Comments && Demonstration.StudentTask.Comments.length">
+                                    <div class="skill-list-detail-col">
                                         <h4 class="skill-list-detail-heading">Latest Comments</h4>
                                         <div class="skill-list-detail-group">
                                             <ul class="skill-list-comments">
@@ -225,11 +225,26 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                 return Slate.API.buildUrl("/cbl/dashboards/tasks/student#"+d.Student.Username+"/"+d.StudentTask.Task.Section.Code+"/"+d.StudentTask.ID);
             },
             linksExist: function(d) {
-                var submissionAttachments = d.StudentTask.Attachments.filter(a => a.status !== 'removed');
-                return d.ArtifactURL != null || d.StudentTask.Task.Attachments && d.StudentTask.Task.Attachments.length || d.StudentTask.Attachments && d.StudentTask.Attachments.length;
+                return (
+                    d.ArtifactURL != null
+                    || this.hasActiveTaskAttachments(d)
+                    || this.hasActiveStudentTaskAttachments(d)
+                );
             },
-            hasActiveAttachments: function(attachments) {
-                return attachments.filter(a => a.status !== 'removed').length > 0;
+            hasActiveTaskAttachments: function(d) {
+                return (
+                    d.StudentTask
+                    && d.StudentTask.Attachments
+                    && d.StudentTask.Attachments.filter(a => a.status !== 'removed').length > 0
+                );
+            },
+            hasActiveStudentTaskAttachments: function(d) {
+                return (
+                    d.StudentTask
+                    && d.StudentTask.Task
+                    && d.StudentTask.Task.Attachments
+                    && d.StudentTask.Task.Attachments.filter(a => a.status !== 'removed').length > 0
+                );
             },
             linkText: function(attachment) {
                 return Slate.cbl.model.tasks.Attachment.getField('title').calculate(attachment);
