@@ -148,9 +148,10 @@ return [
         $conditions = [];
         $order = [];
         $dateConditions = [];
-        $joinStatement = '';
+        $submissionConditions = [];
 
         $studentTaskTableAlias = Slate\CBL\Tasks\StudentTask::getTableAlias();
+        $submissionTableAlias = Slate\CBL\Tasks\StudentTaskSubmission::getTableAlias();
 
         if (count($studentIds)) {
             $conditions['StudentID'] = [
@@ -186,13 +187,6 @@ return [
         }
 
         if (!empty($query['date_submitted_from']) || !empty($query['date_submitted_to'])) {
-            $submissionConditions = [];
-            $submissionTableAlias = Slate\CBL\Tasks\StudentTaskSubmission::getTableAlias();
-            $submissionTableName = Slate\CBL\Tasks\StudentTaskSubmission::$tableName;
-
-            $joinStatement .= " LEFT JOIN `{$submissionTableName}` $submissionTableAlias ON $submissionTableAlias.StudentTaskID = $studentTaskTableAlias.ID ";
-
-            $submissionConditions = [];
             if ($query['date_submitted_from'] && $query['date_submitted_to']) {
                 $submissionConditions['Created'] = [
                     'operator' => 'BETWEEN',
@@ -210,7 +204,11 @@ return [
                     'value' => $query['date_submitted_to']
                 ];
             }
-            $dateConditions = array_merge($dateConditions, array_values(Slate\CBL\Tasks\StudentTaskSubmission::mapConditions($submissionConditions, true)));
+
+            $dateConditions = array_merge(
+                $dateConditions,
+                Slate\CBL\Tasks\StudentTaskSubmission::mapConditions($submissionConditions, true)
+            );
         }
 
         $order[] = 'ID';
@@ -223,16 +221,26 @@ return [
         $result = DB::query(
             '
                 SELECT %2$s.*
-                    FROM `%1$s` %2$s
-                    %3$s
-                    WHERE ((%4$s)
-                      AND ((%5$s)))
-                    ORDER BY %6$s
+                  FROM `%1$s` %2$s
+                  LEFT JOIN (
+                         SELECT MAX(Created) AS Created, StudentTaskID
+                           FROM `%3$s`
+                          GROUP BY StudentTaskID
+                       ) AS %4$s
+                    ON %4$s.StudentTaskID = %2$s.ID
+                        WHERE (
+                            (%5$s)
+                            AND (
+                              (%6$s)
+                            )
+                          )
+                    ORDER BY %7$s
             ',
             [
                 Slate\CBL\Tasks\StudentTask::$tableName,
                 $studentTaskTableAlias,
-                !empty($joinStatement) ? ($joinStatement) : '',
+                Slate\CBL\Tasks\StudentTaskSubmission::$tableName,
+                $submissionTableAlias,
                 count($conditions) ? join(') AND (', $conditions) : 'TRUE',
                 !empty($dateConditions) ? join(') OR (', $dateConditions) : 'TRUE',
                 implode(',', $order)
