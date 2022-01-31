@@ -220,7 +220,8 @@ return [
         // build rows
         $result = DB::query(
             '
-                SELECT %2$s.*
+                SELECT %2$s.*,
+                       %4$s.Created AS SubmissionCreated
                   FROM `%1$s` %2$s
                   LEFT JOIN (
                          SELECT MAX(Created) AS Created, StudentTaskID
@@ -249,7 +250,10 @@ return [
 
         while ($record = $result->fetch_assoc()) {
             $StudentTask = Slate\CBL\Tasks\StudentTask::instantiateRecord($record);
-            $submissionTimestamp = $StudentTask->getSubmissionTimestamp();
+
+            $submissionTimestamp = $record['SubmissionCreated']
+                ? strtotime($record['SubmissionCreated'])
+                : null;
 
             // start with list of skill codes for task, cached between records
             if (isset($taskSkillCodes[$StudentTask->TaskID])) {
