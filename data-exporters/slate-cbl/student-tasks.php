@@ -69,29 +69,25 @@ return [
             $query['term'] = $Term;
 
             if (isset($input['created_within_term'])) {
-                $created_within_term = $input['created_within_term'];
-            } else { // default
-                $created_within_term = $query['submitted_within_term'];
+                $query['created_within_term'] = (bool)$input['created_within_term'];
             }
 
             if (isset($input['submitted_within_term'])) {
-                $submitted_within_term = $input['submitted_within_term'];
-            } else {
-                $submitted_within_term = $query['submitted_within_term'];
+                $query['submitted_within_term'] = (bool)$input['submitted_within_term'];
             }
 
-            if (empty($created_within_term) && empty($submitted_within_term)) {
+            if (empty($query['created_within_term']) && empty($query['submitted_within_term'])) {
                 throw new RangeException('created_within_term or submitted_within_term must be selected with term filter');
             }
 
-            if (!empty($created_within_term)) {
+            if (!empty($query['created_within_term'])) {
                 $query['date_created_from'] = $Term->StartDate;
                 $query['date_created_to'] = $Term->EndDate;
                 unset($input['date_created_from']);
                 unset($input['date_created_to']);
             }
 
-            if (!empty($submitted_within_term)) {
+            if (!empty($query['submitted_within_term'])) {
                 $query['date_submitted_from'] = $Term->StartDate;
                 $query['date_submitted_to'] = $Term->EndDate;
                 unset($input['date_submitted_from']);
