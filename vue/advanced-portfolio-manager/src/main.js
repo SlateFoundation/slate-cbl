@@ -2,9 +2,9 @@ import Vue from 'vue';
 import { BootstrapVue } from 'bootstrap-vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-  faAngleUp, faAngleDown,
   faCheckSquare,
-  faInfo,
+  faChevronCircleUp, faChevronCircleDown,
+  faInfoCircle,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -19,9 +19,9 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './assets/app.scss';
 
 library.add(
-  faAngleUp, faAngleDown,
   faCheckSquare,
-  faInfo,
+  faChevronCircleUp, faChevronCircleDown,
+  faInfoCircle,
   faTimes,
   farSquare,
 );
