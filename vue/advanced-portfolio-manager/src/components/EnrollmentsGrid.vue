@@ -149,6 +149,14 @@ export default {
     color: $link-color;
   }
 
+  thead {
+    background-color: white;
+    box-shadow: 0 1px 0 black;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
   tbody {
     td {
       border: 1px solid;
@@ -215,6 +223,7 @@ export default {
   }
 
   .col-heading-clip {
+    background-color: white;
     height: 100%;
     overflow: hidden;
     width: 300%;
@@ -227,7 +236,7 @@ export default {
     color: inherit;
     display: block;
     height: 58px;
-    left: 47px;
+    left: 48px;
     line-height: 1;
     overflow: hidden;
     padding: 20px 30px 20px 40px;
