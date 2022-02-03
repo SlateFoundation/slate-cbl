@@ -9,7 +9,7 @@
 
 ### State flow
 
-![State Flow Diagram](docs/state-flow.png)
+*Moved to slate-cbl docs*
 
 ## TODO
 
