@@ -24,9 +24,9 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
 
     loadRecords: function() {
         var me = this,
-            childTasksByParent = {},
+            subTasksByParent = {},
             count, index, task, parentTaskId,
-            childTasks, childTasksLength, childTaskIndex, taskData;
+            subTasks, subTasksLength, subTaskIndex, taskData;
 
         me.callParent(arguments);
 
@@ -43,24 +43,24 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
                 continue;
             }
 
-            if (parentTaskId in childTasksByParent) {
-                childTasksByParent[parentTaskId].push(task);
+            if (parentTaskId in subTasksByParent) {
+                subTasksByParent[parentTaskId].push(task);
             } else {
-                childTasksByParent[parentTaskId] = [task];
+                subTasksByParent[parentTaskId] = [task];
             }
         }
 
         for (index = 0; index < count; index++) {
             task = me.getAt(index);
             taskData = task.getData();
-            childTasks = childTasksByParent[task.getId()] || [];
-            childTasksLength = childTasks.length;
-            childTaskIndex = 0;
+            subTasks = subTasksByParent[task.getId()] || [];
+            subTasksLength = subTasks.length;
+            subTaskIndex = 0;
 
-            task.set('SubTasks', childTasks, { dirty: false });
+            task.set('SubTasks', subTasks, { dirty: false });
 
-            for (; childTaskIndex < childTasksLength; childTaskIndex++) {
-                childTasks[childTaskIndex].set('ParentTask', taskData, { dirty: false });
+            for (; subTaskIndex < subTasksLength; subTaskIndex++) {
+                subTasks[subTaskIndex].set('ParentTask', taskData, { dirty: false });
             }
         }
         me.endUpdate();
