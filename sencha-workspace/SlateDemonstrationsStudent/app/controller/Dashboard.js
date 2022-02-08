@@ -252,7 +252,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         Ext.resumeLayouts(true);
 
         // show/hide components based on enrollment
-        me.getDashboardCt().updateCardsForEnrollmentStatus(studentEnrolled);
+        me.getDashboardCt().setHasEnrollments(studentEnrolled);
 
         // finish load
         competenciesSummary.setLoading(false);

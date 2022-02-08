@@ -68,6 +68,14 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         selectedContentArea: null,
 
         /**
+         * @cfg {boolean}
+         * Flag signifying whether or not a student is enrolled in a competency.
+         * On update, this value will be used to show/hide UI elements to reflect
+         * enrollment status.
+         */
+        hasEnrollments: true,
+
+        /**
          * @cfg {Slate.cbl.model.ContentArea|null}
          * The loaded content area model instance for the application. This config gets
          * set following a change in {@link #cfg-selectedContentArea} and successful load
@@ -162,7 +170,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
     },
 
-    updateCardsForEnrollmentStatus: function(enrolled) {
+    updateHasEnrollments: function(enrolled) {
       var me = this;
 
       Ext.suspendLayouts();
