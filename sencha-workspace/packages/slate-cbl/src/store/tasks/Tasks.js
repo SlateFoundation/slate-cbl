@@ -32,7 +32,7 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
 
         me.beginUpdate();
 
-        // decorate Task records with ChildTasks arrays and ParentTask references
+        // decorate Task records with SubTasks arrays and ParentTask references
         count = me.getCount();
 
         for (index = 0; index < count; index++) {
@@ -57,7 +57,7 @@ Ext.define('Slate.cbl.store.tasks.Tasks', {
             childTasksLength = childTasks.length;
             childTaskIndex = 0;
 
-            task.set('ChildTasks', childTasks, { dirty: false });
+            task.set('SubTasks', childTasks, { dirty: false });
 
             for (; childTaskIndex < childTasksLength; childTaskIndex++) {
                 childTasks[childTaskIndex].set('ParentTask', taskData, { dirty: false });
