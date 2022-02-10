@@ -103,6 +103,11 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                         '{Demonstration.StudentTask.Task.Title:htmlEncode}',
                                     '</div>',
                                 '</a> ',
+                            '<tpl elseif="Demonstration.PerformanceType">',
+                                // TODO: update class if not linkable
+                                '<div class="linkable-content">',
+                                    '{Demonstration.PerformanceType:htmlEncode}',
+                                '</div>',
                             '</tpl>',
                         '</td > ',
                     '</tpl>',
