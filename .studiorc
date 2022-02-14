@@ -56,5 +56,9 @@ build-all() {
 }
 
 
+# final init and output
+studio-help
+
+
 # final blank line
 echo
