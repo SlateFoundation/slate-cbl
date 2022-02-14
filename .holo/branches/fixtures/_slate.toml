@@ -1,4 +1,4 @@
 [holomapping]
 holosource = "=>fixtures"
-files = "*.sql"
+files = "**/*.sql"
 before = "*"
