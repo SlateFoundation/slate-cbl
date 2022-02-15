@@ -28,7 +28,7 @@ if (!empty($_REQUEST['students'])) {
         $studentIds = array_map(function($s){
             return $s->ID;
         }, $students);
-    
+
         $studentTaskConditions['StudentID'] = [
             'operator' => 'IN',
             'values' => $studentIds
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insertStatement =
             'INSERT INTO `%1$s` '.
             '(`CreatorID`, `Class`, `DemonstrationID`, `SkillID`, `TargetLevel`, `DemonstratedLevel`) ';
-    
+
         // insert 'Missing' ratings for unrated skills associated with expired tasks
         $query =
             'SELECT * FROM ('.
@@ -122,17 +122,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         '%6$s.SkillID, '.
                         '%10$s.Level, '.
                         '0 AS DemonstratedLevel '.
-    
+
                         // uncomment these lines for debugging
                         // ',%4$s.ID AS StudentTaskID '. // debug
                         // ',%4$s.TaskID AS TaskID '. // debug
                         // ',%4$s.StudentID AS StudentID '. // debug
-    
+
                     'FROM `%3$s` %4$s '.
-    
+
                     'JOIN %15$s `%16$s` '.
                     '  ON %16$s.ID = %4$s.TaskID '.
-    
+
                     'JOIN ( '.
                         'SELECT %6$s.SkillID, %6$s.TaskID '.
                             'FROM `%5$s` %6$s '.
@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             'GROUP BY StudentID, CompetencyID '.
                         ') as %10$s '.
                         'ON  %10$s.CompetencyID = %8$s.CompetencyID '.
-    
+
                     'WHERE '.
                     '%4$s.ID IN (%14$s) '.
                     // 'AND %15$s '.
@@ -169,17 +169,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         '%13$s.SkillID, '.
                         '%10$s.Level, '.
                         '0 AS DemonstratedLevel '.
-    
+
                         // uncomment these lines for debugging
                         // ',%4$s.ID AS StudentTaskID '. // debug
                         // ',%4$s.TaskID AS TaskID '. // debug
                         // ',%4$s.StudentID AS StudentID '. // debug
-    
+
                     'FROM `%3$s` %4$s '.
-    
+
                     'JOIN %15$s `%16$s` '.
                     '  ON %16$s.ID = %4$s.TaskID '.
-    
+
                     'JOIN ( '.
                         'SELECT %13$s.SkillID, %13$s.StudentTaskID '.
                             'FROM `%12$s` %13$s '.
@@ -196,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             'GROUP BY StudentID, CompetencyID '.
                         ') as %10$s '.
                         'ON  %10$s.CompetencyID = %8$s.CompetencyID '.
-    
+
                     'WHERE '.
                     '%4$s.ID IN (%14$s) '.
                     // 'AND %15$s '.
@@ -208,40 +208,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ')'.
                 ')'.
             ") missingSkills";
-    
+
         $params = [
             DemonstrationSkill::$tableName, // 1
             DB::escape(DemonstrationSkill::class), // 2
-    
+
             StudentTask::$tableName, // 3
             StudentTask::getTableAlias(), // 4
-    
+
             TaskSkill::$tableName, // 5
             TaskSkill::getTableAlias(), // 6
-    
+
             Skill::$tableName, // 7
             Skill::getTableAlias(), // 8
-    
+
             StudentCompetency::$tableName, // 9
             StudentCompetency::getTableAlias(), // 10
-    
+
             DemonstrationSkill::getTableAlias(), // 11
-    
+
             StudentTaskSkill::$tableName, // 12
             StudentTaskSkill::getTableAlias(), // 13
-    
+
             join(', ', $expiredStudentTaskIds), // 14
-    
+
             Task::$tableName, // 15
             Task::getTableAlias() // 16
         ];
-    
+
         if (!empty($_REQUEST['debug'])) {
             $missingSkills = DB::allRecords($query, $params);
             Debug::dump([$query, $params, vsprintf($query, $params)], false, 'query/params');
             Debug::dump($missingSkills, true, 'missing skills');
         }
-    
+
         DB::nonQuery($insertStatement.$query, $params);
         Debug::dump(DB::affectedRows(), false, 'created');
     }
