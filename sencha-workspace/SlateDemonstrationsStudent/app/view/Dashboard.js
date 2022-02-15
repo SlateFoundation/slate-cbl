@@ -5,6 +5,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         'SlateDemonstrationsStudent.view.CompetenciesSummary',
         'SlateDemonstrationsStudent.view.RecentProgress',
         'SlateDemonstrationsStudent.view.CardsContainer',
+        'SlateDemonstrationsStudent.view.NonEnrollmentMessage',
 
         /* global Slate */
         'Slate.cbl.view.LevelsLegend',
@@ -67,6 +68,14 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         selectedContentArea: null,
 
         /**
+         * @cfg {boolean}
+         * Flag signifying whether or not a student is enrolled in a competency.
+         * On update, this value will be used to show/hide UI elements to reflect
+         * enrollment status.
+         */
+        hasEnrollments: true,
+
+        /**
          * @cfg {Slate.cbl.model.ContentArea|null}
          * The loaded content area model instance for the application. This config gets
          * set following a change in {@link #cfg-selectedContentArea} and successful load
@@ -97,6 +106,12 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
          * Setting boolean values change visibility.
          */
         legend: false,
+
+        /**
+         * @cfg {SlateDemonstrationsStudent.view.NonEnrollmentMessage|Object|boolean}
+         * Instance or configuration for component containing non-enrollment message.
+         */
+        nonEnrollmentMessage: false,
 
         /**
          * @cfg {Ext.container.Container|Object|boolean}
@@ -149,9 +164,22 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.setRecentProgress(contentAreaSet);
         me.setLegend(contentAreaSet);
         me.setCardsCt(contentAreaSet);
+        me.setNonEnrollmentMessage(contentAreaSet);
         Ext.resumeLayouts(true);
 
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
+    },
+
+    updateHasEnrollments: function(enrolled) {
+      var me = this;
+
+      Ext.suspendLayouts();
+      me.setCompetenciesSummary(enrolled);
+      me.setRecentProgress(enrolled);
+      me.setLegend(enrolled);
+      me.setCardsCt(enrolled);
+      me.setNonEnrollmentMessage(!enrolled);
+      Ext.resumeLayouts(true);
     },
 
     applyLoadedContentArea: function(contentArea, oldContentArea) {
@@ -221,6 +249,16 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         return Ext.factory(cardsCt, 'SlateDemonstrationsStudent.view.CardsContainer', oldCardsCt);
     },
 
+    applyNonEnrollmentMessage: function(message, oldMessage) {
+        if (typeof message === 'boolean') {
+            message = {
+                hidden: !message
+            };
+        }
+
+        return Ext.factory(message, 'SlateDemonstrationsStudent.view.NonEnrollmentMessage', oldMessage);
+    },
+
 
     // component lifecycle
     initItems: function() {
@@ -232,7 +270,8 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
             me.getCompetenciesSummary(),
             me.getRecentProgress(),
             me.getLegend(),
-            me.getCardsCt()
+            me.getCardsCt(),
+            me.getNonEnrollmentMessage()
         ]);
     }
 });

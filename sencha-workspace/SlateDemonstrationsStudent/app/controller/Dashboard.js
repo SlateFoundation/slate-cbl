@@ -22,7 +22,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         studentSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-studentselector',
         contentAreaSelector: 'slate-demonstrations-student-dashboard slate-appheader slate-cbl-contentareaselector',
         competenciesSummary: 'slate-demonstrations-student-competenciessummary',
-        cardsCt: 'slate-demonstrations-student-cardsct'
+        cardsCt: 'slate-demonstrations-student-cardsct',
     },
 
 
@@ -150,6 +150,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             studentCompetencyIndex, studentCompetency, level, competencyId,
             competency, competencyCurrent, average, growth,
 
+            // determine enrollment status by counting competencies
+            studentEnrolled = studentCompetenciesCount > 0,
 
             competencyLevels = {},
             lowestLevel = Infinity,
@@ -160,7 +162,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             growthValues = [],
 
             cardConfigs = [];
-
 
         // load content area and competencies
         delete contentAreaData.Competencies;
@@ -250,6 +251,8 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
         Ext.resumeLayouts(true);
 
+        // show/hide components based on enrollment
+        me.getDashboardCt().setHasEnrollments(studentEnrolled);
 
         // finish load
         competenciesSummary.setLoading(false);
