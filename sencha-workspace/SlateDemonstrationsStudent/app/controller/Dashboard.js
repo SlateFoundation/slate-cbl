@@ -147,6 +147,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
             studentCompetenciesStore = me.getStudentCompetenciesStore(),
             studentCompetenciesCount = studentCompetenciesStore.getCount(),
+            studentCompetencyIDs = [],
             studentCompetencyIndex, studentCompetency, level, competencyId,
             competency, competencyCurrent, average, growth,
 
@@ -222,15 +223,20 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             }
         }
 
+        // get an array of competency IDs from the studentCompetenciesStore
+        studentCompetenciesStore.each((rec,id) => studentCompetencyIDs.push(rec.get('CompetencyID')));
 
-        // build cards
+        //build cards
         competenciesCount = competenciesStore.getCount();
         competencyIndex = 0;
 
         for (; competencyIndex < competenciesCount; competencyIndex++) {
-            cardConfigs.push({
-                competency: competenciesStore.getAt(competencyIndex)
-            });
+            let competency = competenciesStore.getAt(competencyIndex);
+            if (studentCompetencyIDs.includes(competency.get('ID'))) {
+                cardConfigs.push({
+                    competency: competency
+                });
+            }
         }
 
 
