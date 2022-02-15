@@ -1,4 +1,4 @@
 [holomapping]
 root = "fixtures"
-files = "*.sql"
+files = "**/*.sql"
 after = "*"

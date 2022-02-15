@@ -103,6 +103,8 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                                         '{Demonstration.StudentTask.Task.Title:htmlEncode}',
                                     '</div>',
                                 '</a> ',
+                            '<tpl elseif="Demonstration.PerformanceType">',
+                                '{Demonstration.PerformanceType:htmlEncode}',
                             '</tpl>',
                         '</td > ',
                     '</tpl>',

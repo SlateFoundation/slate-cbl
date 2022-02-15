@@ -73,6 +73,7 @@
                     {checkbox
                         inputName=$key
                         value=yes
+                        unsetValue=''
                         label=$label
                         default=$value
                         placeholder='any'
