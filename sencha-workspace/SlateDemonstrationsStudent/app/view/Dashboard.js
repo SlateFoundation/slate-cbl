@@ -171,15 +171,15 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     },
 
     updateHasEnrollments: function(enrolled) {
-      var me = this;
+        var me = this;
 
-      Ext.suspendLayouts();
-      me.setCompetenciesSummary(enrolled);
-      me.setRecentProgress(enrolled);
-      me.setLegend(enrolled);
-      me.setCardsCt(enrolled);
-      me.setNonEnrollmentMessage(!enrolled);
-      Ext.resumeLayouts(true);
+        Ext.suspendLayouts();
+        me.setCompetenciesSummary(enrolled);
+        me.setRecentProgress(enrolled);
+        me.setLegend(enrolled);
+        me.setCardsCt(enrolled);
+        me.setNonEnrollmentMessage(!enrolled);
+        Ext.resumeLayouts(true);
     },
 
     applyLoadedContentArea: function(contentArea, oldContentArea) {
