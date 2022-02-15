@@ -250,10 +250,9 @@ return [
 
         while ($record = $result->fetch_assoc()) {
             $StudentTask = Slate\CBL\Tasks\StudentTask::instantiateRecord($record);
-
-            $submissionTimestamp = $record['SubmissionCreated']
-                ? strtotime($record['SubmissionCreated'])
-                : null;
+            $StudentTaskSubmission = Slate\CBL\Tasks\StudentTaskSubmission::instantiateRecord([
+                'Created' => $record['SubmissionCreated']
+            ]);
 
             // start with list of skill codes for task, cached between records
             if (isset($taskSkillCodes[$StudentTask->TaskID])) {
@@ -313,7 +312,10 @@ return [
                 'Status' => $StudentTask->TaskStatus,
                 'DueDate' => $StudentTask->getEffectiveDueDate() ? date('m/d/Y', $StudentTask->getEffectiveDueDate()) : null,
                 'ExpirationDate' => $StudentTask->getEffectiveExpirationDate() ? date('m/d/Y', $StudentTask->getEffectiveExpirationDate()) : null,
-                'SubmittedDate' => $submissionTimestamp ? date('m/d/Y', $submissionTimestamp) : null,
+                'SubmittedDate' =>
+                    $StudentTaskSubmission->Created && $StudentTaskSubmission->Created != 'CURRENT_TIMESTAMP'
+                    ? date('m/d/Y', $StudentTaskSubmission->Created)
+                    : null,
                 'AssignedDate' => date('m/d/Y', $StudentTask->Created),
                 'SkillCodes' => implode(', ', $skillCodes),
                 'TermTitle' => $StudentTask->Task->Section->Term->Title,
