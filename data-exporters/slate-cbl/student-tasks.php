@@ -304,14 +304,23 @@ return [
                 'CreatorFullName' => $StudentTask->Creator->FullName,
                 'TaskTitle' => $StudentTask->Task->Title,
                 'TaskExperienceType' => $StudentTask->Task->ExperienceType,
-                'Created' =>  $StudentTask->Task->Created ? date('m/d/Y H:i:s P', $StudentTask->Task->Created) : null,
+                'Created' =>
+                    $StudentTask->Task->Created
+                    ? date('m/d/Y H:i:s P', $StudentTask->Task->Created)
+                    : null,
                 'SectionTitle' => $StudentTask->Task->Section->Title,
                 'SectionCode' => $StudentTask->Task->Section->Code,
                 'CourseTitle' => $StudentTask->Task->Section->Course->Title,
                 'CourseCode' => $StudentTask->Task->Section->Course->Code,
                 'Status' => $StudentTask->TaskStatus,
-                'DueDate' => $StudentTask->getEffectiveDueDate() ? date('m/d/Y', $StudentTask->getEffectiveDueDate()) : null,
-                'ExpirationDate' => $StudentTask->getEffectiveExpirationDate() ? date('m/d/Y', $StudentTask->getEffectiveExpirationDate()) : null,
+                'DueDate' =>
+                    $StudentTask->getEffectiveDueDate()
+                    ? date('m/d/Y', $StudentTask->getEffectiveDueDate())
+                    : null,
+                'ExpirationDate' =>
+                    $StudentTask->getEffectiveExpirationDate()
+                    ? date('m/d/Y', $StudentTask->getEffectiveExpirationDate())
+                    : null,
                 'SubmittedDate' =>
                     $StudentTaskSubmission->Created && $StudentTaskSubmission->Created != 'CURRENT_TIMESTAMP'
                     ? date('m/d/Y', $StudentTaskSubmission->Created)
