@@ -170,7 +170,7 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
     },
 
-    updateHasEnrollments: function(enrolled) {
+    applyHasEnrollments: function(enrolled) {
         var me = this;
 
         Ext.suspendLayouts();
@@ -180,6 +180,8 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.setCardsCt(enrolled);
         me.setNonEnrollmentMessage(!enrolled);
         Ext.resumeLayouts(true);
+
+        return enrolled;
     },
 
     applyLoadedContentArea: function(contentArea, oldContentArea) {
