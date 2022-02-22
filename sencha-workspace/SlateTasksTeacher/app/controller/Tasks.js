@@ -319,7 +319,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 tasksStore.mergeData([savedTask]);
 
                 if (parentTask) {
-                    parentTask.get('ChildTasks').push(savedTask);
+                    parentTask.get('SubTasks').push(savedTask);
                 }
 
                 tasksStore.endUpdate();
@@ -380,7 +380,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 tasksStore.mergeData([savedTask]);
 
                 if (parentTask) {
-                    parentTask.get('ChildTasks').push(savedTask);
+                    parentTask.get('SubTasks').push(savedTask);
                 }
 
                 tasksStore.endUpdate();
@@ -443,7 +443,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                 tasksStore.mergeData([savedTask]);
 
                 if (parentTask) {
-                    parentTask.get('ChildTasks').push(savedTask);
+                    parentTask.get('SubTasks').push(savedTask);
                 }
 
                 tasksStore.endUpdate();
