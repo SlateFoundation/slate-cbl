@@ -215,6 +215,13 @@ class Task extends \VersionedRecord
                 // clear immediately to prevent validation loop
                 $Task->ParentTaskID = null;
             }
+
+            if (!empty($Task->SubTasks)) {
+                $validator->addError('ParentTaskID', 'A task with subtasks is a parent task and cannot be a subtask of another task');
+
+                // clear immediately to prevent validation loop
+                $Task->ParentTaskID = null;
+            }
         }
     }
 

@@ -190,7 +190,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
 
         // virtual fields
         {
-            name: 'ChildTasks',
+            name: 'SubTasks',
             defaultValue: [],
             persist: true
         }
@@ -198,7 +198,7 @@ Ext.define('Slate.cbl.model.tasks.Task', {
 
     proxy: {
         type: 'slate-cbl-tasks',
-        include: ['Assignees', 'Attachments.File', 'Skills', 'ClonedTask']
+        include: ['Assignees', 'Attachments.File', 'Skills', 'ClonedTask', 'SubTasks']
     },
 
     // TODO: review if still needed

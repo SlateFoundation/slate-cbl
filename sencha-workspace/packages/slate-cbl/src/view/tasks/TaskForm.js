@@ -253,6 +253,9 @@ Ext.define('Slate.cbl.view.tasks.TaskForm', function() {
                         : Ext.String.format(me.getInitialConfig('editTitle'), task.getId(), task.get('Title'))
                 );
 
+                // Hide the parentTask field if this task is a parent of other tasks
+                me.getParentTaskField().setHidden(task.get('SubTasks').length > 0);
+
                 me.getClonedTaskField().setHidden(!task.phantom);
                 me.getClonedTaskDisplayField().setHidden(task.phantom);
                 me.show();

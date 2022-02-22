@@ -125,7 +125,7 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
 
         // Aggregrid template methods
         isRowExpandable: function(row) {
-            return row.get('ChildTasks').length > 0;
+            return row.get('SubTasks').length > 0;
         },
 
         buildColumnTplData: function() {
