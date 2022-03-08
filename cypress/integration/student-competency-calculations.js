@@ -21,7 +21,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                     .should(({ xhr }) => {
                         const studentCompetencyCodes = Object.keys(testCases[studentUsername][studentContentArea]);
                         studentCompetencyCodes.forEach(studentCompetencyCode => {
-                            const { data, ContentArea: { Competencies: competencies } } = JSON.parse(xhr.response)      
+                            const { data, ContentArea: { Competencies: competencies } } = JSON.parse(xhr.response)
                             const { ID: competencyId } = competencies.filter(datum => datum.Code === `${studentCompetencyCode}`).pop()
                             const studentData = data.filter(datum => datum.CompetencyID === competencyId) // filter by CompetencyID
                             .sort((sc1, sc2) => sc1.Level - sc2.Level).pop(); // sort by highest level last, and use that
@@ -37,7 +37,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                             cy.wrap(xhr).its('status').should('eq', 200);
                             //convert api baseline to string, if it is not null
                             expect(
-                              apiBaseLine ? `${apiBaseLine}` : apiBaseLine,
+                              apiBaseLine !== null ? `${apiBaseLine}` : apiBaseLine,
                               `${studentCompetencyCode} for ${studentUsername} API Baseline Value ${apiBaseLine}: Fixtures data Baseline Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].baseline}`
                             ).to.equal(
                               testCases[studentUsername][studentContentArea][
@@ -45,9 +45,9 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                               ].baseline
                             );
 
-                            // convert api growth to string
+                            // convert api growth to string if the value is not null
                             expect(
-                              `${apiGrowth}`,
+                                apiGrowth !== null ? `${apiGrowth}` : apiGrowth,
                               `${studentCompetencyCode} for ${studentUsername} API Growth Value ${apiGrowth}: Fixtures data Growth Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].growth}`
                             ).to.equal(
                               testCases[studentUsername][studentContentArea][
@@ -188,7 +188,7 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                             const studentCompetencyRow = records.filter((record)=> {
                                 return record.Competency === `${studentCompetencyCode}`
                             }).pop();
-                            
+
                             const csvPerformanceLevel = studentCompetencyRow['Performance Level']
                             const csvGrowth = studentCompetencyRow.Growth
                             const csvBaseLine = studentCompetencyRow.Baseline
@@ -203,22 +203,17 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                                 `${studentCompetencyCode} for ${studentUsername}  CSV Performance Level Value ${csvPerformanceLevel}: Fixtures data Perfomance Level Value ${performanceLevel}`
                             ).to.equal(performanceLevel);
 
-                            // csv represents 0 growth as an empty string
-                            expect(`${csvGrowth === '' ? 0 : csvGrowth}`,
+                            // csv represents null growth as an empty string
+                            expect(
+                                csvGrowth === '' ? null : `${csvGrowth}`,
                                 `${studentCompetencyCode} for ${studentUsername} CSV Growth Value ${csvGrowth}: Fixtures data Growth Value ${growth}`
                             ).to.equal(growth);
 
-                            // if csv value = 0, baseline could = NULL OR 0.
-                            // this needs to be resolved -- the CSV should probably differentiate
-                            if (csvBaseLine === '0') {
-                                expect(baseline,
-                                    `${studentCompetencyCode} for ${studentUsername} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
-                                ).to.be.oneOf(['0', null])
-                            } else {
-                                expect(`${csvBaseLine}`,
-                                    `${studentCompetencyCode} for ${studentUsername} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
-                                ).to.equal(baseline);
-                            }
+                            // csv represents null baseline as empty string
+                            expect(
+                                csvBaseLine === '' ? null : `${csvBaseLine}`,
+                                `${studentCompetencyCode} for ${studentUsername} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
+                            ).to.equal(baseline)
 
                             // csv represents 0 progress as empty string
                             if (csvProgress === '') {
