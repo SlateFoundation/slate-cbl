@@ -145,7 +145,7 @@ class StudentCompetency extends \ActiveRecord
 
     public function getBaselineRating()
     {
-        return round($this->BaselineRating, static::$averagePrecision);
+        return $this->BaselineRating !== null ? round($this->BaselineRating, static::$averagePrecision) : null;
     }
 
     public function getCompletion()
