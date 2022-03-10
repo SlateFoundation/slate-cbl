@@ -33,8 +33,8 @@ describe('Competency dashboard ratings test', () => {
 
             // verify and click first element of picker dropdown
             cy.get('#' + rubricSelector.getPicker().id + ' .x-boundlist-item')
-            .contains('English Language Arts')
-            .click()
+                .contains('English Language Arts')
+                .click()
 
             // verify hash updates
             cy.location('hash').should('eq', '#ELA')
@@ -221,7 +221,7 @@ describe('Competency dashboard ratings test', () => {
                                 // NOTE: the following assertions can fail if the fixture data changes
                                 // "12" rating on each skill in the first competency
                                 cy.get(`tr.cbl-grid-skills-row[data-competency="${firstCompetency.ID}"] [data-student="${studentId}"] li[title="12"]`)
-                                .should('have.length', firstCompetency.skillIds.length);
+                                    .should('have.length', firstCompetency.skillIds.length);
                                 // "10" rating on each skill in the first competency
                                 cy.get(`tr.cbl-grid-skills-row[data-competency="${secondCompetency.ID}"] [data-student="${studentId}"] li[title="10"]`)
                                     .should('have.length', secondCompetency.skillIds.length);
