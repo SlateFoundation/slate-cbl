@@ -1,4 +1,4 @@
-describe('Comptency dashboard ratings test', () => {
+describe('Competency dashboard ratings test', () => {
 
     // load sample database before tests
     before(() => {
@@ -106,7 +106,7 @@ describe('Comptency dashboard ratings test', () => {
 
                     cy.get('#' + competencyCodeTextfield.getId()).type(firstCompetency.Code);
 
-                    // comptency grid should only show the competency we typed
+                    // competency grid should only show the competency we typed
                     cy.get('#' + competencyGrid.getId())
                         .find('table')
                         .should('have.length', 1);
@@ -151,7 +151,7 @@ describe('Comptency dashboard ratings test', () => {
 
                             cy.get('#' + competencyCodeTextfield.getId()).type(secondCompetency.Code);
 
-                             // comptency grid should only show the competency we typed
+                             // competency grid should only show the competency we typed
                              cy.get('#' + competencyGrid.getId())
                                 .find('table')
                                 .should('have.length', 1);
