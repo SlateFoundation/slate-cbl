@@ -177,7 +177,7 @@ describe('Comptency dashboard ratings test', () => {
                         })
 
                         const textarea = extQuerySelector('slate-cbl-demonstrations-demonstrationform textarea');
-                        const saveBtn = extQuerySelector('button[text="Save Demonstration"]');
+                        const saveBtn = extQuerySelector('button[text="Save Evidence"]');
 
                         // type comment into text area
                         cy.get('#' + textarea.getId())
@@ -203,7 +203,7 @@ describe('Comptency dashboard ratings test', () => {
 
                                         // NOTE: the followoing assertions can fail if the fixture data changes
                                         cy.contains('33%') // we input 1 rating for each skill (4/12 = 33%)
-                                        cy.contains('Y4') // Level 4 Progress
+                                        cy.contains('P4') // Level 4 Portfolio Progress
                                         cy.contains('12') // Avg of 12
                                     });
 
@@ -213,7 +213,7 @@ describe('Comptency dashboard ratings test', () => {
 
                                         // NOTE: the followoing assertions can fail if the fixture data changes
                                         cy.contains('33%') // we input 1 rating for each skill (4/12 = 33%)
-                                        cy.contains('Y4') // Level 4 Progress
+                                        cy.contains('P4') // Level 4 Portfolio Progress
                                         cy.contains('10') // Avg of 12
                                     });
 
