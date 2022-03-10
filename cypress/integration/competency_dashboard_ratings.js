@@ -76,7 +76,7 @@ describe('Competency dashboard ratings test', () => {
 
                     const firstCompetency = competencies[0];
                     const secondCompetency = competencies[1];
-                    // const randomCompetency = competencies[competencies.length - Math.floor(Math.random() * (competencies.length - 2) + 2)];
+
                     const demonstrationForm = extQuerySelector('slate-cbl-demonstrations-demonstrationform')
                     const competencyGrid = extQuerySelector('slate-cbl-competenciesgrid')
                     const competencyCodeTextfield = demonstrationForm.getRatingsField().down('textfield')
@@ -191,7 +191,7 @@ describe('Competency dashboard ratings test', () => {
                                 // confirm completion %, avg, and level
                                 const { data } = JSON.parse(xhr.response)
                                 const savedRecord = data[0];
-                                debugger;
+
                                 // check the saved object
                                 expect(savedRecord).to.have.property('StudentID')
 
