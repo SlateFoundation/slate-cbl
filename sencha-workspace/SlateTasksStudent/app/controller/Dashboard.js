@@ -112,21 +112,27 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         me.showDashboard(studentUsername, sectionCode);
 
         if (!studentTaskStore.isLoaded()) {
-          studentTaskStore.on('load', function() {
-            me.showDashboardAndTask(studentUsername, sectionCode, studentTaskId);
-          }, me, { single: true });
-          return;
+            studentTaskStore.on('load', function() {
+                me.showDashboardAndTask(studentUsername, sectionCode, studentTaskId);
+            }, me, { single: true });
+            return;
         }
 
         studentTask = studentTaskStore.getById(studentTaskId);
 
-        if (!studentTask) {
-            Ext.Msg.alert('Unable to open student task', `Student task #${studentTaskId} was not able to be loaded`);
-            return;
+        if (studentTask) {
+            me.getController('Tasks').openTaskWindow(studentTask);
+        } else {
+            studentTaskStore.getModel().load(studentTaskId, {
+                success: function(studentTask) {
+                    me.getController('Tasks').openTaskWindow(studentTask);
+                },
+                failure: function() {
+                    Ext.Msg.alert('Unable to open student task', `Student task #${studentTaskId} was not able to be loaded`);
+                }
+            });
         }
-
-        me.getController('Tasks').openTaskWindow(studentTask);
-  },
+    },
 
 
     // event handlers
