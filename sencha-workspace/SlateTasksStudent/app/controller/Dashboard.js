@@ -112,10 +112,10 @@ Ext.define('SlateTasksStudent.controller.Dashboard', {
         me.showDashboard(studentUsername, sectionCode);
 
         if (!studentTaskStore.isLoaded()) {
-          studentTaskStore.on('load', function() {
-            me.showDashboardAndTask(studentUsername, sectionCode, studentTaskId);
-          }, me, { single: true });
-          return;
+            studentTaskStore.on('load', function() {
+                me.showDashboardAndTask(studentUsername, sectionCode, studentTaskId);
+            }, me, { single: true });
+            return;
         }
 
         studentTask = studentTaskStore.getById(studentTaskId);
