@@ -220,7 +220,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         }
 
         // get an array of competency IDs from the studentCompetenciesStore
-        let studentCompetencyIDs = studentCompetenciesStore.getData().items.map(rec => rec.get('CompetencyID'));
+        const studentCompetencyIDs = studentCompetenciesStore.collect('CompetencyID');
 
         // build cards
         competenciesCount = competenciesStore.getCount();
