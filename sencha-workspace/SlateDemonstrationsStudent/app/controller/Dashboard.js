@@ -229,7 +229,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         for (; competencyIndex < competenciesCount; competencyIndex++) {
             let competency = competenciesStore.getAt(competencyIndex);
 
-            if (studentCompetencyIDs.includes(competency.get('ID'))) {
+            if (studentCompetencyIDs.includes(competency.getId())) {
                 cardConfigs.push({
                     competency: competency
                 });
