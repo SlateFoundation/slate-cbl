@@ -170,16 +170,18 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
     },
 
-    updateHasEnrollments: function(enrolled) {
-      var me = this;
+    applyHasEnrollments: function(enrolled) {
+        var me = this;
 
-      Ext.suspendLayouts();
-      me.setCompetenciesSummary(enrolled);
-      me.setRecentProgress(enrolled);
-      me.setLegend(enrolled);
-      me.setCardsCt(enrolled);
-      me.setNonEnrollmentMessage(!enrolled);
-      Ext.resumeLayouts(true);
+        Ext.suspendLayouts();
+        me.setCompetenciesSummary(enrolled);
+        me.setRecentProgress(enrolled);
+        me.setLegend(enrolled);
+        me.setCardsCt(enrolled);
+        me.setNonEnrollmentMessage(!enrolled);
+        Ext.resumeLayouts(true);
+
+        return enrolled;
     },
 
     applyLoadedContentArea: function(contentArea, oldContentArea) {

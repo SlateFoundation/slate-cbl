@@ -1,29 +1,49 @@
-GET {{host}}/login
+@baseUrl = http://localhost:2190
 
 ###
 
-GET {{host}}/logout
+# @name login
+POST {{baseUrl}}/login
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+
+_LOGIN[username]=system
+&_LOGIN[password]=system
+&_LOGIN[returnMethod]=POST
 
 ###
 
-GET {{host}}/cbl/content-areas
+# @name getSession
+GET {{baseUrl}}/login
+Accept: application/json
 
 ###
 
-GET {{host}}/cbl/competencies
+GET {{baseUrl}}/cbl/content-areas
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
+
+###
+
+GET {{baseUrl}}/cbl/competencies
     ?content_area=SCI
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
+
 
 ###
 
-GET {{host}}/cbl/skills
+GET {{baseUrl}}/cbl/skills
     ?content_area=SCI
     # &competencies[]=SCI.1
     # &competencies[]=SCI.2
     # &competencies[]=1
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
 
 ###
 
-GET {{host}}/cbl/student-competencies
+GET {{baseUrl}}/cbl/student-competencies
     ?entered_via=enrollment
     # &student=aabernathy-2
     &students=section:ELA-001
@@ -33,10 +53,12 @@ GET {{host}}/cbl/student-competencies
     # &competencies[]=SCI.1
     # &competencies[]=SCI.2
     # &competencies[]=1
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
 
 ###
 
-GET {{host}}/cbl/demonstrations
+GET {{baseUrl}}/cbl/demonstrations
     ?foo=bar
     &student=aabernathy
     # &students=section:ELA-001
@@ -48,10 +70,12 @@ GET {{host}}/cbl/demonstrations
     # &skills[]=SCI.1.HS.1
     # &skills[]=SCI.1.HS.2
     # &skills[]=97
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
 
 ###
 
-GET {{host}}/cbl/demonstration-skills
+GET {{baseUrl}}/cbl/demonstration-skills
     ?foo=bar
     # &student=aabernathy
     &students=section:ELA-001
@@ -63,17 +87,23 @@ GET {{host}}/cbl/demonstration-skills
     # &skills[]=SCI.1.HS.1
     # &skills[]=SCI.1.HS.2
     # &skills[]=97
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
 
 ###
 
-GET {{host}}/cbl/todos
+GET {{baseUrl}}/cbl/todos
     ?foo=bar
     &student=23
     &section=ELA-001
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
 
 ###
 
-GET {{host}}/cbl/student-tasks
+GET {{baseUrl}}/cbl/student-tasks
     ?foo=bar
     &student=aabernathy
     &section=ELA-001
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json

@@ -264,7 +264,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
 
 
         // fetch Student, Task, and StudentTask data from server
-        StudentTaskModel.load({
+        StudentTaskModel.loadByQuery({
             student: studentId,
             task: taskId,
             include: formPanel.self.modelInclude,
