@@ -150,9 +150,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             studentCompetencyIndex, studentCompetency, level, competencyId,
             competency, competencyCurrent, average, growth,
 
-            // determine enrollment status by counting competencies
-            studentEnrolled = studentCompetenciesCount > 0,
-
             competencyLevels = {},
             lowestLevel = Infinity,
             totalRequired = 0,
@@ -222,16 +219,25 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
             }
         }
 
+        // get an array of competency IDs from the studentCompetenciesStore
+        const studentCompetencyIDs = studentCompetenciesStore.collect('CompetencyID');
 
         // build cards
         competenciesCount = competenciesStore.getCount();
         competencyIndex = 0;
 
         for (; competencyIndex < competenciesCount; competencyIndex++) {
-            cardConfigs.push({
-                competency: competenciesStore.getAt(competencyIndex)
-            });
+            let competency = competenciesStore.getAt(competencyIndex);
+
+            if (studentCompetencyIDs.includes(competency.getId())) {
+                cardConfigs.push({
+                    competency: competency
+                });
+            }
         }
+
+        // set enrollment status
+        me.getDashboardCt().setHasEnrollments(cardConfigs.length>0);
 
 
         // update interface
@@ -250,9 +256,6 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
         cardsCt.add(cardConfigs);
 
         Ext.resumeLayouts(true);
-
-        // show/hide components based on enrollment
-        me.getDashboardCt().setHasEnrollments(studentEnrolled);
 
         // finish load
         competenciesSummary.setLoading(false);

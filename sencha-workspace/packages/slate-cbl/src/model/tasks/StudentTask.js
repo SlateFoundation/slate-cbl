@@ -387,7 +387,7 @@ Ext.define('Slate.cbl.model.tasks.StudentTask', function() {
 
         // static methods
         inheritableStatics: {
-            load: function(options, session) {
+            loadByQuery: function(options, session) {
                 var record = new this({}, session),
                     student = options.student,
                     task = options.task,

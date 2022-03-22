@@ -213,7 +213,7 @@ class StudentCompetency extends \ActiveRecord
     public function getDemonstrationData()
     {
         if ($this->demonstrationData === null) {
-            // TODO: cache dynamically, maybe use models instead for parsing DemonstrationSkill results?
+            // TODO: cache dynamically
             try {
                 $skillIds = $this->Competency->getSkillIds();
 
@@ -248,15 +248,18 @@ class StudentCompetency extends \ActiveRecord
 
                     foreach ($this->demonstrationData as &$demonstrationSkills) {
                         foreach ($demonstrationSkills as &$demonstrationSkill) {
-                            $demonstrationSkill['ID'] = intval($demonstrationSkill['ID']);
-                            $demonstrationSkill['Created'] = strtotime($demonstrationSkill['Created']);
-                            $demonstrationSkill['CreatorID'] = intval($demonstrationSkill['CreatorID']);
-                            $demonstrationSkill['DemonstrationID'] = intval($demonstrationSkill['DemonstrationID']);
-                            $demonstrationSkill['SkillID'] = intval($demonstrationSkill['SkillID']);
-                            $demonstrationSkill['DemonstrationDate'] = strtotime($demonstrationSkill['DemonstrationDate']);
-                            $demonstrationSkill['TargetLevel'] = intval($demonstrationSkill['TargetLevel']);
-                            $demonstrationSkill['DemonstratedLevel'] = intval($demonstrationSkill['DemonstratedLevel']);
-                            $demonstrationSkill['Override'] = $demonstrationSkill['Override'] == '1';
+                            // leverage models to parse values/timestamps correctly
+                            $Demonstration = Demonstration::instantiateRecord(
+                                [
+                                    'Demonstrated' => $demonstrationSkill['DemonstrationDate']
+                                ]
+                            );
+                            $DemonstrationSkill = DemonstrationSkill::instantiateRecord($demonstrationSkill);
+                            $demonstrationSkill = $DemonstrationSkill->getData();
+                            $demonstrationSkill['DemonstrationDate'] = $Demonstration->Demonstrated;
+
+                            // trim extraneous RevisionID
+                            unset($demonstrationSkill['RevisionID']);
                         }
                     }
                 } else {
