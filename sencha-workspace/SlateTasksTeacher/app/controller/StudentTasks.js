@@ -109,7 +109,10 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         },
         'slate-gridtoolbar checkbox[name=include_archived]': {
             change: 'onIncludeArchivedToolbarOptionChange'
-        }
+        },
+        'slate-gridtoolbar checkbox[name=include_disabled_students]': {
+          change: 'onIncludeDisabledStudentsToolbarOptionChange'
+      }
     },
 
 
@@ -238,6 +241,14 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         tasksStore.getProxy().setExtraParam('include_archived', field.getValue());
         tasksStore.load();
     },
+
+    onIncludeDisabledStudentsToolbarOptionChange: function(field) {
+      var me = this,
+          tasksStore = me.getStudentTasksStore();
+
+      tasksStore.getProxy().setExtraParam('include_disabled_students', field.getValue());
+      tasksStore.load();
+  },
 
 
     // local methods
