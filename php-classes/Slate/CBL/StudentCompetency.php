@@ -106,6 +106,9 @@ class StudentCompetency extends \ActiveRecord
         'effectiveDemonstrationsData' => [
             'getter' => 'getEffectiveDemonstrationsData'
         ],
+        'ineffectiveDemonstrationsData' => [
+            'getter' => 'getIneffectiveDemonstrationsData'
+        ],
         'minimumAverage' => [
             'getter' => 'getMinimumAverage'
         ],
@@ -337,6 +340,30 @@ class StudentCompetency extends \ActiveRecord
         }
 
         return $this->effectiveDemonstrationsData;
+    }
+
+    public function getIneffectiveDemonstrationsData()
+    {
+        $effectiveDemonstrationSkillIds = [];
+
+        foreach ($this->getEffectiveDemonstrationsData() as $demonstrationSkills) {
+            foreach ($demonstrationSkills as $demonstrationSkill) {
+                $effectiveDemonstrationSkillIds[] = $demonstrationSkill['ID'];
+            }
+        }
+
+        $ineffectiveDemonstrationData = [];
+        foreach ($this->getDemonstrationData() as $skillId => $demonstrationSkills) {
+            foreach ($demonstrationSkills as $demonstrationSkill) {
+                if (in_array($demonstrationSkill['ID'], $effectiveDemonstrationSkillIds)) {
+                    continue;
+                }
+
+                $ineffectiveDemonstrationData[$skillId][] = $demonstrationSkill;
+            }
+        }
+
+        return $ineffectiveDemonstrationData;
     }
 
     private $demonstrationsLogged;
