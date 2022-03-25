@@ -21,7 +21,7 @@ Ext.define('SlateTasksTeacher.view.GridToolbar', {
     }, {
         xtype: 'checkboxfield',
         fieldLabel: 'Show Inactive Students',
-        name: 'include_disabled_students',
+        name: 'include_deactivated_students',
         labelWidth: 192
     }]
 
