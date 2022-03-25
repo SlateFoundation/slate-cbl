@@ -23,6 +23,7 @@ use Slate\Courses\Section;
 use Slate\Courses\SectionParticipant;
 
 use Slate\Term;
+use Slate\People\Student;
 
 class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 {
@@ -60,6 +61,32 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             ];
         }
 
+        // apply disabled students filter
+        if (!static::getRequestedStudentDisabledFilter()) {
+            $disabledStudentIds = DB::allValues(
+                'ID',
+                '
+                    SELECT ID
+                      FROM `%s`
+                    WHERE AccountLevel = "disabled"
+                ',
+                [ Student::$tableName ]
+            );
+
+            if (!empty($disabledStudentIds)) {
+                $excludeDisabled = [
+                    'operator' => 'NOT IN',
+                    'values' => $disabledStudentIds
+                ];
+                $existingStudentIDCondition = $conditions['StudentID'];
+
+                if (isset($existingStudentIDCondition)) {
+                    $conditions['StudentID'] = [$existingStudentIDCondition, $excludeDisabled];
+                } else {
+                    $conditions['StudentID'] = $excludeDisabled;
+                }
+            }
+        }
 
         // apply task or course_section filter
         if ($Task = static::getRequestedTask()) {
@@ -489,6 +516,19 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
     }
 
     public static function getRequestedArchiveFilter($fieldName = 'include_archived')
+    {
+        if (empty($_REQUEST[$fieldName])) {
+            return null;
+        }
+
+        if ($_REQUEST[$fieldName] === 'false') {
+            $_REQUEST[$fieldName] = false;
+        }
+
+        return !!$_REQUEST[$fieldName];
+    }
+
+    public static function getRequestedStudentDisabledFilter($fieldName = 'include_deactivated_students')
     {
         if (empty($_REQUEST[$fieldName])) {
             return null;
