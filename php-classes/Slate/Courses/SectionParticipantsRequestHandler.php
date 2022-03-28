@@ -58,7 +58,7 @@ class SectionParticipantsRequestHandler extends \Slate\RecordsRequestHandler
               '
                   SELECT ID
                     FROM `%s`
-                  WHERE AccountLevel = "disabled"
+                  WHERE AccountLevel = "Disabled"
               ',
               [ \Emergence\People\Person::$tableName ]
           );
