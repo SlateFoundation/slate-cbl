@@ -81,7 +81,7 @@ class SectionParticipantsRequestHandler extends \Slate\RecordsRequestHandler
         return $conditions;
     }
 
-    public static function getRequestedStudentDisabledFilter($fieldName = 'include_deactivated_students')
+    public static function getRequestedStudentDisabledFilter($fieldName = 'include_deactivated')
     {
         if (empty($_REQUEST[$fieldName])) {
             return null;

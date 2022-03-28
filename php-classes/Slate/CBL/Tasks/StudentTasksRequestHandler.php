@@ -62,7 +62,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         }
 
         // apply disabled students filter
-        if (!static::getRequestedStudentDisabledFilter()) {
+        if (!static::getRequestedIncludeDeactivated()) {
             $disabledStudentIds = DB::allValues(
                 'ID',
                 '
@@ -528,7 +528,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         return !!$_REQUEST[$fieldName];
     }
 
-    public static function getRequestedStudentDisabledFilter($fieldName = 'include_deactivated_students')
+    public static function getRequestedIncludeDeactivated($fieldName = 'include_deactivated')
     {
         if (empty($_REQUEST[$fieldName])) {
             return null;

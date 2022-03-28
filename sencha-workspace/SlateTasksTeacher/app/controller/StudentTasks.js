@@ -110,8 +110,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         'slate-gridtoolbar checkbox[name=include_archived]': {
             change: 'onIncludeArchivedToolbarOptionChange'
         },
-        'slate-gridtoolbar checkbox[name=include_deactivated_students]': {
-          change: 'onIncludeDisabledStudentsToolbarOptionChange'
+        'slate-gridtoolbar checkbox[name=include_deactivated]': {
+          change: 'onIncludeDeactivatedStudentsToolbarOptionChange'
       }
     },
 
@@ -242,15 +242,15 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         tasksStore.load();
     },
 
-    onIncludeDisabledStudentsToolbarOptionChange: function(field) {
+    onIncludeDeactivatedStudentsToolbarOptionChange: function(field) {
       var me = this,
           sectionParticipantsStore = me.getSectionParticipantsStore()
           tasksStore = me.getStudentTasksStore();
 
-      sectionParticipantsStore.getProxy().setExtraParam('include_deactivated_students', field.getValue());
+      sectionParticipantsStore.getProxy().setExtraParam('include_deactivated', field.getValue());
       sectionParticipantsStore.load();
 
-      tasksStore.getProxy().setExtraParam('include_deactivated_students', field.getValue());
+      tasksStore.getProxy().setExtraParam('include_deactivated', field.getValue());
       tasksStore.load();
   },
 
