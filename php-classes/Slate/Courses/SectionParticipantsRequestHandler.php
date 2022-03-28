@@ -52,7 +52,7 @@ class SectionParticipantsRequestHandler extends \Slate\RecordsRequestHandler
         }
 
         // apply disabled students filter
-        if (!static::getRequestedStudentDisabledFilter()) {
+        if (!static::getRequestedIncludeDeactivated()) {
           $disabledStudentIds = \DB::allValues(
               'ID',
               '
@@ -81,16 +81,4 @@ class SectionParticipantsRequestHandler extends \Slate\RecordsRequestHandler
         return $conditions;
     }
 
-    public static function getRequestedStudentDisabledFilter($fieldName = 'include_deactivated')
-    {
-        if (empty($_REQUEST[$fieldName])) {
-            return null;
-        }
-
-        if ($_REQUEST[$fieldName] === 'false') {
-            $_REQUEST[$fieldName] = false;
-        }
-
-        return !!$_REQUEST[$fieldName];
-    }
 }

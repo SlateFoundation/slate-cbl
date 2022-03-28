@@ -528,19 +528,6 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
         return !!$_REQUEST[$fieldName];
     }
 
-    public static function getRequestedIncludeDeactivated($fieldName = 'include_deactivated')
-    {
-        if (empty($_REQUEST[$fieldName])) {
-            return null;
-        }
-
-        if ($_REQUEST[$fieldName] === 'false') {
-            $_REQUEST[$fieldName] = false;
-        }
-
-        return !!$_REQUEST[$fieldName];
-    }
-
     public static function getRequestedIncludeFilteredParentTasks($fieldName = 'include_filtered_parent_tasks')
     {
         if (empty($_REQUEST[$fieldName])) {
