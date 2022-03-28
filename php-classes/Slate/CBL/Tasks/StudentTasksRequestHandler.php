@@ -74,17 +74,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             );
 
             if (!empty($disabledStudentIds)) {
-                $excludeDisabled = [
-                    'operator' => 'NOT IN',
-                    'values' => $disabledStudentIds
-                ];
-                $existingStudentIDCondition = $conditions['StudentID'];
-
-                if (isset($existingStudentIDCondition)) {
-                    $conditions['StudentID'] = [$existingStudentIDCondition, $excludeDisabled];
-                } else {
-                    $conditions['StudentID'] = $excludeDisabled;
-                }
+                $conditions[] = 'StudentID NOT IN ('.implode(",",$disabledStudentIds).')';
             }
         }
 

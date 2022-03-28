@@ -64,17 +64,8 @@ class SectionParticipantsRequestHandler extends \Slate\RecordsRequestHandler
           );
 
           if (!empty($disabledStudentIds)) {
-              $excludeDisabled = [
-                  'operator' => 'NOT IN',
-                  'values' => $disabledStudentIds
-              ];
-              $existingPersonIDCondition = $conditions['PersonID'];
+                $conditions[] = 'PersonID NOT IN ('.implode(",",$disabledStudentIds).')';
 
-              if (isset($existingStudentIDCondition)) {
-                  $conditions['PersonID'] = [$existingPersonIDCondition, $excludeDisabled];
-              } else {
-                  $conditions['PersonID'] = $excludeDisabled;
-              }
           }
       }
 
