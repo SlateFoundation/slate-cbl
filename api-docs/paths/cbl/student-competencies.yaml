@@ -1,0 +1,18 @@
+x-recordsRequestHandler: Slate\CBL\StudentCompetenciesRequestHandler
+get:
+  parameters:
+  # TODO: build shared parameter components for common filters provided by \Slate\RecordsRequestHandler and \Slate\CBL\RecordsRequestHandler
+  # - $ref: '#/components/parameters/slate-student'
+  # - $ref: '#/components/parameters/slate-students'
+  # - $ref: '#/components/parameters/slate-cbl-competency'
+  # - $ref: '#/components/parameters/slate-cbl-competencies'
+  - name: level
+    in: query
+    description: An `Level` value to filter results by
+    schema:
+      type: integer
+  - name: entered_via
+    in: query
+    description: An `EnteredVia` value to filter results by
+    schema:
+      type: string
