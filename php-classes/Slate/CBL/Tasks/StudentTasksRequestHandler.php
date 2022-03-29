@@ -10,6 +10,7 @@ use JSON;
 use ActiveRecord;
 use UserUnauthorizedException;
 use Emergence\Comments\Comment;
+use Emergence\People\Person;
 use Emergence\People\GuardianRelationship;
 
 use Slate\CBL\Skill;
@@ -63,15 +64,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 
         // apply disabled students filter
         if (!static::getRequestedIncludeDeactivated()) {
-            $disabledStudentIds = DB::allValues(
-                'ID',
-                '
-                    SELECT ID
-                      FROM `%s`
-                    WHERE AccountLevel = "disabled"
-                ',
-                [ Student::$tableName ]
-            );
+            $disabledStudentIds = Person::getDeactivatedIds();
 
             if (!empty($disabledStudentIds)) {
                 $conditions[] = 'StudentID NOT IN ('.implode(",",$disabledStudentIds).')';

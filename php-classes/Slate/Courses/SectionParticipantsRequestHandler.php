@@ -2,6 +2,7 @@
 
 namespace Slate\Courses;
 
+use Emergence\People\Person;
 
 class SectionParticipantsRequestHandler extends \Slate\RecordsRequestHandler
 {
@@ -51,23 +52,14 @@ class SectionParticipantsRequestHandler extends \Slate\RecordsRequestHandler
             ];
         }
 
-        // apply disabled students filter
+        // apply disabled people filter
         if (!static::getRequestedIncludeDeactivated()) {
-          $disabledStudentIds = \DB::allValues(
-              'ID',
-              '
-                  SELECT ID
-                    FROM `%s`
-                  WHERE AccountLevel = "Disabled"
-              ',
-              [ \Emergence\People\Person::$tableName ]
-          );
+            $disabledPersonIds = Person::getDeactivatedIds();
 
-          if (!empty($disabledStudentIds)) {
-                $conditions[] = 'PersonID NOT IN ('.implode(",",$disabledStudentIds).')';
-
-          }
-      }
+            if (!empty($disabledPersonIds)) {
+                $conditions[] = 'PersonID NOT IN ('.implode(",",$disabledPersonIds).')';
+            }
+        }
 
         return $conditions;
     }
