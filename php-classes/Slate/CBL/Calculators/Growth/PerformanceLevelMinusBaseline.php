@@ -24,7 +24,7 @@ class PerformanceLevelMinusBaseline implements IGrowthCalculator
             }
         }
 
-        if ($skillsWithRatings * 2 < $StudentCompetency->Competency->getTotalSkills()) {
+        if ($skillsWithRatings === 0) {
             return false;
         } else {
             return $performanceLevel - $baseline;
