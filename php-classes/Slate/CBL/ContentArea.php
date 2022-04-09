@@ -186,6 +186,8 @@ class ContentArea extends \ActiveRecord
 
     public function save($deep = true)
     {
+        $wasStatusDirty = $this->isFieldDirty('Status');
+
         // set code
         if (!$this->Code) {
             $this->Code = \HandleBehavior::getUniqueHandle($this, $this->Title, [
@@ -195,5 +197,9 @@ class ContentArea extends \ActiveRecord
 
         // call parent
         parent::save($deep);
+
+        if ($wasStatusDirty) {
+            Skill::getInactiveIds(true);
+        }
     }
 }
