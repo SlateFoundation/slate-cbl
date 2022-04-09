@@ -119,17 +119,27 @@ class Skill extends \VersionedRecord
     public function save($deep = true)
     {
         $wasCompetencyDirty = $this->isFieldDirty('CompetencyID');
+        $wasStatusDirty = $this->isFieldDirty('Status');
         $wasDemonstrationsRequiredDirty = $this->isFieldDirty('DemonstrationsRequired');
 
         parent::save($deep);
 
-        if ($wasCompetencyDirty) {
+        if ($wasCompetencyDirty || $wasStatusDirty) {
             if ($this->Competency) {
-                $this->Competency->getSkillIds(true); // true to force refresh of cached value
+                $this->Competency->getActiveSkillIds(true); // true to force refresh of cached value
+                if ($this->Competency->ContentArea) {
+                    $this->Competency->ContentArea->getActiveSkillIds(true); // true to force refresh of cached value
+                }
             }
+        }
 
+        if ($wasCompetencyDirty) {
             if ($oldCompetencyId = $this->getOriginalValue('CompetencyID')) {
-                Competency::getByID($oldCompetencyId)->getSkillIds(true); // true to force refresh of cached value
+                $oldCompetency = Competency::getByID($oldCompetencyId);
+                $oldCompetency->getActiveSkillIds(true); // true to force refresh of cached value
+                if ($oldCompetency->ContentArea) {
+                    $oldCompetency->ContentArea->getActiveSkillIds(true); // true to force refresh of cached value
+                }
             }
         }
 

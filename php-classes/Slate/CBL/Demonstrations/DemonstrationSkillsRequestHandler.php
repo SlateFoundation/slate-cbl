@@ -47,18 +47,18 @@ class DemonstrationSkillsRequestHandler extends \Slate\CBL\RecordsRequestHandler
                 return $Skill->ID;
             }, $skills);
         } elseif ($Competency = static::getRequestedCompetency()) {
-            $skillIds = $Competency->getSkillIds();
+            $skillIds = $Competency->getActiveSkillIds();
             $filterObjects['Competency'] = $Competency;
         } elseif ($competencies = static::getRequestedCompetencies()) {
             $skillIds = [];
 
             foreach ($competencies as $Competency) {
-                $skillIds = array_merge($skillIds, $Competency->getSkillIds());
+                $skillIds = array_merge($skillIds, $Competency->getActiveSkillIds());
             }
 
             $skillIds = array_unique($skillIds);
         } elseif ($ContentArea = static::getRequestedContentArea()) {
-            $skillIds = $ContentArea->getSkillIds();
+            $skillIds = $ContentArea->getActiveSkillIds();
             $filterObjects['ContentArea'] = $ContentArea;
         } else {
             $skillIds = null;
