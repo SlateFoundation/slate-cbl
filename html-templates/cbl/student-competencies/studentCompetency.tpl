@@ -21,8 +21,9 @@
         {dli label=Level value=$data->Level}
         {dli label='Entered Via' value=$data->EnteredVia}
         {dli label='Baseline Rating' value=$data->BaselineRating}
+        {dli label='Growth' value=$data->getGrowth()}
+        {dli label='Progress' value=$data->getProgress()}
         {dli label='Is Level Complete?' value=tif($data->isLevelComplete(), 'Yes', 'No')}
-        {dli label='Growth' value=$data->getGrowth()|number_format:2}
         {dli label='Demonstrations Average' value=$data->getDemonstrationsAverage()|number_format:2}
         {dli label='Demonstrations Logged' value=$data->getDemonstrationsLogged()|number_format}
         {dli label='Demonstrations Missed' value=$data->getDemonstrationsMissed()|number_format}
