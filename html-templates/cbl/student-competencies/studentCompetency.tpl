@@ -15,7 +15,9 @@
         {dli label=Creator value=$data->Creator->getTitle() url=$data->Creator->getUrl()}
         {dli label=Student value=$data->Student->getTitle() url=$data->Student->getUrl()}
         {dli label=Competency value=$data->Competency->getTitle() url=$data->Competency->getUrl()}
+        {dli label='Competency Status' value=$data->Competency->Status}
         {dli label='Content Area' value=$data->Competency->ContentArea->getTitle() url=$data->Competency->ContentArea->getUrl()}
+        {dli label='Content Area Status' value=$data->Competency->->ContentArea->Status}
         {dli label=Level value=$data->Level}
         {dli label='Entered Via' value=$data->EnteredVia}
         {dli label='Baseline Rating' value=$data->BaselineRating}
