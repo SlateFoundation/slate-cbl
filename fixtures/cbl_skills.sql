@@ -223,9 +223,9 @@ INSERT INTO `cbl_skills` VALUES (201,'Slate\\CBL\\Skill','2019-01-02 03:04:05',1
 INSERT INTO `cbl_skills` VALUES (202,'Slate\\CBL\\Skill','2019-01-02 03:04:05',1,'2021-05-14 22:28:44',NULL,39,'WF.4.3','Celebration of Learning','I willingly participate in Celebration of Learning events by exhibiting my learning as well as artifacts I create.','{\"9\": 0, \"10\": 0, \"11\": 0, \"12\": 1, \"default\": 1}','active');
 INSERT INTO `cbl_skills` VALUES (203,'Slate\\CBL\\Skill','2019-01-02 03:04:05',1,'2021-05-14 22:28:44',NULL,39,'WF.4.4','Exit Portfolio','I can document my best work, academic growth, and personal growth in a digital portfolio.','{\"9\": 0, \"10\": 0, \"11\": 0, \"12\": 1, \"default\": 1}','active');
 INSERT INTO `cbl_skills` VALUES (204,'Slate\\CBL\\Skill','2019-01-02 03:04:05',1,'2021-05-14 22:28:44',NULL,39,'WF.4.5','Design Capstone','I can identify a problem, issue, or challenge I am passionate about and then create and implement my solution in the world.','{\"9\": 0, \"10\": 0, \"11\": 0, \"12\": 1, \"default\": 1}','active');
-INSERT INTO `cbl_skills` VALUES (205,'Slate\\CBL\\Skill','2021-08-08 17:12:32',1,NULL,NULL,8,'HOS.1.5','HOS.1 Test Skill','This is a test skill for HOS.1.','{\"9\": 4, \"10\": 4, \"11\": 4, \"12\": 4, \"default\": 1}','archived');
-INSERT INTO `cbl_skills` VALUES (206,'Slate\\CBL\\Skill','2021-08-08 17:16:57',1,NULL,NULL,41,'HOS.5.1','HOS.5 Test Skill','This is a test skill for HOS.5.','{\"9\": 4, \"10\": 4, \"11\": 4, \"12\": 4, \"default\": 1}','archived');
-INSERT INTO `cbl_skills` VALUES (207,'Slate\\CBL\\Skill','2021-08-08 17:18:45',1,NULL,NULL,40,'TEST.1.1','TEST.1 Test Skill','This is a test skill for TEST.1.','{\"9\": 4, \"10\": 4, \"11\": 4, \"12\": 4, \"default\": 1}','archived');
+INSERT INTO `cbl_skills` VALUES (205,'Slate\\CBL\\Skill','2021-08-08 17:12:32',1,NULL,NULL,8,'HOS.1.5','HOS.1 Archived Skill','This is an archived skill for HOS.1.','{\"9\": 4, \"10\": 4, \"11\": 4, \"12\": 4, \"default\": 1}','archived');
+INSERT INTO `cbl_skills` VALUES (206,'Slate\\CBL\\Skill','2021-08-08 17:16:57',1,NULL,NULL,41,'HOS.5.1','HOS.5 Archived Skill','This is an archived skill for HOS.5.','{\"9\": 4, \"10\": 4, \"11\": 4, \"12\": 4, \"default\": 1}','archived');
+INSERT INTO `cbl_skills` VALUES (207,'Slate\\CBL\\Skill','2021-08-08 17:18:45',1,NULL,NULL,40,'TEST.1.1','TEST.1 Archived Skill','This is an archived skill for TEST.1.','{\"9\": 4, \"10\": 4, \"11\": 4, \"12\": 4, \"default\": 1}','archived');
 
 
 CREATE TABLE `history_cbl_skills` (

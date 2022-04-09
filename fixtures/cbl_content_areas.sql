@@ -24,4 +24,4 @@ INSERT INTO `cbl_content_areas` VALUES (8,'Slate\\CBL\\ContentArea','2019-01-02 
 INSERT INTO `cbl_content_areas` VALUES (9,'Slate\\CBL\\ContentArea','2019-01-02 03:04:05',1,'SS','Social Studies','active');
 INSERT INTO `cbl_content_areas` VALUES (10,'Slate\\CBL\\ContentArea','2019-01-02 03:04:05',1,'VA','Visual Art','active');
 INSERT INTO `cbl_content_areas` VALUES (11,'Slate\\CBL\\ContentArea','2019-01-02 03:04:05',1,'WF','Wayfinding','active');
-INSERT INTO `cbl_content_areas` VALUES (12,'Slate\\CBL\\ContentArea','2021-08-08 17:14:02',1,'TEST','Test Area','archived');
+INSERT INTO `cbl_content_areas` VALUES (12,'Slate\\CBL\\ContentArea','2021-08-08 17:14:02',1,'TEST','Archived Area','archived');
