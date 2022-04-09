@@ -1,88 +1,83 @@
 const csvtojson = require('csvtojson');
-const testCases = require('../fixtures/student-competency-calculations.json');
 
-describe('Confirm rounding is consistent across UI, API, and exports', () => {
-    before(() => {
-        cy.resetDatabase();
-    });
+before(() => {
+    cy.resetDatabase();
+});
 
-    it('Check API Data Against Test Case', () => {
-        cy.loginAs('teacher');
-        cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
-        cy.visit(`/cbl/dashboards/demonstrations/student`).then(()=>{
-            const studentUsernames = Object.keys(testCases);
-            studentUsernames.forEach(studentUsername =>{
-                const studentContentAreas = Object.keys(testCases[studentUsername])
-                studentContentAreas.forEach(studentContentArea => {
-                    cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${studentContentArea}`);
+beforeEach(() => {
+    cy.loginAs('teacher');
+})
 
-                    // ensure that API has loaded required data
-                    cy.wait('@studentCompetencyData')
-                    .should(({ xhr }) => {
-                        const studentCompetencyCodes = Object.keys(testCases[studentUsername][studentContentArea]);
-                        studentCompetencyCodes.forEach(studentCompetencyCode => {
-                            const { data, ContentArea: { Competencies: competencies } } = JSON.parse(xhr.response)
-                            const { ID: competencyId } = competencies.filter(datum => datum.Code === `${studentCompetencyCode}`).pop()
-                            const studentData = data.filter(datum => datum.CompetencyID === competencyId) // filter by CompetencyID
-                            .sort((sc1, sc2) => sc1.Level - sc2.Level).pop(); // sort by highest level last, and use that
-                            expect(studentData).to.not.be.null;
-                            const apiBaseLine =  studentData.BaselineRating ? Math.round(studentData.BaselineRating * 10) / 10 : studentData.BaselineRating
-                            const apiGrowth = studentData.growth
-                            const apiProgress = studentData.demonstrationsRequired ? (
-                                studentData.demonstrationsComplete ?
-                                    Math.round(studentData.demonstrationsComplete / studentData.demonstrationsRequired * 100) :
-                                    0
-                            ) : 1;
-                            const apiPerformanceLevel = studentData.demonstrationsAverage
-                            cy.wrap(xhr).its('status').should('eq', 200);
-                            //convert api baseline to string, if it is not null
-                            expect(
-                              apiBaseLine !== null ? `${apiBaseLine}` : apiBaseLine,
-                              `${studentCompetencyCode} for ${studentUsername} API Baseline Value ${apiBaseLine}: Fixtures data Baseline Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].baseline}`
-                            ).to.equal(
-                              testCases[studentUsername][studentContentArea][
-                                studentCompetencyCode
-                              ].baseline
-                            );
+describe('Check API data against test cases', () => {
+    const testCases = require('../fixtures/student-competency-calculations.json');
 
-                            // convert api growth to string if the value is not null
-                            expect(
-                                apiGrowth !== null ? `${apiGrowth}` : apiGrowth,
-                              `${studentCompetencyCode} for ${studentUsername} API Growth Value ${apiGrowth}: Fixtures data Growth Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].growth}`
-                            ).to.equal(
-                              testCases[studentUsername][studentContentArea][
-                                studentCompetencyCode
-                              ].growth
-                            );
+    for (const studentUsername in testCases) {
+        for (const contentArea in testCases[studentUsername]) {
+            const competencyTestCases = testCases[studentUsername][contentArea];
 
-                            // convert api calculated progress into string
-                            expect(
-                              `${apiProgress}`,
-                              `${studentCompetencyCode} for ${studentUsername} API Completion Percentage Value ${apiProgress}: Fixtures data Completion Percentage Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].progress}`
-                            ).to.equal(
-                              testCases[studentUsername][studentContentArea][
-                                studentCompetencyCode
-                              ].progress
-                            );
+            specify(`${studentUsername} data in ${contentArea} matches test cases`, () => {
+                cy.request({
+                    url: '/cbl/student-competencies',
+                    qs: {
+                        format: 'json',
+                        include: [
+                            'Competency',
+                            'growth',
+                            'progress',
+                            'demonstrationsAverage',
+                            'baselineAverage'
+                        ],
+                        student: studentUsername,
+                        content_area: contentArea
+                    }
+                }).its('body.data').then(studentCompetencies => {
+                    // find highest-level per competency
+                    const latestByCompetency = {};
+                    for (const studentCompetency of studentCompetencies) {
+                        const competency = studentCompetency.Competency.Code;
+                        if (
+                            !(competency in latestByCompetency)
+                            || latestByCompetency[competency].Level < studentCompetency.Level
+                        ) {
+                            latestByCompetency[competency] = studentCompetency;
+                        }
+                    }
 
-                            // compare null comparisons without converting to string
-                            expect(
-                              apiPerformanceLevel === null
-                                ? apiPerformanceLevel
-                                : `${apiPerformanceLevel}`,
-                              `${studentCompetencyCode} for ${studentUsername}  API Performance Level Value ${apiPerformanceLevel}: Fixtures data Perfomance Level Value ${testCases[studentUsername][studentContentArea][studentCompetencyCode].average}`
-                            ).to.equal(
-                              testCases[studentUsername][studentContentArea][
-                                studentCompetencyCode
-                              ].average
-                            );
-                        })
-                    })
+                    // check each test case
+                    for (const competency in competencyTestCases) {
+                        const testCase = competencyTestCases[competency];
+
+                        expect(latestByCompetency).to.have.property(competency);
+                        const latest = latestByCompetency[competency];
+
+                        expect(
+                            latest.baselineAverage,
+                            testCase.baselineExplanation || `${competency} baseline`
+                        ).to.equal(testCase.baseline === null ? null : parseFloat(testCase.baseline));
+
+                        expect(
+                            latest.progress,
+                            testCase.progressExplanation || `${competency} progress`
+                        ).to.equal(testCase.progress === null ? null : parseInt(testCase.progress, 10) / 100);
+
+                        expect(
+                            latest.growth,
+                            testCase.growthExplanation || `${competency} growth`
+                        ).to.equal(testCase.growth === null ? null : parseFloat(testCase.growth));
+
+                        expect(
+                            latest.demonstrationsAverage,
+                            testCase.averageExplanation || `${competency} average`
+                        ).to.equal(testCase.average === null ? null : parseFloat(testCase.average));
+                    }
                 })
             })
-        })
-    })
+        }
+    }
+});
 
+describe('Confirm rounding is consistent across UI, API, and exports', () => {
+    const testCases = require('../fixtures/student-competency-calculations.json');
 
     it('Check UI Data Against Test Case', () => {
         cy.loginAs('teacher');
