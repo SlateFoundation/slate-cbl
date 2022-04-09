@@ -47,7 +47,7 @@ describe('Check API data against test cases', () => {
                     for (const competency in competencyTestCases) {
                         const testCase = competencyTestCases[competency];
 
-                        expect(latestByCompetency).to.have.property(competency);
+                        expect(latestByCompetency, testCase.description).to.have.property(competency);
                         const latest = latestByCompetency[competency];
 
                         expect(
