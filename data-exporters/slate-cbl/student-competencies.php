@@ -139,7 +139,7 @@ return [
                     'StudentFullName' => $Student->FullName,
                     'CompetencyCode' => $StudentCompetency->Competency->Code,
                     'Level' => $StudentCompetency->Level,
-                    'BaselineRating' => $StudentCompetency->getBaselineRating(),
+                    'BaselineRating' => $StudentCompetency->getBaselineAverage(),
                     'DemonstrationsAverage' => $StudentCompetency->getDemonstrationsAverage(),
                     'Growth' => $StudentCompetency->getGrowth(),
                     'Progress' => $StudentCompetency->getProgress(),
