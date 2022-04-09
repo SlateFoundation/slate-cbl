@@ -193,7 +193,7 @@
                 "baseline":null,
                 "average":null,
                 "growth":"0",
-                "progress":"0"       
+                "progress":"0"
             }
         },
         "NGE":{
@@ -208,8 +208,8 @@
             "HOS.1":{
                 "baseline":null,
                 "average":"9.1",
-                "growth":"0",
-                "progress":"45"
+                "growth":"2.5",
+                "progress":"56"
             }
         },
         "HW":{
@@ -257,19 +257,19 @@
                 "baseline":"5",
                 "average":"7.5",
                 "growth":"2.5",
-                "progress":"100"              
+                "progress":"100"
             },
             "ELA.5":{
                 "baseline":"5",
                 "average":"7",
                 "growth":"2",
-                "progress":"83"              
+                "progress":"83"
             },
             "ELA.6":{
                 "baseline":"5",
                 "average":"8",
                 "growth":"3",
-                "progress":"33"              
+                "progress":"33"
             },
             "ELA.7":{
                 "baseline":"5",
