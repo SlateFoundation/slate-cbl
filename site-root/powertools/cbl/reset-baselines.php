@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 continue;
             }
 
-            $StudentCompetency->BaselineRating = max($Previous->getBaselineRating(), $Previous->getDemonstrationsAverage());
+            $StudentCompetency->BaselineRating = max($Previous->getBaselineAverage(), $Previous->getDemonstrationsAverage());
             $StudentCompetency->save();
             $updated[] = $StudentCompetency->ID;
         }
@@ -81,8 +81,8 @@ if (!empty($students) && !empty($contentArea)) {
             continue;
         }
 
-        $baseline = $StudentCompetency->getBaselineRating();
-        $previousBaseline = $Previous->getBaselineRating();
+        $baseline = $StudentCompetency->getBaselineAverage();
+        $previousBaseline = $Previous->getBaselineAverage();
         $previousAvg = $Previous->getDemonstrationsAverage();
         $suggestedBaseline = max(
             $previousBaseline,

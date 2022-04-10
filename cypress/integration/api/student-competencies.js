@@ -20,15 +20,15 @@ describe('/cbl/student-competencies API', () => {
             expect(response.body).property('data').to.be.an('array');
             expect(response.body.data).to.have.length(643);
             expect(response.body.data[0]).to.include({
-                ID: 643,
+                ID: 584,
                 Class: 'Slate\\CBL\\StudentCompetency',
-                Created: 1637588605,
+                Created: 1622423774,
                 CreatorID: 2,
-                StudentID: 6,
-                CompetencyID: 32,
-                Level: 9,
+                StudentID: 11,
+                CompetencyID: 20,
+                Level: 12,
                 EnteredVia: 'enrollment',
-                BaselineRating: null
+                BaselineRating: 0
             });
 
         });

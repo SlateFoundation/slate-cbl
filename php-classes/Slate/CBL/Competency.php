@@ -129,6 +129,8 @@ class Competency extends \VersionedRecord
             if ($this->ContentArea) {
                 $this->ContentArea->getActiveSkillIds(true); // true to force refresh of cached value
             }
+
+            Skill::getInactiveIds(true);
         }
 
         if ($wasContentAreaDirty) {
