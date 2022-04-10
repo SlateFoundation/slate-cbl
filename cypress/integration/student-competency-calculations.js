@@ -144,78 +144,48 @@ describe('Check CSV data against test cases', () => {
     }
 });
 
-describe('Confirm rounding is consistent across UI, API, and exports', () => {
+describe('Check UI data against test cases', () => {
     const testCases = require('../fixtures/student-competency-calculations.json');
 
-    it('Check UI Data Against Test Case', () => {
+    beforeEach(() => {
         cy.loginAs('teacher');
-        cy.server().route('GET', '/cbl/student-competencies*').as('studentCompetencyData');
-        cy.visit(`/cbl/dashboards/demonstrations/student`).then(()=>{
-            const studentUsernames = Object.keys(testCases);
-            studentUsernames.forEach(studentUsername =>{
-                const studentContentAreas = Object.keys(testCases[studentUsername])
-                studentContentAreas.forEach(studentContentArea => {
-                    cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${studentContentArea}`);
-                    cy.wait('@studentCompetencyData')
-                    .then(() => {
-                        cy.wait(500); // wait for dom to render
-
-                        // ensure competency card elements have rendered
-                        const studentCompetencyCodes = Object.keys(testCases[studentUsername][studentContentArea]);
-                        studentCompetencyCodes.forEach(studentCompetencyCode => {
-                            cy.get('li.slate-demonstrations-student-competencycard')
-                                .then(() => {
-                                    cy.withExt().then(({extQuerySelector}) => {
-                                        const card = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${studentCompetencyCode}"}`);
-                                        const baseline = testCases[studentUsername][studentContentArea][studentCompetencyCode].baseline
-                                        const growth = testCases[studentUsername][studentContentArea][studentCompetencyCode].growth
-                                        const progress = testCases[studentUsername][studentContentArea][studentCompetencyCode].progress
-                                        const performanceLevel = testCases[studentUsername][studentContentArea][studentCompetencyCode].performanceLevel
-                                        checkUIDataAgainstTestCase(`${studentCompetencyCode}`, card.id, {
-                                            baseline,
-                                            growth,
-                                            progress,
-                                            performanceLevel
-                                        });
-                                    });
-                                });
-                        })
-                    });
-
-                })
-            })
-        })
-
-        const checkUIDataAgainstTestCase = (code, competencyCardId, { baseline, growth, progress, performanceLevel }) => {
-
-            // check baseline rating calculation
-            cy.get(`#${competencyCardId}`)
-                .find('span[data-ref="codeEl"]')
-                .contains(code);
-
-            if (baseline !== undefined) {
-                cy.get(`#${competencyCardId}`)
-                .find('td[data-ref="baselineRatingEl"]')
-                .contains(baseline === null ? '—' : baseline);
-            };
-
-            if (growth !== undefined) {
-                cy.get(`#${competencyCardId}`)
-                .find('td[data-ref="growthEl"]')
-                .contains(growth === null ? '—' : (growth <= 0 ? '' : '+') + growth);
-            }
-
-            if (progress !== undefined) {
-                cy.get(`#${competencyCardId}`)
-                .find('div[data-ref="meterPercentEl"]')
-                .contains(progress === null ? '—' : progress);
-            };
-
-            if (performanceLevel !== undefined) {
-                cy.get(`#${competencyCardId}`)
-                .find('td[data-ref="averageEl"]')
-                .contains(performanceLevel === null ? '—' : performanceLevel);
-            };
-        };
     });
+
+    for (const studentUsername in testCases) {
+        for (const contentArea in testCases[studentUsername]) {
+            const competencyTestCases = testCases[studentUsername][contentArea];
+
+            specify(`${studentUsername} data in ${contentArea} matches test cases`, () => {
+                cy.intercept('/cbl/student-competencies?*').as('getStudentCompetencies');
+                cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${contentArea}`);
+                cy.wait('@getStudentCompetencies');
+                cy.withExt().then(({extQuerySelector}) => {
+                    // check each test case
+                    for (const competency in competencyTestCases) {
+                        const testCase = competencyTestCases[competency];
+
+                        const cardCmp = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${competency}"}`);
+                        expect(cardCmp, testCase.description).to.be.an('object').that.has.property('xtype', 'slate-demonstrations-student-competencycard');
+
+                        cy.get(`#${cardCmp.id}`).within(() => {
+                            cy.get('span[data-ref="codeEl"]')
+                                .should('have.text', competency);
+
+                            cy.get('div[data-ref="meterPercentEl"]')
+                                .should('have.text', testCase.progress === null ? '—' : `${testCase.progress}%`);
+
+                            cy.get('td[data-ref="baselineRatingEl"]')
+                                .should('have.text', testCase.baseline === null ? '—' : testCase.baseline);
+
+                            cy.get('td[data-ref="averageEl"]')
+                                .should('have.text', testCase.average === null ? '—' : testCase.average);
+
+                            cy.get('td[data-ref="growthEl"]')
+                                .should('have.text', testCase.growth === null ? '—' : `${testCase.growth <= 0 ? '' : '+'}${testCase.growth}`);
+                        });
+                    }
+                });
+            });
+        }
+    }
 });
