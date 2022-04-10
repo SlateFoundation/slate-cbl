@@ -61,12 +61,12 @@ describe('Student Tasks test', () => {
     });
 
     beforeEach(() => {
-        cy.intercept('GET', '/cbl/dashboards/tasks/student/bootstrap*').as('bootstrapData');
-        cy.intercept('GET', '/cbl/skills*').as('skillsData');
-        cy.intercept('GET', '/cbl/competencies*').as('competenciesData');
-        cy.intercept('GET', '/cbl/student-tasks*').as('studentTasksData');
-        cy.intercept('GET', '/cbl/todos/*groups*').as('studentTodosData');
-        cy.intercept('POST', '/cbl/student-tasks/save*').as('studentTasksSave');
+        cy.intercept('GET', '/cbl/dashboards/tasks/student/bootstrap?*').as('bootstrapData');
+        cy.intercept('GET', '/cbl/skills?*').as('skillsData');
+        cy.intercept('GET', '/cbl/competencies?*').as('competenciesData');
+        cy.intercept('GET', '/cbl/student-tasks?*').as('studentTasksData');
+        cy.intercept('GET', '/cbl/todos/\\*groups?*').as('studentTodosData');
+        cy.intercept('POST', '/cbl/student-tasks/save?*').as('studentTasksSave');
     });
 
     const _visitDashboardAsStudent = (student = 'student') => {
@@ -228,9 +228,13 @@ describe('Student Tasks test', () => {
                             .contains('Revision Workflow')
                             .click({ force: true })
 
+                        cy.wait('@studentTasksData')
+                            .its('response.statusCode')
+                            .should('eq', 200);
+
                         cy.get('.slate-window')
                             .contains('label', 'Re-assign')
-                            .click()
+                            .click();
 
                         cy.get('.slate-window')
                             .contains('Save Assignment')
