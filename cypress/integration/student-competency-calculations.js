@@ -4,12 +4,12 @@ before(() => {
     cy.resetDatabase();
 });
 
-beforeEach(() => {
-    cy.loginAs('teacher');
-})
-
 describe('Check API data against test cases', () => {
     const testCases = require('../fixtures/student-competency-calculations.json');
+
+    beforeEach(() => {
+        cy.loginAs('teacher');
+    });
 
     for (const studentUsername in testCases) {
         for (const contentArea in testCases[studentUsername]) {
@@ -30,7 +30,13 @@ describe('Check API data against test cases', () => {
                         student: studentUsername,
                         content_area: contentArea
                     }
-                }).its('body.data').then(studentCompetencies => {
+                }).then(({ headers, body }) => {
+                    expect(headers).to.have.property('content-type', 'application/json; charset=utf-8');
+                    expect(body).to.have.an('object');
+                    expect(body).to.have.property('data');
+                    expect(body.data).to.be.an('array');
+                    return body.data;
+                }).then(studentCompetencies => {
                     // find highest-level per competency
                     const latestByCompetency = {};
                     for (const studentCompetency of studentCompetencies) {
@@ -72,6 +78,68 @@ describe('Check API data against test cases', () => {
                     }
                 })
             })
+        }
+    }
+});
+
+describe('Check CSV data against test cases', () => {
+    const testCases = require('../fixtures/student-competency-calculations.json');
+
+    beforeEach(() => {
+        cy.loginAs('admin');
+    });
+
+    for (const studentUsername in testCases) {
+        for (const contentArea in testCases[studentUsername]) {
+            const competencyTestCases = testCases[studentUsername][contentArea];
+
+            specify(`${studentUsername} data in ${contentArea} matches test cases`, () => {
+                cy.request({
+                    url: '/exports/slate-cbl/student-competencies',
+                    qs: {
+                        students: studentUsername,
+                        content_area: contentArea,
+                        level: 'highest'
+                    }
+                }).then(({ headers, body }) => {
+                    expect(headers).to.have.property('content-type', 'text/csv; charset=utf-8')
+                    return csvtojson().fromString(body)
+                }).then(rows => {
+                    // index rows by competency
+                    const rowsByCompetency = {};
+                    for (const row of rows) {
+                        rowsByCompetency[row.Competency] = row;
+                    }
+
+                    // check each test case
+                    for (const competency in competencyTestCases) {
+                        const testCase = competencyTestCases[competency];
+
+                        expect(rowsByCompetency, testCase.description).to.have.property(competency);
+                        const row = rowsByCompetency[competency];
+
+                        expect(
+                            row['Baseline'],
+                            testCase.baselineExplanation || `${competency} baseline`
+                        ).to.equal(testCase.baseline === null ? '' : testCase.baseline);
+
+                        expect(
+                            row['Progress'],
+                            testCase.progressExplanation || `${competency} progress`
+                        ).to.equal(testCase.progress === null ? '' : `${parseFloat(testCase.progress)/100}`);
+
+                        expect(
+                            row['Growth'],
+                            testCase.growthExplanation || `${competency} growth`
+                        ).to.equal(testCase.growth === null ? '' : testCase.growth);
+
+                        expect(
+                            row['Performance Level'],
+                            testCase.averageExplanation || `${competency} average`
+                        ).to.equal(testCase.average === null ? '' : testCase.average);
+                    }
+                });
+            });
         }
     }
 });
@@ -149,82 +217,5 @@ describe('Confirm rounding is consistent across UI, API, and exports', () => {
                 .contains(performanceLevel === null ? '—' : performanceLevel);
             };
         };
-    })
-
-
-    it('Check CSV Data Against Test Case', () => {
-        cy.loginAs('admin');
-        cy.visit('/exports');
-
-        // prepare for form submission that returns back a file
-        // https://on.cypress.io/intercept
-        cy.intercept({ pathname: '/exports/slate-cbl/student-competencies'}, (req) => {
-            req.redirect('/exports')
-        }).as('records');
-
-        const studentUsernames = Object.keys(testCases);
-        studentUsernames.forEach(studentUsername =>{
-            const studentContentAreas = Object.keys(testCases[studentUsername])
-            studentContentAreas.forEach(studentContentArea => {
-                const studentCompetencyCodes = Object.keys(testCases[studentUsername][studentContentArea]);
-                studentCompetencyCodes.forEach(studentCompetencyCode => {
-                    cy.get('form[action="/exports/slate-cbl/student-competencies"]').within(() => {
-                        cy.get('input[name=students]').clear().type(`${studentUsername}`);
-                        cy.get('select[name=content_area]').select(studentContentArea);
-                        cy.get('select[name=level]').select('highest');
-                        cy.root().submit();
-                    });
-                    cy.wait('@records').its('request').then((req) => {
-                        cy.request(req)
-                        .then(({ body, headers }) => {
-                            expect(headers).to.have.property('content-type', 'text/csv; charset=utf-8')
-                            return csvtojson().fromString(body)
-                        }).then((records) => {
-                            const studentCompetencyRow = records.filter((record)=> {
-                                return record.Competency === `${studentCompetencyCode}`
-                            }).pop();
-
-                            const csvPerformanceLevel = studentCompetencyRow['Performance Level']
-                            const csvGrowth = studentCompetencyRow.Growth
-                            const csvBaseLine = studentCompetencyRow.Baseline
-                            const csvProgress = studentCompetencyRow.Progress
-                            const baseline = testCases[studentUsername][studentContentArea][studentCompetencyCode].baseline
-                            const growth = testCases[studentUsername][studentContentArea][studentCompetencyCode].growth
-                            const progress = testCases[studentUsername][studentContentArea][studentCompetencyCode].progress
-                            const performanceLevel = testCases[studentUsername][studentContentArea][studentCompetencyCode].average;
-
-                            // csv represents null as empty string
-                            expect(csvPerformanceLevel === '' ? null : csvPerformanceLevel,
-                                `${studentCompetencyCode} for ${studentUsername}  CSV Performance Level Value ${csvPerformanceLevel}: Fixtures data Perfomance Level Value ${performanceLevel}`
-                            ).to.equal(performanceLevel);
-
-                            // csv represents null growth as an empty string
-                            expect(
-                                csvGrowth === '' ? null : `${csvGrowth}`,
-                                `${studentCompetencyCode} for ${studentUsername} CSV Growth Value ${csvGrowth}: Fixtures data Growth Value ${growth}`
-                            ).to.equal(growth);
-
-                            // csv represents null baseline as empty string
-                            expect(
-                                csvBaseLine === '' ? null : `${csvBaseLine}`,
-                                `${studentCompetencyCode} for ${studentUsername} CSV Baseline Value ${csvBaseLine}: Fixtures data Baseline Value ${baseline}`
-                            ).to.equal(baseline)
-
-                            // csv represents 0 progress as empty string
-                            if (csvProgress === '') {
-                                expect(progress,
-                                    `${studentCompetencyCode} for ${studentUsername} CSV Completion Percentage Value ${csvProgress}: Fixtures data Completion Percentage Value ${progress}`
-                                ).to.equal('0'); // progress is represented as decimal in export
-                            } else {
-                                expect(`${csvProgress}`,
-                                    `${studentCompetencyCode} for ${studentUsername} CSV Completion Percentage Value ${csvProgress}: Fixtures data Completion Percentage Value ${progress}`
-                                ).to.equal(`${progress/100}`); // progress is represented as decimal in export
-                            }
-
-                        })
-                    })
-                })
-            })
-        })
-    })
-})
+    });
+});
