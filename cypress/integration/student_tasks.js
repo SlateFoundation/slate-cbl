@@ -12,7 +12,8 @@ describe('Student Tasks test', () => {
 
         // create time relative tasks
         cy.loginAs('teacher');
-        // // create some relatively due tasks
+
+        // create some relatively due tasks
         cy.request('POST', `/cbl/tasks/save?format=json`, {
             data: [{
                 Title: 'Test Task (Due Today)',
@@ -60,39 +61,29 @@ describe('Student Tasks test', () => {
     });
 
     beforeEach(() => {
-        cy.server().route('GET', '/cbl/dashboards/tasks/student/bootstrap*').as('bootstrapData');
-        cy.server().route('GET', '/cbl/skills*').as('skillsData');
-        cy.server().route('GET', '/cbl/competencies*').as('competenciesData');
-        cy.server().route('GET', '/cbl/student-tasks*').as('studentTasksData');
-        cy.server().route('GET', '/cbl/todos/*groups*').as('studentTodosData');
-        cy.server().route('POST', '/cbl/student-tasks/save*').as('studentTasksSave');
+        cy.intercept('GET', '/cbl/dashboards/tasks/student/bootstrap*').as('bootstrapData');
+        cy.intercept('GET', '/cbl/skills*').as('skillsData');
+        cy.intercept('GET', '/cbl/competencies*').as('competenciesData');
+        cy.intercept('GET', '/cbl/student-tasks*').as('studentTasksData');
+        cy.intercept('GET', '/cbl/todos/*groups*').as('studentTodosData');
+        cy.intercept('POST', '/cbl/student-tasks/save*').as('studentTasksSave');
     });
 
     const _visitDashboardAsStudent = (student = 'student') => {
         cy.loginAs(`${student}`);
         cy.visit(`/cbl/dashboards/tasks/student`);
 
-        cy.wait(['@bootstrapData', '@studentTasksData'])
-            .should((xhrs) => {
-                xhrs.forEach(
-                    xhr => {
-                        expect(xhr.status).to.equal(200);
-                    }
-                )
-            });
+        cy.wait('@studentTasksData')
+            .its('response.statusCode')
+            .should('eq', 200);
     };
     const _visitDashboardAsTeacher = ({ teacher = 'teacher', student = 'student' } = {}) => {
         cy.loginAs(`${teacher}`);
         cy.visit(`/cbl/dashboards/tasks/student#${student}/all`);
 
-        cy.wait(['@bootstrapData', '@studentTasksData'])
-            .should((xhrs) => {
-                xhrs.forEach(
-                    xhr => {
-                        expect(xhr.status).to.equal(200);
-                    }
-                )
-            });
+        cy.wait('@studentTasksData')
+            .its('response.statusCode')
+            .should('eq', 200);
     };
 
     const _setupTests = () => {
@@ -106,14 +97,15 @@ describe('Student Tasks test', () => {
                             cy.get('#' + filterId)
                                 .contains(filterText)
                                 .click({ force: true}) // force click if element isn't visible
-                                .then((el) => {
-                                    cy.wait('@studentTasksData').should((xhr) => {
-                                        cy.wrap(xhr).its('status').should('eq', 200);
-                                        resolve({
-                                            el,
-                                            xhr,
-                                        });
-                                    });
+                                .then(() => {
+                                    cy.wait('@studentTasksData')
+                                        .its('response')
+                                        .then(response => {
+                                            expect(response.statusCode).to.equal(200);
+
+                                            // allow dom re-render
+                                            cy.wait(200).then(() => resolve(response.body));
+                                        })
                                 })
                         });
 
@@ -129,7 +121,10 @@ describe('Student Tasks test', () => {
                                 // if (idx === items.length - 1) {
                                 // }
                             });
-                            cy.wait('@studentTasksData').its('status').should('eq', 200).then(() => resolve(items));
+                            cy.wait('@studentTasksData')
+                                .its('response.statusCode')
+                                .should('eq', 200)
+                                .then(() => resolve(items));
                         });
                     },
                     _clickFilterButton = () => {
@@ -189,13 +184,11 @@ describe('Student Tasks test', () => {
                                 //         .click();
                                 // })
                             cy.wait(['@skillsData', '@competenciesData'])
-                                .should((xhrs) => {
-                                    xhrs.forEach(
-                                        xhr => {
-                                            expect(xhr.status).to.equal(200);
-                                            expect(xhr.response.body.success).to.be.true;
-                                        }
-                                    );
+                                .should(intercepts => {
+                                    for (const { response } of intercepts) {
+                                        expect(response.statusCode).to.equal(200);
+                                        expect(response.body.success).to.be.true;
+                                    }
                                 });
 
                             cy.get('.slate-window')
@@ -207,9 +200,9 @@ describe('Student Tasks test', () => {
                                 .click({ force: true })
 
                             cy.wait('@studentTasksSave')
-                                .should(xhr => {
-                                    expect(xhr.status).to.equal(200);
-                                    expect(xhr.response.body.success).to.be.true;
+                                .should(({ response }) => {
+                                    expect(response.statusCode).to.equal(200);
+                                    expect(response.body.success).to.be.true;
                                 });
 
                             cy.get('#' + currentTasksTree.id)
@@ -237,7 +230,7 @@ describe('Student Tasks test', () => {
 
                         cy.get('.slate-window')
                             .contains('label', 'Re-assign')
-                            .click({ force: true })
+                            .click()
 
                         cy.get('.slate-window')
                             .contains('Save Assignment')
@@ -245,12 +238,12 @@ describe('Student Tasks test', () => {
                                 expect(btn).to.be.visible;
                                 expect(btn.attr('aria-disabled')).to.not.be.true;
                             })
-                            .click({ force: true });
+                            .click();
 
                         cy.wait('@studentTasksSave')
-                            .should(xhr => {
-                                expect(xhr.status).to.equal(200);
-                                expect(xhr.response.body.success).to.be.true;
+                            .should(({ response }) => {
+                                expect(response.statusCode).to.equal(200);
+                                expect(response.body.success).to.be.true;
                             });
 
                         cy.get('#' + currentTasksTree.id)
@@ -272,8 +265,7 @@ describe('Student Tasks test', () => {
                 _clickFilterButton()
                     .then(_deselectAllFilters)
                     .then(() => _selectFilter('Enrolled Sections'))
-                    .then(({ xhr }) => {
-                        const { data: studentTasks } = xhr.response.body;
+                    .then(({ data: studentTasks }) => {
                         // get the users sections ids from the current term via the API
                         cy.request(`/sections?enrolled_user=${studentUsername}&format=json`).as('currentSections');
                         cy.get('@currentSections').then((response) => {
@@ -298,14 +290,12 @@ describe('Student Tasks test', () => {
                     .then(_deselectAllFilters)
                     .then(() => _selectFilter('Current Term'))
                     .then(() => _selectFilter('Enrolled Section'))
-                    .then(( xhr ) => {
-                        const { data: studentTasks } = xhr.response.body;
-
+                    .then(({ data: studentTasks }) => {
                         // get the users sections ids from the current term via the API
                         cy.request(`/sections?term=*current&enrolled_user=${studentUsername}&format=json`).as('currentSections');
                         cy.get('@currentSections').then((response) => {
                             const { data: sections } = response.body;
-                                sectionIds = sections.map(section => section.ID);
+                            const sectionIds = sections.map(section => section.ID);
 
                             // confirm that all student tasks loaded are in the list we got from the API
                             studentTasks.forEach(studentTask => {
@@ -326,9 +316,9 @@ describe('Student Tasks test', () => {
                 _clickFilterButton()
                     .then(_deselectAllFilters)
                     .then(() => _selectFilter('Archived Task'))
-                    .then(({ xhr: { response } }) => {
+                    .then(({ data }) => {
                         // expect there to be at least 1 archived task that was created in the 'before' method
-                        expect(response.body.data.map(studentTask => studentTask.Task.Status.toLowerCase() === 'archived').length).to.be.greaterThan(0);
+                        expect(data.map(studentTask => studentTask.Task.Status.toLowerCase() === 'archived').length).to.be.greaterThan(0);
                     })
             })
     });
@@ -341,7 +331,7 @@ describe('Student Tasks test', () => {
                 _clickFilterButton()
                     .then(_deselectAllFilters)
                     .then(() => _selectFilter('Revision Tasks'))
-                    .then(({ response }) => {
+                    .then(() => {
                         // expect there to be at least 1 archived task that was created in the 'before' method
                         cy.wait(1000); // allow dom re-render
 
@@ -363,10 +353,9 @@ describe('Student Tasks test', () => {
                 _clickFilterButton()
                     .then(_deselectAllFilters)
                     .then(() => _selectFilter('Due Tasks'))
-                    .then(({ response }) => {
+                    .then(() => {
                         // expect there to be at least 1 archived task that was created in the 'before' method
                         // expect(response.body.data.map(studentTask => studentTask.Task.Status.toLowerCase() === 'archived').length).to.be.greaterThan(0);
-                        cy.wait(500); // allow dom re-render
 
                         cy.get('#' + currentTasksTree.getId())
                             .find('ul.slate-tasktree-list')
@@ -387,8 +376,6 @@ describe('Student Tasks test', () => {
                 .then(_deselectAllFilters)
                 .then(() => _selectFilter('Past Due'))
                 .then(() => {
-                    cy.wait(500); // allow dom re-render
-
                     cy.get('#' + currentTasksTree.getId())
                         .find('ul.slate-tasktree-list')
                         .children('li.slate-tasktree-item')
@@ -445,13 +432,11 @@ describe('Student Tasks test', () => {
                                 .click({ force: true })
 
                             cy.wait(['@skillsData', '@competenciesData'])
-                                .should((xhrs) => {
-                                    xhrs.forEach(
-                                        xhr => {
-                                            expect(xhr.status).to.equal(200);
-                                            expect(xhr.response.body.success).to.be.true;
-                                        }
-                                    );
+                                .should(intercepts => {
+                                    for (const { response } of intercepts) {
+                                        expect(response.statusCode).to.equal(200);
+                                        expect(response.body.success).to.be.true;
+                                    }
                                 });
 
                             cy.get('.slate-window')
@@ -463,9 +448,9 @@ describe('Student Tasks test', () => {
                                 .click({ force: true })
 
                             cy.wait('@studentTasksSave')
-                                .should(xhr => {
-                                    expect(xhr.status).to.equal(200);
-                                    expect(xhr.response.body.success).to.be.true;
+                                .should(({ response }) => {
+                                    expect(response.statusCode).to.equal(200);
+                                    expect(response.body.success).to.be.true;
                                 });
 
                             cy.get('#' + currentTasksTree.id)
@@ -481,8 +466,7 @@ describe('Student Tasks test', () => {
                     _clickFilterButton()
                     .then(_deselectAllFilters)
                     .then(() => _selectFilter('Submitted Tasks'))
-                    .then(({ response }) => {
-                        cy.wait(500); // allow dom re-render
+                    .then(() => {
                         cy.get('#' + currentTasksTree.id)
                             .find('ul.slate-tasktree-list')
                             .children('li.slate-tasktree-item')
@@ -501,7 +485,7 @@ describe('Student Tasks test', () => {
             _clickFilterButton()
             .then(_deselectAllFilters)
             .then(() => _selectFilter('Completed Tasks'))
-            .then(({ response }) => {
+            .then(() => {
                 cy.wait(500); // allow dom re-render
                 cy.get('#' + currentTasksTree.id)
                     .find('ul.slate-tasktree-list')
@@ -520,8 +504,7 @@ describe('Student Tasks test', () => {
             _clickFilterButton()
             .then(_deselectAllFilters)
             .then(() => _selectFilter('Due Today'))
-            .then(({ response }) => {
-                cy.wait(500); // allow dom re-render
+            .then(() => {
                 cy.get('#' + currentTasksTree.id)
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
@@ -545,8 +528,7 @@ describe('Student Tasks test', () => {
             _clickFilterButton()
             .then(_deselectAllFilters)
             .then(() => _selectFilter('Due This Week'))
-            .then(({ response }) => {
-                cy.wait(500); // allow dom re-render
+            .then(() => {
                 cy.get('#' + currentTasksTree.id)
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
@@ -571,8 +553,7 @@ describe('Student Tasks test', () => {
             _clickFilterButton()
             .then(_deselectAllFilters)
             .then(() => _selectFilter('Due Next Week'))
-            .then(({ response }) => {
-                cy.wait(500); // allow dom re-render
+            .then(() => {
                 cy.get('#' + currentTasksTree.id)
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
@@ -597,8 +578,7 @@ describe('Student Tasks test', () => {
             _clickFilterButton()
             .then(_deselectAllFilters)
             .then(() => _selectFilter('Due Next Week'))
-            .then(({ response }) => {
-                cy.wait(500); // allow dom re-render
+            .then(() => {
                 cy.get('#' + currentTasksTree.id)
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
@@ -623,8 +603,7 @@ describe('Student Tasks test', () => {
             _clickFilterButton()
             .then(_deselectAllFilters)
             .then(() => _selectFilter('Due (no date)'))
-            .then(({ response }) => {
-                cy.wait(500); // allow dom re-render
+            .then(() => {
                 cy.get('#' + currentTasksTree.id)
                     .find('ul.slate-tasktree-list')
                     .children('li.slate-tasktree-item')
