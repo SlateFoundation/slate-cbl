@@ -1,4 +1,4 @@
-describe('Student Tasks test', () => {
+describe('CBL: Student Tasks test', () => {
     const dayjs = require('dayjs'),
         isBetween = require('dayjs/plugin/isBetween');
 

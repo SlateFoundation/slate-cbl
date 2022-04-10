@@ -1,4 +1,4 @@
-describe('Student demonstrations test', () => {
+describe('CBL: Student demonstrations test', () => {
 
     // load sample database before tests
     before(() => {

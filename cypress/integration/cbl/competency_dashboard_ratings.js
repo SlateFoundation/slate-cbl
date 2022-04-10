@@ -1,4 +1,4 @@
-describe('Competency dashboard ratings test', () => {
+describe('CBL: Competency dashboard ratings test', () => {
 
     // load sample database before tests
     before(() => {
@@ -14,7 +14,7 @@ describe('Competency dashboard ratings test', () => {
     });
 
     it('Can log a demonstration and verify the UI calculations', () => {
-        cy.readFile('cypress/integration/levels.json').then((levels) => {
+        cy.readFile('cypress/fixtures/cbl/levels.json').then((levels) => {
 
             // open student demonstrations dashboard
             cy.visit('/cbl/dashboards/demonstrations/teacher');
