@@ -159,15 +159,16 @@ describe('Check UI data against test cases', () => {
                 cy.intercept('/cbl/student-competencies?*').as('getStudentCompetencies');
                 cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${contentArea}`);
                 cy.wait('@getStudentCompetencies');
-                cy.withExt().then(({extQuerySelector}) => {
-                    // check each test case
-                    for (const competency in competencyTestCases) {
-                        const testCase = competencyTestCases[competency];
 
-                        const cardCmp = extQuerySelector(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${competency}"}`);
-                        expect(cardCmp, testCase.description).to.be.an('object').that.has.property('xtype', 'slate-demonstrations-student-competencycard');
+                // check each test case
+                for (const competency in competencyTestCases) {
+                    const testCase = competencyTestCases[competency];
 
-                        cy.get(`#${cardCmp.id}`).within(() => {
+                    cy.log(testCase.description);
+
+                    cy.extGet(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${competency}"}`)
+                        .should('have.nested.property', 'el.dom')
+                        .within(() => {
                             cy.get('span[data-ref="codeEl"]')
                                 .should('have.text', competency);
 
@@ -182,9 +183,8 @@ describe('Check UI data against test cases', () => {
 
                             cy.get('td[data-ref="growthEl"]')
                                 .should('have.text', testCase.growth === null ? '—' : `${testCase.growth <= 0 ? '' : '+'}${testCase.growth}`);
-                        });
-                    }
-                });
+                    });
+                }
             });
         }
     }
