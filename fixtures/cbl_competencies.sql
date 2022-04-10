@@ -57,8 +57,8 @@ INSERT INTO `cbl_competencies` VALUES (36,'Slate\\CBL\\Competency','2019-01-02 0
 INSERT INTO `cbl_competencies` VALUES (37,'Slate\\CBL\\Competency','2019-01-02 03:04:05',1,NULL,NULL,11,'WF.2','Wayfinding 2','During my second portfolio of Wayfinding, I will participate in career-connected studios and prepare for my Foundations Capstone.','active');
 INSERT INTO `cbl_competencies` VALUES (38,'Slate\\CBL\\Competency','2019-01-02 03:04:05',1,NULL,NULL,11,'WF.3','Wayfinding 3','During my third portfolio of Wayfinding, I will start to personalize my pathway and begin to create my post-secondary plan.','active');
 INSERT INTO `cbl_competencies` VALUES (39,'Slate\\CBL\\Competency','2019-01-02 03:04:05',1,NULL,NULL,11,'WF.4','Wayfinding 4','In my final Wayfinding portfolio, I will create my post-secondary plan and choose a passion project for my Design Capstone.','active');
-INSERT INTO `cbl_competencies` VALUES (40,'Slate\\CBL\\Competency','2021-08-08 17:14:42',1,NULL,NULL,12,'TEST.1','Test Competency','This is a test competency.','archived');
-INSERT INTO `cbl_competencies` VALUES (41,'Slate\\CBL\\Competency','2021-08-08 17:15:30',1,NULL,NULL,2,'HOS.5','HOS Test Competency','This is a test competency for HOS.','archived');
+INSERT INTO `cbl_competencies` VALUES (40,'Slate\\CBL\\Competency','2021-08-08 17:14:42',1,NULL,NULL,12,'TEST.1','Archived Competency','This is an archived competency.','archived');
+INSERT INTO `cbl_competencies` VALUES (41,'Slate\\CBL\\Competency','2021-08-08 17:15:30',1,NULL,NULL,2,'HOS.5','HOS Archived Competency','This is an archived competency for HOS.','archived');
 
 
 CREATE TABLE `history_cbl_competencies` (

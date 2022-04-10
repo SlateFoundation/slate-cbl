@@ -28,7 +28,7 @@ class SkillsRequestHandler extends RecordsRequestHandler
                 }, $competencies)
             ];
         } elseif ($ContentArea = static::getRequestedContentArea()) {
-            $conditions['CompetencyID'] = [ 'values' => $ContentArea->getCompetencyIds() ];
+            $conditions['CompetencyID'] = [ 'values' => $ContentArea->getActiveCompetencyIds() ];
             $filterObjects['ContentArea'] = $ContentArea;
         }
 

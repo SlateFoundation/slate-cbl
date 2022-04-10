@@ -215,7 +215,7 @@ class StudentCompetency extends \ActiveRecord
         if ($this->demonstrationData === null) {
             // TODO: cache dynamically
             try {
-                $skillIds = $this->Competency->getSkillIds();
+                $skillIds = $this->Competency->getActiveSkillIds();
 
                 if (count($skillIds)) {
                     $conditions = [
