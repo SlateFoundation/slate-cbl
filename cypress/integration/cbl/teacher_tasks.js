@@ -7,10 +7,9 @@ describe('CBL: Teacher tasks test', () => {
 
     // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.server().route('GET', '/cbl/tasks/*').as('taskData');
-        cy.server().route('GET', '/cbl/student-tasks*').as('studentTasksData');
-        cy.server().route('POST', '/cbl/tasks/save*').as('taskSave');
-
+        cy.intercept('GET', '/cbl/tasks/*').as('taskData');
+        cy.intercept('GET', '/cbl/student-tasks*').as('studentTasksData');
+        cy.intercept('POST', '/cbl/tasks/save*').as('taskSave');
         cy.loginAs('teacher');
     });
 
