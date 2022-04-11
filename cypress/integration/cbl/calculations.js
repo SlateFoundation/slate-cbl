@@ -4,8 +4,8 @@ before(() => {
     cy.resetDatabase();
 });
 
-describe('Check API data against test cases', () => {
-    const testCases = require('../fixtures/student-competency-calculations.json');
+describe('CBL: Check API data against test cases', () => {
+    const testCases = require('../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('teacher');
@@ -82,8 +82,8 @@ describe('Check API data against test cases', () => {
     }
 });
 
-describe('Check CSV data against test cases', () => {
-    const testCases = require('../fixtures/student-competency-calculations.json');
+describe('CBL: Check CSV data against test cases', () => {
+    const testCases = require('../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('admin');
@@ -144,8 +144,8 @@ describe('Check CSV data against test cases', () => {
     }
 });
 
-describe('Check UI data against test cases', () => {
-    const testCases = require('../fixtures/student-competency-calculations.json');
+describe.only('CBL: Check UI data against test cases', () => {
+    const testCases = require('../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('teacher');
@@ -167,7 +167,7 @@ describe('Check UI data against test cases', () => {
                     cy.log(testCase.description);
 
                     cy.extGet(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${competency}"}`)
-                        .should('have.nested.property', 'el.dom')
+                        .should('exist')
                         .within(() => {
                             cy.get('span[data-ref="codeEl"]')
                                 .should('have.text', competency);

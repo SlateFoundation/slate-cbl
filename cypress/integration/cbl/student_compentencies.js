@@ -1,4 +1,4 @@
-describe('Teacher student competencies test', () => {
+describe('CBL: Teacher student competencies test', () => {
 
     // load sample database before tests
     before(() => {
