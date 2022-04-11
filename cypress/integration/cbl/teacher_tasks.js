@@ -86,7 +86,7 @@ describe('CBL: Teacher tasks test', () => {
                 .click();
 
             // verify student tasks load
-            cy.wait('@studentTasksData').then(({ request, response }) => {
+            cy.wait('@studentTasksData').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
@@ -102,7 +102,7 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('Edit')
                 .click({ force: true });
 
-            cy.wait('@taskData').then(({ request, response }) => {
+            cy.wait('@taskData').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
@@ -112,7 +112,7 @@ describe('CBL: Teacher tasks test', () => {
                 .click({ force: true });
 
 
-            cy.wait('@taskSave').then(({ request, response }) => {
+            cy.wait('@taskSave').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
@@ -149,7 +149,7 @@ describe('CBL: Teacher tasks test', () => {
 
 
               // verify student tasks load
-            cy.wait('@studentTasksData').then(({ request, response }) => {
+            cy.wait('@studentTasksData').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
@@ -164,7 +164,7 @@ describe('CBL: Teacher tasks test', () => {
 
 
                // verify student tasks load
-            cy.wait('@studentTasksData').then(({ request, response }) => {
+            cy.wait('@studentTasksData').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
@@ -177,7 +177,7 @@ describe('CBL: Teacher tasks test', () => {
                 .click({ force: true });
 
 
-            cy.wait('@taskData').then(({ request, response }) => {
+            cy.wait('@taskData').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
@@ -187,7 +187,7 @@ describe('CBL: Teacher tasks test', () => {
                 .click({ force: true });
 
 
-            cy.wait('@taskSave').then(({ request, response }) => {
+            cy.wait('@taskSave').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
