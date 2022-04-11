@@ -1,7 +1,7 @@
 const csvtojson = require('csvtojson');
 
 before(() => {
-    // cy.resetDatabase();
+    cy.resetDatabase();
 });
 
 describe('CBL: Check API data against test cases', () => {
