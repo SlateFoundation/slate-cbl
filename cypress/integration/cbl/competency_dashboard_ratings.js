@@ -135,7 +135,8 @@ describe('CBL: Competency dashboard ratings test', () => {
                                 .to.have.nested.property('el.dom')
                                 .to.have.descendants('.competency-statement');
 
-                            expect(Cypress.$(competencySheet.el.dom).find('.competency-statement'))
+                            expect(Cypress.$(competencySheet.el.dom)
+                                .find('.competency-statement'))
                                 .to.have.text(firstCompetency.Statement);
                         })
                         .extGet('slate-cbl-ratings-slider', { all: true, component: true })
