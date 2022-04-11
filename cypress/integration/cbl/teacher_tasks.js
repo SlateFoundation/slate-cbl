@@ -15,6 +15,12 @@ describe('CBL: Teacher tasks test', () => {
 
     it('View single tasks as teacher', () => {
 
+        // set up XHR monitors
+        cy.intercept('GET', '/cbl/dashboards/tasks/teacher/bootstrap').as('getBootstrapData');
+        cy.intercept('GET', '/sections?enrolled_user=*').as('getCurrentlyEnrolledSections');
+        cy.intercept('GET', '/sections/*/cohorts').as('getSectionCohorts')
+        cy.intercept('GET', '/section-participants*').as('getSectionParticipants')
+
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
 
