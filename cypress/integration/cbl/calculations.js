@@ -167,6 +167,7 @@ describe.only('CBL: Check UI data against test cases', () => {
                     cy.log(testCase.description);
 
                     cy.extGet(`slate-demonstrations-student-competencycard{getCompetency().get("Code")=="${competency}"}`)
+                        .should('exist')
                         .within(() => {
                             cy.get('span[data-ref="codeEl"]')
                                 .should('have.text', competency);
