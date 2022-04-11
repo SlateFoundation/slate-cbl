@@ -7,9 +7,9 @@ describe('CBL: Teacher tasks test', () => {
 
     // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.intercept('GET', '/cbl/tasks/*').as('taskData');
-        cy.intercept('GET', '/cbl/student-tasks*').as('studentTasksData');
-        cy.intercept('POST', '/cbl/tasks/save*').as('taskSave');
+        cy.intercept('GET', '/cbl/tasks/!(\\*)*?(\\?*)').as('taskData');
+        cy.intercept('GET', '/cbl/student-tasks?(\\?*)').as('studentTasksData');
+        cy.intercept('POST', '/cbl/tasks/save?(\\?*)').as('taskSave');
         cy.loginAs('teacher');
     });
 
@@ -17,9 +17,9 @@ describe('CBL: Teacher tasks test', () => {
 
         // set up XHR monitors
         cy.intercept('GET', '/cbl/dashboards/tasks/teacher/bootstrap').as('getBootstrapData');
-        cy.intercept('GET', '/sections?enrolled_user=*').as('getCurrentlyEnrolledSections');
+        cy.intercept('GET', '/sections?(\\?*)').as('getSections');
         cy.intercept('GET', '/sections/*/cohorts').as('getSectionCohorts')
-        cy.intercept('GET', '/section-participants*').as('getSectionParticipants')
+        cy.intercept('GET', '/section-participants?(\\?*)').as('getSectionParticipants')
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
@@ -40,8 +40,8 @@ describe('CBL: Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
-            cy.wait("@getCurrentlyEnrolledSections")
-            cy.get('@getCurrentlyEnrolledSections.all').should('have.length', 1)
+            cy.wait("@getSections")
+            cy.get('@getSections.all').should('have.length', 1)
             // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
                 .contains('English Language Arts')
@@ -101,7 +101,7 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('ELA Task One')
                 .contains('Edit')
                 .click({ force: true });
-            
+
             cy.wait('@taskData').then(({ request, response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
@@ -111,12 +111,12 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('Archive Task')
                 .click({ force: true });
 
-            
+
             cy.wait('@taskSave').then(({ request, response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
-            
+
 
             cy.get('#' + studentGrid.el.dom.id)
                 .contains('ELA Task One (archived)');
