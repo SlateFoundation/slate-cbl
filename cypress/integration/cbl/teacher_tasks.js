@@ -86,11 +86,11 @@ describe('CBL: Teacher tasks test', () => {
                 .click();
 
             // verify student tasks load
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+            cy.wait('@studentTasksData').then(({ request, response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
+
 
             // verify hash
             cy.location('hash').should('eq', '#ELA-001/all');
@@ -101,22 +101,22 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('ELA Task One')
                 .contains('Edit')
                 .click({ force: true });
-
-            cy.wait('@taskData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+            
+            cy.wait('@taskData').then(({ request, response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             cy.get('.slate-window')
                 .contains('Archive Task')
                 .click({ force: true });
 
-            cy.wait('@taskSave')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+            
+            cy.wait('@taskSave').then(({ request, response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
+            
 
             cy.get('#' + studentGrid.el.dom.id)
                 .contains('ELA Task One (archived)');
@@ -147,12 +147,12 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('English Language Arts')
                 .click();
 
-            // verify studetn tasks load
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+
+              // verify student tasks load
+            cy.wait('@studentTasksData').then(({ request, response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             // verify hash
             cy.location('hash').should('eq', '#ELA-001/all');
@@ -162,11 +162,12 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('Show Archived Tasks')
                 .click()
 
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+
+               // verify student tasks load
+            cy.wait('@studentTasksData').then(({ request, response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             // verify content loads
             var studentGrid = extQuerySelector('slate-studentsgrid');
@@ -175,21 +176,21 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('Edit')
                 .click({ force: true });
 
-            cy.wait('@taskData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+
+            cy.wait('@taskData').then(({ request, response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             cy.get('.slate-window')
                 .contains('Un-Archive Task')
                 .click({ force: true });
 
-            cy.wait('@taskSave')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+
+            cy.wait('@taskSave').then(({ request, response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             cy.get('#' + studentGrid.el.dom.id)
                 .contains('ELA Task One');
