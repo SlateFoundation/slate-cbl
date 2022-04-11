@@ -23,6 +23,8 @@ describe('CBL: Teacher tasks test', () => {
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.wait('@getBootstrapData')
+        cy.get('@getBootstrapData.all').should('have.length', 1)
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
@@ -38,16 +40,18 @@ describe('CBL: Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
+            cy.wait("@getCurrentlyEnrolledSections")
+            cy.get('@getCurrentlyEnrolledSections.all').should('have.length', 1)
             // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
                 .contains('English Language Arts')
                 .click();
 
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+            cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionCohorts.all').should('have.length', 1)
+
+            cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionParticipants.all').should('have.length', 1)
 
             // verify hash
             cy.location('hash').should('eq', '#ELA-001/all');
