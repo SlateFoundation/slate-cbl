@@ -10,16 +10,61 @@ describe('CBL: Teacher tasks test', () => {
         cy.intercept('GET', '/cbl/tasks/!(\\*)*?(\\?*)').as('taskData');
         cy.intercept('GET', '/cbl/student-tasks?(\\?*)').as('studentTasksData');
         cy.intercept('POST', '/cbl/tasks/save?(\\?*)').as('taskSave');
+        cy.intercept('GET', '/cbl/dashboards/tasks/teacher/bootstrap').as('getBootstrapData');
+        cy.intercept('GET', '/sections?(\\?*)').as('getSections');
+        cy.intercept('GET', '/sections/*/cohorts').as('getSectionCohorts')
+        cy.intercept('GET', '/section-participants?(\\?*)').as('getSectionParticipants')
         cy.loginAs('teacher');
     });
 
     it('View single tasks as teacher', () => {
 
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/tasks/teacher')  ;
+        cy.wait('@getBootstrapData')
+        cy.get('@getBootstrapData.all').should('have.length', 1)
+
+        // verify teacher redirect
+        cy.location('hash').should('eq', '');
+
+        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
+            .contains('Select a section to load tasks dashboard');
+
+        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+
+            // get the selector element
+            var sectionSelector = extQuerySelector('slate-cbl-sectionselector');
+
+            // click the selector
+            cy.get('#' + sectionSelector.el.dom.id).click();
+
+            cy.wait("@getSections")
+            cy.get('@getSections.all').should('have.length', 1)
+
+            // click ELA section element of picker dropdown
+            cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
+                .contains('English Language Arts')
+                .click();
+
+            cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionCohorts.all').should('have.length', 1)
+
+            cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionParticipants.all').should('have.length', 1)
+
+            // verify hash
+            cy.location('hash').should('eq', '#ELA-001/all');
+
+            // verify content loads
+            var studentGrid = extQuerySelector('slate-studentsgrid');
+            cy.get('#' + studentGrid.el.dom.id).contains('ELA Task One');
+        });
+    });
+
+    it('Archive task as teacher', () => {
+
         // set up XHR monitors
-        cy.intercept('GET', '/cbl/dashboards/tasks/teacher/bootstrap').as('getBootstrapData');
-        cy.intercept('GET', '/sections?(\\?*)').as('getSections');
-        cy.intercept('GET', '/sections/*/cohorts').as('getSectionCohorts')
-        cy.intercept('GET', '/section-participants?(\\?*)').as('getSectionParticipants')
+        cy.intercept('GET', '/cbl/skills?(\\?*)').as('getSkills')
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
@@ -53,38 +98,6 @@ describe('CBL: Teacher tasks test', () => {
             cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200)
             cy.get('@getSectionParticipants.all').should('have.length', 1)
 
-            // verify hash
-            cy.location('hash').should('eq', '#ELA-001/all');
-
-            // verify content loads
-            var studentGrid = extQuerySelector('slate-studentsgrid');
-            cy.get('#' + studentGrid.el.dom.id).contains('ELA Task One');
-        });
-    });
-
-    it('Archive task as teacher', () => {
-        // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/tasks/teacher');
-
-        // verify teacher redirect
-        cy.location('hash').should('eq', '');
-
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
-            .contains('Select a section to load tasks dashboard');
-
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
-
-            // get the selector element
-            var sectionSelector = extQuerySelector('slate-cbl-sectionselector');
-
-            // click the selector
-            cy.get('#' + sectionSelector.el.dom.id).click();
-
-            // click ELA section element of picker dropdown
-            cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('English Language Arts')
-                .click();
-
             // verify student tasks load
             cy.wait('@studentTasksData').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
@@ -117,6 +130,10 @@ describe('CBL: Teacher tasks test', () => {
                 expect(response.statusCode).to.eq(200)
             })
 
+                cy.wait('@getSkills').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             cy.get('#' + studentGrid.el.dom.id)
                 .contains('ELA Task One (archived)');
@@ -127,6 +144,8 @@ describe('CBL: Teacher tasks test', () => {
     it('Un-Archive task as teacher', () => {
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.wait('@getBootstrapData')
+        cy.get('@getBootstrapData.all').should('have.length', 1)
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
@@ -142,10 +161,19 @@ describe('CBL: Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
+            cy.wait("@getSections")
+            cy.get('@getSections.all').should('have.length', 1)
+
             // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
                 .contains('English Language Arts')
                 .click();
+
+            cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionCohorts.all').should('have.length', 1)
+
+            cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionParticipants.all').should('have.length', 1)
 
 
               // verify student tasks load
