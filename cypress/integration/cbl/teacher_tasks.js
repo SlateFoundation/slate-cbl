@@ -176,7 +176,7 @@ describe('CBL: Teacher tasks test', () => {
             cy.get('@getSectionParticipants.all').should('have.length', 1)
 
 
-              // verify student tasks load
+            // verify student tasks load
             cy.wait('@studentTasksData').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
