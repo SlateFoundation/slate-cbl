@@ -144,7 +144,7 @@ describe('CBL: Check CSV data against test cases', () => {
     }
 });
 
-describe.only('CBL: Check UI data against test cases', () => {
+describe('CBL: Check UI data against test cases', () => {
     const testCases = require('../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
