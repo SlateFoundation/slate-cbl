@@ -44,10 +44,10 @@ class ContentArea extends \ActiveRecord
 
     public static $dynamicFields = [
         'Competencies' => [
-            'getter' => 'getCompetencies'
+            'getter' => 'getActiveCompetencies'
         ],
         'competencyIds' => [
-            'getter' => 'getCompetencyIds'
+            'getter' => 'getActiveCompetencyIds'
         ],
     ];
 
@@ -73,9 +73,9 @@ class ContentArea extends \ActiveRecord
         return $title;
     }
 
-    public function getCompetencyIds($forceRefresh = false)
+    public function getActiveCompetencyIds($forceRefresh = false)
     {
-        $cacheKey = "cbl-contentarea/$this->ID/competency-ids";
+        $cacheKey = "cbl-contentarea/$this->ID/active-competency-ids";
 
         if (!$forceRefresh && false !== ($competencyIds = Cache::fetch($cacheKey))) {
             return $competencyIds;
@@ -84,7 +84,7 @@ class ContentArea extends \ActiveRecord
         try {
             $competencyIds = array_map('intval', DB::allValues(
                 'ID',
-                'SELECT ID FROM `%s` WHERE ContentAreaID = %u',
+                'SELECT ID FROM `%s` WHERE ContentAreaID = %u AND Status = "active"',
                 [
                     Competency::$tableName,
                     $this->ID
@@ -99,20 +99,20 @@ class ContentArea extends \ActiveRecord
         return $competencyIds;
     }
 
-    public function getCompetencies($forceRefresh = false)
+    public function getActiveCompetencies($forceRefresh = false)
     {
         $competencies = [];
 
-        foreach (static::getCompetencyIds($forceRefresh) as $competencyId) {
+        foreach (static::getActiveCompetencyIds($forceRefresh) as $competencyId) {
             $competencies[] = Competency::getByID($competencyId);
         }
 
         return $competencies;
     }
 
-    public function getSkillIds($forceRefresh = false)
+    public function getActiveSkillIds($forceRefresh = false)
     {
-        $cacheKey = "cbl-contentarea/$this->ID/skill-ids";
+        $cacheKey = "cbl-contentarea/$this->ID/active-skill-ids";
 
         if (!$forceRefresh && false !== ($skillIds = Cache::fetch($cacheKey))) {
             return $skillIds;
@@ -127,6 +127,8 @@ class ContentArea extends \ActiveRecord
                       JOIN `%s` Competency
                         ON Competency.ID = Skill.CompetencyID
                      WHERE Competency.ContentAreaID = %u
+                       AND Competency.Status = "active"
+                       AND Skill.Status = "active"
                 ',
                 [
                     Skill::$tableName,
@@ -143,11 +145,11 @@ class ContentArea extends \ActiveRecord
         return $skillIds;
     }
 
-    public function getSkills($forceRefresh = false)
+    public function getActiveSkills($forceRefresh = false)
     {
         $skills = [];
 
-        foreach (static::getSkillIds($forceRefresh) as $skillId) {
+        foreach (static::getActiveSkillIds($forceRefresh) as $skillId) {
             $skills[] = Skill::getByID($skillId);
         }
 
@@ -184,6 +186,8 @@ class ContentArea extends \ActiveRecord
 
     public function save($deep = true)
     {
+        $wasStatusDirty = $this->isFieldDirty('Status');
+
         // set code
         if (!$this->Code) {
             $this->Code = \HandleBehavior::getUniqueHandle($this, $this->Title, [
@@ -193,5 +197,9 @@ class ContentArea extends \ActiveRecord
 
         // call parent
         parent::save($deep);
+
+        if ($wasStatusDirty) {
+            Skill::getInactiveIds(true);
+        }
     }
 }
