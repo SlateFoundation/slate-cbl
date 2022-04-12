@@ -121,6 +121,9 @@ class StudentCompetency extends \ActiveRecord
         'progress' => [
             'getter' => 'getProgress'
         ],
+        'baselineAverage' => [
+            'getter' => 'getBaselineAverage'
+        ],
         'next' => [
             'getter' => 'getNext'
         ]
@@ -136,14 +139,14 @@ class StudentCompetency extends \ActiveRecord
             && $this->StudentID && $this->CompetencyID && $this->Level
             && ($Previous = $this->getPrevious())
         ) {
-            $this->BaselineRating = max($Previous->getBaselineRating(), $Previous->getDemonstrationsAverage());
+            $this->BaselineRating = max($Previous->getBaselineAverage(), $Previous->getDemonstrationsAverage());
         }
 
         // call parent
         parent::save($deep);
     }
 
-    public function getBaselineRating()
+    public function getBaselineAverage()
     {
         return $this->BaselineRating !== null ? round($this->BaselineRating, static::$averagePrecision) : null;
     }
@@ -215,7 +218,7 @@ class StudentCompetency extends \ActiveRecord
         if ($this->demonstrationData === null) {
             // TODO: cache dynamically
             try {
-                $skillIds = $this->Competency->getSkillIds();
+                $skillIds = $this->Competency->getActiveSkillIds();
 
                 if (count($skillIds)) {
                     $conditions = [

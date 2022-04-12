@@ -9,7 +9,7 @@ use Emergence\People\Person;
 use Emergence\WebApps\SenchaApp;
 
 use Slate\CBL\RecordsRequestHandler as CBLRecordsRequestHandler;
-use Slate\CBL\ContentAreasRequestHandler;
+use Slate\CBL\ContentArea;
 use Slate\CBL\Competency;
 use Slate\CBL\Skill;
 
@@ -65,7 +65,10 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
 
         // build conditions
         $where = [
-            'd.StudentID = ' . $Student->ID
+            'd.StudentID = ' . $Student->ID,
+            's.Status = "active"',
+            'c.Status = "active"',
+            'ca.Status = "active"'
         ];
 
         if ($ContentArea) {
@@ -103,6 +106,8 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
                     ON s.ID = ds.SkillID
                   JOIN %s AS c
                     ON c.ID = s.CompetencyID
+                  JOIN %s AS ca
+                    ON ca.ID = c.ContentAreaID
                   WHERE (%s)
                   ORDER BY d.ID DESC
                   LIMIT %d',
@@ -112,6 +117,7 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
                     Demonstration::$tableName,
                     Skill::$tableName,
                     Competency::$tableName,
+                    ContentArea::$tableName,
                     count($where) ? implode(') AND (', $where) : 'TRUE',
                     $limit
                 ]

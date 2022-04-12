@@ -15,12 +15,15 @@
         {dli label=Creator value=$data->Creator->getTitle() url=$data->Creator->getUrl()}
         {dli label=Student value=$data->Student->getTitle() url=$data->Student->getUrl()}
         {dli label=Competency value=$data->Competency->getTitle() url=$data->Competency->getUrl()}
+        {dli label='Competency Status' value=$data->Competency->Status}
         {dli label='Content Area' value=$data->Competency->ContentArea->getTitle() url=$data->Competency->ContentArea->getUrl()}
+        {dli label='Content Area Status' value=$data->Competency->->ContentArea->Status}
         {dli label=Level value=$data->Level}
         {dli label='Entered Via' value=$data->EnteredVia}
         {dli label='Baseline Rating' value=$data->BaselineRating}
+        {dli label='Growth' value=$data->getGrowth()}
+        {dli label='Progress' value=$data->getProgress()}
         {dli label='Is Level Complete?' value=tif($data->isLevelComplete(), 'Yes', 'No')}
-        {dli label='Growth' value=$data->getGrowth()|number_format:2}
         {dli label='Demonstrations Average' value=$data->getDemonstrationsAverage()|number_format:2}
         {dli label='Demonstrations Logged' value=$data->getDemonstrationsLogged()|number_format}
         {dli label='Demonstrations Missed' value=$data->getDemonstrationsMissed()|number_format}
@@ -39,38 +42,42 @@
     ?>
 
     <h3>Skill Demonstrations</h3>
-    <table class="auto-width row-stripes row-highlight">
-        <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Created</th>
-                <th scope="col">Creator</th>
-                <th scope="col">Demonstration</th>
-                <th scope="col">DemonstrationDate</th>
-                <th scope="col">Level</th>
-                <th scope="col">Rating</th>
-                <th scope="col">Override</th>
-            </tr>
-        </thead>
-        <tbody>
-        {foreach item=demonstrationSkills key=skillId from=$data->getDemonstrationData()}
-            <tr>
-                <th colspan="8">{contextLink Slate\CBL\Skill::getById($skillId)}</th>
-            </tr>
-            {foreach item=DemonstrationSkill from=$demonstrationSkills}
-                {$Demonstration = Slate\CBL\Demonstrations\Demonstration::getById($DemonstrationSkill.DemonstrationID)}
-                <tr class="{tif $DemonstrationSkill.ID|in_array:$effectiveDemonstrationSkillIds ? effective : muted}">
-                    <td>#{$DemonstrationSkill.ID}</td>
-                    <td>{$DemonstrationSkill.Created|date_format}</td>
-                    <td>{contextLink Emergence\People\Person::getById($DemonstrationSkill.CreatorID)}</td>
-                    <td><a href="{$Demonstration->getUrl()|escape}">#{$Demonstration->ID}</a></td>
-                    <td>{$DemonstrationSkill.DemonstrationDate|date_format}</td>
-                    <td>{$DemonstrationSkill.TargetLevel}</td>
-                    <td>{tif $DemonstrationSkill.DemonstratedLevel == '0' ? 'M' : $DemonstrationSkill.DemonstratedLevel}</td>
-                    <td>{tif($DemonstrationSkill.Override, 'Yes', 'No')}</td>
+    {if $data->Competency->Status == 'active'}
+        <table class="auto-width row-stripes row-highlight">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Creator</th>
+                    <th scope="col">Demonstration</th>
+                    <th scope="col">DemonstrationDate</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Rating</th>
+                    <th scope="col">Override</th>
                 </tr>
+            </thead>
+            <tbody>
+            {foreach item=demonstrationSkills key=skillId from=$data->getDemonstrationData()}
+                <tr>
+                    <th colspan="8">{contextLink Slate\CBL\Skill::getById($skillId)}</th>
+                </tr>
+                {foreach item=DemonstrationSkill from=$demonstrationSkills}
+                    {$Demonstration = Slate\CBL\Demonstrations\Demonstration::getById($DemonstrationSkill.DemonstrationID)}
+                    <tr class="{tif $DemonstrationSkill.ID|in_array:$effectiveDemonstrationSkillIds ? effective : muted}">
+                        <td>#{$DemonstrationSkill.ID}</td>
+                        <td>{$DemonstrationSkill.Created|date_format}</td>
+                        <td>{contextLink Emergence\People\Person::getById($DemonstrationSkill.CreatorID)}</td>
+                        <td><a href="{$Demonstration->getUrl()|escape}">#{$Demonstration->ID}</a></td>
+                        <td>{$DemonstrationSkill.DemonstrationDate|date_format}</td>
+                        <td>{$DemonstrationSkill.TargetLevel}</td>
+                        <td>{tif $DemonstrationSkill.DemonstratedLevel == '0' ? 'M' : $DemonstrationSkill.DemonstratedLevel}</td>
+                        <td>{tif($DemonstrationSkill.Override, 'Yes', 'No')}</td>
+                    </tr>
+                {/foreach}
             {/foreach}
-        {/foreach}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    {else}
+        <p><em>Demonstration data unavailable because this competency is <strong>{$data->Competency->Status}</strong></em></p>
+    {/if}
 {/block}

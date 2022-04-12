@@ -18,7 +18,7 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
     public static $accountLevelComment = 'Staff';
     public static $accountLevelWrite = 'Administrator';
     public static $browseLimitDefault = 100;
-    public static $browseOrder = ['ID' => 'DESC'];
+    public static $browseOrder = ['Level' => 'DESC', 'ID' => 'DESC'];
 
 
     public static function checkReadAccess(ActiveRecord $Record = null, $suppressLogin = false)
@@ -78,7 +78,7 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
                 }, $competencies)
             ];
         } elseif ($ContentArea = static::getRequestedContentArea()) {
-            $conditions['CompetencyID'] = [ 'values' => $ContentArea->getCompetencyIds() ];
+            $conditions['CompetencyID'] = [ 'values' => $ContentArea->getActiveCompetencyIds() ];
             $filterObjects['ContentArea'] = $ContentArea;
         }
 

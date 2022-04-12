@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # script/test-interactive: Run all tests interactively with Cypress GUI
 
@@ -100,4 +100,9 @@ unionfs -o cow \
 
 echo
 echo "==> test-interactive: executing \`cypress open\`…"
-(cd "${temp_path}/merged" && npx cypress open)
+# execute within subshell to isolate env
+(
+    export CYPRESS_REMOTE_DEBUGGING_PORT=9222
+    cd "${temp_path}/merged"
+    npx cypress open
+)

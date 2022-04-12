@@ -1,4 +1,4 @@
-describe('Student tasks demonstrations competency rating level test', () => {
+describe('CBL: Student tasks demonstrations competency rating level test', () => {
 
     // load sample database before tests
     before(() => {

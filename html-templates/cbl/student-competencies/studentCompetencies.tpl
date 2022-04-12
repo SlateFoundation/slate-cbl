@@ -77,6 +77,8 @@
                 <th scope="col">Level</th>
                 <th scope="col">Entered Via</th>
                 <th scope="col">Baseline Rating</th>
+                <th scope="col">Growth</th>
+                <th scope="col">Progress</th>
             </tr>
         </thead>
         <tbody>
@@ -87,7 +89,9 @@
                 <td>{contextLink $StudentCompetency->Competency}</td>
                 <td>{$StudentCompetency->Level}</td>
                 <td>{$StudentCompetency->EnteredVia|escape}</td>
-                <td>{$StudentCompetency->BaselineRating|escape|default:'&mdash;'}</td>
+                <td>{$StudentCompetency->BaselineRating|default:'&mdash;'}</td>
+                <td>{$StudentCompetency->getGrowth()|default:'&mdash;'}</td>
+                <td>{$StudentCompetency->getProgress()|default:'&mdash;'}</td>
             </tr>
         {/foreach}
         </tbody>
