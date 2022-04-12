@@ -30,21 +30,21 @@
             }
         }
     },
-    "student2":{
-        "ELA":{
-            "ELA.2":{
+    "student2": {
+        "ELA": {
+            "ELA.2": {
                 "description": "All Ms. There are ratings but there is no performance level",
-                "baseline":"9",
-                "average":null,
+                "baseline": "9",
+                "average": null,
                 "growth": "0",
-                "progress":"0"
+                "progress": "0"
             },
-            "ELA.3":{
+            "ELA.3": {
                 "description": "Performance level and baseline are the same",
-                "baseline":"9",
-                "average":"9",
+                "baseline": "9",
+                "average": "9",
                 "growth": "0",
-                "progress":"33"
+                "progress": "33"
             }
         }
     },
@@ -89,166 +89,166 @@
             }
         }
     },
-    "student4":{
-        "ELA":{
-            "ELA.1":{
+    "student4": {
+        "ELA": {
+            "ELA.1": {
                 "description": "One rating for each skill",
-                "baseline":null,
-                "average":"6",
-                "growth":"0" ,
-                "progress":"33"
+                "baseline": null,
+                "average": "6",
+                "growth": "0",
+                "progress": "33"
             },
-            "ELA.2":{
+            "ELA.2": {
                 "description": "One rating for all but one skill, progress < 50%",
-                "baseline":null,
-                "average":"6",
-                "growth":"0" ,
-                "progress":"40"
+                "baseline": null,
+                "average": "6",
+                "growth": "0",
+                "progress": "40"
             },
-            "ELA.3":{
+            "ELA.3": {
                 "description": "One set of ERs thats low and hidden and one that is higher and displayed",
-                "baseline":null,
-                "average":"7",
-                "growth":"1" ,
-                "progress":"100"
+                "baseline": null,
+                "average": "7",
+                "growth": "1",
+                "progress": "100"
             },
-            "ELA.4":{
+            "ELA.4": {
                 "description": "One set of ER thats low and hidden and one that is higher and displayed with Ms",
-                "baseline":null,
-                "average":"6.7",
-                "growth":"1" ,
-                "progress":"100"
+                "baseline": null,
+                "average": "6.7",
+                "growth": "1",
+                "progress": "100"
             },
-            "ELA.5":{
+            "ELA.5": {
                 "description": "No full set of ER, Progress > 50%",
-                "baseline":null,
-                "average":"7",
-                "growth":"1" ,
-                "progress":"83"
+                "baseline": null,
+                "average": "7",
+                "growth": "1",
+                "progress": "83"
             },
-            "ELA.6":{
+            "ELA.6": {
                 "description": "One rating for each skill except one which is an M",
-                "baseline":null,
-                "average":"7",
-                "growth":"0" ,
-                "progress":"33"
+                "baseline": null,
+                "average": "7",
+                "growth": "0",
+                "progress": "33"
             },
-            "ELA.7":{
+            "ELA.7": {
                 "description": "One full ER plus one additional rating",
-                "baseline":null,
-                "average":"6.4",
-                "growth":"0",
-                "progress":"63"
+                "baseline": null,
+                "average": "6.4",
+                "growth": "0",
+                "progress": "63"
             }
         },
-        "SCI":{
-            "SCI.1":{
+        "SCI": {
+            "SCI.1": {
                 "description": "One full ER plus one additional rating, less than 50%",
-                "baseline":null,
-                "average":"6.6",
-                "growth":"0",
-                "progress":"38"
+                "baseline": null,
+                "average": "6.6",
+                "growth": "0",
+                "progress": "38"
             },
-            "SCI.3":{
+            "SCI.3": {
                 "description": "All Ms",
-                "baseline":null,
-                "average":null,
-                "growth":"0",
-                "progress":"0"
+                "baseline": null,
+                "average": null,
+                "growth": "0",
+                "progress": "0"
             }
         },
-        "NGE":{
-            "NGE.1":{
+        "NGE": {
+            "NGE.1": {
                 "description": "No full set of ERs, Progress < 50%",
-                "baseline":null,
-                "average":"9.4",
-                "growth":"-1.3",
-                "progress":"35"
+                "baseline": null,
+                "average": "9.4",
+                "growth": "-1.3",
+                "progress": "35"
             }
         },
-        "HOS":{
-            "HOS.1":{
+        "HOS": {
+            "HOS.1": {
                 "description": "No full set of ER, Progress >= 50%",
-                "baseline":null,
-                "average":"9.1",
-                "growth":"2.5",
-                "progress":"56"
+                "baseline": null,
+                "average": "9.1",
+                "growth": "2.5",
+                "progress": "56"
             }
         },
-        "HW":{
-            "HW.1":{
+        "HW": {
+            "HW.1": {
                 "description": "One full ER, HW.1.4 is set to zero ER",
-                "baseline":null,
-                "average":"8",
-                "growth":"0",
-                "progress":"33"
+                "baseline": null,
+                "average": "8",
+                "growth": "0",
+                "progress": "33"
             },
-            "HW.2":{
+            "HW.2": {
                 "description": "No full set of ER, HW.2.5 is set to zero ER, Progress < 50%",
-                "baseline":null,
-                "average":"8.4",
-                "growth":"0",
-                "progress":"42"
+                "baseline": null,
+                "average": "8.4",
+                "growth": "0",
+                "progress": "42"
             },
-            "HW.3":{
+            "HW.3": {
                 "description": "No full set of ER, HW3.4 is set to zero ER, Progress >= 50%",
-                "baseline":null,
-                "average":"9.2",
-                "growth":"2.5",
-                "progress":"56"
+                "baseline": null,
+                "average": "9.2",
+                "growth": "2.5",
+                "progress": "56"
             }
         }
     },
-    "student5":{
-        "ELA":{
-            "ELA.1":{
+    "student5": {
+        "ELA": {
+            "ELA.1": {
                 "description": "One rating for each skill",
-                "baseline":"5",
-                "average":"6.5",
-                "growth":"1.5",
-                "progress":"33"
+                "baseline": "5",
+                "average": "6.5",
+                "growth": "1.5",
+                "progress": "33"
             },
-            "ELA.2":{
+            "ELA.2": {
                 "description": "One rating for all but one skill, progress < 50%",
-                "baseline":"5",
-                "average":"7",
-                "growth":"2",
-                "progress":"40"
+                "baseline": "5",
+                "average": "7",
+                "growth": "2",
+                "progress": "40"
             },
-            "ELA.3":{
+            "ELA.3": {
                 "description": "One set of ERs thats low and hidden and one that is higher and displayed",
-                "baseline":"5",
-                "average":"8.2",
-                "growth":"3.2",
-                "progress":"100"
+                "baseline": "5",
+                "average": "8.2",
+                "growth": "3.2",
+                "progress": "100"
             },
-            "ELA.4":{
+            "ELA.4": {
                 "description": "One set of ER thats low and hidden and one that is higher and displayed with Ms",
-                "baseline":"5",
-                "average":"7.5",
-                "growth":"2.5",
-                "progress":"100"
+                "baseline": "5",
+                "average": "7.5",
+                "growth": "2.5",
+                "progress": "100"
             },
-            "ELA.5":{
+            "ELA.5": {
                 "description": "No full set of ER, Progress > 50%",
-                "baseline":"5",
-                "average":"7",
-                "growth":"2",
-                "progress":"83"
+                "baseline": "5",
+                "average": "7",
+                "growth": "2",
+                "progress": "83"
             },
-            "ELA.6":{
+            "ELA.6": {
                 "description": "One rating for each skill except one which is an M",
-                "baseline":"5",
-                "average":"8",
-                "growth":"3",
-                "progress":"33"
+                "baseline": "5",
+                "average": "8",
+                "growth": "3",
+                "progress": "33"
             },
-            "ELA.7":{
+            "ELA.7": {
                 "description": "One full ER plus one additional rating",
-                "baseline":"5",
-                "average":"6.2",
-                "growth":"1.3",
-                "progress":"63"
+                "baseline": "5",
+                "average": "6.2",
+                "growth": "1.3",
+                "progress": "63"
             }
         }
     }
