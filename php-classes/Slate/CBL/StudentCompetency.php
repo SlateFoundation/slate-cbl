@@ -101,7 +101,7 @@ class StudentCompetency extends \ActiveRecord
             'getter' => 'getDemonstrationsRequired'
         ],
         'demonstrationData' => [
-            'getter' => 'getDemonstrationData'
+            'getter' => 'getDemonstrationsData'
         ],
         'effectiveDemonstrationsData' => [
             'getter' => 'getEffectiveDemonstrationsData'
@@ -213,7 +213,7 @@ class StudentCompetency extends \ActiveRecord
     }
 
     private $demonstrationData;
-    public function getDemonstrationData()
+    public function getDemonstrationsData()
     {
         if ($this->demonstrationData === null) {
             // TODO: cache dynamically
@@ -282,7 +282,7 @@ class StudentCompetency extends \ActiveRecord
         if ($this->demonstrationOpportunities === null) {
             $this->demonstrationOpportunities = 0;
 
-            foreach ($this->getDemonstrationData() as $skillId => $demonstrationData) {
+            foreach ($this->getDemonstrationsData() as $skillId => $demonstrationData) {
                 foreach ($demonstrationData as $demonstration) {
                     if (empty($demonstration['Override'])) {
                         $this->demonstrationOpportunities++;
@@ -312,7 +312,7 @@ class StudentCompetency extends \ActiveRecord
     public function getEffectiveDemonstrationsData()
     {
         if ($this->effectiveDemonstrationsData === null) {
-            $demonstrationsData = $this->getDemonstrationData();
+            $demonstrationsData = $this->getDemonstrationsData();
 
             foreach ($demonstrationsData as $skillId => &$demonstrationData) {
                 usort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);

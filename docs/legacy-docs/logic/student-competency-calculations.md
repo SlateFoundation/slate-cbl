@@ -2,11 +2,11 @@
 
 | Method Name | Description | Output |
 | ----------- | ----------- | ------ |
-| getDemonstrationData | Get demonstrations, **grouped** by `SkillID` and **ordered** by `DemonstrationDate` and `DemonstrationID` | Array of demonstrations
-| getDemonstrationOpportunities | Equal to the total amount of **non-Override demonstrations** found in `getDemonstrationData` | Array of demonstrations
+| getDemonstrationsData | Get demonstrations, **grouped** by `SkillID` and **ordered** by `DemonstrationDate` and `DemonstrationID` | Array of demonstrations
+| getDemonstrationOpportunities | Equal to the total amount of **non-Override demonstrations** found in `getDemonstrationsData` | Array of demonstrations
 | sortDemonstrations | Demonstrations are sorted by their `ID` | Array of demonstrations
 | sortEffectiveDemonstrations | Sort demonstrations by `DemonstratedLevel`, or by the `sortDemonstrations` method if the demonstrations have the same `DemonstratedLevel` | Array of demonstrations
-| getEffectiveDemonstrationsData | Sort `getDemonstrationData` via `sortEffectiveDemonstrations`. Reduce the number of demonstrations to the amount of *demonstrations required for the respective `Level`*. Sort the demonstrations again via `sortDemonstrations` | Array of demonstrations
+| getEffectiveDemonstrationsData | Sort `getDemonstrationsData` via `sortEffectiveDemonstrations`. Reduce the number of demonstrations to the amount of *demonstrations required for the respective `Level`*. Sort the demonstrations again via `sortDemonstrations` | Array of demonstrations
 | getDemonstrationsLogged | Get demonstrations via `getEffectiveDemonstrationsData`. Exclude **Overrides** and records that do not have a **DemonstratedLevel**. | Total of demonstrations found
 | getDemonstrationsMissed | Get demonstrations via `getEffectiveDemonstrationsData`. Exclude **Overrides** and records that have a **DemonstratedLevel** | Total of demonstrations found
 | getDemonstrationsComplete | Get demonstrations via `getEffectiveDemonstrationsData`. If `DemonstratedLevel` is set, Increase the total by **1**. If record is an **Override**, Increase the total by the amount of demonstrations required for the respective Skill Level (via `Skill::getDemonstrationsRequiredByLevel()`). If the Demonstration is an **Override**, equal to the the amount of skills required for that demonstration. | Total of demonstrations completed
