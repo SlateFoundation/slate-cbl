@@ -130,7 +130,7 @@ describe('CBL: Teacher tasks test', () => {
                 expect(response.statusCode).to.eq(200)
             })
 
-                cy.wait('@getSkills').then(({ response }) => {
+            cy.wait('@getSkills').then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
             })
