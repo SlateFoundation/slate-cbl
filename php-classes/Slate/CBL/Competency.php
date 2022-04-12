@@ -57,10 +57,10 @@ class Competency extends \VersionedRecord
     public static $dynamicFields = [
         'ContentArea',
         'Skills' => [
-            'getter' => 'getSkills'
+            'getter' => 'getActiveSkills'
         ],
         'skillIds' => [
-            'getter' => 'getSkillIds'
+            'getter' => 'getActiveSkillIds'
         ],
         'totalDemonstrationsRequired' => [
             'getter' => 'getTotalDemonstrationsRequired'
@@ -118,24 +118,50 @@ class Competency extends \VersionedRecord
         return $this->finishValidation();
     }
 
-    public function getSkillIds($forceRefresh = false)
+    public function save($deep = true)
     {
-        $cacheKey = "cbl-competency/$this->ID/skill-ids";
+        $wasContentAreaDirty = $this->isFieldDirty('ContentAreaID');
+        $wasStatusDirty = $this->isFieldDirty('Status');
+
+        parent::save($deep);
+
+        if ($wasContentAreaDirty || $wasStatusDirty) {
+            if ($this->ContentArea) {
+                $this->ContentArea->getActiveSkillIds(true); // true to force refresh of cached value
+            }
+
+            Skill::getInactiveIds(true);
+        }
+
+        if ($wasContentAreaDirty) {
+            if ($oldContentAreaId = $this->getOriginalValue('ContentAreaID')) {
+                ContentArea::getByID($oldContentAreaId)->getActiveSkillIds(true); // true to force refresh of cached value
+            }
+        }
+    }
+
+    public function getActiveSkillIds($forceRefresh = false)
+    {
+        $cacheKey = "cbl-competency/$this->ID/active-skill-ids";
 
         if (!$forceRefresh && false !== ($skillIds = Cache::fetch($cacheKey))) {
             return $skillIds;
         }
 
-        try {
-            $skillIds = array_map('intval', DB::allValues(
-                'ID',
-                'SELECT ID FROM `%s` WHERE CompetencyID = %u',
-                [
-                    Skill::$tableName,
-                    $this->ID
-                ]
-            ));
-        } catch (TableNotFoundException $e) {
+        if ($this->Status == 'active') {
+            try {
+                $skillIds = array_map('intval', DB::allValues(
+                    'ID',
+                    'SELECT ID FROM `%s` WHERE CompetencyID = %u AND Status = "active"',
+                    [
+                        Skill::$tableName,
+                        $this->ID
+                    ]
+                ));
+            } catch (TableNotFoundException $e) {
+                $skillIds = [];
+            }
+        } else {
             $skillIds = [];
         }
 
@@ -144,11 +170,11 @@ class Competency extends \VersionedRecord
         return $skillIds;
     }
 
-    public function getSkills($forceRefresh = false)
+    public function getActiveSkills($forceRefresh = false)
     {
         $skills = [];
 
-        foreach (static::getSkillIds($forceRefresh) as $skillId) {
+        foreach (static::getActiveSkillIds($forceRefresh) as $skillId) {
             $skills[] = Skill::getByID($skillId);
         }
 
@@ -159,7 +185,7 @@ class Competency extends \VersionedRecord
     public function getTotalSkills($forceRefresh = false)
     {
         if ($this->totalSkills === null || $forceRefresh) {
-            $this->totalSkills = count($this->getSkillIds($forceRefresh));
+            $this->totalSkills = count($this->getActiveSkillIds($forceRefresh));
         }
 
         return $this->totalSkills;
@@ -171,7 +197,7 @@ class Competency extends \VersionedRecord
 
         if ($forceRefresh || false === ($levelTotals = Cache::fetch($cacheKey))) {
             try {
-                $skills = $this->getSkills();
+                $skills = $this->getActiveSkills();
 
                 // accumulate available levels
                 $collectedLevel = [];

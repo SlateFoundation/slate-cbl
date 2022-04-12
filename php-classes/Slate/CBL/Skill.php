@@ -2,6 +2,10 @@
 
 namespace Slate\CBL;
 
+use DB;
+use Cache;
+use TableNotFoundException;
+
 class Skill extends \VersionedRecord
 {
     // ActiveRecord configuration
@@ -119,17 +123,29 @@ class Skill extends \VersionedRecord
     public function save($deep = true)
     {
         $wasCompetencyDirty = $this->isFieldDirty('CompetencyID');
+        $wasStatusDirty = $this->isFieldDirty('Status');
         $wasDemonstrationsRequiredDirty = $this->isFieldDirty('DemonstrationsRequired');
 
         parent::save($deep);
 
-        if ($wasCompetencyDirty) {
+        if ($wasCompetencyDirty || $wasStatusDirty) {
             if ($this->Competency) {
-                $this->Competency->getSkillIds(true); // true to force refresh of cached value
+                $this->Competency->getActiveSkillIds(true); // true to force refresh of cached value
+                if ($this->Competency->ContentArea) {
+                    $this->Competency->ContentArea->getActiveSkillIds(true); // true to force refresh of cached value
+                }
             }
 
+            static::getInactiveIds(true);
+        }
+
+        if ($wasCompetencyDirty) {
             if ($oldCompetencyId = $this->getOriginalValue('CompetencyID')) {
-                Competency::getByID($oldCompetencyId)->getSkillIds(true); // true to force refresh of cached value
+                $oldCompetency = Competency::getByID($oldCompetencyId);
+                $oldCompetency->getActiveSkillIds(true); // true to force refresh of cached value
+                if ($oldCompetency->ContentArea) {
+                    $oldCompetency->ContentArea->getActiveSkillIds(true); // true to force refresh of cached value
+                }
             }
         }
 
@@ -163,5 +179,50 @@ class Skill extends \VersionedRecord
         }
 
         return null;
+    }
+
+    public static function getInactiveIds($forceRefresh = false)
+    {
+        // try to get from static cache
+        static $skillIds = null;
+
+        if ($skillIds !== null && !$forceRefresh) {
+            return $skillIds;
+        }
+
+        // try to get from shared cache
+        $cacheKey = 'inactive-skill-ids';
+
+        if (!$forceRefresh && false !== ($skillIds = Cache::fetch($cacheKey))) {
+            return $skillIds;
+        }
+
+        // try to get from database
+        try {
+            $skillIds = DB::allValues(
+                'ID',
+                '
+                    SELECT s.ID
+                      FROM `%s` s
+                      JOIN `%s` c ON (c.ID = s.CompetencyID)
+                      JOIN `%s` ca ON (ca.ID = c.ContentAreaID)
+                     WHERE s.Status != "active"
+                        OR c.Status != "active"
+                        OR ca.Status != "active"
+                ',
+                [
+                    static::$tableName,
+                    Competency::$tableName,
+                    ContentArea::$tableName
+                ]
+            );
+            $skillIds = array_map('intval', $skillIds);
+        } catch (TableNotFoundException $e) {
+            $skillIds = [];
+        }
+
+        Cache::store($cacheKey, $skillIds);
+
+        return $skillIds;
     }
 }
