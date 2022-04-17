@@ -8,7 +8,7 @@ class PerformanceLevelMinusBaseline implements IGrowthCalculator
 {
     public static function calculateGrowth(StudentCompetency $StudentCompetency)
     {
-        $baseline = $StudentCompetency->getBaselineRating();
+        $baseline = $StudentCompetency->getBaselineAverage();
         $performanceLevel = $StudentCompetency->getDemonstrationsAverage();
 
         // baseline & performance level must > 0
