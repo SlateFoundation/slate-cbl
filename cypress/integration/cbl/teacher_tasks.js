@@ -7,17 +7,22 @@ describe('CBL: Teacher tasks test', () => {
 
     // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.server().route('GET', '/cbl/tasks/*').as('taskData');
-        cy.server().route('GET', '/cbl/student-tasks*').as('studentTasksData');
-        cy.server().route('POST', '/cbl/tasks/save*').as('taskSave');
-
+        cy.intercept('GET', '/cbl/tasks/!(\\*)*?(\\?*)').as('taskData');
+        cy.intercept('GET', '/cbl/student-tasks?(\\?*)').as('studentTasksData');
+        cy.intercept('POST', '/cbl/tasks/save?(\\?*)').as('taskSave');
+        cy.intercept('GET', '/cbl/dashboards/tasks/teacher/bootstrap').as('getBootstrapData');
+        cy.intercept('GET', '/sections?(\\?*)').as('getSections');
+        cy.intercept('GET', '/sections/*/cohorts').as('getSectionCohorts')
+        cy.intercept('GET', '/section-participants?(\\?*)').as('getSectionParticipants')
         cy.loginAs('teacher');
     });
 
     it('View single tasks as teacher', () => {
 
         // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.visit('/cbl/dashboards/tasks/teacher')  ;
+        cy.wait('@getBootstrapData')
+        cy.get('@getBootstrapData.all').should('have.length', 1)
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
@@ -33,16 +38,19 @@ describe('CBL: Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
+            cy.wait("@getSections")
+            cy.get('@getSections.all').should('have.length', 1)
+
             // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
                 .contains('English Language Arts')
                 .click();
 
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+            cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionCohorts.all').should('have.length', 1)
+
+            cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionParticipants.all').should('have.length', 1)
 
             // verify hash
             cy.location('hash').should('eq', '#ELA-001/all');
@@ -54,8 +62,14 @@ describe('CBL: Teacher tasks test', () => {
     });
 
     it('Archive task as teacher', () => {
+
+        // set up XHR monitors
+        cy.intercept('GET', '/cbl/skills?(\\?*)').as('getSkills')
+
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.wait('@getBootstrapData')
+        cy.get('@getBootstrapData.all').should('have.length', 1)
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
@@ -71,17 +85,25 @@ describe('CBL: Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
+            cy.wait("@getSections")
+            cy.get('@getSections.all').should('have.length', 1)
             // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
                 .contains('English Language Arts')
                 .click();
 
+            cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionCohorts.all').should('have.length', 1)
+
+            cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionParticipants.all').should('have.length', 1)
+
             // verify student tasks load
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+            cy.wait('@studentTasksData').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
+
 
             // verify hash
             cy.location('hash').should('eq', '#ELA-001/all');
@@ -93,21 +115,25 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('Edit')
                 .click({ force: true });
 
-            cy.wait('@taskData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+            cy.wait('@taskData').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             cy.get('.slate-window')
                 .contains('Archive Task')
                 .click({ force: true });
 
-            cy.wait('@taskSave')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+
+            cy.wait('@taskSave').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
+
+            cy.wait('@getSkills').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             cy.get('#' + studentGrid.el.dom.id)
                 .contains('ELA Task One (archived)');
@@ -118,6 +144,8 @@ describe('CBL: Teacher tasks test', () => {
     it('Un-Archive task as teacher', () => {
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.wait('@getBootstrapData')
+        cy.get('@getBootstrapData.all').should('have.length', 1)
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
@@ -133,17 +161,26 @@ describe('CBL: Teacher tasks test', () => {
             // click the selector
             cy.get('#' + sectionSelector.el.dom.id).click();
 
+            cy.wait("@getSections")
+            cy.get('@getSections.all').should('have.length', 1)
+
             // click ELA section element of picker dropdown
             cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
                 .contains('English Language Arts')
                 .click();
 
-            // verify studetn tasks load
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+            cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionCohorts.all').should('have.length', 1)
+
+            cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200)
+            cy.get('@getSectionParticipants.all').should('have.length', 1)
+
+
+            // verify student tasks load
+            cy.wait('@studentTasksData').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             // verify hash
             cy.location('hash').should('eq', '#ELA-001/all');
@@ -153,11 +190,12 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('Show Archived Tasks')
                 .click()
 
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+
+               // verify student tasks load
+            cy.wait('@studentTasksData').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             // verify content loads
             var studentGrid = extQuerySelector('slate-studentsgrid');
@@ -166,21 +204,21 @@ describe('CBL: Teacher tasks test', () => {
                 .contains('Edit')
                 .click({ force: true });
 
-            cy.wait('@taskData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+
+            cy.wait('@taskData').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             cy.get('.slate-window')
                 .contains('Un-Archive Task')
                 .click({ force: true });
 
-            cy.wait('@taskSave')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+
+            cy.wait('@taskSave').then(({ response }) => {
+                expect(response.body.success).to.eq(true)
+                expect(response.statusCode).to.eq(200)
+            })
 
             cy.get('#' + studentGrid.el.dom.id)
                 .contains('ELA Task One');
