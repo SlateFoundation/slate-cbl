@@ -34,7 +34,7 @@ StudentCompetency : Level
 StudentCompetency : EnteredVia [enrollment/graduation]
 StudentCompetency : BaselineRating
 StudentCompetency : getCompletion()
-StudentCompetency : getDemonstrationData()
+StudentCompetency : getDemonstrationsData()
 StudentCompetency : getEffectiveDemonstrationsData()
 StudentCompetency : getDemonstrationsLogged()
 StudentCompetency : getDemonstrationsMissed()
