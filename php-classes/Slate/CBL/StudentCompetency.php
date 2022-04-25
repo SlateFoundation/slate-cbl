@@ -296,6 +296,14 @@ class StudentCompetency extends \ActiveRecord
 
     protected static function sortDemonstrations($a, $b)
     {
+        if (
+            !empty($a['DemonstrationDate'])
+            && !empty($b['DemonstrationDate'])
+            && $a['DemonstrationDate'] != $b['DemonstrationDate']
+        ) {
+            return $a['DemonstrationDate'] < $b['DemonstrationDate'] ? -1 : 1;
+        }
+
         return $a['ID'] < $b['ID'] ? -1 : 1;
     }
 
