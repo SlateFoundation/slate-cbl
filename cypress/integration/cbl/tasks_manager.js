@@ -7,8 +7,8 @@ describe('CBL: Tasks Manager Test', () => {
 
     // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.server().route('GET', '/cbl/tasks').as('taskData');
-        cy.server().route('POST', '/cbl/tasks/save*').as('taskSave');
+        cy.intercept('GET', '/cbl/tasks?!(\\?*)').as('taskData');
+        cy.intercept('POST', '/cbl/tasks/save?!(\\?*)').as('taskSave');
 
         cy.loginAs('teacher');
     });
