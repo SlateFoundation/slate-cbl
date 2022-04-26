@@ -15,7 +15,7 @@ class PerformanceLevelMinusBaseline implements IGrowthCalculator
         if ($baseline === null) {
             $earliestRatings = [];
             $neededRatings = 0;
-            $demonstrations = $StudentCompetency->getDemonstrationData();
+            $demonstrations = $StudentCompetency->getDemonstrationsData();
 
             // find the earliest rating for each skill and count up how many skills have non-zero ER
             foreach ($StudentCompetency->Competency->getActiveSkills() as $Skill) {

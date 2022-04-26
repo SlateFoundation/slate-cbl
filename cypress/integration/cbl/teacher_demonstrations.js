@@ -7,17 +7,17 @@ describe('CBL: Teacher demonstrations test', () => {
 
     // authenticate as 'teacher' user
     beforeEach(() => {
+        // set up XHR monitors
+        cy.intercept('GET', '/cbl/dashboards/demonstrations/teacher/bootstrap').as('getBootstrapData');
+        cy.intercept('GET', '/cbl/content-areas\\?summary=true').as('getCompetencyAreas');
+        cy.intercept('GET', '/people/*student-lists').as('getMyStudentLists');
+        cy.intercept('GET', '/people/*student-list\\s?sections=all').as('getAllStudentLists');
+        cy.intercept('GET', '/cbl/student-competencies?(\\?*)').as('getStudentCompetencies');
+
         cy.loginAs('teacher');
     });
 
     it('View single demonstration rubric as teacher', () => {
-        // set up XHR monitors
-        cy.intercept('GET', '/cbl/dashboards/demonstrations/teacher/bootstrap').as('getBootstrapData');
-        cy.intercept('GET', '/cbl/content-areas?summary=true').as('getCompetencyAreas');
-        cy.intercept('GET', '/people/*student-lists').as('getMyStudentLists');
-        cy.intercept('GET', '/people/*student-lists?sections=all').as('getAllStudentLists');
-        cy.intercept('GET', '/cbl/student-competencies?*').as('getStudentCompetencies');
-
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/demonstrations/teacher');
@@ -28,89 +28,89 @@ describe('CBL: Teacher demonstrations test', () => {
 
         // verify teacher redirect
         cy.location('hash').should('eq', '#_');
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder ')
-            .contains('Select a list of students and a content area to load progress dashboard');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        cy.extGet('slate-demonstrations-teacher-dashboard')
+            .contains('.slate-placeholder', 'Select a list of students and a content area to load progress dashboard');
 
-            // get the 'Rubric' selector element
-            var rubricSelector = extQuerySelector('slate-cbl-contentareaselector');
+        // click the 'Rubric' selector
+        cy.extGet('slate-cbl-contentareaselector')
+            .click();
 
-            // click the selector
-            cy.get('#' + rubricSelector.el.dom.id).click();
+        // ensure competency areas are loaded
+        cy.wait('@getCompetencyAreas');
+        cy.get('@getCompetencyAreas.all').should('have.length', 1);
 
-            // ensure competency areas are loaded
-            cy.wait('@getCompetencyAreas');
-            cy.get('@getCompetencyAreas.all').should('have.length', 1);
+        // verify and click first element of picker dropdown
+        cy.extGet('slate-cbl-contentareaselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'English Language Arts')
+            .click();
 
-            // verify and click first element of picker dropdown
-            cy.get('#' + rubricSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('English Language Arts')
-                .click();
+        // verify hash updates
+        cy.location('hash').should('eq', '#ELA');
 
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA');
+        // click the 'Students' selector
+        cy.extGet('slate-cbl-studentslistselector')
+            .should('exist')
+            .click()
+            .focused()
+            .type('Exa');
 
-            // get the 'Students' selector element
-            var studentSelector = extQuerySelector('slate-cbl-studentslistselector');
+        // ensure student lists are loaded
+        cy.wait('@getMyStudentLists');
+        cy.get('@getMyStudentLists.all').should('have.length', 1);
 
-            // click the selector
-            cy.get('#' + studentSelector.el.dom.id)
-                .click()
-                .focused()
-                .type('Exa');
+        // verify and click first element of picker dropdown
+        cy.extGet('slate-cbl-studentslistselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'Example School')
+            .click();
 
-            // ensure student lists are loaded
-            cy.wait('@getMyStudentLists');
-            cy.get('@getMyStudentLists.all').should('have.length', 1);
+        // ensure student competencies are loaded
+        cy.wait('@getStudentCompetencies');
+        cy.get('@getStudentCompetencies.all').should('have.length', 1);
 
-            // verify and click first element of picker dropdown
-            cy.get('#' + studentSelector.getPicker().id)
-                .contains('Example School')
-                .click();
+        // verify hash updates
+        cy.location('hash').should('eq', '#ELA/group:example_school');
 
-            // ensure student competencies are loaded
-            cy.wait('@getStudentCompetencies');
-            cy.get('@getStudentCompetencies.all').should('have.length', 1);
+        // verify content loads
+        cy.extGet('slate-demonstrations-teacher-dashboard')
+            .contains('.cbl-grid-competency-name', 'Reading Critically');
 
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA/group:example_school');
+        // click the 'Students' selector
+        cy.extGet('slate-cbl-studentslistselector')
+            .click()
+            .focused()
+            .type('{selectall}{backspace}{downarrow}');
 
-            // verify content loads
-            cy.get('.cbl-grid-competencies').contains('Reading Critically');
+        // expand list to all sections
+        cy.extGet('slate-cbl-studentslistselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('button', 'Show all sections')
+            .scrollIntoView()
+            .click();
 
-            // click the selector
-            cy.get('#' + studentSelector.el.dom.id)
-                .click()
-                .focused()
-                .type('{selectall}{backspace}{downarrow}');
+        // ensure student lists are loaded
+        cy.wait('@getAllStudentLists');
+        cy.get('@getAllStudentLists.all').should('have.length', 1);
 
-            // expand list to all sections
-            cy.get('#' + studentSelector.getPicker().id)
-                .contains('Show all sections')
-                .scrollIntoView()
-                .closest('button')
-                .click('center', { force: true })  //scrollIntoView does not appear to be working
+        // verify and click empty section element of picker dropdown
+        cy.extGet('slate-cbl-studentslistselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('Jarvus Innovations')
+            .scrollIntoView()
+            .click();
 
-            // ensure student lists are loaded
-            cy.wait('@getAllStudentLists');
-            cy.get('@getAllStudentLists.all').should('have.length', 1);
+        // ensure student competencies are loaded
+        cy.wait('@getStudentCompetencies');
+        cy.get('@getStudentCompetencies.all').should('have.length', 2);
 
-            // verify and click empty section element of picker dropdown
-            cy.get('#' + studentSelector.getPicker().id)
-                .contains('Jarvus Innovations')
-                .scrollIntoView()
-                .click({force: true}); //scrollIntoView does not appear to be working
+        // verify hash updates
+        cy.location('hash').should('eq', '#ELA/group:jarvus');
 
-            // ensure student competencies are loaded
-            cy.wait('@getStudentCompetencies');
-            cy.get('@getStudentCompetencies.all').should('have.length', 2);
-
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA/group:jarvus');
-
-            // verify content loads
-            cy.get('.cbl-grid-main').should('be.empty');
-        });
+        // verify content loads
+        cy.extGet('slate-demonstrations-teacher-dashboard')
+            .find('.cbl-grid-main')
+            .should('be.empty');
     });
 });

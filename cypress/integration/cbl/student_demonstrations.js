@@ -8,6 +8,7 @@ describe('CBL: Student demonstrations test', () => {
     // authenticate as 'student' user
     beforeEach(() => {
         cy.loginAs('student');
+        cy.intercept('GET', '/cbl/content-areas?(\\?*)').as('getContentAreas');
     });
 
     it('View single demonstration rubric as student', () => {
@@ -20,21 +21,21 @@ describe('CBL: Student demonstrations test', () => {
         cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
             .contains('Select a content area to load demonstrations dashboard');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // click the 'Rubric' selector
+        cy.extGet('slate-cbl-contentareaselector')
+            .click();
 
-            // get the selector element
-            var contentAreaSelector = extQuerySelector('slate-cbl-contentareaselector');
+        // wait for options to load
+        cy.wait('@getContentAreas');
 
-            // click the selector
-            cy.get('#' + contentAreaSelector.el.dom.id).click();
+        // verify and click first element of picker dropdown
+        cy.extGet('slate-cbl-contentareaselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'English Language Arts')
+            .click();
 
-            // verify and click first element of picker dropdown
-            cy.get('#' + contentAreaSelector.getPicker().id + ' li:first-child')
-                .contains('English Language Arts')
-                .click();
-
-            // verify content loads
-            cy.get('.slate-demonstrations-student-competenciessummary span').contains('English Language Arts');
-        });
+        // verify content loads
+        cy.get('.slate-demonstrations-student-competenciessummary span')
+            .contains('English Language Arts');
     });
 });

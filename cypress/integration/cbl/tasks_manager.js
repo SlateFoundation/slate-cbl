@@ -7,8 +7,9 @@ describe('CBL: Tasks Manager Test', () => {
 
     // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.server().route('GET', '/cbl/tasks').as('taskData');
-        cy.server().route('POST', '/cbl/tasks/save*').as('taskSave');
+        cy.intercept('GET', '/cbl/tasks?(\\?*)').as('tasksData');
+        cy.intercept('POST', '/cbl/tasks/save?(\\?*)').as('taskSave');
+        cy.intercept('POST', '/cbl/tasks/destroy?(\\?*)').as('taskDestroy');
 
         cy.loginAs('teacher');
     });
@@ -18,41 +19,39 @@ describe('CBL: Tasks Manager Test', () => {
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/manager');
 
-        // verify teacher redirect
-        cy.location('hash').should('eq', '');
-
+        // verify app loaded
         cy.get('#slateapp-viewport')
-            .contains('Task Library');
+            .contains('.slate-appheader-title', 'Task Library');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // wait for data load
+        cy.wait('@tasksData');
 
-            // get the selector element
-            var taskManager = extQuerySelector('slate-tasks-manager'),
-                appHeader = taskManager.down('slate-tasks-manager-appheader'),
-                createBtn = appHeader.down('button[action=create]');
-                // editBtn = appHeader.down('button[action=edit]'),
-                // deleteBtn = appHeader.down('button[action=delete]');
+        // click create button
+        cy.extGet('slate-tasks-manager-appheader button[action=create]')
+            .click();
 
+        // wait for window to transition open
+        cy.extGet('slate-window')
+            .should('not.have.class', 'x-hidden-clip')
+            .within(() => {
+                cy.root()
+                    .contains('.x-title-text', 'Create Task');
 
-            // click create button
-            cy.get('#' + createBtn.getId())
-                .click({ force: true });
+                cy.root()
+                    .contains('.x-form-item-label-text', 'Title')
+                    .click();
 
-            cy.get('.slate-window')
-                .contains('Create Task');
+                cy.focused()
+                    .should('have.attr', 'name', 'Title')
+                    .type('Created Test Task Title');
 
-            cy.get('.slate-window')
-                .contains('Title')
-                .click({ force: true })
+                cy.get('.slate-panelfooter')
+                    .contains('.x-btn-inner', 'Create')
+                    .click();
+            });
 
-            cy.focused()
-                .should('have.attr', 'name', 'Title')
-                .type('Test Task Title');
-
-            cy.get('.slate-window .slate-panelfooter')
-                .contains('Create')
-                .click({ force: true });
-        });
+        // wait for data save
+        cy.wait('@taskSave');
     });
 
     it('Edit public task as teacher', () => {
@@ -60,43 +59,55 @@ describe('CBL: Tasks Manager Test', () => {
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/manager');
 
-        // verify teacher redirect
-        cy.location('hash').should('eq', '');
-
+        // verify app loaded
         cy.get('#slateapp-viewport')
-            .contains('Task Library');
+            .contains('.slate-appheader-title', 'Task Library');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // wait for data load
+        cy.wait('@tasksData');
 
-            // get the selector element
-            var taskManager = extQuerySelector('slate-tasks-manager'),
-                appHeader = taskManager.down('slate-tasks-manager-appheader'),
-                editBtn = appHeader.down('button[action=edit]');
-                // deleteBtn = appHeader.down('button[action=delete]');
+        // find and click created task
+        cy.extGet('slate-tasks-manager')
+            .contains('.x-grid-cell-inner', 'Created Test Task Title')
+            .click();
 
+        // click edit button
+        cy.extGet('slate-tasks-manager-appheader button[action=edit]')
+            .click();
 
-            cy.contains('Test Task Title')
-                .click({ force: true });
+        // wait for window to transition open
+        cy.extGet('slate-window')
+            .should('not.have.class', 'x-hidden-clip')
+            .within(() => {
+                cy.root()
+                    .contains('.x-title-text', 'Edit Task');
 
-            // click create button
-            cy.get('#' + editBtn.getId())
-                .click({ force: true });
+                cy.root()
+                    .contains('.x-form-item-label-text', 'Title')
+                    .click();
 
-            cy.get('.slate-window')
-                .contains('Edit Task');
+                cy.focused()
+                    .should('have.attr', 'name', 'Title')
+                    .type('Updated Test Task Title');
 
-            cy.get('.slate-window')
-                .contains('Title')
-                .click({ force: true })
+                cy.get('.slate-panelfooter')
+                    .contains('.x-btn-inner', 'Save')
+                    .click();
+            });
 
-            cy.focused()
-                .should('have.attr', 'name', 'Title')
-                .type('Test Task Title - Updated');
+        // wait for data save
+        cy.wait('@taskSave');
 
-            cy.get('.slate-window .slate-panelfooter')
-                .contains('Save')
-                .click({ force: true });
-        });
+        // verify selected record is updated
+        cy.extGet('slate-tasks-manager', { component: true })
+            .should(grid => {
+                const selection = grid.getSelection();
+                expect(selection.length, 'one record selected').to.equal(1);
+
+                const [ task ] = selection;
+                expect(task.dirty, 'record is not dirty').to.be.false;
+                expect(task.get('Title'), 'title is updated').to.equal('Updated Test Task Title');
+            });
     });
 
     it('Delete public task as teacher', () => {
@@ -104,34 +115,44 @@ describe('CBL: Tasks Manager Test', () => {
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/manager');
 
-        // verify teacher redirect
-        cy.location('hash').should('eq', '');
-
+        // verify app loaded
         cy.get('#slateapp-viewport')
-            .contains('Task Library');
+            .contains('.slate-appheader-title', 'Task Library');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // wait for data load
+        cy.wait('@tasksData');
 
-            // get the selector element
-            var taskManager = extQuerySelector('slate-tasks-manager'),
-                appHeader = taskManager.down('slate-tasks-manager-appheader'),
-                deleteBtn = appHeader.down('button[action=delete]');
+        // find and click updated task
+        cy.extGet('slate-tasks-manager')
+            .contains('.x-grid-cell-inner', 'Updated Test Task Title')
+            .click();
 
+        // click delete button
+        cy.extGet('slate-tasks-manager-appheader button[action=delete]')
+            .click();
 
-            cy.contains('Test Task Title')
-                .click({ force: true });
+        // get confirmation prompt
+        cy.extGet('messagebox')
+            .within(() => {
+                cy.root()
+                    .contains('.x-title-text', 'Delete Task');
 
-            // click create button
-            cy.get('#' + deleteBtn.getId())
-                .click({ force: true });
+                cy.root()
+                    .contains('.x-window-text strong', 'Updated Test Task Title');
 
-            cy.get('.x-window')
-                .contains('Delete Task');
+                cy.root()
+                    .contains('.x-btn-inner', 'Yes')
+                    .click();
+            });
 
-            cy.get('.x-window .x-docked')
-                .contains('Yes')
-                .click({ force: true });
-        });
+        // wait for data save
+        cy.wait('@taskDestroy');
+
+        // verify grid has no selection
+        cy.extGet('slate-tasks-manager', { component: true })
+            .should(grid => {
+                expect(grid.getSelection().length, 'no record selected').to.equal(0);
+            });
     });
 
 });

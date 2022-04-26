@@ -7,9 +7,13 @@ describe('CBL: Teacher tasks test', () => {
 
     // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.server().route('GET', '/cbl/tasks/*').as('taskData');
-        cy.server().route('GET', '/cbl/student-tasks*').as('studentTasksData');
-        cy.server().route('POST', '/cbl/tasks/save*').as('taskSave');
+        cy.intercept('GET', '/cbl/tasks/!(\\*)*?(\\?*)').as('taskData');
+        cy.intercept('GET', '/cbl/student-tasks?(\\?*)').as('studentTasksData');
+        cy.intercept('POST', '/cbl/tasks/save?(\\?*)').as('taskSave');
+        cy.intercept('GET', '/cbl/dashboards/tasks/teacher/bootstrap').as('getBootstrapData');
+        cy.intercept('GET', '/sections?(\\?*)').as('getSections');
+        cy.intercept('GET', '/sections/*/cohorts').as('getSectionCohorts');
+        cy.intercept('GET', '/section-participants?(\\?*)').as('getSectionParticipants');
 
         cy.loginAs('teacher');
     });
@@ -18,172 +22,201 @@ describe('CBL: Teacher tasks test', () => {
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.wait('@getBootstrapData');
+        cy.get('@getBootstrapData.all').should('have.length', 1);
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
 
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
-            .contains('Select a section to load tasks dashboard');
+        cy.extGet('slate-tasks-teacher-dashboard')
+            .contains('.slate-placeholder', 'Select a section to load tasks dashboard');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // click the 'Section' selector
+        cy.extGet('slate-cbl-sectionselector')
+            .click();
 
-            // get the selector element
-            var sectionSelector = extQuerySelector('slate-cbl-sectionselector');
+        cy.wait('@getSections');
+        cy.get('@getSections.all').should('have.length', 1);
 
-            // click the selector
-            cy.get('#' + sectionSelector.el.dom.id).click();
+        // click ELA section element of picker dropdown
+        cy.extGet('slate-cbl-sectionselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'English Language Arts')
+            .click();
 
-            // click ELA section element of picker dropdown
-            cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('English Language Arts')
-                .click();
+        cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200);
+        cy.get('@getSectionCohorts.all').should('have.length', 1);
 
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+        cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200);
+        cy.get('@getSectionParticipants.all').should('have.length', 1);
 
-            // verify hash
-            cy.location('hash').should('eq', '#ELA-001/all');
+        // verify hash
+        cy.location('hash').should('eq', '#ELA-001/all');
 
-            // verify content loads
-            var studentGrid = extQuerySelector('slate-studentsgrid');
-            cy.get('#' + studentGrid.el.dom.id).contains('ELA Task One');
-        });
+        // verify content loads
+        cy.extGet('slate-studentsgrid')
+            .contains('.jarvus-aggregrid-header-text', 'ELA Task One');
     });
 
     it('Archive task as teacher', () => {
+
+        // set up XHR monitors
+        cy.intercept('GET', '/cbl/skills?(\\?*)').as('getSkills');
+
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.wait('@getBootstrapData');
+        cy.get('@getBootstrapData.all').should('have.length', 1);
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
 
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
-            .contains('Select a section to load tasks dashboard');
+        cy.extGet('slate-tasks-teacher-dashboard')
+            .contains('.slate-placeholder', 'Select a section to load tasks dashboard');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // click the 'Section' selector
+        cy.extGet('slate-cbl-sectionselector')
+            .click();
 
-            // get the selector element
-            var sectionSelector = extQuerySelector('slate-cbl-sectionselector');
+        cy.wait('@getSections');
+        cy.get('@getSections.all').should('have.length', 1);
 
-            // click the selector
-            cy.get('#' + sectionSelector.el.dom.id).click();
+        // click ELA section element of picker dropdown
+        cy.extGet('slate-cbl-sectionselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'English Language Arts')
+            .click();
 
-            // click ELA section element of picker dropdown
-            cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('English Language Arts')
-                .click();
+        cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200);
+        cy.get('@getSectionCohorts.all').should('have.length', 1);
 
-            // verify student tasks load
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+        cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200);
+        cy.get('@getSectionParticipants.all').should('have.length', 1);
 
-            // verify hash
-            cy.location('hash').should('eq', '#ELA-001/all');
-
-            // verify content loads
-            var studentGrid = extQuerySelector('slate-studentsgrid');
-            cy.get('#' + studentGrid.el.dom.id)
-                .contains('ELA Task One')
-                .contains('Edit')
-                .click({ force: true });
-
-            cy.wait('@taskData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
-
-            cy.get('.slate-window')
-                .contains('Archive Task')
-                .click({ force: true });
-
-            cy.wait('@taskSave')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
-
-            cy.get('#' + studentGrid.el.dom.id)
-                .contains('ELA Task One (archived)');
+        // verify student tasks load
+        cy.wait('@studentTasksData').then(({ response }) => {
+            expect(response.body.success).to.eq(true);
+            expect(response.statusCode).to.eq(200);
         });
+
+        // verify hash
+        cy.location('hash').should('eq', '#ELA-001/all');
+
+        // verify content loads
+        cy.extGet('slate-studentsgrid')
+            .contains('.jarvus-aggregrid-header-text', 'ELA Task One')
+            .contains('button', 'Edit')
+            .click({ force: true });
+
+        cy.wait('@taskData').then(({ response }) => {
+            expect(response.body.success).to.eq(true);
+            expect(response.statusCode).to.eq(200);
+        })
+
+        // wait for window to transition open
+        cy.extGet('slate-window')
+            .should('not.have.class', 'x-hidden-clip')
+            .contains('.x-btn-inner', 'Archive Task')
+            .click();
+
+        cy.wait('@taskSave').then(({ response }) => {
+            expect(response.body.success).to.eq(true);
+            expect(response.statusCode).to.eq(200);
+        });
+
+        cy.extGet('slate-studentsgrid')
+            .find('.jarvus-aggregrid-rowheader .jarvus-aggregrid-header-text')
+            .should($rowHeaders => {
+                const archived = $rowHeaders.filter(':contains(ELA Task One \(archived\))');
+                expect(archived.length, 'one archived task').to.eq(1);
+
+                const taskOne = $rowHeaders.filter(':contains(ELA Task One)');
+                expect(taskOne.length, 'only one "ELA Task One"').to.eq(1);
+            });
     });
 
     // requires Archive test to pass, or it will fail
     it('Un-Archive task as teacher', () => {
+
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.wait('@getBootstrapData');
+        cy.get('@getBootstrapData.all').should('have.length', 1);
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
 
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
-            .contains('Select a section to load tasks dashboard');
+        cy.extGet('slate-tasks-teacher-dashboard')
+            .contains('.slate-placeholder', 'Select a section to load tasks dashboard');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // click the 'Section' selector
+        cy.extGet('slate-cbl-sectionselector')
+            .click();
 
-            // get the selector element
-            var sectionSelector = extQuerySelector('slate-cbl-sectionselector');
+        cy.wait('@getSections');
+        cy.get('@getSections.all').should('have.length', 1);
 
-            // click the selector
-            cy.get('#' + sectionSelector.el.dom.id).click();
+        // click ELA section element of picker dropdown
+        cy.extGet('slate-cbl-sectionselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'English Language Arts')
+            .click();
 
-            // click ELA section element of picker dropdown
-            cy.get('#' + sectionSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('English Language Arts')
-                .click();
+        cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200);
+        cy.get('@getSectionCohorts.all').should('have.length', 1);
 
-            // verify studetn tasks load
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
+        cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200);
+        cy.get('@getSectionParticipants.all').should('have.length', 1);
 
-            // verify hash
-            cy.location('hash').should('eq', '#ELA-001/all');
-
-            var gridToolbar = extQuerySelector('slate-gridtoolbar');
-            cy.get('#' + gridToolbar.el.dom.id)
-                .contains('Show Archived Tasks')
-                .click()
-
-            cy.wait('@studentTasksData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
-
-            // verify content loads
-            var studentGrid = extQuerySelector('slate-studentsgrid');
-            cy.get('#' + studentGrid.el.dom.id)
-                .contains('ELA Task One (archived)')
-                .contains('Edit')
-                .click({ force: true });
-
-            cy.wait('@taskData')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
-
-            cy.get('.slate-window')
-                .contains('Un-Archive Task')
-                .click({ force: true });
-
-            cy.wait('@taskSave')
-                .should(xhr => {
-                    expect(xhr.status).to.equal(200);
-                    expect(xhr.response.body.success).to.be.true;
-                });
-
-            cy.get('#' + studentGrid.el.dom.id)
-                .contains('ELA Task One');
+        // verify student tasks load
+        cy.wait('@studentTasksData').then(({ response }) => {
+            expect(response.body.success).to.eq(true);
+            expect(response.statusCode).to.eq(200);
         });
+
+        // verify hash
+        cy.location('hash').should('eq', '#ELA-001/all');
+
+        cy.extGet('slate-gridtoolbar')
+            .contains('.x-form-item-label-text', 'Show Archived Tasks')
+            .click();
+
+        // verify student tasks load
+        cy.wait('@studentTasksData').then(({ response }) => {
+            expect(response.body.success).to.eq(true)
+            expect(response.statusCode).to.eq(200)
+        });
+
+        // verify content loads
+        cy.extGet('slate-studentsgrid')
+            .contains('.jarvus-aggregrid-header-text', 'ELA Task One (archived)')
+            .contains('button', 'Edit')
+            .click({ force: true });
+
+        cy.wait('@taskData').then(({ response }) => {
+            expect(response.body.success).to.eq(true)
+            expect(response.statusCode).to.eq(200)
+        })
+
+        cy.extGet('slate-window')
+            .should('not.have.class', 'x-hidden-clip')
+            .contains('.x-btn-inner', 'Un-Archive Task')
+            .click();
+
+        cy.wait('@taskSave').then(({ response }) => {
+            expect(response.body.success).to.eq(true)
+            expect(response.statusCode).to.eq(200)
+        })
+
+        // verify content loads
+        cy.extGet('slate-studentsgrid')
+            .find('.jarvus-aggregrid-rowheader .jarvus-aggregrid-header-text')
+            .should($rowHeaders => {
+                const archived = $rowHeaders.filter(':contains(ELA Task One \(archived\))');
+                expect(archived.length, 'one archived task').to.eq(0);
+
+                const taskOne = $rowHeaders.filter(':contains(ELA Task One)');
+                expect(taskOne.length, 'only one "ELA Task One"').to.eq(1);
+            });
     });
 });
