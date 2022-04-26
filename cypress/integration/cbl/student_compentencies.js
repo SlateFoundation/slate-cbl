@@ -8,6 +8,8 @@ describe('CBL: Teacher student competencies test', () => {
     // authenticate as 'teacher' user
     beforeEach(() => {
         cy.loginAs('teacher');
+        cy.intercept('GET', '/cbl/content-areas?(\\?*)').as('getContentAreas');
+        cy.intercept('GET', '/people/\\*student-lists').as('getStudentLists');
     });
 
     it('View student competencies dashboard as teacher', () => {
@@ -17,45 +19,46 @@ describe('CBL: Teacher student competencies test', () => {
 
         // verify teacher redirect
         cy.location('hash').should('eq', '');
-
         cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
             .contains('Select a list of students and a content area to load enrollments dashboard');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // click the 'Rubric' selector
+        cy.extGet('slate-cbl-contentareaselector')
+            .click();
 
-            // get the 'Rubric' selector element
-            var rubricSelector = extQuerySelector('slate-cbl-contentareaselector');
+        // wait for options to load
+        cy.wait('@getContentAreas');
 
-            // click the selector
-            cy.get('#' + rubricSelector.el.dom.id).click();
+        // verify and click first element of picker dropdown
+        cy.extGet('slate-cbl-contentareaselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'English Language Arts')
+            .click();
 
-            // verify and click first element of picker dropdown
-            cy.get('#' + rubricSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('English Language Arts')
-                .click();
+        // verify hash updates
+        cy.location('hash').should('eq', '#ELA');
 
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA');
+        // click the 'Students' selector
+        cy.extGet('slate-cbl-studentslistselector')
+            .should('exist')
+            .click()
+            .focused()
+            .type('EXA');
 
-            // get the 'Students' selector element
-            var studentSelector = extQuerySelector('slate-cbl-studentslistselector');
+        // wait for options to load
+        cy.wait('@getStudentLists');
 
-            // click the selector
-            cy.get('#' + studentSelector.el.dom.id)
-                .click()
-                .focused()
-                .type('EXA');
+        // verify and click first element of picker dropdown
+        cy.extGet('slate-cbl-studentslistselector', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'Example School')
+            .click();
 
-            // verify and click first element of picker dropdown
-            cy.get('#' + studentSelector.getPicker().id + ' .x-boundlist-item')
-                .contains('Example School')
-                .click();
+        // verify hash updates
+        cy.location('hash').should('eq', '#ELA/group:example_school');
 
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA/group:example_school');
-
-            // verify content loads
-            cy.get('.slate-studentcompetencies-admin-grid').contains('Student Slate');
-        });
+        // verify content loads
+        cy.get('.slate-studentcompetencies-admin-grid')
+            .contains('Student Slate');
     });
 });

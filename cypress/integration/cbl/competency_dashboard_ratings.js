@@ -7,12 +7,13 @@ describe('CBL: Competency dashboard ratings test', () => {
 
      // authenticate as 'teacher' user
      beforeEach(() => {
-        cy.loginAs('teacher');
-        cy.intercept('GET', '/cbl/content-areas?*').as('getContentAreas');
+        cy.intercept('GET', '/cbl/content-areas?(\\?*)').as('getContentAreas');
         cy.intercept('GET', '/people/\\*student-lists').as('getStudentLists');
-        cy.intercept('GET', '/cbl/student-competencies?*').as('studentCompetencyData');
-        cy.intercept('GET', '/cbl/competencies?*').as('competencyData');
-        cy.intercept('POST', '/cbl/demonstrations/save?*').as('saveDemonstration');
+        cy.intercept('GET', '/cbl/student-competencies?(\\?*)').as('studentCompetencyData');
+        cy.intercept('GET', '/cbl/competencies?(\\?*)').as('competencyData');
+        cy.intercept('POST', '/cbl/demonstrations/save?(\\?*)').as('saveDemonstration');
+
+        cy.loginAs('teacher');
     });
 
     it('Can log a demonstration and verify the UI calculations', () => {
@@ -40,7 +41,7 @@ describe('CBL: Competency dashboard ratings test', () => {
                 .click();
 
             // verify hash updates
-            cy.location('hash').should('eq', '#ELA')
+            cy.location('hash').should('eq', '#ELA');
 
             // click the 'Students' selector
             cy.extGet('slate-cbl-studentslistselector')

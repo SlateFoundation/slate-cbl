@@ -156,7 +156,7 @@ describe('CBL: Check UI data against test cases', () => {
             const competencyTestCases = testCases[studentUsername][contentArea];
 
             specify(`${studentUsername} data in ${contentArea} matches test cases`, () => {
-                cy.intercept('/cbl/student-competencies?*').as('getStudentCompetencies');
+                cy.intercept('/cbl/student-competencies?(\\?*)').as('getStudentCompetencies');
                 cy.visit(`/cbl/dashboards/demonstrations/student#${studentUsername}/${contentArea}`);
                 cy.wait('@getStudentCompetencies');
 

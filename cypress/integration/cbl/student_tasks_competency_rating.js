@@ -18,20 +18,16 @@ describe('CBL: Student tasks demonstrations competency rating level test', () =>
         // wait for grid container to load
         cy.get('.slate-appcontainer').contains('ELA Task One');
 
-        cy.withExt().then(({Ext, extQuerySelector, extQuerySelectorAll}) => {
+        // find and click the first grid cell
+        cy.extGet('slate-studentsgrid')
+            .should('exist')
+            .find('.slate-studentsgrid-cell')
+            .first()
+            .click();
 
-            // find teh student's grid
-            var studentsGrid = extQuerySelector('slate-studentsgrid');
-
-            // find and click the first grid cell
-            cy.get('#' + studentsGrid.el.dom.id + ' .slate-studentsgrid-cell')
-                .first()
-                .click();
-
-            // ensure the first skill rating field has class 'cbl-level-9'
-            cy.get('.slate-cbl-skillratingsfield .slate-cbl-ratings-slider')
-                .first()
-                .should('have.have.class', 'cbl-level-9')
-        });
+        // ensure the first skill rating field has class 'cbl-level-9'
+        cy.get('.slate-cbl-skillratingsfield .slate-cbl-ratings-slider')
+            .first()
+            .should('have.have.class', 'cbl-level-9')
     });
 });
