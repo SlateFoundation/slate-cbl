@@ -2,13 +2,13 @@ describe('CBL: Tasks Manager Test', () => {
 
     // load sample database before tests
     before(() => {
-        cy.resetDatabase();
+        // cy.resetDatabase();
     });
 
     // authenticate as 'teacher' user
     beforeEach(() => {
-        cy.intercept('GET', '/cbl/tasks?!(\\?*)').as('taskData');
-        cy.intercept('POST', '/cbl/tasks/save?!(\\?*)').as('taskSave');
+        cy.intercept('GET', '/cbl/tasks?(\\?*)').as('taskData');
+        cy.intercept('POST', '/cbl/tasks/save?(\\?*)').as('taskSave');
 
         cy.loginAs('teacher');
     });
@@ -37,7 +37,7 @@ describe('CBL: Tasks Manager Test', () => {
             // click create button
             cy.get('#' + createBtn.getId())
                 .click({ force: true });
-            
+
             cy.wait("@taskData")
             cy.get('@taskData.all').should('have.length', 1)
 
@@ -55,7 +55,7 @@ describe('CBL: Tasks Manager Test', () => {
             cy.get('.slate-window .slate-panelfooter')
                 .contains('Create')
                 .click({ force: true });
-            
+
             cy.wait("@taskSave")
             cy.get('@taskSave.all').should('have.length', 1)
         });
@@ -83,7 +83,7 @@ describe('CBL: Tasks Manager Test', () => {
 
             cy.contains('Test Task Title')
                 .click({ force: true });
-            
+
             cy.wait("@taskData")
             cy.get('@taskData.all').should('have.length', 1)
 
@@ -105,7 +105,7 @@ describe('CBL: Tasks Manager Test', () => {
             cy.get('.slate-window .slate-panelfooter')
                 .contains('Save')
                 .click({ force: true });
-            
+
             cy.wait("@taskSave")
             cy.get('@taskSave.all').should('have.length', 1)
         });
@@ -113,7 +113,7 @@ describe('CBL: Tasks Manager Test', () => {
 
     it('Delete public task as teacher', () => {
 
-        cy.intercept('POST', '/cbl/tasks/destroy?!(\\?*)').as('taskDestroy')
+        cy.intercept('POST', '/cbl/tasks/destroy?(\\?*)').as('taskDestroy')
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/manager');
@@ -134,7 +134,7 @@ describe('CBL: Tasks Manager Test', () => {
 
             cy.contains('Test Task Title')
                 .click({ force: true });
-            
+
             cy.wait("@taskData")
             cy.get('@taskData.all').should('have.length', 1)
 
@@ -148,7 +148,7 @@ describe('CBL: Tasks Manager Test', () => {
             cy.get('.x-window .x-docked')
                 .contains('Yes')
                 .click({ force: true });
-            
+
             cy.wait("@taskDestroy").then(({ response }) => {
                 expect(response.body.success).to.eq(true)
                 expect(response.statusCode).to.eq(200)
