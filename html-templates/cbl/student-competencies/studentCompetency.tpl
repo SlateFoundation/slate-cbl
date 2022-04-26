@@ -57,7 +57,7 @@
                 </tr>
             </thead>
             <tbody>
-            {foreach item=demonstrationSkills key=skillId from=$data->getDemonstrationData()}
+            {foreach item=demonstrationSkills key=skillId from=$data->getDemonstrationsData()}
                 <tr>
                     <th colspan="8">{contextLink Slate\CBL\Skill::getById($skillId)}</th>
                 </tr>

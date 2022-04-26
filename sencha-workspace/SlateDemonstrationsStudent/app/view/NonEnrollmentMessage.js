@@ -3,6 +3,6 @@ Ext.define('SlateDemonstrationsStudent.view.NonEnrollmentMessage', {
     xtype: 'slate-demonstrations-student-nonenrollmentmessage',
     config: {
         cls: 'slate-placeholder',
-        html: 'Not currently enrolled in this competency',
+        html: 'Not currently enrolled in this competency area',
     }
 });
