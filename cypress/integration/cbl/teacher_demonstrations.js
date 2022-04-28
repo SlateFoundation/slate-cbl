@@ -43,6 +43,7 @@ describe('CBL: Teacher demonstrations test', () => {
         // verify and click first element of picker dropdown
         cy.extGet('slate-cbl-contentareaselector', { component: true })
             .then(selector => selector.getPicker().el.dom)
+            .should('not.contain', 'Archived Area')
             .contains('.x-boundlist-item', 'English Language Arts')
             .click();
 
