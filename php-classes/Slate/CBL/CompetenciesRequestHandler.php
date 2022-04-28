@@ -12,6 +12,10 @@ class CompetenciesRequestHandler extends RecordsRequestHandler
     {
         $conditions = parent::buildBrowseConditions($conditions, $filterObjects);
 
+        if (empty($_REQUEST['status']) || $_REQUEST['status'] != '*') {
+            $conditions['Status'] = 'active';
+        }
+
         if ($ContentArea = static::getRequestedContentArea()) {
             $conditions['ContentAreaID'] = $ContentArea->ID;
             $filterObjects['ContentArea'] = $ContentArea;
