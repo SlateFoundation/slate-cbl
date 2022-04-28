@@ -18,6 +18,10 @@ class SkillsRequestHandler extends RecordsRequestHandler
     {
         $conditions = parent::buildBrowseConditions($conditions, $filterObjects);
 
+        if (empty($_REQUEST['status']) || $_REQUEST['status'] != '*') {
+            $conditions['Status'] = 'active';
+        }
+
         if ($Competency = static::getRequestedCompetency()) {
             $conditions['CompetencyID'] = $Competency->ID;
             $filterObjects['Competency'] = $Competency;
