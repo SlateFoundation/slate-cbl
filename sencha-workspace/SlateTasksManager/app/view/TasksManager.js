@@ -8,7 +8,8 @@ Ext.define('SlateTasksManager.view.TasksManager', {
 
 
     title: 'Task Library',
-    header: false,
+    //header: false,
+    header: true,
 
     componentCls: 'slate-tasks-manager',
     minHeight: 500,
@@ -49,7 +50,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             {
                 text: 'Type of Exp.',
                 dataIndex: 'ExperienceType',
-                width: 128
+                maxwidth: 128
             },
             {
                 text: 'Skills',
@@ -62,7 +63,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             {
                 text: 'Created by',
                 dataIndex: 'Creator',
-                width: 160,
+                maxWidth: 160,
                 xtype: 'templatecolumn',
                 tpl: [
                     '<tpl for="Creator">{FirstName} {LastName}</tpl>'
@@ -71,7 +72,8 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             {
                 text: 'Created',
                 dataIndex: 'Created',
-                width: 128,
+                maxWidth: 120,
+                //flex: 3,
                 xtype: 'datecolumn',
                 format: 'm-d-Y',
                 filterField: {
