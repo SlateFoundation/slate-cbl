@@ -2,7 +2,6 @@
     border-color: $grid-header-border-color;
     border-width: 0 0 1px;
 
-
     h4 {
         margin: .25em 0;
     }
@@ -10,10 +9,13 @@
     .x-panel-header {
         background-color: $grid-header-background-color;
 
-        padding: 3px 16px 3px !important;
-
         .x-title {
             color: $grid-column-header-color;
+
+            .x-title-text {
+                text-align: center;
+                padding: 0;
+            }
         }
     }
 
