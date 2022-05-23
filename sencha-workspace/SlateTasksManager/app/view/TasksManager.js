@@ -31,17 +31,20 @@ Ext.define('SlateTasksManager.view.TasksManager', {
 
     columns: {
         defaults: {
-            flex: 1
+            flex: 1,
+            align: 'center'
         },
         items: [
             {
                 text: 'Title',
-                dataIndex: 'Title'
-            },
+                dataIndex: 'Title',
+                align: 'left'
+          },
             {
                 text: 'Subtask of&hellip;',
                 dataIndex: 'ParentTask',
                 xtype: 'templatecolumn',
+                align: 'left',
                 tpl: [
                     '<tpl for="ParentTask">{Title}</tpl>'
                 ]
@@ -49,11 +52,12 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             {
                 text: 'Type of Exp.',
                 dataIndex: 'ExperienceType',
-                maxwidth: 128
+                maxWidth: 120
             },
             {
                 text: 'Skills',
                 dataIndex: 'Skills',
+                maxWidth: 120,
                 xtype: 'templatecolumn',
                 tpl: [
                     '<tpl for="Skills">{.}</tpl>'
