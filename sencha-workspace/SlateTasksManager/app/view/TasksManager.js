@@ -8,8 +8,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
 
 
     title: 'Task Library',
-    //header: false,
-    header: true,
+    header: false,
 
     componentCls: 'slate-tasks-manager',
     minHeight: 500,
