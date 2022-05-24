@@ -12,6 +12,9 @@ Ext.define('SlateTasksManager.view.TasksManager', {
     componentCls: 'slate-tasks-manager',
     minHeight: 500,
 
+    // TODO: fix this hack by fitting into viewport div
+    height: '848px',
+
     dockedItems: [
         {
             xtype: 'pagingtoolbar',
