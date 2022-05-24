@@ -10,7 +10,7 @@ Ext.define('SlateTasksTeacher.view.GridToolbar', {
     margin: '10 25',
 
     defaults: {
-      padding: '0 40',
+        padding: '0 40',
     },
 
     items: [{
