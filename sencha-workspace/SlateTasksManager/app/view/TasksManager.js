@@ -63,7 +63,11 @@ Ext.define('SlateTasksManager.view.TasksManager', {
                 flex: 1,
                 xtype: 'templatecolumn',
                 tpl: [
-                    '<tpl for="Skills">{.}</tpl>'
+                    '<div data-qtip= "',
+                      '<tpl for="Skills">{.} </tpl>',
+                    '">',
+                    '<tpl for="Skills">{.} </tpl>',
+                    '</div>'
                 ]
             },
             {
