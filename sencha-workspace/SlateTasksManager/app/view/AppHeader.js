@@ -5,7 +5,7 @@ Ext.define('SlateTasksManager.view.AppHeader', {
 
     items: [{
         xtype: 'component',
-        cls: 'slate-appheader-title',
+        cls: 'slate-apptitle',
         itemId: 'title',
         html: 'Task Library'
     },
