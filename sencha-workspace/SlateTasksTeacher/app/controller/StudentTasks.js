@@ -247,10 +247,14 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             sectionParticipantsStore = me.getSectionParticipantsStore()
             tasksStore = me.getStudentTasksStore();
 
-        sectionParticipantsStore.getProxy().setExtraParam('include_deactivated', field.getValue());
-        sectionParticipantsStore.load();
+        // revert both stores to unloaded state first so grid doesn't re-render until both are loaded again
+        sectionParticipantsStore.unload();
+        tasksStore.unload();
 
+        sectionParticipantsStore.getProxy().setExtraParam('include_deactivated', field.getValue());
         tasksStore.getProxy().setExtraParam('include_deactivated', field.getValue());
+
+        sectionParticipantsStore.load();
         tasksStore.load();
     },
 
