@@ -6,7 +6,6 @@ Ext.define('SlateTasksManager.view.TasksManager', {
         'SlateTasksManager.view.TaskDetails'
     ],
 
-
     title: 'Task Library',
     header: false,
 
@@ -31,17 +30,18 @@ Ext.define('SlateTasksManager.view.TasksManager', {
 
     columns: {
         defaults: {
-            flex: 1,
             align: 'center'
         },
         items: [
             {
                 text: 'Title',
                 dataIndex: 'Title',
+                flex: 3,
                 align: 'left'
           },
             {
                 text: 'Subtask of&hellip;',
+                flex: 2,
                 dataIndex: 'ParentTask',
                 xtype: 'templatecolumn',
                 align: 'left',
@@ -52,12 +52,12 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             {
                 text: 'Type of Exp.',
                 dataIndex: 'ExperienceType',
-                maxWidth: 120
+                width: 120
             },
             {
                 text: 'Skills',
                 dataIndex: 'Skills',
-                maxWidth: 120,
+                flex: 1,
                 xtype: 'templatecolumn',
                 tpl: [
                     '<tpl for="Skills">{.}</tpl>'
@@ -66,7 +66,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             {
                 text: 'Created by',
                 dataIndex: 'Creator',
-                maxWidth: 160,
+                flex: 1,
                 xtype: 'templatecolumn',
                 tpl: [
                     '<tpl for="Creator">{FirstName} {LastName}</tpl>'
@@ -75,8 +75,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
             {
                 text: 'Created',
                 dataIndex: 'Created',
-                maxWidth: 120,
-                //flex: 3,
+                width: 120,
                 xtype: 'datecolumn',
                 format: 'm-d-Y',
                 filterField: {
