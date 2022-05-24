@@ -111,8 +111,8 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             change: 'onIncludeArchivedToolbarOptionChange'
         },
         'slate-gridtoolbar checkbox[name=include_deactivated]': {
-          change: 'onIncludeDeactivatedStudentsToolbarOptionChange'
-      }
+            change: 'onIncludeDeactivatedStudentsToolbarOptionChange'
+        }
     },
 
 
