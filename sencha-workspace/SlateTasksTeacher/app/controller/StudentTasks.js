@@ -243,16 +243,16 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
     },
 
     onIncludeDeactivatedStudentsToolbarOptionChange: function(field) {
-      var me = this,
-          sectionParticipantsStore = me.getSectionParticipantsStore()
-          tasksStore = me.getStudentTasksStore();
+        var me = this,
+            sectionParticipantsStore = me.getSectionParticipantsStore()
+            tasksStore = me.getStudentTasksStore();
 
-      sectionParticipantsStore.getProxy().setExtraParam('include_deactivated', field.getValue());
-      sectionParticipantsStore.load();
+        sectionParticipantsStore.getProxy().setExtraParam('include_deactivated', field.getValue());
+        sectionParticipantsStore.load();
 
-      tasksStore.getProxy().setExtraParam('include_deactivated', field.getValue());
-      tasksStore.load();
-  },
+        tasksStore.getProxy().setExtraParam('include_deactivated', field.getValue());
+        tasksStore.load();
+    },
 
 
     // local methods
