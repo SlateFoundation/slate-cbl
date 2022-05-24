@@ -2,6 +2,7 @@ Ext.define('SlateTasksManager.view.AppHeader', {
     extend: 'Slate.ui.app.Header',
 
     xtype: 'slate-tasks-manager-appheader',
+    padding: '16 90 16 90',
 
     items: [{
         xtype: 'component',
