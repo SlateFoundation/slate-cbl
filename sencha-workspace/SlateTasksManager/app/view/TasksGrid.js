@@ -45,14 +45,11 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
               text: 'Skills',
               dataIndex: 'Skills',
               flex: 1,
-              xtype: 'templatecolumn',
-              tpl: [
-                  '<div data-qtip= "',
-                    '<tpl for="Skills">{.} </tpl>',
-                  '">',
-                  '<tpl for="Skills">{.} </tpl>',
-                  '</div>'
-              ]
+              renderer: function (val) {
+                  const skills = Array.isArray(val) ? val.join(', ') : '';
+
+                  return '<span data-qtip= "'+skills+'">' + skills + '</span>';
+              }
           },
           {
               text: 'Created by',
