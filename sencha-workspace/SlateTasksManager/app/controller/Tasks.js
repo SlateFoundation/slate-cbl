@@ -29,6 +29,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slate-tasks-manager'
             },
 
+            tasksGrid: {
+                selector: 'slate-tasks-manager-grid',
+                autoCreate: true,
+
+                xtype: 'slate-tasks-manager-grid'
+            },
+
             taskDetails: 'slate-tasks-manager-details',
             clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
 
@@ -58,13 +65,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     control: {
-        'slate-tasks-manager toolbar button[action=delete]': {
+        'slate-tasks-manager-appheader button[action=delete]': {
             click: 'onDeleteTaskClick'
         },
-        'slate-tasks-manager toolbar button[action=edit]': {
+        'slate-tasks-manager-appheader button[action=edit]': {
             click: 'onEditTaskClick'
         },
-        'slate-tasks-manager toolbar button[action=create]': {
+        'slate-tasks-manager-appheader button[action=create]': {
             click: 'onCreateTaskClick'
         },
         'slate-cbl-tasks-taskform ^ window button[action=submit]': {
@@ -77,7 +84,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             beforeselect: 'onBeforeClonedTaskSelect',
             select: 'onClonedTaskSelect'
         },
-        tasksManager: {
+        tasksGrid: {
             rowdblclick: 'onTaskManagerRowDblClick',
             select: 'onTaskManagerRecordSelect'
         }
@@ -96,7 +103,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     onEditTaskClick: function({ el }) {
         var me = this,
-            task = me.getTasksManager().getSelection()[0],
+            task = me.getTasksGrid().getSelection()[0],
             taskWindow = me.getTaskWindow(),
             taskEditor = taskWindow.getMainView(),
             lastEditedTask = taskEditor.getTask();
@@ -118,8 +125,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     onDeleteTaskClick: function() {
         var me = this,
-            taskManager = me.getTasksManager(),
-            selection = taskManager.getSelection()[0],
+            tasksGrid = me.getTasksGrid(),
+            selection = tasksGrid.getSelection()[0],
             title, message;
 
         if (!selection) {
@@ -274,9 +281,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     showTaskDetails: function(task) {
         var me = this,
             taskDetails = me.getTaskDetails(),
-            taskManager = me.getTasksManager();
+            tasksGrid = me.getTasksGrid();
 
-        if (!task && !(task = taskManager.getSelection()[0])) {
+        if (!task && !(task = tasksGrid.getSelection()[0])) {
             return;
         }
 
