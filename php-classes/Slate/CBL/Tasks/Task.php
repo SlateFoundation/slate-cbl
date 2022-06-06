@@ -164,6 +164,17 @@ class Task extends \VersionedRecord
             'points' => 2,
             'sql' => 'Title LIKE "%%%s%%"'
         ],
+        'ParentTask' => [
+            'qualifiers' => ['parenttask'],
+            'points' => 2,
+            'join' => [
+                'className' => Task::class,
+                'aliasName' => 'ParentTask',
+                'localField' => 'ParentTaskID',
+                'foreignField' => 'ID'
+            ],
+            'callback' => 'getParentTaskConditions'
+        ],
         'Created' => [
             'qualifiers' => ['created'],
             'points' => 1,
@@ -232,5 +243,21 @@ class Task extends \VersionedRecord
                 $RecordValidator->addError($validatorKey, 'Tasks not assigned to a section must be made "public".');
             }
         }
+    }
+
+    public static function getParentTaskConditions($identifier, $matchedCondition)
+    {
+        $parentTasks = DB::allRecords('SELECT ID FROM %s WHERE Title LIKE "%%%s%%"', [
+            Task::$tableName,
+            $identifier
+        ]);
+
+        $parentTasks = array_map(function($task) {
+            return $task['ID'];
+        },$parentTasks);
+
+        $condition = $matchedCondition['join']['aliasName'].'.ID'.' IN ('.implode(',',$parentTasks).')';
+
+        return $condition;
     }
 }
