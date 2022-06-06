@@ -1,11 +1,16 @@
 Ext.define('SlateTasksManager.view.TasksGrid', {
   extend: 'Ext.grid.GridPanel',
   xtype: 'slate-tasks-manager-grid',
+  requires: [
+     'Ext.grid.filters.Filters'
+  ],
 
   title: 'Task Library',
   header: false,
 
   componentCls: 'slate-tasks-manager-grid',
+
+  plugins: 'gridfilters',
 
   dockedItems: [
       {
@@ -24,7 +29,14 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
               text: 'Title',
               dataIndex: 'Title',
               flex: 3,
-              align: 'left'
+              align: 'left',
+              filter: {
+                  type: 'string',
+                  operator: null,
+                  itemDefaults: {
+                      emptyText: 'Search for...'
+                  }
+              }
           },
           {
               text: 'Subtask of&hellip;',
@@ -34,12 +46,26 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
               align: 'left',
               tpl: [
                   '<tpl for="ParentTask">{Title}</tpl>'
-              ]
+              ],
+              filter: {
+                  type: 'string',
+                  operator: null,
+                  itemDefaults: {
+                      emptyText: 'Search for...'
+                  }
+              }
           },
           {
               text: 'Type of Exp.',
               dataIndex: 'ExperienceType',
-              width: 120
+              width: 120,
+              filter: {
+                  type: 'string',
+                  operator: null,
+                  itemDefaults: {
+                      emptyText: 'Search for...'
+                  }
+              }
           },
           {
               text: 'Skills',
