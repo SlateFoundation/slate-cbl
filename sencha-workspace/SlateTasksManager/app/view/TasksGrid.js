@@ -75,6 +75,13 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
                   const skills = Array.isArray(val) ? val.join(', ') : '';
 
                   return '<span data-qtip= "'+skills+'">' + skills + '</span>';
+              },
+              filter: {
+                  type: 'string',
+                  operator: null,
+                  itemDefaults: {
+                      emptyText: 'Search for...'
+                  }
               }
           },
           {

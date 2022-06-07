@@ -175,6 +175,11 @@ class Task extends \VersionedRecord
             ],
             'callback' => 'getParentTaskConditions'
         ],
+        'Skills' => [
+            'qualifiers' => ['skills'],
+            'points' => 2,
+            'callback' => 'getSkillsConditions'
+        ],
         'Created' => [
             'qualifiers' => ['created'],
             'points' => 1,
@@ -257,6 +262,30 @@ class Task extends \VersionedRecord
         },$parentTasks);
 
         $condition = $matchedCondition['join']['aliasName'].'.ID'.' IN ('.implode(',',$parentTasks).')';
+
+        return $condition;
+    }
+
+    public static function getSkillsConditions($identifier, $matchedCondition)
+    {
+        $relatedTasks = DB::allRecords('
+            SELECT ts.TaskID
+            FROM %s as ts,
+            JOIN %s as sk
+              ON ts.SkillID = sk.ID
+            WHERE sk.Code LIKE "%%%s%%"',
+        [
+            TaskSkill::$tableName,
+            Skill::$tableName,
+            $identifier
+        ]);
+
+        $relatedTasks = array_map(function($task) {
+            return $task['TaskID'];
+        },$relatedTasks);
+
+        // todo: How to get "Slate_CBL_Tasks_Task" table alias here? ID is ambiguous when multiple filters
+        $condition = 'ID IN ('.implode(',',array_unique($relatedTasks)).')';
 
         return $condition;
     }
