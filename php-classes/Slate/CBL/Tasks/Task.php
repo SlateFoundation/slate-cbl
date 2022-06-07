@@ -275,7 +275,7 @@ class Task extends \VersionedRecord
     {
         $relatedTasks = DB::allRecords('
             SELECT ts.TaskID
-            FROM %s as ts,
+            FROM %s as ts
             JOIN %s as sk
               ON ts.SkillID = sk.ID
             WHERE sk.Code LIKE "%%%s%%"',
@@ -288,6 +288,10 @@ class Task extends \VersionedRecord
         $relatedTasks = array_map(function($task) {
             return $task['TaskID'];
         },$relatedTasks);
+
+        if (count($relatedTasks) <= 0) {
+            $relatedTasks = [0];
+        }
 
         // todo: How to get "Slate_CBL_Tasks_Task" table alias here? ID is ambiguous when multiple filters
         $condition = 'ID IN ('.implode(',',array_unique($relatedTasks)).')';
