@@ -26,11 +26,14 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
               tpl: 'total results: {results}',
               flex: 1
           },{
-              xtype: 'button',
-              text: 'clear filters',
-              action: 'clear-filters',
+              xtype: 'container',
               width: 120,
-              hidden: true
+              items: [{
+                  xtype: 'button',
+                  text: 'clear filters',
+                  action: 'clear-filters',
+                  hidden: true
+              }]
           }]
       }
   ],
