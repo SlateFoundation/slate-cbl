@@ -17,13 +17,17 @@ Ext.define('SlateTasksManager.view.AppHeader', {
         action: 'create',
         tooltip: 'Create Task'
     },{
+        cls: 'primary',
         iconCls: 'x-fa fa-pencil',
         action: 'edit',
-        tooltip: 'Edit Task'
+        tooltip: 'Edit Task',
+        disabled: true
     },{
+        cls: 'primary',
         iconCls: 'x-fa fa-trash-o',
         action: 'delete',
-        tooltip: 'Delete Task'
+        tooltip: 'Delete Task',
+        disabled: true
     }]
 
 });

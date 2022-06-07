@@ -36,6 +36,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slate-tasks-manager-grid'
             },
 
+            editTaskButton: 'slate-tasks-manager-appheader button[action=edit]',
+            deleteTaskButton: 'slate-tasks-manager-appheader button[action=delete]',
+
             resultsCountContainer: {
                 selector: 'slate-tasks-manager-grid [itemId=results-count-container]'
             },
@@ -104,7 +107,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         tasksGrid: {
             rowdblclick: 'onTaskManagerRowDblClick',
             select: 'onTaskManagerRecordSelect',
-            filterchange: 'onGridFilterChange'
+            selectionchange: 'onTaskManagerSelectionChange',
+            filterchange: 'onGridFilterChange',
         }
     },
 
@@ -181,6 +185,11 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     onTaskManagerRecordSelect: function() {
         this.showTaskDetails();
+    },
+
+    onTaskManagerSelectionChange: function(grid, selected) {
+        this.getEditTaskButton().setDisabled(selected.length<=0);
+        this.getDeleteTaskButton().setDisabled(selected.length<=0);
     },
 
     onTaskManagerRowDblClick: function(taskManager, task, taskRowEl) {
