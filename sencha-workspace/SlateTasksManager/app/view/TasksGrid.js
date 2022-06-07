@@ -109,10 +109,12 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
               width: 120,
               xtype: 'datecolumn',
               format: 'm-d-Y',
-              filterField: {
-                  xtype: 'datefield',
-                  submitFormat: 'Y-m-d'
-              }
+              // Todo: Getting "Filter operators are not currently supported on the sparkpoints proxy" error even when operator set to null
+              // filter: {
+              //     type: 'date',
+              //     operator: null,
+              //     submitFormat: 'Y-m-d'
+              // }
           }
       ]
   },
