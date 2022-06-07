@@ -14,9 +14,19 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
 
   dockedItems: [
       {
-          xtype: 'pagingtoolbar',
+          xtype: 'toolbar',
           dock: 'bottom',
-          store: 'Tasks'
+          items: [{
+              xtype: 'pagingtoolbar',
+              store: 'Tasks',
+              flex: 1
+          },{
+              xtype: 'button',
+              text: 'clear filters',
+              action: 'clear-filters',
+              width: 120,
+              hidden: true
+          }]
       }
   ],
 

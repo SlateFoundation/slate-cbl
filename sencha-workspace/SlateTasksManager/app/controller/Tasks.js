@@ -36,6 +36,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slate-tasks-manager-grid'
             },
 
+            clearFiltersButton: 'slate-tasks-manager-grid button[action=clear-filters]',
+
             taskDetails: 'slate-tasks-manager-details',
             clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
 
@@ -74,6 +76,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slate-tasks-manager-appheader button[action=create]': {
             click: 'onCreateTaskClick'
         },
+        'slate-tasks-manager-grid button[action=clear-filters]': {
+            click: 'onClearFiltersClick'
+        },
         'slate-cbl-tasks-taskform ^ window button[action=submit]': {
             click: 'onSaveTaskClick'
         },
@@ -86,13 +91,22 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         },
         tasksGrid: {
             rowdblclick: 'onTaskManagerRowDblClick',
-            select: 'onTaskManagerRecordSelect'
+            select: 'onTaskManagerRecordSelect',
+            filterchange: 'onGridFilterChange'
         }
     },
 
     onLaunch: function () {
         this.getTasksManager().render('slateapp-viewport');
         this.getTasksStore().load();
+    },
+
+    onGridFilterChange(store, filters) {
+        this.getClearFiltersButton().setVisible(filters.length>0);
+    },
+
+    onClearFiltersClick(button) {
+        this.getTasksGrid().filters.clearFilters();
     },
 
     onCreateTaskClick: function({ btnEl: { el }}) {
