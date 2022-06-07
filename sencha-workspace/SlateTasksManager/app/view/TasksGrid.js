@@ -109,7 +109,14 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
               xtype: 'templatecolumn',
               tpl: [
                   '<tpl for="Creator">{FirstName} {LastName}</tpl>'
-              ]
+              ],
+              filter: {
+                  type: 'string',
+                  operator: null,
+                  itemDefaults: {
+                      emptyText: 'Search for...'
+                  }
+              }
           },
           {
               text: 'Created',
