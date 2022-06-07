@@ -21,6 +21,11 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
               store: 'Tasks',
               flex: 1
           },{
+              xtype: 'container',
+              itemId: 'results-count-container',
+              tpl: 'total results: {results}',
+              flex: 1
+          },{
               xtype: 'button',
               text: 'clear filters',
               action: 'clear-filters',

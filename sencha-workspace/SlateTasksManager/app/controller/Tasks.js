@@ -36,6 +36,10 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 xtype: 'slate-tasks-manager-grid'
             },
 
+            resultsCountContainer: {
+                selector: 'slate-tasks-manager-grid [itemId=results-count-container]'
+            },
+
             clearFiltersButton: 'slate-tasks-manager-grid button[action=clear-filters]',
 
             taskDetails: 'slate-tasks-manager-details',
@@ -62,6 +66,14 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                     clonedTaskDisplayField: false,
                     assignmentsField: false
                 }
+            }
+        }
+    },
+
+    listen: {
+        store: {
+            '#Tasks': {
+                datachanged: 'onTasksStoreDataChanged'
             }
         }
     },
@@ -99,6 +111,12 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     onLaunch: function () {
         this.getTasksManager().render('slateapp-viewport');
         this.getTasksStore().load();
+    },
+
+    onTasksStoreDataChanged: function(store) {
+        this.getResultsCountContainer().update({
+            results: store.getTotalCount()
+        })
     },
 
     onGridFilterChange(store, filters) {
