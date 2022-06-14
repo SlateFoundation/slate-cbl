@@ -10,6 +10,7 @@ use JSON;
 use ActiveRecord;
 use UserUnauthorizedException;
 use Emergence\Comments\Comment;
+use Emergence\People\Person;
 use Emergence\People\GuardianRelationship;
 
 use Slate\CBL\Skill;
@@ -23,6 +24,7 @@ use Slate\Courses\Section;
 use Slate\Courses\SectionParticipant;
 
 use Slate\Term;
+use Slate\People\Student;
 
 class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
 {
@@ -60,6 +62,14 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             ];
         }
 
+        // apply disabled students filter
+        if (!static::getRequestedIncludeDeactivated()) {
+            $disabledStudentIds = Person::getDeactivatedIds();
+
+            if (!empty($disabledStudentIds)) {
+                $conditions[] = 'StudentID NOT IN ('.implode(",",$disabledStudentIds).')';
+            }
+        }
 
         // apply task or course_section filter
         if ($Task = static::getRequestedTask()) {

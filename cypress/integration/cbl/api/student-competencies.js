@@ -15,10 +15,10 @@ describe('CBL/API: student-competencies', () => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
             expect(response.body).property('success').to.be.true;
-            expect(response.body).property('total').to.eq(643);
+            expect(response.body).property('total').to.eq(647);
             expect(response.body).property('limit').to.eq(0);
             expect(response.body).property('data').to.be.an('array');
-            expect(response.body.data).to.have.length(643);
+            expect(response.body.data).to.have.length(647);
             expect(response.body.data[0]).to.include({
                 ID: 584,
                 Class: 'Slate\\CBL\\StudentCompetency',
