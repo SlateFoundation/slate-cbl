@@ -193,7 +193,8 @@ class Task extends \VersionedRecord
     ];
 
     public static $sorters = [
-        'ParentTask' => [__CLASS__, 'sortByParentTask']
+        'ParentTask' => [__CLASS__, 'sortByParentTask'],
+        'Creator' => [__CLASS__, 'sortByCreator']
     ];
 
     public function save($deep = true)
@@ -335,5 +336,9 @@ class Task extends \VersionedRecord
 
     public static function sortByParentTask($dir, $name) {
         return '(SELECT ParentTask.Title FROM '.static::$tableName.' ParentTask WHERE ParentTask.ID = Slate_CBL_Tasks_Task.ParentTaskID) '.$dir;
+    }
+
+    public static function sortByCreator($dir, $name) {
+        return '(SELECT Creator.LastName FROM '.Person::$tableName.' Creator WHERE Creator.ID = Slate_CBL_Tasks_Task.CreatorID) '.$dir;
     }
 }
