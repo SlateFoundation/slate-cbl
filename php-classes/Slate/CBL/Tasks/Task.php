@@ -195,6 +195,7 @@ class Task extends \VersionedRecord
     public static $sorters = [
         'ParentTask' => [__CLASS__, 'sortByParentTask'],
         'ExperienceType' => [__CLASS__, 'sortByExperienceType'],
+        'Skills' => [__CLASS__, 'sortBySkills'],
         'Creator' => [__CLASS__, 'sortByCreator']
     ];
 
@@ -341,6 +342,15 @@ class Task extends \VersionedRecord
 
     public static function sortByExperienceType($dir, $name) {
         return '(SELECT ExperienceTask.ExperienceType FROM '.static::$tableName.' ExperienceTask WHERE ExperienceTask.ID = Slate_CBL_Tasks_Task.ID) '.$dir;
+    }
+
+    public static function sortBySkills($dir, $name) {
+        return '(SELECT min(Skills.Code) '
+              .'FROM cbl_task_skills TaskSkills '
+              .'JOIN cbl_skills Skills on Skills.ID = TaskSkills.SkillID '
+              .'WHERE TaskSkills.TaskID = Slate_CBL_Tasks_Task.ID '
+              .'GROUP BY TaskSkills.TaskID) '
+              .$dir;
     }
 
     public static function sortByCreator($dir, $name) {
