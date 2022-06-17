@@ -192,6 +192,10 @@ class Task extends \VersionedRecord
         ]
     ];
 
+    public static $sorters = [
+        'ParentTask' => [__CLASS__, 'sortByParentTask']
+    ];
+
     public function save($deep = true)
     {
         HandleBehavior::onSave($this);
@@ -329,5 +333,7 @@ class Task extends \VersionedRecord
         return $condition;
     }
 
-
+    public static function sortByParentTask($dir, $name) {
+        return '(SELECT ParentTask.Title FROM '.static::$tableName.' ParentTask WHERE ParentTask.ID = Slate_CBL_Tasks_Task.ParentTaskID) '.$dir;
+    }
 }
