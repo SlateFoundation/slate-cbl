@@ -284,7 +284,7 @@ class Task extends \VersionedRecord
         return $condition;
     }
 
-    public static function getSkillsConditions($identifier, $matchedCondition)
+    public static function getSkillsConditions($identifier)
     {
         $relatedTasks = DB::allRecords('
             SELECT ts.TaskID
@@ -311,7 +311,7 @@ class Task extends \VersionedRecord
         return $condition;
     }
 
-    public static function getCreatorConditions($identifier, $matchedCondition)
+    public static function getCreatorConditions($identifier)
     {
         $relatedTasks = DB::allRecords('
             SELECT task.ID
