@@ -301,8 +301,7 @@ class Task extends \VersionedRecord
             $relatedTasks = [0];
         }
 
-        // todo: How to get "Slate_CBL_Tasks_Task" table alias here? ID is ambiguous when multiple filters
-        $condition = 'ID IN ('.implode(',',array_unique($relatedTasks)).')';
+        $condition = static::getTableAlias().'.ID IN ('.implode(',',array_unique($relatedTasks)).')';
 
         return $condition;
     }
@@ -331,8 +330,7 @@ class Task extends \VersionedRecord
             $relatedTasks = [0];
         }
 
-        // todo: How to get "Slate_CBL_Tasks_Task" table alias here? ID is ambiguous when multiple filters
-        $condition = 'ID IN ('.implode(',',array_unique($relatedTasks)).')';
+        $condition = static::getTableAlias().'.ID IN ('.implode(',',array_unique($relatedTasks)).')';
 
         return $condition;
     }
