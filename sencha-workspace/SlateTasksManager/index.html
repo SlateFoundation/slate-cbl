@@ -463,15 +463,21 @@
         </div>
 
         <style>
+          .main-tmp {
+              position: relative;
+              height: calc(100vh - 60px);
+              width: 100vw;
+          }
           .viewport-tmp {
-              border: solid red 6px;
-              height: 700px;
-              width: 1000px;
+              position: absolute;
+              top: 0px;
+              bottom: 0px;
+              width: 100vw;
           }
         </style>
 
         <div class="wrapper site">
-            <main class="content site" role="main">
+            <main class="content site main-tmp" role="main">
                 <div id="slateapp-viewport" class="viewport-tmp">
                     <!-- app renders here -->
                 </div>
