@@ -340,7 +340,7 @@ class Task extends \VersionedRecord
         return $condition;
     }
 
-    public static function sortByParentTask($dir, $name) {
+    public static function sortByParentTask($dir) {
         return sprintf('
             (SELECT ParentTask.Title FROM %s ParentTask
             WHERE ParentTask.ID = %s.ParentTaskID)
@@ -352,7 +352,7 @@ class Task extends \VersionedRecord
         );
     }
 
-    public static function sortByExperienceType($dir, $name) {
+    public static function sortByExperienceType($dir) {
         return sprintf('
             (SELECT ExperienceTask.ExperienceType
             FROM %s ExperienceTask
@@ -365,7 +365,7 @@ class Task extends \VersionedRecord
         );
     }
 
-    public static function sortBySkills($dir, $name) {
+    public static function sortBySkills($dir) {
         return sprintf('
             (SELECT min(Skills.Code)
             FROM %s TaskSkills
@@ -381,7 +381,7 @@ class Task extends \VersionedRecord
         );
     }
 
-    public static function sortByCreator($dir, $name) {
+    public static function sortByCreator($dir) {
         return sprintf('
             (SELECT CONCAT(Creator.LastName, " ", Creator.FirstName)
             FROM %s Creator
