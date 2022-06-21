@@ -163,7 +163,7 @@ class Task extends \VersionedRecord
         'Title' => [
             'qualifiers' => ['any', 'title'],
             'points' => 2,
-            'sql' => 'Title LIKE "%%%s%%"'
+            'callback' => 'getTitleConditions'
         ],
         'ParentTask' => [
             'qualifiers' => ['parenttask'],
@@ -261,6 +261,11 @@ class Task extends \VersionedRecord
                 $RecordValidator->addError($validatorKey, 'Tasks not assigned to a section must be made "public".');
             }
         }
+    }
+
+    public static function getTitleConditions($identifier, $matchedCondition)
+    {
+        return static::getTableAlias().'.Title LIKE "%%'.$identifier.'%%"';
     }
 
     public static function getParentTaskConditions($identifier, $matchedCondition)
