@@ -338,7 +338,15 @@ class Task extends \VersionedRecord
     }
 
     public static function sortByParentTask($dir, $name) {
-        return '(SELECT ParentTask.Title FROM '.static::$tableName.' ParentTask WHERE ParentTask.ID = Slate_CBL_Tasks_Task.ParentTaskID) '.$dir;
+        return sprintf('
+            (SELECT ParentTask.Title FROM %s ParentTask
+            WHERE ParentTask.ID = %s.ParentTaskID)
+            %s
+        ',
+            static::$tableName,
+            static::getTableAlias(),
+            $dir
+        );
     }
 
     public static function sortByExperienceType($dir, $name) {
