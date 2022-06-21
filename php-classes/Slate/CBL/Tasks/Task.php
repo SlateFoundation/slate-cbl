@@ -354,6 +354,15 @@ class Task extends \VersionedRecord
     }
 
     public static function sortByCreator($dir, $name) {
-        return '(SELECT Creator.LastName FROM '.Person::$tableName.' Creator WHERE Creator.ID = Slate_CBL_Tasks_Task.CreatorID) '.$dir;
+        return sprintf('
+            (SELECT CONCAT(Creator.LastName, " ", Creator.FirstName)
+            FROM %s Creator
+            WHERE Creator.ID = %s.CreatorID)
+            %s
+        ',
+            Person::$tableName,
+            static::getTableAlias(),
+            $dir
+        );
     }
 }
