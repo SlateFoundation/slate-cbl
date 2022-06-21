@@ -25,8 +25,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
           xtype: 'slate-tasks-manager-details',
           region: 'east',
           width: 240,
-          split: true,
-          collapsible: true
+          split: true
       },
   ]
 
