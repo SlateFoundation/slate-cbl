@@ -8,6 +8,7 @@ use RecordValidator;
 use Emergence\People\Person;
 use Slate\Courses\Section;
 use Slate\CBL\Skill;
+use Slate\CBL\Tasks\TaskSkill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
 class Task extends \VersionedRecord
@@ -345,12 +346,19 @@ class Task extends \VersionedRecord
     }
 
     public static function sortBySkills($dir, $name) {
-        return '(SELECT min(Skills.Code) '
-              .'FROM cbl_task_skills TaskSkills '
-              .'JOIN cbl_skills Skills on Skills.ID = TaskSkills.SkillID '
-              .'WHERE TaskSkills.TaskID = Slate_CBL_Tasks_Task.ID '
-              .'GROUP BY TaskSkills.TaskID) '
-              .$dir;
+        return sprintf('
+            (SELECT min(Skills.Code)
+            FROM %s TaskSkills
+            JOIN %s Skills on Skills.ID = TaskSkills.SkillID
+            WHERE TaskSkills.TaskID = %s.ID
+            GROUP BY TaskSkills.TaskID)
+            %s
+        ',
+            TaskSkill::$tableName,
+            Skill::$tableName,
+            static::getTableAlias(),
+            $dir
+        );
     }
 
     public static function sortByCreator($dir, $name) {
