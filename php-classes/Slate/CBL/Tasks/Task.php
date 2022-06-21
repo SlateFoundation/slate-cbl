@@ -342,7 +342,16 @@ class Task extends \VersionedRecord
     }
 
     public static function sortByExperienceType($dir, $name) {
-        return '(SELECT ExperienceTask.ExperienceType FROM '.static::$tableName.' ExperienceTask WHERE ExperienceTask.ID = Slate_CBL_Tasks_Task.ID) '.$dir;
+        return sprintf('
+            (SELECT ExperienceTask.ExperienceType
+            FROM %s ExperienceTask
+            WHERE ExperienceTask.ID = %s.ID)
+            %s
+        ',
+            static::$tableName,
+            static::getTableAlias(),
+            $dir
+        );
     }
 
     public static function sortBySkills($dir, $name) {
