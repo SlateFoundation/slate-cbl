@@ -11,7 +11,10 @@ Ext.define('SlateTasksManager.store.Tasks', {
               'ParentTask',
               'Skills',
               'ClonedTask'
-          ]
+          ],
+          extraParams:  {
+              'include_archived': 'false'
+          },
       }
   }
 });
