@@ -85,6 +85,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slate-tasks-manager-appheader button[action=delete]': {
             click: 'onDeleteTaskClick'
         },
+        'slate-tasks-manager-appheader checkbox[name=include-archived]': {
+            change: 'onArchiveCheckboxClick'
+        },
         'slate-tasks-manager-appheader button[action=edit]': {
             click: 'onEditTaskClick'
         },
@@ -177,6 +180,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 me.deleteTask(selection);
             }
         });
+    },
+
+    onArchiveCheckboxClick: function(checkbox) {
+        var tasksStore = this.getTasksStore();
+
+        tasksStore.getProxy().extraParams.include_archived = checkbox.checked;
+        tasksStore.load();
     },
 
     onSaveTaskClick: function() {
