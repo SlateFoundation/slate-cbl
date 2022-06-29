@@ -1,3 +1,17 @@
+.content {
+  position: relative;
+  height: calc(100vh - 60px);
+  width: 100vw;
+}
+
+#slateapp-viewport {
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 100vw;
+}
+
 .slate-tasks-manager {
     .x-grid-header-ct {
         border: 0;
