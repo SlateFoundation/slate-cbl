@@ -1,3 +1,11 @@
+/**
+ * The Tasks controller manages the Task Library section where users can browse, create, and edit tasks.
+ *
+ * ## Responsibilities
+ * - Manage the loading the search grid
+ * - Respond to create, edit and delete button click in App Header
+ * - Respond to create, edit and archive buttons in Task form
+ */
 Ext.define('SlateTasksManager.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
@@ -5,10 +13,12 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'Ext.window.Toast'
     ],
 
+
+    // dependencies
     views: [
-        'TasksManager',
-        'TaskForm@Slate.cbl.view.tasks',
-        'Window@Slate.ui'
+      'TasksManager',
+      'TaskForm@Slate.cbl.view.tasks',
+      'Window@Slate.ui'
     ],
 
     stores: [
@@ -20,59 +30,59 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'Task@Slate.cbl.model.tasks'
     ],
 
-    config: {
-        refs: {
-            tasksManager: {
-                selector: 'slate-tasks-manager',
-                autoCreate: true,
 
-                xtype: 'slate-tasks-manager'
-            },
+    // component references
+    refs: {
+        tasksManager: {
+            selector: 'slate-tasks-manager',
+            autoCreate: true,
 
-            tasksGrid: {
-                selector: 'slate-tasks-manager-grid',
-                autoCreate: true,
+            xtype: 'slate-tasks-manager'
+        },
 
-                xtype: 'slate-tasks-manager-grid'
-            },
+        tasksGrid: {
+            selector: 'slate-tasks-manager-grid',
+            autoCreate: true,
 
-            editTaskButton: 'slate-tasks-manager-appheader button[action=edit]',
-            deleteTaskButton: 'slate-tasks-manager-appheader button[action=delete]',
+            xtype: 'slate-tasks-manager-grid'
+        },
 
-            resultsCountContainer: {
-                selector: 'slate-tasks-manager-grid [itemId=results-count-container]'
-            },
+        resultsCountContainer: 'slate-tasks-manager-grid [itemId=results-count-container]',
 
-            clearFiltersButton: 'slate-tasks-manager-grid button[action=clear-filters]',
+        taskDetails: 'slate-tasks-manager-details',
 
-            taskDetails: 'slate-tasks-manager-details',
-            clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
+        editTaskButton: 'slate-tasks-manager-appheader button[action=edit]',
+        deleteTaskButton: 'slate-tasks-manager-appheader button[action=delete]',
+        clearFiltersButton: 'slate-tasks-manager-grid button[action=clear-filters]',
 
-            taskWindow: {
-                autoCreate: true,
+        clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
 
-                xtype: 'slate-window',
-                closeAction: 'hide',
-                modal: true,
-                layout: 'fit',
-                minWidth: 300,
-                width: 600,
-                minHeight: 600,
+        taskWindow: {
+            autoCreate: true,
 
-                mainView: {
-                    xtype: 'slate-cbl-tasks-taskform',
+            xtype: 'slate-window',
+            closeAction: 'hide',
+            modal: true,
+            layout: 'fit',
+            minWidth: 300,
+            width: 600,
+            minHeight: 600,
 
-                    parentTaskField: {
-                        store: 'ParentTasks'
-                    },
-                    sectionField: false,
-                    clonedTaskDisplayField: false,
-                    assignmentsField: false
-                }
+            mainView: {
+                xtype: 'slate-cbl-tasks-taskform',
+
+                parentTaskField: {
+                    store: 'ParentTasks'
+                },
+                sectionField: false,
+                clonedTaskDisplayField: false,
+                assignmentsField: false
             }
         }
     },
 
+
+    // entry points
     listen: {
         store: {
             '#Tasks': {
@@ -82,19 +92,19 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     control: {
-        'slate-tasks-manager-appheader button[action=delete]': {
+        editTaskButton: {
+            click: 'onEditTaskClick'
+        },
+        deleteTaskButton: {
             click: 'onDeleteTaskClick'
         },
         'slate-tasks-manager-appheader checkbox[name=include-archived]': {
             change: 'onArchiveCheckboxClick'
         },
-        'slate-tasks-manager-appheader button[action=edit]': {
-            click: 'onEditTaskClick'
-        },
         'slate-tasks-manager-appheader button[action=create]': {
             click: 'onCreateTaskClick'
         },
-        'slate-tasks-manager-grid button[action=clear-filters]': {
+        clearFiltersButton: {
             click: 'onClearFiltersClick'
         },
         'slate-cbl-tasks-taskform ^ window button[action=submit]': {
@@ -115,15 +125,30 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         }
     },
 
+
+    // controller templates method overrides
     onLaunch: function () {
         this.getTasksManager().render('slateapp-viewport');
         this.getTasksStore().load();
     },
 
+
+    // event handlers
     onTasksStoreDataChanged: function(store) {
         this.getResultsCountContainer().update({
             results: store.getTotalCount()
         })
+    },
+
+    onTaskManagerRecordSelect: function() {
+        this.showTaskDetails();
+    },
+
+    onArchiveCheckboxClick: function(checkbox) {
+        var tasksStore = this.getTasksStore();
+
+        tasksStore.getProxy().extraParams.include_archived = checkbox.checked;
+        tasksStore.load();
     },
 
     onGridFilterChange(store, filters) {
@@ -182,19 +207,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         });
     },
 
-    onArchiveCheckboxClick: function(checkbox) {
-        var tasksStore = this.getTasksStore();
-
-        tasksStore.getProxy().extraParams.include_archived = checkbox.checked;
-        tasksStore.load();
-    },
-
     onSaveTaskClick: function() {
         return this.saveTask();
-    },
-
-    onTaskManagerRecordSelect: function() {
-        this.showTaskDetails();
     },
 
     onTaskManagerSelectionChange: function(grid, selected) {
@@ -326,9 +340,10 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 }
             }
         }
-
     },
 
+
+    // custom controller methods
     showTaskDetails: function(task) {
         var me = this,
             taskDetails = me.getTaskDetails(),
