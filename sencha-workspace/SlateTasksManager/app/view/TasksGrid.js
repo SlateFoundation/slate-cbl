@@ -8,8 +8,6 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
   title: 'Task Library',
   header: false,
 
-  componentCls: 'slate-tasks-manager-grid',
-
   plugins: 'gridfilters',
 
   dockedItems: [
