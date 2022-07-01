@@ -41,6 +41,7 @@ describe('CBL: Tasks Manager Test', () => {
                     .contains('.x-form-item-label-text', 'Title')
                     .click();
 
+                // TODO: looks like we are experiencing a race condition here
                 cy.focused()
                     .should('have.attr', 'name', 'Title')
                     .type('Created Test Task Title');
@@ -86,6 +87,7 @@ describe('CBL: Tasks Manager Test', () => {
                     .contains('.x-form-item-label-text', 'Title')
                     .click();
 
+                // TODO: looks like we are experiencing a race condition here
                 cy.focused()
                     .should('have.attr', 'name', 'Title')
                     .type('Updated Test Task Title');
