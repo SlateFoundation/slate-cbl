@@ -7,6 +7,8 @@ Ext.define('SlateTasksManager.view.TasksManager', {
       'SlateTasksManager.view.TaskDetails'
   ],
 
+  componentCls: 'slate-tasks-manager',
+
   height: '100%',
 
   layout: 'border',

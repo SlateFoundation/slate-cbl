@@ -12,4 +12,9 @@
   width: 100vw;
 }
 
+.slate-tasks-manager {
+    .x-splitter {
+        z-index: 10;
+    }
+}
 
