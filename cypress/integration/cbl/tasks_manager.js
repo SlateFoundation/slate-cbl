@@ -99,7 +99,7 @@ describe('CBL: Tasks Manager Test', () => {
         cy.wait('@taskSave');
 
         // verify selected record is updated
-        cy.extGet('slate-tasks-manager', { component: true })
+        cy.extGet('slate-tasks-manager-grid', { component: true })
             .should(grid => {
                 const selection = grid.getSelection();
                 expect(selection.length, 'one record selected').to.equal(1);
@@ -149,7 +149,7 @@ describe('CBL: Tasks Manager Test', () => {
         cy.wait('@taskDestroy');
 
         // verify grid has no selection
-        cy.extGet('slate-tasks-manager', { component: true })
+        cy.extGet('slate-tasks-manager-grid', { component: true })
             .should(grid => {
                 expect(grid.getSelection().length, 'no record selected').to.equal(0);
             });
