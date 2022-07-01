@@ -413,67 +413,67 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     },
 
     onUnArchiveClick: function(archiveBtn) {
-      var me = this,
-          taskWindow = archiveBtn.up('window'),
-          formPanel = taskWindow.getMainView(),
-          task = formPanel.getRecord(),
-          wasPhantom = task.phantom;
+        var me = this,
+            taskWindow = archiveBtn.up('window'),
+            formPanel = taskWindow.getMainView(),
+            task = formPanel.getRecord(),
+            wasPhantom = task.phantom;
 
-      formPanel.updateRecord(task);
-      task.set({
-          Status: 'private'
-      });
+        formPanel.updateRecord(task);
+        task.set({
+            Status: 'private'
+        });
 
-      // ensure task doesn't become dirty when no changes are made to the form
-      if (!task.dirty) {
-          return;
-      }
+        // ensure task doesn't become dirty when no changes are made to the form
+        if (!task.dirty) {
+            return;
+        }
 
-      taskWindow.setLoading('Saving task&hellip;');
+        taskWindow.setLoading('Saving task&hellip;');
 
-      task.save({
-          include: 'StudentTasks',
-          success: function(savedTask) {
-              var tasksStore = me.getTasksStore(),
-                  parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
-                  tplData = {
-                      task: savedTask.getData()
-                  };
+        task.save({
+            include: 'StudentTasks',
+            success: function(savedTask) {
+                var tasksStore = me.getTasksStore(),
+                    parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+                    tplData = {
+                        task: savedTask.getData()
+                    };
 
-              // show notification to user
-              Ext.toast('Task successfully un-archived!');
+                // show notification to user
+                Ext.toast('Task successfully un-archived!');
 
-              // update loaded tasks data
-              tasksStore.beginUpdate();
-              tasksStore.mergeData([savedTask]);
+                // update loaded tasks data
+                tasksStore.beginUpdate();
+                tasksStore.mergeData([savedTask]);
 
-              if (parentTask) {
-                  parentTask.get('SubTasks').push(savedTask);
-              }
+                if (parentTask) {
+                    parentTask.get('SubTasks').push(savedTask);
+                }
 
-              tasksStore.endUpdate();
+                tasksStore.endUpdate();
 
-              // close window
-              taskWindow.hide();
+                // close window
+                taskWindow.hide();
 
-              // update form panel
-              formPanel.setTask(null);
-              formPanel.setTask(savedTask);
-              taskWindow.setLoading(false);
-          },
-          failure: function(savedTask, operation) {
-              taskWindow.setLoading(false);
-              taskWindow.hide();
+                // update form panel
+                formPanel.setTask(null);
+                formPanel.setTask(savedTask);
+                taskWindow.setLoading(false);
+            },
+            failure: function(savedTask, operation) {
+                taskWindow.setLoading(false);
+                taskWindow.hide();
 
-              Ext.Msg.show({
-                  title: 'Failed to save task',
-                  message: Ext.util.Format.htmlEncode(operation.getError()),
-                  buttons: Ext.Msg.OK,
-                  icon: Ext.Msg.ERROR
-              });
-          }
-      });
-  },
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
+    },
 
 
     // custom controller methods
