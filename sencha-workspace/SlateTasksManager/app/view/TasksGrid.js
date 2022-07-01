@@ -23,7 +23,7 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
           },{
               xtype: 'container',
               itemId: 'results-count-container',
-              tpl: 'total results: {results}',
+              tpl: '{results} total',
               flex: 1
           },{
               xtype: 'container',
@@ -34,6 +34,23 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
                   action: 'clear-filters',
                   hidden: true
               }]
+          },{
+              xtype: 'button',
+              action: 'settings',
+              iconCls: 'x-fa fa-gear',
+              width: 32,
+              scale: 'medium',
+              iconAlign: 'center',
+              arrowVisible: false,
+              arrowAlign: 'top',
+              menu: {
+                  items: [{
+                      xtype: 'menucheckitem',
+                      text: 'include archived',
+                      name: 'include-archived',
+                      value: false,
+                  }]
+              }
           }]
       }
   ],

@@ -98,14 +98,14 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         deleteTaskButton: {
             click: 'onDeleteTaskClick'
         },
-        'slate-tasks-manager-appheader checkbox[name=include-archived]': {
-            change: 'onArchiveCheckboxClick'
-        },
         'slate-tasks-manager-appheader button[action=create]': {
             click: 'onCreateTaskClick'
         },
         clearFiltersButton: {
             click: 'onClearFiltersClick'
+        },
+        'slate-tasks-manager-grid menucheckitem[name=include-archived]': {
+            checkChange: 'onArchiveCheckboxClick'
         },
         'slate-cbl-tasks-taskform ^ window button[action=submit]': {
             click: 'onSaveTaskClick'
