@@ -61,7 +61,7 @@ describe('CBL: Tasks Manager Test', () => {
 
         // verify app loaded
         cy.get('#slateapp-viewport')
-            .contains('slate-apptitle', 'Task Library');
+            .contains('.slate-apptitle', 'Task Library');
 
         // wait for data load
         cy.wait('@tasksData');
