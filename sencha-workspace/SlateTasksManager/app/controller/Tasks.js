@@ -16,9 +16,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     // dependencies
     views: [
-      'TasksManager',
-      'TaskForm@Slate.cbl.view.tasks',
-      'Window@Slate.ui'
+        'TasksManager',
+        'TaskForm@Slate.cbl.view.tasks',
+        'Window@Slate.ui'
     ],
 
     stores: [
