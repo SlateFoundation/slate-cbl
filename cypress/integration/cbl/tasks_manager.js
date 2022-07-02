@@ -38,10 +38,12 @@ describe('CBL: Tasks Manager Test', () => {
                     .contains('.x-title-text', 'Create Task');
 
                 cy.root()
-                    .contains('.x-form-item-label-text', 'Title')
+                    .contains('.x-form-item-label-text', 'Title');
+
+                cy.root()
+                    .get('.x-form-field[name="Title"]')
                     .click();
 
-                // TODO: looks like we are experiencing a race condition here
                 cy.focused()
                     .should('have.attr', 'name', 'Title')
                     .type('Created Test Task Title');
@@ -84,10 +86,12 @@ describe('CBL: Tasks Manager Test', () => {
                     .contains('.x-title-text', 'Edit Task');
 
                 cy.root()
-                    .contains('.x-form-item-label-text', 'Title')
+                    .contains('.x-form-item-label-text', 'Title');
+
+                cy.root()
+                    .get('.x-form-field[name="Title"]')
                     .click();
 
-                // TODO: looks like we are experiencing a race condition here
                 cy.focused()
                     .should('have.attr', 'name', 'Title')
                     .type('Updated Test Task Title');
