@@ -2,7 +2,7 @@ describe('CBL: Tasks Manager Test', () => {
 
     // load sample database before tests
     before(() => {
-        cy.resetDatabase();
+        // cy.resetDatabase();
     });
 
     // authenticate as 'teacher' user
@@ -20,8 +20,9 @@ describe('CBL: Tasks Manager Test', () => {
         cy.visit('/cbl/dashboards/tasks/manager');
 
         // verify app loaded
-        cy.get('#slateapp-viewport')
-            .contains('.slate-appheader-title', 'Task Library');
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.slate-apptitle', 'Task Library');
 
         // wait for data load
         cy.wait('@tasksData');
@@ -38,7 +39,10 @@ describe('CBL: Tasks Manager Test', () => {
                     .contains('.x-title-text', 'Create Task');
 
                 cy.root()
-                    .contains('.x-form-item-label-text', 'Title')
+                    .contains('.x-form-item-label-text', 'Title');
+
+                cy.root()
+                    .get('.x-form-field[name="Title"]')
                     .click();
 
                 cy.focused()
@@ -60,8 +64,9 @@ describe('CBL: Tasks Manager Test', () => {
         cy.visit('/cbl/dashboards/tasks/manager');
 
         // verify app loaded
-        cy.get('#slateapp-viewport')
-            .contains('.slate-appheader-title', 'Task Library');
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.slate-apptitle', 'Task Library');
 
         // wait for data load
         cy.wait('@tasksData');
@@ -83,7 +88,10 @@ describe('CBL: Tasks Manager Test', () => {
                     .contains('.x-title-text', 'Edit Task');
 
                 cy.root()
-                    .contains('.x-form-item-label-text', 'Title')
+                    .contains('.x-form-item-label-text', 'Title');
+
+                cy.root()
+                    .get('.x-form-field[name="Title"]')
                     .click();
 
                 cy.focused()
@@ -99,7 +107,7 @@ describe('CBL: Tasks Manager Test', () => {
         cy.wait('@taskSave');
 
         // verify selected record is updated
-        cy.extGet('slate-tasks-manager', { component: true })
+        cy.extGet('slate-tasks-manager-grid', { component: true })
             .should(grid => {
                 const selection = grid.getSelection();
                 expect(selection.length, 'one record selected').to.equal(1);
@@ -116,8 +124,9 @@ describe('CBL: Tasks Manager Test', () => {
         cy.visit('/cbl/dashboards/tasks/manager');
 
         // verify app loaded
-        cy.get('#slateapp-viewport')
-            .contains('.slate-appheader-title', 'Task Library');
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.slate-apptitle', 'Task Library');
 
         // wait for data load
         cy.wait('@tasksData');
@@ -149,7 +158,7 @@ describe('CBL: Tasks Manager Test', () => {
         cy.wait('@taskDestroy');
 
         // verify grid has no selection
-        cy.extGet('slate-tasks-manager', { component: true })
+        cy.extGet('slate-tasks-manager-grid', { component: true })
             .should(grid => {
                 expect(grid.getSelection().length, 'no record selected').to.equal(0);
             });

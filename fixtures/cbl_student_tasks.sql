@@ -210,6 +210,22 @@ INSERT INTO `cbl_student_tasks` VALUES (188,'Slate\\CBL\\Tasks\\StudentTask','20
 INSERT INTO `cbl_student_tasks` VALUES (189,'Slate\\CBL\\Tasks\\StudentTask','2021-05-29 14:14:45',5,NULL,NULL,45,10,'assigned',NULL,NULL,NULL);
 INSERT INTO `cbl_student_tasks` VALUES (190,'Slate\\CBL\\Tasks\\StudentTask','2021-05-29 14:14:45',5,NULL,NULL,45,11,'assigned',NULL,NULL,NULL);
 INSERT INTO `cbl_student_tasks` VALUES (191,'Slate\\CBL\\Tasks\\StudentTask','2021-05-29 14:14:45',5,NULL,NULL,45,12,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (192,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:51:31',2,NULL,NULL,21,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (193,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:51:50',2,NULL,NULL,18,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (194,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:52:03',2,NULL,NULL,16,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (195,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:52:12',2,NULL,NULL,20,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (196,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:52:27',2,NULL,NULL,19,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (197,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:52:35',2,NULL,NULL,14,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (198,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:52:43',2,NULL,NULL,15,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (199,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:52:51',2,NULL,NULL,13,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (200,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:01',2,NULL,NULL,12,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (201,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:06',2,NULL,NULL,11,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (202,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:12',2,NULL,NULL,6,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (203,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:20',2,NULL,NULL,10,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (204,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:30',2,NULL,NULL,9,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (205,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:38',2,NULL,NULL,8,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (206,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:48',2,NULL,NULL,7,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (207,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:54:02',2,NULL,NULL,17,34,'assigned',NULL,NULL,NULL);
 
 
 CREATE TABLE `history_cbl_student_tasks` (

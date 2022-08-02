@@ -8,6 +8,7 @@ use RecordValidator;
 use Emergence\People\Person;
 use Slate\Courses\Section;
 use Slate\CBL\Skill;
+use Slate\CBL\Tasks\TaskSkill;
 use Slate\CBL\Tasks\Attachments\AbstractTaskAttachment;
 
 class Task extends \VersionedRecord
@@ -162,13 +163,41 @@ class Task extends \VersionedRecord
         'Title' => [
             'qualifiers' => ['any', 'title'],
             'points' => 2,
-            'sql' => 'Title LIKE "%%%s%%"'
+            'callback' => 'getTitleConditions'
+        ],
+        'ParentTask' => [
+            'qualifiers' => ['parenttask'],
+            'points' => 2,
+            'join' => [
+                'className' => Task::class,
+                'aliasName' => 'ParentTask',
+                'localField' => 'ParentTaskID',
+                'foreignField' => 'ID'
+            ],
+            'callback' => 'getParentTaskConditions'
+        ],
+        'Skills' => [
+            'qualifiers' => ['skills'],
+            'points' => 2,
+            'callback' => 'getSkillsConditions'
+        ],
+        'Creator' => [
+            'qualifiers' => ['creator'],
+            'points' => 2,
+            'callback' => 'getCreatorConditions'
         ],
         'Created' => [
             'qualifiers' => ['created'],
             'points' => 1,
             'sql' => 'CAST(Created AS Date) = "%s"'
         ]
+    ];
+
+    public static $sorters = [
+        'ParentTask' => [__CLASS__, 'sortByParentTask'],
+        'ExperienceType' => [__CLASS__, 'sortByExperienceType'],
+        'Skills' => [__CLASS__, 'sortBySkills'],
+        'Creator' => [__CLASS__, 'sortByCreator']
     ];
 
     public function save($deep = true)
@@ -232,5 +261,136 @@ class Task extends \VersionedRecord
                 $RecordValidator->addError($validatorKey, 'Tasks not assigned to a section must be made "public".');
             }
         }
+    }
+
+    public static function getTitleConditions($identifier, $matchedCondition)
+    {
+        return static::getTableAlias().'.Title LIKE "%%'.$identifier.'%%"';
+    }
+
+    public static function getParentTaskConditions($identifier, $matchedCondition)
+    {
+        $parentTasks = DB::allRecords('SELECT ID FROM %s WHERE Title LIKE "%%%s%%"', [
+            Task::$tableName,
+            $identifier
+        ]);
+
+        $parentTasks = array_map(function($task) {
+            return $task['ID'];
+        },$parentTasks);
+
+        $condition = $matchedCondition['join']['aliasName'].'.ID'.' IN ('.implode(',',$parentTasks).')';
+
+        return $condition;
+    }
+
+    public static function getSkillsConditions($identifier)
+    {
+        $relatedTasks = DB::allRecords('
+            SELECT ts.TaskID
+            FROM %s as ts
+            JOIN %s as sk
+              ON ts.SkillID = sk.ID
+            WHERE sk.Code LIKE "%%%s%%"',
+        [
+            TaskSkill::$tableName,
+            Skill::$tableName,
+            $identifier
+        ]);
+
+        $relatedTasks = array_map(function($task) {
+            return $task['TaskID'];
+        },$relatedTasks);
+
+        if (count($relatedTasks) <= 0) {
+            $relatedTasks = [0];
+        }
+
+        $condition = static::getTableAlias().'.ID IN ('.implode(',',array_unique($relatedTasks)).')';
+
+        return $condition;
+    }
+
+    public static function getCreatorConditions($identifier)
+    {
+        $relatedTasks = DB::allRecords('
+            SELECT task.ID
+            FROM %s as task
+            JOIN %s as person
+              ON task.CreatorID = person.ID
+            WHERE person.FirstName LIKE "%%%s%%"
+            OR person.LastName LIKE "%%%s%%"',
+        [
+            Task::$tableName,
+            Person::$tableName,
+            $identifier,
+            $identifier
+        ]);
+
+        $relatedTasks = array_map(function($task) {
+            return $task['ID'];
+        },$relatedTasks);
+
+        if (count($relatedTasks) <= 0) {
+            $relatedTasks = [0];
+        }
+
+        $condition = static::getTableAlias().'.ID IN ('.implode(',',array_unique($relatedTasks)).')';
+
+        return $condition;
+    }
+
+    public static function sortByParentTask($dir) {
+        return sprintf('
+            (SELECT ParentTask.Title FROM %s ParentTask
+            WHERE ParentTask.ID = %s.ParentTaskID)
+            %s
+        ',
+            static::$tableName,
+            static::getTableAlias(),
+            $dir
+        );
+    }
+
+    public static function sortByExperienceType($dir) {
+        return sprintf('
+            (SELECT ExperienceTask.ExperienceType
+            FROM %s ExperienceTask
+            WHERE ExperienceTask.ID = %s.ID)
+            %s
+        ',
+            static::$tableName,
+            static::getTableAlias(),
+            $dir
+        );
+    }
+
+    public static function sortBySkills($dir) {
+        return sprintf('
+            (SELECT min(Skills.Code)
+            FROM %s TaskSkills
+            JOIN %s Skills on Skills.ID = TaskSkills.SkillID
+            WHERE TaskSkills.TaskID = %s.ID
+            GROUP BY TaskSkills.TaskID)
+            %s
+        ',
+            TaskSkill::$tableName,
+            Skill::$tableName,
+            static::getTableAlias(),
+            $dir
+        );
+    }
+
+    public static function sortByCreator($dir) {
+        return sprintf('
+            (SELECT CONCAT(Creator.LastName, " ", Creator.FirstName)
+            FROM %s Creator
+            WHERE Creator.ID = %s.CreatorID)
+            %s
+        ',
+            Person::$tableName,
+            static::getTableAlias(),
+            $dir
+        );
     }
 }

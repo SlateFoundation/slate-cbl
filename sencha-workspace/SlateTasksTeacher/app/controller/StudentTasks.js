@@ -109,6 +109,9 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
         },
         'slate-gridtoolbar checkbox[name=include_archived]': {
             change: 'onIncludeArchivedToolbarOptionChange'
+        },
+        'slate-gridtoolbar checkbox[name=include_deactivated]': {
+            change: 'onIncludeDeactivatedStudentsToolbarOptionChange'
         }
     },
 
@@ -236,6 +239,22 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             tasksStore = me.getStudentTasksStore();
 
         tasksStore.getProxy().setExtraParam('include_archived', field.getValue());
+        tasksStore.load();
+    },
+
+    onIncludeDeactivatedStudentsToolbarOptionChange: function(field) {
+        var me = this,
+            sectionParticipantsStore = me.getSectionParticipantsStore()
+            tasksStore = me.getStudentTasksStore();
+
+        // revert both stores to unloaded state first so grid doesn't re-render until both are loaded again
+        sectionParticipantsStore.unload();
+        tasksStore.unload();
+
+        sectionParticipantsStore.getProxy().setExtraParam('include_deactivated', field.getValue());
+        tasksStore.getProxy().setExtraParam('include_deactivated', field.getValue());
+
+        sectionParticipantsStore.load();
         tasksStore.load();
     },
 

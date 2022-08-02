@@ -42,9 +42,13 @@ class TasksRequestHandler extends \RecordsRequestHandler
 
             $conditions['SectionID'] = $Section->ID;
             $filterObjects['Section'] = $Section;
-        } else { // show all tasks that are either shared, or created by current user.
-            $recordClass = static::$recordClass;
-            $conditions[] = sprintf('(%1$s.Status = "shared" OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u))', $recordClass::getTableAlias(), $GLOBALS['Session']->PersonID);
+        } else {
+            $includeArchived = isset($_REQUEST['include_archived']) && ($_REQUEST['include_archived']=='true');
+            $archivedConditions = static::getArchivedConditions($includeArchived);
+
+            if ($archivedConditions != false) {
+                $conditions[] = $archivedConditions;
+            }
         }
 
         return $conditions;
@@ -150,6 +154,40 @@ class TasksRequestHandler extends \RecordsRequestHandler
             }
 
             $Task->TaskSkills = $taskSkills;
+        }
+    }
+
+    public static function getArchivedConditions($includeArchived) {
+        $recordClass = static::$recordClass;
+
+        if ($includeArchived) {
+
+            if ($_SESSION['User']->hasAccountLevel('Administrator')) {
+                return false;  // User is admin and wants archived: no conditions
+            } else {
+                return sprintf('
+                    (%1$s.Status = "shared"
+                    OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u)
+                    OR (%1$s.Status = "archived" AND %1$s.CreatorID = %2$u))
+                ',
+                    $recordClass::getTableAlias(),
+                    $GLOBALS['Session']->PersonID
+                );
+            }
+
+        } else {
+
+            if ($_SESSION['User']->hasAccountLevel('Administrator')) {
+                return $recordClass::getTableAlias().'.Status != "archived"';
+            } else {
+                return sprintf('
+                    (%1$s.Status = "shared"
+                    OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u))
+                ',
+                    $recordClass::getTableAlias(),
+                    $GLOBALS['Session']->PersonID
+                );
+            }
         }
     }
 }
