@@ -11,6 +11,11 @@
 
         .x-title {
             color: $grid-column-header-color;
+
+            .x-title-text {
+                text-align: center;
+                padding: 0;
+            }
         }
     }
 

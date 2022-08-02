@@ -1,0 +1,17 @@
+.x-viewport {
+    .slate-omnibar {
+        box-shadow: none;
+        z-index: 101;
+
+        > .inner {
+            padding: 0 1em 0 .75em;
+            width: 100%;
+        }
+    }
+
+    .slate-tasks-manager {
+        margin-top: 2.75em;
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
