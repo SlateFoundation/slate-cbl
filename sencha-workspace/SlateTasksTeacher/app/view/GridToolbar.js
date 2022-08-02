@@ -10,14 +10,19 @@ Ext.define('SlateTasksTeacher.view.GridToolbar', {
     margin: '10 25',
 
     defaults: {
-        flex: 1
+        padding: '0 40',
     },
 
     items: [{
         xtype: 'checkboxfield',
         fieldLabel: 'Show Archived Tasks',
         name: 'include_archived',
-        labelWidth: 200
+        labelWidth: 168
+    }, {
+        xtype: 'checkboxfield',
+        fieldLabel: 'Show Inactive Students',
+        name: 'include_deactivated',
+        labelWidth: 192
     }]
 
 });

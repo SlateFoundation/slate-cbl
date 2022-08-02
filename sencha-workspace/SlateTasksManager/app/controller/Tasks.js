@@ -1,3 +1,11 @@
+/**
+ * The Tasks controller manages the Task Library section where users can browse, create, and edit tasks.
+ *
+ * ## Responsibilities
+ * - Manage the loading the search grid
+ * - Respond to create, edit and delete button click in App Header
+ * - Respond to create, edit and archive buttons in Task form
+ */
 Ext.define('SlateTasksManager.controller.Tasks', {
     extend: 'Ext.app.Controller',
     requires: [
@@ -5,6 +13,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'Ext.window.Toast'
     ],
 
+
+    // dependencies
     views: [
         'TasksManager',
         'TaskForm@Slate.cbl.view.tasks',
@@ -20,52 +30,83 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'Task@Slate.cbl.model.tasks'
     ],
 
-    config: {
-        refs: {
-            tasksManager: {
-                selector: 'slate-tasks-manager',
-                autoCreate: true,
 
-                xtype: 'slate-tasks-manager'
-            },
+    // component references
+    refs: {
+        viewport: {
+            selector: 'viewport',
+            autoCreate: true,
 
-            taskDetails: 'slate-tasks-manager-details',
-            clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
+            xclass: 'SlateTasksManager.view.Viewport'
+        },
+        tasksManager: 'slate-tasks-manager',
+        tasksGrid: 'slate-tasks-manager-grid',
 
-            taskWindow: {
-                autoCreate: true,
+        resultsCountContainer: 'slate-tasks-manager-grid [itemId=results-count-container]',
 
-                xtype: 'slate-window',
-                closeAction: 'hide',
-                modal: true,
-                layout: 'fit',
-                minWidth: 300,
-                width: 600,
-                minHeight: 600,
+        taskDetails: 'slate-tasks-manager-details',
 
-                mainView: {
-                    xtype: 'slate-cbl-tasks-taskform',
+        editTaskButton: 'slate-tasks-manager-appheader button[action=edit]',
+        deleteTaskButton: 'slate-tasks-manager-appheader button[action=delete]',
+        clearFiltersButton: 'slate-tasks-manager-grid button[action=clear-filters]',
 
-                    parentTaskField: {
-                        store: 'ParentTasks'
-                    },
-                    sectionField: false,
-                    clonedTaskDisplayField: false,
-                    assignmentsField: false
-                }
+        clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
+
+        taskWindow: {
+            autoCreate: true,
+
+            xtype: 'slate-window',
+            closeAction: 'hide',
+            modal: true,
+            layout: 'fit',
+            minWidth: 300,
+            width: 600,
+            minHeight: 600,
+
+            mainView: {
+                xtype: 'slate-cbl-tasks-taskform',
+
+                parentTaskField: {
+                    store: 'ParentTasks'
+                },
+                sectionField: false,
+                clonedTaskDisplayField: false,
+                assignmentsField: false
+            }
+        }
+    },
+
+
+    // entry points
+    listen: {
+        store: {
+            '#Tasks': {
+                datachanged: 'onTasksStoreDataChanged'
             }
         }
     },
 
     control: {
-        'slate-tasks-manager toolbar button[action=delete]': {
-            click: 'onDeleteTaskClick'
-        },
-        'slate-tasks-manager toolbar button[action=edit]': {
+        editTaskButton: {
             click: 'onEditTaskClick'
         },
-        'slate-tasks-manager toolbar button[action=create]': {
+        deleteTaskButton: {
+            click: 'onDeleteTaskClick'
+        },
+        'slate-tasks-manager-appheader button[action=create]': {
             click: 'onCreateTaskClick'
+        },
+        clearFiltersButton: {
+            click: 'onClearFiltersClick'
+        },
+        'slate-tasks-manager-grid menucheckitem[name=include-archived]': {
+            checkChange: 'onArchiveCheckboxClick'
+        },
+        'slate-cbl-tasks-taskform ^ window button[action=archive]' :{
+            click: 'onArchiveClick'
+        },
+        'slate-cbl-tasks-taskform ^ window button[action=un-archive]' :{
+          click: 'onUnArchiveClick'
         },
         'slate-cbl-tasks-taskform ^ window button[action=submit]': {
             click: 'onSaveTaskClick'
@@ -77,15 +118,49 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             beforeselect: 'onBeforeClonedTaskSelect',
             select: 'onClonedTaskSelect'
         },
-        tasksManager: {
+        tasksGrid: {
             rowdblclick: 'onTaskManagerRowDblClick',
-            select: 'onTaskManagerRecordSelect'
+            select: 'onTaskManagerRecordSelect',
+            selectionchange: 'onTaskManagerSelectionChange',
+            filterchange: 'onGridFilterChange',
         }
     },
 
+
+    // controller templates method overrides
     onLaunch: function () {
-        this.getTasksManager().render('slateapp-viewport');
+        // trigger autocreation of main container that self-renders because it extends Viewport
+        this.getViewport();
+
+        // trigger initial data load
         this.getTasksStore().load();
+    },
+
+
+    // event handlers
+    onTasksStoreDataChanged: function(store) {
+        this.getResultsCountContainer().update({
+            results: store.getTotalCount()
+        })
+    },
+
+    onTaskManagerRecordSelect: function() {
+        this.showTaskDetails();
+    },
+
+    onArchiveCheckboxClick: function(checkbox) {
+        var tasksStore = this.getTasksStore();
+
+        tasksStore.getProxy().extraParams.include_archived = checkbox.checked;
+        tasksStore.load();
+    },
+
+    onGridFilterChange(store, filters) {
+        this.getClearFiltersButton().setVisible(filters.length>0);
+    },
+
+    onClearFiltersClick(button) {
+        this.getTasksGrid().filters.clearFilters();
     },
 
     onCreateTaskClick: function({ btnEl: { el }}) {
@@ -96,7 +171,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     onEditTaskClick: function({ el }) {
         var me = this,
-            task = me.getTasksManager().getSelection()[0],
+            task = me.getTasksGrid().getSelection()[0],
             taskWindow = me.getTaskWindow(),
             taskEditor = taskWindow.getMainView(),
             lastEditedTask = taskEditor.getTask();
@@ -118,8 +193,8 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     onDeleteTaskClick: function() {
         var me = this,
-            taskManager = me.getTasksManager(),
-            selection = taskManager.getSelection()[0],
+            tasksGrid = me.getTasksGrid(),
+            selection = tasksGrid.getSelection()[0],
             title, message;
 
         if (!selection) {
@@ -140,8 +215,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         return this.saveTask();
     },
 
-    onTaskManagerRecordSelect: function() {
-        this.showTaskDetails();
+    onTaskManagerSelectionChange: function(grid, selected) {
+        this.getEditTaskButton().setDisabled(selected.length<=0);
+        this.getDeleteTaskButton().setDisabled(selected.length<=0);
     },
 
     onTaskManagerRowDblClick: function(taskManager, task, taskRowEl) {
@@ -268,15 +344,143 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 }
             }
         }
-
     },
 
+    onArchiveClick: function(archiveBtn) {
+        var me = this,
+            taskWindow = archiveBtn.up('window'),
+            formPanel = taskWindow.getMainView(),
+            task = formPanel.getRecord(),
+            wasPhantom = task.phantom;
+
+        formPanel.updateRecord(task);
+        task.set({
+            Status: 'archived'
+        });
+
+        // ensure task doesn't become dirty when no changes are made to the form
+        if (!task.dirty) {
+            return;
+        }
+
+        taskWindow.setLoading('Saving task&hellip;');
+
+        task.save({
+            include: 'StudentTasks',
+            success: function(savedTask) {
+                var tasksStore = me.getTasksStore(),
+                    parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+                    tplData = {
+                        task: savedTask.getData()
+                    };
+
+                // show notification to user
+                Ext.toast('Task successfully archived!');
+
+                // update loaded tasks data
+                tasksStore.beginUpdate();
+                tasksStore.mergeData([savedTask]);
+
+                if (parentTask) {
+                    parentTask.get('SubTasks').push(savedTask);
+                }
+
+                tasksStore.endUpdate();
+
+                // close window
+                taskWindow.hide();
+
+                // update form panel
+                formPanel.setTask(null);
+                formPanel.setTask(savedTask);
+                taskWindow.setLoading(false);
+
+            },
+            failure: function(savedTask, operation) {
+                taskWindow.setLoading(false);
+                taskWindow.hide();
+
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
+    },
+
+    onUnArchiveClick: function(archiveBtn) {
+        var me = this,
+            taskWindow = archiveBtn.up('window'),
+            formPanel = taskWindow.getMainView(),
+            task = formPanel.getRecord(),
+            wasPhantom = task.phantom;
+
+        formPanel.updateRecord(task);
+        task.set({
+            Status: 'private'
+        });
+
+        // ensure task doesn't become dirty when no changes are made to the form
+        if (!task.dirty) {
+            return;
+        }
+
+        taskWindow.setLoading('Saving task&hellip;');
+
+        task.save({
+            include: 'StudentTasks',
+            success: function(savedTask) {
+                var tasksStore = me.getTasksStore(),
+                    parentTask = tasksStore.getById(savedTask.get('ParentTaskID')),
+                    tplData = {
+                        task: savedTask.getData()
+                    };
+
+                // show notification to user
+                Ext.toast('Task successfully un-archived!');
+
+                // update loaded tasks data
+                tasksStore.beginUpdate();
+                tasksStore.mergeData([savedTask]);
+
+                if (parentTask) {
+                    parentTask.get('SubTasks').push(savedTask);
+                }
+
+                tasksStore.endUpdate();
+
+                // close window
+                taskWindow.hide();
+
+                // update form panel
+                formPanel.setTask(null);
+                formPanel.setTask(savedTask);
+                taskWindow.setLoading(false);
+            },
+            failure: function(savedTask, operation) {
+                taskWindow.setLoading(false);
+                taskWindow.hide();
+
+                Ext.Msg.show({
+                    title: 'Failed to save task',
+                    message: Ext.util.Format.htmlEncode(operation.getError()),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        });
+    },
+
+
+    // custom controller methods
     showTaskDetails: function(task) {
         var me = this,
             taskDetails = me.getTaskDetails(),
-            taskManager = me.getTasksManager();
+            tasksGrid = me.getTasksGrid();
 
-        if (!task && !(task = taskManager.getSelection()[0])) {
+        if (!task && !(task = tasksGrid.getSelection()[0])) {
             return;
         }
 

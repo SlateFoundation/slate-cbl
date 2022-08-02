@@ -2,10 +2,11 @@ Ext.define('SlateTasksManager.view.AppHeader', {
     extend: 'Slate.ui.app.Header',
 
     xtype: 'slate-tasks-manager-appheader',
+    padding: '16 90 16 90',
 
     items: [{
         xtype: 'component',
-        cls: 'slate-appheader-title',
+        cls: 'slate-apptitle',
         itemId: 'title',
         html: 'Task Library'
     },
@@ -18,11 +19,12 @@ Ext.define('SlateTasksManager.view.AppHeader', {
     },{
         iconCls: 'x-fa fa-pencil',
         action: 'edit',
-        tooltip: 'Edit Task'
+        tooltip: 'Edit Task',
+        disabled: true
     },{
         iconCls: 'x-fa fa-trash-o',
         action: 'delete',
-        tooltip: 'Delete Task'
+        tooltip: 'Delete Task',
+        disabled: true
     }]
-
 });
