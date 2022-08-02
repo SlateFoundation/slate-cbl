@@ -33,13 +33,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     // component references
     refs: {
-        tasksManager: {
-            selector: 'slate-tasks-manager',
+        viewport: {
+            selector: 'viewport',
             autoCreate: true,
 
-            xtype: 'slate-tasks-manager'
+            xclass: 'SlateTasksManager.view.Viewport'
         },
-
+        tasksManager: 'slate-tasks-manager',
         tasksGrid: 'slate-tasks-manager-grid',
 
         resultsCountContainer: 'slate-tasks-manager-grid [itemId=results-count-container]',
@@ -129,7 +129,10 @@ Ext.define('SlateTasksManager.controller.Tasks', {
 
     // controller templates method overrides
     onLaunch: function () {
-        this.getTasksManager().render('slateapp-viewport');
+        // trigger autocreation of main container that self-renders because it extends Viewport
+        this.getViewport();
+
+        // trigger initial data load
         this.getTasksStore().load();
     },
 

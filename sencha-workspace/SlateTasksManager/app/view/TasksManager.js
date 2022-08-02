@@ -7,9 +7,8 @@ Ext.define('SlateTasksManager.view.TasksManager', {
       'SlateTasksManager.view.TaskDetails'
   ],
 
+  autoEl: 'main',
   componentCls: 'slate-tasks-manager',
-
-  height: '100%',
 
   layout: 'border',
 
@@ -20,8 +19,7 @@ Ext.define('SlateTasksManager.view.TasksManager', {
       },
       {
           xtype: 'slate-tasks-manager-grid',
-          region: 'center',
-          layout: 'fit'
+          region: 'center'
       },
       {
           xtype: 'slate-tasks-manager-details',
