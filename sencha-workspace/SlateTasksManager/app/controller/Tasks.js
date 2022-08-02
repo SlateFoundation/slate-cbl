@@ -40,12 +40,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             xtype: 'slate-tasks-manager'
         },
 
-        tasksGrid: {
-            selector: 'slate-tasks-manager-grid',
-            autoCreate: true,
-
-            xtype: 'slate-tasks-manager-grid'
-        },
+        tasksGrid: 'slate-tasks-manager-grid',
 
         resultsCountContainer: 'slate-tasks-manager-grid [itemId=results-count-container]',
 
