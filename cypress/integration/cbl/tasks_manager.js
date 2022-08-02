@@ -2,7 +2,7 @@ describe('CBL: Tasks Manager Test', () => {
 
     // load sample database before tests
     before(() => {
-        cy.resetDatabase();
+        // cy.resetDatabase();
     });
 
     // authenticate as 'teacher' user
@@ -20,7 +20,8 @@ describe('CBL: Tasks Manager Test', () => {
         cy.visit('/cbl/dashboards/tasks/manager');
 
         // verify app loaded
-        cy.get('#slateapp-viewport')
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
             .contains('.slate-apptitle', 'Task Library');
 
         // wait for data load
@@ -63,7 +64,8 @@ describe('CBL: Tasks Manager Test', () => {
         cy.visit('/cbl/dashboards/tasks/manager');
 
         // verify app loaded
-        cy.get('#slateapp-viewport')
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
             .contains('.slate-apptitle', 'Task Library');
 
         // wait for data load
@@ -122,7 +124,8 @@ describe('CBL: Tasks Manager Test', () => {
         cy.visit('/cbl/dashboards/tasks/manager');
 
         // verify app loaded
-        cy.get('#slateapp-viewport')
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
             .contains('.slate-apptitle', 'Task Library');
 
         // wait for data load
