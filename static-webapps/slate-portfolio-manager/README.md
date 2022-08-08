@@ -1,4 +1,4 @@
-# advanced-portfolio-manager
+# slate-portfolio-manager
 
 ## Project setup
 

@@ -11,6 +11,6 @@
         "MD007": { "indent": 4 }
     },
     "eslint.workingDirectories": [
-        "./vue/advanced-portfolio-manager"
+        "./static-webapps/slate-portfolio-manager"
     ]
 }

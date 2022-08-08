@@ -7,7 +7,7 @@ command = "build"
 output_dir = "dist"
 
 [hololens.input]
-root = "vue/advanced-portfolio-manager"
+root = "static-webapps/slate-portfolio-manager"
 files = "**"
 
 [hololens.output]
