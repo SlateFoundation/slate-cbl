@@ -34,13 +34,16 @@ class StudentCompetency extends \ActiveRecord
 
     public static $fields = [
         'StudentID' => [
-            'type' => 'uint'
+            'type' => 'uint',
+            'includeInSummary' => true
         ],
         'CompetencyID' => [
-            'type' => 'uint'
+            'type' => 'uint',
+            'includeInSummary' => true
         ],
         'Level' => [
-            'type' => 'tinyint'
+            'type' => 'tinyint',
+            'includeInSummary' => true
         ],
         'EnteredVia' => [
             'type' => 'enum',
