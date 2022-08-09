@@ -353,7 +353,7 @@ class StudentCompetency extends \ActiveRecord
         }
 
         $ineffectiveDemonstrationData = [];
-        foreach ($this->getDemonstrationData() as $skillId => $demonstrationSkills) {
+        foreach ($this->getDemonstrationsData() as $skillId => $demonstrationSkills) {
             foreach ($demonstrationSkills as $demonstrationSkill) {
                 if (in_array($demonstrationSkill['ID'], $effectiveDemonstrationSkillIds)) {
                     continue;
