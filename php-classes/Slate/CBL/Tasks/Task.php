@@ -272,7 +272,7 @@ class Task extends \VersionedRecord
     {
         $parentTasks = DB::allRecords('SELECT ID FROM %s WHERE Title LIKE "%%%s%%"', [
             Task::$tableName,
-            $identifier
+            DB::escape($identifier)
         ]);
 
         $parentTasks = array_map(function($task) {
@@ -295,7 +295,7 @@ class Task extends \VersionedRecord
         [
             TaskSkill::$tableName,
             Skill::$tableName,
-            $identifier
+            DB::escape($identifier)
         ]);
 
         $relatedTasks = array_map(function($task) {
@@ -323,8 +323,8 @@ class Task extends \VersionedRecord
         [
             Task::$tableName,
             Person::$tableName,
-            $identifier,
-            $identifier
+            DB::escape($identifier),
+            DB::escape($identifier)
         ]);
 
         $relatedTasks = array_map(function($task) {

@@ -226,6 +226,10 @@ INSERT INTO `cbl_student_tasks` VALUES (204,'Slate\\CBL\\Tasks\\StudentTask','20
 INSERT INTO `cbl_student_tasks` VALUES (205,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:38',2,NULL,NULL,8,34,'assigned',NULL,NULL,NULL);
 INSERT INTO `cbl_student_tasks` VALUES (206,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:53:48',2,NULL,NULL,7,34,'assigned',NULL,NULL,NULL);
 INSERT INTO `cbl_student_tasks` VALUES (207,'Slate\\CBL\\Tasks\\StudentTask','2022-04-25 15:54:02',2,NULL,NULL,17,34,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (208,'Slate\\CBL\\Tasks\\StudentTask','2022-08-09 21:20:07',3,'2022-08-09 21:23:28',3,11,10,'completed',227,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (209,'Slate\\CBL\\Tasks\\StudentTask','2022-08-09 21:20:13',3,'2022-08-09 21:23:48',3,12,10,'completed',228,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (210,'Slate\\CBL\\Tasks\\StudentTask','2022-08-09 21:20:21',3,NULL,NULL,13,10,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (211,'Slate\\CBL\\Tasks\\StudentTask','2022-08-09 21:22:53',3,NULL,NULL,14,10,'assigned',NULL,NULL,NULL);
 
 
 CREATE TABLE `history_cbl_student_tasks` (

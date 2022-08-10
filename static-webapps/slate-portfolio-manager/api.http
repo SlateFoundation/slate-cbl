@@ -1,0 +1,61 @@
+@baseUrl = http://localhost:2190
+
+###
+
+# @name login
+POST {{baseUrl}}/login
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+
+_LOGIN[username]=system
+&_LOGIN[password]=system
+&_LOGIN[returnMethod]=POST
+
+###
+
+# @name getSession
+GET {{baseUrl}}/login
+Accept: application/json
+
+###
+
+# get all students in selected list
+GET {{baseUrl}}/people/*students
+    ?limit=0
+    &list=group:class_of_2021
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
+
+###
+
+# get all competencies in selected area
+GET {{baseUrl}}/cbl/competencies
+    ?limit=0
+    &content_area=ELA
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
+
+###
+
+# get all studentcompetency records for a whole class and whole competency area
+GET {{baseUrl}}/cbl/student-competencies
+    ?limit=0
+    &students=group:class_of_2021
+    &content_area=ELA
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
+
+###
+
+# get the studentcompetency records for just one single "cell"—student x competency
+GET {{baseUrl}}/cbl/student-competencies
+    ?limit=0
+    &student=ccross
+    &competency=ELA.3
+    &include[]=demonstrationsAverage
+    &include[]=growth
+    &include[]=progress
+    &include[]=effectiveDemonstrationsData
+    &include[]=ineffectiveDemonstrationsData
+Authorization: Token {{login.response.body.$.data.Handle}}
+Accept: application/json
