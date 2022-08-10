@@ -9,5 +9,8 @@
     "markdownlint.config": {
         "default": true,
         "MD007": { "indent": 4 }
-    }
+    },
+    "eslint.workingDirectories": [
+        "./static-webapps/slate-portfolio-manager"
+    ]
 }

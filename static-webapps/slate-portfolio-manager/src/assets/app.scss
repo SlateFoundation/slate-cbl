@@ -1,0 +1,23 @@
+// TODO remove these google font imports and use local versions
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sanchez:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Sanchez:ital@0;1&display=swap');
+
+body {
+  font-family: Lato;
+}
+
+%heading {
+  font-family: Sanchez;
+}
+
+@for $i from 6 through 1 {
+  .h#{$i} {
+    @extend %heading;
+  }
+}
+
+.btn-unstyled {
+  background: unset;
+  border: unset;
+  padding: unset;
+}

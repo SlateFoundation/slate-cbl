@@ -96,7 +96,7 @@ describe('CBL: Competency dashboard ratings test', () => {
                     cy.extGet('slate-cbl-demonstrations-demonstrationform')
                         .within(() => {
                             // enter a students name
-                            cy.get('[name=StudentID]').type('Cross, Clarisa')
+                            cy.get('[name=StudentID]').type('Leon, Leonard')
 
                             // enter an experience type
                             cy.get('[name=ExperienceType]').type('Studio', { force: true }) //input element may be hidden

@@ -2441,6 +2441,12 @@ INSERT INTO `cbl_demonstration_skills` VALUES (2468,'Slate\\CBL\\Demonstrations\
 INSERT INTO `cbl_demonstration_skills` VALUES (2469,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-22 14:45:16',2,NULL,NULL,224,28,10,NULL,1);
 INSERT INTO `cbl_demonstration_skills` VALUES (2470,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-23 20:23:25',3,NULL,NULL,225,1,9,8,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (2471,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2021-11-23 21:10:08',3,NULL,NULL,226,2,9,8,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2472,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-09 21:23:28',3,NULL,NULL,227,1,12,8,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2473,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-09 21:23:28',3,NULL,NULL,227,2,12,9,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2474,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-09 21:23:28',3,NULL,NULL,227,3,12,10,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2475,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-09 21:23:48',3,NULL,NULL,228,3,12,12,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2476,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-09 21:23:48',3,NULL,NULL,228,4,12,12,0);
+
 
 CREATE TABLE `history_cbl_demonstration_skills` (
   `RevisionID` int(10) unsigned NOT NULL AUTO_INCREMENT,
