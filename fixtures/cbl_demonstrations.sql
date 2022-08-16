@@ -240,8 +240,37 @@ INSERT INTO `cbl_demonstrations` VALUES (223,'Slate\\CBL\\Demonstrations\\Experi
 INSERT INTO `cbl_demonstrations` VALUES (224,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2021-11-22 14:45:16',2,NULL,NULL,6,'2021-11-22 14:45:08',NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `cbl_demonstrations` VALUES (225,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2021-11-23 20:23:25',3,'2021-11-23 20:27:04',3,24,'2021-11-23 20:23:25','https://slate.is/task-artifact',NULL,'Studio','The Art of Resistance','Milestone.1: Reading Strategies in Internment');
 INSERT INTO `cbl_demonstrations` VALUES (226,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2021-11-23 21:10:08',3,NULL,NULL,24,'2021-11-23 21:10:08',NULL,NULL,'Studio','The Art of Resistance','Milestone.3: Main Idea and Themes of Internment');
-INSERT INTO `cbl_demonstrations` VALUES (227,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-09 21:23:28',3,NULL,NULL,10,'2022-08-09 21:23:28',NULL,NULL,'Studio','The Art of Resistance','Milestone.1: Reading Strategies in Internment');
-INSERT INTO `cbl_demonstrations` VALUES (228,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-09 21:23:48',3,NULL,NULL,10,'2022-08-09 21:23:48',NULL,NULL,'Studio','The Art of Resistance','Milestone.2: Craft and Context in Internment');
+INSERT INTO `cbl_demonstrations` VALUES (227,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 11:25:11',2,NULL,NULL,4,'2022-07-02 11:24:45',NULL,NULL,'Studio','Override testing','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (228,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:25:36',2,NULL,NULL,4,'2022-07-02 11:25:27',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (229,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:26:16',2,NULL,NULL,4,'2022-07-02 11:26:11',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (230,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:26:38',2,NULL,NULL,4,'2022-07-02 11:26:33',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (231,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:26:51',2,NULL,NULL,4,'2022-07-02 11:26:46',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (232,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 11:30:09',2,NULL,NULL,4,'2022-07-02 11:29:19',NULL,NULL,'Studio','Override Testing','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (233,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:30:30',2,NULL,NULL,4,'2022-07-02 11:30:25',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (234,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:31:28',2,NULL,NULL,4,'2022-07-02 11:31:24',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (235,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 11:32:30',2,NULL,NULL,4,'2022-07-02 11:32:16',NULL,NULL,'Studio','Override testing','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (236,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:32:48',2,NULL,NULL,4,'2022-07-02 11:32:39',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (237,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 11:40:32',2,NULL,NULL,4,'2022-07-02 11:40:12',NULL,NULL,'Studio','Override testing','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (238,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:40:44',2,NULL,NULL,4,'2022-07-02 11:40:39',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (239,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 11:40:58',2,NULL,NULL,4,'2022-07-02 11:40:52',NULL,'Override testing',NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (240,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 11:41:34',2,NULL,NULL,4,'2022-07-02 11:41:21',NULL,NULL,'Studio','Override testing','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (241,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 11:53:06',2,NULL,NULL,6,'2022-07-02 11:52:52',NULL,NULL,'Studio','Override testing','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (242,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 12:16:05',2,NULL,NULL,6,'2022-07-02 12:15:53',NULL,NULL,'Studio','test','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (243,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:01:32',2,NULL,NULL,6,'2022-07-02 14:01:28',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (244,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:01:43',2,NULL,NULL,6,'2022-07-02 14:01:40',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (245,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 14:05:20',2,NULL,NULL,6,'2022-07-02 14:04:56',NULL,NULL,'Studio','Testing Ms','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (246,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:07:01',2,NULL,NULL,6,'2022-07-02 14:07:00',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (247,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:07:08',2,NULL,NULL,6,'2022-07-02 14:07:07',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (248,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:07:17',2,NULL,NULL,6,'2022-07-02 14:07:16',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (249,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:07:26',2,NULL,NULL,6,'2022-07-02 14:07:25',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (250,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:07:34',2,NULL,NULL,6,'2022-07-02 14:07:33',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (251,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 14:21:07',2,NULL,NULL,6,'2022-07-02 14:20:47',NULL,NULL,'Studio','Test','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (252,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 14:21:25',2,NULL,NULL,6,'2022-07-02 14:21:10',NULL,NULL,'Studio','Test','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (253,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 14:21:42',2,NULL,NULL,6,'2022-07-02 14:21:31',NULL,NULL,'Studio','Test','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (254,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-07-02 14:22:03',2,NULL,NULL,6,'2022-07-02 14:21:53',NULL,NULL,'Studio','test','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (255,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:23:20',2,NULL,NULL,6,'2022-07-02 14:23:19',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (256,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-09 21:23:28',3,NULL,NULL,10,'2022-08-09 21:23:28',NULL,NULL,'Studio','The Art of Resistance','Milestone.1: Reading Strategies in Internment');
+INSERT INTO `cbl_demonstrations` VALUES (257,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-09 21:23:48',3,NULL,NULL,10,'2022-08-09 21:23:48',NULL,NULL,'Studio','The Art of Resistance','Milestone.2: Craft and Context in Internment');
 
 
 CREATE TABLE `history_cbl_demonstrations` (
