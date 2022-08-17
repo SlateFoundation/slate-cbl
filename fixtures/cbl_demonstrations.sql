@@ -271,6 +271,8 @@ INSERT INTO `cbl_demonstrations` VALUES (254,'Slate\\CBL\\Demonstrations\\Experi
 INSERT INTO `cbl_demonstrations` VALUES (255,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-07-02 14:23:20',2,NULL,NULL,6,'2022-07-02 14:23:19',NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `cbl_demonstrations` VALUES (256,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-09 21:23:28',3,NULL,NULL,10,'2022-08-09 21:23:28',NULL,NULL,'Studio','The Art of Resistance','Milestone.1: Reading Strategies in Internment');
 INSERT INTO `cbl_demonstrations` VALUES (257,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-09 21:23:48',3,NULL,NULL,10,'2022-08-09 21:23:48',NULL,NULL,'Studio','The Art of Resistance','Milestone.2: Craft and Context in Internment');
+INSERT INTO `cbl_demonstrations` VALUES (258,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-16 22:13:40',2,NULL,NULL,6,'2022-08-16 22:13:09',NULL,NULL,'Studio','All M\'s','Annotated Writing');
+INSERT INTO `cbl_demonstrations` VALUES (259,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-16 22:29:17',2,NULL,NULL,27,'2022-08-16 22:28:41',NULL,NULL,'Presentation of Learning','All M\'s','Multimedia Presentation');
 
 
 CREATE TABLE `history_cbl_demonstrations` (
