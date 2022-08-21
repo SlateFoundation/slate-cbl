@@ -38,6 +38,32 @@
                 "progress": "75",
                 "progressMissed": "0"
             }
+        },
+        "SS": {
+            "SS.1": {
+                "baseline": null,
+                "average": "6.5",
+                "growth": "0",
+                "progress": "53"
+            },
+            "SS.2": {
+                "baseline": null,
+                "average": "6",
+                "growth": "0",
+                "progress": "75"
+            },
+            "SS.3": {
+                "baseline": null,
+                "average": "9.3",
+                "growth": "0.3",
+                "progress": "75"
+            },
+            "SS.4": {
+                "baseline": null,
+                "average": "6.5",
+                "growth": "-0.5",
+                "progress": "50"
+            }
         }
     },
     "student2": {
@@ -98,6 +124,27 @@
                 "growth": null,
                 "progress": "0",
                 "progressMissed": "67"
+            }
+        },
+        "SS": {
+            "SS.1": {
+                "baseline": null,
+                "average": null,
+                "growth": null,
+                "progress": "80"
+            },
+            "SS.2": {
+                "baseline": null,
+                "average": null,
+                "growth": null,
+                "progress": "75"
+            },
+            "SS.4": {
+                "baseline": null,
+                "average": "9.5",
+                "growth": "0",
+                "progress": "50",
+                "progressMissed": "50"
             }
         }
     },
