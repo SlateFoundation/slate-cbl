@@ -215,23 +215,29 @@ describe('CBL: Competency dashboard ratings test', () => {
                             const { StudentID: studentId } = savedRecord;
 
                             cy.get(`tr.cbl-grid-progress-row[data-competency="${firstCompetency.ID}"] td.cbl-grid-progress-cell[data-student=${studentId}]`)
-                                .within(($el) => {
-                                    cy.get($el.first()).click({ force: true })
+                                .within(() => {
+                                    // NOTE: the following assertions can fail if the fixture data changes
+                                    cy.get('.cbl-grid-progress-percent')
+                                        .should('have.text', '33%') // we input 1 rating for each skill (4/12 = 33%)
+                                    cy.get('.cbl-grid-progress-level')
+                                        .should('have.text', levels['12'].abbreviation) // Level 4 Portfolio Progress
+                                    cy.get('.cbl-grid-progress-average')
+                                        .should('have.text', '12') // Avg of 12
 
-                                    // NOTE: the followoing assertions can fail if the fixture data changes
-                                    cy.contains('33%') // we input 1 rating for each skill (4/12 = 33%)
-                                    cy.contains(levels['12'].abbreviation) // Level 4 Portfolio Progress
-                                    cy.contains('12') // Avg of 12
+                                    cy.root().click({ force: true })
                                 });
 
                             cy.get(`tr.cbl-grid-progress-row[data-competency="${secondCompetency.ID}"] td.cbl-grid-progress-cell[data-student=${studentId}]`)
                                 .within(($el) => {
-                                    cy.get($el.first()).click({ force: true })
+                                    // NOTE: the following assertions can fail if the fixture data changes
+                                    cy.get('.cbl-grid-progress-percent')
+                                        .should('have.text', '33%') // we input 1 rating for each skill (4/12 = 33%)
+                                    cy.get('.cbl-grid-progress-level')
+                                        .should('have.text', levels['12'].abbreviation) // Level 4 Portfolio Progress
+                                    cy.get('.cbl-grid-progress-average')
+                                        .should('have.text', '10') // Avg of 10
 
-                                    // NOTE: the followoing assertions can fail if the fixture data changes
-                                    cy.contains('33%') // we input 1 rating for each skill (4/12 = 33%)
-                                    cy.contains(levels['12'].abbreviation) // Level 4 Portfolio Progress
-                                    cy.contains('10') // Avg of 12
+                                    cy.root().click({ force: true })
                                 });
 
                             // NOTE: the following assertions can fail if the fixture data changes
