@@ -18,7 +18,7 @@ describe('CBL: Teacher tasks test', () => {
         cy.loginAs('teacher');
     });
 
-    it('View single tasks as teacher', () => {
+    it('Load selected grid', () => {
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/teacher');
@@ -53,9 +53,45 @@ describe('CBL: Teacher tasks test', () => {
         // verify hash
         cy.location('hash').should('eq', '#ELA-001/all');
 
+        // verify student tasks load
+        cy.wait('@studentTasksData').then(({ response }) => {
+            expect(response.body.success).to.eq(true);
+            expect(response.statusCode).to.eq(200);
+        });
+        cy.get('@studentTasksData.all').should('have.length', 1);
+
         // verify content loads
         cy.extGet('slate-studentsgrid')
             .contains('.jarvus-aggregrid-header-text', 'ELA Task One');
+    });
+
+    it('View student task', () => {
+
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/tasks/teacher#ELA-001/all');
+
+        // wait for data to load
+        cy.wait('@getBootstrapData');
+        cy.get('@getBootstrapData.all').should('have.length', 1);
+
+        // verify student tasks load
+        cy.wait('@studentTasksData').then(({ response }) => {
+            expect(response.body.success).to.eq(true);
+            expect(response.statusCode).to.eq(200);
+        });
+        cy.get('@studentTasksData.all').should('have.length', 1);
+
+        // find and click the first grid cell
+        cy.extGet('slate-studentsgrid')
+            .should('exist')
+            .find('.slate-studentsgrid-cell')
+            .first()
+            .click();
+
+        // ensure the first skill rating field has class 'cbl-level-9'
+        cy.get('.slate-cbl-skillratingsfield .slate-cbl-ratings-slider')
+            .first()
+            .should('have.have.class', 'cbl-level-9');
     });
 
     it('Archive task as teacher', () => {
@@ -64,54 +100,30 @@ describe('CBL: Teacher tasks test', () => {
         cy.intercept('GET', '/cbl/skills?(\\?*)').as('getSkills');
 
         // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.visit('/cbl/dashboards/tasks/teacher#ELA-001/all');
+
+        // wait for data to load
         cy.wait('@getBootstrapData');
         cy.get('@getBootstrapData.all').should('have.length', 1);
-
-        // verify teacher redirect
-        cy.location('hash').should('eq', '');
-
-        cy.extGet('slate-tasks-teacher-dashboard')
-            .contains('.slate-placeholder', 'Select a section to load tasks dashboard');
-
-        // click the 'Section' selector
-        cy.extGet('slate-cbl-sectionselector')
-            .click();
-
-        cy.wait('@getSections');
-        cy.get('@getSections.all').should('have.length', 1);
-
-        // click ELA section element of picker dropdown
-        cy.extGet('slate-cbl-sectionselector', { component: true })
-            .then(selector => selector.getPicker().el.dom)
-            .contains('.x-boundlist-item', 'English Language Arts')
-            .click();
-
-        cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200);
-        cy.get('@getSectionCohorts.all').should('have.length', 1);
-
-        cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200);
-        cy.get('@getSectionParticipants.all').should('have.length', 1);
 
         // verify student tasks load
         cy.wait('@studentTasksData').then(({ response }) => {
             expect(response.body.success).to.eq(true);
             expect(response.statusCode).to.eq(200);
         });
+        cy.get('@studentTasksData.all').should('have.length', 1);
 
-        // verify hash
-        cy.location('hash').should('eq', '#ELA-001/all');
-
-        // verify content loads
+        // verify content loads and click edit
         cy.extGet('slate-studentsgrid')
             .contains('.jarvus-aggregrid-header-text', 'ELA Task One')
             .contains('button', 'Edit')
             .click({ force: true });
 
+        // wait for modal data to load
         cy.wait('@taskData').then(({ response }) => {
             expect(response.body.success).to.eq(true);
             expect(response.statusCode).to.eq(200);
-        })
+        });
 
         // wait for window to transition open
         cy.extGet('slate-window')
@@ -139,44 +151,20 @@ describe('CBL: Teacher tasks test', () => {
     it('Un-Archive task as teacher', () => {
 
         // open student demonstrations dashboard
-        cy.visit('/cbl/dashboards/tasks/teacher');
+        cy.visit('/cbl/dashboards/tasks/teacher#ELA-001/all');
+
+        // wait for data to load
         cy.wait('@getBootstrapData');
         cy.get('@getBootstrapData.all').should('have.length', 1);
-
-        // verify teacher redirect
-        cy.location('hash').should('eq', '');
-
-        cy.extGet('slate-tasks-teacher-dashboard')
-            .contains('.slate-placeholder', 'Select a section to load tasks dashboard');
-
-        // click the 'Section' selector
-        cy.extGet('slate-cbl-sectionselector')
-            .click();
-
-        cy.wait('@getSections');
-        cy.get('@getSections.all').should('have.length', 1);
-
-        // click ELA section element of picker dropdown
-        cy.extGet('slate-cbl-sectionselector', { component: true })
-            .then(selector => selector.getPicker().el.dom)
-            .contains('.x-boundlist-item', 'English Language Arts')
-            .click();
-
-        cy.wait('@getSectionCohorts').its('response.statusCode').should('eq', 200);
-        cy.get('@getSectionCohorts.all').should('have.length', 1);
-
-        cy.wait('@getSectionParticipants').its('response.statusCode').should('eq', 200);
-        cy.get('@getSectionParticipants.all').should('have.length', 1);
 
         // verify student tasks load
         cy.wait('@studentTasksData').then(({ response }) => {
             expect(response.body.success).to.eq(true);
             expect(response.statusCode).to.eq(200);
         });
+        cy.get('@studentTasksData.all').should('have.length', 1);
 
-        // verify hash
-        cy.location('hash').should('eq', '#ELA-001/all');
-
+        // enable showing archived tasks
         cy.extGet('slate-gridtoolbar')
             .contains('.x-form-item-label-text', 'Show Archived Tasks')
             .click();
