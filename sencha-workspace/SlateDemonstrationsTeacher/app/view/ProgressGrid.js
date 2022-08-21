@@ -889,7 +889,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     }
 
                     if (demonstrationRatingDirty) {
-                        demonstrationBlockEl.toggleCls('cbl-skill-demo-missing', demonstrationRating === 0 && !demonstrationOverride);
+                        demonstrationBlockEl.toggleCls('cbl-skill-demo-missed', demonstrationRating === 0 && !demonstrationOverride);
                     }
 
                     if (demonstrationOverrideDirty) {
