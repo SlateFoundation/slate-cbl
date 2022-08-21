@@ -1,4 +1,4 @@
-describe('CBL/API: student-competencies', () => {
+describe('CBL / API / StudentCompetency', () => {
 
     // load sample database before tests
     before(() => {

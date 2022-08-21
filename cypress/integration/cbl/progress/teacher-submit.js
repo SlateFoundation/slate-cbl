@@ -1,4 +1,4 @@
-describe('CBL: Submit demonstrations', () => {
+describe('CBL / Progress / Teacher Submit', () => {
 
     // load sample database before tests
     before(() => {

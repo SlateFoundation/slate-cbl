@@ -1,4 +1,4 @@
-describe('CBL: Tasks Manager Test', () => {
+describe('CBL / Admin / Tasks Manager', () => {
 
     // load sample database before tests
     before(() => {
