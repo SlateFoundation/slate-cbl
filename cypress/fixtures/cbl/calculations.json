@@ -28,6 +28,16 @@
                 "growth": "0.5",
                 "progress": "67"
             }
+        },
+        "HW": {
+            "HW.3": {
+                "description": "There are some ratings and some Ms. The skills with Ms have been overridden",
+                "baseline": null,
+                "average": "7",
+                "growth": "0",
+                "progress": "75",
+                "progressMissed": "25"
+            }
         }
     },
     "student2": {
@@ -45,6 +55,33 @@
                 "average": "9",
                 "growth": "0",
                 "progress": "33"
+            }
+        },
+        "HW": {
+            "HW.1": {
+                "description": "Overrides with ratings only",
+                "baseline": null,
+                "average": "7.2",
+                "growth": "0.2",
+                "progress": "88",
+                "progressMissed": "0"
+            },
+            "HW.3": {
+                "description": "Overrides only",
+                "baseline": null,
+                "average": null,
+                "growth": null,
+                "progress": "75"
+            }
+        },
+        "HOS": {
+            "HOS.3": {
+                "description": "All M’s only with one ER for each skill",
+                "baseline": null,
+                "average": null,
+                "growth": null,
+                "progress": "0",
+                "progressMissed": "67"
             }
         }
     },
@@ -164,6 +201,22 @@
                 "average": "9.4",
                 "growth": null,
                 "progress": "35"
+            },
+            "NGE.2": {
+                "description": "All M’s only with multiple ER’s per skill",
+                "baseline": null,
+                "average": null,
+                "growth": null,
+                "progress": "0",
+                "progressMissed": "42"
+            },
+            "NGE.3": {
+                "description": "Single and double M’s per skill",
+                "baseline": null,
+                "average": null,
+                "growth": null,
+                "progress": "0",
+                "progressMissed": "63"
             }
         },
         "HOS": {

@@ -2498,6 +2498,18 @@ INSERT INTO `cbl_demonstration_skills` VALUES (2527,'Slate\\CBL\\Demonstrations\
 INSERT INTO `cbl_demonstration_skills` VALUES (2528,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-09 21:23:28',3,NULL,NULL,256,3,12,10,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (2529,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-09 21:23:48',3,NULL,NULL,257,3,12,12,0);
 INSERT INTO `cbl_demonstration_skills` VALUES (2530,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-09 21:23:48',3,NULL,NULL,257,4,12,12,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2531,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-16 22:13:40',2,NULL,NULL,258,42,9,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2532,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-16 22:13:40',2,NULL,NULL,258,43,9,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2534,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-16 22:29:17',2,NULL,NULL,259,120,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2535,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-16 22:29:17',2,NULL,NULL,259,121,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2536,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-16 22:29:17',2,NULL,NULL,259,122,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2537,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-16 22:29:17',2,NULL,NULL,259,123,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2538,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-16 22:29:17',2,NULL,NULL,259,124,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2539,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-21 16:32:56',1,NULL,NULL,260,126,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2540,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-21 16:32:56',1,NULL,NULL,260,127,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2541,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-21 16:32:56',1,NULL,NULL,260,128,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2542,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-21 16:32:56',1,NULL,NULL,260,129,11,0,0);
+INSERT INTO `cbl_demonstration_skills` VALUES (2543,'Slate\\CBL\\Demonstrations\\DemonstrationSkill','2022-08-21 16:33:38',1,NULL,NULL,261,126,11,0,0);
 
 
 CREATE TABLE `history_cbl_demonstration_skills` (
