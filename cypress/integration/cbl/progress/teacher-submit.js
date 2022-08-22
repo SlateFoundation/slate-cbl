@@ -1,4 +1,4 @@
-describe('CBL: Competency dashboard ratings test', () => {
+describe('CBL / Progress / Teacher Submit', () => {
 
     // load sample database before tests
     before(() => {
@@ -7,8 +7,6 @@ describe('CBL: Competency dashboard ratings test', () => {
 
      // authenticate as 'teacher' user
      beforeEach(() => {
-        cy.intercept('GET', '/cbl/content-areas?(\\?*)').as('getContentAreas');
-        cy.intercept('GET', '/people/\\*student-lists').as('getStudentLists');
         cy.intercept('GET', '/cbl/student-competencies?(\\?*)').as('studentCompetencyData');
         cy.intercept('GET', '/cbl/competencies?(\\?*)').as('competencyData');
         cy.intercept('POST', '/cbl/demonstrations/save?(\\?*)').as('saveDemonstration');
@@ -20,47 +18,7 @@ describe('CBL: Competency dashboard ratings test', () => {
         cy.readFile('cypress/fixtures/cbl/levels.json').then((levels) => {
 
             // open student demonstrations dashboard
-            cy.visit('/cbl/dashboards/demonstrations/teacher');
-
-            // verify teacher redirect
-            cy.location('hash').should('eq', '#_')
-            cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
-                .contains('Select a list of students and a content area to load progress dashboard')
-
-            // click the 'Rubric' selector
-            cy.extGet('slate-cbl-contentareaselector')
-                .click();
-
-            // wait for options to load
-            cy.wait('@getContentAreas');
-
-            // verify and click first element of picker dropdown
-            cy.extGet('slate-cbl-contentareaselector', { component: true })
-                .then(selector => selector.getPicker().el.dom)
-                .contains('.x-boundlist-item', 'English Language Arts')
-                .click();
-
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA');
-
-            // click the 'Students' selector
-            cy.extGet('slate-cbl-studentslistselector')
-                .should('exist')
-                .click()
-                .focused()
-                .type('EXA');
-
-            // wait for options to load
-            cy.wait('@getStudentLists');
-
-            // verify and click first element of picker dropdown
-            cy.extGet('slate-cbl-studentslistselector', { component: true })
-                .then(selector => selector.getPicker().el.dom)
-                .contains('.x-boundlist-item', 'Example School')
-                .click();
-
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA/group:example_school');
+            cy.visit('/cbl/dashboards/demonstrations/teacher#ELA/group:example_school');
 
             // student competency data loads when student + rubric selectors set
             cy.wait('@studentCompetencyData')

@@ -4,8 +4,8 @@ before(() => {
     cy.resetDatabase();
 });
 
-describe('CBL: Check API data against test cases', () => {
-    const testCases = require('../../fixtures/cbl/calculations.json');
+describe('CBL / Progress / Calculations / API', () => {
+    const testCases = require('../../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('teacher');
@@ -91,8 +91,8 @@ describe('CBL: Check API data against test cases', () => {
     }
 });
 
-describe('CBL: Check CSV data against test cases', () => {
-    const testCases = require('../../fixtures/cbl/calculations.json');
+describe('CBL / Progress / Calculations / CSV', () => {
+    const testCases = require('../../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('admin');
@@ -160,8 +160,8 @@ describe('CBL: Check CSV data against test cases', () => {
     }
 });
 
-describe('CBL: Check UI data against test cases', () => {
-    const testCases = require('../../fixtures/cbl/calculations.json');
+describe('CBL / Progress / Calculations / UI', () => {
+    const testCases = require('../../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('teacher');
