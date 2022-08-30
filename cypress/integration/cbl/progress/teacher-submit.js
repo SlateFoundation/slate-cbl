@@ -1,4 +1,4 @@
-describe('CBL: Competency dashboard ratings test', () => {
+describe('CBL / Progress / Teacher Submit', () => {
 
     // load sample database before tests
     before(() => {
@@ -7,8 +7,6 @@ describe('CBL: Competency dashboard ratings test', () => {
 
      // authenticate as 'teacher' user
      beforeEach(() => {
-        cy.intercept('GET', '/cbl/content-areas?(\\?*)').as('getContentAreas');
-        cy.intercept('GET', '/people/\\*student-lists').as('getStudentLists');
         cy.intercept('GET', '/cbl/student-competencies?(\\?*)').as('studentCompetencyData');
         cy.intercept('GET', '/cbl/competencies?(\\?*)').as('competencyData');
         cy.intercept('POST', '/cbl/demonstrations/save?(\\?*)').as('saveDemonstration');
@@ -20,47 +18,7 @@ describe('CBL: Competency dashboard ratings test', () => {
         cy.readFile('cypress/fixtures/cbl/levels.json').then((levels) => {
 
             // open student demonstrations dashboard
-            cy.visit('/cbl/dashboards/demonstrations/teacher');
-
-            // verify teacher redirect
-            cy.location('hash').should('eq', '#_')
-            cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
-                .contains('Select a list of students and a content area to load progress dashboard')
-
-            // click the 'Rubric' selector
-            cy.extGet('slate-cbl-contentareaselector')
-                .click();
-
-            // wait for options to load
-            cy.wait('@getContentAreas');
-
-            // verify and click first element of picker dropdown
-            cy.extGet('slate-cbl-contentareaselector', { component: true })
-                .then(selector => selector.getPicker().el.dom)
-                .contains('.x-boundlist-item', 'English Language Arts')
-                .click();
-
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA');
-
-            // click the 'Students' selector
-            cy.extGet('slate-cbl-studentslistselector')
-                .should('exist')
-                .click()
-                .focused()
-                .type('EXA');
-
-            // wait for options to load
-            cy.wait('@getStudentLists');
-
-            // verify and click first element of picker dropdown
-            cy.extGet('slate-cbl-studentslistselector', { component: true })
-                .then(selector => selector.getPicker().el.dom)
-                .contains('.x-boundlist-item', 'Example School')
-                .click();
-
-            // verify hash updates
-            cy.location('hash').should('eq', '#ELA/group:example_school');
+            cy.visit('/cbl/dashboards/demonstrations/teacher#ELA/group:example_school');
 
             // student competency data loads when student + rubric selectors set
             cy.wait('@studentCompetencyData')
@@ -215,23 +173,29 @@ describe('CBL: Competency dashboard ratings test', () => {
                             const { StudentID: studentId } = savedRecord;
 
                             cy.get(`tr.cbl-grid-progress-row[data-competency="${firstCompetency.ID}"] td.cbl-grid-progress-cell[data-student=${studentId}]`)
-                                .within(($el) => {
-                                    cy.get($el.first()).click({ force: true })
+                                .within(() => {
+                                    // NOTE: the following assertions can fail if the fixture data changes
+                                    cy.get('.cbl-grid-progress-percent')
+                                        .should('have.text', '33%') // we input 1 rating for each skill (4/12 = 33%)
+                                    cy.get('.cbl-grid-progress-level')
+                                        .should('have.text', levels['12'].abbreviation) // Level 4 Portfolio Progress
+                                    cy.get('.cbl-grid-progress-average')
+                                        .should('have.text', '12') // Avg of 12
 
-                                    // NOTE: the followoing assertions can fail if the fixture data changes
-                                    cy.contains('33%') // we input 1 rating for each skill (4/12 = 33%)
-                                    cy.contains(levels['12'].abbreviation) // Level 4 Portfolio Progress
-                                    cy.contains('12') // Avg of 12
+                                    cy.root().click({ force: true })
                                 });
 
                             cy.get(`tr.cbl-grid-progress-row[data-competency="${secondCompetency.ID}"] td.cbl-grid-progress-cell[data-student=${studentId}]`)
                                 .within(($el) => {
-                                    cy.get($el.first()).click({ force: true })
+                                    // NOTE: the following assertions can fail if the fixture data changes
+                                    cy.get('.cbl-grid-progress-percent')
+                                        .should('have.text', '33%') // we input 1 rating for each skill (4/12 = 33%)
+                                    cy.get('.cbl-grid-progress-level')
+                                        .should('have.text', levels['12'].abbreviation) // Level 4 Portfolio Progress
+                                    cy.get('.cbl-grid-progress-average')
+                                        .should('have.text', '10') // Avg of 10
 
-                                    // NOTE: the followoing assertions can fail if the fixture data changes
-                                    cy.contains('33%') // we input 1 rating for each skill (4/12 = 33%)
-                                    cy.contains(levels['12'].abbreviation) // Level 4 Portfolio Progress
-                                    cy.contains('10') // Avg of 12
+                                    cy.root().click({ force: true })
                                 });
 
                             // NOTE: the following assertions can fail if the fixture data changes

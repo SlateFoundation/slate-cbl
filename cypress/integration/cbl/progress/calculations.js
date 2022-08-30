@@ -4,8 +4,8 @@ before(() => {
     cy.resetDatabase();
 });
 
-describe('CBL: Check API data against test cases', () => {
-    const testCases = require('../../fixtures/cbl/calculations.json');
+describe('CBL / Progress / Calculations / API', () => {
+    const testCases = require('../../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('teacher');
@@ -25,6 +25,8 @@ describe('CBL: Check API data against test cases', () => {
                             'growth',
                             'progress',
                             'demonstrationsAverage',
+                            'demonstrationsMissed',
+                            'demonstrationsRequired',
                             'baselineAverage'
                         ],
                         student: studentUsername,
@@ -75,6 +77,13 @@ describe('CBL: Check API data against test cases', () => {
                             latest.demonstrationsAverage,
                             testCase.averageExplanation || `${competency} average`
                         ).to.equal(testCase.average === null ? null : parseFloat(testCase.average));
+
+                        if (testCase.progressMissed != null) {
+                            expect(
+                                latest.demonstrationsMissed,
+                                testCase.progressMissedExplanation || `${competency} opportunities missed`
+                            ).to.equal(Math.round(testCase.progressMissed / 100 * latest.demonstrationsRequired));
+                        }
                     }
                 })
             })
@@ -82,8 +91,8 @@ describe('CBL: Check API data against test cases', () => {
     }
 });
 
-describe('CBL: Check CSV data against test cases', () => {
-    const testCases = require('../../fixtures/cbl/calculations.json');
+describe('CBL / Progress / Calculations / CSV', () => {
+    const testCases = require('../../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('admin');
@@ -137,6 +146,13 @@ describe('CBL: Check CSV data against test cases', () => {
                             row['Performance Level'],
                             testCase.averageExplanation || `${competency} average`
                         ).to.equal(testCase.average === null ? '' : testCase.average);
+
+                        if (testCase.progressMissed != null) {
+                            expect(
+                                row['Missed ER'],
+                                testCase.progressMissedExplanation || `${competency} opportunities missed`
+                            ).to.equal(`${Math.round(testCase.progressMissed / 100 * row['Total ER'])}`);
+                        }
                     }
                 });
             });
@@ -144,8 +160,8 @@ describe('CBL: Check CSV data against test cases', () => {
     }
 });
 
-describe('CBL: Check UI data against test cases', () => {
-    const testCases = require('../../fixtures/cbl/calculations.json');
+describe('CBL / Progress / Calculations / UI', () => {
+    const testCases = require('../../../fixtures/cbl/calculations.json');
 
     beforeEach(() => {
         cy.loginAs('teacher');
@@ -183,6 +199,16 @@ describe('CBL: Check UI data against test cases', () => {
 
                             cy.get('td[data-ref="growthEl"]')
                                 .should('have.text', testCase.growth === null ? '—' : `${testCase.growth <= 0 ? '' : '+'}${testCase.growth}`);
+
+                            if (testCase.progressMissed != null) {
+                                cy.get('div[data-ref="meterBarMissedEl"]')
+                                    .should($bar => {
+                                        expect(
+                                            $bar.get(0).style.width,
+                                            testCase.progressMissedExplanation || `${competency} opportunities missed`
+                                        ).to.equal(`${testCase.progressMissed}%`);
+                                    });
+                            }
                     });
                 }
             });

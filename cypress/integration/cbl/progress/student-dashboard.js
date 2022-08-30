@@ -1,4 +1,4 @@
-describe('CBL: Student demonstrations test', () => {
+describe('CBL / Progress / Student Dashboard', () => {
 
     // load sample database before tests
     before(() => {

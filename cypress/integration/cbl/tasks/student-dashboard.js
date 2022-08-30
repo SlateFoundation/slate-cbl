@@ -127,7 +127,7 @@ function _clickFilterButton() {
 };
 
 
-describe('CBL: Student Tasks Workflows', () => {
+describe('CBL / Tasks / Student Dashboard: Workflows', () => {
 
     it('Submit task as student / Re-Assign As Teacher', () => {
         // todo: create task in test? we want to make sure tests don't fail because of previous test failures or successes
@@ -300,7 +300,7 @@ describe('CBL: Student Tasks Workflows', () => {
 });
 
 
-describe('CBL: Student Tasks Section Filters', () => {
+describe('CBL / Tasks / Student Dashboard: Section Filters', () => {
 
     // todo: ensure we create data that should NOT included in filter
     it('Enrolled Sections Filter', () => {
@@ -351,7 +351,7 @@ describe('CBL: Student Tasks Section Filters', () => {
 });
 
 
-describe('CBL: Student Tasks Status Filters', () => {
+describe('CBL / Tasks / Student Dashboard: Status Filters', () => {
 
     // todo: ensure we create data that should NOT included in filter
     it('Archived Tasks Filter', () => {
@@ -384,7 +384,7 @@ describe('CBL: Student Tasks Status Filters', () => {
 });
 
 
-describe('CBL: Student Tasks Timeline Filters', () => {
+describe('CBL / Tasks / Student Dashboard: Timeline Filters', () => {
 
     // todo: ensure we create data that should NOT included in filter
     it('Past Due Filter', () => {

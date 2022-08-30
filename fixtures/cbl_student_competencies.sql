@@ -662,3 +662,11 @@ INSERT INTO `cbl_student_competencies` VALUES (644,'Slate\\CBL\\StudentCompetenc
 INSERT INTO `cbl_student_competencies` VALUES (645,'Slate\\CBL\\StudentCompetency','2022-04-25 15:48:50',2,34,2,9,'enrollment',NULL);
 INSERT INTO `cbl_student_competencies` VALUES (646,'Slate\\CBL\\StudentCompetency','2022-04-25 15:48:50',2,34,5,9,'enrollment',NULL);
 INSERT INTO `cbl_student_competencies` VALUES (647,'Slate\\CBL\\StudentCompetency','2022-04-25 15:48:50',2,34,6,9,'enrollment',NULL);
+INSERT INTO `cbl_student_competencies` VALUES (648,'Slate\\CBL\\StudentCompetency','2022-07-02 11:24:27',2,4,12,9,'enrollment',NULL);
+INSERT INTO `cbl_student_competencies` VALUES (649,'Slate\\CBL\\StudentCompetency','2022-07-02 11:24:27',2,4,13,9,'enrollment',NULL);
+INSERT INTO `cbl_student_competencies` VALUES (650,'Slate\\CBL\\StudentCompetency','2022-07-02 11:24:27',2,4,14,9,'enrollment',NULL);
+INSERT INTO `cbl_student_competencies` VALUES (651,'Slate\\CBL\\StudentCompetency','2022-07-02 11:26:51',2,4,12,10,'graduation',7.00);
+INSERT INTO `cbl_student_competencies` VALUES (652,'Slate\\CBL\\StudentCompetency','2022-07-02 11:32:48',2,4,13,10,'graduation',7.00);
+INSERT INTO `cbl_student_competencies` VALUES (653,'Slate\\CBL\\StudentCompetency','2022-07-02 11:52:37',2,6,12,9,'enrollment',NULL);
+INSERT INTO `cbl_student_competencies` VALUES (654,'Slate\\CBL\\StudentCompetency','2022-07-02 11:52:37',2,6,13,9,'enrollment',NULL);
+INSERT INTO `cbl_student_competencies` VALUES (655,'Slate\\CBL\\StudentCompetency','2022-07-02 11:52:37',2,6,14,9,'enrollment',NULL);
