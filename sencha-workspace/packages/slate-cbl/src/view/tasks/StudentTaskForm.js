@@ -62,6 +62,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         config: {
             studentTask: null,
+            displayRemovedTasks: true,
 
             statusField: {
                 merge: mergeFn,
@@ -524,7 +525,10 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         // component lifecycle
         initItems: function() {
-            var me = this;
+            var me = this,
+                taskAttachmentsField = me.getTaskAttachmentsField();
+
+            taskAttachmentsField.setDisplayRemoved(me.getDisplayRemovedTasks());
 
             me.callParent();
 
@@ -575,7 +579,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                         me.getExpirationDateOverrideField()
                     ]
                 },
-                me.getTaskAttachmentsField(),
+                taskAttachmentsField,
                 me.getRatingsField(),
                 me.getAttachmentsField(),
                 me.getSubmissionsField(),
