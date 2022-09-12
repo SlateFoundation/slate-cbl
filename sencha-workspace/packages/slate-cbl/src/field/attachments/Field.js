@@ -24,7 +24,8 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         ],
         toolbar: true,
 
-        fieldLabel: 'Attachments'
+        fieldLabel: 'Attachments',
+        displayRemoved: true
     },
 
 
@@ -174,12 +175,31 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         return normalValue;
     },
 
+    filterValue: function(value) {
+        var me = this,
+            filteredValue = [],
+            length = value ? value.length : 0,
+            i = 0;
+
+        for (; i < length; i++) {
+            if (value[i].Status.toLowerCase() !== 'removed') {
+                filteredValue.push(value[i]);
+            }
+        }
+
+        return filteredValue;
+    },
+
     setValue: function(value) {
         var me = this,
             listCt = me.listCt,
             valueItemsMap = me.valueItemsMap = {},
-            length = value ? value.length : 0,
-            i = 0, itemValue, itemClass, Attachment, attachmentItem;
+            i = 0, length, itemValue, itemClass, Attachment, attachmentItem;
+
+        // filter out items marked as 'removed' if applicable
+        if (me.displayRemoved === false) {
+            value = me.filterValue(value);
+        }
 
         // clone value to normalized array
         value = me.normalizeValue(value);
@@ -190,6 +210,8 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         Ext.suspendLayouts();
         ++me.suspendCheckChange;
         listCt.removeAll();
+
+        length = value ? value.length : 0;
 
         for (; i < length; i++) {
             itemValue = value[i];
