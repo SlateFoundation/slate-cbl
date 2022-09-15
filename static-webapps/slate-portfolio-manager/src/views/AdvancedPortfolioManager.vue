@@ -1,5 +1,8 @@
 <template>
-  <div id="app">
+  <div
+    v-if="authStore.user"
+    id="app"
+  >
     <b-container
       fluid
       class="p-0"
@@ -40,11 +43,12 @@
 </template>
 
 <script>
-import { mapStores } from 'pinia'
+import { mapStores } from 'pinia';
 
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
-import { useUi } from '@/store/ui'
+import { useUi } from '@/store/ui';
+import { useAuth } from '@/store/auth';
 
 export default {
   name: 'AdvancedPortfolioManager',
@@ -61,10 +65,13 @@ export default {
   },
 
   computed: {
-    ...mapStores(useUi),
+    ...mapStores(useUi, useAuth),
   },
 
   async mounted() {
+    await this.authStore.required();
+    const { user, token } = this.authStore;
+    console.log(`user has session, token=${token}, welcome ${user.FirstName}!`);
 
     // common fetch options
     const fetchOptions = {
@@ -73,16 +80,6 @@ export default {
         Accept: 'application/json',
       },
     };
-
-    // verify user has a session
-    const loginResponse = await fetch('http://localhost:2190/login?include=Person', fetchOptions).then((response) => response.json());
-
-    console.log('loginResponse=%o', loginResponse);
-    console.log(
-      loginResponse.success
-        ? `user has session, token=${loginResponse.data.Handle}, welcome ${loginResponse.data.Person.FirstName}!`
-        : 'no session available',
-    );
 
     // get competencies and students lists for navigation selectors
     const [
@@ -216,7 +213,7 @@ export default {
       }
 
       // if data exists and sidebar is closed, open it
-      this.uiStore.$patch({ sidebarIsOpen: !!data })
+      this.uiStore.$patch({ sidebarIsOpen: !!data });
     },
   },
 };

@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export const useUi = defineStore('ui', {
   state: () => ({
@@ -6,7 +6,7 @@ export const useUi = defineStore('ui', {
   }),
   actions: {
     toggleSidebar() {
-      this.$state.sidebarIsOpen = !this.$state.sidebarIsOpen
-    }
-  }
-})
+      this.$state.sidebarIsOpen = !this.$state.sidebarIsOpen;
+    },
+  },
+});

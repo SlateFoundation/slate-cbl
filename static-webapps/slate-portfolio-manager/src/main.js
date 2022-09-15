@@ -12,14 +12,14 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
+import { PiniaVuePlugin, createPinia } from 'pinia';
 import App from './App.vue';
 
-import { PiniaVuePlugin, createPinia } from 'pinia'
+import router from './router';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 
-import router from './router';
 import './assets/app.scss';
 
 library.add(
@@ -32,13 +32,15 @@ library.add(
 
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 
-Vue.use(PiniaVuePlugin)
 Vue.use(BootstrapVue);
 
 window.Vue = Vue;
 
-new Vue({
+Vue.use(PiniaVuePlugin);
+const pinia = createPinia();
+
+const app = new Vue({
   render: (h) => h(App),
+  pinia,
   router,
-  pinia: createPinia(),
 }).$mount('#app');
