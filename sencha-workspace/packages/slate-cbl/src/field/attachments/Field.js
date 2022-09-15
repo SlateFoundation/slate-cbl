@@ -175,14 +175,15 @@ Ext.define('Slate.cbl.field.attachments.Field', {
         return normalValue;
     },
 
-    filterValue: function(value) {
+    filterRemovedItems: function(value) {
         var me = this,
+            displayRemoved = me.getDisplayRemoved(),
             filteredValue = [],
             length = value ? value.length : 0,
             i = 0;
 
         for (; i < length; i++) {
-            if (value[i].Status.toLowerCase() !== 'removed') {
+            if (displayRemoved || value[i].Status.toLowerCase() !== 'removed') {
                 filteredValue.push(value[i]);
             }
         }
@@ -197,9 +198,7 @@ Ext.define('Slate.cbl.field.attachments.Field', {
             i = 0, length, itemValue, itemClass, Attachment, attachmentItem;
 
         // filter out items marked as 'removed' if applicable
-        if (me.displayRemoved === false) {
-            value = me.filterValue(value);
-        }
+        value = me.filterRemovedItems(value);
 
         // clone value to normalized array
         value = me.normalizeValue(value);
