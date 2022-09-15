@@ -11,11 +11,12 @@ import {
   faSquare as farSquare,
 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import App from './AdvancedPortfolioManager.vue';
+import App from './App.vue';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 
+import router from './router';
 import './assets/app.scss';
 
 library.add(
@@ -34,4 +35,5 @@ window.Vue = Vue;
 
 new Vue({
   render: (h) => h(App),
+  router,
 }).$mount('#app');
