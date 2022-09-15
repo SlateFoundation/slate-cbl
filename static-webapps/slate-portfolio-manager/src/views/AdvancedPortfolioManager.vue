@@ -16,7 +16,7 @@
 
         <img
           class="img-fluid"
-          src="./assets/mockup-enrollments-bg.png"
+          src="@/assets/mockup-enrollments-bg.png"
         >
       </main>
       <b-sidebar
@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import AdvancedPortfolioSidebar from './components/AdvancedPortfolioSidebar.vue';
-import EnrollmentsGrid from './components/EnrollmentsGrid.vue';
+import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
+import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
 
 export default {
   name: 'AdvancedPortfolioManager',
