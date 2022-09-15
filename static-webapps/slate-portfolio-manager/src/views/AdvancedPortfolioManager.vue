@@ -9,9 +9,9 @@
 
         <b-button
           ref="sidebarToggle"
-          v-b-toggle.sidebar
+          @click="uiStore.toggleSidebar"
         >
-          Toggle Sidebar ({{ sidebarIsOpen ? 'is open' : 'is not open' }})
+          Toggle Sidebar ({{ uiStore.sidebarIsOpen ? 'is open' : 'is not open' }})
         </b-button>
 
         <img
@@ -21,7 +21,7 @@
       </main>
       <b-sidebar
         id="sidebar"
-        v-model="sidebarIsOpen"
+        v-model="uiStore.$state.sidebarIsOpen"
         no-header
         right
         shadow
@@ -40,8 +40,11 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia'
+
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
+import { useUi } from '@/store/ui'
 
 export default {
   name: 'AdvancedPortfolioManager',
@@ -52,14 +55,16 @@ export default {
 
   data() {
     return {
-      sidebarIsOpen: false,
       skill: null,
       student: null,
     };
   },
 
+  computed: {
+    ...mapStores(useUi),
+  },
+
   async mounted() {
-    // setTimeout(() => { this.$refs.sidebarToggle.click(); }, 0);
 
     // common fetch options
     const fetchOptions = {
@@ -210,12 +215,8 @@ export default {
         }
       }
 
-      if (Boolean(data) !== this.sidebarIsOpen) {
-        // if we have data and sidebar is closed, or vice-versa, then toggle it
-        // use the toggle button with directive for accessibility
-        // https://bootstrap-vue.org/docs/components/sidebar#visibility-control
-        this.$refs.sidebarToggle.click();
-      }
+      // if data exists and sidebar is closed, open it
+      this.uiStore.$patch({ sidebarIsOpen: !!data })
     },
   },
 };

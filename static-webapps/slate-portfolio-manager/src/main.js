@@ -11,7 +11,10 @@ import {
   faSquare as farSquare,
 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
 import App from './App.vue';
+
+import { PiniaVuePlugin, createPinia } from 'pinia'
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
@@ -29,6 +32,7 @@ library.add(
 
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 
+Vue.use(PiniaVuePlugin)
 Vue.use(BootstrapVue);
 
 window.Vue = Vue;
@@ -36,4 +40,5 @@ window.Vue = Vue;
 new Vue({
   render: (h) => h(App),
   router,
+  pinia: createPinia(),
 }).$mount('#app');
