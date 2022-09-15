@@ -522,13 +522,14 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
         applySaveBtn: applyFn,
         applySubmitBtn: applyFn,
 
+        updateDisplayRemovedTasks(displayRemovedTasks) {
+          this.getTaskAttachmentsField().setDisplayRemoved(displayRemovedTasks);
+        },
+
 
         // component lifecycle
         initItems: function() {
-            var me = this,
-                taskAttachmentsField = me.getTaskAttachmentsField();
-
-            taskAttachmentsField.setDisplayRemoved(me.getDisplayRemovedTasks());
+            var me = this;
 
             me.callParent();
 
@@ -579,7 +580,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
                         me.getExpirationDateOverrideField()
                     ]
                 },
-                taskAttachmentsField,
+                me.getTaskAttachmentsField(),
                 me.getRatingsField(),
                 me.getAttachmentsField(),
                 me.getSubmissionsField(),
