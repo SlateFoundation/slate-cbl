@@ -1,10 +1,10 @@
 <template>
   <table
+    v-if="studentCompetencies && students && competencies"
     @click="handleTableClick"
     @mouseenter="highlightCells"
     @mouseleave="highlightCells"
     @mousemove="highlightCells"
-    v-if="contentAreas"
   >
     <caption>
       {{ hoveredCell }}
@@ -16,10 +16,10 @@
         <th>&nbsp;</th>
         <th
           v-for="student in students"
-          :key="student"
+          :key="student.ID"
           class="col-heading"
-          :class="{ '-is-highlighted': shouldHighlightCell({ student, skill: false }) }"
-          :data-student="student"
+          :class="{ '-is-highlighted': shouldHighlightCell({ student, competency: false }) }"
+          :data-student="student.DisplayName"
         >
           <div class="col-heading-clip">
             <a
@@ -27,7 +27,7 @@
               href="#"
             >
               <div class="col-heading-text">
-                {{ student }}
+                {{ student.DisplayName }}
               </div>
             </a>
           </div>
@@ -36,23 +36,23 @@
     </thead>
     <tbody>
       <tr
-        v-for="skill in skills"
-        :key="skill"
+        v-for="row in rows"
+        :key="row.ID"
       >
         <th
-          :data-skill="skill"
-          :class="{ '-is-highlighted': shouldHighlightCell({ skill, student: false }) }"
+          :data-competency="row.Descriptor"
+          :class="{ '-is-highlighted': shouldHighlightCell({ competency: row, student: false }) }"
         >
-          {{ skill }}
+          {{ row.Descriptor }}
         </th>
         <td
-          v-for="student in students"
-          :key="student"
-          :data-skill="skill"
-          :data-student="student"
-          :class="{ '-is-selected': isCellSelected({ skill, student }) }"
+          v-for="value, i in row.values"
+          :key="i"
+          :data-competency="row.Descriptor"
+          :data-student="students[i].DisplayName"
+          :class="{ '-is-selected': isCellSelected({ competency: row, student: students[i] }) }"
         >
-          00
+          {{ value }}
           <div class="outline" />
         </td>
       </tr>
@@ -61,22 +61,70 @@
 </template>
 
 <script>
+import { range } from 'lodash';
+import { mapStores } from 'pinia';
+
+import useCompetency from '@/store/useCompetency';
+import useStudent from '@/store/useStudent';
+import useStudentCompetency from '@/store/useStudentCompetency';
+
 export default {
   data() {
     return {
       hoveredCell: {
         domCache: null,
         student: '',
-        skill: '',
+        competency: '',
       },
       selectedCell: {
         domCache: null,
         student: '',
-        skill: '',
+        competency: '',
       },
-      skills: '1234567890'.split('').map((num) => `ELA.${num}`),
-      students: 'ABCDEFGHIJK'.split('').map((letter) => `Student ${letter} Lastname`),
     };
+  },
+
+  computed: {
+    ...mapStores(useCompetency, useStudent, useStudentCompetency),
+    students() {
+      const { students } = this.$route.query;
+      return this.studentStore.get(`?limit=0&list=${students}`);
+    },
+    competencies() {
+      const { area } = this.$route.query;
+      return this.competencyStore.get(`?limit=0&content_area=${area}`);
+    },
+    studentCompetencies() {
+      const { area, students } = this.$route.query;
+      if (!(area && students)) {
+        return null;
+      }
+      return this.studentCompetencyStore.get({
+        limit: 0,
+        students,
+        content_area: area,
+      });
+    },
+    rows() {
+      if (!this.students || !this.competencies) {
+        return null;
+      }
+      this.studentCompetencies.forEach((sc) => {
+        console.log(JSON.stringify(sc));
+      });
+      const student_ids = this.students.map((s) => s.ID);
+      return this.competencies.map((competency) => {
+        const { ID, Descriptor } = competency;
+        const values = range(student_ids.length).map(() => 0);
+        this.studentCompetencies.forEach((sc) => {
+          const index = student_ids.indexOf(sc.StudentID);
+          if (sc.CompetencyID === ID && index !== -1) {
+            values[index] = Math.max(values[index] || 0, sc.BaselineRating);
+          }
+        });
+        return { Descriptor, values, ID };
+      });
+    },
   },
 
   methods: {
@@ -84,7 +132,7 @@ export default {
       const cell = event.target.closest('td');
       if (cell === this.selectedCell.domCache) {
         Vue.set(this.selectedCell, 'domCache', '');
-        Vue.set(this.selectedCell, 'skill', '');
+        Vue.set(this.selectedCell, 'competency', '');
         Vue.set(this.selectedCell, 'student', '');
         this.$emit('select', null);
         return;
@@ -94,14 +142,14 @@ export default {
 
       if (cell) {
         Vue.set(this.selectedCell, 'student', cell.dataset.student);
-        Vue.set(this.selectedCell, 'skill', cell.dataset.skill);
+        Vue.set(this.selectedCell, 'competency', cell.dataset.competency);
         this.$emit('select', {
           student: cell.dataset.student,
-          skill: cell.dataset.skill,
+          competency: cell.dataset.competency,
         });
       } else {
         Vue.set(this.selectedCell, 'student', '');
-        Vue.set(this.selectedCell, 'skill', '');
+        Vue.set(this.selectedCell, 'competency', '');
         this.$emit('select', null);
       }
     },
@@ -116,21 +164,21 @@ export default {
 
       if (cell) {
         Vue.set(this.hoveredCell, 'student', cell.dataset.student);
-        Vue.set(this.hoveredCell, 'skill', cell.dataset.skill);
+        Vue.set(this.hoveredCell, 'competency', cell.dataset.competency);
       } else {
         Vue.set(this.hoveredCell, 'student', '');
-        Vue.set(this.hoveredCell, 'skill', '');
+        Vue.set(this.hoveredCell, 'competency', '');
       }
     },
 
     isCellSelected(cell) {
-      return cell.skill === this.selectedCell.skill
+      return cell.competency === this.selectedCell.competency
         && cell.student === this.selectedCell.student;
     },
 
     shouldHighlightCell(cell) {
-      return cell.skill === this.hoveredCell.skill
-          || cell.skill === this.selectedCell.skill
+      return cell.competency === this.hoveredCell.competency
+        || cell.competency === this.selectedCell.competency
         || cell.student === this.hoveredCell.student
         || cell.student === this.selectedCell.student;
     },

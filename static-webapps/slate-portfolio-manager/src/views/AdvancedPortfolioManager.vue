@@ -8,7 +8,11 @@
       class="p-0"
     >
       <main>
-        <enrollments-grid @select="handleSelect" />
+        <competency-dropdown />
+        <enrollments-grid
+          :student-competencies="studentCompetencies"
+          @select="handleSelect"
+        />
 
         <b-button
           ref="sidebarToggle"
@@ -46,15 +50,19 @@
 import { mapStores } from 'pinia';
 
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
+import CompetencyDropdown from '@/components/CompetencyDropdown.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
 import { useUi } from '@/store/ui';
 import useAuth from '@/store/useAuth';
 import useContentArea from '@/store/useContentArea';
+import useStudentCompetency from '@/store/useStudentCompetency';
+import useStudentList from '@/store/useStudentList';
 
 export default {
   name: 'AdvancedPortfolioManager',
   components: {
     AdvancedPortfolioSidebar,
+    CompetencyDropdown,
     EnrollmentsGrid,
   },
 
@@ -66,7 +74,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useUi, useAuth, useContentArea),
+    ...mapStores(useUi, useAuth, useContentArea, useStudentList),
   },
 
   async mounted() {
@@ -87,8 +95,8 @@ export default {
       competencyAreasResponse,
       studentListsResponse,
     ] = await Promise.all([
-      this.contentAreaStore.fetch('summary=true'),
-      fetch('http://localhost:2190/people/*student-lists', fetchOptions).then((response) => response.json()),
+      this.contentAreaStore.fetch('?summary=true'),
+      this.studentListStore.fetch(),
     ]);
 
     console.log('competencyAreasResponse=%o', competencyAreasResponse);

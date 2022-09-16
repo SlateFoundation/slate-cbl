@@ -4,18 +4,20 @@ import Vue from 'vue';
 
 import client from './client';
 
+const noop = (a) => a;
+
 export default ({
-  id, baseURL, actions = {}, getters = {},
+  id, baseURL, actions = {}, getters = {}, fromServer = noop,
 }) => {
   const pending = {};
-  const makeUrl = (query) => {
+  const makeUrl = (target) => {
     let url = baseURL;
-    if (query) {
-      url += baseURL.includes('?') ? '&' : '?';
-      if (typeof query === 'object') {
-        url += querystring.stringify(query);
+    if (target) {
+      if (typeof target === 'object') {
+        url += baseURL.includes('?') ? '&' : '?';
+        url += querystring.stringify(target);
       } else {
-        url += query;
+        url += target;
       }
     }
     pending[url] = pending[url] || [];
@@ -28,12 +30,12 @@ export default ({
     getters,
     actions: {
       ...actions,
-      get(query) {
-        this.fetch(query);
-        return this.$state.response[makeUrl(query)];
+      get(target) {
+        this.fetch(target);
+        return this.$state.response[makeUrl(target)];
       },
-      fetch(query) {
-        const url = makeUrl(query);
+      fetch(target) {
+        const url = makeUrl(target);
         if (this.$state.response[url]) {
           // already fetched, use that
           return Promise.resolve(this.$state.response);
@@ -58,7 +60,7 @@ export default ({
         set({ loading: true });
         return client.get(url)
           .then((response) => {
-            set({ loading: false, response });
+            set({ loading: false, response: fromServer(response) });
             pending[url].forEach(([resolve]) => resolve(response));
             pending[url] = [];
             return response;
@@ -71,10 +73,10 @@ export default ({
           });
       },
 
-      refetch(query) {
-        const url = makeUrl(query);
+      refetch(target) {
+        const url = makeUrl(target);
         Vue.set(this.$state.response, url, null);
-        return this.fetch(query);
+        return this.fetch(target);
       },
     },
   });
