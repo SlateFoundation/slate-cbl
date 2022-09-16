@@ -9,7 +9,7 @@ export default defineRestStore({
         FirstName, LastName, MiddleName, PreferredName, NameSuffix,
       } = student;
       const parts = [FirstName, PreferredName ? `"${PreferredName}"` : MiddleName, LastName, NameSuffix];
-      student.DisplayName = parts.filter(Boolean).join(' ');
+      student.DisplayName = parts.filter(Boolean).join(' '); // eslint-disable-line
     });
     return students;
   },

@@ -1,21 +1,22 @@
 import axios from 'axios';
 
 export const redirectToLogin = () => {
-  const next = encodeURIComponent(window.location.href)
-  window.location = 'http://localhost:2190/login?return=' + next
-}
+  const next = encodeURIComponent(window.location.href);
+  window.location = `http://localhost:2190/login?return=${next}`;
+};
 
 export const getClient = (options = {}) => {
   const handleError = (error) => {
-    if (error.response?.status === 401) {
-      redirectToLogin()
+    const { status } = error.response || {};
+    if (status === 401) {
+      redirectToLogin();
     }
     throw error;
   };
   const client = axios.create({
     baseURL: options.baseURL,
     withCredentials: true,
-    transformRequest(data, headers) {
+    transformRequest(data, _headers) {
       return JSON.stringify(data);
     },
   });

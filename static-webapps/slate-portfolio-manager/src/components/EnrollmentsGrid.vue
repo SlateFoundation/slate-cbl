@@ -109,15 +109,12 @@ export default {
       if (!this.students || !this.competencies) {
         return null;
       }
-      this.studentCompetencies.forEach((sc) => {
-        console.log(JSON.stringify(sc));
-      });
-      const student_ids = this.students.map((s) => s.ID);
+      const studentIds = this.students.map((s) => s.ID);
       return this.competencies.map((competency) => {
         const { ID, Descriptor } = competency;
-        const values = range(student_ids.length).map(() => 0);
+        const values = range(studentIds.length).map(() => 0);
         this.studentCompetencies.forEach((sc) => {
-          const index = student_ids.indexOf(sc.StudentID);
+          const index = studentIds.indexOf(sc.StudentID);
           if (sc.CompetencyID === ID && index !== -1) {
             values[index] = Math.max(values[index] || 0, sc.BaselineRating);
           }

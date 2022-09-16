@@ -9,10 +9,7 @@
     >
       <main>
         <competency-dropdown />
-        <enrollments-grid
-          :student-competencies="studentCompetencies"
-          @select="handleSelect"
-        />
+        <enrollments-grid @select="handleSelect" />
 
         <b-button
           ref="sidebarToggle"
@@ -52,11 +49,13 @@ import { mapStores } from 'pinia';
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
 import CompetencyDropdown from '@/components/CompetencyDropdown.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
-import { useUi } from '@/store/ui';
 import useAuth from '@/store/useAuth';
 import useContentArea from '@/store/useContentArea';
-import useStudentCompetency from '@/store/useStudentCompetency';
 import useStudentList from '@/store/useStudentList';
+import useUi from '@/store/useUi';
+
+const _log = (...args) => console.log(...args) // eslint-disable-line
+const _table = (...args) => console.table(...args) // eslint-disable-line
 
 export default {
   name: 'AdvancedPortfolioManager',
@@ -80,7 +79,7 @@ export default {
   async mounted() {
     await this.authStore.required();
     const { user, token } = this.authStore;
-    console.log(`user has session, token=${token}, welcome ${user.FirstName}!`);
+    _log(`user has session, token=${token}, welcome ${user.FirstName}!`);
 
     // common fetch options
     const fetchOptions = {
@@ -90,42 +89,8 @@ export default {
       },
     };
 
-    // get competencies and students lists for navigation selectors
-    const [
-      competencyAreasResponse,
-      studentListsResponse,
-    ] = await Promise.all([
-      this.contentAreaStore.fetch('?summary=true'),
-      this.studentListStore.fetch(),
-    ]);
-
-    console.log('competencyAreasResponse=%o', competencyAreasResponse);
-    console.table(competencyAreasResponse.data);
-
-    console.log('studentListsResponse=%o', studentListsResponse);
-    console.table(studentListsResponse.data);
-
-    // fake selection
     const selectedCompetencyArea = 'ELA';
     const selectedStudentsList = 'group:class_of_2021';
-
-    console.log('selectedCompetencyArea=%o', selectedCompetencyArea);
-    console.log('selectedStudentsList=%o', selectedStudentsList);
-
-    // load students × competencies
-    const [
-      competenciesResponse,
-      studentsResponse,
-    ] = await Promise.all([
-      fetch(`http://localhost:2190/cbl/competencies?limit=0&content_area=${selectedCompetencyArea}`, fetchOptions).then((response) => response.json()),
-      fetch(`http://localhost:2190/people/*students?limit=0&list=${selectedStudentsList}`, fetchOptions).then((response) => response.json()),
-    ]);
-
-    console.log('competenciesResponse= %o', competenciesResponse);
-    console.table(competenciesResponse.data);
-
-    console.log('studentsResponse=%o', studentsResponse);
-    console.table(studentsResponse.data);
 
     // load all intersecting StudentCompetency records, with no embedded data
     const studentCompetenciesResponse = await fetch(
@@ -137,15 +102,15 @@ export default {
       fetchOptions,
     ).then((response) => response.json());
 
-    console.log('studentCompetenciesResponse=%o', studentCompetenciesResponse);
-    console.table(studentCompetenciesResponse.data);
+    _log('studentCompetenciesResponse=%o', studentCompetenciesResponse);
+    _table(studentCompetenciesResponse.data);
 
     // fake selection
     const selectedCompetency = 'ELA.1';
     const selectedStudent = 'ccross';
 
-    console.log('selectedCompetency=%o', selectedCompetency);
-    console.log('selectedStudent=%o', selectedStudent);
+    _log('selectedCompetency=%o', selectedCompetency);
+    _log('selectedStudent=%o', selectedStudent);
 
     // load all details needed to render sidebar
     const studentCompetencyDetailsResponse = await fetch(
@@ -161,7 +126,7 @@ export default {
       fetchOptions,
     ).then((response) => response.json());
 
-    console.log('studentCompetencyDetailsResponse=%o', studentCompetencyDetailsResponse);
+    _log('studentCompetencyDetailsResponse=%o', studentCompetencyDetailsResponse);
 
     // build a de-duplicated list of referenced demonstrations to fetch metadata details
     /**
@@ -185,7 +150,7 @@ export default {
         });
     });
 
-    console.log('demonstrationIds=%o', Array.from(demonstrationIds.values()));
+    _log('demonstrationIds=%o', Array.from(demonstrationIds.values()));
 
     // fetch details of all referenced demonstrations
     const demonstrationDetailsResponse = await fetch(
@@ -196,8 +161,8 @@ export default {
       fetchOptions,
     ).then((response) => response.json());
 
-    console.log('demonstrationDetailsResponse=%o', demonstrationDetailsResponse);
-    console.table(demonstrationDetailsResponse.data.map((demonstration) => ({
+    _log('demonstrationDetailsResponse=%o', demonstrationDetailsResponse);
+    _table(demonstrationDetailsResponse.data.map((demonstration) => ({
       DemonstrationID: demonstration.ID,
       Created: demonstration.Created,
       Creator: `${demonstration.Creator.FirstName} ${demonstration.Creator.LastName}`,

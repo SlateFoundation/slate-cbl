@@ -1,4 +1,4 @@
-import client, { redirectToLogin } from './client';
+import { redirectToLogin } from './client';
 import defineRestStore from './defineRestStore';
 
 export default defineRestStore({

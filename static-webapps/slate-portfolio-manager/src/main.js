@@ -39,7 +39,7 @@ window.Vue = Vue;
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
 
-const app = new Vue({
+new Vue({
   render: (h) => h(App),
   pinia,
   router,
