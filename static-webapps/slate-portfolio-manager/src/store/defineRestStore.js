@@ -5,21 +5,25 @@ import Vue from 'vue';
 import client from './client';
 
 export default ({
-  name, baseUrl, actions = {}, getters = {},
+  id, baseURL, actions = {}, getters = {},
 }) => {
   const pending = {};
   const makeUrl = (query) => {
-    let url = baseUrl;
-    pending[url] = pending[url] || [];
+    let url = baseURL;
     if (query) {
-      url += baseUrl.includes('?') ? '&' : '?';
-      url += querystring.stringify(query);
+      url += baseURL.includes('?') ? '&' : '?';
+      if (typeof query === 'object') {
+        url += querystring.stringify(query);
+      } else {
+        url += query;
+      }
     }
+    pending[url] = pending[url] || [];
     return url;
   };
 
-  return defineStore(name, {
-    baseUrl,
+  return defineStore(id, {
+    baseURL,
     state: () => ({ response: {}, loading: {}, error: {} }),
     getters,
     actions: {
@@ -54,7 +58,6 @@ export default ({
         set({ loading: true });
         return client.get(url)
           .then((response) => {
-            console.log('response', response);
             set({ loading: false, response });
             pending[url].forEach(([resolve]) => resolve(response));
             pending[url] = [];

@@ -48,7 +48,8 @@ import { mapStores } from 'pinia';
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
 import { useUi } from '@/store/ui';
-import { useAuth } from '@/store/auth';
+import useAuth from '@/store/useAuth';
+import useContentArea from '@/store/useContentArea';
 
 export default {
   name: 'AdvancedPortfolioManager',
@@ -65,7 +66,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useUi, useAuth),
+    ...mapStores(useUi, useAuth, useContentArea),
   },
 
   async mounted() {
@@ -86,7 +87,7 @@ export default {
       competencyAreasResponse,
       studentListsResponse,
     ] = await Promise.all([
-      fetch('http://localhost:2190/cbl/content-areas?summary=true', fetchOptions).then((response) => response.json()),
+      this.contentAreaStore.fetch('summary=true'),
       fetch('http://localhost:2190/people/*student-lists', fetchOptions).then((response) => response.json()),
     ]);
 
