@@ -4,6 +4,7 @@
     @mouseenter="highlightCells"
     @mouseleave="highlightCells"
     @mousemove="highlightCells"
+    v-if="contentAreas"
   >
     <caption>
       {{ hoveredCell }}
