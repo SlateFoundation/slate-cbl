@@ -1,7 +1,6 @@
 <template>
   <table
     v-if="studentCompetencies && students && competencies"
-    @click="handleTableClick"
     @mouseenter="highlightCells"
     @mouseleave="highlightCells"
     @mousemove="highlightCells"
@@ -9,7 +8,7 @@
     <caption>
       {{ hoveredCell }}
       <br>
-      {{ selectedCell }}
+      {{ selected }}
     </caption>
     <thead>
       <tr>
@@ -18,8 +17,8 @@
           v-for="student in students"
           :key="student.ID"
           class="col-heading"
-          :class="{ '-is-highlighted': shouldHighlightCell({ student, competency: false }) }"
-          :data-student="student.DisplayName"
+          :class="{ '-is-highlighted': shouldHighlightStudent(student.ID) }"
+          :data-student="student.ID"
         >
           <div class="col-heading-clip">
             <a
@@ -40,17 +39,18 @@
         :key="row.ID"
       >
         <th
-          :data-competency="row.Descriptor"
-          :class="{ '-is-highlighted': shouldHighlightCell({ competency: row, student: false }) }"
+          :data-competency="row.ID"
+          :class="{ '-is-highlighted': shouldHighlightCompetency(row.ID) }"
         >
           {{ row.Descriptor }}
         </th>
         <td
           v-for="value, i in row.values"
           :key="i"
-          :data-competency="row.Descriptor"
-          :data-student="students[i].DisplayName"
-          :class="{ '-is-selected': isCellSelected({ competency: row, student: students[i] }) }"
+          :data-competency="row.ID"
+          :data-student="students[i].ID"
+          :class="{ '-is-selected': isCellSelected({ competency: row.ID, student: students[i].ID }) }"
+          @click="$emit('select', [row.ID, students[i].ID])"
         >
           {{ value }}
           <div class="outline" />
@@ -76,12 +76,11 @@ export default {
         student: '',
         competency: '',
       },
-      selectedCell: {
-        domCache: null,
-        student: '',
-        competency: '',
-      },
     };
+  },
+
+  props: {
+    selected: Object,
   },
 
   computed: {
@@ -125,32 +124,6 @@ export default {
   },
 
   methods: {
-    handleTableClick(event) {
-      const cell = event.target.closest('td');
-      if (cell === this.selectedCell.domCache) {
-        Vue.set(this.selectedCell, 'domCache', '');
-        Vue.set(this.selectedCell, 'competency', '');
-        Vue.set(this.selectedCell, 'student', '');
-        this.$emit('select', null);
-        return;
-      }
-
-      Vue.set(this.selectedCell, 'domCache', cell);
-
-      if (cell) {
-        Vue.set(this.selectedCell, 'student', cell.dataset.student);
-        Vue.set(this.selectedCell, 'competency', cell.dataset.competency);
-        this.$emit('select', {
-          student: cell.dataset.student,
-          competency: cell.dataset.competency,
-        });
-      } else {
-        Vue.set(this.selectedCell, 'student', '');
-        Vue.set(this.selectedCell, 'competency', '');
-        this.$emit('select', null);
-      }
-    },
-
     highlightCells(event) {
       const cell = event.target.closest('td, th');
       if (cell === this.hoveredCell.domCache) {
@@ -160,8 +133,8 @@ export default {
       this.hoveredCell.domCache = cell;
 
       if (cell) {
-        Vue.set(this.hoveredCell, 'student', cell.dataset.student);
-        Vue.set(this.hoveredCell, 'competency', cell.dataset.competency);
+        Vue.set(this.hoveredCell, 'student', parseInt(cell.dataset.student));
+        Vue.set(this.hoveredCell, 'competency', parseInt(cell.dataset.competency));
       } else {
         Vue.set(this.hoveredCell, 'student', '');
         Vue.set(this.hoveredCell, 'competency', '');
@@ -169,15 +142,16 @@ export default {
     },
 
     isCellSelected(cell) {
-      return cell.competency === this.selectedCell.competency
-        && cell.student === this.selectedCell.student;
+      return cell.competency === this.selected?.competency
+        && cell.student === this.selected?.student;
     },
 
-    shouldHighlightCell(cell) {
-      return cell.competency === this.hoveredCell.competency
-        || cell.competency === this.selectedCell.competency
-        || cell.student === this.hoveredCell.student
-        || cell.student === this.selectedCell.student;
+    shouldHighlightStudent(studentId) {
+      return this.hoveredCell.student === studentId || this.selected?.student === studentId
+    },
+
+    shouldHighlightCompetency(competencyId) {
+      return this.hoveredCell.competency === competencyId || this.selected?.competency === competencyId
     },
   },
 };

@@ -9,14 +9,7 @@
     >
       <main>
         <competency-dropdown />
-        <enrollments-grid @select="handleSelect" />
-
-        <b-button
-          ref="sidebarToggle"
-          @click="uiStore.toggleSidebar"
-        >
-          Toggle Sidebar ({{ uiStore.sidebarIsOpen ? 'is open' : 'is not open' }})
-        </b-button>
+        <enrollments-grid @select="handleSelect" :selected="selected" />
 
         <img
           class="img-fluid"
@@ -25,7 +18,7 @@
       </main>
       <b-sidebar
         id="sidebar"
-        v-model="uiStore.$state.sidebarIsOpen"
+        v-model="visible"
         no-header
         right
         shadow
@@ -33,8 +26,7 @@
       >
         <template #default="{ hide }">
           <advanced-portfolio-sidebar
-            :skill="skill"
-            :student="student"
+            :selected="selected"
             @hide="hide"
           />
         </template>
@@ -52,10 +44,9 @@ import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
 import useAuth from '@/store/useAuth';
 import useContentArea from '@/store/useContentArea';
 import useStudentList from '@/store/useStudentList';
-import useUi from '@/store/useUi';
 
-const _log = (...args) => console.log(...args) // eslint-disable-line
-const _table = (...args) => console.table(...args) // eslint-disable-line
+const _log = (...args) => null //console.log(...args) // eslint-disable-line
+const _table = (...args) => null //console.table(...args) // eslint-disable-line
 
 export default {
   name: 'AdvancedPortfolioManager',
@@ -67,13 +58,22 @@ export default {
 
   data() {
     return {
-      skill: null,
-      student: null,
+      selected: null,
     };
   },
 
   computed: {
-    ...mapStores(useUi, useAuth, useContentArea, useStudentList),
+    ...mapStores(useAuth, useContentArea, useStudentList),
+    visible: {
+      get() {
+        return !!this.selected
+      },
+      set(value) {
+        if (!value) {
+          this.selected = null
+        }
+      },
+    },
   },
 
   async mounted() {
@@ -175,19 +175,13 @@ export default {
   },
 
   methods: {
-    handleSelect(data) {
-      if (data) {
-        if (data.student) {
-          this.student = data.student;
-        }
-
-        if (data.skill) {
-          this.skill = data.skill;
-        }
+    handleSelect([competency, student]=[]) {
+      if (competency === this.selected?.competency && student === this.selected?.student) {
+        // user clicked same student
+        this.$set(this, 'selected', null)
+      } else {
+        this.$set(this, 'selected', { student, competency })
       }
-
-      // if data exists and sidebar is closed, open it
-      this.uiStore.$patch({ sidebarIsOpen: !!data });
     },
   },
 };
