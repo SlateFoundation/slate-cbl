@@ -1,32 +1,34 @@
 <template>
-  <div class="skill-demos p-3 border-bottom">
+  <div class="skill-demos p-3 border-bottom bg-cbl-level-10">
     <h4 class="h6 skill-demos__heading">
-      {{ code }}
+      {{ skill.Code }}
       <span
-        v-if="title"
         class="ml-1 text-black-50"
-      >{{ title }}</span>
+      >{{ skill.Descriptor }}</span>
     </h4>
 
-    <ol class="list-unstyled skill-demos__list">
-      <skill-demo-card
-        v-for="demo in demos"
-        :key="demo.id"
-        v-bind="demo"
-        :level-color="levelColor"
-      />
-
-      <p
-        v-if="demos.length < 1"
+    <ol
+      class="list-unstyled d-flex flex-column"
+      style="gap: 0.25rem;"
+    >
+      <li
+        v-if="skillDemos.length == 0"
         class="text-black-50 font-italic m-0"
       >
         No demonstrations recorded
-      </p>
+      </li>
+      <skill-demo-card
+        v-for="demo in skillDemos"
+        :key="demo.id"
+        :demo="demo"
+      />
     </ol>
   </div>
 </template>
 
 <script>
+import { format } from 'date-fns';
+
 import SkillDemoCard from './SkillDemoCard.vue';
 
 export default {
@@ -35,31 +37,46 @@ export default {
   },
 
   props: {
-    code: {
-      type: String,
-      required: true,
+    skill: {
+      type: Object,
+      default: () => ({}),
     },
-
-    title: {
-      type: String,
-      default: '',
-    },
-
-    demos: {
+    effectiveDemonstrationsData: {
       type: Array,
       default: () => [],
     },
+    ineffectiveDemonstrationsData: {
+      type: Array,
+      default: () => [],
+    },
+    demonstrations: {
+      type: Array,
+      default: () => [],
+    },
+  },
 
-    levelColor: {
-      type: String,
-      default: '999999',
+  computed: {
+    skillDemos() {
+      const out = [];
+      const process = (demo, effective) => {
+        const {
+          DemonstratedLevel, ID, DemonstrationID, DemonstrationDate,
+        } = demo;
+        const demonstration = this.demonstrations.find((d) => d.ID === DemonstrationID);
+        const { Comments, Context } = demonstration;
+        out.push({
+          ID,
+          DemonstratedLevel,
+          Context,
+          Comments,
+          date: format(new Date(DemonstrationDate), 'MMM d'),
+          class: ['demonstration-skill', effective ? '-effective' : '-ineffective'],
+        });
+      };
+      this.effectiveDemonstrationsData.forEach((demo) => process(demo, true));
+      this.ineffectiveDemonstrationsData.forEach((demo) => process(demo, false));
+      return out;
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .skill-demo + .skill-demo {
-    margin-top: .25rem;
-  }
-</style>

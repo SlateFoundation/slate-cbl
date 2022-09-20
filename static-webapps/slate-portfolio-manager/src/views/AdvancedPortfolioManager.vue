@@ -9,7 +9,10 @@
     >
       <main>
         <competency-dropdown />
-        <enrollments-grid @select="handleSelect" :selected="selected" />
+        <enrollments-grid
+          :selected="selected"
+          @select="handleSelect"
+        />
 
         <img
           class="img-fluid"
@@ -36,6 +39,7 @@
 </template>
 
 <script>
+import { isEqual } from 'lodash';
 import { mapStores } from 'pinia';
 
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
@@ -45,8 +49,8 @@ import useAuth from '@/store/useAuth';
 import useContentArea from '@/store/useContentArea';
 import useStudentList from '@/store/useStudentList';
 
-const _log = (...args) => null //console.log(...args) // eslint-disable-line
-const _table = (...args) => null //console.table(...args) // eslint-disable-line
+const _log = (...args) => console.log(...args) // eslint-disable-line
+const _table = (...args) => console.table(...args) // eslint-disable-line
 
 export default {
   name: 'AdvancedPortfolioManager',
@@ -58,7 +62,7 @@ export default {
 
   data() {
     return {
-      selected: null,
+      selected: undefined,
     };
   },
 
@@ -66,11 +70,11 @@ export default {
     ...mapStores(useAuth, useContentArea, useStudentList),
     visible: {
       get() {
-        return !!this.selected
+        return !!this.selected;
       },
       set(value) {
         if (!value) {
-          this.selected = null
+          this.selected = undefined;
         }
       },
     },
@@ -88,6 +92,19 @@ export default {
         Accept: 'application/json',
       },
     };
+
+    // get competencies and students lists for navigation selectors
+    const [
+      competencyAreasResponse,
+      studentListsResponse,
+    ] = await Promise.all([
+      fetch('http://localhost:2190/cbl/content-areas?summary=true', fetchOptions).then((response) => response.json()),
+      fetch('http://localhost:2190/people/*student-lists', fetchOptions).then((response) => response.json()),
+    ]);
+    _log('competencyAreasResponse=%o', competencyAreasResponse);
+    _table(competencyAreasResponse.data);
+    _log('studentListsResponse=%o', studentListsResponse);
+    _table(studentListsResponse.data);
 
     const selectedCompetencyArea = 'ELA';
     const selectedStudentsList = 'group:class_of_2021';
@@ -118,9 +135,10 @@ export default {
       + '?limit=0'
       + `&student=${selectedStudent}`
       + `&competency=${selectedCompetency}`
-      + '&include[]=demonstrationsAverage'
-      + '&include[]=growth'
-      + '&include[]=progress'
+      + '&include[]=demonstrationsAverage' // top bar
+      + '&include[]=growth' // top bar
+      + '&include[]=progress' // top bar
+      + '&include[]=Skills'
       + '&include[]=effectiveDemonstrationsData'
       + '&include[]=ineffectiveDemonstrationsData',
       fetchOptions,
@@ -150,8 +168,6 @@ export default {
         });
     });
 
-    _log('demonstrationIds=%o', Array.from(demonstrationIds.values()));
-
     // fetch details of all referenced demonstrations
     const demonstrationDetailsResponse = await fetch(
       'http://localhost:2190/cbl/demonstrations'
@@ -175,12 +191,12 @@ export default {
   },
 
   methods: {
-    handleSelect([competency, student]=[]) {
-      if (competency === this.selected?.competency && student === this.selected?.student) {
+    handleSelect(target) {
+      if (isEqual(target, this.selected)) {
         // user clicked same student
-        this.$set(this, 'selected', null)
+        this.$set(this, 'selected', undefined);
       } else {
-        this.$set(this, 'selected', { student, competency })
+        this.$set(this, 'selected', target);
       }
     },
   },

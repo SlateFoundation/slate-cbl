@@ -4,7 +4,7 @@
       Competency Area
       <select v-model="area">
         <option
-          v-for="option in contentAreaStore.get('?summary=true')"
+          v-for="option in areaOptions"
           :key="option.Code"
           :value="option.Code"
         >
@@ -16,7 +16,7 @@
       Students
       <select v-model="students">
         <option
-          v-for="option in studentListStore.get()"
+          v-for="option in studentOptions"
           :key="option.value"
           :value="option.value"
         >
@@ -51,6 +51,14 @@ export default {
     ...mapStores(useContentArea, useStudentList),
     area: routeParam('area'),
     students: routeParam('students'),
+    areaOptions() {
+      const response = this.contentAreaStore.get('?summary=true');
+      return response && response.data;
+    },
+    studentOptions() {
+      const response = this.studentListStore.get();
+      return response && response.data;
+    },
   },
 };
 </script>

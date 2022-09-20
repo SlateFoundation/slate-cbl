@@ -15,10 +15,10 @@
         <th>&nbsp;</th>
         <th
           v-for="student in students"
-          :key="student.ID"
+          :key="student.Username"
           class="col-heading"
-          :class="{ '-is-highlighted': shouldHighlightStudent(student.ID) }"
-          :data-student="student.ID"
+          :class="{ '-is-highlighted': shouldHighlightStudent(student.Username) }"
+          :data-student="student.Username"
         >
           <div class="col-heading-clip">
             <a
@@ -26,7 +26,7 @@
               href="#"
             >
               <div class="col-heading-text">
-                {{ student.DisplayName }}
+                {{ getDisplayName(student) }}
               </div>
             </a>
           </div>
@@ -36,21 +36,21 @@
     <tbody>
       <tr
         v-for="row in rows"
-        :key="row.ID"
+        :key="row.Code"
       >
         <th
-          :data-competency="row.ID"
-          :class="{ '-is-highlighted': shouldHighlightCompetency(row.ID) }"
+          :data-competency="row.Code"
+          :class="{ '-is-highlighted': shouldHighlightCompetency(row.Code) }"
         >
           {{ row.Descriptor }}
         </th>
         <td
           v-for="value, i in row.values"
           :key="i"
-          :data-competency="row.ID"
-          :data-student="students[i].ID"
-          :class="{ '-is-selected': isCellSelected({ competency: row.ID, student: students[i].ID }) }"
-          @click="$emit('select', [row.ID, students[i].ID])"
+          :data-competency="row.Code"
+          :data-student="students[i].Username"
+          :class="{ '-is-selected': isCellSelected(row.Code, students[i].Username) }"
+          @click="$emit('select', { competency: row.Code, student: students[i].Username })"
         >
           {{ value }}
           <div class="outline" />
@@ -58,17 +58,28 @@
       </tr>
     </tbody>
   </table>
+  <div v-else>
+    Select a list of students and a content area to load enrollments dashboard
+  </div>
 </template>
 
 <script>
 import { range } from 'lodash';
 import { mapStores } from 'pinia';
 
+import Student from '@/models/Student';
 import useCompetency from '@/store/useCompetency';
 import useStudent from '@/store/useStudent';
 import useStudentCompetency from '@/store/useStudentCompetency';
 
 export default {
+
+  props: {
+    selected: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       hoveredCell: {
@@ -79,30 +90,29 @@ export default {
     };
   },
 
-  props: {
-    selected: Object,
-  },
-
   computed: {
     ...mapStores(useCompetency, useStudent, useStudentCompetency),
-    students() {
-      const { students } = this.$route.query;
-      return this.studentStore.get(`?limit=0&list=${students}`);
-    },
     competencies() {
       const { area } = this.$route.query;
-      return this.competencyStore.get(`?limit=0&content_area=${area}`);
+      const response = this.competencyStore.get(`?limit=0&content_area=${area}`);
+      return response && response.data;
+    },
+    students() {
+      const { students } = this.$route.query;
+      const response = this.studentStore.get(`?limit=0&list=${students}`);
+      return response && response.data;
     },
     studentCompetencies() {
       const { area, students } = this.$route.query;
       if (!(area && students)) {
         return null;
       }
-      return this.studentCompetencyStore.get({
+      const response = this.studentCompetencyStore.get({
         limit: 0,
         students,
         content_area: area,
       });
+      return response && response.data;
     },
     rows() {
       if (!this.students || !this.competencies) {
@@ -110,7 +120,7 @@ export default {
       }
       const studentIds = this.students.map((s) => s.ID);
       return this.competencies.map((competency) => {
-        const { ID, Descriptor } = competency;
+        const { ID, Descriptor, Code } = competency;
         const values = range(studentIds.length).map(() => 0);
         this.studentCompetencies.forEach((sc) => {
           const index = studentIds.indexOf(sc.StudentID);
@@ -118,7 +128,9 @@ export default {
             values[index] = Math.max(values[index] || 0, sc.BaselineRating);
           }
         });
-        return { Descriptor, values, ID };
+        return {
+          Descriptor, values, Code, ID,
+        };
       });
     },
   },
@@ -133,25 +145,31 @@ export default {
       this.hoveredCell.domCache = cell;
 
       if (cell) {
-        Vue.set(this.hoveredCell, 'student', parseInt(cell.dataset.student));
-        Vue.set(this.hoveredCell, 'competency', parseInt(cell.dataset.competency));
+        Vue.set(this.hoveredCell, 'student', cell.dataset.student);
+        Vue.set(this.hoveredCell, 'competency', cell.dataset.competency);
       } else {
         Vue.set(this.hoveredCell, 'student', '');
         Vue.set(this.hoveredCell, 'competency', '');
       }
     },
 
-    isCellSelected(cell) {
-      return cell.competency === this.selected?.competency
-        && cell.student === this.selected?.student;
+    isCellSelected(competency, student) {
+      const { selected = {} } = this;
+      return competency === selected.competency && student === selected.student;
     },
 
-    shouldHighlightStudent(studentId) {
-      return this.hoveredCell.student === studentId || this.selected?.student === studentId
+    shouldHighlightStudent(username) {
+      const { selected = {} } = this;
+      return this.hoveredCell.student === username || selected.student === username;
     },
 
-    shouldHighlightCompetency(competencyId) {
-      return this.hoveredCell.competency === competencyId || this.selected?.competency === competencyId
+    shouldHighlightCompetency(code) {
+      const { selected = {} } = this;
+      return this.hoveredCell.competency === code || selected.competency === code;
+    },
+
+    getDisplayName(student) {
+      return Student.getDisplayName(student);
     },
   },
 };

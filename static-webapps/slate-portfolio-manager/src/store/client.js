@@ -21,7 +21,7 @@ export const getClient = (options = {}) => {
     },
   });
   client.defaults.headers.Accept = 'application/json';
-  client.interceptors.response.use((r) => r.data.data, handleError);
+  client.interceptors.response.use((r) => r.data, handleError);
   return client;
 };
 

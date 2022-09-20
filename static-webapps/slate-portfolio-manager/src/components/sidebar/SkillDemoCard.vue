@@ -1,21 +1,12 @@
 <template>
   <div class="align-items-baseline bg-white d-flex rounded shadow-sm skill-demo">
-    <div
-      ref="rating"
-      class="skill-demo__rating py-1"
-    >
-      {{ rating }}
+    <div class="skill-demo__rating py-1 bg-cbl-level">
+      {{ demo.DemonstratedLevel }}
     </div>
-    <div
-      ref="title"
-      class="skill-demo__title"
-    >
-      {{ taskTitle }}
+    <div class="skill-demo__title">
+      {{ demo.Context }}
     </div>
-    <div
-      ref="controls"
-      class="skill-demo__controls"
-    >
+    <div class="skill-demo__controls">
       <b-button variant="unstyled">
         <font-awesome-icon
           icon="chevron-circle-up"
@@ -39,11 +30,8 @@
         />
       </b-button>
     </div>
-    <div
-      ref="date"
-      class="skill-demo__date text-black-50 mr-2"
-    >
-      {{ shortDate }}
+    <div class="skill-demo__date text-black-50 mr-2">
+      {{ demo.date }}
     </div>
   </div>
 </template>
@@ -51,43 +39,10 @@
 <script>
 export default {
   props: {
-    rating: {
-      type: String,
-      default: '\u2014', // em dash
+    demo: {
+      type: Object,
+      default: () => ({}),
     },
-
-    taskTitle: {
-      type: String,
-      default: '', // em dash
-    },
-
-    date: {
-      type: String,
-      default: null, // em dash
-    },
-
-    levelColor: {
-      type: String,
-      default: '999999',
-    },
-  },
-
-  computed: {
-    shortDate() {
-      const date = new Date(this.date);
-      if (date) {
-        return date.toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        });
-      }
-
-      return '\u2014';
-    },
-  },
-
-  mounted() {
-    this.$refs.rating.style.backgroundColor = `#${this.levelColor}`;
   },
 };
 </script>

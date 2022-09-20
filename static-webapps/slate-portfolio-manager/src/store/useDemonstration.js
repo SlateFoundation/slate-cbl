@@ -1,6 +1,6 @@
 import defineRestStore from './defineRestStore';
 
 export default defineRestStore({
-  id: 'student',
-  baseURL: '/people/*students',
+  id: 'demonstration',
+  baseURL: '/cbl/demonstrations',
 });

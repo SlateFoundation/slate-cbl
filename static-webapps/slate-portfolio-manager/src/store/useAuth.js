@@ -7,11 +7,11 @@ export default defineRestStore({
   getters: {
     user() {
       const data = this.get();
-      return data && data.Person;
+      return data && data.data.Person;
     },
     token() {
       const data = this.get();
-      return data && data.Handle;
+      return data && data.data.Handle;
     },
   },
   actions: {
