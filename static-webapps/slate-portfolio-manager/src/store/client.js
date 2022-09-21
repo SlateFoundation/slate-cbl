@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+const baseURL = process.env.BASE_URL || 'http://localhost:2190';
+
 export const redirectToLogin = () => {
   const next = encodeURIComponent(window.location.href);
-  window.location = `http://localhost:2190/login?return=${next}`;
+  window.location = `${baseURL}/login?return=${next}`;
 };
 
 export const getClient = (options = {}) => {
@@ -25,4 +27,4 @@ export const getClient = (options = {}) => {
   return client;
 };
 
-export default getClient({ baseURL: 'http://localhost:2190' });
+export default getClient({ baseURL });
