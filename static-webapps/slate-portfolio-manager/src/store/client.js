@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.VUE_APP_API_BASE || '/';
+const baseURL = process.env.VUE_APP_API_BASE || '';
 
 export const redirectToLogin = () => {
   const next = encodeURIComponent(window.location.href);
