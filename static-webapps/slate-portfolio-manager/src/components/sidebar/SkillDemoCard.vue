@@ -51,6 +51,11 @@ export default {
   .skill-demo {
     gap: .5rem;
 
+    &.-ineffective {
+      opacity: 0.5;
+      box-shadow: none !important;
+    }
+
     &__rating {
       border-bottom-left-radius: .25rem;
       border-top-left-radius: .25rem;

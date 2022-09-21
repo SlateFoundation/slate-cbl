@@ -55,6 +55,7 @@
         :key="skillDemo.SkillID"
         :demonstrations="demonstrations"
         v-bind="skillDemo"
+        :show-hidden-items="showHiddenItems"
       />
     </b-collapse>
   </div>
@@ -73,6 +74,10 @@ export default {
   },
 
   props: {
+    showHiddenItems: {
+      type: Boolean,
+      default: () => false,
+    },
     portfolio: {
       type: Object,
       default: () => ({}),
@@ -144,7 +149,7 @@ export default {
             effectiveDemonstrationsData: [],
           };
         }
-        out[SkillID].ineffectiveDeomstrations = demos;
+        out[SkillID].ineffectiveDemonstrationsData = demos;
       });
       return Object.values(out);
     },

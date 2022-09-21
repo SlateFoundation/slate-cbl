@@ -53,6 +53,7 @@
           :portfolio="portfolio"
           :demonstrations="demonstrations"
           :student-competency-details="studentCompetencyDetails"
+          :show-hidden-items="showHiddenItems"
         />
       </li>
     </ol>
@@ -105,10 +106,10 @@ export default {
     },
 
     studentCompetencyDetails() {
-      if (!this.selected) {
+      const { student, competency } = this.selected;
+      if (!(student && competency)) {
         return null;
       }
-      const { student, competency } = this.selected;
       return this.studentCompetencyStore.get(
         '?limit=0'
           + `&student=${student}`

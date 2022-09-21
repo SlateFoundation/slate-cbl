@@ -2,9 +2,9 @@
   <div class="skill-demos p-3 border-bottom bg-cbl-level-10">
     <h4 class="h6 skill-demos__heading">
       {{ skill.Code }}
-      <span
-        class="ml-1 text-black-50"
-      >{{ skill.Descriptor }}</span>
+      <span class="ml-1 text-black-50">
+        {{ skill.Descriptor }}
+      </span>
     </h4>
 
     <ol
@@ -21,6 +21,8 @@
         v-for="demo in skillDemos"
         :key="demo.id"
         :demo="demo"
+        :class="demo.class"
+        :show-hidden-items="showHiddenItems"
       />
     </ol>
   </div>
@@ -37,6 +39,10 @@ export default {
   },
 
   props: {
+    showHiddenItems: {
+      type: Boolean,
+      default: () => false,
+    },
     skill: {
       type: Object,
       default: () => ({}),
@@ -59,6 +65,9 @@ export default {
     skillDemos() {
       const out = [];
       const process = (demo, effective) => {
+        if (!effective && !this.showHiddenItems) {
+          return;
+        }
         const {
           DemonstratedLevel, ID, DemonstrationID, DemonstrationDate,
         } = demo;
@@ -70,6 +79,7 @@ export default {
           Context,
           Comments,
           date: format(new Date(DemonstrationDate), 'MMM d'),
+          effective,
           class: ['demonstration-skill', effective ? '-effective' : '-ineffective'],
         });
       };

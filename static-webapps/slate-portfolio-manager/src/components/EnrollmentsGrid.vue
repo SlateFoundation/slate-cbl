@@ -73,7 +73,6 @@ import useStudent from '@/store/useStudent';
 import useStudentCompetency from '@/store/useStudentCompetency';
 
 export default {
-
   props: {
     selected: {
       type: Object,
