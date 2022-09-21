@@ -223,12 +223,14 @@ export default {
 
       &:hover,
       &:focus {
+        z-index: 1;
         .outline {
           opacity: .4;
         }
       }
 
       &.-is-selected {
+        z-index: 2;
         .outline {
           opacity: 1;
         }
