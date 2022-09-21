@@ -13,11 +13,6 @@
           :selected="selected"
           @select="handleSelect"
         />
-
-        <img
-          class="img-fluid"
-          src="@/assets/mockup-enrollments-bg.png"
-        >
       </main>
       <b-sidebar
         id="sidebar"
