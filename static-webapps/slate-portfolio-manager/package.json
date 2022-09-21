@@ -15,6 +15,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/vue-fontawesome": "^2.0.2",
     "@vue/composition-api": "^1.7.0",
+    "@vue/reactivity": "^3.2.39",
     "axios": "^0.27.2",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
@@ -23,7 +24,7 @@
     "lodash": "^4.17.21",
     "pinia": "^2.0.22",
     "vue": "^2.6.11",
-    "vue-router": "^3.6.5"
+    "vue-router": "^3.5.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.15",
