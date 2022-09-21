@@ -49,7 +49,7 @@
           :key="i"
           :data-competency="row.Code"
           :data-student="students[i].Username"
-          :class="{ '-is-selected': isCellSelected(row.Code, students[i].Username) }"
+          :class="getCellClass(row, students[i], value)"
           @click="$emit('select', { competency: row.Code, student: students[i].Username })"
         >
           {{ value }}
@@ -124,7 +124,7 @@ export default {
         this.studentCompetencies.forEach((sc) => {
           const index = studentIds.indexOf(sc.StudentID);
           if (sc.CompetencyID === ID && index !== -1) {
-            values[index] = Math.max(values[index] || 0, sc.BaselineRating);
+            values[index] = Math.max(values[index] || 0, sc.Level);
           }
         });
         return {
@@ -135,6 +135,17 @@ export default {
   },
 
   methods: {
+    getCellClass(row, student, value) {
+      const { selected = {} } = this;
+      const { Code } = row;
+      const { Username } = student;
+      const isSelected = Code === selected.competency && Username === selected.student;
+      return [
+        `cbl-level-${value} bg-cbl-level-50 text-white`,
+        isSelected && '-is-selected',
+      ];
+    },
+
     highlightCells(event) {
       const cell = event.target.closest('td, th');
       if (cell === this.hoveredCell.domCache) {
@@ -150,11 +161,6 @@ export default {
         Vue.set(this.hoveredCell, 'student', '');
         Vue.set(this.hoveredCell, 'competency', '');
       }
-    },
-
-    isCellSelected(competency, student) {
-      const { selected = {} } = this;
-      return competency === selected.competency && student === selected.student;
     },
 
     shouldHighlightStudent(username) {
@@ -196,7 +202,7 @@ export default {
 
   tbody {
     td {
-      border: 1px solid;
+      border: 1px solid black;
       max-width: $cell-max-width;
       padding: .5em;
       position: relative;
