@@ -102,6 +102,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slate-tasks-manager-grid menucheckitem[name=include-archived]': {
             checkChange: 'onArchiveCheckboxClick'
         },
+        'slate-tasks-manager-grid menucheckitem[name=include-shared]': {
+            checkChange: 'onIncludeSharedCheckboxClick'
+        },
         'slate-cbl-tasks-taskform ^ window button[action=archive]' :{
             click: 'onArchiveClick'
         },
@@ -152,6 +155,13 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         var tasksStore = this.getTasksStore();
 
         tasksStore.getProxy().extraParams.include_archived = checkbox.checked;
+        tasksStore.load();
+    },
+
+    onIncludeSharedCheckboxClick: function(checkbox) {
+        var tasksStore = this.getTasksStore();
+
+        tasksStore.getProxy().extraParams.include_shared = checkbox.checked;
         tasksStore.load();
     },
 
