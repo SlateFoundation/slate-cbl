@@ -49,6 +49,13 @@ class TasksRequestHandler extends \RecordsRequestHandler
             if ($archivedConditions != false) {
                 $conditions[] = $archivedConditions;
             }
+
+            $includeShared = isset($_REQUEST['include_shared']) && ($_REQUEST['include_shared']=='true');
+            $sharedConditions = static::getSharedConditions($includeShared);
+
+            if ($sharedConditions != false) {
+                $conditions[] = $sharedConditions;
+            }
         }
 
         return $conditions;
@@ -188,6 +195,13 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     $GLOBALS['Session']->PersonID
                 );
             }
+        }
+    }
+
+    public static function getSharedConditions($includeShared) {
+        $recordClass = static::$recordClass;
+        if (!$includeShared) {
+            return $recordClass::getTableAlias().'.Status != "shared"';
         }
     }
 }
