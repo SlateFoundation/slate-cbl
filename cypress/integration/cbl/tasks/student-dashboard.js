@@ -245,6 +245,9 @@ describe('CBL / Tasks / Student Dashboard: Workflows', () => {
             _deselectAllFilters();
             _selectFilter('Due Tasks', '.slate-tasktree-status-due, .slate-tasktree-status-late');
 
+            // close filter menu to prevent interference with opening task
+            _clickFilterButton();
+
             // open recently created task
             cy.extGet('slate-tasks-student-tasktree')
                 .find(`.slate-tasktree-item[data-id=${studentTaskId}]`)
