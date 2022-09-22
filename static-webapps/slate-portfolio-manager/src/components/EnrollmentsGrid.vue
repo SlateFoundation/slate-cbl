@@ -136,7 +136,7 @@ export default {
 
   methods: {
     getCellClass(row, student, value) {
-      const { selected = {} } = this;
+      const selected = this.selected || {};
       const { Code } = row;
       const { Username } = student;
       const isSelected = Code === selected.competency && Username === selected.student;
@@ -164,12 +164,12 @@ export default {
     },
 
     shouldHighlightStudent(username) {
-      const { selected = {} } = this;
+      const selected = this.selected || {};
       return this.hoveredCell.student === username || selected.student === username;
     },
 
     shouldHighlightCompetency(code) {
-      const { selected = {} } = this;
+      const selected = this.selected || {};
       return this.hoveredCell.competency === code || selected.competency === code;
     },
 

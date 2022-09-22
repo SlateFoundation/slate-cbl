@@ -106,7 +106,7 @@ export default {
     },
 
     studentCompetencyDetails() {
-      const { student, competency } = this.selected;
+      const { student, competency } = this.selected || {};
       if (!(student && competency)) {
         return null;
       }
