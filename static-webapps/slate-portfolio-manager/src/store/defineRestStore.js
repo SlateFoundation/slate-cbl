@@ -82,8 +82,7 @@ export default ({
       },
 
       refetch(target) {
-        const url = makeUrl(target);
-        return this.fetch(url, true);
+        return this.fetch(target, true);
       },
       update(data) {
         const url = makeUrl('/save');
