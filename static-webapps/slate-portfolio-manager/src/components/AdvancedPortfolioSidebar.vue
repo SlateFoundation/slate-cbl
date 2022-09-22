@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="studentCompetencyDetails"
-    class="advanced-portfolio-sidebar-contents bg-white"
+    :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': isLoading }]"
   >
     <!-- TODO: break all this up -->
 
@@ -54,6 +54,7 @@
           :demonstrations="demonstrations"
           :student-competency-details="studentCompetencyDetails"
           :show-hidden-items="showHiddenItems"
+          @refetch="refetch"
         />
       </li>
     </ol>
@@ -105,22 +106,29 @@ export default {
       );
     },
 
-    studentCompetencyDetails() {
+    isLoading() {
+      return this.studentCompetencyStore.isLoading(this.studentCompetencyDetailsUrl);
+    },
+
+    studentCompetencyDetailsUrl() {
       const { student, competency } = this.selected || {};
       if (!(student && competency)) {
         return null;
       }
-      return this.studentCompetencyStore.get(
-        '?limit=0'
-          + `&student=${student}`
-          + `&competency=${competency}`
-          + '&include[]=demonstrationsAverage'
-          + '&include[]=growth'
-          + '&include[]=progress'
-          + '&include[]=Skills'
-          + '&include[]=effectiveDemonstrationsData'
-          + '&include[]=ineffectiveDemonstrationsData',
-      );
+      return '?limit=0'
+        + `&student=${student}`
+        + `&competency=${competency}`
+        + '&include[]=demonstrationsAverage'
+        + '&include[]=growth'
+        + '&include[]=progress'
+        + '&include[]=Skills'
+        + '&include[]=effectiveDemonstrationsData'
+        + '&include[]=ineffectiveDemonstrationsData';
+    },
+
+    studentCompetencyDetails() {
+      const url = this.studentCompetencyDetailsUrl;
+      return url && this.studentCompetencyStore.get(url);
     },
 
     demonstrations() {
@@ -150,6 +158,11 @@ export default {
           + '&include[]=StudentTask.Task',
       );
       return response && response.data;
+    },
+  },
+  methods: {
+    refetch() {
+      return this.studentCompetencyStore.refetch(this.studentCompetencyDetailsUrl);
     },
   },
 };

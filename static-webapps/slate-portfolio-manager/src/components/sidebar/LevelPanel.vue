@@ -56,6 +56,8 @@
         :demonstrations="demonstrations"
         v-bind="skillDemo"
         :show-hidden-items="showHiddenItems"
+        :level="portfolio.Level"
+        @refetch="$emit('refetch')"
       />
     </b-collapse>
   </div>
@@ -93,7 +95,6 @@ export default {
   },
 
   computed: {
-    // TODO: use a better ID
     ready() {
       return this.demonstrations.length !== 0;
     },
@@ -102,7 +103,7 @@ export default {
       const { BaselineRating, growth } = this.portfolio;
       const clean = (value) => {
         if (Number.isNaN(value) || value === undefined || value === null) {
-          return '&mdash;';
+          return '—';
         }
         return value;
       };

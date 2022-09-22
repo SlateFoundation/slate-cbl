@@ -23,6 +23,8 @@
         :demo="demo"
         :class="demo.class"
         :show-hidden-items="showHiddenItems"
+        :level="level"
+        @refetch="$emit('refetch')"
       />
     </ol>
   </div>
@@ -46,6 +48,10 @@ export default {
     skill: {
       type: Object,
       default: () => ({}),
+    },
+    level: {
+      type: Number,
+      default: () => 0,
     },
     effectiveDemonstrationsData: {
       type: Array,

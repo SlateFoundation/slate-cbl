@@ -26,17 +26,25 @@ export default ({
 
   return defineStore(id, {
     baseURL,
-    state: () => ({ response: {}, loading: {}, error: {} }),
+    state: () => ({
+      response: {},
+      loading: {},
+      error: {},
+    }),
     getters,
     actions: {
       ...actions,
-      get(target) {
-        this.fetch(target);
+      isLoading(target) {
+        const url = makeUrl(target);
+        return this.$state.loading[url];
+      },
+      get(target, force) {
+        this.fetch(target, force);
         return this.$state.response[makeUrl(target)];
       },
-      fetch(target) {
+      fetch(target, force) {
         const url = makeUrl(target);
-        if (this.$state.response[url]) {
+        if (!force && this.$state.response[url]) {
           // already fetched, use that
           return Promise.resolve(this.$state.response);
         }
@@ -75,8 +83,11 @@ export default ({
 
       refetch(target) {
         const url = makeUrl(target);
-        Vue.set(this.$state.response, url, null);
-        return this.fetch(target);
+        return this.fetch(url, true);
+      },
+      update(data) {
+        const url = makeUrl('/save');
+        return client.post(url, data);
       },
     },
   });

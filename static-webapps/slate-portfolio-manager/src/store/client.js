@@ -19,6 +19,10 @@ export const getClient = (options = {}) => {
     baseURL: options.baseURL,
     withCredentials: true,
     transformRequest(data, _headers) {
+      Object.assign(_headers.post, {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      });
       return JSON.stringify(data);
     },
   });

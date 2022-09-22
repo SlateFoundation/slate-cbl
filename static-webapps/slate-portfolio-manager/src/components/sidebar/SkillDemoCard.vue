@@ -7,14 +7,22 @@
       {{ demo.Context }}
     </div>
     <div class="skill-demo__controls">
-      <b-button variant="unstyled">
+      <b-button
+        v-if="level < 12"
+        variant="unstyled"
+        @click="moveUp"
+      >
         <font-awesome-icon
           icon="chevron-circle-up"
           class="text-success"
         />
       </b-button>
 
-      <b-button variant="unstyled">
+      <b-button
+        v-if="level > 9"
+        variant="unstyled"
+        @click="moveDown"
+      >
         <font-awesome-icon
           icon="chevron-circle-down"
           class="text-danger"
@@ -37,11 +45,36 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia';
+import useDemonstrationSkill from '@/store/useDemonstrationSkill';
+
 export default {
   props: {
     demo: {
       type: Object,
       default: () => ({}),
+    },
+    level: {
+      type: Number,
+      default: () => 0,
+    },
+  },
+  computed: {
+    ...mapStores(useDemonstrationSkill),
+  },
+  methods: {
+    moveDown() {
+      this.setTargetLevel(this.level - 1);
+    },
+    moveUp() {
+      this.setTargetLevel(this.level + 1);
+    },
+    setTargetLevel(TargetLevel) {
+      const { ID } = this.demo;
+      const data = [{ ID, TargetLevel }];
+      this.demonstrationSkillStore.update({ data }).then(
+        () => this.$emit('refetch'),
+      );
     },
   },
 };
