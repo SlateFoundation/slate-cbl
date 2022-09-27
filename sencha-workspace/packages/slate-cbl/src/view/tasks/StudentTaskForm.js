@@ -62,6 +62,7 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         config: {
             studentTask: null,
+            displayRemovedTasks: true,
 
             statusField: {
                 merge: mergeFn,
@@ -520,6 +521,10 @@ Ext.define('Slate.cbl.view.tasks.StudentTaskForm', function() {
 
         applySaveBtn: applyFn,
         applySubmitBtn: applyFn,
+
+        updateDisplayRemovedTasks(displayRemovedTasks) {
+          this.getTaskAttachmentsField().setDisplayRemoved(displayRemovedTasks);
+        },
 
 
         // component lifecycle

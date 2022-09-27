@@ -71,7 +71,8 @@ Ext.define('SlateTasksStudent.controller.Tasks', {
             minHeight: 200,
 
             mainView: {
-                xtype: 'slate-cbl-tasks-studenttaskform'
+                xtype: 'slate-cbl-tasks-studenttaskform',
+                displayRemovedTasks: false
             }
         },
         formPanel: 'slate-cbl-tasks-studenttaskform',
