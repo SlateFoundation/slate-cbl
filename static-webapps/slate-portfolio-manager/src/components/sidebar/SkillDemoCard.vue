@@ -8,24 +8,15 @@
     </div>
     <div class="skill-demo__controls">
       <b-button
-        v-if="level < 12"
+        v-for="targetLevel in targetLevels"
+        :key="targetLevel"
         variant="unstyled"
-        @click="moveUp"
+        @click="setTargetLevel(targetLevel)"
+        :title="`Move to level ${targetLevel}`"
       >
         <font-awesome-icon
-          icon="chevron-circle-up"
-          class="text-success"
-        />
-      </b-button>
-
-      <b-button
-        v-if="level > 9"
-        variant="unstyled"
-        @click="moveDown"
-      >
-        <font-awesome-icon
-          icon="chevron-circle-down"
-          class="text-danger"
+          :icon="`chevron-circle-${targetLevel > level ? 'up' : 'down' }`"
+          :class="`cbl-level-${targetLevel} text-cbl-level`"
         />
       </b-button>
 
@@ -49,6 +40,8 @@ import { mapStores } from 'pinia';
 import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 
 export default {
+
+  inject: ['visibleLevels'],
   props: {
     demo: {
       type: Object,
@@ -59,16 +52,16 @@ export default {
       default: () => 0,
     },
   },
+
   computed: {
     ...mapStores(useDemonstrationSkill),
+    targetLevels() {
+      const visibleLevels = this.visibleLevels.value;
+      return [this.level + 1, this.level -1].filter(level => visibleLevels.includes(level))
+    },
   },
+
   methods: {
-    moveDown() {
-      this.setTargetLevel(this.level - 1);
-    },
-    moveUp() {
-      this.setTargetLevel(this.level + 1);
-    },
     setTargetLevel(TargetLevel) {
       const { ID } = this.demo;
       const data = [{ ID, TargetLevel }];

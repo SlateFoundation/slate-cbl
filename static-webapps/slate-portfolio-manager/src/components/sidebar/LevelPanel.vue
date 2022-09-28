@@ -88,7 +88,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    studentCompetencyDetails: {
+    skillsByID: {
       type: Object,
       default: () => ({}),
     },
@@ -116,13 +116,6 @@ export default {
 
     collapseId() {
       return `level-${this.portfolio.ID}-collapse`;
-    },
-
-    skillsByID() {
-      const out = {};
-      const { Skills } = this.studentCompetencyDetails.Competency;
-      Skills.forEach((s) => { out[s.ID] = s; });
-      return out;
     },
 
     demonstrationsById() {

@@ -52,7 +52,7 @@
         <level-panel
           :portfolio="portfolio"
           :demonstrations="demonstrations"
-          :student-competency-details="studentCompetencyDetails"
+          :skills-by-i-d="skillsByID"
           :show-hidden-items="showHiddenItems"
           @refetch="refetch"
         />
@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { computed } from '@vue/reactivity';
 import { mapStores } from 'pinia';
 
 import Student from '@/models/Student';
@@ -74,6 +75,15 @@ import LevelPanel from './sidebar/LevelPanel.vue';
 export default {
   components: {
     LevelPanel,
+  },
+
+  provide() {
+    return {
+      visibleLevels: computed(() => {
+        const details = this.studentCompetencyDetails;
+        return details ? details.data.map((portfolio) => portfolio.Level) : [];
+      }),
+    };
   },
 
   props: {
@@ -132,6 +142,13 @@ export default {
     studentCompetencyDetails() {
       const url = this.studentCompetencyDetailsUrl;
       return url && this.studentCompetencyStore.get(url);
+    },
+
+    skillsByID() {
+      const out = {};
+      const { Skills } = this.studentCompetencyDetails.Competency;
+      Skills.forEach((s) => { out[s.ID] = s; });
+      return out;
     },
 
     demonstrations() {
