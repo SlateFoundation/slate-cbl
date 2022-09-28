@@ -60,7 +60,7 @@ export default {
   computed: {
     ...mapStores(useDemonstrationSkill, useUi),
     targetLevels() {
-      const visibleLevels = this.visibleLevels.value;
+      const visibleLevels = this.visibleLevels.value.slice();
       const higherLevels = visibleLevels.filter((l) => l > this.level);
       const lowerLevels = visibleLevels.filter((l) => l < this.level);
       const targetLevels = [];
