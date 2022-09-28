@@ -40,7 +40,7 @@ import { mapStores } from 'pinia';
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
 import CompetencyDropdown from '@/components/CompetencyDropdown.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
-import useUi from '@/store/useUi';
+import useConfig from '@/store/useConfig';
 import useAuth from '@/store/useAuth';
 
 export default {
@@ -52,9 +52,9 @@ export default {
   },
 
   computed: {
-    ...mapStores(useAuth, useUi),
+    ...mapStores(useAuth, useConfig),
     selected() {
-      return this.uiStore.$state.enrollmentGridSelection;
+      return this.configStore.$state.enrollmentGridSelection;
     },
     visible: {
       get() {
@@ -62,7 +62,7 @@ export default {
       },
       set(value) {
         if (!value) {
-          this.uiStore.set('enrollmentGridSelection', null);
+          this.configStore.set('enrollmentGridSelection', null);
         }
       },
     },
@@ -76,9 +76,9 @@ export default {
     handleSelect(target) {
       if (isEqual(target, this.selected)) {
         // user clicked same student
-        this.uiStore.set('enrollmentGridSelection', null);
+        this.configStore.set('enrollmentGridSelection', null);
       } else {
-        this.uiStore.set('enrollmentGridSelection', target);
+        this.configStore.set('enrollmentGridSelection', target);
       }
     },
   },

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import ls from 'local-storage-json';
 
-const LS_KEY = 'app_ui_storage';
+const LS_KEY = 'app_config_storage';
 
 const defaultState = {
   sidebarIsOpen: false,
@@ -13,7 +13,7 @@ const initialState = {
   ...ls.get(LS_KEY),
 };
 
-export default defineStore('ui', {
+export default defineStore('config', {
   state: () => (initialState),
   actions: {
     set(key, value) {

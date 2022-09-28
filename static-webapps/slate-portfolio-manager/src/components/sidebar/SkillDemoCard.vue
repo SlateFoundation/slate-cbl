@@ -5,29 +5,32 @@
     </div>
     <div class="skill-demo__title">
       {{ demo.Context }}
-    </div>
-    <div class="skill-demo__controls">
-      <b-button
-        v-for="targetLevel in targetLevels"
-        :key="targetLevel"
-        variant="unstyled"
-        @click="setTargetLevel(targetLevel)"
-        :title="`Move to level ${targetLevel}`"
+      <div
+        v-if="targetLevels.length"
+        class="skill-demo__controls"
       >
-        <font-awesome-icon
-          :icon="`chevron-circle-${targetLevel > level ? 'up' : 'down' }`"
-          :class="`cbl-level-${targetLevel} text-cbl-level`"
-        />
-      </b-button>
+        <b-button
+          v-for="targetLevel in targetLevels"
+          :key="targetLevel"
+          variant="unstyled"
+          :title="`Move to level ${targetLevel}`"
+          @click="setTargetLevel(targetLevel)"
+        >
+          <font-awesome-icon
+            :icon="`chevron-circle-${targetLevel > level ? 'up' : 'down' }`"
+            :class="`cbl-level-${targetLevel} text-cbl-level`"
+          />
+        </b-button>
 
-      <div class="skill-demo__grabber" />
+        <div class="skill-demo__grabber" />
 
-      <b-button variant="unstyled">
-        <font-awesome-icon
-          icon="info-circle"
-          class="text-info"
-        />
-      </b-button>
+        <b-button variant="unstyled">
+          <font-awesome-icon
+            icon="info-circle"
+            class="text-info"
+          />
+        </b-button>
+      </div>
     </div>
     <div class="skill-demo__date text-black-50 mr-2">
       {{ demo.date }}
@@ -57,7 +60,16 @@ export default {
     ...mapStores(useDemonstrationSkill),
     targetLevels() {
       const visibleLevels = this.visibleLevels.value;
-      return [this.level + 1, this.level -1].filter(level => visibleLevels.includes(level))
+      const higherLevels = visibleLevels.filter((l) => l > this.level);
+      const lowerLevels = visibleLevels.filter((l) => l < this.level);
+      const targetLevels = [];
+      if (higherLevels.length) {
+        targetLevels.push(Math.min(...higherLevels));
+      }
+      if (lowerLevels.length) {
+        targetLevels.push(Math.max(...lowerLevels));
+      }
+      return targetLevels;
     },
   },
 
@@ -65,9 +77,11 @@ export default {
     setTargetLevel(TargetLevel) {
       const { ID } = this.demo;
       const data = [{ ID, TargetLevel }];
-      this.demonstrationSkillStore.update({ data }).then(
-        () => this.$emit('refetch'),
-      );
+      if (confirm(`Are you sure you want to move this to level ${TargetLevel}`)) {
+        this.demonstrationSkillStore.update({ data }).then(
+          () => this.$emit('refetch'),
+        );
+      }
     },
   },
 };
@@ -96,12 +110,16 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      position: relative;
     }
 
     &__controls {
       display: none;
       flex: 1 1 0;
       gap: .5rem;
+      position: absolute;
+      inset: 0;
+      background: white;
     }
 
     &__grabber {
@@ -114,10 +132,6 @@ export default {
     }
 
     &:hover {
-      .skill-demo__title {
-        display: none;
-      }
-
       .skill-demo__controls {
         display: flex;
       }
