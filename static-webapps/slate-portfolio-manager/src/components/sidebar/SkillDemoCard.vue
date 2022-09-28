@@ -41,6 +41,7 @@
 <script>
 import { mapStores } from 'pinia';
 import useDemonstrationSkill from '@/store/useDemonstrationSkill';
+import useUi from '@/store/useUi';
 
 export default {
 
@@ -57,7 +58,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useDemonstrationSkill),
+    ...mapStores(useDemonstrationSkill, useUi),
     targetLevels() {
       const visibleLevels = this.visibleLevels.value;
       const higherLevels = visibleLevels.filter((l) => l > this.level);
@@ -77,11 +78,13 @@ export default {
     setTargetLevel(TargetLevel) {
       const { ID } = this.demo;
       const data = [{ ID, TargetLevel }];
-      if (confirm(`Are you sure you want to move this to level ${TargetLevel}`)) {
+      const body = `Are you sure you want to move this to level ${TargetLevel}?`;
+      const action = () => {
         this.demonstrationSkillStore.update({ data }).then(
           () => this.$emit('refetch'),
         );
-      }
+      };
+      this.uiStore.confirm(body, action);
     },
   },
 };
