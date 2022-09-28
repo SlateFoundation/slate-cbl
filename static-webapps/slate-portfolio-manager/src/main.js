@@ -2,6 +2,7 @@ import Vue from 'vue';
 import { BootstrapVue } from 'bootstrap-vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
+  faCheck,
   faCheckSquare,
   faChevronCircleUp, faChevronCircleDown,
   faInfoCircle,
@@ -23,6 +24,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './assets/app.scss';
 
 library.add(
+  faCheck,
   faCheckSquare,
   faChevronCircleUp, faChevronCircleDown,
   faInfoCircle,

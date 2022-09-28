@@ -1,10 +1,14 @@
 <template>
-  <div class="align-items-baseline bg-white d-flex rounded shadow-sm skill-demo">
+  <div :class="wrapperClass">
     <div class="skill-demo__rating py-1 bg-cbl-level">
-      {{ demo.DemonstratedLevel }}
+      <font-awesome-icon
+        v-if="demo.Override"
+        icon="check"
+      />
+      <span v-else>{{ demo.DemonstratedLevel === 0 ? "M" : demo.DemonstratedLevel }}</span>
     </div>
     <div class="skill-demo__title">
-      {{ demo.Context }}
+      {{ title }}
       <div
         v-if="targetLevels.length"
         class="skill-demo__controls"
@@ -44,7 +48,6 @@ import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useUi from '@/store/useUi';
 
 export default {
-
   inject: ['visibleLevels'],
   props: {
     demo: {
@@ -71,6 +74,16 @@ export default {
         targetLevels.push(Math.max(...lowerLevels));
       }
       return targetLevels;
+    },
+    title() {
+      const { Context, Override } = this.demo;
+      return Override ? '[Overridden]' : Context;
+    },
+    wrapperClass() {
+      return [
+        'align-items-baseline bg-white d-flex rounded shadow-sm skill-demo',
+        this.demo.DemonstratedLevel === 0 && 'cbl-level-missing',
+      ];
     },
   },
 

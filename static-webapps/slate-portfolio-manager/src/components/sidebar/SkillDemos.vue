@@ -75,10 +75,14 @@ export default {
           return;
         }
         const {
-          DemonstratedLevel, ID, DemonstrationID, DemonstrationDate,
+          DemonstratedLevel, ID, DemonstrationID, DemonstrationDate, Override,
         } = demo;
         const demonstration = this.demonstrations.find((d) => d.ID === DemonstrationID);
-        const { Comments, Context } = demonstration;
+        const { Comments } = demonstration;
+        let { Context } = demonstration;
+        if (demonstration.StudentTask) {
+          Context = demonstration.StudentTask.Task.Title;
+        }
         out.push({
           ID,
           DemonstratedLevel,
@@ -86,6 +90,7 @@ export default {
           Comments,
           date: format(new Date(DemonstrationDate), 'MMM d'),
           effective,
+          Override,
           class: ['demonstration-skill', effective ? '-effective' : '-ineffective'],
         });
       };
