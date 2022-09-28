@@ -34,9 +34,8 @@ export default ({
     getters,
     actions: {
       ...actions,
-      isLoading(target) {
-        const url = makeUrl(target);
-        return this.$state.loading[url];
+      isLoading() {
+        return Object.values(this.$state.loading).find((value) => value);
       },
       get(target, force) {
         this.fetch(target, force);
@@ -63,6 +62,11 @@ export default ({
           Object.entries(data).forEach(([key, value]) => {
             Vue.set(this.$state[key], url, value);
           });
+          Object.entries(this.$state.loading).forEach(([key, value]) => {
+            if (!value) {
+              delete this.$state.loading[key];
+            }
+          });
         };
         // get the login and see
         set({ loading: true });
@@ -84,9 +88,14 @@ export default ({
       refetch(target) {
         return this.fetch(target, true);
       },
+
       update(data) {
         const url = makeUrl('/save');
-        return client.post(url, data);
+        Vue.set(this.$state.loading, url, true);
+        return client.post(url, data).then((response) => {
+          Vue.delete(this.$state.loading, url);
+          return response;
+        });
       },
     },
   });

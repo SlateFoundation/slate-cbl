@@ -101,16 +101,16 @@ export default {
 
     stats() {
       const { BaselineRating, growth } = this.portfolio;
-      const clean = (value) => {
+      const format = (value) => {
         if (Number.isNaN(value) || value === undefined || value === null) {
           return '—';
         }
-        return value;
+        return value.toFixed(1);
       };
       return {
-        baseline: clean(BaselineRating),
-        growth: clean(growth),
-        performance: clean(BaselineRating + growth),
+        baseline: format(BaselineRating),
+        growth: format(growth),
+        performance: format(BaselineRating + growth),
       };
     },
 

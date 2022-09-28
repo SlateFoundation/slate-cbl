@@ -66,6 +66,7 @@ import { mapStores } from 'pinia';
 
 import Student from '@/models/Student';
 import useCompetency from '@/store/useCompetency';
+import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useStudentCompetency from '@/store/useStudentCompetency';
 import useDemonstration from '@/store/useDemonstration';
 import LevelPanel from './sidebar/LevelPanel.vue';
@@ -87,7 +88,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useCompetency, useDemonstration, useStudentCompetency),
+    ...mapStores(useCompetency, useDemonstration, useStudentCompetency, useDemonstrationSkill),
 
     competencies() {
       const competencyArea = this.$route.query.area;
@@ -107,7 +108,9 @@ export default {
     },
 
     isLoading() {
-      return this.studentCompetencyStore.isLoading(this.studentCompetencyDetailsUrl);
+      return this.studentCompetencyStore.isLoading()
+        || this.demonstrationStore.isLoading()
+        || this.demonstrationSkillStore.isLoading();
     },
 
     studentCompetencyDetailsUrl() {
@@ -153,7 +156,7 @@ export default {
           });
       });
       const response = this.demonstrationStore.get(
-        `?q=id:${Array.from(demonstrationIds.values()).join(',')}`
+        `?q=id:${Array.from(demonstrationIds.values()).sort().join(',')}`
           + '&include[]=Creator'
           + '&include[]=StudentTask.Task',
       );
