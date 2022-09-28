@@ -5,11 +5,6 @@
     @mouseleave="highlightCells"
     @mousemove="highlightCells"
   >
-    <caption>
-      {{ hoveredCell }}
-      <br>
-      {{ selected }}
-    </caption>
     <thead>
       <tr>
         <th>&nbsp;</th>

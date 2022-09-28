@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div class="slate-appheader">
+    <div class="slate-appheader__title">
+      Portfolio Manager
+    </div>
     <div>
       Competency Area
       <select v-model="area">
