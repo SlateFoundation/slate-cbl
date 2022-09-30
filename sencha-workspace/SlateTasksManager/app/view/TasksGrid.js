@@ -53,8 +53,8 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
                       value: false,
                   }, {
                       xtype: 'menucheckitem',
-                      text: 'include shared',
-                      name: 'include-shared',
+                      text: 'include unshared',
+                      name: 'include-unshared',
                       value: false,
                   }]
               }

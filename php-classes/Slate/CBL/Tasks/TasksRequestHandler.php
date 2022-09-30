@@ -50,8 +50,8 @@ class TasksRequestHandler extends \RecordsRequestHandler
                 $conditions[] = $archivedConditions;
             }
 
-            $includeShared = isset($_REQUEST['include_shared']) && ($_REQUEST['include_shared']=='true');
-            $sharedConditions = static::getSharedConditions($includeShared);
+            $includeUnshared = isset($_REQUEST['include_unshared']) && ($_REQUEST['include_unshared']=='true');
+            $sharedConditions = static::getSharedConditions($includeUnshared);
 
             if ($sharedConditions != false) {
                 $conditions[] = $sharedConditions;
