@@ -48,8 +48,11 @@ import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useUi from '@/store/useUi';
 
 export default {
-  inject: ['visibleLevels'],
   props: {
+    visibleLevels: {
+      type: Array,
+      default: () => [],
+    },
     demo: {
       type: Object,
       default: () => ({}),
@@ -63,7 +66,7 @@ export default {
   computed: {
     ...mapStores(useDemonstrationSkill, useUi),
     targetLevels() {
-      const visibleLevels = this.visibleLevels.value.slice();
+      const visibleLevels = this.visibleLevels.slice();
       const higherLevels = visibleLevels.filter((l) => l > this.level);
       const lowerLevels = visibleLevels.filter((l) => l < this.level);
       const targetLevels = [];

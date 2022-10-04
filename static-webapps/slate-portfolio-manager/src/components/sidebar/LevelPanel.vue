@@ -57,6 +57,7 @@
         v-bind="skillDemo"
         :show-hidden-items="showHiddenItems"
         :level="portfolio.Level"
+        :visible-levels="visibleLevels"
         @refetch="$emit('refetch')"
       />
     </b-collapse>
@@ -76,6 +77,10 @@ export default {
   },
 
   props: {
+    visibleLevels: {
+      type: Array,
+      default: () => [],
+    },
     showHiddenItems: {
       type: Boolean,
       default: () => false,

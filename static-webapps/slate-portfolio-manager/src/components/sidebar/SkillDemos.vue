@@ -24,6 +24,7 @@
         :class="demo.class"
         :show-hidden-items="showHiddenItems"
         :level="level"
+        :visible-levels="visibleLevels"
         @refetch="$emit('refetch')"
       />
     </ol>
@@ -62,6 +63,10 @@ export default {
       default: () => [],
     },
     demonstrations: {
+      type: Array,
+      default: () => [],
+    },
+    visibleLevels: {
       type: Array,
       default: () => [],
     },
