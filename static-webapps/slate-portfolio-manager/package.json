@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "NODE_ENV=production vue-cli-service build",
     "lint": "vue-cli-service lint",
     "start": "npm run serve"
   },
@@ -14,10 +14,18 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.3",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/vue-fontawesome": "^2.0.2",
+    "@vue/composition-api": "^1.7.0",
+    "@vue/reactivity": "^3.2.39",
+    "axios": "^0.27.2",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11"
+    "date-fns": "^2.29.3",
+    "local-storage-json": "^1.1.0",
+    "lodash": "^4.17.21",
+    "pinia": "^2.0.22",
+    "vue": "^2.6.11",
+    "vue-router": "^3.5.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.15",
