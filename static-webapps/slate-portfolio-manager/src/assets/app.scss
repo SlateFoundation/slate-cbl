@@ -1,6 +1,6 @@
 // TODO remove these google font imports and use local versions
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sanchez:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Sanchez:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:ital,wght@0,300;0,400;0,700;1,400;1,700&family=Sanchez:ital@0;1&display=swap');
 
 body {
   font-family: Lato;
@@ -20,4 +20,20 @@ body {
   background: unset;
   border: unset;
   padding: unset;
+}
+
+@import "./colors.scss";
+@import "./appheader.scss";
+
+.block-loading {
+  position: relative;
+  pointer-events: none;
+  &:before {
+    background-color: rgba(128, 128, 128, 0.2);
+    content: "";
+    display: block;
+    inset: 0;
+    position: absolute;
+    z-index: 99999;
+  }
 }

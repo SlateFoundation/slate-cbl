@@ -5,25 +5,13 @@
   />
 </template>
 
-<script>
-export default {
-  props: {
-    color: {
-      type: String,
-      default: '',
-    },
-  },
-
-  mounted() {
-    const bar = this.$el.querySelector('.progress-bar');
-    bar.style.backgroundColor = `#${this.color}`;
-  },
-};
-</script>
-
 <style lang="scss" scoped>
   .progress {
     box-shadow: inset 0 2px 2px rgba(black, .1);
+  }
+
+  .progress::v-deep .progress-bar {
+    background-color: var(--cbl-level-color);
   }
 
   .progress,
@@ -42,5 +30,6 @@ export default {
       right: 0;
       top: 0;
     }
+
   }
 </style>
