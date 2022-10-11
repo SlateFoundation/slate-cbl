@@ -1,93 +1,107 @@
 <template>
-  <div class="align-items-baseline bg-white d-flex rounded shadow-sm skill-demo">
-    <div
-      ref="rating"
-      class="skill-demo__rating py-1"
-    >
-      {{ rating }}
+  <div :class="wrapperClass">
+    <div class="skill-demo__rating py-1 bg-cbl-level">
+      <font-awesome-icon
+        v-if="demo.Override"
+        icon="check"
+      />
+      <span v-else>{{ demo.DemonstratedLevel === 0 ? "M" : demo.DemonstratedLevel }}</span>
     </div>
-    <div
-      ref="title"
-      class="skill-demo__title"
-    >
-      {{ taskTitle }}
+    <div class="skill-demo__title">
+      {{ title }}
+      <div
+        v-if="targetLevels.length"
+        class="skill-demo__controls"
+      >
+        <b-button
+          v-for="targetLevel in targetLevels"
+          :key="targetLevel"
+          variant="unstyled"
+          :title="`Move to level ${targetLevel}`"
+          @click="setTargetLevel(targetLevel)"
+        >
+          <font-awesome-icon
+            :icon="`chevron-circle-${targetLevel > level ? 'up' : 'down' }`"
+            :class="`cbl-level-${targetLevel} text-cbl-level`"
+          />
+        </b-button>
+
+        <div class="skill-demo__grabber" />
+
+        <b-button variant="unstyled">
+          <font-awesome-icon
+            icon="info-circle"
+            class="text-info"
+          />
+        </b-button>
+      </div>
     </div>
-    <div
-      ref="controls"
-      class="skill-demo__controls"
-    >
-      <b-button variant="unstyled">
-        <font-awesome-icon
-          icon="chevron-circle-up"
-          class="text-success"
-        />
-      </b-button>
-
-      <b-button variant="unstyled">
-        <font-awesome-icon
-          icon="chevron-circle-down"
-          class="text-danger"
-        />
-      </b-button>
-
-      <div class="skill-demo__grabber" />
-
-      <b-button variant="unstyled">
-        <font-awesome-icon
-          icon="info-circle"
-          class="text-info"
-        />
-      </b-button>
-    </div>
-    <div
-      ref="date"
-      class="skill-demo__date text-black-50 mr-2"
-    >
-      {{ shortDate }}
+    <div class="skill-demo__date text-black-50 mr-2">
+      {{ demo.date }}
     </div>
   </div>
 </template>
 
 <script>
+import { mapStores } from 'pinia';
+import useDemonstrationSkill from '@/store/useDemonstrationSkill';
+import useUi from '@/store/useUi';
+
 export default {
   props: {
-    rating: {
-      type: String,
-      default: '\u2014', // em dash
+    visibleLevels: {
+      type: Array,
+      default: () => [],
     },
-
-    taskTitle: {
-      type: String,
-      default: '', // em dash
+    demo: {
+      type: Object,
+      default: () => ({}),
     },
-
-    date: {
-      type: String,
-      default: null, // em dash
-    },
-
-    levelColor: {
-      type: String,
-      default: '999999',
+    level: {
+      type: Number,
+      default: () => 0,
     },
   },
 
   computed: {
-    shortDate() {
-      const date = new Date(this.date);
-      if (date) {
-        return date.toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        });
+    ...mapStores(useDemonstrationSkill, useUi),
+    targetLevels() {
+      const visibleLevels = this.visibleLevels.slice();
+      const higherLevels = visibleLevels.filter((l) => l > this.level);
+      const lowerLevels = visibleLevels.filter((l) => l < this.level);
+      const targetLevels = [];
+      if (higherLevels.length) {
+        targetLevels.push(Math.min(...higherLevels));
       }
-
-      return '\u2014';
+      if (lowerLevels.length) {
+        targetLevels.push(Math.max(...lowerLevels));
+      }
+      return targetLevels;
+    },
+    title() {
+      const { Context, Override } = this.demo;
+      return Override ? '[Overridden]' : Context;
+    },
+    wrapperClass() {
+      return [
+        'align-items-baseline bg-white d-flex rounded shadow-sm skill-demo',
+        this.demo.DemonstratedLevel === 0 && 'cbl-level-missing',
+      ];
     },
   },
 
-  mounted() {
-    this.$refs.rating.style.backgroundColor = `#${this.levelColor}`;
+  methods: {
+    setTargetLevel(TargetLevel) {
+      const { ID } = this.demo;
+      const data = [{ ID, TargetLevel }];
+      const body = `Are you sure you want to move this to level ${TargetLevel}?`;
+      const action = () => {
+        this.demonstrationSkillStore.update({ data }).then(
+          () => this.$emit('refetch'),
+        );
+      };
+      this.uiStore.confirm(body, action);
+    },
   },
 };
 </script>
@@ -95,6 +109,11 @@ export default {
 <style lang="scss" scoped>
   .skill-demo {
     gap: .5rem;
+
+    &.-ineffective {
+      opacity: 0.5;
+      box-shadow: none !important;
+    }
 
     &__rating {
       border-bottom-left-radius: .25rem;
@@ -110,12 +129,16 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      position: relative;
     }
 
     &__controls {
       display: none;
       flex: 1 1 0;
       gap: .5rem;
+      position: absolute;
+      inset: 0;
+      background: white;
     }
 
     &__grabber {
@@ -128,10 +151,6 @@ export default {
     }
 
     &:hover {
-      .skill-demo__title {
-        display: none;
-      }
-
       .skill-demo__controls {
         display: flex;
       }

@@ -1,15 +1,14 @@
 <template>
   <div
-    class="level-panel mb-2"
-    :style="getBackgroundStyle(.1)"
+    v-if="ready"
+    :class="`level-panel mb-2 cbl-level-${portfolio.Level}`"
   >
     <b-container
       v-b-toggle="collapseId"
-      :style="getBackgroundStyle(.15)"
+      class="bg-cbl-level-50"
     >
       <b-row
         class="py-2 align-items-center"
-        :style="getBackgroundStyle(.25)"
       >
         <b-col>
           <button
@@ -17,15 +16,12 @@
             class="btn-unstyled d-flex"
           >
             <h3 class="h6 m-0">
-              Year 2
+              Year {{ portfolio.Level }} <!-- TODO global property? -->
             </h3>
           </button>
         </b-col>
         <b-col cols="4">
-          <skill-progress
-            :value=".6"
-            :color="levelColor"
-          />
+          <skill-progress :value="portfolio.progress" />
         </b-col>
       </b-row>
     </b-container>
@@ -34,70 +30,35 @@
       :id="collapseId"
       visible
     >
-      <b-container :style="getBackgroundStyle(.15)">
+      <b-container class="bg-cbl-level-25">
         <b-row class="text-center py-2">
           <b-col>
             <stat-figure label="Baseline">
-              9
+              {{ stats.baseline }}
             </stat-figure>
           </b-col>
           <b-col>
             <stat-figure label="Performance">
-              7.2
+              {{ stats.performance }}
             </stat-figure>
           </b-col>
           <b-col>
             <stat-figure label="Growth">
-              -1.8
+              {{ stats.growth }}
             </stat-figure>
           </b-col>
         </b-row>
       </b-container>
 
       <skill-demos
-        code="ELA 2.3"
-        title="Prepare the medium"
-        :level-color="levelColor"
-        :demos="[
-          {
-            id: '0',
-            rating: '9',
-            taskTitle: 'Lorem ipsum dolor sit amet',
-            date: '2022-04-29T00:00:00.000Z',
-          },
-          {
-            id: '1',
-            rating: 'M',
-            taskTitle: 'Data analysis task',
-            date: '2022-04-30T00:00:00.000Z',
-          },
-          {
-            id: '2',
-            rating: '7',
-            taskTitle: 'Some other task',
-            date: '2022-05-15T00:00:00.000Z',
-          },
-        ]"
-      />
-
-      <skill-demos
-        code="ELA 2.4"
-        title="Finalize, practice, and/or prepare with a longer name"
-        :level-color="levelColor"
-        :demos="[
-          {
-            id: '3',
-            rating: '9',
-            taskTitle: 'Example task has an overflowing name probably',
-            date: '2022-11-12T00:00:00.000Z',
-          },
-          {
-            id: '4',
-            rating: '8',
-            taskTitle: 'Mathematical modeling',
-            date: '2022-12-03T00:00:00.000Z',
-          },
-        ]"
+        v-for="skillDemo in preppedSkillDemos"
+        :key="skillDemo.SkillID"
+        :demonstrations="demonstrations"
+        v-bind="skillDemo"
+        :show-hidden-items="showHiddenItems"
+        :level="portfolio.Level"
+        :visible-levels="visibleLevels"
+        @refetch="$emit('refetch')"
       />
     </b-collapse>
   </div>
@@ -116,16 +77,80 @@ export default {
   },
 
   props: {
-    levelColor: {
-      type: String,
-      default: '999999',
+    visibleLevels: {
+      type: Array,
+      default: () => [],
+    },
+    showHiddenItems: {
+      type: Boolean,
+      default: () => false,
+    },
+    portfolio: {
+      type: Object,
+      default: () => ({}),
+    },
+    demonstrations: {
+      type: Array,
+      default: () => [],
+    },
+    skillsByID: {
+      type: Object,
+      default: () => ({}),
     },
   },
 
   computed: {
-    // TODO: use a better ID
+    ready() {
+      return this.demonstrations.length !== 0;
+    },
+
+    stats() {
+      const { BaselineRating, growth } = this.portfolio;
+      const format = (value) => {
+        if (Number.isNaN(value) || value === undefined || value === null) {
+          return '—';
+        }
+        return value.toFixed(1);
+      };
+      return {
+        baseline: format(BaselineRating),
+        growth: format(growth),
+        performance: format(BaselineRating + growth),
+      };
+    },
+
     collapseId() {
-      return `level-${this.levelColor}-collapse`;
+      return `level-${this.portfolio.ID}-collapse`;
+    },
+
+    demonstrationsById() {
+      const out = {};
+      this.demonstrations.forEach((d) => { out[d.ID] = d; });
+      return out;
+    },
+
+    preppedSkillDemos() {
+      const out = {};
+      const { effectiveDemonstrationsData, ineffectiveDemonstrationsData } = this.portfolio;
+      Object.entries(effectiveDemonstrationsData).forEach(([SkillID, demos]) => {
+        out[SkillID] = {
+          SkillID,
+          skill: this.skillsByID[SkillID],
+          effectiveDemonstrationsData: demos,
+          ineffectiveDemonstrationsData: [],
+        };
+      });
+      Object.entries(ineffectiveDemonstrationsData).forEach(([SkillID, demos]) => {
+        if (!out[SkillID]) {
+          out[SkillID] = {
+            SkillID,
+            skill: this.skillsByID[SkillID],
+            effectiveDemonstrationsData: [],
+          };
+        }
+        out[SkillID].ineffectiveDemonstrationsData = demos;
+      });
+      return Object.values(out);
     },
   },
 

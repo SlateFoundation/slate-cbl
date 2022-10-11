@@ -1,24 +1,19 @@
 <template>
   <table
-    @click="handleTableClick"
+    v-if="studentCompetencies && students && competencies"
     @mouseenter="highlightCells"
     @mouseleave="highlightCells"
     @mousemove="highlightCells"
   >
-    <caption>
-      {{ hoveredCell }}
-      <br>
-      {{ selectedCell }}
-    </caption>
     <thead>
       <tr>
         <th>&nbsp;</th>
         <th
           v-for="student in students"
-          :key="student"
+          :key="student.Username"
           class="col-heading"
-          :class="{ '-is-highlighted': shouldHighlightCell({ student, skill: false }) }"
-          :data-student="student"
+          :class="{ '-is-highlighted': shouldHighlightStudent(student.Username) }"
+          :data-student="student.Username"
         >
           <div class="col-heading-clip">
             <a
@@ -26,7 +21,7 @@
               href="#"
             >
               <div class="col-heading-text">
-                {{ student }}
+                {{ getDisplayName(student) }}
               </div>
             </a>
           </div>
@@ -35,74 +30,115 @@
     </thead>
     <tbody>
       <tr
-        v-for="skill in skills"
-        :key="skill"
+        v-for="row in rows"
+        :key="row.Code"
       >
         <th
-          :data-skill="skill"
-          :class="{ '-is-highlighted': shouldHighlightCell({ skill, student: false }) }"
+          :data-competency="row.Code"
+          :class="{ '-is-highlighted': shouldHighlightCompetency(row.Code) }"
         >
-          {{ skill }}
+          {{ row.Descriptor }}
         </th>
         <td
-          v-for="student in students"
-          :key="student"
-          :data-skill="skill"
-          :data-student="student"
-          :class="{ '-is-selected': isCellSelected({ skill, student }) }"
+          v-for="value, i in row.values"
+          :key="i"
+          :data-competency="row.Code"
+          :data-student="students[i].Username"
+          :class="getCellClass(row, students[i], value)"
+          @click="$emit('select', { competency: row.Code, student: students[i].Username })"
         >
-          00
+          {{ value }}
           <div class="outline" />
         </td>
       </tr>
     </tbody>
   </table>
+  <div v-else>
+    Select a list of students and a content area to load enrollments dashboard
+  </div>
 </template>
 
 <script>
+import { range } from 'lodash';
+import { mapStores } from 'pinia';
+
+import Student from '@/models/Student';
+import useCompetency from '@/store/useCompetency';
+import useStudent from '@/store/useStudent';
+import useStudentCompetency from '@/store/useStudentCompetency';
+
 export default {
+  props: {
+    selected: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       hoveredCell: {
         domCache: null,
         student: '',
-        skill: '',
+        competency: '',
       },
-      selectedCell: {
-        domCache: null,
-        student: '',
-        skill: '',
-      },
-      skills: '1234567890'.split('').map((num) => `ELA.${num}`),
-      students: 'ABCDEFGHIJK'.split('').map((letter) => `Student ${letter} Lastname`),
     };
   },
 
-  methods: {
-    handleTableClick(event) {
-      const cell = event.target.closest('td');
-      if (cell === this.selectedCell.domCache) {
-        Vue.set(this.selectedCell, 'domCache', '');
-        Vue.set(this.selectedCell, 'skill', '');
-        Vue.set(this.selectedCell, 'student', '');
-        this.$emit('select', null);
-        return;
+  computed: {
+    ...mapStores(useCompetency, useStudent, useStudentCompetency),
+    competencies() {
+      const { area } = this.$route.query;
+      const response = this.competencyStore.get(`?limit=0&content_area=${area}`);
+      return response && response.data;
+    },
+    students() {
+      const { students } = this.$route.query;
+      const response = this.studentStore.get(`?limit=0&list=${students}`);
+      return response && response.data;
+    },
+    studentCompetencies() {
+      const { area, students } = this.$route.query;
+      if (!(area && students)) {
+        return null;
       }
-
-      Vue.set(this.selectedCell, 'domCache', cell);
-
-      if (cell) {
-        Vue.set(this.selectedCell, 'student', cell.dataset.student);
-        Vue.set(this.selectedCell, 'skill', cell.dataset.skill);
-        this.$emit('select', {
-          student: cell.dataset.student,
-          skill: cell.dataset.skill,
+      const response = this.studentCompetencyStore.get({
+        limit: 0,
+        students,
+        content_area: area,
+      });
+      return response && response.data;
+    },
+    rows() {
+      if (!this.students || !this.competencies) {
+        return null;
+      }
+      const studentIds = this.students.map((s) => s.ID);
+      return this.competencies.map((competency) => {
+        const { ID, Descriptor, Code } = competency;
+        const values = range(studentIds.length).map(() => 0);
+        this.studentCompetencies.forEach((sc) => {
+          const index = studentIds.indexOf(sc.StudentID);
+          if (sc.CompetencyID === ID && index !== -1) {
+            values[index] = Math.max(values[index] || 0, sc.Level);
+          }
         });
-      } else {
-        Vue.set(this.selectedCell, 'student', '');
-        Vue.set(this.selectedCell, 'skill', '');
-        this.$emit('select', null);
-      }
+        return {
+          Descriptor, values, Code, ID,
+        };
+      });
+    },
+  },
+
+  methods: {
+    getCellClass(row, student, value) {
+      const selected = this.selected || {};
+      const { Code } = row;
+      const { Username } = student;
+      const isSelected = Code === selected.competency && Username === selected.student;
+      return [
+        `cbl-level-${value} bg-cbl-level-50 text-white`,
+        isSelected && '-is-selected',
+      ];
     },
 
     highlightCells(event) {
@@ -115,23 +151,25 @@ export default {
 
       if (cell) {
         Vue.set(this.hoveredCell, 'student', cell.dataset.student);
-        Vue.set(this.hoveredCell, 'skill', cell.dataset.skill);
+        Vue.set(this.hoveredCell, 'competency', cell.dataset.competency);
       } else {
         Vue.set(this.hoveredCell, 'student', '');
-        Vue.set(this.hoveredCell, 'skill', '');
+        Vue.set(this.hoveredCell, 'competency', '');
       }
     },
 
-    isCellSelected(cell) {
-      return cell.skill === this.selectedCell.skill
-        && cell.student === this.selectedCell.student;
+    shouldHighlightStudent(username) {
+      const selected = this.selected || {};
+      return this.hoveredCell.student === username || selected.student === username;
     },
 
-    shouldHighlightCell(cell) {
-      return cell.skill === this.hoveredCell.skill
-          || cell.skill === this.selectedCell.skill
-        || cell.student === this.hoveredCell.student
-        || cell.student === this.selectedCell.student;
+    shouldHighlightCompetency(code) {
+      const selected = this.selected || {};
+      return this.hoveredCell.competency === code || selected.competency === code;
+    },
+
+    getDisplayName(student) {
+      return Student.getDisplayName(student);
     },
   },
 };
@@ -159,7 +197,7 @@ export default {
 
   tbody {
     td {
-      border: 1px solid;
+      border: 1px solid black;
       max-width: $cell-max-width;
       padding: .5em;
       position: relative;
@@ -180,12 +218,14 @@ export default {
 
       &:hover,
       &:focus {
+        z-index: 1;
         .outline {
           opacity: .4;
         }
       }
 
       &.-is-selected {
+        z-index: 2;
         .outline {
           opacity: 1;
         }

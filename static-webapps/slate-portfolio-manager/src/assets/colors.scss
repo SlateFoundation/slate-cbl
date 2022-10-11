@@ -1,0 +1,60 @@
+@use "sass:color";
+
+$generic: #606060;
+
+$level-colors: (
+  missing: #888,
+  1: $generic,
+  2: $generic,
+  3: $generic,
+  4: $generic,
+  5: $generic,
+  6: $generic,
+  7: $generic,
+  8: $generic,
+  9: #d94181,
+  10: #ffa200,
+  11: #5dc02a,
+  12: #008cc1,
+);
+
+@each $index, $color in $level-colors {
+  .cbl-level-#{$index} {
+    --cbl-level-color: #{$color};
+    --cbl-level-color-10: #{color.mix($color, white, $weight: 10%)};
+    --cbl-level-color-25: #{color.mix($color, white, $weight: 25%)};
+    --cbl-level-color-50: #{color.mix($color, white, $weight: 50%)};
+  }
+}
+
+.bg-cbl-level {
+  background: var(--cbl-level-color);
+}
+
+.bg-cbl-level-10 {
+  background: var(--cbl-level-color-10);
+}
+
+.bg-cbl-level-25 {
+  background: var(--cbl-level-color-25);
+}
+
+.bg-cbl-level-50 {
+  background: var(--cbl-level-color-50);
+}
+
+.text-cbl-level {
+  color: var(--cbl-level-color);
+}
+
+.text-cbl-level-10 {
+  color: var(--cbl-level-color-10);
+}
+
+.text-cbl-level-25 {
+  color: var(--cbl-level-color-25);
+}
+
+.text-cbl-level-50 {
+  color: var(--cbl-level-color-50);
+}
