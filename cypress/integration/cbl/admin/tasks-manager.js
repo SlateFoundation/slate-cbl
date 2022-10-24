@@ -71,17 +71,6 @@ describe('CBL / Admin / Tasks Manager', () => {
         // wait for data load
         cy.wait('@tasksData');
 
-        // open options menu
-        cy.extGet('slate-tasks-manager-grid button[action=settings]')
-            .click();
-
-        // check 'include unshared' option
-        cy.extGet('slate-tasks-manager-grid menucheckitem[name=include-unshared]')
-            .click();
-
-        // wait for data load after option change
-        cy.wait('@tasksData');
-
         // find and click created task
         cy.extGet('slate-tasks-manager')
             .contains('.x-grid-cell-inner', 'Created Test Task Title')
@@ -141,17 +130,6 @@ describe('CBL / Admin / Tasks Manager', () => {
             .contains('.slate-apptitle', 'Task Library');
 
         // wait for data load
-        cy.wait('@tasksData');
-
-        // open options menu
-        cy.extGet('slate-tasks-manager-grid button[action=settings]')
-            .click();
-
-        // check 'include unshared' option
-        cy.extGet('slate-tasks-manager-grid menucheckitem[name=include-unshared]')
-            .click();
-
-        // wait for data load after option change
         cy.wait('@tasksData');
 
         // find and click updated task
