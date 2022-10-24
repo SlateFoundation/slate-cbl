@@ -51,10 +51,10 @@ class TasksRequestHandler extends \RecordsRequestHandler
             }
 
             $includeUnshared = isset($_REQUEST['include_unshared']) && ($_REQUEST['include_unshared']=='true');
-            $sharedConditions = static::getSharedConditions($includeUnshared);
+            //$sharedConditions = static::getSharedConditions($includeUnshared);
 
-            if ($sharedConditions != false) {
-                $conditions[] = $sharedConditions;
+            if (!$includeUnshared) {
+                $conditions['Status'] = 'shared';
             }
         }
 
@@ -195,13 +195,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
                     $GLOBALS['Session']->PersonID
                 );
             }
-        }
-    }
-
-    public static function getSharedConditions($includeShared) {
-        $recordClass = static::$recordClass;
-        if (!$includeShared) {
-            return $recordClass::getTableAlias().'.Status != "shared"';
         }
     }
 }
