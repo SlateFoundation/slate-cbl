@@ -85,7 +85,7 @@ export default {
   },
 
   data() {
-    return { showHiddenItems: false };
+    return { showHiddenItems: true };
   },
 
   computed: {
