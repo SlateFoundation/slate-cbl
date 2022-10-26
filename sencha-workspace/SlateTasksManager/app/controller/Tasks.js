@@ -51,6 +51,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         clearFiltersButton: 'slate-tasks-manager-grid button[action=clear-filters]',
 
         clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
+        sharedTaskCheckbox: 'slate-window checkboxfield[name=Status]',
 
         taskWindow: {
             autoCreate: true,
@@ -566,6 +567,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
                 SectionID: 0,
                 Status: 'shared'
             }, task || null));
+            me.getSharedTaskCheckbox().setDisabled(true);
         }
 
         taskWindow.animateTarget = animateTarget;
