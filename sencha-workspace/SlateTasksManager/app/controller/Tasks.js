@@ -562,6 +562,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             }),
             taskEditor = taskWindow.getMainView();
 
+        // re-enable shared checkbox if it has been previously disabled during task creation
+        me.getSharedTaskCheckbox().setDisabled(false);
+
         if (!task || (typeof task == 'object' && !task.isModel)) {
             task = me.getTaskModel().create(Ext.apply({
                 SectionID: 0,
