@@ -165,4 +165,55 @@ describe('CBL / Admin / Tasks Manager', () => {
             });
     });
 
+    it('Verify grid filtering for shared and unshared tasks', () => {
+
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/tasks/manager');
+
+        // verify app loaded
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.slate-apptitle', 'Task Library');
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify that shared task is present
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.x-grid-cell-inner', 'A Shared Task')
+            .should('exist');
+
+        // verify that the unshared task is not present
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.x-grid-cell-inner', 'An Unshared Task')
+            .should('not.exist');
+
+        // open options menu
+        cy.extGet('slate-tasks-manager-grid button[action=settings]')
+            .should('exist')
+            .click();
+
+        // check 'include unshared' option
+        cy.extGet('slate-tasks-manager-grid menucheckitem[name=include-unshared]')
+            .should('exist')
+            .click();
+
+        // wait for data load after option change
+        cy.wait('@tasksData');
+
+        // verify that shared task is present
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.x-grid-cell-inner', 'A Shared Task')
+            .should('exist');
+
+        // verify that the unshared task is present
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.x-grid-cell-inner', 'An Unshared Task')
+            .should('exist');
+    });
+
 });
