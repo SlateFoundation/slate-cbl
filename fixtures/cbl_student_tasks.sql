@@ -230,6 +230,8 @@ INSERT INTO `cbl_student_tasks` VALUES (208,'Slate\\CBL\\Tasks\\StudentTask','20
 INSERT INTO `cbl_student_tasks` VALUES (209,'Slate\\CBL\\Tasks\\StudentTask','2022-08-09 21:20:13',3,'2022-08-09 21:23:48',3,12,10,'completed',228,NULL,NULL);
 INSERT INTO `cbl_student_tasks` VALUES (210,'Slate\\CBL\\Tasks\\StudentTask','2022-08-09 21:20:21',3,NULL,NULL,13,10,'assigned',NULL,NULL,NULL);
 INSERT INTO `cbl_student_tasks` VALUES (211,'Slate\\CBL\\Tasks\\StudentTask','2022-08-09 21:22:53',3,NULL,NULL,14,10,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (212,'Slate\\CBL\\Tasks\\StudentTask','2022-10-28 16:16:28',3,NULL,NULL,47,4,'assigned',NULL,NULL,NULL);
+INSERT INTO `cbl_student_tasks` VALUES (213,'Slate\\CBL\\Tasks\\StudentTask','2022-10-28 16:16:28',3,NULL,NULL,47,6,'assigned',NULL,NULL,NULL);
 
 
 CREATE TABLE `history_cbl_student_tasks` (
