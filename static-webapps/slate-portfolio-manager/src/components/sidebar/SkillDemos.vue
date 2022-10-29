@@ -12,7 +12,7 @@
       style="gap: 0.25rem;"
     >
       <li
-        v-if="skillDemos.length == 0"
+        v-if="skillDemos.length === 0"
         class="text-black-50 font-italic m-0"
       >
         No demonstrations recorded
