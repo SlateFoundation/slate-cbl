@@ -165,7 +165,7 @@ describe('CBL / Admin / Tasks Manager', () => {
             });
     });
 
-    it('Verify grid filtering for shared and unshared tasks', () => {
+    it('Verify buttons disabled when no selection', () => {
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/manager');
@@ -177,7 +177,39 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // wait for data load
         cy.wait('@tasksData');
+        // verify create button not disabled
+        cy.extGet('slate-tasks-manager-appheader button[action=create]')
+            .should('exist')
+            .should('not.have.class', 'x-btn-disabled')
 
+        // verify edit button disabled
+        cy.extGet('slate-tasks-manager-appheader button[action=edit]')
+            .should('exist')
+            .should('have.class', 'x-btn-disabled')
+
+        // verify delete button disabled
+        cy.extGet('slate-tasks-manager-appheader button[action=delete]')
+            .should('exist')
+            .should('have.class', 'x-btn-disabled')
+
+        // select the first grid cell
+        cy.root()
+            .get('.x-grid-cell-inner')
+            .first()
+            .click();
+
+        // verify edit button not disabled after selection
+        cy.extGet('slate-tasks-manager-appheader button[action=edit]')
+            .should('exist')
+            .should('not.have.class', 'x-btn-disabled')
+
+        // verify delete button not disabled after selection
+        cy.extGet('slate-tasks-manager-appheader button[action=delete]')
+            .should('exist')
+            .should('not.have.class', 'x-btn-disabled')
+    });
+
+    it('Verify grid filtering for shared and unshared tasks', () => {
         // verify that shared task is present
         cy.extGet('slate-tasks-manager')
             .should('exist')
@@ -264,7 +296,5 @@ describe('CBL / Admin / Tasks Manager', () => {
                     .contains('.x-boundlist-item', 'An UnShared Task')
                     .should('not.exist');
             });
-
     });
-
 });
