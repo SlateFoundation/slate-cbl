@@ -51,7 +51,6 @@ class TasksRequestHandler extends \RecordsRequestHandler
             }
 
             $includeUnshared = isset($_REQUEST['include_unshared']) && ($_REQUEST['include_unshared']=='true');
-            //$sharedConditions = static::getSharedConditions($includeUnshared);
 
             if (!$includeUnshared) {
                 $conditions['Status'] = 'shared';
