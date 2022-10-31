@@ -164,4 +164,48 @@ describe('CBL / Admin / Tasks Manager', () => {
             });
     });
 
+    it('Verify buttons disabled when no selection', () => {
+
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/tasks/manager');
+
+        // verify app loaded
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.slate-apptitle', 'Task Library');
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify create button not disabled
+        cy.extGet('slate-tasks-manager-appheader button[action=create]')
+            .should('exist')
+            .should('not.have.class', 'x-btn-disabled')
+
+        // verify edit button disabled
+        cy.extGet('slate-tasks-manager-appheader button[action=edit]')
+            .should('exist')
+            .should('have.class', 'x-btn-disabled')
+
+        // verify delete button disabled
+        cy.extGet('slate-tasks-manager-appheader button[action=delete]')
+            .should('exist')
+            .should('have.class', 'x-btn-disabled')
+
+        // select the first grid cell
+        cy.root()
+            .get('.x-grid-cell-inner')
+            .first()
+            .click();
+
+        // verify edit button not disabled after selection
+        cy.extGet('slate-tasks-manager-appheader button[action=edit]')
+            .should('exist')
+            .should('not.have.class', 'x-btn-disabled')
+
+        // verify delete button not disabled after selection
+        cy.extGet('slate-tasks-manager-appheader button[action=delete]')
+            .should('exist')
+            .should('not.have.class', 'x-btn-disabled')
+    });
 });
