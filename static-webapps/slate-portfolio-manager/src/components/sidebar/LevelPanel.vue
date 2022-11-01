@@ -183,7 +183,7 @@ export default {
     startDelete() {
       let body = `Are you sure you want to delete Year ${this.portfolio.Level}?`;
       body += ' This cannot be undone.';
-      const action = () => this.studentCompetencyStore.delete(this.portfolio.Level).then(
+      const action = () => this.studentCompetencyStore.delete(this.portfolio.ID).then(
         () => this.$emit('refetch'),
       );
       this.uiStore.confirm(body, action);
