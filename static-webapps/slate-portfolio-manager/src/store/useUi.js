@@ -29,6 +29,7 @@ export default defineStore('ui', {
                   message = `The server returned an error: ${error.response.data.message}`;
                 }
                 this.alert({ body: message });
+                throw error;
               });
             },
           },

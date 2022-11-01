@@ -58,7 +58,7 @@
         :show-hidden-items="showHiddenItems"
         :level="portfolio.Level"
         :visible-levels="visibleLevels"
-        @refetch="$emit('refetch')"
+        @refetch="refetch"
       />
       <div
         v-if="canDelete"
@@ -80,6 +80,8 @@ import { mapStores } from 'pinia';
 import SkillDemos from './SkillDemos.vue';
 import SkillProgress from './SkillProgress.vue';
 import StatFigure from './StatFigure.vue';
+
+import emitter from '@/store/emitter';
 import useStudentCompetency from '@/store/useStudentCompetency';
 import useUi from '@/store/useUi';
 
@@ -180,12 +182,14 @@ export default {
       // append it to the level color as a hex/255
       return `background-color: #${this.levelColor}${Math.round(alpha * 255).toString(16)}`;
     },
+    refetch() {
+      const { StudentID, CompetencyID } = this.portfolio;
+      emitter.emit('update-store', { StudentID, CompetencyID });
+    },
     startDelete() {
       let body = `Are you sure you want to delete Year ${this.portfolio.Level}?`;
       body += ' This cannot be undone.';
-      const action = () => this.studentCompetencyStore.delete(this.portfolio.ID).then(
-        () => this.$emit('refetch'),
-      );
+      const action = () => this.studentCompetencyStore.delete(this.portfolio.ID).then(this.refetch);
       this.uiStore.confirm(body, action);
     },
   },
