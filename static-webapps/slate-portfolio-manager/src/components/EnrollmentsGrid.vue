@@ -66,6 +66,7 @@ import Student from '@/models/Student';
 import useCompetency from '@/store/useCompetency';
 import useStudent from '@/store/useStudent';
 import useStudentCompetency from '@/store/useStudentCompetency';
+import emitter from '@/store/emitter';
 
 export default {
   props: {
@@ -97,15 +98,7 @@ export default {
       return response && response.data;
     },
     studentCompetencies() {
-      const { area, students } = this.$route.query;
-      if (!(area && students)) {
-        return null;
-      }
-      const response = this.studentCompetencyStore.get({
-        limit: 0,
-        students,
-        content_area: area,
-      });
+      const response = this.getStudentCompetencies();
       return response && response.data;
     },
     rows() {
@@ -129,7 +122,28 @@ export default {
     },
   },
 
+  mounted() {
+    emitter.on('update-store', this.updateStore);
+  },
+
+  unmounted() {
+    emitter.off('update-store', this.updateStore);
+  },
+
   methods: {
+    getStudentCompetencies(force) {
+      const { area, students } = this.$route.query;
+      if (!(area && students)) {
+        return null;
+      }
+      const options = {
+        limit: 0,
+        students,
+        content_area: area,
+      };
+      return this.studentCompetencyStore.get(options, force);
+    },
+
     getCellClass(row, student, value) {
       const selected = this.selected || {};
       const { Code } = row;
@@ -170,6 +184,19 @@ export default {
 
     getDisplayName(student) {
       return Student.getDisplayName(student);
+    },
+
+    updateStore(options) {
+      let changed = false;
+      const { StudentID, CompetencyID } = options;
+      if (StudentID && this.students.find((s) => s.ID === StudentID)) {
+        changed = true;
+      } else if (CompetencyID && this.competencies.find((c) => c.ID === CompetencyID)) {
+        changed = true;
+      }
+      if (changed) {
+        this.getStudentCompetencies(true);
+      }
     },
   },
 };

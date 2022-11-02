@@ -4,6 +4,9 @@ export default defineStore('ui', {
   state: () => ({ alert: null, confirm: null }),
   actions: {
     alert(options) {
+      if (options && !options.actions) {
+        options.actions = [{ text: 'Close', click: () => this.alert(null) }];
+      }
       this.$state.alert = options;
     },
     confirm(body, action) {
@@ -20,7 +23,14 @@ export default defineStore('ui', {
             text: 'Confirm',
             click: () => {
               this.alert(null);
-              action();
+              Promise.resolve(action()).catch((error) => {
+                let message = `Uncaught exception: ${error.message}`;
+                if (error.response && error.response.data.message) {
+                  message = `The server returned an error: ${error.response.data.message}`;
+                }
+                this.alert({ body: message });
+                throw error;
+              });
             },
           },
         ],

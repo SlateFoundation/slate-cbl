@@ -105,4 +105,14 @@ class StudentCompetenciesRequestHandler extends RecordsRequestHandler
 
         return $conditions;
     }
+
+
+    protected static function onBeforeRecordDestroyed(ActiveRecord $StudentCompetency)
+    {
+        if (count($StudentCompetency->getDemonstrationsData()) > 0) {
+            return static::throwInvalidRequestError('Portfolios must be emptied before they are deleted');
+        }
+
+        return parent::onBeforeRecordDestroyed($StudentCompetency);
+    }
 }

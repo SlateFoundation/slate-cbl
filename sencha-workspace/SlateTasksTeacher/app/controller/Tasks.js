@@ -110,9 +110,10 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
         formPanel: 'slate-cbl-tasks-taskform',
         clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
         statusField: 'slate-cbl-tasks-taskform ^ window field[name=Status]',
-        submitBtn: 'slate-cbl-tasks-taskform ^ window button[action=submit]',
         archiveBtn: 'slate-cbl-tasks-taskform ^ window button[action=archive]',
-        unarchiveBtn: 'slate-cbl-tasks-taskform ^ window button[action=un-archive]'
+        unarchiveBtn: 'slate-cbl-tasks-taskform ^ window button[action=un-archive]',
+        sharedTaskCheckbox: 'slate-cbl-tasks-taskform ^ window checkboxfield[name=Status]',
+        submitBtn: 'slate-cbl-tasks-taskform ^ window button[action=submit]'
     },
 
 
@@ -239,7 +240,8 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
     },
 
     onClonedTaskSelect: function(clonedTaskField, clonedTask) {
-        var formPanel = this.getFormPanel(),
+        var me = this,
+            formPanel = me.getFormPanel(),
             form = formPanel.getForm(),
             fields = clonedTask.getFields(),
             fieldsLength = fields.length, fieldIndex = 0, field, fieldName, formField;
@@ -265,6 +267,7 @@ Ext.define('SlateTasksTeacher.controller.Tasks', {
                     }
                 }
 
+                me.getSharedTaskCheckbox().setValue(false);  // expressly uncheck after selecting to clone a task
                 formPanel.setLoading(false);
             },
             failure: function(savedTask, operation) {

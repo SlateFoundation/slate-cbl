@@ -58,16 +58,32 @@
         :show-hidden-items="showHiddenItems"
         :level="portfolio.Level"
         :visible-levels="visibleLevels"
-        @refetch="$emit('refetch')"
+        @refetch="refetch"
       />
+      <div
+        v-if="canDelete"
+        class="p-3 bg-cbl-level-10"
+      >
+        <button
+          class="btn btn-danger"
+          @click="startDelete"
+        >
+          Delete Porfolio
+        </button>
+      </div>
     </b-collapse>
   </div>
 </template>
 
 <script>
+import { mapStores } from 'pinia';
 import SkillDemos from './SkillDemos.vue';
 import SkillProgress from './SkillProgress.vue';
 import StatFigure from './StatFigure.vue';
+
+import emitter from '@/store/emitter';
+import useStudentCompetency from '@/store/useStudentCompetency';
+import useUi from '@/store/useUi';
 
 export default {
   components: {
@@ -100,12 +116,13 @@ export default {
   },
 
   computed: {
+    ...mapStores(useStudentCompetency, useUi),
     ready() {
       return this.demonstrations.length !== 0;
     },
 
     stats() {
-      const { BaselineRating, growth } = this.portfolio;
+      const { BaselineRating, demonstrationsAverage, growth } = this.portfolio;
       const format = (value) => {
         if (Number.isNaN(value) || value === undefined || value === null) {
           return '—';
@@ -115,7 +132,7 @@ export default {
       return {
         baseline: format(BaselineRating),
         growth: format(growth),
-        performance: format(BaselineRating + growth),
+        performance: format(demonstrationsAverage),
       };
     },
 
@@ -152,6 +169,11 @@ export default {
       });
       return Object.values(out);
     },
+
+    canDelete() {
+      const nextLevel = this.visibleLevels.find((level) => level > this.portfolio.Level);
+      return this.preppedSkillDemos.length === 0 && !nextLevel;
+    },
   },
 
   methods: {
@@ -159,6 +181,16 @@ export default {
       // take alpha as decimal, e.g., .5 for 50%
       // append it to the level color as a hex/255
       return `background-color: #${this.levelColor}${Math.round(alpha * 255).toString(16)}`;
+    },
+    refetch() {
+      const { StudentID, CompetencyID } = this.portfolio;
+      emitter.emit('update-store', { StudentID, CompetencyID });
+    },
+    startDelete() {
+      let body = `Are you sure you want to delete Year ${this.portfolio.Level}?`;
+      body += ' This cannot be undone.';
+      const action = () => this.studentCompetencyStore.delete(this.portfolio.ID).then(this.refetch);
+      this.uiStore.confirm(body, action);
     },
   },
 };
