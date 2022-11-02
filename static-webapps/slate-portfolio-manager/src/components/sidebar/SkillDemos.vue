@@ -12,7 +12,7 @@
       style="gap: 0.25rem;"
     >
       <li
-        v-if="skillDemos.length == 0"
+        v-if="skillDemos.length === 0"
         class="text-black-50 font-italic m-0"
       >
         No demonstrations recorded
@@ -35,6 +35,18 @@
 import { format } from 'date-fns';
 
 import SkillDemoCard from './SkillDemoCard.vue';
+
+const displayDemoDate = (demo) => {
+  const { Modified, Created } = demo;
+  if (!Modified && !Created) {
+    return '';
+  }
+  const date = new Date(1000 * (Modified || Created));
+  if (date.getFullYear() !== new Date().getFullYear()) {
+    return format(date, 'MMM d, yyyy');
+  }
+  return format(date, 'MMM d');
+};
 
 export default {
   components: {
@@ -80,7 +92,7 @@ export default {
           return;
         }
         const {
-          DemonstratedLevel, ID, DemonstrationID, DemonstrationDate, Override,
+          DemonstratedLevel, ID, DemonstrationID, Override,
         } = demo;
         const demonstration = this.demonstrations.find((d) => d.ID === DemonstrationID);
         const { Comments } = demonstration;
@@ -93,7 +105,7 @@ export default {
           DemonstratedLevel,
           Context,
           Comments,
-          date: format(new Date(DemonstrationDate), 'MMM d'),
+          date: displayDemoDate(demo),
           effective,
           Override,
           class: ['demonstration-skill', effective ? '-effective' : '-ineffective'],

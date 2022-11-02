@@ -97,6 +97,15 @@ export default ({
           return response;
         });
       },
+
+      delete(identifier) {
+        const url = makeUrl(`/${identifier}/delete`);
+        Vue.set(this.$state.loading, url, true);
+        return client.post(url).then((response) => {
+          Vue.delete(this.$state.loading, url);
+          return response;
+        });
+      },
     },
   });
 };
