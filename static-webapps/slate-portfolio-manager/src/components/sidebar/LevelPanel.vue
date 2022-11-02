@@ -122,7 +122,7 @@ export default {
     },
 
     stats() {
-      const { BaselineRating, growth } = this.portfolio;
+      const { BaselineRating, demonstrationsAverage, growth } = this.portfolio;
       const format = (value) => {
         if (Number.isNaN(value) || value === undefined || value === null) {
           return '—';
@@ -132,7 +132,7 @@ export default {
       return {
         baseline: format(BaselineRating),
         growth: format(growth),
-        performance: format(BaselineRating + growth),
+        performance: format(demonstrationsAverage),
       };
     },
 
