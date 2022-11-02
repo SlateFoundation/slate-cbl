@@ -20,6 +20,7 @@ module.exports = {
     'vue',
   ],
   rules: {
+    'no-param-reassign': 0,
     'no-unused-vars': [
       'error',
       {

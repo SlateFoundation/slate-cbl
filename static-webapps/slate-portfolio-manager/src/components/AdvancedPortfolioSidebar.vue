@@ -55,7 +55,6 @@
           :skills-by-i-d="skillsByID"
           :show-hidden-items="showHiddenItems"
           :visible-levels="visibleLevels"
-          @refetch="refetch"
         />
       </li>
     </ol>
@@ -66,6 +65,7 @@
 import { mapStores } from 'pinia';
 
 import Student from '@/models/Student';
+import emitter from '@/store/emitter';
 import useCompetency from '@/store/useCompetency';
 import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useStudentCompetency from '@/store/useStudentCompetency';
@@ -85,7 +85,7 @@ export default {
   },
 
   data() {
-    return { showHiddenItems: false };
+    return { showHiddenItems: true };
   },
 
   computed: {
@@ -176,9 +176,21 @@ export default {
       return response && response.data;
     },
   },
+
+  mounted() {
+    emitter.on('update-store', this.updateStore);
+  },
+
+  unmounted() {
+    emitter.off('update-store', this.updateStore);
+  },
+
   methods: {
-    refetch() {
-      return this.studentCompetencyStore.refetch(this.studentCompetencyDetailsUrl);
+    updateStore(options) {
+      const { studentID, competencyID } = options;
+      if (studentID === this.selected.student.ID || competencyID === this.selected.competency.ID) {
+        this.studentCompetencyStore.refetch(this.studentCompetencyDetailsUrl);
+      }
     },
   },
 };
