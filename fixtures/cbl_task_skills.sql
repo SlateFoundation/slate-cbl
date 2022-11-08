@@ -128,6 +128,10 @@ INSERT INTO `cbl_task_skills` VALUES (113,'Slate\\CBL\\Tasks\\TaskSkill','2021-0
 INSERT INTO `cbl_task_skills` VALUES (114,'Slate\\CBL\\Tasks\\TaskSkill','2021-05-29 14:14:45',5,NULL,NULL,45,38);
 INSERT INTO `cbl_task_skills` VALUES (115,'Slate\\CBL\\Tasks\\TaskSkill','2021-05-29 14:14:45',5,NULL,NULL,45,39);
 INSERT INTO `cbl_task_skills` VALUES (116,'Slate\\CBL\\Tasks\\TaskSkill','2021-05-29 14:14:45',5,NULL,NULL,45,119);
+INSERT INTO `cbl_task_skills` VALUES (117,'Slate\\CBL\\Tasks\\TaskSkill','2022-10-28 16:16:28',3,NULL,NULL,47,61);
+INSERT INTO `cbl_task_skills` VALUES (118,'Slate\\CBL\\Tasks\\TaskSkill','2022-10-28 16:16:28',3,NULL,NULL,47,62);
+INSERT INTO `cbl_task_skills` VALUES (119,'Slate\\CBL\\Tasks\\TaskSkill','2022-10-28 16:17:07',3,NULL,NULL,46,61);
+INSERT INTO `cbl_task_skills` VALUES (120,'Slate\\CBL\\Tasks\\TaskSkill','2022-10-28 16:17:07',3,NULL,NULL,46,62);
 
 
 CREATE TABLE `history_cbl_task_skills` (

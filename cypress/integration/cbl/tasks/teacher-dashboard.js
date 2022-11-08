@@ -8,6 +8,7 @@ describe('CBL / Tasks / Teacher Dashboard', () => {
     // authenticate as 'teacher' user
     beforeEach(() => {
         cy.intercept('GET', '/cbl/tasks/!(\\*)*?(\\?*)').as('taskData');
+        cy.intercept('GET', '/cbl/tasks?(\\?*)').as('tasksData');
         cy.intercept('GET', '/cbl/student-tasks?(\\?*)').as('studentTasksData');
         cy.intercept('POST', '/cbl/tasks/save?(\\?*)').as('taskSave');
         cy.intercept('GET', '/cbl/dashboards/tasks/teacher/bootstrap').as('getBootstrapData');
@@ -207,4 +208,59 @@ describe('CBL / Tasks / Teacher Dashboard', () => {
                 expect(taskOne.length, 'only one "ELA Task One"').to.eq(1);
             });
     });
+
+    it('Verify options in task form clone field', () => {
+
+        // open teacher task  dashboard
+        cy.visit('/cbl/dashboards/tasks/teacher#ELA-001/all');
+
+        // wait for data to load
+        cy.wait('@getBootstrapData');
+        cy.get('@getBootstrapData.all').should('have.length', 1);
+
+        // verify student tasks load
+        cy.wait('@studentTasksData').then(({ response }) => {
+            expect(response.body.success).to.eq(true);
+            expect(response.statusCode).to.eq(200);
+        });
+        cy.get('@studentTasksData.all').should('have.length', 1);
+
+        // click create button
+        cy.extGet('slate-tasks-teacher-dashboard button[action=create]')
+            .click();
+
+        // wait for window to transition open
+        cy.extGet('slate-window')
+            .should('not.have.class', 'x-hidden-clip')
+            .within(() => {
+
+                // click cloned task selector
+                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]')
+                    .should('exist')
+                    .within(() => {
+
+                        cy.root()
+                            .get('.x-form-arrow-trigger')
+                            .click()
+
+                    });
+
+                // wait for options to load
+                cy.wait('@tasksData');
+
+                // verify shared task exists in picker dropdown
+                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
+                    .then(selector => selector.getPicker().el.dom)
+                    .contains('.x-boundlist-item', 'A Shared Task')
+                    .should('exist');
+
+                // verify unshared task does not exist in picker dropdown
+                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
+                    .then(selector => selector.getPicker().el.dom)
+                    .contains('.x-boundlist-item', 'An UnShared Task')
+                    .should('not.exist');
+            });
+    });
+
+
 });
