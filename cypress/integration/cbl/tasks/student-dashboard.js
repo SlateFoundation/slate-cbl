@@ -8,48 +8,27 @@ dayjs.extend(isBetween);
 
 // load sample database before tests
 before(() => {
-    cy.resetDatabase();
-
-    // create time relative tasks
-    cy.loginAs('teacher');
 
     // create some relatively due tasks
-    cy.request('POST', `/cbl/tasks/save?format=json`, {
-        data: [{
+    _loadTaskData([{
             Title: 'Test Task (Due Today)',
-            DueDate: today.format('YYYY-MM--DD'),
-            SectionID: 2,
-            Assignees: {
-                'student': true
-            }
+            DueDate: today.format('MM/DD/YYYY'),
         }, {
             Title: 'Test Task (Due This Week)',
-            DueDate: today.add(5, 'day').format('YYYY-MM--DD'),
-            SectionID: 2,
-            Assignees: {
-                'student': true
-            }
+            DueDate: today.add(5, 'day').format('MM/DD/YYYY'),
         }, {
             Title: 'Test Task (Due Recently)',
-            DueDate: today.subtract(9, 'day').format('YYYY-MM--DD'),
-            SectionID: 2,
-            Assignees: {
-                'student': true
-            }
+            DueDate: today.subtract(9, 'day').format('MM/DD/YYYY'),
         }, {
             Title: 'Test Task (Due Next Week)',
-            DueDate: today.add(8, 'day').format('YYYY-MM--DD'),
-            SectionID: 2,
-            Assignees: {
-                'student': true
-            }
+            DueDate: today.add(8, 'day').format('MM/DD/YYYY'),
         }, {
             Title: 'Test Task (No Due Date)',
-            SectionID: 2,
-            Assignees: {
-                'student': true
-            }
-        }, {
+        }]);
+
+    // create an archived task
+    cy.request('POST', `/cbl/tasks/save?format=json`, {
+        data: [{
             Title: 'Test Task (Archived)',
             SectionID: 2,
             Status: 'archived',
@@ -68,6 +47,80 @@ beforeEach(() => {
     cy.intercept('GET', '/cbl/todos/\\*groups?(\\?*)').as('studentTodosData');
     cy.intercept('POST', '/cbl/student-tasks/save?(\\?*)').as('studentTasksSave');
 });
+
+function _loadTaskData(taskData) {
+    cy.resetDatabase();
+
+    cy.intercept('GET', '/cbl/student-tasks?(\\?*)').as('studentTasksData');
+    cy.intercept('POST', '/cbl/tasks/save?(\\?*)').as('taskSave');
+
+    // create time relative tasks
+    cy.loginAs('teacher');
+
+    // open student demonstrations dashboard
+    cy.visit('/cbl/dashboards/tasks/teacher#ELA-001/all');
+
+    // wait for data load
+    cy.wait('@studentTasksData');
+
+    for (var i = 0; i < taskData.length; i++) {
+
+        let task = taskData[i];
+
+        // click create button
+        cy.extGet('slate-tasks-teacher-dashboard button[action=create]')
+            .click();
+
+        // wait for window to transition open
+        cy.extGet('slate-window')
+            .should('not.have.class', 'x-hidden-clip')
+            .within(() => {
+                cy.root()
+                    .contains('.x-title-text', 'Create Task');
+
+                cy.root()
+                    .contains('.x-form-item-label-text', 'Title');
+
+                cy.root()
+                    .get('.x-form-field[name="Title"]')
+                    .click();
+
+                cy.focused()
+                    .should('have.attr', 'name', 'Title')
+                    .type(task['Title']);
+
+                if (task['DueDate']) {
+                    cy.root()
+                        .get('.x-form-field[name="DueDate"]')
+                        .click();
+
+                    cy.focused()
+                        .should('have.attr', 'name', 'DueDate')
+                        .type(task['DueDate']);
+                }
+
+                cy.extGet('slate-cbl-assigneesfield')
+                    .find('.x-form-arrow-trigger')
+                    .click({ force: true}) // force click if element isn't visible
+
+                cy.extGet('slate-cbl-assigneesfield', { component: true })
+                    .then(selector => selector.getPicker().el.dom)
+                    .contains('.x-boundlist-item', 'Student Slate')
+                    .click({ force: true});
+
+                cy.root()
+                    .get('.x-form-field[name="Instructions"]')
+                    .click();
+
+                cy.extGet('button[action=submit]')
+                    .click();
+
+                // wait for data save
+                cy.wait('@taskSave');
+
+            });
+    }
+}
 
 function _visitDashboardAsStudent(student = 'student') {
     cy.loginAs(`${student}`);
@@ -461,6 +514,9 @@ describe('CBL / Tasks / Student Dashboard: Timeline Filters', () => {
             .find('.slate-tasktree-item')
             .each($task => {
                 const date = dayjs($task.find('.slate-tasktree-date').text(), 'MMM, DD YYYY');
+                console.log('first date below should be after second one');
+                console.log(date);
+                console.log(endOfThisWeek);
                 const isAfter = date.isAfter(endOfThisWeek);
                 expect(isAfter, 'Due date after this week').to.be.true;
             });

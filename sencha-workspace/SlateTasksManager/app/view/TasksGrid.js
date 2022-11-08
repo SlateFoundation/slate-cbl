@@ -42,10 +42,19 @@ Ext.define('SlateTasksManager.view.TasksGrid', {
               arrowVisible: false,
               arrowAlign: 'top',
               menu: {
+                  title: {
+                      text: 'Options',
+                      iconCls: 'x-fa fa-gear'
+                  },
                   items: [{
                       xtype: 'menucheckitem',
                       text: 'include archived',
                       name: 'include-archived',
+                      value: false,
+                  }, {
+                      xtype: 'menucheckitem',
+                      text: 'include unshared',
+                      name: 'include-unshared',
                       value: false,
                   }]
               }

@@ -49,6 +49,12 @@ class TasksRequestHandler extends \RecordsRequestHandler
             if ($archivedConditions != false) {
                 $conditions[] = $archivedConditions;
             }
+
+            $includeUnshared = isset($_REQUEST['include_unshared']) && ($_REQUEST['include_unshared']=='true');
+
+            if (!$includeUnshared) {
+                $conditions['Status'] = 'shared';
+            }
         }
 
         return $conditions;

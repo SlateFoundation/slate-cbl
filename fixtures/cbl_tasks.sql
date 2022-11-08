@@ -69,6 +69,8 @@ INSERT INTO `cbl_tasks` VALUES (42,'Slate\\CBL\\Tasks\\ExperienceTask','2021-05-
 INSERT INTO `cbl_tasks` VALUES (43,'Slate\\CBL\\Tasks\\ExperienceTask','2021-05-29 14:11:20',5,NULL,NULL,7,'M.6 Step.4: Formal Style','m.6_step.4--formal_style',39,NULL,NULL,'shared','Complete and submit the assessment.',NULL,NULL,'Studio');
 INSERT INTO `cbl_tasks` VALUES (44,'Slate\\CBL\\Tasks\\ExperienceTask','2021-05-29 14:12:54',5,NULL,NULL,7,'M.6 Step.5: Conclusion','m.6_step.5--conclusion',39,NULL,NULL,'shared','Complete and submit the assessment.',NULL,NULL,'Studio');
 INSERT INTO `cbl_tasks` VALUES (45,'Slate\\CBL\\Tasks\\ExperienceTask','2021-05-29 14:14:45',5,NULL,NULL,7,'Reflection: Who Gets a Vote','reflection--who_gets_a_vote',NULL,21,NULL,'shared','Complete the reflection google form.',NULL,NULL,'Studio');
+INSERT INTO `cbl_tasks` VALUES (46,'Slate\\CBL\\Tasks\\ExperienceTask','2022-10-28 16:13:22',3,'2022-10-28 16:17:07',3,0,'A Shared Task','a_shared_task',NULL,NULL,NULL,'shared','A shared task that will be used to test the filtering of shared and unshared tasks',NULL,NULL,'Studio');
+INSERT INTO `cbl_tasks` VALUES (47,'Slate\\CBL\\Tasks\\ExperienceTask','2022-10-28 16:16:28',3,NULL,NULL,1,'An Unshared Task','an_unshared_task',NULL,NULL,NULL,'private','An unshared task that will be used to test the filtering of shared and unshared tasks',NULL,NULL,'Studio');
 
 
 CREATE TABLE `history_cbl_tasks` (
