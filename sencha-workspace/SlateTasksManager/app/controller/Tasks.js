@@ -155,15 +155,15 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     onArchiveCheckboxClick: function(checkbox) {
         var tasksStore = this.getTasksStore();
 
-        tasksStore.getProxy().extraParams.include_archived = checkbox.checked;
-        tasksStore.load();
+        tasksStore.getProxy().setExtraParam('include_archived', checkbox.checked);
+        tasksStore.load({ page: 1 });
     },
 
     onIncludeUnsharedCheckboxClick: function(checkbox) {
         var tasksStore = this.getTasksStore();
 
-        tasksStore.getProxy().extraParams.include_unshared = checkbox.checked;
-        tasksStore.load();
+        tasksStore.getProxy().setExtraParam('include_unshared', checkbox.checked);
+        tasksStore.load({ page: 1 });
     },
 
     onGridFilterChange(store, filters) {
