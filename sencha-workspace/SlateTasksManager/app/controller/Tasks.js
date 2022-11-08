@@ -51,6 +51,7 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         clearFiltersButton: 'slate-tasks-manager-grid button[action=clear-filters]',
 
         clonedTaskField: 'slate-cbl-tasks-taskform field[name=ClonedTaskID]',
+        sharedTaskCheckbox: 'slate-cbl-tasks-taskform ^ window checkboxfield[name=Status]',
 
         taskWindow: {
             autoCreate: true,
@@ -102,6 +103,9 @@ Ext.define('SlateTasksManager.controller.Tasks', {
         'slate-tasks-manager-grid menucheckitem[name=include-archived]': {
             checkChange: 'onArchiveCheckboxClick'
         },
+        'slate-tasks-manager-grid menucheckitem[name=include-unshared]': {
+            checkChange: 'onIncludeUnsharedCheckboxClick'
+        },
         'slate-cbl-tasks-taskform ^ window button[action=archive]' :{
             click: 'onArchiveClick'
         },
@@ -151,8 +155,15 @@ Ext.define('SlateTasksManager.controller.Tasks', {
     onArchiveCheckboxClick: function(checkbox) {
         var tasksStore = this.getTasksStore();
 
-        tasksStore.getProxy().extraParams.include_archived = checkbox.checked;
-        tasksStore.load();
+        tasksStore.getProxy().setExtraParam('include_archived', checkbox.checked);
+        tasksStore.load({ page: 1 });
+    },
+
+    onIncludeUnsharedCheckboxClick: function(checkbox) {
+        var tasksStore = this.getTasksStore();
+
+        tasksStore.getProxy().setExtraParam('include_unshared', checkbox.checked);
+        tasksStore.load({ page: 1 });
     },
 
     onGridFilterChange(store, filters) {
@@ -551,11 +562,15 @@ Ext.define('SlateTasksManager.controller.Tasks', {
             }),
             taskEditor = taskWindow.getMainView();
 
+        // re-enable shared checkbox if it has been previously disabled during task creation
+        me.getSharedTaskCheckbox().setDisabled(false);
+
         if (!task || (typeof task == 'object' && !task.isModel)) {
             task = me.getTaskModel().create(Ext.apply({
                 SectionID: 0,
                 Status: 'shared'
             }, task || null));
+            me.getSharedTaskCheckbox().setDisabled(true);
         }
 
         taskWindow.animateTarget = animateTarget;

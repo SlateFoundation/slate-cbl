@@ -95,6 +95,9 @@ export default ({
         return client.post(url, data).then((response) => {
           Vue.delete(this.$state.loading, url);
           return response;
+        }).catch((e) => {
+          Vue.delete(this.$state.loading, url);
+          throw e;
         });
       },
 
@@ -104,6 +107,9 @@ export default ({
         return client.post(url).then((response) => {
           Vue.delete(this.$state.loading, url);
           return response;
+        }).catch((e) => {
+          Vue.delete(this.$state.loading, url);
+          throw e;
         });
       },
     },
