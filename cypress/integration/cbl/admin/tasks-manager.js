@@ -177,6 +177,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // wait for data load
         cy.wait('@tasksData');
+
         // verify create button not disabled
         cy.extGet('slate-tasks-manager-appheader button[action=create]')
             .should('exist')
