@@ -95,6 +95,9 @@ export default {
           DemonstratedLevel, ID, DemonstrationID, Override,
         } = demo;
         const demonstration = this.demonstrations.find((d) => d.ID === DemonstrationID);
+        if (!demonstration) {
+          return;
+        }
         const { Comments } = demonstration;
         let { Context } = demonstration;
         if (demonstration.StudentTask) {
