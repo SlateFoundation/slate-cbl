@@ -386,7 +386,7 @@ describe('CBL / Admin / Tasks Manager', () => {
             })
             .then(() => {
                 let sortedItems = reverse ? items.slice().sort().reverse() : items.slice().sort();
-                cy.expect(items, 'Items are sorted in '+(reverse?'reverse ':'')+'alphbetical order.').to.deep.equal(sortedItems);
+                cy.expect(items, 'Column '+col+': items are sorted in '+(reverse?'reverse ':'')+'alphbetical order.').to.deep.equal(sortedItems);
             });
     };
 });
