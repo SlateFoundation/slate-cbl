@@ -211,6 +211,7 @@ describe('CBL / Admin / Tasks Manager', () => {
     });
 
     it('Verify grid filtering for shared and unshared tasks', () => {
+
         // verify that shared task is present
         cy.extGet('slate-tasks-manager')
             .should('exist')
@@ -298,4 +299,94 @@ describe('CBL / Admin / Tasks Manager', () => {
                     .should('not.exist');
             });
     });
+
+    it('Verify sorting by column', () => {
+
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/tasks/manager');
+
+        // verify app loaded
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.slate-apptitle', 'Task Library');
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        cy.extGet('slate-tasks-manager')
+            .should('not.have.class', 'is-loading');
+
+        // check title column sorting
+        _clickColumnHeader(0);
+        _checkColumnSort(0);
+
+        _clickColumnHeader(0);
+        _checkColumnSort(0, true);
+
+        // check parent task column sorting
+        _clickColumnHeader(1);
+        _checkColumnSort(1)
+
+        _clickColumnHeader(1);
+        _checkColumnSort(1, true)
+
+        // check experience type column sorting
+        _clickColumnHeader(2);
+        _checkColumnSort(2);
+
+        _clickColumnHeader(2);
+        _checkColumnSort(2, true);
+
+        // check skills column sorting
+        _clickColumnHeader(3);
+        _checkColumnSort(3);
+
+        _clickColumnHeader(3);
+        _checkColumnSort(3, true);
+
+        // check created by column sorting
+        _clickColumnHeader(4);
+        _checkColumnSort(4);
+
+        _clickColumnHeader(4);
+        _checkColumnSort(4, true);
+
+        // check date created sorting
+        _clickColumnHeader(5);
+        _checkColumnSort(5);
+
+        _clickColumnHeader(5);
+        _checkColumnSort(5, true);
+
+    });
+
+    function _clickColumnHeader(col) {
+        // click title column header
+        cy.get('.x-grid-header-ct', { log: false })
+            .find('.x-column-header')
+            .eq(col)
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+        cy.extGet('slate-tasks-manager')
+            .should('not.have.class', 'is-loading');
+    };
+
+    function _checkColumnSort(col, reverse) {
+        let items = [];
+        cy.get('.x-grid-row', { log: false })
+            .each(($row) => {
+                cy.wrap($row, { log: false })
+                    .find('.x-grid-cell-inner', { log: false })
+                    .eq(col, { log: false })
+                    .should(($div) => {
+                        items.push($div.text().trim());
+                    })
+            })
+            .then(() => {
+                let sortedItems = reverse ? items.slice().sort().reverse() : items.slice().sort();
+                cy.expect(items, 'Items are sorted in '+(reverse?'reverse ':'')+'alphbetical order.').to.deep.equal(sortedItems);
+            });
+    };
 });
