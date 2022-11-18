@@ -194,8 +194,7 @@ describe('CBL / Admin / Tasks Manager', () => {
             .should('have.class', 'x-btn-disabled')
 
         // select the first grid cell
-        cy.root()
-            .get('.x-grid-cell-inner')
+        cy.get('.x-grid-cell-inner')
             .first()
             .click();
 
