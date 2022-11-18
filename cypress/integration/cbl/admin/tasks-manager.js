@@ -210,6 +210,45 @@ describe('CBL / Admin / Tasks Manager', () => {
             .should('not.have.class', 'x-btn-disabled')
     });
 
+    it('Verify grid filtering for archived tasks', () => {
+
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/tasks/manager');
+
+        // verify app loaded
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.slate-apptitle', 'Task Library');
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify that the archived task is not present
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.x-grid-cell-inner', 'An Archived Task')
+            .should('not.exist');
+
+        // open options menu
+        cy.extGet('slate-tasks-manager-grid button[action=settings]')
+            .should('exist')
+            .click();
+
+        // check 'include unshared' option
+        cy.extGet('slate-tasks-manager-grid menucheckitem[name=include-archived]')
+            .should('exist')
+            .click();
+
+        // wait for data load after option change
+        cy.wait('@tasksData');
+
+        // verify that archived task is present
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.x-grid-cell-inner', 'An Archived Task')
+            .should('exist');
+    });
+
     it('Verify grid filtering for shared and unshared tasks', () => {
 
         // open student demonstrations dashboard
