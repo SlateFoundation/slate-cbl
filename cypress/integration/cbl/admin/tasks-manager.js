@@ -301,6 +301,7 @@ describe('CBL / Admin / Tasks Manager', () => {
     });
 
     it('Verify sorting by column', () => {
+        var items;
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/tasks/manager');
@@ -316,64 +317,183 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.extGet('slate-tasks-manager')
             .should('not.have.class', 'is-loading');
 
-        // check title column sorting
-        _clickColumnHeader(0);
-        _checkColumnSort(0);
 
-        _clickColumnHeader(0);
-        _checkColumnSort(0, true);
-
-        // check parent task column sorting
-        _clickColumnHeader(1);
-        _checkColumnSort(1)
-
-        _clickColumnHeader(1);
-        _checkColumnSort(1, true)
-
-        // check experience type column sorting
-        _clickColumnHeader(2);
-        _checkColumnSort(2);
-
-        _clickColumnHeader(2);
-        _checkColumnSort(2, true);
-
-        // check skills column sorting
-        _clickColumnHeader(3);
-        _checkColumnSort(3);
-
-        _clickColumnHeader(3);
-        _checkColumnSort(3, true);
-
-        // check created by column sorting
-        _clickColumnHeader(4);
-        _checkColumnSort(4);
-
-        _clickColumnHeader(4);
-        _checkColumnSort(4, true);
-
-        // check date created sorting
-        _clickColumnHeader(5);
-        _checkColumnSort(5);
-
-        _clickColumnHeader(5);
-        _checkColumnSort(5, true);
-
-    });
-
-    function _clickColumnHeader(col) {
-        // click title column header
+        /** Title column */
+        // click title column header to sort alphabetically
         cy.get('.x-grid-header-ct', { log: false })
-            .find('.x-column-header')
-            .eq(col)
+            .contains('.x-column-header', 'Title')
             .click();
 
         // wait for data load
         cy.wait('@tasksData');
-        cy.extGet('slate-tasks-manager')
-            .should('not.have.class', 'is-loading');
-    };
 
-    function _checkColumnSort(col, reverse) {
+        // verify the sort order icon in column header
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Title')
+            .should('have.class', 'x-column-header-sort-ASC')
+
+        // verify column is sorted in alphabetical order
+        items = _getColumnValues(0);
+        cy.expect(items, 'Title column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+
+        // click title column header to reverse sort
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Title')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify the sort order icon in column header
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Title')
+            .should('have.class', 'x-column-header-sort-DESC')
+
+        // verify column is sorted in reverse alphabetical order
+        items = _getColumnValues(0);
+        cy.expect(items, 'Title column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+
+
+        /** Parent Task column */
+        // click Parent Task column header to sort alphabetically
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Subtask of')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in alphabetical order
+        items = _getColumnValues(1);
+        cy.expect(items, 'Parent Task column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+
+        // click Parent Task column header to reverse sort
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Subtask of')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in reverse alphabetical order
+        items = _getColumnValues(1);
+        cy.expect(items, 'Parent Task column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+
+
+        /** Experience Type column */
+        // click Experience Type column header to sort alphabetically
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Type of Exp.')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in alphabetical order
+        items = _getColumnValues(2);
+        cy.expect(items, 'Experience Type column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+
+        // click Experience Type column header to reverse sort
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Type of Exp.')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in reverse alphabetical order
+        items = _getColumnValues(2);
+        cy.expect(items, 'Experience Type column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+
+
+        /** Skills column */
+        // click Skills column header to sort alphabetically
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Skills')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in alphabetical order
+        items = _getColumnValues(3);
+        cy.expect(items, 'Skills column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+
+        // click Skills column header to reverse sort
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Skills')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in reverse alphabetical order
+        items = _getColumnValues(3);
+        cy.expect(items, 'Skills column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+
+
+        /** Creator column */
+        // click Creator column header to sort alphabetically
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Created by')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in alphabetical order
+        items = _getColumnValues(4);
+        cy.expect(items, 'Creator column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+
+        // click Creator column header to reverse sort
+        cy.get('.x-grid-header-ct', { log: false })
+            .contains('.x-column-header', 'Created by')
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in reverse alphabetical order
+        items = _getColumnValues(4);
+        cy.expect(items, 'Creator column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+
+
+        /** Creation Date column */
+        // click Creation Date column header to sort alphabetically (access by index rather than text)
+        cy.get('.x-grid-header-ct', { log: false })
+            .find('.x-column-header .x-column-header-text', { log: false })
+            .eq(5, { log: false })
+            .then(($div) => {
+                expect($div).to.have.text('Created')
+            })
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in alphabetical order
+        items = _getColumnValues(5);
+        cy.expect(items, 'Creation Date column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+
+        // click Creation Date column header to reverse sort
+        cy.get('.x-grid-header-ct', { log: false })
+            .find('.x-column-header .x-column-header-text', { log: false })
+            .eq(5, { log: false })
+            .then(($div) => {
+                expect($div).to.have.text('Created')
+            })
+            .click();
+
+        // wait for data load
+        cy.wait('@tasksData');
+
+        // verify column is sorted in reverse alphabetical order
+        items = _getColumnValues(5);
+        cy.expect(items, 'Creation Date column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+
+    });
+
+    function _getColumnValues(col) {
         let items = [];
         cy.get('.x-grid-row', { log: false })
             .each(($row) => {
@@ -384,9 +504,6 @@ describe('CBL / Admin / Tasks Manager', () => {
                         items.push($div.text().trim());
                     })
             })
-            .then(() => {
-                let sortedItems = reverse ? items.slice().sort().reverse() : items.slice().sort();
-                cy.expect(items, 'Column '+col+': items are sorted in '+(reverse?'reverse ':'')+'alphbetical order.').to.deep.equal(sortedItems);
-            });
+        return items;
     };
 });
