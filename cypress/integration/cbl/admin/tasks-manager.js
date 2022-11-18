@@ -212,6 +212,17 @@ describe('CBL / Admin / Tasks Manager', () => {
 
     it('Verify grid filtering for shared and unshared tasks', () => {
 
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/tasks/manager');
+
+        // verify app loaded
+        cy.extGet('slate-tasks-manager')
+            .should('exist')
+            .contains('.slate-apptitle', 'Task Library');
+
+        // wait for data load
+        cy.wait('@tasksData');
+
         // verify that shared task is present
         cy.extGet('slate-tasks-manager')
             .should('exist')
