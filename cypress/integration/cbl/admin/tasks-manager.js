@@ -334,7 +334,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in alphabetical order
         items = _getColumnValues(0);
-        cy.expect(items, 'Title column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+        cy.expect(items, 'Title column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
 
         // click title column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -351,7 +351,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in reverse alphabetical order
         items = _getColumnValues(0);
-        cy.expect(items, 'Title column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+        cy.expect(items, 'Title column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
 
 
         /** Parent Task column */
@@ -365,7 +365,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in alphabetical order
         items = _getColumnValues(1);
-        cy.expect(items, 'Parent Task column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+        cy.expect(items, 'Parent Task column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
 
         // click Parent Task column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -377,7 +377,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in reverse alphabetical order
         items = _getColumnValues(1);
-        cy.expect(items, 'Parent Task column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+        cy.expect(items, 'Parent Task column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
 
 
         /** Experience Type column */
@@ -391,7 +391,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in alphabetical order
         items = _getColumnValues(2);
-        cy.expect(items, 'Experience Type column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+        cy.expect(items, 'Experience Type column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
 
         // click Experience Type column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -403,7 +403,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in reverse alphabetical order
         items = _getColumnValues(2);
-        cy.expect(items, 'Experience Type column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+        cy.expect(items, 'Experience Type column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
 
 
         /** Skills column */
@@ -417,7 +417,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in alphabetical order
         items = _getColumnValues(3);
-        cy.expect(items, 'Skills column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+        cy.expect(items, 'Skills column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
 
         // click Skills column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -429,7 +429,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in reverse alphabetical order
         items = _getColumnValues(3);
-        cy.expect(items, 'Skills column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+        cy.expect(items, 'Skills column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
 
 
         /** Creator column */
@@ -443,7 +443,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in alphabetical order
         items = _getColumnValues(4);
-        cy.expect(items, 'Creator column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+        cy.expect(items, 'Creator column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
 
         // click Creator column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -455,7 +455,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in reverse alphabetical order
         items = _getColumnValues(4);
-        cy.expect(items, 'Creator column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+        cy.expect(items, 'Creator column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
 
 
         /** Creation Date column */
@@ -473,7 +473,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in alphabetical order
         items = _getColumnValues(5);
-        cy.expect(items, 'Creation Date column: items are sorted in alphbetical order.').to.deep.equal(items.slice().sort());
+        cy.expect(items, 'Creation Date column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
 
         // click Creation Date column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -489,7 +489,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
         // verify column is sorted in reverse alphabetical order
         items = _getColumnValues(5);
-        cy.expect(items, 'Creation Date column: items are sorted in reverse alphbetical order.').to.deep.equal(items.slice().sort().reverse());
+        cy.expect(items, 'Creation Date column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
 
     });
 
