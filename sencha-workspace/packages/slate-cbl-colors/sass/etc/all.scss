@@ -115,7 +115,7 @@ $level-colors-dark: dynamic(
                 );
             }
 
-            .cbl-level-progress-bar {
+            .cbl-level-progress-complete {
                 @include background-image(linear-gradient(
                     $color,
                     $color-dark
