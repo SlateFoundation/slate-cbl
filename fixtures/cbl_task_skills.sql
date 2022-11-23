@@ -132,6 +132,8 @@ INSERT INTO `cbl_task_skills` VALUES (117,'Slate\\CBL\\Tasks\\TaskSkill','2022-1
 INSERT INTO `cbl_task_skills` VALUES (118,'Slate\\CBL\\Tasks\\TaskSkill','2022-10-28 16:16:28',3,NULL,NULL,47,62);
 INSERT INTO `cbl_task_skills` VALUES (119,'Slate\\CBL\\Tasks\\TaskSkill','2022-10-28 16:17:07',3,NULL,NULL,46,61);
 INSERT INTO `cbl_task_skills` VALUES (120,'Slate\\CBL\\Tasks\\TaskSkill','2022-10-28 16:17:07',3,NULL,NULL,46,62);
+INSERT INTO `cbl_task_skills` VALUES (121,'Slate\\CBL\\Tasks\\TaskSkill','2022-11-17 21:00:26',3,NULL,NULL,48,61);
+INSERT INTO `cbl_task_skills` VALUES (122,'Slate\\CBL\\Tasks\\TaskSkill','2022-11-17 21:00:26',3,NULL,NULL,48,62);
 
 
 CREATE TABLE `history_cbl_task_skills` (
