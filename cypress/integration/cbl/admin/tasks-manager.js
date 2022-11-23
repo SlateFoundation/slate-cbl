@@ -93,6 +93,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
                 cy.root()
                     .get('.x-form-field[name="Title"]')
+                    .should('have.value', 'Created Test Task Title')
                     .click();
 
                 cy.focused()
