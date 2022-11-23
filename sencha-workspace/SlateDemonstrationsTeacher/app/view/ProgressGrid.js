@@ -96,7 +96,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                 '<tr class="cbl-grid-progress-row" data-competency="{competency.ID}">',
                                     '<tpl for="students">',
                                         '<td class="cbl-grid-progress-cell cbl-level-progress-meter" data-student="{student.ID}">',
-                                            '<span class="cbl-grid-progress-bar cbl-level-progress-bar" style="width: 0%"></span>',
+                                            '<span class="cbl-grid-progress-bar cbl-level-progress-bar cbl-level-progress-complete" style="width: 0%"></span>',
                                             '<span class="cbl-grid-progress-level cbl-level-progress-label"></span>',
                                             '<span class="cbl-grid-progress-percent cbl-level-progress-percent"></span>',
                                             '<span class="cbl-grid-progress-average cbl-level-progress-average"></span>',
