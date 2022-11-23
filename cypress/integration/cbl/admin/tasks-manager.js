@@ -2,7 +2,7 @@ describe('CBL / Admin / Tasks Manager', () => {
 
     // load sample database before tests
     before(() => {
-        // cy.resetDatabase();
+        cy.resetDatabase();
     });
 
     // authenticate as 'teacher' user
