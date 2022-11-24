@@ -43,17 +43,12 @@ class TasksRequestHandler extends \RecordsRequestHandler
             $conditions['SectionID'] = $Section->ID;
             $filterObjects['Section'] = $Section;
         } else {
-            $includeArchived = isset($_REQUEST['include_archived']) && ($_REQUEST['include_archived']=='true');
-            $archivedConditions = static::getArchivedConditions($includeArchived);
-
-            if ($archivedConditions != false) {
-                $conditions[] = $archivedConditions;
-            }
-
             $includeUnshared = isset($_REQUEST['include_unshared']) && ($_REQUEST['include_unshared']=='true');
+            $includeArchived = isset($_REQUEST['include_archived']) && ($_REQUEST['include_archived']=='true');
+            $statusConditions = static::getStatusConditions($includeUnshared, $includeArchived);
 
-            if (!$includeUnshared) {
-                $conditions['Status'] = 'shared';
+            if ($statusConditions != false) {
+                $conditions[] = $statusConditions;
             }
         }
 
@@ -163,37 +158,33 @@ class TasksRequestHandler extends \RecordsRequestHandler
         }
     }
 
-    public static function getArchivedConditions($includeArchived) {
+    public static function getStatusConditions($includeUnshared, $includeArchived) {
         $recordClass = static::$recordClass;
 
-        if ($includeArchived) {
-
-            if ($_SESSION['User']->hasAccountLevel('Administrator')) {
-                return false;  // User is admin and wants archived: no conditions
+        if ($_SESSION['User']->hasAccountLevel('Administrator')) {
+            if ($includeUnshared && $includeArchived) {
+                return false;
             } else {
-                return sprintf('
-                    (%1$s.Status = "shared"
-                    OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u)
-                    OR (%1$s.Status = "archived" AND %1$s.CreatorID = %2$u))
-                ',
-                    $recordClass::getTableAlias(),
-                    $GLOBALS['Session']->PersonID
-                );
-            }
+                $statusCondition = '%1$s.Status = "shared"';
 
+                if ($includeUnshared) {
+                    $statusCondition .= ' OR %1$s.Status = "private"';
+                }
+                if ($includeArchived) {
+                    $statusCondition .= ' OR %1$s.Status = "archived"';
+                }
+                return sprintf($statusCondition, $recordClass::getTableAlias());
+            }
         } else {
+                $statusCondition = '%1$s.Status = "shared"';
 
-            if ($_SESSION['User']->hasAccountLevel('Administrator')) {
-                return $recordClass::getTableAlias().'.Status != "archived"';
-            } else {
-                return sprintf('
-                    (%1$s.Status = "shared"
-                    OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u))
-                ',
-                    $recordClass::getTableAlias(),
-                    $GLOBALS['Session']->PersonID
-                );
-            }
+                if ($includeUnshared) {
+                    $statusCondition .= ' OR (%1$s.Status = "private" AND %1$s.CreatorID = %2$u)';
+                }
+                if ($includeArchived) {
+                    $statusCondition .= ' OR (%1$s.Status = "archived" AND %1$s.CreatorID = %2$u)';
+                }
+                return sprintf($statusCondition, $recordClass::getTableAlias(), $GLOBALS['Session']->PersonID);
         }
     }
 }
