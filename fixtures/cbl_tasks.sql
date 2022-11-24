@@ -71,6 +71,7 @@ INSERT INTO `cbl_tasks` VALUES (44,'Slate\\CBL\\Tasks\\ExperienceTask','2021-05-
 INSERT INTO `cbl_tasks` VALUES (45,'Slate\\CBL\\Tasks\\ExperienceTask','2021-05-29 14:14:45',5,NULL,NULL,7,'Reflection: Who Gets a Vote','reflection--who_gets_a_vote',NULL,21,NULL,'shared','Complete the reflection google form.',NULL,NULL,'Studio');
 INSERT INTO `cbl_tasks` VALUES (46,'Slate\\CBL\\Tasks\\ExperienceTask','2022-10-28 16:13:22',3,'2022-10-28 16:17:07',3,0,'A Shared Task','a_shared_task',NULL,NULL,NULL,'shared','A shared task that will be used to test the filtering of shared and unshared tasks',NULL,NULL,'Studio');
 INSERT INTO `cbl_tasks` VALUES (47,'Slate\\CBL\\Tasks\\ExperienceTask','2022-10-28 16:16:28',3,NULL,NULL,1,'An Unshared Task','an_unshared_task',NULL,NULL,NULL,'private','An unshared task that will be used to test the filtering of shared and unshared tasks',NULL,NULL,'Studio');
+INSERT INTO `cbl_tasks` VALUES (48,'Slate\\CBL\\Tasks\\ExperienceTask','2022-11-17 21:00:26',3,'2022-11-17 21:00:35',3,1,'An Archived Task','an_archived_task',NULL,46,NULL,'archived','An archived task that will be used to test the filtering of archived tasks',NULL,NULL,'Studio');
 
 
 CREATE TABLE `history_cbl_tasks` (

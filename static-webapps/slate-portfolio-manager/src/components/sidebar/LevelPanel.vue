@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="ready"
-    :class="`level-panel mb-2 cbl-level-${portfolio.Level}`"
-  >
+  <div :class="`level-panel mb-2 cbl-level-${portfolio.Level}`">
     <b-container
       v-b-toggle="collapseId"
       class="bg-cbl-level-50"
@@ -117,9 +114,6 @@ export default {
 
   computed: {
     ...mapStores(useStudentCompetency, useUi),
-    ready() {
-      return this.demonstrations.length !== 0;
-    },
 
     stats() {
       const { BaselineRating, demonstrationsAverage, growth } = this.portfolio;
