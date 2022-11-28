@@ -45,10 +45,12 @@
     </div>
 
     <ol class="list-unstyled">
-      <li>
+      <li
+        v-for="Level in availableLevels"
+        :key="Level"
+      >
         <new-level-panel
-          v-if="nextLevel"
-          :Level="nextLevel"
+          :Level="Level"
           :StudentID="studentCompetencyDetails.Student.ID"
           :CompetencyID="studentCompetencyDetails.Competency.ID"
         />
@@ -71,6 +73,7 @@
 
 <script>
 import { mapStores } from 'pinia';
+import { range } from 'lodash';
 
 import Student from '@/models/Student';
 import emitter from '@/store/emitter';
@@ -101,9 +104,9 @@ export default {
   computed: {
     ...mapStores(useCompetency, useDemonstration, useStudentCompetency, useDemonstrationSkill),
 
-    nextLevel() {
-      const maxLevel = Math.max(...this.visibleLevels);
-      return maxLevel < this.$site.maxLevel ? maxLevel + 1 : null;
+    availableLevels() {
+      const maxLevel = Math.max(this.$site.minLevel - 1, ...this.visibleLevels);
+      return range(maxLevel + 1, this.$site.maxLevel + 1).reverse();
     },
 
     visibleLevels() {
