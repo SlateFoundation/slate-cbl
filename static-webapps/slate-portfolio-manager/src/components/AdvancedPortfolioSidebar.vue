@@ -45,6 +45,14 @@
     </div>
 
     <ol class="list-unstyled">
+      <li>
+        <new-level-panel
+          v-if="nextLevel"
+          :Level="nextLevel"
+          :StudentID="studentCompetencyDetails.Student.ID"
+          :CompetencyID="studentCompetencyDetails.Competency.ID"
+        />
+      </li>
       <li
         v-for="portfolio in studentCompetencyDetails.data"
         :key="portfolio.ID"
@@ -71,9 +79,11 @@ import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useStudentCompetency from '@/store/useStudentCompetency';
 import useDemonstration from '@/store/useDemonstration';
 import LevelPanel from './sidebar/LevelPanel.vue';
+import NewLevelPanel from './sidebar/NewLevelPanel.vue';
 
 export default {
   components: {
+    NewLevelPanel,
     LevelPanel,
   },
 
@@ -90,6 +100,11 @@ export default {
 
   computed: {
     ...mapStores(useCompetency, useDemonstration, useStudentCompetency, useDemonstrationSkill),
+
+    nextLevel() {
+      const maxLevel = Math.max(...this.visibleLevels);
+      return maxLevel < this.$site.maxLevel ? maxLevel + 1 : null;
+    },
 
     visibleLevels() {
       const details = this.studentCompetencyDetails;

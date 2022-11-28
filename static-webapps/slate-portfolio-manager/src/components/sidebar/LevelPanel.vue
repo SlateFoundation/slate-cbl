@@ -13,7 +13,7 @@
             class="btn-unstyled d-flex"
           >
             <h3 class="h6 m-0">
-              Year {{ portfolio.Level }} <!-- TODO global property? -->
+              Year {{ portfolio.Level }}
             </h3>
           </button>
         </b-col>
@@ -100,7 +100,7 @@ export default {
     },
     portfolio: {
       type: Object,
-      default: () => ({}),
+      default: () => null,
     },
     demonstrations: {
       type: Array,
