@@ -1,5 +1,10 @@
 <template>
-  <div :class="`level-panel mb-2 cbl-level-${portfolio.Level}`">
+  <div
+    :class="wrapperClass"
+    @drop="drop"
+    @dragover.prevent
+    @dragenter.prevent
+  >
     <b-container
       v-b-toggle="collapseId"
       class="bg-cbl-level-50"
@@ -115,6 +120,13 @@ export default {
   computed: {
     ...mapStores(useStudentCompetency, useUi),
 
+    wrapperClass() {
+      return [
+        `level-panel mb-2 cbl-level-${this.portfolio.Level}`,
+        this.isDroppable && '-drop-zone',
+      ];
+    },
+
     stats() {
       const { BaselineRating, demonstrationsAverage, growth } = this.portfolio;
       const format = (value) => {
@@ -168,6 +180,11 @@ export default {
       const nextLevel = this.visibleLevels.find((level) => level > this.portfolio.Level);
       return this.preppedSkillDemos.length === 0 && !nextLevel;
     },
+
+    isDroppable() {
+      const { dragging } = this.uiStore;
+      return dragging && dragging.type === 'skill-demo';
+    },
   },
 
   methods: {
@@ -191,6 +208,12 @@ export default {
           throw e;
         });
       this.uiStore.confirm(body, action);
+    },
+    drop() {
+      const { type, action } = this.uiStore.$state.dragging || {};
+      if (type === 'move-skill-demo') {
+        action(this.portfolio.Level);
+      }
     },
   },
 };

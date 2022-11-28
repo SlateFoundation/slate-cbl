@@ -1,5 +1,9 @@
 <template>
-  <div :class="wrapperClass">
+  <div
+    :class="wrapperClass"
+    draggable="true"
+    @drag="drag"
+  >
     <div class="skill-demo__rating py-1 bg-cbl-level">
       <font-awesome-icon
         v-if="demo.Override"
@@ -102,6 +106,16 @@ export default {
       };
       this.uiStore.confirm(body, action);
     },
+    drag() {
+      const { ID } = this.demo;
+      const { level } = this;
+      this.uiStore.startDragging({
+        ID,
+        Level: level,
+        type: 'move-skill-demo',
+        action: this.setTargetLevel,
+      });
+    },
   },
 };
 </script>
@@ -143,6 +157,7 @@ export default {
 
     &__grabber {
       background-color: #eee;
+      cursor: pointer;
       flex: 1 1 0;
     }
 
