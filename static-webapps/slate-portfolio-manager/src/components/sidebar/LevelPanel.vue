@@ -183,7 +183,7 @@ export default {
 
     isDroppable() {
       const { dragging } = this.uiStore;
-      return dragging && dragging.type === 'skill-demo';
+      return dragging && dragging.type === 'move-skill-demo';
     },
   },
 

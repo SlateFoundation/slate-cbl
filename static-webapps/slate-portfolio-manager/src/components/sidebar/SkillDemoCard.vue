@@ -96,6 +96,10 @@ export default {
 
   methods: {
     setTargetLevel(TargetLevel) {
+      if (TargetLevel === this.level) {
+        // skill demo-card was dropped on current portfolio level
+        return;
+      }
       const { ID } = this.demo;
       const data = [{ ID, TargetLevel }];
       const body = `Are you sure you want to move this to level ${TargetLevel}?`;

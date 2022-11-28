@@ -39,13 +39,7 @@ body {
 }
 
 .level-panel.-drop-zone {
-  position: relative;
-  &:before {
-    background: green;
-    content: "";
-    display: block;
-    inset: 0;
-    position: absolute;
-    z-index: 1;
+  .btn-danger, .skill-demos {
+    display: none;
   }
 }
