@@ -19,7 +19,6 @@ Task : Title
 Task : DueDate
 Task : ExpirationDate
 Task : Instructions
-Task : Shared [course/school/public]
 Task : Status [private/shared/deleted]
 
 StudentTask : ExperienceType
