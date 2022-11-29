@@ -64,7 +64,7 @@
       />
       <div
         v-if="canDelete"
-        class="p-3 bg-cbl-level-10"
+        class="p-3 bg-cbl-level-10 level-panel__delete"
       >
         <button
           class="btn btn-danger"
@@ -121,9 +121,15 @@ export default {
     ...mapStores(useStudentCompetency, useUi),
 
     wrapperClass() {
+      const { Level } = this.portfolio;
+      const { dragging } = this.uiStore;
+      const isDroppable = dragging && dragging.type === 'move-skill-demo';
       return [
-        `level-panel mb-2 cbl-level-${this.portfolio.Level}`,
-        this.isDroppable && '-drop-zone',
+        `level-panel mb-2 cbl-level-${Level}`,
+        isDroppable && [
+          '-drop-zone',
+          dragging.Level === Level ? '-drag-source' : '-drag-target',
+        ],
       ];
     },
 
@@ -179,11 +185,6 @@ export default {
     canDelete() {
       const nextLevel = this.visibleLevels.find((level) => level > this.portfolio.Level);
       return this.preppedSkillDemos.length === 0 && !nextLevel;
-    },
-
-    isDroppable() {
-      const { dragging } = this.uiStore;
-      return dragging && dragging.type === 'move-skill-demo';
     },
   },
 

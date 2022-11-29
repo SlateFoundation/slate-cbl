@@ -39,7 +39,11 @@ body {
 }
 
 .level-panel.-drop-zone {
-  .btn-danger, .skill-demos {
+  .level-panel__delete, .skill-demos {
     display: none;
+  }
+  &.-drag-source {
+    filter: grayscale(0.75);
+    opacity: 0.5;
   }
 }
