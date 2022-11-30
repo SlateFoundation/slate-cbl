@@ -1,5 +1,10 @@
 <template>
-  <div :class="`level-panel mb-2 cbl-level-${portfolio.Level}`">
+  <div
+    :class="wrapperClass"
+    @drop="drop"
+    @dragover.prevent
+    @dragenter.prevent
+  >
     <b-container
       v-b-toggle="collapseId"
       class="bg-cbl-level-50"
@@ -13,7 +18,7 @@
             class="btn-unstyled d-flex"
           >
             <h3 class="h6 m-0">
-              Year {{ portfolio.Level }} <!-- TODO global property? -->
+              Year {{ portfolio.Level }}
             </h3>
           </button>
         </b-col>
@@ -59,7 +64,7 @@
       />
       <div
         v-if="canDelete"
-        class="p-3 bg-cbl-level-10"
+        class="p-3 bg-cbl-level-10 level-panel__delete"
       >
         <button
           class="btn btn-danger"
@@ -100,7 +105,7 @@ export default {
     },
     portfolio: {
       type: Object,
-      default: () => ({}),
+      default: () => null,
     },
     demonstrations: {
       type: Array,
@@ -114,6 +119,19 @@ export default {
 
   computed: {
     ...mapStores(useStudentCompetency, useUi),
+
+    wrapperClass() {
+      const { Level } = this.portfolio;
+      const { dragging } = this.uiStore;
+      const isDroppable = dragging && dragging.type === 'move-skill-demo';
+      return [
+        `level-panel mb-2 cbl-level-${Level}`,
+        isDroppable && [
+          '-drop-zone',
+          dragging.Level === Level ? '-drag-source' : '-drag-target',
+        ],
+      ];
+    },
 
     stats() {
       const { BaselineRating, demonstrationsAverage, growth } = this.portfolio;
@@ -191,6 +209,12 @@ export default {
           throw e;
         });
       this.uiStore.confirm(body, action);
+    },
+    drop() {
+      const { type, action } = this.uiStore.$state.dragging || {};
+      if (type === 'move-skill-demo') {
+        action(this.portfolio.Level);
+      }
     },
   },
 };

@@ -28,5 +28,8 @@ module.exports = {
         varsIgnorePattern: '^_',
       },
     ],
+    // The backend uses PascalCase for many variable names
+    'vue/prop-name-casing': 0,
+    'vue/attribute-hyphenation': 0,
   },
 };
