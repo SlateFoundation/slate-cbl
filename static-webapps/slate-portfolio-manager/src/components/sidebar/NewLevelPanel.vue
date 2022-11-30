@@ -55,7 +55,7 @@ export default {
           BaselineRating: null,
         },
       ];
-      const url = 'cbl/student-competencies/save';
+      const url = '/cbl/student-competencies/save';
       const refetch = () => emitter.emit('update-store', { StudentID, CompetencyID });
       client.post(url, { data }).then(refetch);
     },
