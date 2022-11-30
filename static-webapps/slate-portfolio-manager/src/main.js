@@ -39,6 +39,14 @@ Vue.use(BootstrapVue);
 window.Vue = Vue;
 
 Vue.use(PiniaVuePlugin);
+
+Vue.prototype.$site = {
+  // per-site configuration
+  // TODO get this from back end
+  minLevel: 9,
+  maxLevel: 12,
+};
+
 const pinia = createPinia();
 
 new Vue({

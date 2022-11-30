@@ -104,11 +104,6 @@ Ext.define('Slate.cbl.model.tasks.Task', {
             clonable: true
         },
         {
-            name: 'Shared',
-            type: 'string',
-            allowNull: true
-        },
-        {
             name: 'Status',
             type: 'string'
         },
