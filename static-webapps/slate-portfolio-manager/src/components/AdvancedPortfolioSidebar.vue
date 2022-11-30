@@ -46,6 +46,16 @@
 
     <ol class="list-unstyled">
       <li
+        v-for="Level in availableLevels"
+        :key="Level"
+      >
+        <new-level-panel
+          :Level="Level"
+          :StudentID="studentCompetencyDetails.Student.ID"
+          :CompetencyID="studentCompetencyDetails.Competency.ID"
+        />
+      </li>
+      <li
         v-for="portfolio in studentCompetencyDetails.data"
         :key="portfolio.ID"
       >
@@ -63,6 +73,7 @@
 
 <script>
 import { mapStores } from 'pinia';
+import { range } from 'lodash';
 
 import Student from '@/models/Student';
 import emitter from '@/store/emitter';
@@ -71,9 +82,11 @@ import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useStudentCompetency from '@/store/useStudentCompetency';
 import useDemonstration from '@/store/useDemonstration';
 import LevelPanel from './sidebar/LevelPanel.vue';
+import NewLevelPanel from './sidebar/NewLevelPanel.vue';
 
 export default {
   components: {
+    NewLevelPanel,
     LevelPanel,
   },
 
@@ -90,6 +103,11 @@ export default {
 
   computed: {
     ...mapStores(useCompetency, useDemonstration, useStudentCompetency, useDemonstrationSkill),
+
+    availableLevels() {
+      const maxLevel = Math.max(this.$site.minLevel - 1, ...this.visibleLevels);
+      return range(maxLevel + 1, this.$site.maxLevel + 1).reverse();
+    },
 
     visibleLevels() {
       const details = this.studentCompetencyDetails;

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 export default defineStore('ui', {
-  state: () => ({ alert: null, confirm: null }),
+  state: () => ({ alert: null, confirm: null, dragging: null }),
   actions: {
     alert(options) {
       if (options && !options.actions) {
@@ -35,6 +35,14 @@ export default defineStore('ui', {
           },
         ],
       });
+    },
+    startDragging(options) {
+      this.$state.dragging = options;
+      document.addEventListener(
+        'dragend',
+        () => { this.$state.dragging = null; },
+        { once: true },
+      );
     },
   },
 });
