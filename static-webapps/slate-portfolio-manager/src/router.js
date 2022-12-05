@@ -1,5 +1,4 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import { createRouter, createWebHashHistory} from 'vue-router';
 
 import AdvancedPortfolioManager from './views/AdvancedPortfolioManager.vue';
 
@@ -7,6 +6,9 @@ const routes = [
   { path: '/', component: AdvancedPortfolioManager },
 ];
 
-Vue.use(VueRouter);
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes,
+})
 
-export default new VueRouter({ routes });
+export default router

@@ -164,11 +164,11 @@ export default {
       this.hoveredCell.domCache = cell;
 
       if (cell) {
-        Vue.set(this.hoveredCell, 'student', cell.dataset.student);
-        Vue.set(this.hoveredCell, 'competency', cell.dataset.competency);
+        this.hoveredCell.student. = cell.dataset.student
+        this.hoveredCell.competency = cell.dataset.competency;
       } else {
-        Vue.set(this.hoveredCell, 'student', '');
-        Vue.set(this.hoveredCell, 'competency', '');
+        this.hoveredCell.student = ''
+        this.hoveredCell.competency = ''
       }
     },
 
@@ -202,6 +202,7 @@ export default {
 };
 </script>
 
+<!--
 <style lang="scss" scoped>
   @import '~bootstrap/scss/functions.scss';
   @import '~bootstrap/scss/variables.scss';
@@ -330,3 +331,4 @@ export default {
     white-space: nowrap;
   }
 </style>
+-->
