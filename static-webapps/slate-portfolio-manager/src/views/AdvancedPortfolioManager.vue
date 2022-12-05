@@ -22,12 +22,10 @@
         shadow
         width="375px"
       >
-        <template #default="{ hide }">
-          <advanced-portfolio-sidebar
-            :selected="selected"
-            @hide="hide"
-          />
-        </template>
+        <advanced-portfolio-sidebar
+          :selected="selected"
+          @hide="hide"
+        />
       </b-sidebar>
     </b-container>
   </div>

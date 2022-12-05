@@ -164,7 +164,7 @@ export default {
       this.hoveredCell.domCache = cell;
 
       if (cell) {
-        this.hoveredCell.student. = cell.dataset.student
+        this.hoveredCell.student = cell.dataset.student
         this.hoveredCell.competency = cell.dataset.competency;
       } else {
         this.hoveredCell.student = ''
