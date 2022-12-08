@@ -1,26 +1,18 @@
 <template>
-  <div
-    v-if="authStore.user"
-    id="app"
-  >
-    <b-container
-      fluid
-      class="p-0"
-    >
-      <main>
-        <competency-dropdown />
-        <enrollments-grid
-          :selected="selected"
-          @select="handleSelect"
+  <div v-if="authStore.user" id="app">
+    <main>
+      <competency-dropdown />
+      <enrollments-grid
+        :selected="selected"
+        @select="handleSelect"
         />
-      </main>
-      <slate-sidebar v-model="visible">
-        <advanced-portfolio-sidebar
-          :selected="selected"
-          @hide="visible=null"
+    </main>
+    <slate-sidebar v-model="visible">
+      <advanced-portfolio-sidebar
+        :selected="selected"
+        @hide="visible=null"
         />
-      </slate-sidebar>
-    </b-container>
+    </slate-sidebar>
   </div>
 </template>
 
