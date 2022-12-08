@@ -18,7 +18,6 @@ Ext.define('Slate.cbl.field.TaskSelector', {
         selectOnTab: false
     },
 
-
     store: {
         model: 'Slate.cbl.model.tasks.Task',
         proxy: {
@@ -27,6 +26,7 @@ Ext.define('Slate.cbl.field.TaskSelector', {
             include: ['Creator']
         },
         remoteSort: true,
+        pageSize: 0,
         sorters: [{
             property: 'Created',
             direction: 'DESC'
