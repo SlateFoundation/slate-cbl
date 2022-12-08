@@ -2,7 +2,7 @@ Ext.define('Slate.cbl.field.TaskSelector', {
     extend: 'Slate.cbl.field.ClearableSelector',
     xtype: 'slate-cbl-taskselector',
     requires: [
-        'Slate.cbl.store.tasks.Tasks'
+        'Slate.cbl.model.tasks.Task'
     ],
 
 
@@ -20,7 +20,7 @@ Ext.define('Slate.cbl.field.TaskSelector', {
 
 
     store: {
-        type: 'slate-cbl-tasks',
+        model: 'Slate.cbl.model.tasks.Task',
         proxy: {
             type: 'slate-cbl-tasks',
             summary: true,
