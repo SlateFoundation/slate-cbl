@@ -14,19 +14,12 @@
           @select="handleSelect"
         />
       </main>
-      <b-sidebar
-        id="sidebar"
-        v-model="visible"
-        no-header
-        right
-        shadow
-        width="375px"
-      >
+      <slate-sidebar v-model="visible">
         <advanced-portfolio-sidebar
           :selected="selected"
-          @hide="hide"
+          @hide="visible=null"
         />
-      </b-sidebar>
+      </slate-sidebar>
     </b-container>
   </div>
 </template>
@@ -35,6 +28,7 @@
 import { isEqual } from 'lodash';
 import { mapStores } from 'pinia';
 
+import SlateSidebar from '@/components/SlateSidebar.vue'
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
 import CompetencyDropdown from '@/components/CompetencyDropdown.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
@@ -47,6 +41,7 @@ export default {
     AdvancedPortfolioSidebar,
     CompetencyDropdown,
     EnrollmentsGrid,
+    SlateSidebar,
   },
 
   computed: {

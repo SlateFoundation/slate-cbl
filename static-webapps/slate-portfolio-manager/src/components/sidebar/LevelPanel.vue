@@ -1,80 +1,65 @@
 <template>
-  <div
+  <v-expansion-panels v-model="open"
     :class="wrapperClass"
     @drop="drop"
     @dragover.prevent
     @dragenter.prevent
   >
-    <b-container
-      v-b-toggle="collapseId"
-      class="bg-cbl-level-50"
-    >
-      <b-row
-        class="py-2 align-items-center"
-      >
-        <b-col>
-          <button
-            v-b-toggle.collapse-1
-            class="btn-unstyled d-flex"
-          >
-            <h3 class="h6 m-0">
+    <v-expansion-panel value="only">
+      <v-expansion-panel-title class="bg-cbl-level-50">
+        <v-row>
+          <v-col class="align-center">
+            <h3 class="h6 mb-0">
               Year {{ portfolio.Level }}
             </h3>
-          </button>
-        </b-col>
-        <b-col cols="4">
-          <skill-progress :value="portfolio.progress" />
-        </b-col>
-      </b-row>
-    </b-container>
+          </v-col>
+          <v-col cols="4">
+            <v-progress-linear
+              :model-value="50"
+              height="16"
+              bg-color="#e9ecef"
+              color="var(--cbl-level-color)"
+              style="--v-border-opacity: 1;border-radius: 4px; border: 1px solid gray"
+            />
+          </v-col>
+        </v-row>
+        <template v-slot:actions />
+      </v-expansion-panel-title>
 
-    <b-collapse
-      :id="collapseId"
-      visible
-    >
-      <b-container class="bg-cbl-level-25">
-        <b-row class="text-center py-2">
-          <b-col>
-            <stat-figure label="Baseline">
-              {{ stats.baseline }}
-            </stat-figure>
-          </b-col>
-          <b-col>
-            <stat-figure label="Performance">
-              {{ stats.performance }}
-            </stat-figure>
-          </b-col>
-          <b-col>
-            <stat-figure label="Growth">
-              {{ stats.growth }}
-            </stat-figure>
-          </b-col>
-        </b-row>
-      </b-container>
+      <v-expansion-panel-text>
+        <div class="bg-cbl-level-25 justify-space-around pa-2 d-flex text-center">
+          <stat-figure label="Baseline">
+            {{ stats.baseline }}
+          </stat-figure>
+          <stat-figure label="Performance">
+            {{ stats.performance }}
+          </stat-figure>
+          <stat-figure label="Growth">
+            {{ stats.growth }}
+          </stat-figure>
+        </div>
 
-      <skill-demos
-        v-for="skillDemo in preppedSkillDemos"
-        :key="skillDemo.SkillID"
-        :demonstrations="demonstrations"
-        v-bind="skillDemo"
-        :show-hidden-items="showHiddenItems"
-        :level="portfolio.Level"
-        :visible-levels="visibleLevels"
-        @refetch="refetch"
-      />
-      <div
-        v-if="canDelete"
-        class="p-3 bg-cbl-level-10 level-panel__delete"
-      >
-        <button
-          class="btn btn-danger"
-          @click="startDelete"
+        <skill-demos
+          v-for="skillDemo in preppedSkillDemos"
+          :key="skillDemo.SkillID"
+          :demonstrations="demonstrations"
+          v-bind="skillDemo"
+          :show-hidden-items="showHiddenItems"
+          :level="portfolio.Level"
+          :visible-levels="visibleLevels"
+          @refetch="refetch"
+        />
+        <div
+          v-if="canDelete"
+          class="pa-3 text-center bg-cbl-level-10 level-panel__delete"
         >
-          Delete Porfolio
-        </button>
-      </div>
-    </b-collapse>
-  </div>
+          <v-btn color="error" @click="startDelete">
+            Delete Porfolio
+          </v-btn>
+        </div>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>
 
 <script>
@@ -115,6 +100,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+
+  data() {
+    return { open: "only" }
   },
 
   computed: {
@@ -219,3 +208,18 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+::v-deep .v-expansion-panel-text__wrapper {
+  padding: 0;
+}
+
+.stat-figures {
+  display: flex;
+  justify-content: center;
+}
+
+.level-panel {
+  --v-theme-overlay-multiplier: 0;
+}
+</style>

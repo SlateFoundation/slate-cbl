@@ -2,12 +2,13 @@
   <div
     v-if="studentCompetencyDetails"
     :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': isLoading }]"
+    style="width: 375px;"
   >
     <!-- TODO: break all this up -->
 
-    <header class="p-3">
-      <b-row class="mb-2">
-        <b-col>
+    <header class="pa-3">
+      <v-row class="mb-2">
+        <v-col>
           <h1 class="h4 my-1">
             {{ studentName }}
           </h1>
@@ -15,33 +16,20 @@
             <b>{{ studentCompetencyDetails.Competency.Code }}:</b>
             {{ studentCompetencyDetails.Competency.Descriptor }}
           </h2>
-        </b-col>
-        <b-col sm="auto">
-          <b-button
-            class="mx-n2"
-            variant="link"
-            pill
-            @click="$emit('hide')"
-          >
-            <font-awesome-icon
-              icon="times"
-              class="text-muted"
-            />
-          </b-button>
-        </b-col>
-      </b-row>
+        </v-col>
+        <v-col sm="auto">
+          <v-btn @click="$emit('hide')">
+            <v-icon icon="fa:fa fa-times" />
+          </v-btn>
+        </v-col>
+      </v-row>
     </header>
 
     <div
       v-if="hasHiddenItems"
       class="bg-light mt-n2 mb-3 px-3 py-2"
     >
-      <b-form-checkbox
-        v-model="showHiddenItems"
-        switch
-      >
-        Show hidden items
-      </b-form-checkbox>
+      <v-checkbox v-model="showHiddenItems" label="Show hidden items" />
     </div>
 
     <ol class="list-unstyled">

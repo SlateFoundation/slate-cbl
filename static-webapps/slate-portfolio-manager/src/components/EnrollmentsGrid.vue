@@ -1,9 +1,10 @@
 <template>
-  <table
+  <v-table
     v-if="studentCompetencies && students && competencies"
     @mouseenter="highlightCells"
     @mouseleave="highlightCells"
     @mousemove="highlightCells"
+    density="compact"
   >
     <thead>
       <tr>
@@ -52,7 +53,7 @@
         </td>
       </tr>
     </tbody>
-  </table>
+  </v-table>
   <div v-else>
     Select a list of students and a content area to load enrollments dashboard
   </div>

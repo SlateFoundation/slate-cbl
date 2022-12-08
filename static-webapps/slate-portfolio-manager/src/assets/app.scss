@@ -22,6 +22,11 @@ body {
   padding: unset;
 }
 
+.list-unstyled {
+  padding-left: 0;
+  list-style: none;
+}
+
 @import "./colors.scss";
 @import "./appheader.scss";
 
@@ -46,4 +51,34 @@ body {
     filter: grayscale(0.75);
     opacity: 0.5;
   }
+}
+
+/* these were copied from bootstrap */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.h6, h6 {
+  font-size: 1rem;
+}
+.h5, h5 {
+  font-size: 1.25rem;
+}
+.h4, h4 {
+  font-size: 1.5rem;
+}
+.h3, h3 {
+  font-size: 1.75rem;
+}
+.h2, h2 {
+  font-size: 2rem;
+}
+.h1, h1 {
+  font-size: 2.5rem;
+}
+
+.text-muted {
+  color: #6c757d!important;
 }

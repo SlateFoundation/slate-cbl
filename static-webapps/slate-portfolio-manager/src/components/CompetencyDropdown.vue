@@ -5,27 +5,11 @@
     </div>
     <div>
       Competency Area
-      <select v-model="area">
-        <option
-          v-for="option in areaOptions"
-          :key="option.Code"
-          :value="option.Code"
-        >
-          {{ option.Title }}
-        </option>
-      </select>
+      <v-select v-model="area" :items="areaOptions" />
     </div>
     <div>
       Students
-      <select v-model="students">
-        <option
-          v-for="option in studentOptions"
-          :key="option.value"
-          :value="option.value"
-        >
-          {{ option.label }}
-        </option>
-      </select>
+      <v-select v-model="students" :items="studentOptions" />
     </div>
   </div>
 </template>
@@ -56,11 +40,17 @@ export default {
     students: routeParam('students'),
     areaOptions() {
       const response = this.contentAreaStore.get('?summary=true');
-      return response && response.data;
+      return response && response.data.map(({ Code, Title }) => ({
+        value: Code,
+        title: Title,
+      }));
     },
     studentOptions() {
       const response = this.studentListStore.get();
-      return response && response.data;
+      return response && response.data.map(({ label, value }) => ({
+        title: label,
+        value,
+      }));
     },
   },
 };
