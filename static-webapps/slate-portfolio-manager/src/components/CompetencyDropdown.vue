@@ -5,11 +5,17 @@
     </div>
     <div>
       Competency Area
-      <v-select v-model="area" :items="areaOptions" />
+      <v-select
+        v-model="area"
+        :items="areaOptions"
+      />
     </div>
     <div>
       Students
-      <v-select v-model="students" :items="studentOptions" />
+      <v-select
+        v-model="students"
+        :items="studentOptions"
+      />
     </div>
   </div>
 </template>

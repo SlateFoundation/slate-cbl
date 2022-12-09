@@ -1,3 +1,3 @@
-import AdvancedPortfolioManager from './AdvancedPortfolioManager.vue'
+import AdvancedPortfolioManager from './AdvancedPortfolioManager.vue';
 
-export default AdvancedPortfolioManager
+export default AdvancedPortfolioManager;

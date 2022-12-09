@@ -5,7 +5,10 @@
     @drag="drag"
   >
     <div class="skill-demo__rating py-1 bg-cbl-level">
-      <v-icon icon="fa:fa fa-check" v-if="demo.Override" />
+      <v-icon
+        v-if="demo.Override"
+        icon="fa:fa fa-check"
+      />
       <span v-else>{{ demo.DemonstratedLevel === 0 ? "M" : demo.DemonstratedLevel }}</span>
     </div>
     <div class="skill-demo__title">
@@ -16,12 +19,12 @@
       >
         <v-btn
           v-for="targetLevel in targetLevels"
+          :key="targetLevel"
           variant="plain"
           size="small"
-          :key="targetLevel"
           :title="`Move to level ${targetLevel}`"
-          @click="setTargetLevel(targetLevel)"
           class="pa-0"
+          @click="setTargetLevel(targetLevel)"
         >
           <v-icon
             :icon="`fa fa-chevron-circle-${targetLevel > level ? 'up' : 'down' }`"

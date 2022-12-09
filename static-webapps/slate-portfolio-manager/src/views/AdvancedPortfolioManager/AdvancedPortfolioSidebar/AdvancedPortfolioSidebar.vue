@@ -1,7 +1,7 @@
 <template>
   <slate-sidebar
-    v-model="visible"
     v-if="studentCompetencyDetails"
+    v-model="visible"
     :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': isLoading }]"
     style="width: 375px;"
   >
@@ -17,7 +17,10 @@
           </h2>
         </v-col>
         <v-col sm="auto">
-          <v-btn @click="$emit('hide')" variant="plain">
+          <v-btn
+            variant="plain"
+            @click="$emit('hide')"
+          >
             <v-icon icon="fa:fa fa-times" />
           </v-btn>
         </v-col>
@@ -28,7 +31,10 @@
       v-if="hasHiddenItems"
       class="bg-light mt-n2 mb-3 px-3 py-2"
     >
-      <v-checkbox v-model="showHiddenItems" label="Show hidden items" />
+      <v-checkbox
+        v-model="showHiddenItems"
+        label="Show hidden items"
+      />
     </div>
 
     <ol class="list-unstyled">

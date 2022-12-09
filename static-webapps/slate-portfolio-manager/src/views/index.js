@@ -1,5 +1,5 @@
-import AdvancedPortfolioManager from './AdvancedPortfolioManager'
+import AdvancedPortfolioManager from './AdvancedPortfolioManager';
 
 export default {
   AdvancedPortfolioManager,
-}
+};

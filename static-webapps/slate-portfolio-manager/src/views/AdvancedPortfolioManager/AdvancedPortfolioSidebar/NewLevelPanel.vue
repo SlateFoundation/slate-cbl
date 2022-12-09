@@ -7,9 +7,9 @@
         Year {{ Level }}
       </h3>
       <v-btn
-        @click="createLevel"
         size="small"
         color="success"
+        @click="createLevel"
       >
         Enroll
       </v-btn>

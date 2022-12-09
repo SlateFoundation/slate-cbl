@@ -1,3 +1,3 @@
-import AdvancedPortfolioSidebar from './AdvancedPortfolioSidebar.vue'
+import AdvancedPortfolioSidebar from './AdvancedPortfolioSidebar.vue';
 
-export default AdvancedPortfolioSidebar
+export default AdvancedPortfolioSidebar;

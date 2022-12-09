@@ -1,5 +1,6 @@
 <template>
-  <v-expansion-panels v-model="open"
+  <v-expansion-panels
+    v-model="open"
     :class="wrapperClass"
     @drop="drop"
     @dragover.prevent
@@ -23,7 +24,7 @@
             />
           </v-col>
         </v-row>
-        <template v-slot:actions />
+        <template #actions />
       </v-expansion-panel-title>
 
       <v-expansion-panel-text>
@@ -53,7 +54,10 @@
           v-if="canDelete"
           class="pa-3 text-center bg-cbl-level-10 level-panel__delete"
         >
-          <v-btn color="error" @click="startDelete">
+          <v-btn
+            color="error"
+            @click="startDelete"
+          >
             Delete Porfolio
           </v-btn>
         </div>
@@ -64,12 +68,12 @@
 
 <script>
 import { mapStores } from 'pinia';
-import SkillDemos from './SkillDemos.vue';
-import StatFigure from './StatFigure.vue';
 
 import emitter from '@/store/emitter';
 import useStudentCompetency from '@/store/useStudentCompetency';
 import useUi from '@/store/useUi';
+import StatFigure from './StatFigure.vue';
+import SkillDemos from './SkillDemos.vue';
 
 export default {
   components: {
@@ -101,7 +105,7 @@ export default {
   },
 
   data() {
-    return { open: "only" }
+    return { open: 'only' };
   },
 
   computed: {

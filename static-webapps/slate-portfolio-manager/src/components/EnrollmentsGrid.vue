@@ -1,10 +1,10 @@
 <template>
   <v-table
     v-if="studentCompetencies && students && competencies"
+    density="compact"
     @mouseenter="highlightCells"
     @mouseleave="highlightCells"
     @mousemove="highlightCells"
-    density="compact"
   >
     <thead>
       <tr>
@@ -165,11 +165,11 @@ export default {
       this.hoveredCell.domCache = cell;
 
       if (cell) {
-        this.hoveredCell.student = cell.dataset.student
+        this.hoveredCell.student = cell.dataset.student;
         this.hoveredCell.competency = cell.dataset.competency;
       } else {
-        this.hoveredCell.student = ''
-        this.hoveredCell.competency = ''
+        this.hoveredCell.student = '';
+        this.hoveredCell.competency = '';
       }
     },
 

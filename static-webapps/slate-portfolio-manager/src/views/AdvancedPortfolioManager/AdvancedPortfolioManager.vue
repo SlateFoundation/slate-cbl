@@ -1,16 +1,19 @@
 <template>
-  <div v-if="authStore.user" id="app">
+  <div
+    v-if="authStore.user"
+    id="app"
+  >
     <main>
       <competency-dropdown />
       <enrollments-grid
         :selected="selected"
         @select="handleSelect"
-        />
+      />
     </main>
     <advanced-portfolio-sidebar
       :selected="selected"
       @hide="visible=null"
-      />
+    />
   </div>
 </template>
 
@@ -18,11 +21,11 @@
 import { isEqual } from 'lodash';
 import { mapStores } from 'pinia';
 
-import AdvancedPortfolioSidebar from './AdvancedPortfolioSidebar';
 import CompetencyDropdown from '@/components/CompetencyDropdown.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
 import useConfig from '@/store/useConfig';
 import useAuth from '@/store/useAuth';
+import AdvancedPortfolioSidebar from './AdvancedPortfolioSidebar';
 
 export default {
   name: 'AdvancedPortfolioManager',

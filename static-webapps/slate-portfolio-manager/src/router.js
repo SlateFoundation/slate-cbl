@@ -1,8 +1,8 @@
-import { createRouter, createWebHashHistory} from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 import views from '@/views';
 
-const { AdvancedPortfolioManager } = views
+const { AdvancedPortfolioManager } = views;
 
 const routes = [
   { path: '/', component: AdvancedPortfolioManager },
@@ -11,6 +11,6 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
-})
+});
 
-export default router
+export default router;

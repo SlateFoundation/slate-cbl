@@ -1,6 +1,9 @@
 <template>
   <v-expand-x-transition>
-    <v-sheet class="slate-sidebar" elevation="6">
+    <v-sheet
+      class="slate-sidebar"
+      elevation="6"
+    >
       <slot />
     </v-sheet>
   </v-expand-x-transition>
@@ -12,7 +15,7 @@ export default {
     modelValue: Boolean,
   },
   emits: ['update:modelValue'],
-}
+};
 </script>
 
 <style>

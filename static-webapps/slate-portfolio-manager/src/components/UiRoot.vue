@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-dialog v-model="showAlert" v-if="alert">
+    <v-dialog
+      v-if="alert"
+      v-model="showAlert"
+    >
       <div class="d-flex justify-center">
         <v-card width="400">
           <v-card-text>
@@ -14,7 +17,7 @@
               variant="flat"
               :color="action.color"
               @click="action.click"
-              >
+            >
               {{ action.text }}
             </v-btn>
           </v-card-actions>
@@ -33,12 +36,11 @@ export default {
     ...mapStores(useUi),
     showAlert: {
       get() {
-        console.log(!!this.uiStore.$state.alert)
         return !!this.uiStore.$state.alert;
       },
       set(value) {
         if (!value) {
-          this.uiStore.alert(null)
+          this.uiStore.alert(null);
         }
       },
     },
