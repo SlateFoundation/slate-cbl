@@ -65,7 +65,6 @@
 <script>
 import { mapStores } from 'pinia';
 import SkillDemos from './SkillDemos.vue';
-import SkillProgress from './SkillProgress.vue';
 import StatFigure from './StatFigure.vue';
 
 import emitter from '@/store/emitter';
@@ -75,7 +74,6 @@ import useUi from '@/store/useUi';
 export default {
   components: {
     SkillDemos,
-    SkillProgress,
     StatFigure,
   },
 
