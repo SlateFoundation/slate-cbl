@@ -9,6 +9,7 @@ import { aliases, fa } from 'vuetify/iconsets/fa4'
 import App from './App.vue';
 import router from './router';
 import './assets/app.scss';
+import SlateSidebar from '@/components/SlateSidebar.vue'
 
 const pinia = createPinia()
 
@@ -28,6 +29,7 @@ createApp(App)
   .use(router)
   .use(pinia)
   .use(vuetify)
+  .component("SlateSidebar", SlateSidebar)
   .use({
     install(app) {
       app.config.globalProperties.$site = {

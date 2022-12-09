@@ -7,12 +7,10 @@
         @select="handleSelect"
         />
     </main>
-    <slate-sidebar v-model="visible">
-      <advanced-portfolio-sidebar
-        :selected="selected"
-        @hide="visible=null"
-        />
-    </slate-sidebar>
+    <advanced-portfolio-sidebar
+      :selected="selected"
+      @hide="visible=null"
+      />
   </div>
 </template>
 
@@ -20,7 +18,6 @@
 import { isEqual } from 'lodash';
 import { mapStores } from 'pinia';
 
-import SlateSidebar from '@/components/SlateSidebar.vue'
 import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
 import CompetencyDropdown from '@/components/CompetencyDropdown.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
@@ -33,23 +30,12 @@ export default {
     AdvancedPortfolioSidebar,
     CompetencyDropdown,
     EnrollmentsGrid,
-    SlateSidebar,
   },
 
   computed: {
     ...mapStores(useAuth, useConfig),
     selected() {
       return this.configStore.$state.enrollmentGridSelection;
-    },
-    visible: {
-      get() {
-        return !!this.selected;
-      },
-      set(value) {
-        if (!value) {
-          this.configStore.set('enrollmentGridSelection', null);
-        }
-      },
     },
   },
 

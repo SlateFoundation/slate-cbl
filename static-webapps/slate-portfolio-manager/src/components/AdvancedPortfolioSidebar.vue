@@ -1,11 +1,10 @@
 <template>
-  <div
+  <slate-sidebar
+    v-model="visible"
     v-if="studentCompetencyDetails"
     :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': isLoading }]"
     style="width: 375px;"
   >
-    <!-- TODO: break all this up -->
-
     <header class="pa-3">
       <v-row class="mb-2">
         <v-col>
@@ -18,7 +17,7 @@
           </h2>
         </v-col>
         <v-col sm="auto">
-          <v-btn @click="$emit('hide')">
+          <v-btn @click="$emit('hide')" variant="plain">
             <v-icon icon="fa:fa fa-times" />
           </v-btn>
         </v-col>
@@ -56,7 +55,7 @@
         />
       </li>
     </ol>
-  </div>
+  </slate-sidebar>
 </template>
 
 <script>
@@ -91,6 +90,17 @@ export default {
 
   computed: {
     ...mapStores(useCompetency, useDemonstration, useStudentCompetency, useDemonstrationSkill),
+
+    visible: {
+      get() {
+        return !!this.selected;
+      },
+      set(value) {
+        if (!value) {
+          this.configStore.set('enrollmentGridSelection', null);
+        }
+      },
+    },
 
     availableLevels() {
       const maxLevel = Math.max(this.$site.minLevel - 1, ...this.visibleLevels);
