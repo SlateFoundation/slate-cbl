@@ -21,6 +21,7 @@ export default {
 <style>
 .slate-sidebar {
   bottom: 0;
+  overflow-y: auto;
   position: fixed;
   right: 0;
   top: 0;

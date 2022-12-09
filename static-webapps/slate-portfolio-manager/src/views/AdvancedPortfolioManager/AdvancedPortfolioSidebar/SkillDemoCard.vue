@@ -23,7 +23,7 @@
           variant="plain"
           size="small"
           :title="`Move to level ${targetLevel}`"
-          class="pa-0"
+          class="btn-unstyled"
           @click="setTargetLevel(targetLevel)"
         >
           <v-icon
@@ -34,8 +34,11 @@
 
         <div class="skill-demo__grabber" />
 
-        <v-btn>
-          <v-icon icon="fa:fa fa-info-circle" />
+        <v-btn
+          variant="flat"
+          class="btn-unstyled"
+        >
+          <v-icon icon="fa:fa fa-info-circle text-orange" />
         </v-btn>
       </div>
     </div>
@@ -125,6 +128,7 @@ export default {
 
 <style lang="scss" scoped>
   .skill-demo {
+    align-items: center;
     gap: .5rem;
 
     &.-ineffective {
@@ -159,9 +163,11 @@ export default {
     }
 
     &__grabber {
-      background-color: #eee;
+      background: url('@/assets/grabber-bg.png');
+      background-size: auto 100%;
       cursor: pointer;
       flex: 1 1 0;
+      height: 100%;
     }
 
     &__date {
