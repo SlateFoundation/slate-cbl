@@ -26,7 +26,7 @@ Ext.define('Slate.cbl.field.TaskSelector', {
             include: ['Creator']
         },
         remoteSort: true,
-        pageSize: 0,
+        pageSize: 30,
         sorters: [{
             property: 'Created',
             direction: 'DESC'
