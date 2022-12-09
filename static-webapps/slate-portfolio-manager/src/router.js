@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory} from 'vue-router';
 
-import AdvancedPortfolioManager from './views/AdvancedPortfolioManager.vue';
+import views from '@/views';
+
+const { AdvancedPortfolioManager } = views
 
 const routes = [
   { path: '/', component: AdvancedPortfolioManager },

@@ -68,10 +68,11 @@ import useCompetency from '@/store/useCompetency';
 import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useStudentCompetency from '@/store/useStudentCompetency';
 import useDemonstration from '@/store/useDemonstration';
-import LevelPanel from './sidebar/LevelPanel.vue';
-import NewLevelPanel from './sidebar/NewLevelPanel.vue';
+import LevelPanel from './LevelPanel.vue';
+import NewLevelPanel from './NewLevelPanel.vue';
 
 export default {
+  name: 'AdvancedPortfolioSidebar',
   components: {
     NewLevelPanel,
     LevelPanel,

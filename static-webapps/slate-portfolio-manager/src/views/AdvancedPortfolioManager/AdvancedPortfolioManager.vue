@@ -18,7 +18,7 @@
 import { isEqual } from 'lodash';
 import { mapStores } from 'pinia';
 
-import AdvancedPortfolioSidebar from '@/components/AdvancedPortfolioSidebar.vue';
+import AdvancedPortfolioSidebar from './AdvancedPortfolioSidebar';
 import CompetencyDropdown from '@/components/CompetencyDropdown.vue';
 import EnrollmentsGrid from '@/components/EnrollmentsGrid.vue';
 import useConfig from '@/store/useConfig';
