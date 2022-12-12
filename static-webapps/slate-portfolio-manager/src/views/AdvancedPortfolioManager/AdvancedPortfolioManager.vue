@@ -12,7 +12,7 @@
     </main>
     <advanced-portfolio-sidebar
       :selected="selected"
-      @hide="visible=null"
+      @hide="handleSelect(null)"
     />
   </div>
 </template>

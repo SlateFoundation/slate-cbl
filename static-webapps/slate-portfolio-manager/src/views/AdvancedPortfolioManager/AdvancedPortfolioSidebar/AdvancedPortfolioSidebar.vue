@@ -1,8 +1,7 @@
 <template>
   <slate-sidebar
     v-if="studentCompetencyDetails"
-    v-model="visible"
-    :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': isLoading }]"
+    :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': true }]"
     style="width: 375px;"
   >
     <header class="pa-3">
@@ -97,17 +96,6 @@ export default {
 
   computed: {
     ...mapStores(useCompetency, useDemonstration, useStudentCompetency, useDemonstrationSkill),
-
-    visible: {
-      get() {
-        return !!this.selected;
-      },
-      set(value) {
-        if (!value) {
-          this.configStore.set('enrollmentGridSelection', null);
-        }
-      },
-    },
 
     availableLevels() {
       const maxLevel = Math.max(this.$site.minLevel - 1, ...this.visibleLevels);
