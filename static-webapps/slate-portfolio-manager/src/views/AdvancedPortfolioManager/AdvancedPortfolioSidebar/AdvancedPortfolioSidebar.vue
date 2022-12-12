@@ -1,7 +1,7 @@
 <template>
   <slate-sidebar
     v-if="studentCompetencyDetails"
-    :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': true }]"
+    :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': isLoading }]"
     style="width: 375px;"
   >
     <header class="pa-3">
