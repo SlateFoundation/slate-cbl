@@ -329,9 +329,29 @@ class StudentCompetency extends \ActiveRecord
             $demonstrationsData = $this->getDemonstrationsData();
 
             foreach ($demonstrationsData as $skillId => &$demonstrationData) {
+                // Check if there are overrides
+                $overrideExists = false;
+                foreach ($demonstrationData as $item) {
+                    if ($item['Override'] === true) {
+                        $overrideExists = true;
+                        break;
+                    }
+                }
+
+                // If any overrides exist, bump all M ratings
+                if ($overrideExists) {
+                    $filteredDemonstrationData = array_filter($demonstrationData, function($datum) {
+                        if ($datum['DemonstratedLevel'] !== 0) {
+                            return true;
+                        }
+                    });
+                    $demonstrationData = $filteredDemonstrationData;
+                }
+
                 usort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
 
                 $Skill = Skill::getByID($skillId);
+
                 $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
 
                 array_splice($demonstrationData, $demonstrationsRequired);
