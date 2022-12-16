@@ -340,12 +340,9 @@ class StudentCompetency extends \ActiveRecord
 
                 // If any overrides exist, bump all M ratings
                 if ($overrideExists) {
-                    $filteredDemonstrationData = array_filter($demonstrationData, function($datum) {
-                        if ($datum['DemonstratedLevel'] !== 0) {
-                            return true;
-                        }
+                    $demonstrationData = array_filter($demonstrationData, function($datum) {
+                        return $datum['DemonstratedLevel'] !== 0;
                     });
-                    $demonstrationData = $filteredDemonstrationData;
                 }
 
                 usort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
