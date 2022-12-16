@@ -36,7 +36,7 @@
                 "average": "7",
                 "growth": "0",
                 "progress": "75",
-                "progressMissed": "25"
+                "progressMissed": "0"
             }
         }
     },
@@ -66,6 +66,14 @@
                 "progress": "88",
                 "progressMissed": "0"
             },
+            "HW.2": {
+                "description": "Overrides with Ms only",
+                "baseline": null,
+                "average": null,
+                "growth": null,
+                "progress": "40",
+                "progressMissed": "30"
+            },
             "HW.3": {
                 "description": "Overrides only",
                 "baseline": null,
@@ -75,6 +83,14 @@
             }
         },
         "HOS": {
+            "HOS.2": {
+                "description": "Ratings and Ms for every evidence requirement in a skill with an override.",
+                "baseline": null,
+                "average": "7",
+                "growth": "1",
+                "progress": "83",
+                "progressMissed": "17"
+            },
             "HOS.3": {
                 "description": "All M’s only with one ER for each skill",
                 "baseline": null,
