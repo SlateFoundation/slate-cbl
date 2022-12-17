@@ -16,7 +16,7 @@ erDiagram
     DemonstrationSkill {
         int TargetLevel "Portfolio level rating is against"
         int Rating
-        bool Override
+        int EvidenceWeight
     }
     Skill {
         int CompetencyID
@@ -60,7 +60,7 @@ erDiagram
         int SkillID "Matched to StudentCompetency.CompetencyID"
         int TargetLevel "Matched to StudentCompetency.Level"
         int Rating
-        bool Override
+        int EvidenceWeight
     }
 ```
 
