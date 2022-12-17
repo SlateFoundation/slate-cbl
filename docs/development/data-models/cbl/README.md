@@ -75,3 +75,14 @@ The following table shows an example set of ratings that might be available for 
 | `ELA.1.3` |   9 |  11 |     |     |
 
 In this simple scenario, performance level is `9` and progress is `50%`.
+
+Illustrated as a list of `DemonstrationSkill` records that might be stored in the database if the `StudentCompetency` was for portfolio level 9 and performed across 2 demonstrations, this set of ratings could look like this:
+
+| DemoID | SkillID | TargetLevel | DemonstratedLevel | EvidenceWeight |
+| -------| ------- | ----------- | ----------------- | -------------- |
+| 1      | 1       | 9           | 9                 | 1              |
+| 1      | 2       | 9           | 9                 | 1              |
+| 1      | 3       | 9           | 9                 | 1              |
+| 2      | 1       | 9           | 11                | 1              |
+| 2      | 2       | 9           | 11                | 1              |
+| 2      | 3       | 9           | 11                | 1              |
