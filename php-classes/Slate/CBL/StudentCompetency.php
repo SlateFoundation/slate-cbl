@@ -438,11 +438,8 @@ class StudentCompetency extends \ActiveRecord
 
             foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
                 foreach ($demonstrationData as $demonstration) {
-                    if (
-                        $demonstration['DemonstrationClass'] !== OverrideDemonstration::class &&
-                        empty($demonstration['DemonstratedLevel'])
-                    ) {
-                        $this->demonstrationsMissed++;
+                    if ($demonstration['DemonstratedLevel'] === 0) {
+                        $this->demonstrationsMissed += $demonstration['EvidenceWeight'];
                     }
                 }
             }
