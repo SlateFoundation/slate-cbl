@@ -82,6 +82,34 @@ describe('CBL / API / StudentCompetency', () => {
                 DemonstrationDate: 1546300860
             });
         });
+
+        cy.request('/cbl/student-competencies/33?format=json&include=completion,effectiveDemonstrationsData').then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+
+            expect(response.body).property('data').to.be.an('object');
+            expect(response.body.data).to.include({
+                ID: 33,
+                StudentID: 4,
+                CompetencyID: 1,
+                Level: 10,
+                EnteredVia: 'graduation',
+                BaselineRating: 10
+            });
+
+            expect(response.body.data).property('completion').to.be.an('object');
+            expect(response.body.data.completion).to.include({
+                StudentID: 4,
+                CompetencyID: 1,
+                currentLevel: 10,
+                baselineRating: 10,
+                demonstrationsLogged: 4,
+                demonstrationsMissed: 0,
+                demonstrationsComplete: 4,
+                demonstrationsAverage: 9.3,
+                demonstrationsRequired: 12
+            });
+        });
     });
 
     it('Can change DemonstratedLevel on existing student task rating', () => {
@@ -207,6 +235,162 @@ describe('CBL / API / StudentCompetency', () => {
                 DemonstratedLevel: 10,
                 TargetLevel: 9,
                 EvidenceWeight: null
+            });
+        });
+    });
+
+    it('Create an override', () => {
+        cy.request('POST', '/cbl/demonstrations/save?format=json&include=DemonstrationSkills', {
+            data: [{
+                ID: -1,
+                Class: 'Slate\\CBL\\Demonstrations\\OverrideDemonstration',
+                StudentID: 4,
+                DemonstrationSkills: [
+                  {
+                    SkillID: 1,
+                    EvidenceWeight: null
+                  }
+                ],
+                Comments: 'this is an override comment'
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body).property('message', null);
+            expect(response.body).property('success', true);
+            expect(response.body).property('failed').to.be.an('array').that.has.length(0);
+            expect(response.body.data[0]).to.be.an('object').to.include({
+                ID: 262,
+                Class: 'Slate\\CBL\\Demonstrations\\OverrideDemonstration',
+                StudentID: 4,
+                ArtifactURL: null,
+                Comments: 'this is an override comment'
+            });
+            expect(response.body.data[0].DemonstrationSkills).to.be.an('array').that.has.length(1);
+            expect(response.body.data[0].DemonstrationSkills[0]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].ID,
+                SkillID: 1,
+                TargetLevel: 10,
+                DemonstratedLevel: null,
+                EvidenceWeight: null,
+            });
+        });
+
+        cy.request('/cbl/student-competencies/33?format=json&include=completion,effectiveDemonstrationsData').then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+
+            expect(response.body).property('data').to.be.an('object');
+            expect(response.body.data).to.include({
+                ID: 33,
+                StudentID: 4,
+                CompetencyID: 1,
+                Level: 10,
+                EnteredVia: 'graduation',
+                BaselineRating: 10
+            });
+
+            expect(response.body.data).property('completion').to.be.an('object');
+            expect(response.body.data.completion).to.include({
+                StudentID: 4,
+                CompetencyID: 1,
+                currentLevel: 10,
+                baselineRating: 10,
+                demonstrationsLogged: 4,
+                demonstrationsMissed: 0,
+                demonstrationsComplete: 6,
+                demonstrationsAverage: 9.3,
+                demonstrationsRequired: 12
+            });
+
+            expect(response.body.data).property('effectiveDemonstrationsData').to.be.an('object').to.have.all.keys('1', '2', '3', '4');
+            expect(response.body.data.effectiveDemonstrationsData['1']).to.be.an('array').that.has.length(2);
+            expect(response.body.data.effectiveDemonstrationsData['2']).to.be.an('array').that.has.length(1);
+            expect(response.body.data.effectiveDemonstrationsData['3']).to.be.an('array').that.has.length(1);
+            expect(response.body.data.effectiveDemonstrationsData['4']).to.be.an('array').that.has.length(1);
+            expect(response.body.data.effectiveDemonstrationsData['1'][0]).to.be.an('object').to.include({
+                SkillID: 1,
+                TargetLevel: 10,
+                DemonstratedLevel: 8,
+                EvidenceWeight: 1
+            });
+            expect(response.body.data.effectiveDemonstrationsData['1'][1]).to.be.an('object').to.include({
+                SkillID: 1,
+                TargetLevel: 10,
+                DemonstratedLevel: null,
+                EvidenceWeight: null
+            });
+        });
+    });
+
+    it('Delete an override', () => {
+        cy.request('POST', '/cbl/demonstrations/destroy?format=json&include=DemonstrationSkills', {
+            data: [{
+                ID: 262
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body).property('success', true);
+            expect(response.body).property('failed').to.be.an('array').that.has.length(0);
+            expect(response.body.data[0]).to.be.an('object').to.include({
+                ID: 262,
+                Class: 'Slate\\CBL\\Demonstrations\\OverrideDemonstration',
+                StudentID: 4,
+                ArtifactURL: null,
+                Comments: 'this is an override comment'
+            });
+            expect(response.body.data[0].DemonstrationSkills).to.be.an('array').that.has.length(1);
+            expect(response.body.data[0].DemonstrationSkills[0]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].ID,
+                SkillID: 1,
+                TargetLevel: 10,
+                DemonstratedLevel: null,
+                EvidenceWeight: null,
+            });
+        });
+
+        cy.request('/cbl/student-competencies/33?format=json&include=completion,effectiveDemonstrationsData').then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+
+            expect(response.body).property('data').to.be.an('object');
+            expect(response.body.data).to.include({
+                ID: 33,
+                StudentID: 4,
+                CompetencyID: 1,
+                Level: 10,
+                EnteredVia: 'graduation',
+                BaselineRating: 10
+            });
+
+            expect(response.body.data).property('completion').to.be.an('object');
+            expect(response.body.data.completion).to.include({
+                StudentID: 4,
+                CompetencyID: 1,
+                currentLevel: 10,
+                baselineRating: 10,
+                demonstrationsLogged: 4,
+                demonstrationsMissed: 0,
+                demonstrationsComplete: 4,
+                demonstrationsAverage: 9.3,
+                demonstrationsRequired: 12
+            });
+
+            expect(response.body.data).property('effectiveDemonstrationsData').to.be.an('object').to.have.all.keys('1', '2', '3', '4');
+            expect(response.body.data.effectiveDemonstrationsData['1']).to.be.an('array').that.has.length(1);
+            expect(response.body.data.effectiveDemonstrationsData['2']).to.be.an('array').that.has.length(1);
+            expect(response.body.data.effectiveDemonstrationsData['3']).to.be.an('array').that.has.length(1);
+            expect(response.body.data.effectiveDemonstrationsData['4']).to.be.an('array').that.has.length(1);
+            expect(response.body.data.effectiveDemonstrationsData['1'][0]).to.be.an('object').to.include({
+                SkillID: 1,
+                TargetLevel: 10,
+                DemonstratedLevel: 8,
+                EvidenceWeight: 1
             });
         });
     });
