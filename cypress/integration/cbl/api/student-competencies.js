@@ -78,7 +78,7 @@ describe('CBL / API / StudentCompetency', () => {
                 SkillID: 1,
                 TargetLevel: 9,
                 DemonstratedLevel: 9,
-                Override: false,
+                EvidenceWeight: 1,
                 DemonstrationDate: 1546300860
             });
         });
@@ -106,7 +106,61 @@ describe('CBL / API / StudentCompetency', () => {
                 SkillID: 1,
                 DemonstratedLevel: 10,
                 TargetLevel: 9,
-                Override: 0
+                EvidenceWeight: 1
+            });
+        });
+    });
+
+    it('Can change EvidenceWeight to 2 value on existing student task rating', () => {
+        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
+            data: [{
+                ID: 1,
+                DemonstrationSkills: [{
+                    ID: 1,
+                    SkillID: 1,
+                    EvidenceWeight: 2
+                }]
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body.data[0]).property('Demonstration').to.be.an('object');
+            expect(response.body.data[0].Demonstration).property('DemonstrationSkills').to.be.an('array').that.has.length(1);
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.be.an('object');
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.include({
+                ID: 1,
+                SkillID: 1,
+                DemonstratedLevel: 10,
+                TargetLevel: 9,
+                EvidenceWeight: 2
+            });
+        });
+    });
+
+    it('Can change EvidenceWeight to null on existing student task rating', () => {
+        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
+            data: [{
+                ID: 1,
+                DemonstrationSkills: [{
+                    ID: 1,
+                    SkillID: 1,
+                    EvidenceWeight: null
+                }]
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body.data[0]).property('Demonstration').to.be.an('object');
+            expect(response.body.data[0].Demonstration).property('DemonstrationSkills').to.be.an('array').that.has.length(1);
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.be.an('object');
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.include({
+                ID: 1,
+                SkillID: 1,
+                DemonstratedLevel: 10,
+                TargetLevel: 9,
+                EvidenceWeight: null
             });
         });
     });
@@ -152,7 +206,7 @@ describe('CBL / API / StudentCompetency', () => {
                 SkillID: 1,
                 DemonstratedLevel: 10,
                 TargetLevel: 9,
-                Override: false
+                EvidenceWeight: null
             });
         });
     });
