@@ -262,11 +262,13 @@ class StudentCompetency extends \ActiveRecord
                             // leverage models to parse values/timestamps correctly
                             $Demonstration = Demonstration::instantiateRecord(
                                 [
+                                    'Class' => $demonstrationSkill['DemonstrationClass'],
                                     'Demonstrated' => $demonstrationSkill['DemonstrationDate']
                                 ]
                             );
                             $DemonstrationSkill = DemonstrationSkill::instantiateRecord($demonstrationSkill);
                             $demonstrationSkill = $DemonstrationSkill->getData();
+                            $demonstrationSkill['DemonstrationClass'] = $Demonstration->Class;
                             $demonstrationSkill['DemonstrationDate'] = $Demonstration->Demonstrated;
 
                             // trim extraneous RevisionID
