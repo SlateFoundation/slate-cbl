@@ -82,13 +82,6 @@ class DemonstrationSkill extends \VersionedRecord
         // call parent
         parent::validate($deep);
 
-        // demonstrated level
-        if ($this->EvidenceWeight === null && $this->DemonstratedLevel !== null) {
-            $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must be null for override');
-        } elseif ($this->EvidenceWeight !== null && $this->DemonstratedLevel === null) {
-            $this->_validator->addError('DemonstratedLevel', 'DemonstratedLevel must not be null for non-override!');
-        }
-
         // target level can only be set on new records
         if (!$this->isPhantom && $this->isFieldDirty('TargetLevel') && !$this->userCanChangeLevel()) {
             $this->_validator->addError('TargetLevel', 'TargetLevel cannot be changed on existing records');
