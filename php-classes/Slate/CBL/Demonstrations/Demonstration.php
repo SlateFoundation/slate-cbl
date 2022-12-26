@@ -215,32 +215,19 @@ class Demonstration extends \VersionedRecord
         // create new and update existing skills
         $skills = [];
         foreach ($skillsData as $skillData) {
-            // skip if DemonstratedLevel and Override is unset or null -- these will be deleted
-            if (!isset($skillData['DemonstratedLevel']) && !empty($skillData['EvidenceWeight'])) {
-                continue;
-            }
-
             if (empty($skillData['SkillID'])) {
                 throw new Exception('demonstration skill requires SkillID be set');
             }
-
-            $rating = $skillData['DemonstratedLevel'];
-            $evidenceWeight = $skillData['EvidenceWeight'];
 
             if ($DemonstrationSkill = $existingSkills[$skillData['SkillID']]) {
                 if (!empty($skillData['TargetLevel'])) {
                     $DemonstrationSkill->TargetLevel = $skillData['TargetLevel'];
                 }
 
-                $DemonstrationSkill->DemonstratedLevel = $rating;
-                $DemonstrationSkill->EvidenceWeight = $evidenceWeight;
-
             } else {
                 $DemonstrationSkill = DemonstrationSkill::create([
                     'Demonstration' => $this,
                     'SkillID' => $skillData['SkillID'],
-                    'DemonstratedLevel' => $rating,
-                    'EvidenceWeight' => $evidenceWeight
                 ]);
 
                 if (!empty($skillData['TargetLevel'])) {
@@ -254,6 +241,16 @@ class Demonstration extends \VersionedRecord
 
                 // append to existing map to prevent issues if data contains multiple entries for same SkillID
                 $existingSkills[$skillData['SkillID']] = $DemonstrationSkill;
+            }
+
+            if (array_key_exists('EvidenceWeight', $skillData)) {
+                $DemonstrationSkill->EvidenceWeight = $skillData['EvidenceWeight'];
+                $setEvRate = $DemonstrationSkill->EvidenceWeight;
+                $setEvRate;
+            }
+
+            if (array_key_exists('DemonstratedLevel', $skillData)) {
+                $DemonstrationSkill->DemonstratedLevel = $skillData['DemonstratedLevel'];
             }
 
             $skills[] = $DemonstrationSkill;
