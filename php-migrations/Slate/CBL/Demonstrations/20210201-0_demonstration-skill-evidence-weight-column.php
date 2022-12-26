@@ -19,7 +19,7 @@ if (static::columnExists($tableName, $columnName)) {
 }
 
 // add EvidenceWeight columns
-static::addColumn($tableName, $columnName, 'TINYINT(10) NULL DEFAULT NULL');
-static::addColumn($historyTableName, $columnName, 'TINYINT(10) NULL DEFAULT NULL');
+static::addColumn($tableName, $columnName, 'tinyint unsigned NULL default 1');
+static::addColumn($historyTableName, $columnName, 'tinyint unsigned NULL default 1');
 
 return static::STATUS_EXECUTED;
