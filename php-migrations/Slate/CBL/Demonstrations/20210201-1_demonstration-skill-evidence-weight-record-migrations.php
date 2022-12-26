@@ -66,9 +66,10 @@ function migrateRecords($tableName) {
             $tableName
         ]
     );
+    printf("Migrated %u Override records in `%s`\n", DB::affectedRows(), $tableName);
 
     // migrate non override records
-    printf("Migrating non Override records in `%s`\n", $tableName);
+    printf("Migrating non-Override records in `%s`\n", $tableName);
     DB::nonQuery(
         '
             UPDATE `%s`
@@ -79,4 +80,5 @@ function migrateRecords($tableName) {
             $tableName
         ]
     );
+    printf("Migrated %u non-Override records in `%s`\n", DB::affectedRows(), $tableName);
 }
