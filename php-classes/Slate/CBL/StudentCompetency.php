@@ -463,7 +463,7 @@ class StudentCompetency extends \ActiveRecord
                     if ($demonstration['DemonstrationClass'] === OverrideDemonstration::class) {
                         $skillCount += $demonstrationsRequired;
                     } elseif (!empty($demonstration['DemonstratedLevel'])) {
-                        $skillCount+= $demonstration['EvidenceWeight'];
+                        $skillCount += $demonstration['EvidenceWeight'];
                     }
                 }
 
