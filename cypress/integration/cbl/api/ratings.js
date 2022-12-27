@@ -404,6 +404,7 @@ describe('CBL / API / Ratings', () => {
                     { SkillID: 2, TargetLevel: 10 },
                     { SkillID: 3, TargetLevel: 10 },
                     { SkillID: 4, TargetLevel: 10 },
+                    { SkillID: 5, TargetLevel: 10 }, // does not already exist and should be ignored
                 ]
             }]
         }).then(response => {

@@ -219,6 +219,7 @@ class Demonstration extends \VersionedRecord
                 throw new Exception('demonstration skill requires SkillID be set');
             }
 
+            // get existing or initialize new rating record
             if ($DemonstrationSkill = $existingSkills[$skillData['SkillID']]) {
                 if (!empty($skillData['TargetLevel'])) {
                     $DemonstrationSkill->TargetLevel = $skillData['TargetLevel'];
@@ -242,14 +243,25 @@ class Demonstration extends \VersionedRecord
                 $existingSkills[$skillData['SkillID']] = $DemonstrationSkill;
             }
 
+            // apply rating data
+            $ratingDataProvided = false;
+
             if (array_key_exists('EvidenceWeight', $skillData)) {
                 $DemonstrationSkill->EvidenceWeight = $skillData['EvidenceWeight'];
+                $ratingDataProvided = true;
             }
 
             if (array_key_exists('DemonstratedLevel', $skillData)) {
                 $DemonstrationSkill->DemonstratedLevel = $skillData['DemonstratedLevel'];
+                $ratingDataProvided = true;
             }
 
+            // skip saving if phantom and neither EvidenceWeight or DemonstratedLevel has been set
+            if ($DemonstrationSkill->isPhantom && !$ratingDataProvided) {
+                continue;
+            }
+
+            // add to new array to create/preserve
             $skills[] = $DemonstrationSkill;
         }
 
