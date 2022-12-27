@@ -492,9 +492,9 @@ describe('CBL / API / Ratings', () => {
             data: [{
                 ID: 28,
                 DemonstrationSkills: [
-                    { ID: 267, SkillID: 2, TargetLevel: 10, DemonstratedLevel: 9 },
-                    { ID: 268, SkillID: 3, TargetLevel: 10, DemonstratedLevel: 10 },
-                    { ID: 269, SkillID: 4, TargetLevel: 10, DemonstratedLevel: 10 },
+                    { SkillID: 2, TargetLevel: 10, DemonstratedLevel: 9 },
+                    { SkillID: 3, TargetLevel: 10, DemonstratedLevel: 10 },
+                    { SkillID: 4, TargetLevel: 10, DemonstratedLevel: 10 },
                 ]
             }]
         }).then(response => {
