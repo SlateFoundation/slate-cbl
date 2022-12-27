@@ -223,7 +223,6 @@ class Demonstration extends \VersionedRecord
                 if (!empty($skillData['TargetLevel'])) {
                     $DemonstrationSkill->TargetLevel = $skillData['TargetLevel'];
                 }
-
             } else {
                 $DemonstrationSkill = DemonstrationSkill::create([
                     'Demonstration' => $this,
@@ -245,8 +244,6 @@ class Demonstration extends \VersionedRecord
 
             if (array_key_exists('EvidenceWeight', $skillData)) {
                 $DemonstrationSkill->EvidenceWeight = $skillData['EvidenceWeight'];
-                $setEvRate = $DemonstrationSkill->EvidenceWeight;
-                $setEvRate;
             }
 
             if (array_key_exists('DemonstratedLevel', $skillData)) {
