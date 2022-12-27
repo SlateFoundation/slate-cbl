@@ -113,23 +113,18 @@ describe('CBL / API / StudentCompetency', () => {
     });
 
     it('Can change DemonstratedLevel on existing student task rating', () => {
-        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
+        cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
             data: [{
                 ID: 1,
-                DemonstrationSkills: [{
-                    ID: 1,
-                    SkillID: 1,
-                    DemonstratedLevel: 10
-                }]
+                SkillID: 1,
+                DemonstratedLevel: 10
             }]
         }).then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
             expect(response.body).property('data').to.be.an('array').that.has.length(1);
-            expect(response.body.data[0]).property('Demonstration').to.be.an('object');
-            expect(response.body.data[0].Demonstration).property('DemonstrationSkills').to.be.an('array').that.has.length(1);
-            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.be.an('object');
-            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.include({
+            expect(response.body.data[0]).to.be.an('object');
+            expect(response.body.data[0]).to.include({
                 ID: 1,
                 SkillID: 1,
                 DemonstratedLevel: 10,
@@ -140,23 +135,18 @@ describe('CBL / API / StudentCompetency', () => {
     });
 
     it('Can change EvidenceWeight to 2 value on existing student task rating', () => {
-        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
+        cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
             data: [{
                 ID: 1,
-                DemonstrationSkills: [{
-                    ID: 1,
-                    SkillID: 1,
-                    EvidenceWeight: 2
-                }]
+                SkillID: 1,
+                EvidenceWeight: 2
             }]
         }).then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
             expect(response.body).property('data').to.be.an('array').that.has.length(1);
-            expect(response.body.data[0]).property('Demonstration').to.be.an('object');
-            expect(response.body.data[0].Demonstration).property('DemonstrationSkills').to.be.an('array').that.has.length(1);
-            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.be.an('object');
-            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.include({
+            expect(response.body.data[0]).to.be.an('object');
+            expect(response.body.data[0]).to.include({
                 ID: 1,
                 SkillID: 1,
                 DemonstratedLevel: 10,
@@ -167,23 +157,18 @@ describe('CBL / API / StudentCompetency', () => {
     });
 
     it('Can change EvidenceWeight to null on existing student task rating', () => {
-        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
+        cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
             data: [{
                 ID: 1,
-                DemonstrationSkills: [{
-                    ID: 1,
-                    SkillID: 1,
-                    EvidenceWeight: null
-                }]
+                SkillID: 1,
+                EvidenceWeight: null
             }]
         }).then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
             expect(response.body).property('data').to.be.an('array').that.has.length(1);
-            expect(response.body.data[0]).property('Demonstration').to.be.an('object');
-            expect(response.body.data[0].Demonstration).property('DemonstrationSkills').to.be.an('array').that.has.length(1);
-            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.be.an('object');
-            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.include({
+            expect(response.body.data[0]).to.be.an('object');
+            expect(response.body.data[0]).to.include({
                 ID: 1,
                 SkillID: 1,
                 DemonstratedLevel: 10,
@@ -194,16 +179,15 @@ describe('CBL / API / StudentCompetency', () => {
     });
 
     it('Validation prevents TargetLevel changes to existing StudentTask rating', () => {
-        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills', {
-            data: [{
-                ID: 1,
-                DemonstrationSkills: [{
-                    ID: 1,
-                    SkillID: 1,
-                    TargetLevel: 10,
-                    DemonstratedLevel: 11
-                }]
-            }]
+        const patchData = {
+            ID: 1,
+            SkillID: 1,
+            TargetLevel: 10,
+            DemonstratedLevel: 11
+        };
+
+        cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
+            data: [patchData]
         }).then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
@@ -212,30 +196,26 @@ describe('CBL / API / StudentCompetency', () => {
             expect(response.body).property('success', false);
             expect(response.body).property('failed').to.be.an('array').that.has.length(1);
             expect(response.body.failed[0]).to.be.an('object').that.has.all.keys('record', 'validationErrors');
-            expect(response.body.failed[0].record).to.be.an('object');
-            expect(response.body.failed[0].validationErrors).to.be.an('object').that.has.all.keys('Demonstration');
-            expect(response.body.failed[0].validationErrors.Demonstration).to.be.an('object').that.has.all.keys('DemonstrationSkills');
-            expect(response.body.failed[0].validationErrors.Demonstration.DemonstrationSkills).to.be.an('array').that.has.length(1);
-            expect(response.body.failed[0].validationErrors.Demonstration.DemonstrationSkills[0]).to.be.an('object').that.has.property('TargetLevel', 'TargetLevel cannot be changed on existing records')
-
+            expect(response.body.failed[0].record).to.be.an('object').to.include(patchData);
+            expect(response.body.failed[0].validationErrors).to.be.an('object')
+                .that.has.all.keys('TargetLevel')
+                .that.has.property('TargetLevel', 'TargetLevel cannot be changed on existing records');
         });
     });
 
     it('Rating remains unchanged after invalid edit', () => {
-        cy.request('/cbl/student-tasks/1?format=json&include=Demonstration.DemonstrationSkills').then(response => {
+        cy.request('/cbl/demonstration-skills/1?format=json').then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
-            expect(response.body).property('data').to.be.an('object');
-            expect(response.body.data).property('Demonstration').to.be.an('object');
-            expect(response.body.data.Demonstration).property('DemonstrationSkills').to.be.an('array').that.has.length(1);
-            expect(response.body.data.Demonstration.DemonstrationSkills[0]).to.be.an('object');
-            expect(response.body.data.Demonstration.DemonstrationSkills[0]).to.include({
-                ID: 1,
-                SkillID: 1,
-                DemonstratedLevel: 10,
-                TargetLevel: 9,
-                EvidenceWeight: null
-            });
+            expect(response.body).property('data')
+                .to.be.an('object')
+                .to.include({
+                    ID: 1,
+                    SkillID: 1,
+                    DemonstratedLevel: 10,
+                    TargetLevel: 9,
+                    EvidenceWeight: null
+                });
         });
     });
 
