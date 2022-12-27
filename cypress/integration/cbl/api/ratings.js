@@ -10,7 +10,7 @@ describe('CBL / API / Ratings', () => {
         cy.loginAs('teacher');
     });
 
-    it('Expected student competencies exist', () => {
+    it('Initial state matches expectations', () => {
         cy.request('/cbl/student-competencies?format=json&limit=0').then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
@@ -112,7 +112,7 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
-    it('Can change DemonstratedLevel on existing student task rating', () => {
+    it('demonstration-skills: Can change DemonstratedLevel to 10', () => {
         cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
             data: [{
                 ID: 1,
@@ -134,7 +134,7 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
-    it('Can change EvidenceWeight to 2 value on existing student task rating', () => {
+    it('demonstration-skills: Can change EvidenceWeight to 2', () => {
         cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
             data: [{
                 ID: 1,
@@ -156,7 +156,7 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
-    it('Can change EvidenceWeight to null on existing student task rating', () => {
+    it('demonstration-skills: Can change EvidenceWeight to null', () => {
         cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
             data: [{
                 ID: 1,
@@ -178,7 +178,7 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
-    it('Validation prevents TargetLevel changes to existing StudentTask rating', () => {
+    it('demonstration-skills: Validation prevents TargetLevel changes', () => {
         const patchData = {
             ID: 1,
             SkillID: 1,
@@ -201,9 +201,7 @@ describe('CBL / API / Ratings', () => {
                 .that.has.all.keys('TargetLevel')
                 .that.has.property('TargetLevel', 'TargetLevel cannot be changed on existing records');
         });
-    });
 
-    it('Rating remains unchanged after invalid edit', () => {
         cy.request('/cbl/demonstration-skills/1?format=json').then(response => {
             expect(response).property('status').to.eq(200);
             expect(response).property('body').to.be.an('object');
@@ -219,7 +217,7 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
-    it('Create an override', () => {
+    it('demonstrations: Create an override', () => {
         cy.request('POST', '/cbl/demonstrations/save?format=json&include=DemonstrationSkills', {
             data: [{
                 ID: -1,
@@ -305,7 +303,7 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
-    it('Delete an override', () => {
+    it('demonstrations: Delete an override', () => {
         cy.request('POST', '/cbl/demonstrations/destroy?format=json&include=DemonstrationSkills', {
             data: [{
                 ID: 262
@@ -375,7 +373,7 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
-    it('Delete a rating', () => {
+    it('demonstrations: Delete a rating', () => {
         cy.request('POST', '/cbl/demonstrations/save?format=json&include=DemonstrationSkills', {
             data: [{
                 ID: 28,
