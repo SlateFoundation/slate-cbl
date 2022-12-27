@@ -134,6 +134,28 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
+    it('demonstration-skills: Can change DemonstratedLevel to null', () => {
+        cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
+            data: [{
+                ID: 1,
+                SkillID: 1,
+                DemonstratedLevel: null
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body.data[0]).to.be.an('object');
+            expect(response.body.data[0]).to.include({
+                ID: 1,
+                SkillID: 1,
+                DemonstratedLevel: null,
+                TargetLevel: 9,
+                EvidenceWeight: 1
+            });
+        });
+    });
+
     it('demonstration-skills: Can change EvidenceWeight to 2', () => {
         cy.request('POST', '/cbl/demonstration-skills/save?format=json', {
             data: [{
@@ -149,7 +171,7 @@ describe('CBL / API / Ratings', () => {
             expect(response.body.data[0]).to.include({
                 ID: 1,
                 SkillID: 1,
-                DemonstratedLevel: 10,
+                DemonstratedLevel: null,
                 TargetLevel: 9,
                 EvidenceWeight: 2
             });
@@ -171,7 +193,7 @@ describe('CBL / API / Ratings', () => {
             expect(response.body.data[0]).to.include({
                 ID: 1,
                 SkillID: 1,
-                DemonstratedLevel: 10,
+                DemonstratedLevel: null,
                 TargetLevel: 9,
                 EvidenceWeight: null
             });
@@ -210,7 +232,7 @@ describe('CBL / API / Ratings', () => {
                 .to.include({
                     ID: 1,
                     SkillID: 1,
-                    DemonstratedLevel: 10,
+                    DemonstratedLevel: null,
                     TargetLevel: 9,
                     EvidenceWeight: null
                 });
