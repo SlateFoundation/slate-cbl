@@ -53,7 +53,7 @@
                     <th scope="col">DemonstrationDate</th>
                     <th scope="col">Level</th>
                     <th scope="col">Rating</th>
-                    <th scope="col">Override</th>
+                    <th scope="col">Evidence Weight</th>
                 </tr>
             </thead>
             <tbody>
@@ -67,7 +67,12 @@
                         <td>#{$DemonstrationSkill.ID}</td>
                         <td>{$DemonstrationSkill.Created|date_format}</td>
                         <td>{contextLink Emergence\People\Person::getById($DemonstrationSkill.CreatorID)}</td>
-                        <td><a href="{$Demonstration->getUrl()|escape}">#{$Demonstration->ID}</a></td>
+                        <td>
+                            <a href="{$Demonstration->getUrl()|escape}">#{$Demonstration->ID}</a>
+                            {if $Demonstration->Class == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration'}
+                                (override)
+                            {/if}
+                        </td>
                         <td>{$DemonstrationSkill.DemonstrationDate|date_format}</td>
                         <td>{$DemonstrationSkill.TargetLevel}</td>
                         {if $DemonstrationSkill.DemonstratedLevel === 0}
@@ -77,7 +82,7 @@
                         {else}
                             <td>{$DemonstrationSkill.DemonstratedLevel}</td>
                         {/if}
-                        <td>{tif($Demonstration->Class == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration', 'Yes', 'No')}</td>
+                        <td>{tif($DemonstrationSkill.EvidenceWeight === null, '&infin;', $DemonstrationSkill.EvidenceWeight)}</td>
                     </tr>
                 {/foreach}
             {/foreach}
