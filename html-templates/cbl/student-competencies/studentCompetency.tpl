@@ -70,8 +70,14 @@
                         <td><a href="{$Demonstration->getUrl()|escape}">#{$Demonstration->ID}</a></td>
                         <td>{$DemonstrationSkill.DemonstrationDate|date_format}</td>
                         <td>{$DemonstrationSkill.TargetLevel}</td>
-                        <td>{tif $DemonstrationSkill.DemonstratedLevel == '0' ? 'M' : $DemonstrationSkill.DemonstratedLevel}</td>
-                        <td>{tif($DemonstrationSkill.Override, 'Yes', 'No')}</td>
+                        {if $DemonstrationSkill.DemonstratedLevel === 0}
+                            <td>M</td>
+                        {elseif $DemonstrationSkill.DemonstratedLevel === null}
+                            <td>&mdash;</td>
+                        {else}
+                            <td>{$DemonstrationSkill.DemonstratedLevel}</td>
+                        {/if}
+                        <td>{tif($Demonstration->Class == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration', 'Yes', 'No')}</td>
                     </tr>
                 {/foreach}
             {/foreach}
