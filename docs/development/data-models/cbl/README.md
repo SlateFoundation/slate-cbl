@@ -86,3 +86,9 @@ Illustrated as a list of `DemonstrationSkill` records that might be stored in th
 | 2      | 1       | 9           | 11                | 1              |
 | 2      | 2       | 9           | 11                | 1              |
 | 2      | 3       | 9           | 11                | 1              |
+
+## Overrides
+
+Logging an override enables a teacher to indicate that a student has completed all remaining evidence requirements in a portfolio for a given skill without affecting their performance level. An override is stored as a `DemonstrationSkill` record where `EvidenceWeight` is set to `null` to indicate an unlimited weight while `DemonstratedLevel` is also `null` to indicate no rating was assessed.
+
+An override will displace any missed opportunities while being displaced by any actual ratings that could contribute to a measured performance level.
