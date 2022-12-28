@@ -3,7 +3,7 @@
 | Method Name | Description | Output |
 | ----------- | ----------- | ------ |
 | getDemonstrationsData | Get demonstrations, **grouped** by `SkillID` and **ordered** by `DemonstrationDate` and `DemonstrationID` | Array of demonstrations
-| getDemonstrationOpportunities | Equal to the total amount of **non-Override demonstrations** found in `getDemonstrationsData`. If a demonstration has a **wildcard `EvidenceWehight`**, the result will be equal to the amount of Demonstrations (Evidence) Required. | Total of Demonstration opportunities
+| getDemonstrationOpportunities | Equal to the total amount of **non-Override demonstrations** found in `getDemonstrationsData`. If a demonstration has a **wildcard `EvidenceWeight`**, the result will be equal to the amount of Demonstrations (Evidence) Required. | Total of Demonstration opportunities
 | sortDemonstrations | Demonstrations are sorted by their `ID` | Array of demonstrations
 | sortEffectiveDemonstrations | Sort demonstrations by `DemonstratedLevel`, or by the `sortDemonstrations` method if the demonstrations have the same `DemonstratedLevel` | Array of demonstrations
 | getEffectiveDemonstrationsData | Sort `getDemonstrationsData` via `sortEffectiveDemonstrations`. Reduce the number of demonstrations to the amount of *demonstrations required for the respective `Level`*. Sort the demonstrations again via `sortDemonstrations` | Array of demonstrations
