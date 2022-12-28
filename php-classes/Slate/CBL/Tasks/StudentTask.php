@@ -95,7 +95,8 @@ class StudentTask extends \VersionedRecord
             'class' => Skill::class,
             'linkClass' => StudentTaskSkill::class,
             'linkLocal' => 'StudentTaskID',
-            'linkForeign' => 'SkillID'
+            'linkForeign' => 'SkillID',
+            'order' => ['ID' => 'ASC']
         ],
         'Demonstration' => [
             'type' => 'one-one',
