@@ -351,11 +351,11 @@ class StudentCompetency extends \ActiveRecord
         if ($this->effectiveDemonstrationsData === null) {
             $demonstrationsData = $this->getDemonstrationsData();
 
-            foreach ($demonstrationsData as $skillId => &$demonstrationData) {
+            foreach ($demonstrationsData as $skillId => &$skillDemonstrationsData) {
                 // Check if there are overrides
                 $overrideExists = false;
-                foreach ($demonstrationData as $item) {
-                    if ($item['Override'] === true) {
+                foreach ($skillDemonstrationsData as $demonstrationData) {
+                    if ($demonstrationData['EvidenceWeight'] === null) {
                         $overrideExists = true;
                         break;
                     }
@@ -363,20 +363,20 @@ class StudentCompetency extends \ActiveRecord
 
                 // If any overrides exist, bump all M ratings
                 if ($overrideExists) {
-                    $demonstrationData = array_filter($demonstrationData, function($datum) {
-                        return $datum['DemonstratedLevel'] !== 0;
+                    $skillDemonstrationsData = array_filter($skillDemonstrationsData, function($demonstrationData) {
+                        return $demonstrationData['DemonstratedLevel'] !== 0;
                     });
                 }
 
-                usort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
+                usort($skillDemonstrationsData, [__CLASS__,  'sortEffectiveDemonstrations']);
 
                 $Skill = Skill::getByID($skillId);
 
                 $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
 
-                array_splice($demonstrationData, $demonstrationsRequired);
+                array_splice($skillDemonstrationsData, $demonstrationsRequired);
 
-                usort($demonstrationData, [__CLASS__,  'sortDemonstrations']);
+                usort($skillDemonstrationsData, [__CLASS__,  'sortDemonstrations']);
             }
 
             $this->effectiveDemonstrationsData = $demonstrationsData;
