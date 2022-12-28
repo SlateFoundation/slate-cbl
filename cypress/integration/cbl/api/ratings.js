@@ -661,4 +661,185 @@ describe('CBL / API / Ratings', () => {
             expect(response.body.data.effectiveDemonstrationsData['4']).to.be.an('array').that.has.length(1);
         });
     });
+
+    it('student-tasks: Attach student-specific skills', () => {
+        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills,Skills', {
+            data: [{
+                ID: 68,
+                DemonstrationSkills: [
+                    { SkillID: 1, TargetLevel: 9, DemonstratedLevel: null, EvidenceWeight: null },
+                    { SkillID: 2, TargetLevel: 9, DemonstratedLevel: null },
+                    { SkillID: 3, TargetLevel: 9 },
+                    { SkillID: 4, TargetLevel: 9 },
+                ]
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body).property('message', null);
+            expect(response.body).property('success', true);
+            expect(response.body).property('failed').to.be.an('array').that.has.length(0);
+            expect(response.body.data[0]).to.be.an('object').to.contain.keys('Demonstration', 'Skills');
+            expect(response.body.data[0].Demonstration).to.be.an('object').that.has.property('DemonstrationSkills');
+            expect(response.body.data[0].Demonstration.DemonstrationSkills).to.be.an('array').that.has.length(0);
+            expect(response.body.data[0].Skills).to.be.an('array').that.has.length(4);
+            expect(response.body.data[0].Skills[0]).to.be.an('object').that.has.property('ID', 1);
+            expect(response.body.data[0].Skills[1]).to.be.an('object').that.has.property('ID', 2);
+            expect(response.body.data[0].Skills[2]).to.be.an('object').that.has.property('ID', 3);
+            expect(response.body.data[0].Skills[3]).to.be.an('object').that.has.property('ID', 4);
+        });
+    });
+
+    it('student-tasks: Remove student-specific skills', () => {
+        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills,Skills', {
+            data: [{
+                ID: 68,
+                DemonstrationSkills: [
+                    { SkillID: 1, TargetLevel: 9, DemonstratedLevel: null, EvidenceWeight: null },
+                    { SkillID: 2, TargetLevel: 9, DemonstratedLevel: null },
+                    { SkillID: 3, TargetLevel: 9 },
+                ]
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body).property('message', null);
+            expect(response.body).property('success', true);
+            expect(response.body).property('failed').to.be.an('array').that.has.length(0);
+            expect(response.body.data[0]).to.be.an('object').to.contain.keys('Demonstration', 'Skills');
+            expect(response.body.data[0].Skills).to.be.an('array').that.has.length(3);
+            expect(response.body.data[0].Skills[0]).to.be.an('object').that.has.property('ID', 1);
+            expect(response.body.data[0].Skills[1]).to.be.an('object').that.has.property('ID', 2);
+            expect(response.body.data[0].Skills[2]).to.be.an('object').that.has.property('ID', 3);
+            expect(response.body.data[0].Demonstration).to.be.an('object').that.has.property('DemonstrationSkills');
+            expect(response.body.data[0].Demonstration.DemonstrationSkills).to.be.an('array').that.has.length(0);
+        });
+    });
+
+    it('student-tasks: Add ratings', () => {
+        // add multiple to both student-level and task-level
+        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills,Skills', {
+            data: [{
+                ID: 68,
+                DemonstrationSkills: [
+                    { SkillID: 1, TargetLevel: 9, DemonstratedLevel: 5 },
+                    { SkillID: 2, TargetLevel: 9, DemonstratedLevel: 6 },
+                    { SkillID: 3, TargetLevel: 9, DemonstratedLevel: 7 },
+                    { SkillID: 38, TargetLevel: 9, DemonstratedLevel: 8 },
+                    { SkillID: 39, TargetLevel: 9, DemonstratedLevel: 9 },
+                    { SkillID: 119, TargetLevel: 9, DemonstratedLevel: 10 },
+                ]
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body).property('message', null);
+            expect(response.body).property('success', true);
+            expect(response.body).property('failed').to.be.an('array').that.has.length(0);
+            expect(response.body.data[0]).to.be.an('object').to.contain.keys('Demonstration', 'Skills');
+            expect(response.body.data[0].Skills).to.be.an('array').that.has.length(3);
+            expect(response.body.data[0].Skills[0]).to.be.an('object').that.has.property('ID', 1);
+            expect(response.body.data[0].Skills[1]).to.be.an('object').that.has.property('ID', 2);
+            expect(response.body.data[0].Skills[2]).to.be.an('object').that.has.property('ID', 3);
+            expect(response.body.data[0].Demonstration).to.be.an('object').that.has.property('DemonstrationSkills');
+            expect(response.body.data[0].Demonstration.DemonstrationSkills).to.be.an('array').that.has.length(6);
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].Demonstration.ID,
+                SkillID: 1,
+                TargetLevel: 9,
+                DemonstratedLevel: 5,
+                EvidenceWeight: 1,
+            });
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[1]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].Demonstration.ID,
+                SkillID: 2,
+                TargetLevel: 9,
+                DemonstratedLevel: 6,
+                EvidenceWeight: 1,
+            });
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[2]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].Demonstration.ID,
+                SkillID: 3,
+                TargetLevel: 9,
+                DemonstratedLevel: 7,
+                EvidenceWeight: 1,
+            });
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[3]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].Demonstration.ID,
+                SkillID: 38,
+                TargetLevel: 9,
+                DemonstratedLevel: 8,
+                EvidenceWeight: 1,
+            });
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[4]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].Demonstration.ID,
+                SkillID: 39,
+                TargetLevel: 9,
+                DemonstratedLevel: 9,
+                EvidenceWeight: 1,
+            });
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[5]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].Demonstration.ID,
+                SkillID: 119,
+                TargetLevel: 9,
+                DemonstratedLevel: 10,
+                EvidenceWeight: 1,
+            });
+        });
+    });
+
+    it('student-tasks: Remove ratings', () => {
+        // remove subset of both student-level and task-level added above
+        cy.request('POST', '/cbl/student-tasks/save?format=json&include=Demonstration.DemonstrationSkills,Skills', {
+            data: [{
+                ID: 68,
+                DemonstrationSkills: [
+                    { SkillID: 1, TargetLevel: 9, DemonstratedLevel: 7 },
+                    { SkillID: 2, TargetLevel: 9 }, // delete by having no rating
+                    // { SkillID: 3, TargetLevel: 9, DemonstratedLevel: 7 }, // delete rating by omission
+                    // { SkillID: 38, TargetLevel: 9, DemonstratedLevel: 8 }, // delete rating by omission
+                    { SkillID: 39, TargetLevel: 9, DemonstratedLevel: 8 },
+                    { SkillID: 119, TargetLevel: 9, DemonstratedLevel: null }, // delete by having null rating
+                ]
+            }]
+        }).then(response => {
+            expect(response).property('status').to.eq(200);
+            expect(response).property('body').to.be.an('object');
+            expect(response.body).property('data').to.be.an('array').that.has.length(1);
+            expect(response.body).property('message', null);
+            expect(response.body).property('success', true);
+            expect(response.body).property('failed').to.be.an('array').that.has.length(0);
+            expect(response.body.data[0]).to.be.an('object').to.contain.keys('Demonstration', 'Skills');
+            expect(response.body.data[0].Skills).to.be.an('array').that.has.length(2);
+            expect(response.body.data[0].Skills[0]).to.be.an('object').that.has.property('ID', 1);
+            expect(response.body.data[0].Skills[1]).to.be.an('object').that.has.property('ID', 2);
+            expect(response.body.data[0].Demonstration).to.be.an('object').that.has.property('DemonstrationSkills');
+            expect(response.body.data[0].Demonstration.DemonstrationSkills).to.be.an('array').that.has.length(2);
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[0]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].Demonstration.ID,
+                SkillID: 1,
+                TargetLevel: 9,
+                DemonstratedLevel: 7,
+                EvidenceWeight: 1,
+            });
+            expect(response.body.data[0].Demonstration.DemonstrationSkills[1]).to.be.an('object').to.include({
+                Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
+                DemonstrationID: response.body.data[0].Demonstration.ID,
+                SkillID: 39,
+                TargetLevel: 9,
+                DemonstratedLevel: 8,
+                EvidenceWeight: 1,
+            });
+        });
+    });
 });
