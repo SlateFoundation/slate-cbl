@@ -98,7 +98,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                     .should('have.length', 1)
                     .scrollIntoView()
                     .should('contain.text', 'Show all sections')
-                    .click();
+                    .click({ force: true });
 
                 // ensure expanded student lists are loaded
                 cy.wait('@getAllStudentLists');
@@ -128,7 +128,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                     .should('have.length', 1)
                     .scrollIntoView()
                     .should('contain.text', 'Show only my sections')
-                    .click();
+                    .click({ force: true });
 
                 // ensure student lists are loaded
                 cy.wait('@getMyStudentLists');
@@ -180,7 +180,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
             .then(selector => selector.getPicker().el.dom)
             .contains('button', 'Show all sections')
             .scrollIntoView()
-            .click();
+            .click({ force: true });
 
         // ensure student lists are loaded
         cy.wait('@getAllStudentLists');
