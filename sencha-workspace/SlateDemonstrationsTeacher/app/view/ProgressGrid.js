@@ -156,9 +156,9 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                 '<tpl if=".">',
                                     '<li',
                                         ' data-demonstration="{DemonstrationID}"',
-                                        '<tpl if="Override"> data-span="{[xcount - xindex + 1]}"</tpl>',
+                                        '<tpl if="this.isOverride(values)"> data-span="{[xcount - xindex + 1]}"</tpl>',
                                         ' title="',
-                                            '<tpl if="Override">',
+                                            '<tpl if="this.isOverride(values)">',
                                                 '[Overridden]',
                                             '<tpl else>',
                                                 '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
@@ -166,12 +166,12 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                         '"',
                                         ' class="',
                                             ' cbl-skill-demo',
-                                            '<tpl if="Override">',
+                                            '<tpl if="this.isOverride(values)">',
                                                 ' cbl-skill-demo-override',
                                             '<tpl else>',
                                                 ' cbl-rating-{DemonstratedLevel}',
                                             '</tpl>',
-                                            '<tpl if="DemonstratedLevel || Override">',
+                                            '<tpl if="DemonstratedLevel || this.isOverride(values)">',
                                                 ' cbl-skill-demo-counted',
                                             '<tpl elseif="DemonstratedLevel == 0">',
                                                 ' cbl-skill-demo-missed',
@@ -180,13 +180,13 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                                             '</tpl>',
                                         '"',
                                     '>',
-                                        '<tpl if="Override">',
+                                        '<tpl if="this.isOverride(values)">',
                                             '<i class="fa fa-check"></i>',
                                         '<tpl else>',
                                             '{[fm.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(values.DemonstratedLevel))]}',
                                         '</tpl>',
                                     '</li>',
-                                    '{% if (values.Override) break; %}', // don't print any more blocks after override
+                                    '{% if (this.isOverride(values)) break; %}', // don't print any more blocks after override
                                 '<tpl else>',
                                     '<li class="cbl-skill-demo cbl-skill-demo-uncounted">&nbsp;</li>',
                                 '</tpl>',
@@ -195,7 +195,12 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     '</td>',
                 '</tpl>',
             '</tr>',
-        '</tpl>'
+        '</tpl>',
+        {
+            isOverride: function(demonstrationData) {
+                return demonstrationData.DemonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration';
+            }
+        }
     ],
 
 
@@ -843,7 +848,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     // gather information about incoming demonstration data
                     demonstration = demonstrations[demonstrationIndex];
                     demonstrationRating = demonstration ? demonstration.DemonstratedLevel : null;
-                    demonstrationOverride = demonstration ? demonstration.Override : null;
+                    demonstrationOverride = demonstration ? demonstration.DemonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration' : null;
                     demonstrationId = demonstration ? demonstration.DemonstrationID : null;
 
                     // gather information about previous render
@@ -868,7 +873,7 @@ Ext.define('SlateDemonstrationsTeacher.view.ProgressGrid', {
                     // detect changes from previous rendering
                     if (renderedDemonstration) {
                         demonstrationRatingDirty = renderedDemonstrationRating != demonstrationRating;
-                        demonstrationOverrideDirty = renderedDemonstration.Override != demonstrationOverride;
+                        demonstrationOverrideDirty = (renderedDemonstration.DemonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration') != demonstrationOverride;
                     } else {
                         demonstrationRatingDirty = true;
                         demonstrationOverrideDirty = true;
