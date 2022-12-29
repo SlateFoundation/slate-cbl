@@ -24,6 +24,7 @@
         {dli label='Growth' value=$data->getGrowth()}
         {dli label='Progress' value=$data->getProgress()}
         {dli label='Is Level Complete?' value=tif($data->isLevelComplete(), 'Yes', 'No')}
+        {dli label='Demonstration Opportunities' value=$data->getDemonstrationOpportunities()|number_format}
         {dli label='Demonstrations Average' value=$data->getDemonstrationsAverage()|number_format:2}
         {dli label='Demonstrations Logged' value=$data->getDemonstrationsLogged()|number_format}
         {dli label='Demonstrations Missed' value=$data->getDemonstrationsMissed()|number_format}
