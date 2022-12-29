@@ -291,8 +291,12 @@ class StudentCompetency extends \ActiveRecord
     {
         if ($this->demonstrationOpportunities === null) {
             $this->demonstrationOpportunities = 0;
-            $hasWildCard = false;
             foreach ($this->getDemonstrationsData() as $skillId => $demonstrationData) {
+                $Skill = Skill::getByID($skillId);
+                $skillDemonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
+
+                $skillDemonstrationOpportunities = 0;
+                $hasWildcard = false;
                 foreach ($demonstrationData as $demonstration) {
                     // skip overrides by class
                     if ($demonstration['DemonstrationClass'] == OverrideDemonstration::class) {
@@ -300,18 +304,20 @@ class StudentCompetency extends \ActiveRecord
                     }
 
                     if ($demonstration['EvidenceWeight'] === null) {
+                        // count a wildcard as 1 opportunity until a gap is left between the total for this skill and demonstrations required
+                        $skillDemonstrationOpportunities += 1;
                         $hasWildcard = true;
-                        break;
                     } else {
-                        $this->demonstrationOpportunities += $demonstration['EvidenceWeight'];
+                        $skillDemonstrationOpportunities += $demonstration['EvidenceWeight'];
                     }
                 }
-            }
-        }
 
-        if ($hasWildCard) {
-            // return total requirements
-            $this->demonstrationOpportunities = $this->getDemonstrationsRequired();
+                if ($hasWildcard && $skillDemonstrationOpportunities < $skillDemonstrationsRequired) {
+                    $skillDemonstrationOpportunities = $skillDemonstrationsRequired;
+                }
+
+                $this->demonstrationOpportunities += $skillDemonstrationOpportunities;
+            }
         }
 
         return $this->demonstrationOpportunities;
