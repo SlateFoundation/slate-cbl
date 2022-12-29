@@ -664,8 +664,9 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 // HW.2.5 - student5
                 expect($skillCells[3]).to.have.class('cbl-level-9');
                 $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
-                expect($demoItems).to.have.length(1);
-                expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.class('cbl-skill-demo-override').and.have.descendants('.fa-check');
+                expect($demoItems).to.have.length(2);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.text('10');
+                expect($demoItems[1]).to.have.class('cbl-skill-demo-counted').and.have.class('cbl-skill-demo-override').and.have.descendants('.fa-check');
             }
         });
     });
