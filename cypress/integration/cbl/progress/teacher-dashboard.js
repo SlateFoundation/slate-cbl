@@ -286,7 +286,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
 
         cy.extGet('slate-demonstrations-teacher-dashboard')
             .find('.cbl-grid-student-name')
-            .should('have.length', 3)
+            .should('have.length', 4)
             .first()
                 .should('have.text', 'Student Slate');
 
@@ -356,7 +356,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
 
         cy.extGet('slate-demonstrations-teacher-dashboard')
             .find('.cbl-grid-student-name')
-            .should('have.length', 3)
+            .should('have.length', 4)
             .first()
                 .should('have.text', 'Student Slate');
 
@@ -385,7 +385,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 // HW.1.1
                 expect($skillRows[0]).to.have.attr('data-skill', '48');
                 $skillCells = $skillRows.eq(0).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.1.1 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
@@ -407,10 +407,16 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
+                // HW.1.1 - student5
+                expect([...$skillCells[3].classList].filter(className => className.startsWith('cbl-level-'))).to.have.length(0);
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
+
                 // HW.1.2
                 expect($skillRows[1]).to.have.attr('data-skill', '49');
                 $skillCells = $skillRows.eq(1).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.1.2 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
@@ -431,11 +437,17 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.text('8');
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
+
+                // HW.1.2 - student5
+                expect([...$skillCells[3].classList].filter(className => className.startsWith('cbl-level-'))).to.have.length(0);
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
                 // HW.1.3
                 expect($skillRows[2]).to.have.attr('data-skill', '50');
                 $skillCells = $skillRows.eq(2).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.1.2 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
@@ -457,27 +469,39 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
+                // HW.1.3 - student5
+                expect([...$skillCells[3].classList].filter(className => className.startsWith('cbl-level-'))).to.have.length(0);
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
+
                 // HW.1.4
                 expect($skillRows[3]).to.have.attr('data-skill', '51');
                 $skillCells = $skillRows.eq(3).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
-                // HW.1.2 - student
+                // HW.1.4 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
                 $demoItems = $skillCells.eq(0).find('.cbl-skill-demo');
                 expect($demoItems).to.have.length(0);
 
-                // HW.1.2 - student 2
+                // HW.1.4 - student 2
                 expect($skillCells[1]).to.have.class('cbl-level-9');
                 $demoItems = $skillCells.eq(1).find('.cbl-skill-demo');
                 expect($demoItems).to.have.length(2);
                 expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.text('7');
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
-                // HW.1.2 - student 3
+                // HW.1.4 - student 3
                 expect($skillCells[2]).to.have.class('cbl-level-11');
                 $demoItems = $skillCells.eq(2).find('.cbl-skill-demo');
                 expect($demoItems).to.have.length(0);
+
+                // HW.1.4 - student5
+                expect([...$skillCells[3].classList].filter(className => className.startsWith('cbl-level-'))).to.have.length(0);
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
             }
         });
     });
@@ -493,7 +517,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 // HW.2.1
                 expect($skillRows[0]).to.have.attr('data-skill', '52');
                 $skillCells = $skillRows.eq(0).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.2.1 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
@@ -514,10 +538,17 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-counted').and.have.text('9');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
+                // HW.2.1 - student5
+                expect($skillCells[3]).to.have.class('cbl-level-9');
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(2);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.text('8');
+                expect($demoItems[1]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
+
                 // HW.2.2
                 expect($skillRows[1]).to.have.attr('data-skill', '53');
                 $skillCells = $skillRows.eq(1).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.2.2 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
@@ -538,10 +569,17 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-counted').and.have.text('9');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
+                // HW.2.2 - student5
+                expect($skillCells[3]).to.have.class('cbl-level-9');
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(2);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.text('8');
+                expect($demoItems[1]).to.have.class('cbl-skill-demo-counted').and.have.class('cbl-skill-demo-override').and.have.descendants('.fa-check');
+
                 // HW.2.3
                 expect($skillRows[2]).to.have.attr('data-skill', '54');
                 $skillCells = $skillRows.eq(2).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.2.3 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
@@ -563,10 +601,17 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
+                // HW.2.3 - student5
+                expect($skillCells[3]).to.have.class('cbl-level-9');
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(2);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.text('8');
+                expect($demoItems[1]).to.have.class('cbl-skill-demo-counted').and.have.text('10');
+
                 // HW.2.4
                 expect($skillRows[3]).to.have.attr('data-skill', '55');
                 $skillCells = $skillRows.eq(3).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.2.4 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
@@ -588,10 +633,16 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
+                // HW.2.4 - student5
+                expect($skillCells[3]).to.have.class('cbl-level-9');
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.class('cbl-skill-demo-override').and.have.descendants('.fa-check');
+
                 // HW.2.5
                 expect($skillRows[4]).to.have.attr('data-skill', '56');
                 $skillCells = $skillRows.eq(4).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.2.5 - student
                 expect($skillCells[0]).to.have.class('cbl-level-10');
@@ -609,6 +660,12 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($skillCells[2]).to.have.class('cbl-level-11');
                 $demoItems = $skillCells.eq(2).find('.cbl-skill-demo');
                 expect($demoItems).to.have.length(0);
+
+                // HW.2.5 - student5
+                expect($skillCells[3]).to.have.class('cbl-level-9');
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-counted').and.have.class('cbl-skill-demo-override').and.have.descendants('.fa-check');
             }
         });
     });
@@ -624,7 +681,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 // HW.3.1
                 expect($skillRows[0]).to.have.attr('data-skill', '57');
                 $skillCells = $skillRows.eq(0).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.3.1 - student
                 expect($skillCells[0]).to.have.class('cbl-level-9');
@@ -646,10 +703,16 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-counted').and.have.text('9');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-counted').and.have.text('11');
 
+                // HW.3.1 - student5
+                expect([...$skillCells[3].classList].filter(className => className.startsWith('cbl-level-'))).to.have.length(0);
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
+
                 // HW.3.2
                 expect($skillRows[1]).to.have.attr('data-skill', '58');
                 $skillCells = $skillRows.eq(1).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.3.2 - student
                 expect($skillCells[0]).to.have.class('cbl-level-9');
@@ -671,10 +734,16 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-counted').and.have.text('10');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
+                // HW.3.2 - student5
+                expect([...$skillCells[3].classList].filter(className => className.startsWith('cbl-level-'))).to.have.length(0);
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
+
                 // HW.3.3
                 expect($skillRows[2]).to.have.attr('data-skill', '59');
                 $skillCells = $skillRows.eq(2).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.3.3 - student
                 expect($skillCells[0]).to.have.class('cbl-level-9');
@@ -697,10 +766,16 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($demoItems[1]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
                 expect($demoItems[2]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
 
+                // HW.3.3 - student5
+                expect([...$skillCells[3].classList].filter(className => className.startsWith('cbl-level-'))).to.have.length(0);
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
+
                 // HW.3.4
                 expect($skillRows[3]).to.have.attr('data-skill', '60');
                 $skillCells = $skillRows.eq(3).find('.cbl-grid-demos-cell');
-                expect($skillCells).to.have.length(3);
+                expect($skillCells).to.have.length(4);
 
                 // HW.3.4 - student
                 expect($skillCells[0]).to.have.class('cbl-level-9');
@@ -720,6 +795,12 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 expect($skillCells[2]).to.have.class('cbl-level-11');
                 $demoItems = $skillCells.eq(2).find('.cbl-skill-demo');
                 expect($demoItems).to.have.length(0);
+
+                // HW.3.4 - student5
+                expect([...$skillCells[3].classList].filter(className => className.startsWith('cbl-level-'))).to.have.length(0);
+                $demoItems = $skillCells.eq(3).find('.cbl-skill-demo');
+                expect($demoItems).to.have.length(1);
+                expect($demoItems[0]).to.have.class('cbl-skill-demo-uncounted').and.have.html('&nbsp;');
             }
         });
     });
