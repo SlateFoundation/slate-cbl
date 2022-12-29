@@ -268,6 +268,77 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 .should('have.text', 'Student Slate');
     });
 
+    it('Verify rendering of overrides in skill hitory', () => {
+
+        loadDashboard('HW/group:class_of_2020');
+
+        // ensure student competencies are loaded
+        cy.wait('@getStudentCompetencies');
+        cy.get('@getStudentCompetencies.all').should('have.length', 1);
+
+        // verify hash updates
+        cy.location('hash').should('eq', '#HW/group:class_of_2020');
+
+        // verify content loads
+        cy.extGet('slate-demonstrations-teacher-dashboard')
+            .find('.cbl-grid-competency-name')
+            .should('have.length', 3);
+
+        cy.extGet('slate-demonstrations-teacher-dashboard')
+            .find('.cbl-grid-student-name')
+            .should('have.length', 3)
+            .first()
+                .should('have.text', 'Student Slate');
+
+        // expand competency
+        cy.get('.cbl-grid-progress-row[data-competency="12"] .cbl-grid-competency-name')
+            .should('have.text', 'Apply Knowledge of Health Concepts')
+            .click();
+
+        // click override under HW.1.1 - student2
+        cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="12"]')
+            .should('have.length', 1)
+            .should('have.class', 'is-expanded')
+            .find('.cbl-grid-skill-row[data-skill="50"] .cbl-grid-demos-cell[data-student="6"] .fa-check')
+                .click();
+
+        // wait for window to transition open
+        cy.extGet('slate-window')
+            .should('not.have.class', 'x-hidden-clip')
+            .within(($window) => {
+                cy.get('.slate-cbl-competencyselector input')
+                    .should('have.value', 'Apply Knowledge of Health Concepts');
+
+                cy.get('.slate-cbl-skillselector input')
+                    .should('have.value', 'Analyze key factors that impact health');
+
+                cy.get('.skill-statement')
+                    .should('have.text', 'How well can I analyze key factors that impact health?');
+
+                cy.get('.skill-list .skill-list-demo')
+                    .should('have.length', 2)
+                    .should(($demoCt) => {
+                        expect($demoCt.eq(0).find('.skill-list-demo-level > div'))
+                            .to.have.class('cbl-level-colored')
+                            .and.have.class('cbl-level-9')
+                            .and.have.class('cbl-rating-7')
+                            .and.have.text('7');
+
+                        expect($demoCt[1]).to.have.class('skill-list-demo-highlighted');
+
+                        expect($demoCt.eq(1).find('.skill-list-demo-level > div'))
+                            .to.have.class('cbl-level-colored')
+                            .and.have.class('cbl-level-9')
+                            .and.have.attr('title', '[Overridden]')
+                            .and.have.descendants('.fa-check');
+
+                        expect($demoCt.eq(1).find('.skill-list-override'))
+                            .to.have.text('[Overridden]');
+                    });
+
+            });
+    });
+
     function withHealthAndWellnessSkillRows({ competencyId, competencyStatement, skillsCount, assertions }) {
         loadDashboard('HW/group:class_of_2020');
 
