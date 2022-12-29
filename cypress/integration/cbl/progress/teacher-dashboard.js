@@ -268,7 +268,7 @@ describe('CBL / Progress / Teacher Dashboard', () => {
                 .should('have.text', 'Student Slate');
     });
 
-    it('Verify rendering of overrides in skill hitory', () => {
+    it('Verify rendering of overrides in skill history', () => {
 
         loadDashboard('HW/group:class_of_2020');
 
