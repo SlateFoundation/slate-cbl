@@ -275,6 +275,12 @@ INSERT INTO `cbl_demonstrations` VALUES (258,'Slate\\CBL\\Demonstrations\\Experi
 INSERT INTO `cbl_demonstrations` VALUES (259,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-16 22:29:17',2,NULL,NULL,27,'2022-08-16 22:28:41',NULL,NULL,'Presentation of Learning','All M\'s','Multimedia Presentation');
 INSERT INTO `cbl_demonstrations` VALUES (260,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-21 16:32:56',1,NULL,NULL,27,'2022-08-21 16:28:27',NULL,NULL,'Studio','Missing studio 1','Data Analysis Task');
 INSERT INTO `cbl_demonstrations` VALUES (261,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-08-21 16:33:38',1,NULL,NULL,27,'2022-08-21 16:32:57',NULL,NULL,'Studio','Missing Studio 2','Engineering Design');
+INSERT INTO `cbl_demonstrations` VALUES (262,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-12-29 20:57:47',2,NULL,NULL,28,'2022-12-29 20:57:37',NULL,NULL,'Studio','Initial demonstration before overrides','Data Analysis Task');
+INSERT INTO `cbl_demonstrations` VALUES (263,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-12-29 20:57:54',2,NULL,NULL,28,'2022-12-29 20:57:54',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (264,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-12-29 20:58:00',2,NULL,NULL,28,'2022-12-29 20:57:58',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (265,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-12-29 20:58:05',2,NULL,NULL,28,'2022-12-29 20:58:04',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (266,'Slate\\CBL\\Demonstrations\\OverrideDemonstration','2022-12-29 20:58:10',2,NULL,NULL,28,'2022-12-29 20:58:08',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `cbl_demonstrations` VALUES (267,'Slate\\CBL\\Demonstrations\\ExperienceDemonstration','2022-12-29 20:59:06',2,NULL,NULL,28,'2022-12-29 20:58:50',NULL,NULL,'Studio','Initial demonstration after overrides','Data Analysis Task');
 
 
 CREATE TABLE `history_cbl_demonstrations` (
