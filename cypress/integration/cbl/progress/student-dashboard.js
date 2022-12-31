@@ -7,19 +7,56 @@ describe('CBL / Progress / Student Dashboard', () => {
 
     // authenticate as 'student' user
     beforeEach(() => {
-        cy.loginAs('student2');
         cy.intercept('GET', '/cbl/content-areas?(\\?*)').as('getContentAreas');
+        cy.intercept('GET', '/cbl/student-competencies?(\\?*)').as('getStudentCompetencies');
+        cy.intercept('GET', '/cbl/dashboards/demonstrations/student/recent-progress?(\\?*)').as('getRecentProgress');
     });
 
-    it('View single demonstration rubric as student', () => {
+    it('Only placeholder visible when no selection is made', () => {
+
+        cy.loginAs('student');
+
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/demonstrations/student');
+
+        // verify placeholder is visible and none of its siblings
+        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder:visible')
+            .should('have.text', 'Select a competency area to load demonstrations dashboard');
+
+        cy.get('.slate-demonstrations-student-cardsct')
+            .should('be.empty');
+    });
+
+    it('Only placeholder visible when no enrollments in selection', () => {
+
+        cy.loginAs('student');
+
+        // open student demonstrations dashboard
+        cy.visit('/cbl/dashboards/demonstrations/student#me/VA');
+
+        // verify placeholder is visible and none of its siblings
+        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder:visible')
+            .should('have.text', 'Not currently enrolled in this competency area')
+            .siblings(':visible')
+                .should('have.length', 0);
+
+        cy.get('.slate-demonstrations-student-cardsct')
+            .should('be.empty');
+    });
+
+    it('Load progress via selector', () => {
+
+        cy.loginAs('student');
 
         // open student demonstrations dashboard
         cy.visit('/cbl/dashboards/demonstrations/student');
 
         // verify student redirect
         cy.location('hash').should('eq', '#me');
-        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder')
-            .contains('Select a content area to load demonstrations dashboard');
+
+        // verify placeholder
+        cy.get('.slate-appcontainer-bodyWrap .slate-placeholder:visible')
+            .should('have.text', 'Select a competency area to load demonstrations dashboard');
 
         // click the 'Rubric' selector
         cy.extGet('slate-cbl-contentareaselector')
@@ -31,12 +68,51 @@ describe('CBL / Progress / Student Dashboard', () => {
         // verify and click first element of picker dropdown
         cy.extGet('slate-cbl-contentareaselector', { component: true })
             .then(selector => selector.getPicker().el.dom)
-            .contains('.x-boundlist-item', 'Health and Wellness')
+            .contains('.x-boundlist-item', 'English Language Arts')
             .click();
+
+        // ensure student competencies loaded
+        cy.wait('@getStudentCompetencies');
+        cy.get('@getStudentCompetencies.all').should('have.length', 1);
+
+        // ensure recent progress loaded
+        cy.wait('@getRecentProgress');
+        cy.get('@getRecentProgress.all').should('have.length', 1);
+
+        // verify redirect
+        cy.location('hash').should('eq', '#me/ELA');
 
         // verify content loads
         cy.get('.slate-demonstrations-student-competenciessummary span')
-            .contains('Health and Wellness');
+            .should('have.text', 'English Language Arts');
+
+        cy.get('.slate-demonstrations-student-cardsct .slate-demonstrations-student-competencycard')
+            .should('have.length', 7);
+
+        cy.get('.slate-tasks-student-recentactivity tbody tr .level-col > div')
+            .should('have.length', 20)
+    });
+
+    it('Verify student2 test cases render correctly', () => {
+
+        // load student2-HW dashboard
+        cy.loginAs('student2');
+        cy.visit('/cbl/dashboards/demonstrations/student#me/HW');
+
+        // ensure student competencies loaded
+        cy.wait('@getStudentCompetencies');
+        cy.get('@getStudentCompetencies.all').should('have.length', 1);
+
+        // ensure recent progress loaded
+        cy.wait('@getRecentProgress');
+        cy.get('@getRecentProgress.all').should('have.length', 1);
+
+        // verify content updated
+        cy.get('.slate-demonstrations-student-competenciessummary span')
+            .should('have.text', 'Health and Wellness');
+
+        cy.get('.slate-demonstrations-student-cardsct .slate-demonstrations-student-competencycard')
+            .should('have.length', 3);
 
         // verify recent progress feed
         cy.get('.slate-tasks-student-recentactivity tbody tr .level-col > div').should('have.length', 17).should(($ratingCells) => {
