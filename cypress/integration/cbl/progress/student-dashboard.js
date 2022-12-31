@@ -315,5 +315,14 @@ describe('CBL / Progress / Student Dashboard', () => {
                     .and.have.descendants('.fa-check');
             });
         });
+        cy.get('.cbl-skill[data-skill="HW.2.5"').within(() => {
+            cy.get('.cbl-skill-complete-indicator').should('have.class', 'is-checked');
+            cy.get('.cbl-skill-demo').should('have.length', 2).should(($skillCells) => {
+                expect($skillCells[0]).to.have.text('10');
+                expect($skillCells[1]).to.have.class('cbl-skill-override')
+                    .and.have.attr('title', '[Overridden]')
+                    .and.have.descendants('.fa-check');
+            });
+        });
     });
 });
