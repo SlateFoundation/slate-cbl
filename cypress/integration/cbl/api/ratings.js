@@ -239,6 +239,7 @@ describe('CBL / API / Ratings', () => {
         });
     });
 
+    let createdOverrideID;
     it('demonstrations: Create an override', () => {
         cy.request('POST', '/cbl/demonstrations/save?format=json&include=DemonstrationSkills', {
             data: [{
@@ -261,12 +262,12 @@ describe('CBL / API / Ratings', () => {
             expect(response.body).property('success', true);
             expect(response.body).property('failed').to.be.an('array').that.has.length(0);
             expect(response.body.data[0]).to.be.an('object').to.include({
-                ID: 262,
                 Class: 'Slate\\CBL\\Demonstrations\\OverrideDemonstration',
                 StudentID: 4,
                 ArtifactURL: null,
                 Comments: 'this is an override comment'
             });
+            expect(response.body.data[0].ID).to.be.a('number').that.has.greaterThan(0);
             expect(response.body.data[0].DemonstrationSkills).to.be.an('array').that.has.length(1);
             expect(response.body.data[0].DemonstrationSkills[0]).to.be.an('object').to.include({
                 Class: 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
@@ -276,6 +277,9 @@ describe('CBL / API / Ratings', () => {
                 DemonstratedLevel: null,
                 EvidenceWeight: null,
             });
+
+            // save for delete test
+            createdOverrideID = response.body.data[0].ID;
         });
 
         cy.request('/cbl/student-competencies/33?format=json&include=completion,effectiveDemonstrationsData').then(response => {
@@ -328,7 +332,7 @@ describe('CBL / API / Ratings', () => {
     it('demonstrations: Delete an override', () => {
         cy.request('POST', '/cbl/demonstrations/destroy?format=json&include=DemonstrationSkills', {
             data: [{
-                ID: 262
+                ID: createdOverrideID
             }]
         }).then(response => {
             expect(response).property('status').to.eq(200);
@@ -337,7 +341,7 @@ describe('CBL / API / Ratings', () => {
             expect(response.body).property('success', true);
             expect(response.body).property('failed').to.be.an('array').that.has.length(0);
             expect(response.body.data[0]).to.be.an('object').to.include({
-                ID: 262,
+                ID: createdOverrideID,
                 Class: 'Slate\\CBL\\Demonstrations\\OverrideDemonstration',
                 StudentID: 4,
                 ArtifactURL: null,
