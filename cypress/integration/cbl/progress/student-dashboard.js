@@ -247,4 +247,73 @@ describe('CBL / Progress / Student Dashboard', () => {
             });
         });
     });
+
+    it('Verify student5 test cases render correctly', () => {
+
+        // load student2-HW dashboard
+        cy.loginAs('student5');
+        cy.visit('/cbl/dashboards/demonstrations/student#me/HW');
+
+        // ensure student competencies loaded
+        cy.wait('@getStudentCompetencies');
+        cy.get('@getStudentCompetencies.all').should('have.length', 1);
+
+        // ensure recent progress loaded
+        cy.wait('@getRecentProgress');
+        cy.get('@getRecentProgress.all').should('have.length', 1);
+
+        // verify content updated
+        cy.get('.slate-demonstrations-student-competenciessummary span')
+            .should('have.text', 'Health and Wellness');
+
+        cy.get('.slate-demonstrations-student-cardsct .slate-demonstrations-student-competencycard')
+            .should('have.length', 1);
+
+        // verify recent progress feed
+        cy.get('.slate-tasks-student-recentactivity tbody tr .level-col > div').should('have.length', 9).should(($ratingCells) => {
+            expect($ratingCells[0]).to.have.class('cbl-level-9').and.have.text('10');
+            expect($ratingCells[1]).to.have.class('cbl-level-9').and.have.text('10');
+            expect($ratingCells[2]).to.have.class('cbl-level-9').and.have.descendants('.fa-check');
+            expect($ratingCells[3]).to.have.class('cbl-level-9').and.have.descendants('.fa-check');
+            expect($ratingCells[4]).to.have.class('cbl-level-9').and.have.descendants('.fa-check');
+            expect($ratingCells[5]).to.have.class('cbl-level-9').and.have.descendants('.fa-check');
+            expect($ratingCells[6]).to.have.class('cbl-level-9').and.have.text('8');
+            expect($ratingCells[7]).to.have.class('cbl-level-9').and.have.text('8');
+            expect($ratingCells[8]).to.have.class('cbl-level-9').and.have.text('8');
+        });
+
+        // verify skill renderings for HW.2
+        cy.get('.slate-demonstrations-student-competencycard[data-competency="13"]').should('have.class', 'cbl-level-9');
+        cy.get('.cbl-skill[data-skill="HW.2.1"]').within(() => {
+            cy.get('.cbl-skill-complete-indicator').should('not.have.class', 'is-checked');
+            cy.get('.cbl-skill-demo').should('have.length', 2).should(($skillCells) => {
+                expect($skillCells[0]).to.have.text('8');
+                expect($skillCells[1]).to.have.class('cbl-skill-demo-empty');
+            });
+        });
+        cy.get('.cbl-skill[data-skill="HW.2.2"').within(() => {
+            cy.get('.cbl-skill-complete-indicator').should('have.class', 'is-checked');
+            cy.get('.cbl-skill-demo').should('have.length', 2).should(($skillCells) => {
+                expect($skillCells[0]).to.have.text('8');
+                expect($skillCells[1]).to.have.class('cbl-skill-override')
+                    .and.have.attr('title', '[Overridden]')
+                    .and.have.descendants('.fa-check');
+            });
+        });
+        cy.get('.cbl-skill[data-skill="HW.2.3"').within(() => {
+            cy.get('.cbl-skill-complete-indicator').should('have.class', 'is-checked');
+            cy.get('.cbl-skill-demo').should('have.length', 2).should(($skillCells) => {
+                expect($skillCells[0]).to.have.text('8');
+                expect($skillCells[1]).to.have.text('10');
+            });
+        });
+        cy.get('.cbl-skill[data-skill="HW.2.4"').within(() => {
+            cy.get('.cbl-skill-complete-indicator').should('have.class', 'is-checked');
+            cy.get('.cbl-skill-demo').should('have.length', 1).should(($skillCells) => {
+                expect($skillCells[0]).to.have.class('cbl-skill-override')
+                    .and.have.attr('title', '[Overridden]')
+                    .and.have.descendants('.fa-check');
+            });
+        });
+    });
 });
