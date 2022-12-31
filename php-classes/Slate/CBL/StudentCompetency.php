@@ -325,9 +325,9 @@ class StudentCompetency extends \ActiveRecord
 
     protected static function sortDemonstrations($a, $b)
     {
-        if ($a['Override'] === true) {
+        if ($a['DemonstrationClass'] === OverrideDemonstration::class) {
             return 1;
-        } elseif ($b['Override'] === true) {
+        } elseif ($b['DemonstrationClass'] === OverrideDemonstration::class) {
             return -1;
         }
 
