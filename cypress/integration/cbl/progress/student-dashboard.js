@@ -21,7 +21,9 @@ describe('CBL / Progress / Student Dashboard', () => {
 
         // verify placeholder is visible and none of its siblings
         cy.get('.slate-appcontainer-bodyWrap .slate-placeholder:visible')
-            .should('have.text', 'Select a competency area to load demonstrations dashboard');
+            .should('have.text', 'Select a competency area to load demonstrations dashboard')
+            .siblings(':visible')
+                .should('have.length', 0);
 
         cy.get('.slate-demonstrations-student-cardsct')
             .should('be.empty');
