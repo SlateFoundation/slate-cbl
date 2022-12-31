@@ -38,7 +38,6 @@ Ext.define('Slate.cbl.data.field.DemonstrationSkills', {
 
             skill1 = value1[skillId];
             rating = skill1.DemonstratedLevel;
-            override = Boolean(skill1.Override);
 
             if (
                 typeof rating == 'number' || typeof skill2.DemonstratedLevel == 'number'
@@ -48,7 +47,7 @@ Ext.define('Slate.cbl.data.field.DemonstrationSkills', {
                 return false;
             }
 
-            if (override !== Boolean(skill2.Override)) {
+            if (skill1.EvidenceWeight !== skill2.EvidenceWeight) {
                 return false;
             }
 
@@ -57,7 +56,7 @@ Ext.define('Slate.cbl.data.field.DemonstrationSkills', {
             }
 
             // differences in any following attributes are irrelevant if no DemonstrationSkill record would persist
-            if ((rating === null || typeof rating == 'undefined') && !override) {
+            if (typeof rating == 'undefined' && typeof evidenceWeight == 'undefined') {
                 continue;
             }
 
