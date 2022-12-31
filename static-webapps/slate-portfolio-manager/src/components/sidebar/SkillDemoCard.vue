@@ -6,7 +6,7 @@
   >
     <div class="skill-demo__rating py-1 bg-cbl-level">
       <font-awesome-icon
-        v-if="demo.Override"
+        v-if="demo.DemonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration'"
         icon="check"
       />
       <span v-else>{{ demo.DemonstratedLevel === 0 ? "M" : demo.DemonstratedLevel }}</span>
@@ -83,8 +83,10 @@ export default {
       return targetLevels;
     },
     title() {
-      const { Context, Override } = this.demo;
-      return Override ? '[Overridden]' : Context;
+      const { Context, DemonstrationClass } = this.demo;
+      return DemonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration'
+        ? '[Overridden]'
+        : Context;
     },
     wrapperClass() {
       return [

@@ -92,7 +92,7 @@ export default {
           return;
         }
         const {
-          DemonstratedLevel, ID, DemonstrationID, Override,
+          ID, DemonstratedLevel, EvidenceWeight, DemonstrationID, DemonstrationClass,
         } = demo;
         const demonstration = this.demonstrations.find((d) => d.ID === DemonstrationID);
         if (!demonstration) {
@@ -106,11 +106,12 @@ export default {
         out.push({
           ID,
           DemonstratedLevel,
+          EvidenceWeight,
           Context,
           Comments,
           date: displayDemoDate(demo),
           effective,
-          Override,
+          DemonstrationClass,
           class: ['demonstration-skill', effective ? '-effective' : '-ineffective'],
         });
       };
