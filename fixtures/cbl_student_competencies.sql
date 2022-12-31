@@ -670,3 +670,4 @@ INSERT INTO `cbl_student_competencies` VALUES (652,'Slate\\CBL\\StudentCompetenc
 INSERT INTO `cbl_student_competencies` VALUES (653,'Slate\\CBL\\StudentCompetency','2022-07-02 11:52:37',2,6,12,9,'enrollment',NULL);
 INSERT INTO `cbl_student_competencies` VALUES (654,'Slate\\CBL\\StudentCompetency','2022-07-02 11:52:37',2,6,13,9,'enrollment',NULL);
 INSERT INTO `cbl_student_competencies` VALUES (655,'Slate\\CBL\\StudentCompetency','2022-07-02 11:52:37',2,6,14,9,'enrollment',NULL);
+INSERT INTO `cbl_student_competencies` VALUES (656,'Slate\\CBL\\StudentCompetency','2022-12-29 20:57:09',2,28,13,9,'enrollment',NULL);
