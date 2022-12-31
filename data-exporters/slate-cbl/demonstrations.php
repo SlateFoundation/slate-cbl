@@ -5,6 +5,7 @@ use Slate\People\Student;
 use Slate\CBL\Skill;
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
+use Slate\CBL\Demonstrations\OverrideDemonstration;
 use Slate\CBL\Tasks\StudentTask;
 
 return [
@@ -104,6 +105,7 @@ return [
 
         $results = \DB::query(
             'SELECT %2$s.ID, '.
+                    '%2$s.Class AS DemonstrationClass, '.
                     '%2$s.StudentID, '.
                     'CONCAT(%4$s.FirstName, " ", %4$s.LastName) AS CreatorFullName, '.
                     '%5$s.StudentNumber AS StudentNumber, '.
@@ -139,6 +141,8 @@ return [
             unset($row['ID']);
             $row['DemonstrationID'] = $rowId;
 
+            $isOverride = $row['DemonstrationClass'] === OverrideDemonstration::class;
+
 
             $demonstrationSkills = DemonstrationSkill::getAllByWhere(['DemonstrationID' => $rowId]);
             for ($i = 0; $i < count($demonstrationSkills); $i++) {
@@ -149,7 +153,7 @@ return [
                 $row['Modified'] = $demonstrationSkills[$i]->Modified ? date('m/d/Y H:i:s P', $demonstrationSkills[$i]->Modified) : null;
 
                 // For overriden demonstrations, rating should be "O" rather than the DemonstratedLevel
-                if ($demonstrationSkills[$i]->Override) {
+                if ($isOverride) {
                     $row['Rating'] = 'O';
                 } elseif ($demonstrationSkills[$i]->DemonstratedLevel > 0) {
                     $row['Rating'] = $demonstrationSkills[$i]->DemonstratedLevel;
