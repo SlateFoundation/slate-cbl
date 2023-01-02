@@ -10,18 +10,17 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
         'Slate.cbl.model.Skill'
     ],
 
+
     config: {
         skill: null,
         level: null,
+
+        label: false,
     },
 
-    componentCls: 'slate-cbl-ratings-rater',
 
+    componentCls: 'slate-cbl-ratings-rater',
     items: [{
-        xtype: 'label',
-        cls: 'x-form-item-label',
-        text: 'Skill code and descriptor',
-    }, {
         xtype: 'container',
         layout: 'hbox',
         margin: '4 0',
@@ -81,8 +80,8 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
         }],
     }],
 
-    // config handlers
 
+    // config handlers
     updateLevel: function(level, oldLevel) {
         var me = this;
 
@@ -97,24 +96,54 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
         me.setDisabled(!level);
     },
 
-    // applySkill: function(skill, oldSkill) {
-    //     if (!skill) {
-    //         return null;
-    //     }
+    applySkill: function(skill, oldSkill) {
+        if (!skill) {
+            return null;
+        }
 
-    //     if (!skill.isModel) {
-    //         if (oldSkill && skill.ID == oldSkill.getId()) {
-    //             oldSkill.set(skill, { dirty: false });
-    //             return oldSkill;
-    //         }
+        if (!skill.isModel) {
+            if (oldSkill && skill.ID == oldSkill.getId()) {
+                oldSkill.set(skill, { dirty: false });
+                return oldSkill;
+            }
 
-    //         skill = Slate.cbl.model.Skill.create(skill);
-    //     }
+            skill = Slate.cbl.model.Skill.create(skill);
+        }
 
-    //     return skill;
-    // },
+        return skill;
+    },
 
-    // updateSkill: function(skill) {
-    //     this.setFieldLabel(skill ? skill.get('Code') + '&mdash;' + skill.get('Descriptor') : null);
-    // },
+    updateSkill: function(skill) {
+        this.setLabel(skill ? skill.get('Code') + '—' + skill.get('Descriptor') : null);
+    },
+
+    applyLabel: function(labelCmp, oldLabelCmp) {
+        if (!labelCmp || typeof labelCmp == 'boolean') {
+            labelCmp = {
+                hidden: !labelCmp
+            };
+        } else if (typeof labelCmp == 'string') {
+            labelCmp = {
+                text: labelCmp
+            };
+        }
+
+        if (Ext.isSimpleObject(labelCmp)) {
+            Ext.applyIf(labelCmp, {
+                cls: 'x-form-item-label',
+            });
+        }
+
+        return Ext.factory(labelCmp, 'Ext.form.Label', oldLabelCmp);
+    },
+
+
+    // component lifecycle
+    initItems: function() {
+        var me = this;
+
+        me.callParent();
+
+        me.items.insert(0, me.getLabel());
+    },
 });
