@@ -211,7 +211,7 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
         }
 
         // insert min->max rating buttons
-        for (rating = minRating; rating < maxRating; rating++) {
+        for (rating = minRating; rating <= maxRating; rating++) {
             segmentedBtn.add({
                 value: rating,
                 text: Ext.util.Format.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(rating)),
