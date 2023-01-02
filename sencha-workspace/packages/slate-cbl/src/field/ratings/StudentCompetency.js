@@ -7,6 +7,7 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
     requires: [
         /* global Slate */
         'Slate.cbl.model.StudentCompetency',
+        'Slate.cbl.field.ratings.Rater',
         'Slate.cbl.field.ratings.Slider'
     ],
 
