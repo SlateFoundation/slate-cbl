@@ -1,6 +1,72 @@
 .slate-cbl-ratings-rater {
     .x-btn-icon-el-default-large.x-btn-glyph { // TODO replace selector?
         font-size: 14px;
+<<<<<<< HEAD
+        opacity: .9;
+    }
+
+    .x-segmented-button-item-horizontal {
+        border-left: 1px solid rgba(black, .15);
+
+        .x-btn-inner {
+            padding: 0;
+        }
+
+        &:first-child {
+            border-left: 0;
+        }
+    }
+
+
+    @for $n from 1 through length($level-colors) {
+        $color: nth($level-colors, $n);
+        $color-dark: darken(nth($level-colors-dark, $n), 10%);
+        $color-light: darken(nth($level-colors-light, $n), 15%);
+        $color-shadow: darken($color-dark, 5%);
+
+        &.cbl-level-#{$n} {
+            .x-btn {
+                background-color: $color;
+                border-bottom-color: $color-shadow;
+                text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+
+                &:hover,
+                &:focus,
+                &.x-btn-over,
+                &.x-btn-focus {
+                    background-color: $color-light;
+                    background-image: none;
+                }
+
+                &.x-btn-pressed {
+                    background-color: $color-dark;
+                    border-color: $color-shadow;
+
+                    + .x-segmented-button-item-horizontal {
+                        border-left-color: $color-shadow;
+                    }
+                }
+
+                .x-btn-inner {
+                    font-weight: bold;
+                }
+            }
+        }
+    //         }
+
+    //         // &.x-btn-pressed + .x-segmented-button-item-horizontal {
+    //         //     border-left-color: $button-default-border-color-pressed;
+    //         // }
+    //         // &.slate-progress-meter {
+    //         //     background-color: nth($level-colors-light, $n);
+    //         // }
+
+    //         // .slate-progress-bar {
+    //         //     background-color: nth($level-colors-dark, $n);
+    //         // }
+    //     }
+=======
+>>>>>>> 6e40fea9623ff48eb7b28deb85824ae9457a601b
     }
 }
 
@@ -12,8 +78,28 @@
 }
 
 .slate-cbl-ratings-rater-menu-btn {
+<<<<<<< HEAD
+    // match the framework selectors
+
+    .x-btn-arrow-right > .x-btn-icon.x-btn-no-text.x-btn-button-default-large {
+        padding-right: 0;
+    }
+
+    .x-btn-wrap-default-large.x-btn-arrow-right:after {
+        background: none;
+        color: white;
+        content: '\f0d7'; // fa-caret-down
+        font-family: FontAwesome;
+        font-size: 14px;
+        margin: 0 4px;
+        opacity: .6;
+        padding: 0;
+        width: 14px;
+    }
+=======
     // matching framework selector
     .x-btn-arrow-right > .x-btn-icon.x-btn-no-text.x-btn-button-default-large {
         padding-right: 0;
     }
+>>>>>>> 6e40fea9623ff48eb7b28deb85824ae9457a601b
 }

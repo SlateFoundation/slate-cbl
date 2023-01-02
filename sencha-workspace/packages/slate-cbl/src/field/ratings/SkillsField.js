@@ -15,6 +15,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         'Slate.cbl.store.StudentCompetencies',
         'Slate.cbl.field.ratings.SkillsCompetency',
         'Slate.cbl.field.ratings.Slider',
+        'Slate.cbl.field.ratings.Rater',
         'Slate.cbl.field.SkillsSelector',
 
         'Jarvus.override.data.RequireLoadedStores',
@@ -275,7 +276,7 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
     onRatingChange: function(ratingSlider, rating) {
         var me = this;
 
-        me.setSkillValue(ratingSlider.getSkill().getId(), rating, ratingSlider.getLevel());
+        me.setSkillValue(rating`Slider`.getSkill().getId(), rating, ratingSlider.getLevel());
 
         me.validate();
         me.checkDirty();
