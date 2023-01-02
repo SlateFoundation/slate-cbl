@@ -125,8 +125,9 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
 
                 skillFieldsMap[skillId] = me.add({
                     skill: skill,
-                    level: value ? value.Level : currentLevel,
-                    value: value ? value.Rating : null,
+                    value: value
+                        ? value
+                        : { TargetLevel: currentLevel },
 
                     listeners: {
                         scope: me,
@@ -252,19 +253,15 @@ Ext.define('Slate.cbl.field.ratings.StudentCompetency', {
         });
     },
 
-    setSkillValue: function(skillId, rating, level) {
+    setSkillValue: function(skillId, value) {
         var me = this,
             skillFieldsMap = me.skillFieldsMap,
             skillField = skillFieldsMap && skillFieldsMap[skillId];
 
         if (skillField && me.isStudentCompetencyLoaded()) {
-            skillField.setLevel(level);
-            skillField.setValue(rating);
+            skillField.setValue(value);
         } else {
-            me.skillValueQueue[skillId] = {
-                Rating: rating,
-                Level: level
-            };
+            me.skillValueQueue[skillId] = value;
         }
     },
 
