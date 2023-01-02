@@ -25,12 +25,9 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
             scale: 'large',
             text: 'Clear',
             cls: 'slate-cbl-ratings-rater-clear-btn',
-<<<<<<< HEAD
             style: {
                 borderRadius: '99px',
             },
-=======
->>>>>>> 6e40fea9623ff48eb7b28deb85824ae9457a601b
         }, {
             flex: 1,
             xtype: 'segmentedbutton',
@@ -50,22 +47,14 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
                         text: '3',
                     }, {
                         text: '4',
-<<<<<<< HEAD
-=======
-                    }, {
-                        text: 'DNM',
->>>>>>> 6e40fea9623ff48eb7b28deb85824ae9457a601b
                     }],
                 },
             }, {
                 text: 'M',
             }, {
-<<<<<<< HEAD
                 cls: '-text-smaller',
                 text: 'DNM',
             }, {
-=======
->>>>>>> 6e40fea9623ff48eb7b28deb85824ae9457a601b
                 text: '5',
             }, {
                 text: '6',
@@ -88,7 +77,6 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
     }],
 
     // config handlers
-<<<<<<< HEAD
 
     updateLevel: function(level, oldLevel) {
         var me = this;
@@ -104,8 +92,6 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
         me.setDisabled(!level);
     },
 
-=======
->>>>>>> 6e40fea9623ff48eb7b28deb85824ae9457a601b
     // applySkill: function(skill, oldSkill) {
     //     if (!skill) {
     //         return null;
