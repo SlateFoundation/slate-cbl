@@ -222,11 +222,52 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
                 });
             }
 
-            segmentedBtn.add({
+            me.menuBtn = segmentedBtn.add({
+                value: 'MENU',
                 cls: 'slate-cbl-ratings-rater-menu-btn',
                 glyph: 'xf0c9', // fa-bars
                 menu: {
-                    items: menuRatingItemsCfg
+                    items: menuRatingItemsCfg,
+                    plain: true,
+                    defaultType: 'menucheckitem',
+                    defaults: {
+                        group: 'rating',
+                        listeners: {
+                            checkchange: function(menuItem, checked) {
+                                if (!checked) {
+                                    return; // ignore uncheck events
+                                }
+
+                                me.menuBtn.value = menuItem.value;
+                                me.menuBtn.setPressed(true);
+                                me.segmentedBtn.setValue(menuItem.value);
+                            }
+                        }
+                    },
+                    listeners: {
+                        beforeshow: function(menu) {
+                            menu.setWidth(me.menuBtn.getWidth())
+                        }
+                    }
+                },
+                listeners: {
+                    beforetoggle: function(btn, pressed) {
+                        var checkedItem;
+                        
+                        // return menu button back to MENU value on un-press
+                        if (!pressed && btn === me.menuBtn) {
+                            btn.value = 'MENU';
+                            checkedItem = btn.down('[checked]');
+                            if (checkedItem) {
+                                checkedItem.setChecked(false, true);
+                            }
+                        }
+
+                        // prevent selecting menu button with no value set yet
+                        if (pressed && btn.value == 'MENU') {
+                            return false;
+                        }
+                    }
                 }
             });
         }
