@@ -1,13 +1,15 @@
 Ext.define('Slate.cbl.field.ratings.Rater', {
-    extend: 'Ext.Container',
+    extend: 'Slate.ui.form.ContainerField',
     xtype: 'slate-cbl-ratings-rater',
     requires: [
         'Ext.button.Button',
         'Ext.button.Segmented',
         'Ext.form.Label',
+        'Ext.util.Format',
 
         /* global Slate */
-        'Slate.cbl.model.Skill'
+        'Slate.cbl.model.Skill',
+        'Slate.cbl.util.Config',
     ],
 
 
@@ -15,9 +17,20 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
 
 
     config: {
+        // configuration:
+        minRating: 5,
+        maxRating: 12,
+        menuRatings: [4, 3, 2, 1],
+
+        enableMissing: true,
+        enableDidNotMeet: true,
+        enableCheckmark: true,
+
+        // state:
         skill: null,
         level: null,
 
+        // subcomponents:
         label: false,
     },
 
@@ -37,49 +50,12 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
             },
         }, {
             flex: 1,
+
             xtype: 'segmentedbutton',
             margin: '0 0 0 16',
             defaults: {
                 scale: 'large',
-            },
-            items: [{
-                cls: 'slate-cbl-ratings-rater-menu-btn',
-                glyph: 'xf0c9', // fa-bars
-                menu: {
-                    items: [{
-                        text: '1',
-                    }, {
-                        text: '2',
-                    }, {
-                        text: '3',
-                    }, {
-                        text: '4',
-                    }],
-                },
-            }, {
-                text: 'M',
-            }, {
-                cls: '-text-smaller',
-                text: 'DNM',
-            }, {
-                text: '5',
-            }, {
-                text: '6',
-            }, {
-                text: '7',
-            }, {
-                text: '8',
-            }, {
-                text: '9',
-            }, {
-                text: '10',
-            }, {
-                text: '11',
-            }, {
-                text: '12',
-            }, {
-                glyph: 'xf00c', // fa-check
-            }],
+            }
         }],
     }],
 
@@ -141,12 +117,117 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
     },
 
 
+    // field lifecycle
+    initValue: function() {
+        var me = this,
+            minRating = me.getMinRating(),
+            maxRating = me.getMaxRating(),
+            // i = minRating + 1,
+            value = me.normalizeValue(me.value);
+
+        me.value = me.originalValue = value;
+
+        console.info('TODO: initialize value:', value);
+    },
+
+    normalizeValue: function(value) {
+        var me = this,
+            maxValue = me.maxValue;
+
+        if (!value && value !== 0) {
+            return null;
+        }
+
+        value = Math.round(value);
+
+        if (value >= maxValue) {
+            value = maxValue;
+        } else if (value < me.minValue && me.getMenuRatings().indexOf(value) == -1) {
+            value = null;
+        }
+
+        return value;
+    },
+
+
     // component lifecycle
     initItems: function() {
-        var me = this;
+        var me = this,
+            minRating = me.getMinRating(),
+            maxRating = me.getMaxRating(),
+            menuRatingItemsCfg = [],
+            menuRatings = me.getMenuRatings(),
+            menuRatingsLength = menuRatings && menuRatings.length,
+            menuRatingsIndex = 0,
+            rating, segmentedBtn;
 
         me.callParent();
 
+        // grab references to pre-configured items
+        segmentedBtn = me.segmentedBtn = me.down('segmentedbutton');
+
+        // insert config-managed label component
         me.items.insert(0, me.getLabel());
+
+        // insert menu ratings button
+        if (menuRatingsLength) {
+            for (; menuRatingsIndex < menuRatingsLength; menuRatingsIndex++) {
+                rating = menuRatings[menuRatingsIndex];
+
+                menuRatingItemsCfg.push({
+                    value: rating,
+                    text: Ext.util.Format.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(rating)),
+                    tooltip: Slate.cbl.util.Config.getTitleForRating(rating),
+                    tooltipType: 'title'
+                });
+            }
+
+            segmentedBtn.add({
+                cls: 'slate-cbl-ratings-rater-menu-btn',
+                glyph: 'xf0c9', // fa-bars
+                menu: {
+                    items: menuRatingItemsCfg
+                }
+            });
+        }
+
+        // insert M and DNM buttons
+        if (me.getEnableMissing()) {
+            segmentedBtn.add({
+                value: 'M',
+                text: Ext.util.Format.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating('M')),
+                tooltip: Slate.cbl.util.Config.getTitleForRating('M'),
+                tooltipType: 'title'
+            });
+        }
+
+        if (me.getEnableDidNotMeet()) {
+            segmentedBtn.add({
+                value: 'DNM',
+                text: Ext.util.Format.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating('DNM')),
+                tooltip: Slate.cbl.util.Config.getTitleForRating('DNM'),
+                tooltipType: 'title'
+            });
+        }
+
+        // insert min->max rating buttons
+        for (rating = minRating; rating < maxRating; rating++) {
+            segmentedBtn.add({
+                value: rating,
+                text: Ext.util.Format.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(rating)),
+                tooltip: Slate.cbl.util.Config.getTitleForRating(rating),
+                tooltipType: 'title'
+            });
+        }
+
+        // insert checkmark button
+        if (me.getEnableCheckmark()) {
+            segmentedBtn.add({
+                value: 'CHECK',
+                glyph: 'xf00c', // fa-check
+                tooltip: Slate.cbl.util.Config.getTitleForRating('CHECK'),
+                tooltipType: 'title'
+            });
+        }
     },
 });
