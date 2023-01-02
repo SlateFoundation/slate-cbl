@@ -14,7 +14,6 @@ Ext.define('Slate.cbl.field.ratings.SkillsField', {
         'Slate.cbl.store.Competencies',
         'Slate.cbl.store.StudentCompetencies',
         'Slate.cbl.field.ratings.SkillsCompetency',
-        'Slate.cbl.field.ratings.Slider',
         'Slate.cbl.field.ratings.Rater',
         'Slate.cbl.field.SkillsSelector',
 
