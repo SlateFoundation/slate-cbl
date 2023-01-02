@@ -2,6 +2,11 @@ Ext.define('Slate.cbl.field.ratings.Rater', {
     extend: 'Ext.Container',
     xtype: 'slate-cbl-ratings-rater',
     requires: [
+        'Ext.button.Button',
+        'Ext.button.Segmented',
+        'Ext.form.Label',
+
+        /* global Slate */
         'Slate.cbl.model.Skill'
     ],
 
