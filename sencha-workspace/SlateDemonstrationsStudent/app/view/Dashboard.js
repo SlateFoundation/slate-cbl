@@ -155,18 +155,9 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
     },
 
     updateSelectedContentArea: function(contentArea, oldContentArea) {
-        var me = this,
-            contentAreaSet = Boolean(contentArea);
+        var me = this;
 
-        Ext.suspendLayouts();
-        me.setPlaceholderItem(!contentAreaSet);
-        me.setCompetenciesSummary(contentAreaSet);
-        me.setRecentProgress(contentAreaSet);
-        me.setLegend(contentAreaSet);
-        me.setCardsCt(contentAreaSet);
-        me.setNonEnrollmentMessage(contentAreaSet);
-        Ext.resumeLayouts(true);
-
+        me.displayViewsForContentArea(contentArea);
         me.fireEvent('selectedcontentareachange', me, contentArea, oldContentArea);
     },
 
@@ -268,6 +259,8 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
 
         me.callParent();
 
+        me.displayViewsForContentArea(me.getSelectedContentArea());
+
         me.add([
             me.getCompetenciesSummary(),
             me.getRecentProgress(),
@@ -275,5 +268,19 @@ Ext.define('SlateDemonstrationsStudent.view.Dashboard', {
             me.getCardsCt(),
             me.getNonEnrollmentMessage()
         ]);
+    },
+
+    displayViewsForContentArea: function(contentArea) {
+        var me = this,
+            contentAreaSet = Boolean(contentArea);
+
+        Ext.suspendLayouts();
+        me.setPlaceholderItem(!contentAreaSet);
+        me.setCompetenciesSummary(contentAreaSet);
+        me.setRecentProgress(contentAreaSet);
+        me.setLegend(contentAreaSet);
+        me.setCardsCt(contentAreaSet);
+        me.setNonEnrollmentMessage(contentAreaSet);
+        Ext.resumeLayouts(true);
     }
 });
