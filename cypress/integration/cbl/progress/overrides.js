@@ -17,7 +17,7 @@ describe('CBL / Progress / Overrides', () => {
         cy.loginAs('teacher');
     });
 
-    it.skip('Override all skills in a competency with one ER and no other ratings to trigger graduation', () => {
+    it('Override all skills in a competency with one ER and no other ratings to trigger graduation', () => {
         loadTeacherDashboard('SS/group:class_of_2020');
 
         let competency = 30; // SS.2
@@ -36,7 +36,7 @@ describe('CBL / Progress / Overrides', () => {
                     .should('contain.text', '0%')
     });
 
-    it.skip('Override all skills in a competency with multiple ER and no other ratings to trigger graduation', () => {
+    it('Override all skills in a competency with multiple ER and no other ratings to trigger graduation', () => {
         loadTeacherDashboard('SS/group:class_of_2020');
 
         let competency = 29; // SS.1
@@ -55,7 +55,7 @@ describe('CBL / Progress / Overrides', () => {
                     .should('contain.text', '0%')
     });
 
-    it.skip('Override one skill in a competency with one ER and one rating should have no impact', () => {
+    it('Override one skill in a competency with one ER and one rating should have no impact', () => {
         loadTeacherDashboard('SS/group:class_of_2020');
 
         let competency = 30; // SS.2
@@ -85,7 +85,7 @@ describe('CBL / Progress / Overrides', () => {
                     .and('contain.text', '6')
     });
 
-    it.skip('Override skill with multiple ERs and one rating.', () => {
+    it('Override skill with multiple ERs and one rating.', () => {
         loadTeacherDashboard('SS/group:class_of_2020');
 
         let competency = 29; // SS.1
@@ -115,7 +115,7 @@ describe('CBL / Progress / Overrides', () => {
                     .and('contain.text', '6.5')
     });
 
-    it.skip('Submit override resulting in graduation.', () => {
+    it('Submit override resulting in graduation.', () => {
         loadTeacherDashboard('SS/group:class_of_2020');
 
         let competency = 31; // SS.3
@@ -134,7 +134,7 @@ describe('CBL / Progress / Overrides', () => {
                     .should('contain.text', '0%')
     });
 
-    it.skip('Override a skill with an M rating and one white box.', () => {
+    it('Override a skill with an M rating and one white box.', () => {
         loadTeacherDashboard('SS/group:class_of_2020');
 
         let competency = 32; // SS.4
@@ -153,7 +153,7 @@ describe('CBL / Progress / Overrides', () => {
                     .should('contain.text', '0%')
     });
 
-    it.skip('Override for all skills where one set of ERs has all Ms.', () => {
+    it('Override for all skills where one set of ERs has all Ms.', () => {
         loadTeacherDashboard('SS/group:class_of_2020');
 
         let competency = 32; // SS.4
