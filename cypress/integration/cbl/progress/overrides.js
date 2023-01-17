@@ -241,6 +241,16 @@ describe('CBL / Progress / Overrides', () => {
             });
 
         // check portfolio value for correct values for ELA.6.1 - student2
+        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+            .should('have.length', 1)
+            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+                .should('have.length', 1)
+                .should('have.class', 'cbl-level-10')
+                .children()
+                    .should('contain.text', '56%')
+                    .and('contain.text', '8.5')
+
+        // check skill boxes for correct values for ELA.6.1 - student2
         cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
             .should('have.length', 1)
             .find('.cbl-grid-skill-row[data-skill="'+skill+'"]')
