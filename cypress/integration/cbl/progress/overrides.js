@@ -268,7 +268,7 @@ describe('CBL / Progress / Overrides', () => {
 
     });
 
-    // TODO: taking this function from teacher-dashboard.js ... unify?
+    // Todo: this function from teacher-dashboard.js... potential for unification
     function loadDashboard(hashPath) {
         // open student demonstrations dashboard
         cy.visit(`/cbl/dashboards/demonstrations/teacher${hashPath ? `#${hashPath}` : ''}`);
@@ -333,7 +333,7 @@ describe('CBL / Progress / Overrides', () => {
         cy.wait('@getDemonstrationSkills');
     };
 
-    // TODO: taking this function from teacher-submit.js ... unify?
+    // Todo: this function from teacher-submit.js... potential for unification
     function getSlidersRatingSelector(sliders) {
         const firstSlider = sliders[0];
         const { minRating, maxRating } = firstSlider.getConfig();
