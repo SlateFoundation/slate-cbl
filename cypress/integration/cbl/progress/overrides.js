@@ -17,7 +17,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     it('Override all skills in a competency with one ER and no other ratings to trigger graduation', () => {
-        loadTeacherDashboard('SS/group:class_of_2020');
+        loadDashboard('SS/group:class_of_2020');
 
         let competency = 30; // SS.2
         let skill = 166; // SS.2.4
@@ -36,7 +36,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     it('Override all skills in a competency with multiple ER and no other ratings to trigger graduation', () => {
-        loadTeacherDashboard('SS/group:class_of_2020');
+        loadDashboard('SS/group:class_of_2020');
 
         let competency = 29; // SS.1
         let skill = 162; // SS.1.5
@@ -55,7 +55,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     it('Override one skill in a competency with one ER and one rating should have no impact', () => {
-        loadTeacherDashboard('SS/group:class_of_2020');
+        loadDashboard('SS/group:class_of_2020');
 
         let competency = 30; // SS.2
         let skill = 165; // SS.2.3
@@ -85,7 +85,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     it('Override skill with multiple ERs and one rating.', () => {
-        loadTeacherDashboard('SS/group:class_of_2020');
+        loadDashboard('SS/group:class_of_2020');
 
         let competency = 29; // SS.1
         let skill = 160; // SS.1.3
@@ -115,7 +115,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     it('Submit override resulting in graduation.', () => {
-        loadTeacherDashboard('SS/group:class_of_2020');
+        loadDashboard('SS/group:class_of_2020');
 
         let competency = 31; // SS.3
         let skill = 168;    // SS.3.2
@@ -134,7 +134,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     it('Override a skill with an M rating and one white box.', () => {
-        loadTeacherDashboard('SS/group:class_of_2020');
+        loadDashboard('SS/group:class_of_2020');
 
         let competency = 32; // SS.4
         let skill = 169; // SS.4.1
@@ -153,7 +153,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     it('Override for all skills where one set of ERs has all Ms.', () => {
-        loadTeacherDashboard('SS/group:class_of_2020');
+        loadDashboard('SS/group:class_of_2020');
 
         let competency = 32; // SS.4
         let skill = 170; // SS.4.2
@@ -172,7 +172,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     it('Submit a rating for a skill with an override.', () => {
-        loadTeacherDashboard('ELA/group:class_of_2020');
+        loadDashboard('ELA/group:class_of_2020');
 
         let competency = 6; // ELA.6
         let skill = 28; // ELA.6.1
@@ -269,7 +269,7 @@ describe('CBL / Progress / Overrides', () => {
     });
 
     // TODO: taking this function from teacher-dashboard.js ... unify?
-    function loadTeacherDashboard(hashPath) {
+    function loadDashboard(hashPath) {
         // open student demonstrations dashboard
         cy.visit(`/cbl/dashboards/demonstrations/teacher${hashPath ? `#${hashPath}` : ''}`);
 
