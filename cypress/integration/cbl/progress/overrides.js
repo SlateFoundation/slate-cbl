@@ -99,9 +99,10 @@ describe('CBL / Progress / Overrides', () => {
             .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-9')
-                .children()
-                    .should('contain.text', '53%')
-                    .and('contain.text', '6.5')
+                .within(() => {
+                    cy.get('.cbl-level-progress-percent').should('contain.text', '53%')
+                    cy.get('.cbl-level-progress-average').should('contain.text', '6.5')
+                });
 
         overrideSkill(competency, skill, student);
 
