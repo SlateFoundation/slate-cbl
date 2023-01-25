@@ -9,7 +9,6 @@ describe('CBL / Progress / Overrides', () => {
     beforeEach(() => {
         // set up XHR monitors
         cy.intercept('GET', '/cbl/dashboards/demonstrations/teacher/bootstrap').as('getBootstrapData');
-        cy.intercept('GET', '/cbl/content-areas?(\\?*)').as('getContentAreas');     // todo: needed?
         cy.intercept('/cbl/student-competencies?(\\?*)').as('getStudentCompetencies');
         cy.intercept('/cbl/demonstration-skills?(\\?*)').as('getDemonstrationSkills');
         cy.intercept('POST', '/cbl/demonstrations/save?(\\?*)').as('saveDemonstration');
