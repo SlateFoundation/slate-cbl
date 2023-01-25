@@ -305,6 +305,7 @@ describe('CBL / Progress / Overrides', () => {
 
         // wait for window to transition open
         cy.extGet('slate-window title[text="Skill History"]')
+            .should('have.length', 1)
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 cy.extGet('button[text="Override"]')
@@ -314,6 +315,7 @@ describe('CBL / Progress / Overrides', () => {
 
         // wait for window to transition open
         cy.extGet('slate-window title[text="Override Standard"]')
+            .should('have.length', 1)
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 cy.extGet('slate-cbl-demonstrations-overrideform textarea[name="Comments"]')
@@ -328,6 +330,7 @@ describe('CBL / Progress / Overrides', () => {
 
         // close the window
         cy.extGet('slate-window title[text="Skill History"]')
+            .should('have.length', 1)
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 cy.extGet('tool[type="close"]')
