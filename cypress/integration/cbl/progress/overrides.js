@@ -67,9 +67,10 @@ describe('CBL / Progress / Overrides', () => {
             .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-9')
-                .children()
-                    .should('contain.text', '75%')
-                    .and('contain.text', '6')
+                .within(() => {
+                    cy.get('.cbl-level-progress-percent').should('contain.text', '75%')
+                    cy.get('.cbl-level-progress-average').should('contain.text', '6')
+                });
 
         overrideSkill(competency, skill, student);
 
@@ -79,9 +80,10 @@ describe('CBL / Progress / Overrides', () => {
             .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-9')
-                .children()
-                    .should('contain.text', '75%')
-                    .and('contain.text', '6')
+                .within(() => {
+                    cy.get('.cbl-level-progress-percent').should('contain.text', '75%')
+                    cy.get('.cbl-level-progress-average').should('contain.text', '6')
+                });
     });
 
     it('Override skill with multiple ERs and one rating.', () => {
@@ -109,9 +111,10 @@ describe('CBL / Progress / Overrides', () => {
             .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-9')
-                .children()
-                    .should('contain.text', '67%')
-                    .and('contain.text', '6.5')
+                .within(() => {
+                    cy.get('.cbl-level-progress-percent').should('contain.text', '67%')
+                    cy.get('.cbl-level-progress-average').should('contain.text', '6.5')
+                });
     });
 
     it('Submit override resulting in graduation.', () => {
@@ -245,9 +248,10 @@ describe('CBL / Progress / Overrides', () => {
             .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-10')
-                .children()
-                    .should('contain.text', '56%')
-                    .and('contain.text', '8.5')
+                .within(() => {
+                    cy.get('.cbl-level-progress-percent').should('contain.text', '56%')
+                    cy.get('.cbl-level-progress-average').should('contain.text', '8.5')
+                });
 
         // check skill boxes for correct values for ELA.6.1 - student2
         cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
