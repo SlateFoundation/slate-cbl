@@ -290,19 +290,23 @@ describe('CBL / Progress / Overrides', () => {
             .contains('.slate-placeholder', 'Select a list of students and a content area to load progress dashboard');
     };
 
-    function overrideSkill(competency, skill, student) {
+    function overrideSkillExpandcompetency(competency, skill, student) {
         // expand competency
         cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
             .should('have.length', 1)
             .click();
+    };
 
+    function overrideSkillClickCell(competency, skill, student) {
         // click cell for given skill/student
         cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
             .should('have.class', 'is-expanded')
             .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
                 .click();
+    };
 
-        // wait for window to transition open
+    function overrideSkillHistoryWindow(competency, skill, student) {
+        // wait for history window to transition open
         cy.extGet('slate-window title[text="Skill History"]')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
@@ -310,6 +314,31 @@ describe('CBL / Progress / Overrides', () => {
                     .should('exist')
                     .click();
             });
+    };
+
+    function overrideSkill(competency, skill, student) {
+        // expand competency
+        // cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
+        //     .should('have.length', 1)
+        //     .click();
+        overrideSkillExpandcompetency(competency, skill, student);
+
+        // click cell for given skill/student
+        // cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
+        //     .should('have.class', 'is-expanded')
+        //     .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
+        //         .click();
+        overrideSkillClickCell(competency, skill, student)
+
+        // wait for window to transition open
+        // cy.extGet('slate-window title[text="Skill History"]')
+        //     .should('not.have.class', 'x-hidden-clip')
+        //     .within(($window) => {
+        //         cy.extGet('button[text="Override"]')
+        //             .should('exist')
+        //             .click();
+        //     });
+        overrideSkillHistoryWindow(competency, skill, student)
 
         // wait for window to transition open
         cy.extGet('slate-window title[text="Override Standard"]')
