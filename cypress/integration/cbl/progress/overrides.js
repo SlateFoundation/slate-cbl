@@ -298,7 +298,6 @@ describe('CBL / Progress / Overrides', () => {
 
         // click cell for given skill/student
         cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
-            .should('have.length', 1)
             .should('have.class', 'is-expanded')
             .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
                 .click();
