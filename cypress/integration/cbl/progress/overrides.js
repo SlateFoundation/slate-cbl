@@ -290,22 +290,18 @@ describe('CBL / Progress / Overrides', () => {
             .contains('.slate-placeholder', 'Select a list of students and a content area to load progress dashboard');
     };
 
-    function overrideSkillExpandcompetency(competency, skill, student) {
+    function overrideSkill(competency, skill, student) {
         // expand competency
         cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
             .should('have.length', 1)
             .click();
-    };
 
-    function overrideSkillClickCell(competency, skill, student) {
         // click cell for given skill/student
         cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
             .should('have.class', 'is-expanded')
             .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
                 .click();
-    };
 
-    function overrideSkillHistoryWindow(competency, skill, student) {
         // wait for history window to transition open
         cy.extGet('slate-window title[text="Skill History"]')
             .should('not.have.class', 'x-hidden-clip')
@@ -315,9 +311,7 @@ describe('CBL / Progress / Overrides', () => {
                     .should('have.length', 1)
                     .click();
             });
-    };
 
-    function overrideSkillOverrideWindow(competency, skill, student) {
         // wait for override window to transition open
         cy.extGet('slate-window title[text="Override Standard"]')
             .should('not.have.class', 'x-hidden-clip')
@@ -330,10 +324,9 @@ describe('CBL / Progress / Overrides', () => {
                     .should('have.length', 1)
                     .click();
             });
-        cy.wait('@saveDemonstration');
-    };
 
-    function overrideSkillCloseHistory(competency, skill, student) {
+        cy.wait('@saveDemonstration');
+
         // close the history window
         cy.extGet('slate-window title[text="Skill History"]')
             .should('have.length', 1)
@@ -345,62 +338,6 @@ describe('CBL / Progress / Overrides', () => {
             });
 
         cy.wait('@getDemonstrationSkills');
-    };
-
-    function overrideSkill(competency, skill, student) {
-        // expand competency
-        // cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
-        //     .should('have.length', 1)
-        //     .click();
-        overrideSkillExpandcompetency(competency, skill, student);
-
-        // click cell for given skill/student
-        // cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
-        //     .should('have.class', 'is-expanded')
-        //     .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
-        //         .click();
-        overrideSkillClickCell(competency, skill, student)
-
-        // wait for window to transition open
-        // cy.extGet('slate-window title[text="Skill History"]')
-        //     .should('not.have.class', 'x-hidden-clip')
-        //     .within(($window) => {
-        //         cy.extGet('button[text="Override"]')
-        //             .should('exist')
-        //             .click();
-        //     });
-        overrideSkillHistoryWindow(competency, skill, student)
-
-        // wait for window to transition open
-        // cy.extGet('slate-window title[text="Override Standard"]')
-        //     .should('have.length', 1)
-        //     .should('not.have.class', 'x-hidden-clip')
-        //     .within(($window) => {
-        //         cy.extGet('slate-cbl-demonstrations-overrideform textarea[name="Comments"]')
-        //             .type('Test Override');
-
-        //         cy.extGet('button[text="Submit Override"]')
-        //             .should('exist')
-        //             .click();
-        //     });
-
-        // cy.wait('@saveDemonstration');
-        overrideSkillOverrideWindow(competency, skill, student);
-
-
-
-        // close the window
-        // cy.extGet('slate-window title[text="Skill History"]')
-        //     .should('have.length', 1)
-        //     .should('not.have.class', 'x-hidden-clip')
-        //     .within(($window) => {
-        //         cy.extGet('tool[type="close"]')
-        //             .should('exist')
-        //             .click();
-        //     });
-
-        // cy.wait('@getDemonstrationSkills');
-        overrideSkillCloseHistory(competency, skill, student)
     };
 
     // Todo: this function from teacher-submit.js... potential for unification
