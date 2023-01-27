@@ -311,9 +311,40 @@ describe('CBL / Progress / Overrides', () => {
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 cy.extGet('button[text="Override"]')
+                    // .should('exist')
+                    .should('have.length', 1)
+                    .click();
+            });
+    };
+
+    function overrideSkillOverrideWindow(competency, skill, student) {
+        // wait for override window to transition open
+        cy.extGet('slate-window title[text="Override Standard"]')
+            .should('not.have.class', 'x-hidden-clip')
+            .within(($window) => {
+                cy.extGet('slate-cbl-demonstrations-overrideform textarea[name="Comments"]')
+                    .type('Test Override');
+
+                cy.extGet('button[text="Submit Override"]')
+                    //.should('exist')
+                    .should('have.length', 1)
+                    .click();
+            });
+        cy.wait('@saveDemonstration');
+    };
+
+    function overrideSkillCloseHistory(competency, skill, student) {
+        // close the history window
+        cy.extGet('slate-window title[text="Skill History"]')
+            .should('have.length', 1)
+            .should('not.have.class', 'x-hidden-clip')
+            .within(($window) => {
+                cy.extGet('tool[type="close"]')
                     .should('exist')
                     .click();
             });
+
+        cy.wait('@getDemonstrationSkills');
     };
 
     function overrideSkill(competency, skill, student) {
@@ -341,31 +372,35 @@ describe('CBL / Progress / Overrides', () => {
         overrideSkillHistoryWindow(competency, skill, student)
 
         // wait for window to transition open
-        cy.extGet('slate-window title[text="Override Standard"]')
-            .should('have.length', 1)
-            .should('not.have.class', 'x-hidden-clip')
-            .within(($window) => {
-                cy.extGet('slate-cbl-demonstrations-overrideform textarea[name="Comments"]')
-                    .type('Test Override');
+        // cy.extGet('slate-window title[text="Override Standard"]')
+        //     .should('have.length', 1)
+        //     .should('not.have.class', 'x-hidden-clip')
+        //     .within(($window) => {
+        //         cy.extGet('slate-cbl-demonstrations-overrideform textarea[name="Comments"]')
+        //             .type('Test Override');
 
-                cy.extGet('button[text="Submit Override"]')
-                    .should('exist')
-                    .click();
-            });
+        //         cy.extGet('button[text="Submit Override"]')
+        //             .should('exist')
+        //             .click();
+        //     });
 
-        cy.wait('@saveDemonstration');
+        // cy.wait('@saveDemonstration');
+        overrideSkillOverrideWindow(competency, skill, student);
+
+
 
         // close the window
-        cy.extGet('slate-window title[text="Skill History"]')
-            .should('have.length', 1)
-            .should('not.have.class', 'x-hidden-clip')
-            .within(($window) => {
-                cy.extGet('tool[type="close"]')
-                    .should('exist')
-                    .click();
-            });
+        // cy.extGet('slate-window title[text="Skill History"]')
+        //     .should('have.length', 1)
+        //     .should('not.have.class', 'x-hidden-clip')
+        //     .within(($window) => {
+        //         cy.extGet('tool[type="close"]')
+        //             .should('exist')
+        //             .click();
+        //     });
 
-        cy.wait('@getDemonstrationSkills');
+        // cy.wait('@getDemonstrationSkills');
+        overrideSkillCloseHistory(competency, skill, student)
     };
 
     // Todo: this function from teacher-submit.js... potential for unification
