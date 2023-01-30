@@ -19,16 +19,16 @@ describe('CBL / Progress / Overrides', () => {
     it('Override all skills in a competency with one ER and no other ratings to trigger graduation', () => {
         loadDashboard('SS/group:class_of_2020');
 
-        let competency = 30; // SS.2
-        let skill = 166; // SS.2.4
-        let student = 6; // student2
+        const competency = 30; // SS.2
+        const skill = 166; // SS.2.4
+        const student = 6; // student2
 
         overrideSkill(competency, skill, student);
 
         // check portfolio value for graduation at cell at SS.2 - student2
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="30"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="6"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-10')
                 .find('.cbl-grid-progress-percent')
