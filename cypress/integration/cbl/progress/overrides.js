@@ -272,77 +272,76 @@ describe('CBL / Progress / Overrides', () => {
                                 cy.get($children[1]).should('contain.text', '9');
                                 cy.get($children[2]).should('have.class', 'cbl-skill-demo-override');
                             })
-
     });
+});
 
-    function loadDashboard(competencyArea, studentsList) {
-        // open student demonstrations dashboard
-        cy.visit(`/cbl/dashboards/demonstrations/teacher#${competencyArea}/${studentsList}`);
+function loadDashboard(competencyArea, studentsList) {
+    // open student demonstrations dashboard
+    cy.visit(`/cbl/dashboards/demonstrations/teacher#${competencyArea}/${studentsList}`);
 
-        // ensure bootstrap data is loaded
-        cy.wait('@getBootstrapData');
-        cy.get('@getBootstrapData.all').should('have.length', 1);
+    // ensure bootstrap data is loaded
+    cy.wait('@getBootstrapData');
+    cy.get('@getBootstrapData.all').should('have.length', 1);
 
-        // verify teacher redirect
-        cy.location('hash').should('eq', `#${competencyArea}/${studentsList}`);
+    // verify teacher redirect
+    cy.location('hash').should('eq', `#${competencyArea}/${studentsList}`);
 
-        // ensure student competencies are loaded
-        cy.wait('@getStudentCompetencies');
-        cy.get('@getStudentCompetencies.all').should('have.length', 1);
+    // ensure student competencies are loaded
+    cy.wait('@getStudentCompetencies');
+    cy.get('@getStudentCompetencies.all').should('have.length', 1);
 
-        // verify placeholder is gone
-        cy.extGet('slate-demonstrations-teacher-dashboard')
-            .find('.slate-placeholder')
-                .should('not.be.visible');
+    // verify placeholder is gone
+    cy.extGet('slate-demonstrations-teacher-dashboard')
+        .find('.slate-placeholder')
+            .should('not.be.visible');
 
-        // verify competencies loaded
-        cy.extGet('slate-demonstrations-teacher-dashboard')
-            .find('.cbl-grid-competency-name')
-                .should('have.length.greaterThan', 0);
-    };
+    // verify competencies loaded
+    cy.extGet('slate-demonstrations-teacher-dashboard')
+        .find('.cbl-grid-competency-name')
+            .should('have.length.greaterThan', 0);
+};
 
-    function overrideSkill(competency, skill, student) {
-        // expand competency
-        cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
-            .should('have.length', 1)
+function overrideSkill(competency, skill, student) {
+    // expand competency
+    cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
+        .should('have.length', 1)
+        .click();
+
+    // click cell for given skill/student
+    cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
+        .should('have.class', 'is-expanded')
+        .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
             .click();
 
-        // click cell for given skill/student
-        cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
-            .should('have.class', 'is-expanded')
-            .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
+    // wait for history window to transition open
+    cy.extGet('title[text="Skill History"] ^ slate-window')
+        .should('not.have.class', 'x-hidden-clip')
+        .within(() => {
+            cy.get('.x-btn-inner:contains("Override")')
+                .should('have.length', 1)
                 .click();
+        });
 
-        // wait for history window to transition open
-        cy.extGet('title[text="Skill History"] ^ slate-window')
-            .should('not.have.class', 'x-hidden-clip')
-            .within(() => {
-                cy.get('.x-btn-inner:contains("Override")')
-                    .should('have.length', 1)
-                    .click();
-            });
+    // wait for override window to transition open
+    cy.extGet('title[text="Override Standard"] ^ slate-window')
+        .should('not.have.class', 'x-hidden-clip')
+        .within(() => {
+            cy.get('.x-btn-inner:contains("Submit Override")')
+                .should('have.length', 1)
+                .click();
+        });
 
-        // wait for override window to transition open
-        cy.extGet('title[text="Override Standard"] ^ slate-window')
-            .should('not.have.class', 'x-hidden-clip')
-            .within(() => {
-                cy.get('.x-btn-inner:contains("Submit Override")')
-                    .should('have.length', 1)
-                    .click();
-            });
+    cy.wait('@saveDemonstration');
 
-        cy.wait('@saveDemonstration');
+    // close the history window
+    cy.extGet('title[text="Skill History"] ^ slate-window')
+        .should('have.length', 1)
+        .should('not.have.class', 'x-hidden-clip')
+        .within(($window) => {
+            cy.extGet('tool[type="close"]')
+                .should('exist')
+                .click();
+        });
 
-        // close the history window
-        cy.extGet('title[text="Skill History"] ^ slate-window')
-            .should('have.length', 1)
-            .should('not.have.class', 'x-hidden-clip')
-            .within(($window) => {
-                cy.extGet('tool[type="close"]')
-                    .should('exist')
-                    .click();
-            });
-
-        cy.wait('@getDemonstrationSkills');
-    };
-});
+    cy.wait('@getDemonstrationSkills');
+};
