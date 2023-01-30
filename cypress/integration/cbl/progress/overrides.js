@@ -195,7 +195,7 @@ describe('CBL / Progress / Overrides', () => {
                 .click();
 
         // wait for window to transition open
-        cy.extGet('slate-window title[text="Skill History"]')
+        cy.extGet('title[text="Skill History"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 cy.extGet('button[text="Submit Evidence"]')
@@ -204,7 +204,7 @@ describe('CBL / Progress / Overrides', () => {
             });
 
         // wait for window to transition open
-        cy.extGet('slate-window title[text="Submit Evidence"]')
+        cy.extGet('title[text="Submit Evidence"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 // TODO: select using combo rather than typing
@@ -235,7 +235,7 @@ describe('CBL / Progress / Overrides', () => {
             });
 
         // close the window
-        cy.extGet('slate-window title[text="Skill History"]')
+        cy.extGet('title[text="Skill History"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 cy.extGet('tool[type="close"]')
@@ -312,7 +312,7 @@ describe('CBL / Progress / Overrides', () => {
                 .click();
 
         // wait for history window to transition open
-        cy.extGet('slate-window title[text="Skill History"]')
+        cy.extGet('title[text="Skill History"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 cy.extGet('button[text="Override"]')
@@ -322,7 +322,7 @@ describe('CBL / Progress / Overrides', () => {
             });
 
         // wait for override window to transition open
-        cy.extGet('slate-window title[text="Override Standard"]')
+        cy.extGet('title[text="Override Standard"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
                 cy.extGet('slate-cbl-demonstrations-overrideform textarea[name="Comments"]')
@@ -337,7 +337,7 @@ describe('CBL / Progress / Overrides', () => {
         cy.wait('@saveDemonstration');
 
         // close the history window
-        cy.extGet('slate-window title[text="Skill History"]')
+        cy.extGet('title[text="Skill History"] ^ slate-window')
             .should('have.length', 1)
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
