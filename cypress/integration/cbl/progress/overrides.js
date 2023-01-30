@@ -314,9 +314,8 @@ describe('CBL / Progress / Overrides', () => {
         // wait for history window to transition open
         cy.extGet('title[text="Skill History"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
-            .within(($window) => {
-                cy.extGet('button[text="Override"]')
-                    // .should('exist')
+            .within(() => {
+                cy.get('.x-btn-inner:contains("Override")')
                     .should('have.length', 1)
                     .click();
             });
@@ -324,12 +323,8 @@ describe('CBL / Progress / Overrides', () => {
         // wait for override window to transition open
         cy.extGet('title[text="Override Standard"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
-            .within(($window) => {
-                cy.extGet('slate-cbl-demonstrations-overrideform textarea[name="Comments"]')
-                    .type('Test Override');
-
-                cy.extGet('button[text="Submit Override"]')
-                    //.should('exist')
+            .within(() => {
+                cy.get('.x-btn-inner:contains("Submit Override")')
                     .should('have.length', 1)
                     .click();
             });
