@@ -143,8 +143,8 @@
                 "baseline": null,
                 "average": "9.5",
                 "growth": "0",
-                "progress": "50",
-                "progressMissed": "50"
+                "progress": "75",
+                "progressMissed": "25"
             }
         }
     },
