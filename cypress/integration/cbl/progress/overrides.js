@@ -337,8 +337,8 @@ function overrideSkill(competency, skill, student) {
     cy.extGet('title[text="Skill History"] ^ slate-window')
         .should('have.length', 1)
         .should('not.have.class', 'x-hidden-clip')
-        .within(($window) => {
-            cy.extGet('tool[type="close"]')
+        .within(() => {
+            cy.get('.x-tool-close')
                 .should('exist')
                 .click();
         });
