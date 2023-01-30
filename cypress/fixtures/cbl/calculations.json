@@ -319,6 +319,15 @@
                 "growth": "1.2",
                 "progress": "63"
             }
+        },
+        "HW": {
+            "HW.2": {
+                "description": "Ratings added after overrides with and without flushing out the override",
+                "baseline": null,
+                "average": "8.8",
+                "growth": "0.8",
+                "progress": "90"
+            }
         }
     }
 }

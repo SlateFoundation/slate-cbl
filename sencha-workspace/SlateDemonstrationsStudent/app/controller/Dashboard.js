@@ -89,7 +89,7 @@ Ext.define('SlateDemonstrationsStudent.controller.Dashboard', {
 
         // use false instead of null, to indicate selecting *nothing* vs having no selection
         dashboardCt.setSelectedStudent(studentUsername == 'me' ? false : studentUsername);
-        dashboardCt.setSelectedContentArea(contentAreaCode || null);
+        dashboardCt.setSelectedContentArea(contentAreaCode || false);
     },
 
 
