@@ -64,9 +64,9 @@ describe('CBL / Progress / Overrides', () => {
         const student = 4; // student
 
         // check values for progress and performance level for SS.2 - student
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-9')
                 .within(() => {
@@ -77,9 +77,9 @@ describe('CBL / Progress / Overrides', () => {
         overrideSkill(competency, skill, student);
 
         // ensure values for progress and performance remain the same
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-9')
                 .within(() => {
@@ -96,9 +96,9 @@ describe('CBL / Progress / Overrides', () => {
         const student = 4; //student
 
         // check values for progress and performance level for SS.2 - student
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-9')
                 .within(() => {
@@ -109,9 +109,9 @@ describe('CBL / Progress / Overrides', () => {
         overrideSkill(competency, skill, student);
 
         // ensure values for progress and performance have update appropriately
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-9')
                 .within(() => {
@@ -130,9 +130,9 @@ describe('CBL / Progress / Overrides', () => {
         overrideSkill(competency, skill, student);
 
         // ensure values for progress and performance have update appropriately
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-10')
                 .find('.cbl-grid-progress-percent')
@@ -149,9 +149,9 @@ describe('CBL / Progress / Overrides', () => {
         overrideSkill(competency, skill, student);
 
         // check portfolio value for graduation at cell at SS.4 - student
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-10')
                 .find('.cbl-grid-progress-percent')
@@ -168,9 +168,9 @@ describe('CBL / Progress / Overrides', () => {
         overrideSkill(competency, skill, student);
 
         // check portfolio value for graduation at cell at SS.4 - student
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-10')
                 .find('.cbl-grid-progress-percent')
@@ -185,15 +185,15 @@ describe('CBL / Progress / Overrides', () => {
         const student = 6; // student2
 
         // expand competency
-        cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
+        cy.get(`.cbl-grid-progress-row[data-competency="${competency}"] .cbl-grid-competency-name`)
             .should('have.length', 1)
             .click();
 
         // click cell for given skill/student
-        cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-skills-row[data-competency="${competency}"]`)
             .should('have.length', 1)
             .should('have.class', 'is-expanded')
-            .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-skill-row[data-skill="${skill}"] .cbl-grid-demos-cell[data-student="${student}"]`)
                 .click();
 
         // wait for window to transition open
@@ -246,9 +246,9 @@ describe('CBL / Progress / Overrides', () => {
             });
 
         // check portfolio value for correct values for ELA.6.1 - student2
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="'+student+'"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-10')
                 .within(() => {
@@ -257,11 +257,11 @@ describe('CBL / Progress / Overrides', () => {
                 });
 
         // check skill boxes for correct values for ELA.6.1 - student2
-        cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
+        cy.get(`.cbl-grid-main .cbl-grid-skills-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-skill-row[data-skill="'+skill+'"]')
+            .find(`.cbl-grid-skill-row[data-skill="${skill}"]`)
                 .should('have.length', 1)
-                .find('.cbl-grid-demos-cell[data-student="'+student+'"]')
+                .find(`.cbl-grid-demos-cell[data-student="${student}"]`)
                     .should('have.length', 1)
                     .find('ul.cbl-skill-demos')
                         .children()
@@ -303,14 +303,14 @@ function loadDashboard(competencyArea, studentsList) {
 
 function overrideSkill(competency, skill, student) {
     // expand competency
-    cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
+    cy.get(`.cbl-grid-progress-row[data-competency="${competency}"] .cbl-grid-competency-name`)
         .should('have.length', 1)
         .click();
 
     // click cell for given skill/student
-    cy.get('.cbl-grid-main .cbl-grid-skills-row[data-competency="'+competency+'"]')
+    cy.get(`.cbl-grid-main .cbl-grid-skills-row[data-competency="${competency}"]`)
         .should('have.class', 'is-expanded')
-        .find('.cbl-grid-skill-row[data-skill="'+skill+'"] .cbl-grid-demos-cell[data-student="'+student+'"]')
+        .find(`.cbl-grid-skill-row[data-skill="${skill}"] .cbl-grid-demos-cell[data-student="${student}"]`)
             .click();
 
     // wait for history window to transition open
