@@ -71,7 +71,7 @@ Ext.define('SlateTasksTeacher.controller.StudentTasks', {
             modal: true,
             layout: 'fit',
             minWidth: 300,
-            width: 600,
+            width: 960,
             minHeight: 200,
 
             mainView: {

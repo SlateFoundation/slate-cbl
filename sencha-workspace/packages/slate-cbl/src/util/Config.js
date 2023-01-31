@@ -21,7 +21,20 @@ Ext.define('Slate.cbl.util.Config', {
                 abbreviation: 'P4'
             }
         },
-        ratings: {}
+        ratings: {
+            M: {
+                title: 'Missing',
+                abbreviation: 'M'
+            },
+            DNM: {
+                title: 'Did Not Meet',
+                abbreviation: 'DNM'
+            },
+            CHECK: {
+                title: 'Complete w/o rating',
+                abbreviation: 'CHK'
+            }
+        }
     },
 
 
@@ -64,7 +77,7 @@ Ext.define('Slate.cbl.util.Config', {
             return ratingConfig.title || ratingConfig.abbreviation;
         }
 
-        return rating == '0' ? 'M' : rating;
+        return String(rating);
     },
 
     getAbbreviationForRating: function(rating) {
@@ -73,6 +86,7 @@ Ext.define('Slate.cbl.util.Config', {
         if (ratingConfig) {
             return ratingConfig.abbreviation || ratingConfig.title;
         }
-        return rating == '0' ? 'M' : rating;
+
+        return String(rating);
     }
 });

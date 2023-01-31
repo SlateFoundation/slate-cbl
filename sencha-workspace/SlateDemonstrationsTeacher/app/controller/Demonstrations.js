@@ -86,7 +86,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
             modal: true,
             layout: 'fit',
             minWidth: 300,
-            width: 600,
+            width: 960,
             minHeight: 600,
 
             mainView: {
@@ -316,7 +316,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Demonstrations', {
 
 
         // fetch demonstration and show window
-        if (!demonstration || (typeof demonstration == 'object' && !demonstration.isModel)) {
+        if (!demonstration || typeof demonstration == 'object' && !demonstration.isModel) {
             demonstration = DemonstrationModel.create(Ext.apply({
                 Class: 'Slate\\CBL\\Demonstrations\\ExperienceDemonstration',
                 Demonstrated: new Date()
