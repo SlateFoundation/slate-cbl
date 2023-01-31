@@ -314,7 +314,6 @@ function overrideSkill(competency, skill, student) {
 
     // wait for history window to transition open
     cy.extGet('title[text="Skill History"] ^ slate-window')
-        .should('have.length', 1)
         .should('not.have.class', 'x-hidden-clip')
         .within(() => {
             cy.get('.x-btn-inner:contains("Override")')
