@@ -40,9 +40,9 @@ describe('CBL / Progress / Overrides', () => {
     it('Override all skills in a competency with multiple ER and no other ratings to trigger graduation', () => {
         loadDashboard('SS', 'group:class_of_2020');
 
-        let competency = 29; // SS.1
-        let skill = 162; // SS.1.5
-        let student = 6; // student2
+        const competency = 29; // SS.1
+        const skill = 162; // SS.1.5
+        const student = 6; // student2
 
         overrideSkill(competency, skill, student);
 
@@ -59,9 +59,9 @@ describe('CBL / Progress / Overrides', () => {
     it('Override one skill in a competency with one ER and one rating should have no impact', () => {
         loadDashboard('SS', 'group:class_of_2020');
 
-        let competency = 30; // SS.2
-        let skill = 165; // SS.2.3
-        let student = 4; // student
+        const competency = 30; // SS.2
+        const skill = 165; // SS.2.3
+        const student = 4; // student
 
         // check values for progress and performance level for SS.2 - student
         cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
@@ -91,9 +91,9 @@ describe('CBL / Progress / Overrides', () => {
     it('Override skill with multiple ERs and one rating.', () => {
         loadDashboard('SS', 'group:class_of_2020');
 
-        let competency = 29; // SS.1
-        let skill = 160; // SS.1.3
-        let student = 4; //student
+        const competency = 29; // SS.1
+        const skill = 160; // SS.1.3
+        const student = 4; //student
 
         // check values for progress and performance level for SS.2 - student
         cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="'+competency+'"]')
@@ -123,9 +123,9 @@ describe('CBL / Progress / Overrides', () => {
     it('Submit override resulting in graduation.', () => {
         loadDashboard('SS', 'group:class_of_2020');
 
-        let competency = 31; // SS.3
-        let skill = 168;    // SS.3.2
-        let student = 4; // student
+        const competency = 31; // SS.3
+        const skill = 168;    // SS.3.2
+        const student = 4; // student
 
         overrideSkill(competency, skill, student);
 
@@ -142,9 +142,9 @@ describe('CBL / Progress / Overrides', () => {
     it('Override a skill with an M rating and one white box.', () => {
         loadDashboard('SS', 'group:class_of_2020');
 
-        let competency = 32; // SS.4
-        let skill = 169; // SS.4.1
-        let student = 4; // student
+        const competency = 32; // SS.4
+        const skill = 169; // SS.4.1
+        const student = 4; // student
 
         overrideSkill(competency, skill, student);
 
@@ -161,9 +161,9 @@ describe('CBL / Progress / Overrides', () => {
     it('Override for all skills where one set of ERs has all Ms.', () => {
         loadDashboard('SS', 'group:class_of_2020');
 
-        let competency = 32; // SS.4
-        let skill = 170; // SS.4.2
-        let student = 6; // student2
+        const competency = 32; // SS.4
+        const skill = 170; // SS.4.2
+        const student = 6; // student2
 
         overrideSkill(competency, skill, student);
 
@@ -180,9 +180,9 @@ describe('CBL / Progress / Overrides', () => {
     it('Submit a rating for a skill with an override.', () => {
         loadDashboard('ELA', 'group:class_of_2020');
 
-        let competency = 6; // ELA.6
-        let skill = 28; // ELA.6.1
-        let student = 6; // student2
+        const competency = 6; // ELA.6
+        const skill = 28; // ELA.6.1
+        const student = 6; // student2
 
         // expand competency
         cy.get('.cbl-grid-progress-row[data-competency="'+competency+'"] .cbl-grid-competency-name')
