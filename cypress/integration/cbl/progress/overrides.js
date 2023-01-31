@@ -209,14 +209,12 @@ describe('CBL / Progress / Overrides', () => {
         cy.extGet('title[text="Submit Evidence"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
-                // TODO: select using combo rather than typing
                 cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Type of Experience"]')
                     .type('Studio');
 
                 cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Name of Experience"]')
                     .type('Test');
 
-                // TODO: select using combo rather than typing
                 cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Performance Task"]')
                     .type('Debate');
 
