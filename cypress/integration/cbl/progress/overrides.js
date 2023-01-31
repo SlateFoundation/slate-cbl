@@ -47,9 +47,9 @@ describe('CBL / Progress / Overrides', () => {
         overrideSkill(competency, skill, student);
 
         // check portfolio value for graduation at cell at SS.1 - student2
-        cy.get('.cbl-grid-main .cbl-grid-progress-row[data-competency="29"]')
+        cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
-            .find('.cbl-grid-progress-cell[data-student="6"]')
+            .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
                 .should('have.class', 'cbl-level-10')
                 .find('.cbl-grid-progress-percent')
