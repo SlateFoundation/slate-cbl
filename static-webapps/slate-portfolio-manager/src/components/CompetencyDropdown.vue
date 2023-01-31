@@ -1,20 +1,24 @@
 <template>
-  <div class="slate-appheader">
+  <div class="slate-appheader d-flex align-center pa-6">
     <div class="slate-appheader__title">
       Portfolio Manager
     </div>
-    <div>
-      Competency Area
+    <div style="min-width: 300px">
       <v-select
         v-model="area"
+        label="Competency Area"
+        variant="solo"
         :items="areaOptions"
+        hide-details="auto"
       />
     </div>
-    <div>
-      Students
+    <div style="min-width: 300px">
       <v-select
         v-model="students"
+        label="Students"
+        variant="solo"
         :items="studentOptions"
+        hide-details="auto"
       />
     </div>
   </div>

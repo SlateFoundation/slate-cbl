@@ -1,20 +1,32 @@
 <template>
-  <div
+  <v-app
     v-if="authStore.user"
     id="app"
   >
-    <main>
+    <v-navigation-drawer
+      v-model="detailsSidebarIsOpen"
+      :elevation="12"
+      floating
+      location="right"
+      width="375"
+    >
+      <advanced-portfolio-sidebar
+        :selected="selected"
+        @hide="handleSelect(null)"
+      />
+    </v-navigation-drawer>
+
+    <v-main
+      class="d-flex flex-column flex-grow-1"
+    >
       <competency-dropdown />
       <enrollments-grid
+        style="flex: 1 1 0"
         :selected="selected"
         @select="handleSelect"
       />
-    </main>
-    <advanced-portfolio-sidebar
-      :selected="selected"
-      @hide="handleSelect(null)"
-    />
-  </div>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -35,6 +47,12 @@ export default {
     EnrollmentsGrid,
   },
 
+  data() {
+    return {
+      detailsSidebarIsOpen: false,
+    };
+  },
+
   computed: {
     ...mapStores(useAuth, useConfig),
     selected() {
@@ -48,12 +66,11 @@ export default {
 
   methods: {
     handleSelect(target) {
-      if (isEqual(target, this.selected)) {
-        // user clicked same student
-        this.configStore.set('enrollmentGridSelection', null);
-      } else {
-        this.configStore.set('enrollmentGridSelection', target);
-      }
+      // use null if user clicked same student
+      const newSelection = isEqual(target, this.selected) ? null : target;
+
+      this.configStore.set('enrollmentGridSelection', newSelection);
+      this.detailsSidebarIsOpen = Boolean(newSelection);
     },
   },
 };

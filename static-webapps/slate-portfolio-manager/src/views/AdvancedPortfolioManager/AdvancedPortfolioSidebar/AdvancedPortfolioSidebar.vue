@@ -1,66 +1,99 @@
 <template>
-  <slate-sidebar
-    v-if="studentCompetencyDetails"
-    :class="['advanced-portfolio-sidebar-contents bg-white', { 'block-loading': isLoading }]"
-    style="width: 375px;"
+  <div
+    :class="[
+      'advanced-portfolio-sidebar-contents',
+      'pb-12',
+    ]"
   >
-    <header class="pa-3">
-      <v-row class="mb-2">
-        <v-col>
-          <h1 class="h4 my-1">
-            {{ studentName }}
-          </h1>
-          <h2 class="h6 text-muted m-0">
-            <b>{{ studentCompetencyDetails.Competency.Code }}:</b>
-            {{ studentCompetencyDetails.Competency.Descriptor }}
-          </h2>
-        </v-col>
-        <v-col sm="auto">
+    <template v-if="isLoading">
+      <v-overlay
+        scrim="white"
+        contained
+        :model-value="isLoading"
+        class="align-center justify-center"
+      >
+        <v-sheet
+          rounded="lg"
+          :elevation="4"
+          class="text-center pa-6"
+        >
+          <p class="mb-3">
+            Loading competency&hellip;
+          </p>
+
+          <v-progress-circular indeterminate />
+        </v-sheet>
+      </v-overlay>
+    </template>
+
+    <template v-if="studentCompetencyDetails">
+      <header class="px-4 py-3">
+        <div class="d-flex align-start">
+          <div class="flex-grow-1">
+            <h1 class="h4 my-1">
+              {{ studentName }}
+            </h1>
+            <h2 class="h6 text-muted m-0">
+              <b>{{ studentCompetencyDetails.Competency.Code }}:</b>
+              {{ studentCompetencyDetails.Competency.Descriptor }}
+            </h2>
+          </div>
+
           <v-btn
             variant="plain"
+            class="mr-n3"
+            size="small"
+            icon
             @click="$emit('hide')"
           >
             <v-icon icon="fa:fa fa-times" />
           </v-btn>
-        </v-col>
-      </v-row>
-    </header>
+        </div>
+      </header>
 
-    <div
-      v-if="hasHiddenItems"
-      class="bg-light mt-n2 mb-3 px-3 py-2"
-    >
-      <v-checkbox
-        v-model="showHiddenItems"
-        label="Show hidden items"
-      />
-    </div>
+      <template v-if="hasHiddenItems">
+        <v-checkbox
+          v-model="showHiddenItems"
+          label="Show hidden items"
+          hide-details="auto"
+          class="pl-2"
+        />
+      </template>
 
-    <ol class="list-unstyled">
-      <li
-        v-for="Level in availableLevels"
-        :key="Level"
+      <ol class="list-unstyled">
+        <li
+          v-for="Level in availableLevels"
+          :key="Level"
+        >
+          <new-level-panel
+            :Level="Level"
+            :StudentID="studentCompetencyDetails.Student.ID"
+            :CompetencyID="studentCompetencyDetails.Competency.ID"
+          />
+        </li>
+        <li
+          v-for="portfolio in studentCompetencyDetails.data"
+          :key="portfolio.ID"
+        >
+          <level-panel
+            :portfolio="portfolio"
+            :demonstrations="demonstrations"
+            :skills-by-i-d="skillsByID"
+            :show-hidden-items="showHiddenItems"
+            :visible-levels="visibleLevels"
+          />
+        </li>
+      </ol>
+    </template>
+    <template v-else>
+      <div
+        v-if="!isLoading"
+        class="text-center pa-6"
       >
-        <new-level-panel
-          :Level="Level"
-          :StudentID="studentCompetencyDetails.Student.ID"
-          :CompetencyID="studentCompetencyDetails.Competency.ID"
-        />
-      </li>
-      <li
-        v-for="portfolio in studentCompetencyDetails.data"
-        :key="portfolio.ID"
-      >
-        <level-panel
-          :portfolio="portfolio"
-          :demonstrations="demonstrations"
-          :skills-by-i-d="skillsByID"
-          :show-hidden-items="showHiddenItems"
-          :visible-levels="visibleLevels"
-        />
-      </li>
-    </ol>
-  </slate-sidebar>
+        No competency selected
+      </div>
+    </template>
+  </div>
 </template>
 
 <script>

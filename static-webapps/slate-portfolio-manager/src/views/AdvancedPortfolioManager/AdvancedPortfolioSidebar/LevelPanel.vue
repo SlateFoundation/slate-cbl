@@ -6,8 +6,12 @@
     @dragover.prevent
     @dragenter.prevent
   >
-    <v-expansion-panel value="only">
-      <v-expansion-panel-title class="bg-cbl-level-50">
+    <v-expansion-panel
+      class="rounded-0"
+      :elevation="4"
+      value="only"
+    >
+      <v-expansion-panel-title class="bg-cbl-level-50 px-4 py-3">
         <v-row>
           <v-col class="align-center">
             <h3 class="h6 mb-0">
@@ -19,8 +23,10 @@
               :model-value="50"
               height="16"
               bg-color="#e9ecef"
+              class="bg-white rounded"
               color="var(--cbl-level-color)"
-              style="--v-border-opacity: 1;border-radius: 4px; border: 1px solid gray"
+              style="box-shadow: 0 -1px 2px rgba(0, 0, 0, .1),
+                inset 0 3px 6px rgba(0, 0, 0, .1);"
             />
           </v-col>
         </v-row>
@@ -56,6 +62,7 @@
         >
           <v-btn
             color="error"
+            size="small"
             @click="startDelete"
           >
             Delete Porfolio
@@ -214,6 +221,14 @@ export default {
 <style scoped>
 ::v-deep .v-expansion-panel-text__wrapper {
   padding: 0;
+}
+
+::v-deep .v-expansion-panel-title {
+    min-height: 0;
+}
+
+::v-deep .v-expansion-panel--active > .v-expansion-panel-title {
+    min-height: 0;
 }
 
 .stat-figures {

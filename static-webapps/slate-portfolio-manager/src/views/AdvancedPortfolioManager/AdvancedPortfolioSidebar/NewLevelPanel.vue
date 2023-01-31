@@ -2,13 +2,14 @@
   <div
     :class="`level-panel -new mb-2 cbl-level-${Level}`"
   >
-    <div class="bg-cbl-level-25 d-flex justify-space-between pa-3 align-center">
+    <div class="bg-cbl-level-25 d-flex justify-space-between px-4 py-2 align-center">
       <h3 class="h6 mb-0 text-muted">
         Year {{ Level }}
       </h3>
       <v-btn
         size="small"
-        color="success"
+        class="text-white"
+        color="var(--cbl-level-color)"
         @click="createLevel"
       >
         Enroll
