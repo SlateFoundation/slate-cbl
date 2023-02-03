@@ -1,0 +1,9 @@
+.level-panel.-drop-zone {
+  .level-panel__delete, .skill-demos {
+    display: none;
+  }
+  &.-drag-source {
+    filter: grayscale(0.75);
+    opacity: 0.5;
+  }
+}

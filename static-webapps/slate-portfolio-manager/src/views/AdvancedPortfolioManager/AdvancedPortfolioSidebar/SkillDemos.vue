@@ -1,5 +1,5 @@
 <template>
-  <div class="skill-demos p-3 border-bottom bg-cbl-level-10">
+  <div class="skill-demos pa-4 border-bottom bg-cbl-level-10">
     <h4 class="h6 skill-demos__heading">
       {{ skill.Code }}
       <span class="ml-1 text-black-50">
@@ -111,7 +111,11 @@ export default {
           date: displayDemoDate(demo),
           effective,
           Override,
-          class: ['demonstration-skill', effective ? '-effective' : '-ineffective'],
+          class: [
+            'demonstration-skill',
+            'elevation-1',
+            effective ? '-effective' : '-ineffective',
+          ],
         });
       };
       this.effectiveDemonstrationsData.forEach((demo) => process(demo, true));

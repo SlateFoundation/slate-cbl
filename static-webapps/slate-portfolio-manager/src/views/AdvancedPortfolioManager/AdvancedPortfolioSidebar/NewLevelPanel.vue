@@ -2,23 +2,19 @@
   <div
     :class="`level-panel -new mb-2 cbl-level-${Level}`"
   >
-    <b-container class="bg-cbl-level-25">
-      <b-row class="py-2 align-items-center">
-        <b-col>
-          <h3 class="h6 m-0 text-muted">
-            Year {{ Level }}
-          </h3>
-        </b-col>
-        <b-col cols="4">
-          <button
-            class="btn btn-primary btn-sm float-right"
-            @click="createLevel"
-          >
-            Enroll
-          </button>
-        </b-col>
-      </b-row>
-    </b-container>
+    <div class="bg-cbl-level-25 d-flex justify-space-between px-4 py-2 align-center">
+      <h3 class="h6 mb-0 text-muted">
+        Year {{ Level }}
+      </h3>
+      <v-btn
+        size="small"
+        class="text-white"
+        color="var(--cbl-level-color)"
+        @click="createLevel"
+      >
+        Enroll
+      </v-btn>
+    </div>
   </div>
 </template>
 

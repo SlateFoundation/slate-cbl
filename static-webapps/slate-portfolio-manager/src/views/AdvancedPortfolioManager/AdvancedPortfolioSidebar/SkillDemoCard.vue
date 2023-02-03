@@ -5,9 +5,10 @@
     @drag="drag"
   >
     <div class="skill-demo__rating py-1 bg-cbl-level">
-      <font-awesome-icon
+      <v-icon
         v-if="demo.Override"
-        icon="check"
+        icon="fa:fa fa-check"
+        size="x-small"
       />
       <span v-else>{{ demo.DemonstratedLevel === 0 ? "M" : demo.DemonstratedLevel }}</span>
     </div>
@@ -17,27 +18,31 @@
         v-if="targetLevels.length"
         class="skill-demo__controls"
       >
-        <b-button
+        <v-btn
           v-for="targetLevel in targetLevels"
           :key="targetLevel"
-          variant="unstyled"
+          variant="plain"
           :title="`Move to level ${targetLevel}`"
+          class="btn-unstyled"
           @click="setTargetLevel(targetLevel)"
         >
-          <font-awesome-icon
-            :icon="`chevron-circle-${targetLevel > level ? 'up' : 'down' }`"
+          <v-icon
+            :icon="`fa fa-chevron-circle-${targetLevel > level ? 'up' : 'down' }`"
             :class="`cbl-level-${targetLevel} text-cbl-level`"
           />
-        </b-button>
+        </v-btn>
 
         <div class="skill-demo__grabber" />
 
-        <b-button variant="unstyled">
-          <font-awesome-icon
-            icon="info-circle"
-            class="text-info"
+        <v-btn
+          variant="plain"
+          class="btn-unstyled"
+        >
+          <v-icon
+            icon="`fa:fa fa-info-circle"
+            :class="`text-cbl-level cbl-level-${level}`"
           />
-        </b-button>
+        </v-btn>
       </div>
     </div>
     <div class="skill-demo__date text-black-50 mr-2">
@@ -125,18 +130,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @use 'sass:math';
+
   .skill-demo {
+    align-items: center;
     gap: .5rem;
 
     &.-ineffective {
-      opacity: 0.5;
       box-shadow: none !important;
+
+      &:not(:hover) {
+        opacity: 0.5;
+      }
     }
 
     &__rating {
       border-bottom-left-radius: .25rem;
       border-top-left-radius: .25rem;
       color: white;
+      font-weight: bold;
       text-align: center;
       text-shadow: 0 1px 0 black;
       width: 1.75rem;
@@ -160,9 +172,13 @@ export default {
     }
 
     &__grabber {
-      background-color: #eee;
-      cursor: pointer;
+      align-self: center;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="%23ddd" cx="50%" cy="50%" r="30%" shape-rendering="geometricPrecision" /></svg>');
+      background-repeat: repeat;
+      background-size: auto (math.div(1, 3) * 100%);
+      cursor: grab;
       flex: 1 1 0;
+      height: 18px;
     }
 
     &__date {
