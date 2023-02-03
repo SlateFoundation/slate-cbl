@@ -20,7 +20,7 @@
           </v-col>
           <v-col cols="4">
             <v-progress-linear
-              :model-value="50"
+              :model-value="100 * portfolio.progress"
               height="16"
               bg-color="#e9ecef"
               class="bg-white rounded"
