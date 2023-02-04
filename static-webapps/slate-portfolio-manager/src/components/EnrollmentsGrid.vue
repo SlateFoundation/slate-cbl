@@ -232,6 +232,8 @@ export default {
 
   table {
     border-collapse: collapse;
+    margin: 0;
+    width: auto;
   }
 
   thead {
@@ -246,6 +248,8 @@ export default {
     }
 
     th {
+      background: none;
+      border: none;
       box-shadow: 0 1px 0 black;
     }
   }
@@ -255,6 +259,7 @@ export default {
       background-color: white;
       border-bottom: 1px solid black;
       left: 0;
+      padding: 0;
       position: sticky;
       z-index: 10;
 
