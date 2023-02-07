@@ -36,7 +36,10 @@
       <v-expansion-panel-text>
         <div class="bg-cbl-level-25 justify-space-around pa-2 d-flex text-center">
           <stat-figure label="Baseline">
-            {{ stats.baseline }}
+            <edit-baseline
+              :value="stats.baseline"
+              :portfolio="portfolio"
+            />
           </stat-figure>
           <stat-figure label="Performance">
             {{ stats.performance }}
@@ -79,11 +82,13 @@ import { mapStores } from 'pinia';
 import emitter from '@/store/emitter';
 import useStudentCompetency from '@/store/useStudentCompetency';
 import useUi from '@/store/useUi';
+import EditBaseline from './EditBaseline.vue';
 import StatFigure from './StatFigure.vue';
 import SkillDemos from './SkillDemos.vue';
 
 export default {
   components: {
+    EditBaseline,
     SkillDemos,
     StatFigure,
   },
@@ -112,7 +117,7 @@ export default {
   },
 
   data() {
-    return { open: 'only' };
+    return { open: 'only', editing_baseline: false };
   },
 
   computed: {
