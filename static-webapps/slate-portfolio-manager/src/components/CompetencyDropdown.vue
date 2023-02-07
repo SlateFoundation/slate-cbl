@@ -1,31 +1,25 @@
 <template>
-  <div class="slate-appheader">
+  <div class="slate-appheader d-flex align-center pa-6">
     <div class="slate-appheader__title">
       Portfolio Manager
     </div>
-    <div>
-      Competency Area
-      <select v-model="area">
-        <option
-          v-for="option in areaOptions"
-          :key="option.Code"
-          :value="option.Code"
-        >
-          {{ option.Title }}
-        </option>
-      </select>
+    <div style="min-width: 300px">
+      <v-select
+        v-model="area"
+        label="Competency Area"
+        variant="solo"
+        :items="areaOptions"
+        hide-details="auto"
+      />
     </div>
-    <div>
-      Students
-      <select v-model="students">
-        <option
-          v-for="option in studentOptions"
-          :key="option.value"
-          :value="option.value"
-        >
-          {{ option.label }}
-        </option>
-      </select>
+    <div style="min-width: 300px">
+      <v-select
+        v-model="students"
+        label="Students"
+        variant="solo"
+        :items="studentOptions"
+        hide-details="auto"
+      />
     </div>
   </div>
 </template>
@@ -56,11 +50,17 @@ export default {
     students: routeParam('students'),
     areaOptions() {
       const response = this.contentAreaStore.get('?summary=true');
-      return response && response.data;
+      return response && response.data.map(({ Code, Title }) => ({
+        value: Code,
+        title: Title,
+      }));
     },
     studentOptions() {
       const response = this.studentListStore.get();
-      return response && response.data;
+      return response && response.data.map(({ label, value }) => ({
+        title: label,
+        value,
+      }));
     },
   },
 };

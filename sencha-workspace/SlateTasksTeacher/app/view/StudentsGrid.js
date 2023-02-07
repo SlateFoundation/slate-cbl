@@ -29,15 +29,13 @@ Ext.define('SlateTasksTeacher.view.StudentsGrid', function() {
                 }],
                 sorters: [{
                     sorterFn: function(a, b) {
-                        return (
-                            a.get('Status') === b.get('Status') ?
-                            0 :
-                            (
-                                a.get('Status') === 'archived' ?
-                                1 :
-                                -1
-                            )
-                        )
+                        // sort archived tasks to end first
+                        if (a.get('Status') !== b.get('Status')) {
+                            return a.get('Status') === 'archived' ? 1 : -1;
+                        }
+
+                        // sort created date second
+                        return a.get('Created') < b.get('Created') ? 1 : -1;
                     }
                 }]
             },
