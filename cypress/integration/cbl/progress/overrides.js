@@ -312,6 +312,10 @@ function overrideSkill(competency, skill, student) {
         .find(`.cbl-grid-skill-row[data-skill="${skill}"] .cbl-grid-demos-cell[data-student="${student}"]`)
             .click();
 
+    // ensure bootstrap data is loaded
+    cy.wait('@getDemonstrationSkills');
+    cy.get('@getDemonstrationSkills.all').should('have.length', 1);
+
     // wait for history window to transition open
     cy.extGet('title[text="Skill History"] ^ slate-window')
         .should('not.have.class', 'x-hidden-clip')
