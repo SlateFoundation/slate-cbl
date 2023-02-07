@@ -1,0 +1,11 @@
+:root {
+  --v-shadow-key-umbra-opacity: rgba(0, 0, 0, 0.12);
+  --v-shadow-key-penumbra-opacity: rgba(0, 0, 0, 0.08);
+  --v-shadow-key-ambient-opacity: rgba(0, 0, 0, 0.06);
+}
+
+.v-tooltip {
+  .v-overlay__content {
+    background: rgba(var(--v-theme-surface-variant), 0.85);
+  }
+}

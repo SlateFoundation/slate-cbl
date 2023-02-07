@@ -18,8 +18,8 @@ export const getClient = (options = {}) => {
   const client = axios.create({
     baseURL: options.baseURL,
     withCredentials: true,
-    transformRequest(data, _headers) {
-      Object.assign(_headers.post, {
+    transformRequest(data, headers) {
+      Object.assign(headers, {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       });

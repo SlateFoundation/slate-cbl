@@ -1,5 +1,5 @@
 <template>
-  <div class="skill-demos p-3 border-bottom bg-cbl-level-10">
+  <div class="skill-demos pa-4 border-bottom bg-cbl-level-10">
     <h4 class="h6 skill-demos__heading">
       {{ skill.Code }}
       <span class="ml-1 text-black-50">
@@ -19,9 +19,10 @@
       </li>
       <skill-demo-card
         v-for="demo in skillDemos"
-        :key="demo.id"
-        :demo="demo"
-        :class="demo.class"
+        :key="demo.skillDemo.id"
+        :skill-demo="demo.skillDemo"
+        :demonstration="demo.demonstration"
+        :effective="demo.effective"
         :show-hidden-items="showHiddenItems"
         :level="level"
         :visible-levels="visibleLevels"
@@ -32,21 +33,7 @@
 </template>
 
 <script>
-import { format } from 'date-fns';
-
 import SkillDemoCard from './SkillDemoCard.vue';
-
-const displayDemoDate = (demo) => {
-  const { Modified, Created } = demo;
-  if (!Modified && !Created) {
-    return '';
-  }
-  const date = new Date(1000 * (Modified || Created));
-  if (date.getFullYear() !== new Date().getFullYear()) {
-    return format(date, 'MMM d, yyyy');
-  }
-  return format(date, 'MMM d');
-};
 
 export default {
   components: {
@@ -87,32 +74,16 @@ export default {
   computed: {
     skillDemos() {
       const out = [];
-      const process = (demo, effective) => {
+      const process = (skillDemo, effective) => {
         if (!effective && !this.showHiddenItems) {
           return;
         }
-        const {
-          DemonstratedLevel, ID, DemonstrationID, Override,
-        } = demo;
+        const { DemonstrationID } = skillDemo;
         const demonstration = this.demonstrations.find((d) => d.ID === DemonstrationID);
         if (!demonstration) {
           return;
         }
-        const { Comments } = demonstration;
-        let { Context } = demonstration;
-        if (demonstration.StudentTask) {
-          Context = demonstration.StudentTask.Task.Title;
-        }
-        out.push({
-          ID,
-          DemonstratedLevel,
-          Context,
-          Comments,
-          date: displayDemoDate(demo),
-          effective,
-          Override,
-          class: ['demonstration-skill', effective ? '-effective' : '-ineffective'],
-        });
+        out.push({ skillDemo, demonstration, effective });
       };
       this.effectiveDemonstrationsData.forEach((demo) => process(demo, true));
       this.ineffectiveDemonstrationsData.forEach((demo) => process(demo, false));

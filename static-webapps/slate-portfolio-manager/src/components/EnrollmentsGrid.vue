@@ -1,58 +1,75 @@
 <template>
-  <table
+  <div
     v-if="studentCompetencies && students && competencies"
-    @mouseenter="highlightCells"
-    @mouseleave="highlightCells"
-    @mousemove="highlightCells"
+    class="overflow-x-auto"
   >
-    <thead>
-      <tr>
-        <th>&nbsp;</th>
-        <th
-          v-for="student in students"
-          :key="student.Username"
-          class="col-heading"
-          :class="{ '-is-highlighted': shouldHighlightStudent(student.Username) }"
-          :data-student="student.Username"
+    <table
+      @mouseenter="highlightCells"
+      @mouseleave="highlightCells"
+      @mousemove="highlightCells"
+    >
+      <thead>
+        <tr>
+          <th>
+            &nbsp;
+          </th>
+          <th
+            v-for="student in students"
+            :key="student.Username"
+            class="col-heading"
+            :class="{ '-is-highlighted': shouldHighlightStudent(student.Username) }"
+            :data-student="student.Username"
+          >
+            <div class="col-heading-clip">
+              <a
+                class="col-heading-link"
+                href="#"
+              >
+                <div class="col-heading-text">
+                  {{ getDisplayName(student) }}
+                </div>
+              </a>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="row in rows"
+          :key="row.Code"
         >
-          <div class="col-heading-clip">
-            <a
-              class="col-heading-link"
-              href="#"
-            >
-              <div class="col-heading-text">
-                {{ getDisplayName(student) }}
-              </div>
-            </a>
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="row in rows"
-        :key="row.Code"
-      >
-        <th
-          :data-competency="row.Code"
-          :class="{ '-is-highlighted': shouldHighlightCompetency(row.Code) }"
-        >
-          {{ row.Descriptor }}
-        </th>
-        <td
-          v-for="value, i in row.values"
-          :key="i"
-          :data-competency="row.Code"
-          :data-student="students[i].Username"
-          :class="getCellClass(row, students[i], value)"
-          @click="$emit('select', { competency: row.Code, student: students[i].Username })"
-        >
-          {{ value }}
-          <div class="outline" />
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <th
+            :data-competency="row.Code"
+            :class="{ '-is-highlighted': shouldHighlightCompetency(row.Code) }"
+          >
+            <div class="row-heading">
+              <v-tooltip :text="row.Descriptor">
+                <template #activator="{ props }">
+                  <div
+                    class="text-truncate"
+                    v-bind="props"
+                  >
+                    {{ row.Descriptor }}
+                  </div>
+                </template>
+              </v-tooltip>
+            </div>
+          </th>
+          <td
+            v-for="value, i in row.values"
+            :key="i"
+            :data-competency="row.Code"
+            :data-student="students[i].Username"
+            :class="getCellClass(row, students[i], value)"
+            @click="$emit('select', { competency: row.Code, student: students[i].Username })"
+          >
+            {{ value }}
+            <div class="outline" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div v-else>
     Select a list of students and a content area to load enrollments dashboard
   </div>
@@ -150,7 +167,7 @@ export default {
       const { Username } = student;
       const isSelected = Code === selected.competency && Username === selected.student;
       return [
-        `cbl-level-${value} bg-cbl-level-50 text-white`,
+        `cbl-level-${value} bg-cbl-level-25`,
         isSelected && '-is-selected',
       ];
     },
@@ -164,11 +181,11 @@ export default {
       this.hoveredCell.domCache = cell;
 
       if (cell) {
-        Vue.set(this.hoveredCell, 'student', cell.dataset.student);
-        Vue.set(this.hoveredCell, 'competency', cell.dataset.competency);
+        this.hoveredCell.student = cell.dataset.student;
+        this.hoveredCell.competency = cell.dataset.competency;
       } else {
-        Vue.set(this.hoveredCell, 'student', '');
-        Vue.set(this.hoveredCell, 'competency', '');
+        this.hoveredCell.student = '';
+        this.hoveredCell.competency = '';
       }
     },
 
@@ -203,8 +220,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '~bootstrap/scss/functions.scss';
-  @import '~bootstrap/scss/variables.scss';
+  $link-color: #0288d1;
 
   $cell-max-width: 70px;
   $col-heading-border-color: rgba(black, .2);
@@ -214,15 +230,53 @@ export default {
     color: $link-color;
   }
 
+  table {
+    border-collapse: collapse;
+    margin: 0;
+    width: auto;
+  }
+
   thead {
     background-color: white;
-    box-shadow: 0 1px 0 black;
+    box-shadow: 0 .5px 0 black;
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 11;
+
+    a {
+      text-decoration: none;
+    }
+
+    th {
+      background: none;
+      border: none;
+      box-shadow: 0 1px 0 black;
+    }
   }
 
   tbody {
+    th {
+      background-color: white;
+      border-bottom: 1px solid black;
+      left: 0;
+      padding: 0;
+      position: sticky;
+      z-index: 10;
+
+      .row-heading {
+        border-left: 0;
+        box-shadow: .5px 0 0 black;
+        overflow: hidden;
+        padding: .5em 1em;
+        text-overflow: ellipsis;
+        width: 15em;
+      }
+    }
+
+    .-is-highlighted .row-heading {
+      @include is-highlighted();
+    }
+
     td {
       border: 1px solid black;
       max-width: $cell-max-width;
@@ -258,26 +312,13 @@ export default {
         }
       }
     }
-
-    th {
-      background-color: rgba(black, .05);
-      border-bottom: 1px solid $col-heading-border-color;
-      border-left: 0;
-      border-top: 1px solid $col-heading-border-color;
-      padding: .5em 1em;
-      width: 15em;
-    }
-
-    .-is-highlighted {
-      @include is-highlighted();
-    }
   }
 
-  th:first-child {
-    padding-right: 1em;
+  th {
+    text-align: left;
   }
 
-  .col-heading {
+  thead > tr > th.col-heading {
     border: 0;
     height: 150px;
     max-width: $cell-max-width;
@@ -303,7 +344,7 @@ export default {
     color: inherit;
     display: block;
     height: 58px;
-    left: 48px;
+    left: 47px;
     line-height: 1;
     overflow: hidden;
     padding: 20px 30px 20px 40px;

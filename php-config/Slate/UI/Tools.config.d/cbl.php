@@ -8,6 +8,10 @@ $cblTools = [
     '_icon' => 'cbl'
 ];
 
+if ($GLOBALS['Session']->hasAccountLevel('Administrator')) {
+    $cblTools['Portfolio Manager'] = '/cbl/dashboards/portfolios/admin';
+}
+
 if ($GLOBALS['Session']->hasAccountLevel('Staff')) {
     $cblTools['Competency Dashboard'] = '/cbl/dashboards/demonstrations/teacher';
     $cblTools['Task Dashboard'] = '/cbl/dashboards/tasks/teacher';
