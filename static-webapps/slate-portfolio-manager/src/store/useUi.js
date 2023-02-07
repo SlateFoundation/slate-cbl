@@ -16,11 +16,11 @@ export default defineStore('ui', {
         actions: [
           {
             text: 'Cancel',
-            class: 'btn btn-secondary',
             click: () => this.alert(null),
           },
           {
             text: 'Confirm',
+            color: 'primary',
             click: () => {
               this.alert(null);
               Promise.resolve(action()).catch((error) => {

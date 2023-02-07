@@ -1,49 +1,7 @@
-// TODO remove these google font imports and use local versions
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sanchez:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:ital,wght@0,300;0,400;0,700;1,400;1,700&family=Sanchez:ital@0;1&display=swap');
-
-body {
-  font-family: Lato;
-}
-
-%heading {
-  font-family: Sanchez;
-}
-
-@for $i from 6 through 1 {
-  .h#{$i} {
-    @extend %heading;
-  }
-}
-
-.btn-unstyled {
-  background: unset;
-  border: unset;
-  padding: unset;
-}
-
+/* general */
+@import "./global.scss";
 @import "./colors.scss";
+
+/* components */
 @import "./appheader.scss";
-
-.block-loading {
-  position: relative;
-  pointer-events: none;
-  &:before {
-    background-color: rgba(128, 128, 128, 0.2);
-    content: "";
-    display: block;
-    inset: 0;
-    position: absolute;
-    z-index: 99999;
-  }
-}
-
-.level-panel.-drop-zone {
-  .level-panel__delete, .skill-demos {
-    display: none;
-  }
-  &.-drag-source {
-    filter: grayscale(0.75);
-    opacity: 0.5;
-  }
-}
+@import "./level-panel.scss";

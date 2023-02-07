@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import querystring from 'querystring';
-import Vue from 'vue';
 
 import client from './client';
 
@@ -60,7 +59,7 @@ export default ({
 
         const set = (data) => {
           Object.entries(data).forEach(([key, value]) => {
-            Vue.set(this.$state[key], url, value);
+            this.$state[key][url] = value;
           });
           Object.entries(this.$state.loading).forEach(([key, value]) => {
             if (!value) {
@@ -91,24 +90,24 @@ export default ({
 
       update(data) {
         const url = makeUrl('/save');
-        Vue.set(this.$state.loading, url, true);
+        this.$state.loading[url] = true;
         return client.post(url, data).then((response) => {
-          Vue.delete(this.$state.loading, url);
+          delete this.$state.loading[url];
           return response;
         }).catch((e) => {
-          Vue.delete(this.$state.loading, url);
+          delete this.$state.loading[url];
           throw e;
         });
       },
 
       delete(identifier) {
         const url = makeUrl(`/${identifier}/delete`);
-        Vue.set(this.$state.loading, url, true);
+        this.$state.loading[url] = true;
         return client.post(url).then((response) => {
-          Vue.delete(this.$state.loading, url);
+          delete this.$state.loading[url];
           return response;
         }).catch((e) => {
-          Vue.delete(this.$state.loading, url);
+          delete this.$state.loading[url];
           throw e;
         });
       },

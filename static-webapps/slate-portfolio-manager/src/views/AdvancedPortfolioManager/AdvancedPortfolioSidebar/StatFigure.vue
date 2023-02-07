@@ -25,7 +25,7 @@ export default {
 <style lang="scss" scoped>
   .stat-figure {
     line-height: 1.25;
-    margin-bottom: 0;
+    margin: 0;
 
     &__label {
       font-size: .6875em;
