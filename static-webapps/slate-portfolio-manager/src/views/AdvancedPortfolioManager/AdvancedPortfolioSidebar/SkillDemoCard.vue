@@ -6,53 +6,95 @@
   >
     <div class="skill-demo__rating py-1 bg-cbl-level">
       <v-icon
-        v-if="demo.Override"
+        v-if="skillDemo.Override"
         icon="fa:fa fa-check"
         size="x-small"
       />
-      <span v-else>{{ demo.DemonstratedLevel === 0 ? "M" : demo.DemonstratedLevel }}</span>
+      <span v-else>{{ demonstratedLevel }}</span>
     </div>
     <div class="skill-demo__title">
       {{ title }}
-      <div
-        v-if="targetLevels.length"
-        class="skill-demo__controls"
-      >
-        <v-btn
-          v-for="targetLevel in targetLevels"
-          :key="targetLevel"
-          variant="plain"
-          :title="`Move to level ${targetLevel}`"
-          class="btn-unstyled"
-          @click="setTargetLevel(targetLevel)"
+      <div class="skill-demo__hover">
+        <div
+          v-if="targetLevels.length"
+          class="skill-demo__controls"
         >
-          <v-icon
-            :icon="`fa fa-chevron-circle-${targetLevel > level ? 'up' : 'down' }`"
-            :class="`cbl-level-${targetLevel} text-cbl-level`"
-          />
-        </v-btn>
+          <v-btn
+            v-for="targetLevel in targetLevels"
+            :key="targetLevel"
+            variant="plain"
+            :title="`Move to level ${targetLevel}`"
+            class="btn-unstyled"
+            @click="setTargetLevel(targetLevel)"
+          >
+            <v-icon
+              :icon="`fa fa-chevron-circle-${targetLevel > level ? 'up' : 'down' }`"
+              :class="`cbl-level-${targetLevel} text-cbl-level`"
+            />
+          </v-btn>
 
-        <div class="skill-demo__grabber" />
+          <div class="skill-demo__grabber" />
+        </div>
+        <div
+          v-else
+          class="flex-grow"
+        />
 
-        <v-btn
-          variant="plain"
-          class="btn-unstyled"
-        >
-          <v-icon
-            icon="`fa:fa fa-info-circle"
-            :class="`text-cbl-level cbl-level-${level}`"
-          />
-        </v-btn>
+        <v-tooltip location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              variant="plain"
+              class="btn-unstyled"
+              v-bind="props"
+            >
+              <v-icon
+                icon="`fa:fa fa-info-circle"
+                :class="`text-cbl-level cbl-level-${level}`"
+              />
+            </v-btn>
+          </template>
+          <div v-if="createdBy">
+            Created By: {{ createdBy }}
+          </div>
+          <div>
+            Demonstration ID: {{ demonstration.ID }}
+          </div>
+          <div>
+            Demonstration Date: {{ fullDate }}
+          </div>
+          <div>
+            Experience Type: {{ demonstration.Context }}
+          </div>
+          <div>
+            Performance Type: {{ demonstration.PerformanceType }}
+          </div>
+          <div v-if="demonstration.ArtifactURL">
+            <a
+              :href="demonstration.ArtifactURL"
+              target="_blank"
+            >Link</a>
+          </div>
+          <template v-else-if="demonstration.StudentTask">
+            <div>
+              TODO: StudentTask.Submitted (date, if applicable)
+            </div>
+            <div>
+              TODO: Task.Title (with link to task)
+            </div>
+          </template>
+        </v-tooltip>
       </div>
     </div>
     <div class="skill-demo__date text-black-50 mr-2">
-      {{ demo.date }}
+      {{ date }}
     </div>
   </div>
 </template>
 
 <script>
+import { format } from 'date-fns';
 import { mapStores } from 'pinia';
+
 import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useUi from '@/store/useUi';
 
@@ -62,7 +104,11 @@ export default {
       type: Array,
       default: () => [],
     },
-    demo: {
+    skillDemo: {
+      type: Object,
+      default: () => ({}),
+    },
+    demonstration: {
       type: Object,
       default: () => ({}),
     },
@@ -70,10 +116,44 @@ export default {
       type: Number,
       default: () => 0,
     },
+    effective: {
+      type: Boolean,
+      default: () => true,
+    },
   },
 
   computed: {
     ...mapStores(useDemonstrationSkill, useUi),
+    demonstratedLevel() {
+      const { DemonstratedLevel } = this.skillDemo;
+      return DemonstratedLevel === 0 ? 'M' : DemonstratedLevel;
+    },
+    fullDate() {
+      const { Modified, Created } = this.skillDemo;
+      if (!Modified && !Created) {
+        return '';
+      }
+      const date = new Date(1000 * (Modified || Created));
+      return format(date, 'MMM d, yyyy, h:mm aaa');
+    },
+    date() {
+      const { Modified, Created } = this.skillDemo;
+      if (!Modified && !Created) {
+        return '';
+      }
+      const date = new Date(1000 * (Modified || Created));
+      if (date.getFullYear() !== new Date().getFullYear()) {
+        return format(date, 'MMM d, yyyy');
+      }
+      return format(date, 'MMM d');
+    },
+    createdBy() {
+      if (!this.demonstration.Created) {
+        return null;
+      }
+      const { FirstName = '', LastName = '' } = this.demonstration.Creator;
+      return `${FirstName} ${LastName}`;
+    },
     targetLevels() {
       const visibleLevels = this.visibleLevels.slice();
       const higherLevels = visibleLevels.filter((l) => l > this.level);
@@ -88,13 +168,17 @@ export default {
       return targetLevels;
     },
     title() {
-      const { Context, Override } = this.demo;
-      return Override ? '[Overridden]' : Context;
+      const { Context, Override, StudentTask } = this.demonstration;
+      if (Override) {
+        return '[Overridden]';
+      }
+      const taskTitle = StudentTask && StudentTask.Task.Title;
+      return taskTitle || Context;
     },
     wrapperClass() {
       return [
         'align-items-baseline bg-white d-flex rounded shadow-sm skill-demo',
-        this.demo.DemonstratedLevel === 0 && 'cbl-level-missing',
+        this.skillDemo.DemonstratedLevel === 0 && 'cbl-level-missing',
       ];
     },
   },
@@ -105,7 +189,7 @@ export default {
         // skill demo-card was dropped on current portfolio level
         return;
       }
-      const { ID } = this.demo;
+      const { ID } = this.skillDemo;
       const data = [{ ID, TargetLevel }];
       const body = `Are you sure you want to move this to level ${TargetLevel}?`;
       const action = () => {
@@ -116,7 +200,7 @@ export default {
       this.uiStore.confirm(body, action);
     },
     drag() {
-      const { ID } = this.demo;
+      const { ID } = this.skillDemo;
       const { level } = this;
       this.uiStore.startDragging({
         ID,
@@ -162,13 +246,22 @@ export default {
       position: relative;
     }
 
-    &__controls {
+    &__hover {
       display: none;
       flex: 1 1 0;
       gap: .5rem;
       position: absolute;
       inset: 0;
+    }
+
+    .btn-unstyled {
       background: white;
+    }
+
+    &__controls {
+      display: flex;
+      background: white;
+      flex-grow: 1;
     }
 
     &__grabber {
@@ -186,9 +279,12 @@ export default {
     }
 
     &:hover {
-      .skill-demo__controls {
+      .skill-demo__hover {
         display: flex;
       }
+    }
+    .flex-grow {
+      flex-grow: 1;
     }
   }
 </style>
