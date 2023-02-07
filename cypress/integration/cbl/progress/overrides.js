@@ -12,6 +12,7 @@ describe('CBL / Progress / Overrides', () => {
         // set up XHR monitors
         cy.intercept('GET', '/cbl/dashboards/demonstrations/teacher/bootstrap').as('getBootstrapData');
         cy.intercept('/cbl/student-competencies?(\\?*)').as('getStudentCompetencies');
+        cy.intercept('/cbl/competencies?(\\?*)').as('getCompetencies');
         cy.intercept('/cbl/demonstration-skills?(\\?*)').as('getDemonstrationSkills');
         cy.intercept('POST', '/cbl/demonstrations/save?(\\?*)').as('saveDemonstration');
 
@@ -204,6 +205,14 @@ describe('CBL / Progress / Overrides', () => {
                     .should('exist')
                     .click();
             });
+
+        // ensure competency data is loaded
+        cy.wait('@getCompetencies');
+        cy.get('@getCompetencies.all').should('have.length', 1);
+
+        // ensure student competency data is loaded
+        cy.wait('@getStudentCompetencies');
+        cy.get('@getStudentCompetencies.all').should('have.length', 2);
 
         // wait for window to transition open
         cy.extGet('title[text="Submit Evidence"] ^ slate-window')
