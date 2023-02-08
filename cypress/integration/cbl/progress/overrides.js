@@ -12,6 +12,7 @@ describe('CBL / Progress / Overrides', () => {
         // set up XHR monitors
         cy.intercept('GET', '/cbl/dashboards/demonstrations/teacher/bootstrap').as('getBootstrapData');
         cy.intercept('/cbl/student-competencies?(\\?*)').as('getStudentCompetencies');
+        cy.intercept('/cbl/competencies?(\\?*)').as('getCompetencies');
         cy.intercept('/cbl/demonstration-skills?(\\?*)').as('getDemonstrationSkills');
         cy.intercept('POST', '/cbl/demonstrations/save?(\\?*)').as('saveDemonstration');
 
@@ -196,27 +197,35 @@ describe('CBL / Progress / Overrides', () => {
             .find(`.cbl-grid-skill-row[data-skill="${skill}"] .cbl-grid-demos-cell[data-student="${student}"]`)
                 .click();
 
+        // ensure bootstrap data is loaded
+        cy.wait('@getDemonstrationSkills');
+        cy.get('@getDemonstrationSkills.all').should('have.length', 1);
+
         // wait for window to transition open
         cy.extGet('title[text="Skill History"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
-                cy.extGet('button[text="Submit Evidence"]')
-                    .should('exist')
+                cy.get('.x-btn-inner:contains("Submit Evidence")')
+                    .should('have.length', 1)
                     .click();
             });
+
+        // ensure competency data is loaded
+        cy.wait('@getCompetencies');
+        cy.get('@getCompetencies.all').should('have.length', 1);
 
         // wait for window to transition open
         cy.extGet('title[text="Submit Evidence"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
-            .within(($window) => {
-                cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Type of Experience"]')
+            .within(() => {
+                cy.get('input[name="ExperienceType"]')
                     .type('Studio');
 
-                cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Name of Experience"]')
+                cy.get('input[name="Context"]')
                     .type('Test');
 
-                cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Performance Task"]')
-                    .type('Debate');
+                cy.get('input[name="PerformanceType"]')
+                    .type('Test');
 
                 cy.extGet('slate-cbl-ratings-slider', { all: true, component: true })
                         .should('have.length', 3)
@@ -226,13 +235,16 @@ describe('CBL / Progress / Overrides', () => {
                             _selectRating(sliders[0], 9);
                         });
 
-                cy.extGet('slate-cbl-demonstrations-demonstrationform textarea[fieldLabel="Comments"]')
-                    .type('Test rating');
-
-                cy.extGet('button[text="Save Evidence"]')
-                    .should('exist')
+                cy.get('.x-btn-inner:contains("Save Evidence")')
+                    .should('have.length', 1)
                     .click();
             });
+
+        // ensure demonstration is saved
+        cy.wait('@saveDemonstration');
+
+        // ensure competency data is loaded
+        cy.wait('@getDemonstrationSkills');
 
         // close the window
         cy.extGet('title[text="Skill History"] ^ slate-window')
@@ -311,6 +323,10 @@ function overrideSkill(competency, skill, student) {
         .should('have.class', 'is-expanded')
         .find(`.cbl-grid-skill-row[data-skill="${skill}"] .cbl-grid-demos-cell[data-student="${student}"]`)
             .click();
+
+    // ensure bootstrap data is loaded
+    cy.wait('@getDemonstrationSkills');
+    cy.get('@getDemonstrationSkills.all').should('have.length', 1);
 
     // wait for history window to transition open
     cy.extGet('title[text="Skill History"] ^ slate-window')
