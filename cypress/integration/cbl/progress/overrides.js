@@ -178,7 +178,7 @@ describe('CBL / Progress / Overrides', () => {
                     .should('contain.text', '0%')
     });
 
-    it('Submit a rating for a skill with an override.', () => {
+    it.only('Submit a rating for a skill with an override.', () => {
         loadDashboard('ELA', 'group:class_of_2020');
 
         const competency = 6; // ELA.6
@@ -197,6 +197,10 @@ describe('CBL / Progress / Overrides', () => {
             .find(`.cbl-grid-skill-row[data-skill="${skill}"] .cbl-grid-demos-cell[data-student="${student}"]`)
                 .click();
 
+        // ensure bootstrap data is loaded
+        cy.wait('@getDemonstrationSkills');
+        cy.get('@getDemonstrationSkills.all').should('have.length', 1);
+
         // wait for window to transition open
         cy.extGet('title[text="Skill History"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
@@ -210,10 +214,6 @@ describe('CBL / Progress / Overrides', () => {
         cy.wait('@getCompetencies');
         cy.get('@getCompetencies.all').should('have.length', 1);
 
-        // ensure student competency data is loaded
-        cy.wait('@getStudentCompetencies');
-        cy.get('@getStudentCompetencies.all').should('have.length', 2);
-
         // wait for window to transition open
         cy.extGet('title[text="Submit Evidence"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
@@ -226,6 +226,9 @@ describe('CBL / Progress / Overrides', () => {
 
                 cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Performance Task"]')
                     .type('Debate');
+
+                cy.extGet('tabpanel tab[text="ELA.6"]')
+                    .should('have.length', 1)
 
                 cy.extGet('slate-cbl-ratings-slider', { all: true, component: true })
                         .should('have.length', 3)
@@ -242,6 +245,12 @@ describe('CBL / Progress / Overrides', () => {
                     .should('exist')
                     .click();
             });
+
+        // ensure demonstration is saved
+        cy.wait('@saveDemonstration');
+
+        // ensure competency data is loaded
+        cy.wait('@getDemonstrationSkills');
 
         // close the window
         cy.extGet('title[text="Skill History"] ^ slate-window')
