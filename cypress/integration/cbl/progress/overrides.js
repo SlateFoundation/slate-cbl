@@ -205,8 +205,8 @@ describe('CBL / Progress / Overrides', () => {
         cy.extGet('title[text="Skill History"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
             .within(($window) => {
-                cy.extGet('button[text="Submit Evidence"]')
-                    .should('exist')
+                cy.get('.x-btn-inner:contains("Submit Evidence")')
+                    .should('have.length', 1)
                     .click();
             });
 
