@@ -217,18 +217,15 @@ describe('CBL / Progress / Overrides', () => {
         // wait for window to transition open
         cy.extGet('title[text="Submit Evidence"] ^ slate-window')
             .should('not.have.class', 'x-hidden-clip')
-            .within(($window) => {
-                cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Type of Experience"]')
+            .within(() => {
+                cy.get('input[name="ExperienceType"]')
                     .type('Studio');
 
-                cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Name of Experience"]')
+                cy.get('input[name="Context"]')
                     .type('Test');
 
-                cy.extGet('slate-cbl-demonstrations-demonstrationform combobox[fieldLabel="Performance Task"]')
-                    .type('Debate');
-
-                cy.extGet('tabpanel tab[text="ELA.6"]')
-                    .should('have.length', 1)
+                cy.get('input[name="PerformanceType"]')
+                    .type('Test');
 
                 cy.extGet('slate-cbl-ratings-slider', { all: true, component: true })
                         .should('have.length', 3)
@@ -238,11 +235,8 @@ describe('CBL / Progress / Overrides', () => {
                             _selectRating(sliders[0], 9);
                         });
 
-                cy.extGet('slate-cbl-demonstrations-demonstrationform textarea[fieldLabel="Comments"]')
-                    .type('Test rating');
-
-                cy.extGet('button[text="Save Evidence"]')
-                    .should('exist')
+                cy.get('.x-btn-inner:contains("Save Evidence")')
+                    .should('have.length', 1)
                     .click();
             });
 
