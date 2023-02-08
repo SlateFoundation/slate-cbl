@@ -178,7 +178,7 @@ describe('CBL / Progress / Overrides', () => {
                     .should('contain.text', '0%')
     });
 
-    it.only('Submit a rating for a skill with an override.', () => {
+    it('Submit a rating for a skill with an override.', () => {
         loadDashboard('ELA', 'group:class_of_2020');
 
         const competency = 6; // ELA.6
