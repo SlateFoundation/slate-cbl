@@ -10,6 +10,7 @@ $cblTools = [
 
 if ($GLOBALS['Session']->hasAccountLevel('Administrator')) {
     $cblTools['Portfolio Manager'] = '/cbl/dashboards/portfolios/admin';
+    $cblTools['Enrollments Dashboard'] = '/cbl/dashboards/student-competencies/admin';
 }
 
 if ($GLOBALS['Session']->hasAccountLevel('Staff')) {
@@ -17,7 +18,6 @@ if ($GLOBALS['Session']->hasAccountLevel('Staff')) {
     $cblTools['Task Dashboard'] = '/cbl/dashboards/tasks/teacher';
     //$cblTools['My Assigned Tasks'] = '/cbl/dashboards/tasks/student';
     $cblTools['Task Library'] = '/cbl/dashboards/tasks/manager';
-    $cblTools['Enrollments Dashboard'] = '/cbl/dashboards/student-competencies/admin';
 } elseif ($GLOBALS['Session']->Person && $GLOBALS['Session']->Person->isA(Slate\People\Student::class)) {
     $cblTools['Competency Dashboard'] = '/cbl/dashboards/demonstrations/student';
     $cblTools['Task Dashboard'] = '/cbl/dashboards/tasks/student';
