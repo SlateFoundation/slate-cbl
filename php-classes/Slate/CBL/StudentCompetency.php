@@ -555,11 +555,13 @@ class StudentCompetency extends \ActiveRecord
 
 
         // require minimum average as offset from level
+        $average = $this->getDemonstrationsAverage();
         $minimumAverage = $this->getMinimumAverage();
 
         if (
             $minimumAverage !== null
-            && $this->getDemonstrationsAverage() < $minimumAverage
+            && $average !== null
+            && $average < $minimumAverage
         ) {
             return false;
         }

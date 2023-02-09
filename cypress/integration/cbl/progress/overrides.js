@@ -149,14 +149,19 @@ describe('CBL / Progress / Overrides', () => {
 
         overrideSkill(competency, skill, student);
 
-        // check portfolio value for graduation at cell at SS.4 - student
+        // check portfolio value for withheld graduation at cell at SS.4 - student
         cy.get(`.cbl-grid-main .cbl-grid-progress-row[data-competency="${competency}"]`)
             .should('have.length', 1)
             .find(`.cbl-grid-progress-cell[data-student="${student}"]`)
                 .should('have.length', 1)
-                .should('have.class', 'cbl-level-10')
-                .find('.cbl-grid-progress-percent')
-                    .should('contain.text', '0%')
+                .should('have.class', 'cbl-level-9')
+                .should('have.class', 'is-average-low')
+                .within(() => {
+                    cy.get('.cbl-grid-progress-percent')
+                        .should('have.text', '100%');
+                    cy.get('.cbl-level-progress-average')
+                        .should('have.text', '6.5');
+                });
     });
 
     it('Override for all skills where one set of ERs has all Ms.', () => {
