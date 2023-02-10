@@ -323,30 +323,31 @@ describe('CBL / Admin / Tasks Manager', () => {
             .within(() => {
 
                 // click cloned task selector
-                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]')
-                    .should('exist')
-                    .within(() => {
-
-                        cy.root()
-                            .get('.x-form-arrow-trigger')
-                            .click()
-
-                    });
+                cy.get('input[name="ClonedTaskID"]')
+                    .should('have.length', 1)
+                    .parents('.x-form-trigger-wrap')
+                        .should('have.length', 1)
+                        .within(() => {
+                            cy.get('.x-form-arrow-trigger')
+                                .click()
+                        });
 
                 // wait for options to load
                 cy.wait('@tasksData');
 
-                // verify shared task exists in picker dropdown
-                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
-                    .then(selector => selector.getPicker().el.dom)
-                    .contains('.x-boundlist-item', 'A Shared Task')
-                    .should('exist');
+                // get componentid in order to find foating options list outside of window scope
+                cy.get('input[name="ClonedTaskID"]')
+                    .then(($input) => {
+                        const componentID = $input.attr('data-componentid');
 
-                // verify unshared task does not exist in picker dropdown
-                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
-                    .then(selector => selector.getPicker().el.dom)
-                    .contains('.x-boundlist-item', 'An UnShared Task')
-                    .should('not.exist');
+                        cy.document().its('body').find(`#${componentID}-picker-listEl`)
+                            .contains('.x-boundlist-item', 'A Shared Task')
+                            .should('exist');
+
+                        cy.document().its('body').find(`#${componentID}-picker-listEl`)
+                            .contains('.x-boundlist-item', 'An UnShared Task')
+                            .should('not.exist');
+                    })
             });
     });
 
