@@ -8,13 +8,24 @@
     class="elevation-1"
   >
     <template v-slot:column.ParentTask="{ column }">
-        {{ column.title }}&hellip;
+        <ParentTaskColumnTemplate :column="column" />
     </template>
+    <template v-slot:item.Created="{ item }">
+        <CreatedItemTemplate :item="item" />
+    </template>
+
   </v-data-table>
 </template>
 
 <script>
+import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
+import CreatedItemTemplate from "@/components/templates/CreatedItemTemplate.vue";
+
 export default {
+  components: {
+    ParentTaskColumnTemplate,
+    CreatedItemTemplate
+  },
   data() {
     return {
       itemsPerPage: 20,
