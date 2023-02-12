@@ -13,6 +13,9 @@
     <template v-slot:item.ParentTask="{ item }">
         <ParentTaskItemTemplate :item="item" />
     </template>
+    <template v-slot:item.Skills="{ item }">
+        <SkillsItemTemplate :item="item" />
+    </template>
     <template v-slot:item.Creator="{ item }">
         <CreatorItemTemplate :item="item" />
     </template>
@@ -26,6 +29,7 @@
 <script>
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import ParentTaskItemTemplate from "@/components/templates/ParentTaskItemTemplate";
+import SkillsItemTemplate from "@/components/templates/SkillsItemTemplate.vue";
 import CreatedItemTemplate from "@/components/templates/CreatedItemTemplate.vue";
 import CreatorItemTemplate from "@/components/templates/CreatorItemTemplate.vue";
 
@@ -33,6 +37,7 @@ export default {
   components: {
     ParentTaskColumnTemplate,
     ParentTaskItemTemplate,
+    SkillsItemTemplate,
     CreatorItemTemplate,
     CreatedItemTemplate
   },
