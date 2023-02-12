@@ -1,12 +1,12 @@
 <template>
   <v-app>
     <v-main>
-    <h1>test</h1>
-    <MyDataTable />
+    <h1>Task Library</h1>
+    <TasksDataTable />
     </v-main>
   </v-app>
 </template>
 
 <script setup>
-import MyDataTable from './components/MyDataTable.vue'
+import TasksDataTable from './components/TasksDataTable.vue'
 </script>
