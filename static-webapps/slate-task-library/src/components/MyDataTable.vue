@@ -6,7 +6,11 @@
     density="compact"
     item-value="name"
     class="elevation-1"
-  />
+  >
+    <template v-slot:column.ParentTask="{ column }">
+        {{ column.title }}&hellip;
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -16,7 +20,7 @@ export default {
       itemsPerPage: 20,
       headers: [
         { title: "Title", align: "start", key: "Title" },
-        { title: "Subtask of&hellip;", align: "start", key: "ParentTask" },
+        { title: "Subtask of", align: "start", key: "ParentTask" },
         { title: "Type of Exp.", align: "center", key: "ExperienceType" },
         { title: "Skills", align: "end", key: "Skills" },
         { title: "Created by", align: "start", key: "Creator" },
