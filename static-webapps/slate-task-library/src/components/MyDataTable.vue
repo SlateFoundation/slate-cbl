@@ -10,6 +10,9 @@
     <template v-slot:column.ParentTask="{ column }">
         <ParentTaskColumnTemplate :column="column" />
     </template>
+    <template v-slot:item.Creator="{ item }">
+        <CreatorItemTemplate :item="item" />
+    </template>
     <template v-slot:item.Created="{ item }">
         <CreatedItemTemplate :item="item" />
     </template>
@@ -20,10 +23,12 @@
 <script>
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import CreatedItemTemplate from "@/components/templates/CreatedItemTemplate.vue";
+import CreatorItemTemplate from "@/components/templates/CreatorItemTemplate.vue";
 
 export default {
   components: {
     ParentTaskColumnTemplate,
+    CreatorItemTemplate,
     CreatedItemTemplate
   },
   data() {
