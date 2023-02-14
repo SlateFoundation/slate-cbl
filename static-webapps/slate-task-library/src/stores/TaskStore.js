@@ -17,9 +17,11 @@ export const useTaskStore = defineStore("taskStore", {
     async fetchTasks() {
       this.loading = true;
 
+      const hostname = 'http://localhost:2190'
+      const path = '/cbl/tasks'
+      const include = 'Attachments%2CCreator%2CParentTask%2CSkills%2CClonedTask'
 
-      const url =
-        "http://localhost:2190/cbl/tasks?include_archived=false&offset=0&limit=20&include=Attachments%2CCreator%2CParentTask%2CSkills%2CClonedTask";
+      const url = `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}`
 
       const res = await fetch(url, {
         method: "GET", // *GET, POST, PUT, DELETE, etc.
