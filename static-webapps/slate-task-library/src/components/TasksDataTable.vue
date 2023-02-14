@@ -9,20 +9,20 @@
     density="compact"
     class="elevation-1"
   >
-    <template v-slot:column.ParentTask="{ column }">
-        <ParentTaskColumnTemplate :column="column" />
+    <template #column.ParentTask="{ column }">
+      <ParentTaskColumnTemplate :column="column" />
     </template>
-    <template v-slot:item.ParentTask="{ item }">
-        <ParentTaskItemTemplate :item="item" />
+    <template #item.ParentTask="{ item }">
+      <ParentTaskItemTemplate :item="item" />
     </template>
-    <template v-slot:item.Skills="{ item }">
-        <SkillsItemTemplate :item="item" />
+    <template #item.Skills="{ item }">
+      <SkillsItemTemplate :item="item" />
     </template>
-    <template v-slot:item.Creator="{ item }">
-        <CreatorItemTemplate :item="item" />
+    <template #item.Creator="{ item }">
+      <CreatorItemTemplate :item="item" />
     </template>
-    <template v-slot:item.Created="{ item }">
-        <CreatedItemTemplate :item="item" />
+    <template #item.Created="{ item }">
+      <CreatedItemTemplate :item="item" />
     </template>
   </v-data-table-server>
 </template>
@@ -34,7 +34,7 @@ import SkillsItemTemplate from "@/components/templates/SkillsItemTemplate.vue";
 import CreatedItemTemplate from "@/components/templates/CreatedItemTemplate.vue";
 import CreatorItemTemplate from "@/components/templates/CreatorItemTemplate.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from "pinia";
 
 export default {
   components: {
@@ -45,14 +45,14 @@ export default {
     CreatedItemTemplate,
   },
   setup() {
-    const taskStore = useTaskStore()
-    // fetch tasks
+    const taskStore = useTaskStore(),
+      // fetch tasks
 
-    const { data, loading, total } = storeToRefs(taskStore)
+      { data, loading, total } = storeToRefs(taskStore);
 
-    taskStore.fetchTasks()
+    taskStore.fetchTasks();
 
-    return { taskStore, data, loading, total }
+    return { taskStore, data, loading, total };
   },
   data() {
     return {

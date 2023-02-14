@@ -1,10 +1,10 @@
-<template>
-{{ displayColumn }}&hellip;
-</template>
+<template>{{ displayColumn }}&hellip;</template>
 
 <script>
 export default {
-  props: ["column"],
+  props: {
+    column: Object,
+  },
   computed: {
     displayColumn() {
       return this.column.title;

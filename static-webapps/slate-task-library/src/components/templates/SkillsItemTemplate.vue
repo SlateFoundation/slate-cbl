@@ -4,10 +4,13 @@
 
 <script>
 export default {
-  props: ["item"],
+  props: {
+    item: Object,
+  },
   computed: {
     displayItem() {
       const skills = this.item.raw.Skills;
+
       return Array.isArray(skills)
         ? skills.map((skill) => skill.Code).join(",")
         : "";

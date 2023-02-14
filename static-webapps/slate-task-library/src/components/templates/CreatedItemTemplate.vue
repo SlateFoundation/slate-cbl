@@ -1,13 +1,15 @@
 <template>
-{{ displayItem }}
+  {{ displayItem }}
 </template>
 
 <script>
 export default {
-  props: ["item"],
+  props: {
+    item: Object,
+  },
   computed: {
     displayItem() {
-      return new Date(this.item.raw.Created * 1000).toLocaleDateString()
+      return new Date(this.item.raw.Created * 1000).toLocaleDateString();
     },
   },
 };

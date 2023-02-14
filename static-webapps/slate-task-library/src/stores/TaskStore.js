@@ -9,32 +9,28 @@ export const useTaskStore = defineStore("taskStore", {
     loading: false,
   }),
   getters: {
-    totalCount: (state) => {
-      return state.tasks.length;
-    },
+    totalCount: (state) => state.tasks.length,
   },
   actions: {
     async fetchTasks() {
       this.loading = true;
 
-      const hostname = 'http://localhost:2190'
-      const path = '/cbl/tasks'
-      const include = 'Attachments%2CCreator%2CParentTask%2CSkills%2CClonedTask'
-
-      const url = `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}`
-
-      const res = await fetch(url, {
-        method: "GET", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: "include", // include, *same-origin, omit
-        headers: {
-          "Accept": "application/json",
-        },
-        redirect: "follow", // manual, *follow, error
-        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      });
-      const json = await res.json();
+      const hostname = "http://localhost:2190",
+        path = "/cbl/tasks",
+        include = "Attachments%2CCreator%2CParentTask%2CSkills%2CClonedTask",
+        url = `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}`,
+        res = await fetch(url, {
+          method: "GET", // *GET, POST, PUT, DELETE, etc.
+          mode: "cors", // no-cors, *cors, same-origin
+          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: "include", // include, *same-origin, omit
+          headers: {
+            Accept: "application/json",
+          },
+          redirect: "follow", // manual, *follow, error
+          referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        }),
+        json = await res.json();
 
       console.log(json);
 
