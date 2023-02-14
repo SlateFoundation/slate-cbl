@@ -179,6 +179,8 @@ export default {
       return [
         'align-items-baseline bg-white d-flex rounded shadow-sm skill-demo',
         this.skillDemo.DemonstratedLevel === 0 && 'cbl-level-missing',
+        'elevation-1',
+        this.effective ? '-effective' : '-ineffective'
       ];
     },
   },
