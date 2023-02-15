@@ -1,30 +1,44 @@
 <template>
-  <v-data-table-server
-    v-model:items-per-page="itemsPerPage"
-    :headers="headers"
-    :items="data"
-    :items-length="total"
-    :loading="loading"
-    loading-text="Loading... Please wait"
-    density="compact"
-    class="elevation-1"
-  >
-    <template #column.ParentTask="{ column }">
-      <ParentTaskColumnTemplate :column="column" />
-    </template>
-    <template #item.ParentTask="{ item }">
-      <ParentTaskItemTemplate :item="item" />
-    </template>
-    <template #item.Skills="{ item }">
-      <SkillsItemTemplate :item="item" />
-    </template>
-    <template #item.Creator="{ item }">
-      <CreatorItemTemplate :item="item" />
-    </template>
-    <template #item.Created="{ item }">
-      <CreatedItemTemplate :item="item" />
-    </template>
-  </v-data-table-server>
+  <v-container fluid="true">
+    <v-row>
+      <v-col cols="12" sm="10">
+        <!-- Data Table -->
+        <v-data-table-server
+          v-model:items-per-page="itemsPerPage"
+          :headers="headers"
+          :items="data"
+          :items-length="total"
+          :loading="loading"
+          loading-text="Loading... Please wait"
+          density="compact"
+          class="elevation-1"
+        >
+          <template #column.ParentTask="{ column }">
+            <ParentTaskColumnTemplate :column="column" />
+          </template>
+          <template #item.ParentTask="{ item }">
+            <ParentTaskItemTemplate :item="item" />
+          </template>
+          <template #item.Skills="{ item }">
+            <SkillsItemTemplate :item="item" />
+          </template>
+          <template #item.Creator="{ item }">
+            <CreatorItemTemplate :item="item" />
+          </template>
+          <template #item.Created="{ item }">
+            <CreatedItemTemplate :item="item" />
+          </template>
+        </v-data-table-server>
+      </v-col>
+
+      <v-col cols="12" sm="2">
+        <!-- Empty panel for now -->
+        <v-sheet rounded="lg" min-height="268">
+          <!--  -->
+        </v-sheet>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
