@@ -2,7 +2,7 @@
   <tr :class="selected ? 'selected' : ''" @click="onRowClick(item)">
     <td>{{ item.raw.Title }}</td>
     <td><ParentTaskItemTemplate :item="item" /></td>
-    <td>{{ item.raw.ExperienceType }}</td>
+    <td align="center">{{ item.raw.ExperienceType }}</td>
     <td><SkillsItemTemplate :item="item" /></td>
     <td><CreatorItemTemplate :item="item" /></td>
     <td><CreatedItemTemplate :item="item" /></td>
@@ -14,7 +14,6 @@ import ParentTaskItemTemplate from "@/components/templates/ParentTaskItemTemplat
 import SkillsItemTemplate from "@/components/templates/SkillsItemTemplate.vue";
 import CreatedItemTemplate from "@/components/templates/CreatedItemTemplate.vue";
 import CreatorItemTemplate from "@/components/templates/CreatorItemTemplate.vue";
-import { isProxy, toRaw } from "vue";
 
 export default {
   components: {
@@ -29,17 +28,19 @@ export default {
   },
   emits: ["rowclick"],
   methods: {
-    getItemId(row) {
-      return row && isProxy(row.value) ? toRaw(row.value).ID : null;
-    },
     onRowClick(row) {
-      this.$emit("rowclick", this.getItemId(row));
+      this.$emit("rowclick", row);
     },
   },
 };
 </script>
 
 <style>
+td {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
 .selected td {
   background-color: #1111 !important;
 }

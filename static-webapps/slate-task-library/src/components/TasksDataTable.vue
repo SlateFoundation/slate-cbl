@@ -68,7 +68,7 @@ export default {
         { title: "Title", align: "start", key: "Title" },
         { title: "Subtask of", align: "start", key: "ParentTask" },
         { title: "Type of Exp.", align: "center", key: "ExperienceType" },
-        { title: "Skills", align: "end", key: "Skills" },
+        { title: "Skills", align: "center", key: "Skills" },
         { title: "Created by", align: "start", key: "Creator" },
         { title: "Created", align: "end", key: "Created" },
       ],
@@ -82,7 +82,9 @@ export default {
     isSelected(row) {
       return this.selected.indexOf(this.getItemId(row)) > -1;
     },
-    onRowClick(itemID) {
+    onRowClick(row) {
+      const itemID = this.getItemId(row);
+
       this.selected = this.selected.indexOf(itemID) > -1 ? [] : [itemID];
     },
   },
