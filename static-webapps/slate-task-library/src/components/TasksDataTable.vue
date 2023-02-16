@@ -1,12 +1,14 @@
 <template>
-  <v-container fluid="true">
+  <v-container :fluid="true">
     <v-row>
       <v-col cols="12" sm="10">
         <!-- Data Table -->
         <v-data-table-server
+          v-model="selected"
           v-model:items-per-page="itemsPerPage"
           :headers="headers"
           :items="data"
+          item-key="ID"
           :items-length="total"
           :loading="loading"
           loading-text="Loading... Please wait"
@@ -16,17 +18,12 @@
           <template #column.ParentTask="{ column }">
             <ParentTaskColumnTemplate :column="column" />
           </template>
-          <template #item.ParentTask="{ item }">
-            <ParentTaskItemTemplate :item="item" />
-          </template>
-          <template #item.Skills="{ item }">
-            <SkillsItemTemplate :item="item" />
-          </template>
-          <template #item.Creator="{ item }">
-            <CreatorItemTemplate :item="item" />
-          </template>
-          <template #item.Created="{ item }">
-            <CreatedItemTemplate :item="item" />
+          <template #item="{ item }">
+            <RowTemplate
+              :item="item"
+              :selected="isSelected(item)"
+              @rowclick="onRowClick"
+            />
           </template>
         </v-data-table-server>
       </v-col>
@@ -43,20 +40,15 @@
 
 <script>
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
-import ParentTaskItemTemplate from "@/components/templates/ParentTaskItemTemplate";
-import SkillsItemTemplate from "@/components/templates/SkillsItemTemplate.vue";
-import CreatedItemTemplate from "@/components/templates/CreatedItemTemplate.vue";
-import CreatorItemTemplate from "@/components/templates/CreatorItemTemplate.vue";
+import RowTemplate from "@/components/templates/RowTemplate.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
 import { storeToRefs } from "pinia";
+import { isProxy, toRaw } from "vue";
 
 export default {
   components: {
     ParentTaskColumnTemplate,
-    ParentTaskItemTemplate,
-    SkillsItemTemplate,
-    CreatorItemTemplate,
-    CreatedItemTemplate,
+    RowTemplate,
   },
   setup() {
     const taskStore = useTaskStore(),
@@ -71,6 +63,7 @@ export default {
   data() {
     return {
       itemsPerPage: 20,
+      selected: [],
       headers: [
         { title: "Title", align: "start", key: "Title" },
         { title: "Subtask of", align: "start", key: "ParentTask" },
@@ -82,5 +75,22 @@ export default {
       tasks: [],
     };
   },
+  methods: {
+    getItemId(row) {
+      return row && isProxy(row.value) ? toRaw(row.value).ID : null;
+    },
+    isSelected(row) {
+      return this.selected.indexOf(this.getItemId(row)) > -1;
+    },
+    onRowClick(itemID) {
+      this.selected = this.selected.indexOf(itemID) > -1 ? [] : [itemID];
+    },
+  },
 };
 </script>
+
+<style>
+tr:nth-child(even):not(.selected) td {
+  background-color: #fafafa !important;
+}
+</style>
