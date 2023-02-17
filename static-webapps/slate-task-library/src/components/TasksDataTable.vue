@@ -33,16 +33,14 @@
       </v-col>
 
       <v-col cols="12" sm="2">
-        <!-- Empty panel for now -->
-        <v-sheet rounded="lg" min-height="268">
-          <!--  -->
-        </v-sheet>
+        <TaskDetails v-if="selectedItem" :item="selectedItem" />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import TaskDetails from "@/components/TaskDetails.vue";
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import RowTemplate from "@/components/templates/RowTemplate.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
@@ -51,6 +49,7 @@ import { isProxy, toRaw } from "vue";
 
 export default {
   components: {
+    TaskDetails,
     ParentTaskColumnTemplate,
     RowTemplate,
   },
@@ -68,6 +67,7 @@ export default {
     return {
       itemsPerPage: 20,
       selected: [],
+      selectedItem: null,
       sortBy: [],
       headers: [
         { title: "Title", align: "start", key: "Title" },
@@ -91,6 +91,7 @@ export default {
       const itemID = this.getItemId(row);
 
       this.selected = this.selected.indexOf(itemID) > -1 ? [] : [itemID];
+      this.selectedItem = this.selected.length > 0 ? row : null;
     },
     updateSortBy(sortBy) {
       const taskStore = useTaskStore();
