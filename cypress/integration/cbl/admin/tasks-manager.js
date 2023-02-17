@@ -327,10 +327,8 @@ describe('CBL / Admin / Tasks Manager', () => {
                     .should('have.length', 1)
                     .parents('.x-form-trigger-wrap')
                         .should('have.length', 1)
-                        .within(() => {
-                            cy.get('.x-form-arrow-trigger')
-                                .click()
-                        });
+                        .find('.x-form-arrow-trigger')
+                            .click()
 
                 // wait for options to load
                 cy.wait('@tasksData');
