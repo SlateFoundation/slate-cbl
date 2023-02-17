@@ -6,6 +6,8 @@ export const useTaskStore = defineStore("taskStore", {
     limit: 20,
     offset: 0,
     total: 0,
+    sortBy: null,
+    order: "asc",
     loading: false,
   }),
   getters: {
@@ -15,10 +17,11 @@ export const useTaskStore = defineStore("taskStore", {
     async fetchTasks() {
       this.loading = true;
 
-      const hostname = "http://localhost:2190",
+      const sort = this.getEncodedSortBy(),
+        hostname = "http://localhost:2190",
         path = "/cbl/tasks",
         include = "Attachments%2CCreator%2CParentTask%2CSkills%2CClonedTask",
-        url = `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}`,
+        url = `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}${sort}`,
         res = await fetch(url, {
           method: "GET", // *GET, POST, PUT, DELETE, etc.
           mode: "cors", // no-cors, *cors, same-origin
@@ -37,6 +40,17 @@ export const useTaskStore = defineStore("taskStore", {
       this.data = json.data;
       this.total = json.total;
       this.loading = false;
+    },
+    setSortBy: function (sortBy) {
+      this.sortBy = sortBy;
+    },
+    getEncodedSortBy: function () {
+      const sort = this.sortBy;
+
+      if (sort) {
+        return `&sort=${sort.key}&dir=${sort.order.toUpperCase()}`;
+      }
+      return "";
     },
   },
 });

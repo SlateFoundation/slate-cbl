@@ -6,6 +6,7 @@
         <v-data-table-server
           v-model="selected"
           v-model:items-per-page="itemsPerPage"
+          v-model:sort-by="sortBy"
           :headers="headers"
           :items="data"
           item-key="ID"
@@ -14,6 +15,7 @@
           loading-text="Loading... Please wait"
           density="compact"
           class="elevation-1"
+          @update:sort-by="updateSortBy"
         >
           <template #column.ParentTask="{ column }">
             <ParentTaskColumnTemplate :column="column" />
@@ -64,6 +66,7 @@ export default {
     return {
       itemsPerPage: 20,
       selected: [],
+      sortBy: [],
       headers: [
         { title: "Title", align: "start", key: "Title" },
         { title: "Subtask of", align: "start", key: "ParentTask" },
@@ -86,6 +89,14 @@ export default {
       const itemID = this.getItemId(row);
 
       this.selected = this.selected.indexOf(itemID) > -1 ? [] : [itemID];
+    },
+    updateSortBy(sortBy) {
+      const taskStore = useTaskStore();
+
+      taskStore.setSortBy(sortBy[0] || null);
+      taskStore.fetchTasks();
+
+      this.sortBy = sortBy;
     },
   },
 };
