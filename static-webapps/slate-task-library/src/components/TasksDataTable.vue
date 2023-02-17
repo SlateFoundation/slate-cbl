@@ -16,6 +16,8 @@
           density="compact"
           class="elevation-1"
           @update:sort-by="updateSortBy"
+          @update:page="updatePage"
+          @update:itemsPerPage="updateItemsPerPage"
         >
           <template #column.ParentTask="{ column }">
             <ParentTaskColumnTemplate :column="column" />
@@ -97,6 +99,18 @@ export default {
       taskStore.fetchTasks();
 
       this.sortBy = sortBy;
+    },
+    updatePage(page) {
+      const taskStore = useTaskStore();
+
+      taskStore.setOffset((page - 1) * this.itemsPerPage);
+      taskStore.fetchTasks();
+    },
+    updateItemsPerPage(limit) {
+      const taskStore = useTaskStore();
+
+      taskStore.setLimit(limit);
+      taskStore.fetchTasks();
     },
   },
 };

@@ -18,10 +18,11 @@ export const useTaskStore = defineStore("taskStore", {
       this.loading = true;
 
       const sort = this.getEncodedSortBy(),
+        offset = this.getEncodedOffset(),
         hostname = "http://localhost:2190",
         path = "/cbl/tasks",
         include = "Attachments%2CCreator%2CParentTask%2CSkills%2CClonedTask",
-        url = `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}${sort}`,
+        url = `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}${sort}${offset}`,
         res = await fetch(url, {
           method: "GET", // *GET, POST, PUT, DELETE, etc.
           mode: "cors", // no-cors, *cors, same-origin
@@ -44,11 +45,26 @@ export const useTaskStore = defineStore("taskStore", {
     setSortBy: function (sortBy) {
       this.sortBy = sortBy;
     },
+    setOffset: function (offset) {
+      console.log(offset);
+      this.offset = offset;
+    },
+    setLimit: function (limit) {
+      this.limit = limit;
+    },
     getEncodedSortBy: function () {
       const sort = this.sortBy;
 
       if (sort) {
         return `&sort=${sort.key}&dir=${sort.order.toUpperCase()}`;
+      }
+      return "";
+    },
+    getEncodedOffset: function () {
+      const offset = this.offset;
+
+      if (offset > 0) {
+        return `&offset=${offset}`;
       }
       return "";
     },
