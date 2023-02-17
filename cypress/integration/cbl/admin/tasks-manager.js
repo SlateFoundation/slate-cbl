@@ -329,24 +329,21 @@ describe('CBL / Admin / Tasks Manager', () => {
                         .should('have.length', 1)
                         .find('.x-form-arrow-trigger')
                             .click()
-
-                // wait for options to load
-                cy.wait('@tasksData');
-
-                // get componentid in order to find foating options list outside of window scope
-                cy.get('input[name="ClonedTaskID"]')
-                    .then(($input) => {
-                        const componentID = $input.attr('data-componentid');
-
-                        cy.document().its('body').find(`#${componentID}-picker-listEl`)
-                            .contains('.x-boundlist-item', 'A Shared Task')
-                            .should('exist');
-
-                        cy.document().its('body').find(`#${componentID}-picker-listEl`)
-                            .contains('.x-boundlist-item', 'An UnShared Task')
-                            .should('not.exist');
-                    })
             });
+
+        // wait for options to load
+        cy.wait('@tasksData');
+
+        cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'A Shared Task')
+            .should('exist');
+
+        // verify unshared task does not exist in picker dropdown
+        cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'An UnShared Task')
+            .should('not.exist');
     });
 
     it('Verify sorting by column', () => {
