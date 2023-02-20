@@ -1,5 +1,6 @@
 <template>
   <v-container :fluid="true">
+    <TasksHeader :task="selectedItem" />
     <v-row>
       <v-col cols="12" sm="10">
         <!-- Data Table -->
@@ -40,6 +41,7 @@
 </template>
 
 <script>
+import TasksHeader from "@/components/TasksHeader.vue";
 import TaskDetails from "@/components/TaskDetails.vue";
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import RowTemplate from "@/components/templates/RowTemplate.vue";
@@ -49,6 +51,7 @@ import { isProxy, toRaw } from "vue";
 
 export default {
   components: {
+    TasksHeader,
     TaskDetails,
     ParentTaskColumnTemplate,
     RowTemplate,
