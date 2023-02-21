@@ -13,7 +13,7 @@
       <v-card-text>{{ task.raw.Title }}</v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="green-darken-1" variant="text" @click="dialog = false">
+        <v-btn color="green-darken-1" variant="text" @click="confirmDelete">
           Delete
         </v-btn>
         <v-btn color="green-darken-1" variant="text" @click="dialog = false">
@@ -29,10 +29,17 @@ export default {
   props: {
     task: Object,
   },
+  emits: ["deleteconfirmed"],
   data() {
     return {
       dialog: false,
     };
+  },
+  methods: {
+    confirmDelete(task) {
+      this.$emit("deleteconfirmed", task);
+      this.dialog = false;
+    },
   },
 };
 </script>
