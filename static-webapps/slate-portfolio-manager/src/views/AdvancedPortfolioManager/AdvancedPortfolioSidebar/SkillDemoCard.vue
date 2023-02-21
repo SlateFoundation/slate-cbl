@@ -60,6 +60,9 @@
             Demonstration ID: {{ demonstration.ID }}
           </div>
           <div>
+            DemonstrationSkill ID: {{ skillDemo.ID }}
+          </div>
+          <div>
             Demonstration Date: {{ fullDate }}
           </div>
           <div>
@@ -69,17 +72,18 @@
             Performance Type: {{ demonstration.PerformanceType }}
           </div>
           <div v-if="demonstration.ArtifactURL">
-            <a
-              :href="demonstration.ArtifactURL"
-              target="_blank"
-            >Link</a>
+            <!-- <a -->
+            <!--   :href="demonstration.ArtifactURL" -->
+            <!--   target="_blank" -->
+            <!-- >Link</a> -->
+            Artifact URL: {{ demonstration.ArtifactURL }}
           </div>
           <template v-else-if="demonstration.StudentTask">
-            <div>
-              TODO: StudentTask.Submitted (date, if applicable)
+            <div v-if="submittedDate">
+              Submitted: {{ submittedDate }}
             </div>
-            <div>
-              TODO: Task.Title (with link to task)
+            <div v-if="demonstration.StudentTask.Task.Title">
+              Title: {{ demonstration.StudentTask.Task.Title }}
             </div>
           </template>
         </v-tooltip>
@@ -97,6 +101,17 @@ import { mapStores } from 'pinia';
 
 import useDemonstrationSkill from '@/store/useDemonstrationSkill';
 import useUi from '@/store/useUi';
+
+const shortDate = (value) => {
+  if (!value) {
+    return '';
+  }
+  const date = new Date(1000 * value);
+  if (date.getFullYear() !== new Date().getFullYear()) {
+    return format(date, 'MMM d, yyyy');
+  }
+  return format(date, 'MMM d');
+};
 
 export default {
   props: {
@@ -138,14 +153,10 @@ export default {
     },
     date() {
       const { Modified, Created } = this.skillDemo;
-      if (!Modified && !Created) {
-        return '';
-      }
-      const date = new Date(1000 * (Modified || Created));
-      if (date.getFullYear() !== new Date().getFullYear()) {
-        return format(date, 'MMM d, yyyy');
-      }
-      return format(date, 'MMM d');
+      return shortDate(Modified || Created);
+    },
+    submittedDate() {
+      return shortDate(this.demonstration.StudentTask.Created);
     },
     createdBy() {
       if (!this.demonstration.Created) {
@@ -179,6 +190,8 @@ export default {
       return [
         'align-items-baseline bg-white d-flex rounded shadow-sm skill-demo',
         this.skillDemo.DemonstratedLevel === 0 && 'cbl-level-missing',
+        'elevation-1',
+        this.effective ? '-effective' : '-ineffective',
       ];
     },
   },
