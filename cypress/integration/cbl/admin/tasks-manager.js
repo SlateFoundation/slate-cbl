@@ -323,31 +323,27 @@ describe('CBL / Admin / Tasks Manager', () => {
             .within(() => {
 
                 // click cloned task selector
-                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]')
-                    .should('exist')
-                    .within(() => {
-
-                        cy.root()
-                            .get('.x-form-arrow-trigger')
+                cy.get('input[name="ClonedTaskID"]')
+                    .should('have.length', 1)
+                    .parents('.x-form-trigger-wrap')
+                        .should('have.length', 1)
+                        .find('.x-form-arrow-trigger')
                             .click()
-
-                    });
-
-                // wait for options to load
-                cy.wait('@tasksData');
-
-                // verify shared task exists in picker dropdown
-                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
-                    .then(selector => selector.getPicker().el.dom)
-                    .contains('.x-boundlist-item', 'A Shared Task')
-                    .should('exist');
-
-                // verify unshared task does not exist in picker dropdown
-                cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
-                    .then(selector => selector.getPicker().el.dom)
-                    .contains('.x-boundlist-item', 'An UnShared Task')
-                    .should('not.exist');
             });
+
+        // wait for options to load
+        cy.wait('@tasksData');
+
+        cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'A Shared Task')
+            .should('exist');
+
+        // verify unshared task does not exist in picker dropdown
+        cy.extGet('slate-cbl-taskselector[name=ClonedTaskID]', { component: true })
+            .then(selector => selector.getPicker().el.dom)
+            .contains('.x-boundlist-item', 'An UnShared Task')
+            .should('not.exist');
     });
 
     it('Verify sorting by column', () => {
@@ -380,11 +376,10 @@ describe('CBL / Admin / Tasks Manager', () => {
         // verify the sort order icon in column header
         cy.get('.x-grid-header-ct', { log: false })
             .contains('.x-column-header', 'Title')
-            .should('have.class', 'x-column-header-sort-ASC')
+            .should('have.class', 'x-column-header-sort-ASC');
 
         // verify column is sorted in alphabetical order
-        items = _getColumnValues(0);
-        cy.expect(items, 'Title column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
+        assertColumnOrder(0);
 
         // click title column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -397,11 +392,10 @@ describe('CBL / Admin / Tasks Manager', () => {
         // verify the sort order icon in column header
         cy.get('.x-grid-header-ct', { log: false })
             .contains('.x-column-header', 'Title')
-            .should('have.class', 'x-column-header-sort-DESC')
+            .should('have.class', 'x-column-header-sort-DESC');
 
         // verify column is sorted in reverse alphabetical order
-        items = _getColumnValues(0);
-        cy.expect(items, 'Title column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
+        assertColumnOrder(0, true);
 
 
         /** Parent Task column */
@@ -414,8 +408,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in alphabetical order
-        items = _getColumnValues(1);
-        cy.expect(items, 'Parent Task column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
+        assertColumnOrder(1);
 
         // click Parent Task column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -426,8 +419,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in reverse alphabetical order
-        items = _getColumnValues(1);
-        cy.expect(items, 'Parent Task column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
+        assertColumnOrder(1, true);
 
 
         /** Experience Type column */
@@ -440,8 +432,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in alphabetical order
-        items = _getColumnValues(2);
-        cy.expect(items, 'Experience Type column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
+        assertColumnOrder(2);
 
         // click Experience Type column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -452,8 +443,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in reverse alphabetical order
-        items = _getColumnValues(2);
-        cy.expect(items, 'Experience Type column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
+        assertColumnOrder(2, true);
 
 
         /** Skills column */
@@ -466,8 +456,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in alphabetical order
-        items = _getColumnValues(3);
-        cy.expect(items, 'Skills column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
+        assertColumnOrder(3);
 
         // click Skills column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -478,8 +467,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in reverse alphabetical order
-        items = _getColumnValues(3);
-        cy.expect(items, 'Skills column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
+        assertColumnOrder(3, true);
 
 
         /** Creator column */
@@ -492,8 +480,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in alphabetical order
-        items = _getColumnValues(4);
-        cy.expect(items, 'Creator column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
+        assertColumnOrder(4);
 
         // click Creator column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -504,8 +491,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in reverse alphabetical order
-        items = _getColumnValues(4);
-        cy.expect(items, 'Creator column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
+        assertColumnOrder(4, true);
 
 
         /** Creation Date column */
@@ -522,8 +508,7 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in alphabetical order
-        items = _getColumnValues(5);
-        cy.expect(items, 'Creation Date column: items are sorted in alphabetical order.').to.deep.equal(items.slice().sort());
+        assertColumnOrder(5);
 
         // click Creation Date column header to reverse sort
         cy.get('.x-grid-header-ct', { log: false })
@@ -538,14 +523,14 @@ describe('CBL / Admin / Tasks Manager', () => {
         cy.wait('@tasksData');
 
         // verify column is sorted in reverse alphabetical order
-        items = _getColumnValues(5);
-        cy.expect(items, 'Creation Date column: items are sorted in reverse alphabetical order.').to.deep.equal(items.slice().sort().reverse());
+        assertColumnOrder(5, true);
 
     });
 
-    function _getColumnValues(col) {
-        let items = [];
+    function assertColumnOrder(col, reverse = false) {
+        const items = [];
         cy.get('.x-grid-row', { log: false })
+            .should('have.length', 20)
             .each(($row) => {
                 cy.wrap($row, { log: false })
                     .find('.x-grid-cell-inner', { log: false })
@@ -554,6 +539,12 @@ describe('CBL / Admin / Tasks Manager', () => {
                         items.push($div.text().trim());
                     })
             })
-        return items;
+            .then(() => {
+                if (reverse) {
+                    cy.expect(items, `Column [index: ${col}]: items are sorted in reverse alphabetical order.`).to.deep.equal(items.slice().sort().reverse());
+                } else {
+                    cy.expect(items, `Column [index: ${col}]: items are sorted in alphabetical order.`).to.deep.equal(items.slice().sort());
+                }
+            })
     };
 });
