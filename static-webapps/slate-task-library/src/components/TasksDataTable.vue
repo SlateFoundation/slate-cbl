@@ -1,6 +1,6 @@
 <template>
   <v-container :fluid="true">
-    <TasksHeader :task="selectedItem" />
+    <TasksHeader :task="selectedItem" @delete-confirmed="deleteTask" />
     <v-row>
       <v-col cols="12" sm="10">
         <!-- Data Table -->
@@ -115,6 +115,11 @@ export default {
 
       taskStore.setLimit(limit);
       taskStore.fetchTasks();
+    },
+    deleteTask(task) {
+      const taskStore = useTaskStore();
+
+      taskStore.destroy(this.getItemId(task));
     },
   },
 };

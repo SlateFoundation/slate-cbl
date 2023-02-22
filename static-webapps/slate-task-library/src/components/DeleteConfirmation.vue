@@ -29,15 +29,15 @@ export default {
   props: {
     task: Object,
   },
-  emits: ["deleteconfirmed"],
+  emits: ["delete-confirmed"],
   data() {
     return {
       dialog: false,
     };
   },
   methods: {
-    confirmDelete(task) {
-      this.$emit("deleteconfirmed", task);
+    confirmDelete(task, a, b) {
+      this.$emit("delete-confirmed", this.task);
       this.dialog = false;
     },
   },

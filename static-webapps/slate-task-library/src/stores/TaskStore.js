@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import axios from "axios";
 
 export const useTaskStore = defineStore("taskStore", {
   state: () => ({
@@ -9,6 +10,7 @@ export const useTaskStore = defineStore("taskStore", {
     sortBy: null,
     order: "asc",
     loading: false,
+    includes: ["Attachments", "Creator", "ParentTask", "Skills", "ClonedTask"],
   }),
   getters: {
     totalCount: (state) => state.tasks.length,
@@ -17,36 +19,35 @@ export const useTaskStore = defineStore("taskStore", {
     async fetchTasks() {
       this.loading = true;
 
-      const sort = this.getEncodedSortBy(),
-        offset = this.getEncodedOffset(),
-        hostname = "http://localhost:2190",
-        path = "/cbl/tasks",
-        include = "Attachments%2CCreator%2CParentTask%2CSkills%2CClonedTask",
-        url = `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}${sort}${offset}`,
-        res = await fetch(url, {
-          method: "GET", // *GET, POST, PUT, DELETE, etc.
-          mode: "cors", // no-cors, *cors, same-origin
-          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: "include", // include, *same-origin, omit
-          headers: {
-            Accept: "application/json",
-          },
-          redirect: "follow", // manual, *follow, error
-          referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        }),
-        json = await res.json();
+      axios
+        .get(this.getRequestUrl("/cbl/tasks"), this.getRequestHeaders())
+        .then(({ data }) => {
+          this.data = data.data;
+          this.total = data.total;
+          this.loading = false;
+        });
+    },
+    async destroy(taskID) {
+      this.loading = true;
 
-      console.log(json);
+      axios
+        .post(
+          this.getRequestUrl("/cbl/tasks/destroy"),
+          { data: [{ ID: taskID }] },
+          this.getRequestHeaders()
+        )
+        .then(({ data }) => {
+          if (data.success === true) {
+            this.data = this.data.filter((rec) => rec.ID !== taskID);
+          }
+        });
 
-      this.data = json.data;
-      this.total = json.total;
       this.loading = false;
     },
     setSortBy: function (sortBy) {
       this.sortBy = sortBy;
     },
     setOffset: function (offset) {
-      console.log(offset);
       this.offset = offset;
     },
     setLimit: function (limit) {
@@ -67,6 +68,23 @@ export const useTaskStore = defineStore("taskStore", {
         return `&offset=${offset}`;
       }
       return "";
+    },
+    getRequestUrl: function (path) {
+      const sort = this.getEncodedSortBy(),
+        offset = this.getEncodedOffset(),
+        hostname = "http://localhost:2190",
+        include = encodeURIComponent(this.includes.join(","));
+
+      return `${hostname}${path}?include_archived=false&offset=${this.offset}&limit=${this.limit}&include=${include}${sort}${offset}`;
+    },
+    getRequestHeaders: function () {
+      return {
+        withCredentials: true,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      };
     },
   },
 });
