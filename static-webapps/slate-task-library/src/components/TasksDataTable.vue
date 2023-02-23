@@ -109,6 +109,6 @@ export default {
 
 <style>
 tr:nth-child(even):not(.selected) td {
-  background-color: #fafafa !important;
+  filter: brightness(95%);
 }
 </style>

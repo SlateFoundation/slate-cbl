@@ -42,6 +42,6 @@ td {
   text-overflow: ellipsis !important;
 }
 .selected td {
-  background-color: #1111 !important;
+  filter: brightness(80%);
 }
 </style>
