@@ -1,75 +1,63 @@
 <template>
-  <v-container :fluid="true">
-    <TasksHeader :task="selectedItem" @delete-confirmed="deleteTask" />
-    <v-row>
-      <v-col cols="12" sm="10">
-        <!-- Data Table -->
-        <v-data-table-server
-          v-model="selected"
-          v-model:items-per-page="itemsPerPage"
-          v-model:sort-by="sortBy"
-          :headers="headers"
-          :items="data"
-          item-key="ID"
-          :items-length="total"
-          :loading="loading"
-          loading-text="Loading... Please wait"
-          density="compact"
-          class="elevation-1"
-          @update:sort-by="updateSortBy"
-          @update:page="updatePage"
-          @update:itemsPerPage="updateItemsPerPage"
-        >
-          <template #column.ParentTask="{ column }">
-            <ParentTaskColumnTemplate :column="column" />
-          </template>
-          <template #item="{ item }">
-            <RowTemplate
-              :item="item"
-              :selected="isSelected(item)"
-              @rowclick="onRowClick"
-            />
-          </template>
-        </v-data-table-server>
-      </v-col>
+  <v-data-table-server
+    v-model="selected"
+    v-model:items-per-page="itemsPerPage"
+    v-model:sort-by="sortBy"
+    :headers="headers"
+    :items="data"
+    item-key="ID"
+    :items-length="total"
+    :loading="loading"
+    loading-text="Loading... Please wait"
+    density="compact"
+    class="elevation-1"
+    :footer-props="{ 'items-per-page-options': [15, 30] }"
+    @update:sort-by="updateSortBy"
+    @update:page="updatePage"
+    @update:itemsPerPage="updateItemsPerPage"
+  >
+    <!-- Parent Task column header template -->
+    <template #column.ParentTask="{ column }">
+      <ParentTaskColumnTemplate :column="column" />
+    </template>
 
-      <v-col cols="12" sm="2">
-        <TaskDetails v-if="selectedItem" :item="selectedItem" />
-      </v-col>
-    </v-row>
-  </v-container>
+    <!-- Item (row) templates -->
+    <template #item="{ item }">
+      <RowTemplate
+        :item="item"
+        :selected="isSelected(item)"
+        @rowclick="onRowClick"
+      />
+    </template>
+  </v-data-table-server>
 </template>
 
 <script>
-import TasksHeader from "@/components/TasksHeader.vue";
-import TaskDetails from "@/components/TaskDetails.vue";
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import RowTemplate from "@/components/templates/RowTemplate.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
+import { useTaskDataTableStore } from "@/stores/TaskDataTableStore.js";
 import { storeToRefs } from "pinia";
 import { isProxy, toRaw } from "vue";
 
 export default {
   components: {
-    TasksHeader,
-    TaskDetails,
     ParentTaskColumnTemplate,
     RowTemplate,
   },
   setup() {
     const taskStore = useTaskStore(),
-      // fetch tasks
-
-      { data, loading, total } = storeToRefs(taskStore);
+      taskDataTableStore = useTaskDataTableStore(),
+      { data, loading, total } = storeToRefs(taskStore),
+      { selected } = storeToRefs(taskDataTableStore);
 
     taskStore.fetchTasks();
 
-    return { taskStore, data, loading, total };
+    return { taskStore, data, taskDataTableStore, loading, total, selected };
   },
   data() {
     return {
       itemsPerPage: 20,
-      selected: [],
       selectedItem: null,
       sortBy: [],
       headers: [
@@ -84,17 +72,16 @@ export default {
     };
   },
   methods: {
-    getItemId(row) {
-      return row && isProxy(row.value) ? toRaw(row.value).ID : null;
-    },
     isSelected(row) {
-      return this.selected.indexOf(this.getItemId(row)) > -1;
+      const taskDataTableStore = useTaskDataTableStore();
+
+      return taskDataTableStore.selected.indexOf(row) > -1;
     },
     onRowClick(row) {
-      const itemID = this.getItemId(row);
+      const taskDataTableStore = useTaskDataTableStore();
 
-      this.selected = this.selected.indexOf(itemID) > -1 ? [] : [itemID];
-      this.selectedItem = this.selected.length > 0 ? row : null;
+      taskDataTableStore.selected =
+        taskDataTableStore.selected.indexOf(row) > -1 ? [] : [row];
     },
     updateSortBy(sortBy) {
       const taskStore = useTaskStore();
@@ -115,11 +102,6 @@ export default {
 
       taskStore.setLimit(limit);
       taskStore.fetchTasks();
-    },
-    deleteTask(task) {
-      const taskStore = useTaskStore();
-
-      taskStore.destroy(this.getItemId(task));
     },
   },
 };

@@ -30,19 +30,17 @@ export const useTaskStore = defineStore("taskStore", {
     async destroy(taskID) {
       this.loading = true;
 
-      axios
+      await axios
         .post(
           this.getRequestUrl("/cbl/tasks/destroy"),
           { data: [{ ID: taskID }] },
           this.getRequestHeaders()
         )
         .then(({ data }) => {
-          if (data.success === true) {
-            this.data = this.data.filter((rec) => rec.ID !== taskID);
-          }
+          this.loading = false;
+          this.data = this.data.filter((rec) => rec.ID !== taskID);
+          return { success: data.success };
         });
-
-      this.loading = false;
     },
     setSortBy: function (sortBy) {
       this.sortBy = sortBy;

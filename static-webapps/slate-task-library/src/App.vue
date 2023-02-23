@@ -1,11 +1,11 @@
 <template>
   <v-app>
     <v-main>
-      <TasksDataTable />
+      <TaskLibrary />
     </v-main>
   </v-app>
 </template>
 
 <script setup>
-import TasksDataTable from "./components/TasksDataTable.vue";
+import TaskLibrary from "@/components/TaskLibrary.vue";
 </script>

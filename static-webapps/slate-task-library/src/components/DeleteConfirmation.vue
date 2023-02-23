@@ -10,7 +10,7 @@
     </template>
     <v-card>
       <v-card-title class="text-h5"> Delete Task </v-card-title>
-      <v-card-text>{{ task.raw.Title }}</v-card-text>
+      <v-card-text>{{ task.Title }}</v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="green-darken-1" variant="text" @click="confirmDelete">
@@ -25,20 +25,35 @@
 </template>
 
 <script>
+import { useTaskStore } from "@/stores/TaskStore.js";
+import { useTaskDataTableStore } from "@/stores/TaskDataTableStore.js";
+import { storeToRefs } from "pinia";
+
 export default {
-  props: {
-    task: Object,
+  setup() {
+    const taskStore = useTaskStore(),
+      taskDataTableStore = useTaskDataTableStore(),
+      { selected } = storeToRefs(taskDataTableStore);
+
+    return { selected, taskStore };
   },
-  emits: ["delete-confirmed"],
   data() {
     return {
       dialog: false,
     };
   },
+  computed: {
+    task() {
+      const selected = this.selected;
+
+      return selected && selected.length > 0 ? selected[0].value : null;
+    },
+  },
   methods: {
-    confirmDelete(task, a, b) {
-      this.$emit("delete-confirmed", this.task);
-      this.dialog = false;
+    confirmDelete() {
+      this.taskStore.destroy(this.task.ID).then(() => {
+        this.dialog = false;
+      });
     },
   },
 };

@@ -1,5 +1,5 @@
-<template v-if="data">
-  <v-card>
+<template>
+  <v-card v-if="task">
     <v-card-item>
       <v-card-title>Task Details</v-card-title>
     </v-card-item>
@@ -7,7 +7,7 @@
       <v-card-subtitle>Attachments</v-card-subtitle>
       <v-card-text>
         <ul>
-          <li v-for="attachment in data.Attachments" :key="attachment.ID">
+          <li v-for="attachment in task.Attachments" :key="attachment.ID">
             <span class="title"
               ><a :href="attachment.URL">{{ attachment.Title }}</a></span
             >
@@ -18,23 +18,29 @@
     </v-card-item>
     <v-card-item>
       <v-card-subtitle>Instructions</v-card-subtitle>
-      <v-card-text> {{ data.Instructions }}</v-card-text>
+      <v-card-text> {{ task.Instructions }}</v-card-text>
     </v-card-item>
   </v-card>
 </template>
 
 <script>
-import { isProxy, toRaw } from "vue";
+import { useTaskDataTableStore } from "@/stores/TaskDataTableStore.js";
+import { storeToRefs } from "pinia";
 
 export default {
-  props: {
-    item: Object,
+  setup() {
+    const taskDataTableStore = useTaskDataTableStore(),
+      { selected } = storeToRefs(taskDataTableStore);
+
+    return {
+      selected,
+    };
   },
   computed: {
-    data() {
-      const item = this.item;
+    task() {
+      const selected = this.selected;
 
-      return item && isProxy(item.value) ? toRaw(item.value) : null;
+      return selected && selected.length > 0 ? selected[0].value : null;
     },
   },
 };
