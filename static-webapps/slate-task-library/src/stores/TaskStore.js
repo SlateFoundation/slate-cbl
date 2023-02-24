@@ -21,10 +21,35 @@ export const useTaskStore = defineStore("taskStore", {
 
       axios
         .get(this.getRequestUrl("/cbl/tasks"), this.getRequestHeaders())
-        .then(({ data }) => {
-          this.data = data.data;
-          this.total = data.total;
+        .then(({ data: res }) => {
+          this.data = res.data;
+          this.total = res.total;
           this.loading = false;
+        });
+    },
+    async create(task) {
+      this.loading = true;
+      const payload = Object.assign(
+        {
+          ID: -2, // todo: necessary?
+          Class: "Slate\\CBL\\Tasks\\ExperienceTask",
+          Status: "shared",
+        },
+        task
+      );
+
+      await axios
+        .post(
+          this.getRequestUrl("/cbl/tasks/save"),
+          {
+            data: [payload],
+          },
+          this.getRequestHeaders()
+        )
+        .then(({ data: res }) => {
+          this.loading = false;
+          this.data.unshift(res.data[0]);
+          return { success: res.success, data: res.data };
         });
     },
     async destroy(taskID) {
@@ -36,10 +61,10 @@ export const useTaskStore = defineStore("taskStore", {
           { data: [{ ID: taskID }] },
           this.getRequestHeaders()
         )
-        .then(({ data }) => {
+        .then(({ data: res }) => {
           this.loading = false;
           this.data = this.data.filter((rec) => rec.ID !== taskID);
-          return { success: data.success };
+          return { success: res.success };
         });
     },
     setSortBy: function (sortBy) {

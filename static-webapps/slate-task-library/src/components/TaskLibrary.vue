@@ -17,10 +17,13 @@
       </v-col>
     </v-row>
   </v-container>
+
+  <TaskForm />
 </template>
 
 <script setup>
 import TasksDataTable from "@/components/TasksDataTable.vue";
 import TasksHeader from "@/components/TasksHeader.vue";
 import TaskDetails from "@/components/TaskDetails.vue";
+import TaskForm from "@/components/TaskForm.vue";
 </script>

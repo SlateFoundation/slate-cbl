@@ -3,23 +3,28 @@
     <h1>Task Library</h1>
   </v-col>
   <v-col cols="12" sm="2">
-    <v-btn icon="mdi-plus" color="primary" />
-    <v-btn :disabled="task === null" icon="mdi-pencil" color="primary" />
+    <v-btn icon="mdi-plus" color="primary" @click="createTask(task)" />
+    <v-btn
+      :disabled="task === null"
+      icon="mdi-pencil"
+      color="primary"
+      @click="editTask(task)"
+    />
     <DeleteConfirmation :task="task" @delete-confirmed="deleteTask" />
   </v-col>
 </template>
 
 <script>
 import DeleteConfirmation from "./DeleteConfirmation.vue";
-import { useTaskDataTableStore } from "@/stores/TaskDataTableStore.js";
+import { useTaskUIStore } from "@/stores/TaskUIStore.js";
 import { storeToRefs } from "pinia";
 
 export default {
   components: { DeleteConfirmation },
   emits: ["delete-confirmed"],
   setup() {
-    const taskDataTableStore = useTaskDataTableStore(),
-      { selected } = storeToRefs(taskDataTableStore);
+    const taskUIStore = useTaskUIStore(),
+      { selected } = storeToRefs(taskUIStore);
 
     return {
       selected,
@@ -33,6 +38,16 @@ export default {
     },
   },
   methods: {
+    createTask() {
+      const taskUIStore = useTaskUIStore();
+
+      taskUIStore.editFormVisible = true;
+    },
+    editTask() {
+      const taskUIStore = useTaskUIStore();
+
+      taskUIStore.editFormVisible = true;
+    },
     deleteTask(task) {
       this.$emit("delete-confirmed", task);
     },
