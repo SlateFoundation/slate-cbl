@@ -6,8 +6,11 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
+import { slateApiPlugin } from "@/plugins/slateapi.js";
 
 const pinia = createPinia();
+
+pinia.use(slateApiPlugin);
 
 // Plugins
 import { registerPlugins } from "@/plugins";
