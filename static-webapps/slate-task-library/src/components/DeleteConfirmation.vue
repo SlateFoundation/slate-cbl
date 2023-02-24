@@ -26,14 +26,14 @@
 
 <script>
 import { useTaskStore } from "@/stores/TaskStore.js";
-import { useTaskDataTableStore } from "@/stores/TaskDataTableStore.js";
+import { useTaskUIStore } from "@/stores/TaskUIStore.js";
 import { storeToRefs } from "pinia";
 
 export default {
   setup() {
     const taskStore = useTaskStore(),
-      taskDataTableStore = useTaskDataTableStore(),
-      { selected } = storeToRefs(taskDataTableStore);
+      taskUIStore = useTaskUIStore(),
+      { selected } = storeToRefs(taskUIStore);
 
     return { selected, taskStore };
   },

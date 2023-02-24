@@ -36,9 +36,8 @@
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import RowTemplate from "@/components/templates/RowTemplate.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
-import { useTaskDataTableStore } from "@/stores/TaskDataTableStore.js";
+import { useTaskUIStore } from "@/stores/TaskUIStore.js";
 import { storeToRefs } from "pinia";
-import { isProxy, toRaw } from "vue";
 
 export default {
   components: {
@@ -47,13 +46,13 @@ export default {
   },
   setup() {
     const taskStore = useTaskStore(),
-      taskDataTableStore = useTaskDataTableStore(),
+      taskUIStore = useTaskUIStore(),
       { data, loading, total } = storeToRefs(taskStore),
-      { selected } = storeToRefs(taskDataTableStore);
+      { selected } = storeToRefs(taskUIStore);
 
     taskStore.fetchTasks();
 
-    return { taskStore, data, taskDataTableStore, loading, total, selected };
+    return { taskStore, data, taskUIStore, loading, total, selected };
   },
   data() {
     return {
@@ -73,15 +72,15 @@ export default {
   },
   methods: {
     isSelected(row) {
-      const taskDataTableStore = useTaskDataTableStore();
+      const taskUIStore = useTaskUIStore();
 
-      return taskDataTableStore.selected.indexOf(row) > -1;
+      return taskUIStore.selected.indexOf(row) > -1;
     },
     onRowClick(row) {
-      const taskDataTableStore = useTaskDataTableStore();
+      const taskUIStore = useTaskUIStore();
 
-      taskDataTableStore.selected =
-        taskDataTableStore.selected.indexOf(row) > -1 ? [] : [row];
+      taskUIStore.selected =
+        taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
     },
     updateSortBy(sortBy) {
       const taskStore = useTaskStore();

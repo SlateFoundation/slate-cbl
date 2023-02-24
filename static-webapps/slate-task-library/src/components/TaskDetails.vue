@@ -14,7 +14,7 @@
           </li>
         </ul>
       </v-card-text>
-      <hr />
+      <v-divider />
     </v-card-item>
     <v-card-item>
       <v-card-subtitle>Instructions</v-card-subtitle>
@@ -24,13 +24,13 @@
 </template>
 
 <script>
-import { useTaskDataTableStore } from "@/stores/TaskDataTableStore.js";
+import { useTaskUIStore } from "@/stores/TaskUIStore.js";
 import { storeToRefs } from "pinia";
 
 export default {
   setup() {
-    const taskDataTableStore = useTaskDataTableStore(),
-      { selected } = storeToRefs(taskDataTableStore);
+    const taskUIStore = useTaskUIStore(),
+      { selected } = storeToRefs(taskUIStore);
 
     return {
       selected,
