@@ -136,7 +136,6 @@ export default {
   },
   methods: {
     save() {
-      console.log(this.fields.Skills);
       this.taskStore.create({ Title: "test" }).then(() => {
         this.dialog = false;
       });
