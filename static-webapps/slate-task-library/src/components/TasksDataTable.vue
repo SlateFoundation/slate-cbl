@@ -50,7 +50,7 @@ export default {
       { data, loading, total } = storeToRefs(taskStore),
       { selected } = storeToRefs(taskUIStore);
 
-    taskStore.fetchTasks();
+    taskStore.fetch();
 
     return { taskStore, data, taskUIStore, loading, total, selected };
   },
@@ -86,7 +86,7 @@ export default {
       const taskStore = useTaskStore();
 
       taskStore.setSortBy(sortBy[0] || null);
-      taskStore.fetchTasks();
+      taskStore.fetch();
 
       this.sortBy = sortBy;
     },
@@ -94,13 +94,13 @@ export default {
       const taskStore = useTaskStore();
 
       taskStore.setOffset((page - 1) * this.itemsPerPage);
-      taskStore.fetchTasks();
+      taskStore.fetch();
     },
     updateItemsPerPage(limit) {
       const taskStore = useTaskStore();
 
       taskStore.setLimit(limit);
-      taskStore.fetchTasks();
+      taskStore.fetch();
     },
   },
 };
