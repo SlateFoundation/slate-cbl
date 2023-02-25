@@ -10,7 +10,7 @@
     </template>
     <v-card>
       <v-card-title class="text-h5"> Delete Task </v-card-title>
-      <v-card-text>{{ task.Title }}</v-card-text>
+      <v-card-text>{{ title }}</v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="green-darken-1" variant="text" @click="confirmDelete">
@@ -48,10 +48,14 @@ export default {
 
       return selected && selected.length > 0 ? selected[0].value : null;
     },
+    title() {
+      return this.task ? this.task.Title : "";
+    },
   },
   methods: {
     confirmDelete() {
       this.taskStore.destroy(this.task.ID).then(() => {
+        this.selected = [];
         this.dialog = false;
       });
     },
