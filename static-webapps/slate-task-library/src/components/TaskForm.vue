@@ -54,18 +54,16 @@
                 <v-col cols="6" sm="12" md="6">
                   <v-row>
                     <v-col cols="6" sm="12" md="6">
-                      <v-text-field
+                      <DateField
                         v-model="fields.DueDate"
                         label="Due Date"
-                        type="date"
-                      ></v-text-field>
+                      ></DateField>
                     </v-col>
                     <v-col cols="6" sm="12" md="6">
-                      <v-text-field
-                        v-model="fields.Created"
+                      <DateField
+                        v-model="fields.ExpirationDate"
                         label="Expiration Date"
-                        type="date"
-                      ></v-text-field>
+                      ></DateField>
                     </v-col>
                     <v-col cols="12">
                       <v-text-field
@@ -105,29 +103,39 @@ import { useTaskStore } from "@/stores/TaskStore.js";
 import { useTaskUIStore } from "@/stores/TaskUIStore.js";
 import { useExperienceTypeStore } from "@/stores/ExperienceTypeStore.js";
 import { useSkillStore } from "@/stores/SkillStore.js";
+import DateField from "@/components/fields/DateField.vue";
 import { storeToRefs } from "pinia";
 
 export default {
+  components: {
+    DateField,
+  },
   setup() {
     const taskStore = useTaskStore(),
       taskUIStore = useTaskUIStore(),
       experienceTypeStore = useExperienceTypeStore(),
       skillStore = useSkillStore(),
-      { editFormVisible: dialog } = storeToRefs(taskUIStore),
+      { selected, editFormVisible: dialog } = storeToRefs(taskUIStore),
       { data: ExperienceTypeComboData } = storeToRefs(experienceTypeStore),
       { data: SkillComboData } = storeToRefs(skillStore);
 
     experienceTypeStore.fetch();
     skillStore.fetch();
 
-    return { taskStore, dialog, ExperienceTypeComboData, SkillComboData };
+    return {
+      selected,
+      taskStore,
+      dialog,
+      ExperienceTypeComboData,
+      SkillComboData,
+    };
   },
   data() {
     return {
       fields: {
         Attachments: [],
-        Created: "",
-        DueDate: "",
+        ExpirationDate: null,
+        DueDate: null,
         ExperienceType: "",
         Instructions: "",
         ParentTaskID: null,
@@ -136,17 +144,42 @@ export default {
       },
     };
   },
+  watch: {
+    dialog: {
+      handler: "onDialogToggle",
+    },
+  },
   methods: {
+    load() {
+      const me = this;
+
+      me.reset();
+
+      for (const field in me.fields) {
+        if (Object.prototype.hasOwnProperty.call(me.fields, field)) {
+          me.fields[field] = me.selected[0].value[field];
+        }
+      }
+    },
     save() {
-      console.log(this.fields);
       this.taskStore.create(this.fields).then(() => {
         this.reset();
         this.dialog = false;
       });
     },
     reset() {
-      console.log(this.$refs);
-      this.$refs.form.reset();
+      if (this.$refs.form) {
+        this.$refs.form.reset();
+      }
+    },
+    onDialogToggle() {
+      const me = this;
+
+      if (me.selected && me.selected.length > 0) {
+        me.load();
+      } else {
+        me.reset();
+      }
     },
   },
 };
