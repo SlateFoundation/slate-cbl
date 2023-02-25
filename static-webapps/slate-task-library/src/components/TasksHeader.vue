@@ -10,7 +10,7 @@
       color="primary"
       @click="editTask(task)"
     />
-    <DeleteConfirmation :task="task" @delete-confirmed="deleteTask" />
+    <DeleteConfirmation :task="task" />
   </v-col>
 </template>
 
@@ -21,7 +21,6 @@ import { storeToRefs } from "pinia";
 
 export default {
   components: { DeleteConfirmation },
-  emits: ["delete-confirmed"],
   setup() {
     const taskUIStore = useTaskUIStore(),
       { selected } = storeToRefs(taskUIStore);
@@ -47,9 +46,6 @@ export default {
       const taskUIStore = useTaskUIStore();
 
       taskUIStore.editFormVisible = true;
-    },
-    deleteTask(task) {
-      this.$emit("delete-confirmed", task);
     },
   },
 };
