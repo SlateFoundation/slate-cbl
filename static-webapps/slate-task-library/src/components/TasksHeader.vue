@@ -40,6 +40,7 @@ export default {
     createTask() {
       const taskUIStore = useTaskUIStore();
 
+      taskUIStore.selected = [];
       taskUIStore.editFormVisible = true;
     },
     editTask() {
