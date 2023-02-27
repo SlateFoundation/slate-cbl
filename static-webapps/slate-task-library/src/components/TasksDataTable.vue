@@ -84,12 +84,10 @@ export default {
         taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
     },
     onRowDblClick(row) {
-      const taskUIStore = useTaskUIStore();
-
-      taskUIStore.selected =
-        taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
-
-      taskUIStore.editFormVisible = true;
+      // const taskUIStore = useTaskUIStore();
+      // taskUIStore.selected =
+      //   taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
+      // taskUIStore.editFormVisible = true;
     },
     updateSortBy(sortBy) {
       const taskStore = useTaskStore();
