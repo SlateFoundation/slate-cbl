@@ -25,6 +25,8 @@
                         item-title="Title"
                         item-value="ID"
                         label="Subtask of"
+                        no-data-text="type at least 3 characters to search tasks"
+                        clearable
                         :loading="loadingParentTasks"
                         :custom-filter="
                           () => {
@@ -39,6 +41,8 @@
                         v-model="fields.ExperienceType"
                         :items="experienceTypeComboData"
                         label="Type of Experience"
+                        item-title="Title"
+                        item-value="ID"
                       ></v-select>
                     </v-col>
                     <v-col cols="12">
@@ -46,6 +50,8 @@
                         v-model="fields.Skills"
                         :items="skillComboData"
                         label="Skills"
+                        item-title="title"
+                        item-value="Code"
                         return-object
                         chips
                         closable-chips
@@ -163,6 +169,9 @@ export default {
     };
   },
   computed: {
+    task() {
+      return this.selected[0].value;
+    },
     editMode() {
       return this.selected && this.selected.length;
     },
@@ -217,10 +226,30 @@ export default {
       });
     },
     update() {
-      this.taskStore.create(this.fields).then(() => {
-        this.reset();
-        this.dialog = false;
-      });
+      const me = this,
+        fields = me.fields,
+        task = me.task,
+        changes = Object.fromEntries(
+          Object.entries(fields).filter(
+            ([key, val]) => key in task && task[key] !== val
+          )
+        );
+
+      // Convert skills to an array of string skill codes
+      if (changes.Skills) {
+        changes.Skills = changes.Skills.map((skill) => skill.Code);
+      }
+
+      if (Object.keys(changes).length !== 0) {
+        const payload = Object.assign({ ID: task.ID }, changes);
+
+        this.taskStore.update(payload).then(() => {
+          this.reset();
+          this.dialog = false;
+        });
+      }
+      this.reset();
+      this.dialog = false;
     },
     cancel() {
       const me = this;
