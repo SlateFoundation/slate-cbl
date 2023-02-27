@@ -20,7 +20,7 @@ export default createVuetify({
     VDataTableServer,
   },
   theme: {
-    defaultTheme: "dark",
+    // defaultTheme: "dark",
     themes: {
       light: {
         colors: {
