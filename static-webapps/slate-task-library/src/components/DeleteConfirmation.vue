@@ -35,7 +35,7 @@ export default {
       taskUIStore = useTaskUIStore(),
       { selected } = storeToRefs(taskUIStore);
 
-    return { selected, taskStore };
+    return { selected, taskStore, taskUIStore };
   },
   data() {
     return {
@@ -54,9 +54,13 @@ export default {
   },
   methods: {
     confirmDelete() {
-      this.taskStore.destroy(this.task.ID).then(() => {
+      this.taskStore.destroy(this.task.ID).then((result) => {
         this.selected = [];
         this.dialog = false;
+        console.log(result);
+        if (result && result.success === true) {
+          this.taskUIStore.toast("task deleted successfully");
+        }
       });
     },
   },

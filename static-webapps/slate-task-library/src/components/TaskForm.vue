@@ -220,10 +220,18 @@ export default {
       }
     },
     create() {
-      this.taskStore.create(this.fields).then(() => {
+      this.taskStore.create(this.fields).then((result) => {
         this.reset();
         this.dialog = false;
+        if (result && result.success === true) {
+          this.toast("task created successfully");
+        }
       });
+    },
+    toast(msg) {
+      const taskUIStore = useTaskUIStore();
+
+      taskUIStore.toast(msg);
     },
     update() {
       const me = this,
@@ -243,9 +251,12 @@ export default {
       if (Object.keys(changes).length !== 0) {
         const payload = Object.assign({ ID: task.ID }, changes);
 
-        this.taskStore.update(payload).then(() => {
+        this.taskStore.update(payload).then((result) => {
           this.reset();
           this.dialog = false;
+          if (result && result.success === true) {
+            this.toast("task updated successfully");
+          }
         });
       }
       this.reset();
