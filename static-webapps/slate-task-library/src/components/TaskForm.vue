@@ -4,7 +4,7 @@
       <v-card>
         <v-form ref="form">
           <v-card-title>
-            <span class="text-h5">Create Task</span>
+            <span class="text-h5">{{ dialogTitle }} </span>
           </v-card-title>
           <v-card-text>
             <v-container>
@@ -95,8 +95,8 @@
             <v-btn color="blue-darken-1" variant="text" @click="dialog = false">
               Close
             </v-btn>
-            <v-btn color="blue-darken-1" variant="text" @click="save">
-              Save
+            <v-btn color="blue-darken-1" variant="text" @click="submit">
+              {{ submitButtonLabel }}
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -155,8 +155,20 @@ export default {
         Skills: [],
         Title: "",
       },
+      editKey: false,
       loadingParentTasks: false,
     };
+  },
+  computed: {
+    editMode() {
+      return this.selected && this.selected.length;
+    },
+    dialogTitle() {
+      return this.editMode ? "Edit Task" : "Add Task";
+    },
+    submitButtonLabel() {
+      return this.editMode ? "Update" : "Add";
+    },
   },
   watch: {
     dialog: {
@@ -188,7 +200,22 @@ export default {
         }
       }
     },
-    save() {
+    submit() {
+      const me = this;
+
+      if (me.editMode) {
+        me.update();
+      } else {
+        me.create();
+      }
+    },
+    create() {
+      this.taskStore.create(this.fields).then(() => {
+        this.reset();
+        this.dialog = false;
+      });
+    },
+    update() {
       this.taskStore.create(this.fields).then(() => {
         this.reset();
         this.dialog = false;
