@@ -13,9 +13,7 @@ export const useSkillStore = defineStore("skillStore", {
       return data.map(function (item) {
         return {
           title: `${item.Code} - ${item.Descriptor}`,
-          value: item.ID,
           Code: item.Code,
-          Descriptor: item.Descriptor,
         };
       });
     },
