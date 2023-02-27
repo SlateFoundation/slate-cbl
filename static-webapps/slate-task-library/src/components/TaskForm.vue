@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent width="1024">
       <v-card>
-        <v-form ref="form">
+        <v-form ref="taskform">
           <v-card-title>
             <span class="text-h5">{{ dialogTitle }} </span>
           </v-card-title>
@@ -92,7 +92,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue-darken-1" variant="text" @click="dialog = false">
+            <v-btn color="blue-darken-1" variant="text" @click="cancel">
               Close
             </v-btn>
             <v-btn color="blue-darken-1" variant="text" @click="submit">
@@ -114,6 +114,7 @@ import { useSkillStore } from "@/stores/SkillStore.js";
 import DateField from "@/components/fields/DateField.vue";
 import AttachmentField from "@/components/fields/AttachmentField.vue";
 import { storeToRefs } from "pinia";
+import { ref } from "vue";
 
 export default {
   components: {
@@ -129,7 +130,8 @@ export default {
       { selected, editFormVisible: dialog } = storeToRefs(taskUIStore),
       { data: parentTaskComboData } = storeToRefs(parentTaskStore),
       { data: experienceTypeComboData } = storeToRefs(experienceTypeStore),
-      { data: skillComboData } = storeToRefs(skillStore);
+      { data: skillComboData } = storeToRefs(skillStore),
+      taskform = ref(null);
 
     experienceTypeStore.fetch();
     skillStore.fetch();
@@ -138,6 +140,7 @@ export default {
       selected,
       taskStore,
       dialog,
+      taskform,
       parentTaskComboData,
       experienceTypeComboData,
       skillComboData,
@@ -171,8 +174,8 @@ export default {
     },
   },
   watch: {
-    dialog: {
-      handler: "onDialogToggle",
+    taskform: {
+      handler: "onTaskformToggle",
     },
   },
   methods: {
@@ -180,8 +183,6 @@ export default {
       const me = this,
         parentTaskStore = useParentTaskStore(),
         parentTask = me.selected[0].value.ParentTask;
-
-      me.reset();
 
       /**
        *  TODO: we need the combo store to contain the value of the current parent task, but there's probably a better way to do this.
@@ -221,15 +222,20 @@ export default {
         this.dialog = false;
       });
     },
-    reset() {
-      if (this.$refs.form) {
-        this.$refs.form.reset();
-      }
-    },
-    onDialogToggle() {
+    cancel() {
       const me = this;
 
-      if (me.selected && me.selected.length > 0) {
+      me.dialog = false;
+    },
+    reset() {
+      if (this.$refs.taskform) {
+        this.$refs.taskform.reset();
+      }
+    },
+    onTaskformToggle() {
+      const me = this;
+
+      if (me.editMode) {
         me.load();
       } else {
         me.reset();
