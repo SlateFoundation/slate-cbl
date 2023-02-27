@@ -14,7 +14,7 @@
     :footer-props="{ 'items-per-page-options': [15, 30] }"
     @update:sort-by="updateSortBy"
     @update:page="updatePage"
-    @update:itemsPerPage="updateItemsPerPage"
+    @update:items-per-page="updateItemsPerPage"
   >
     <!-- Parent Task column header template -->
     <template #column.ParentTask="{ column }">
