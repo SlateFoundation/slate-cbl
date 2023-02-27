@@ -45,7 +45,7 @@ const methods = {
 
     me.loading = true;
 
-    await axios
+    const response = await axios
       .post(
         me.getRequestUrl(`${me.path}/save`),
         {
@@ -53,23 +53,22 @@ const methods = {
         },
         me.getRequestHeaders()
       )
-      .then(({ data: res }) => {
-        me.loading = false;
-        me.data.unshift(res.data[0]);
-        return { success: res.success, data: res.data };
-      })
       .catch((error) => {
         console.log(error);
         me.loading = false;
         return error;
       });
+
+    me.loading = false;
+    me.data.unshift(response.data.data[0]);
+    return { success: response.data.success, data: response.data.data };
   },
   async update(payload) {
     const me = this;
 
     me.loading = true;
 
-    await axios
+    const response = await axios
       .post(
         me.getRequestUrl(`${me.path}/save`),
         {
@@ -77,40 +76,41 @@ const methods = {
         },
         me.getRequestHeaders()
       )
-      .then(({ data: res }) => {
-        me.loading = false;
-        const record = me.data.filter((item) => item.ID === res.data[0].ID)[0];
-
-        Object.assign(record, res.data[0]);
-        return { success: res.success, data: res.data };
-      })
       .catch((error) => {
         console.log(error);
         me.loading = false;
         return error;
       });
+
+    me.loading = false;
+
+    const record = me.data.filter(
+      (item) => item.ID === response.data.data[0].ID
+    )[0];
+
+    Object.assign(record, response.data.data[0]);
+    return { success: response.data.success, data: record };
   },
   async destroy(itemID) {
     const me = this;
 
     me.loading = true;
 
-    await axios
+    const response = await axios
       .post(
         me.getRequestUrl(`${me.path}/destroy`),
         { data: [{ ID: itemID }] },
         me.getRequestHeaders()
       )
-      .then(({ data: res }) => {
-        me.loading = false;
-        me.data = me.data.filter((rec) => rec.ID !== itemID);
-        return { success: res.success };
-      })
       .catch((error) => {
         console.log(error);
         me.loading = false;
         return error;
       });
+
+    me.loading = false;
+    me.data = me.data.filter((rec) => rec.ID !== itemID);
+    return { success: response.data.success, data: response.data.data };
   },
   transformData(data) {
     return data;
