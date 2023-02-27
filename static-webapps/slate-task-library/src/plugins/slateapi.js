@@ -64,6 +64,32 @@ const methods = {
         return error;
       });
   },
+  async update(payload) {
+    const me = this;
+
+    me.loading = true;
+
+    await axios
+      .post(
+        me.getRequestUrl(`${me.path}/save`),
+        {
+          data: [payload],
+        },
+        me.getRequestHeaders()
+      )
+      .then(({ data: res }) => {
+        me.loading = false;
+        const record = me.data.filter((item) => item.ID === res.data[0].ID)[0];
+
+        Object.assign(record, res.data[0]);
+        return { success: res.success, data: res.data };
+      })
+      .catch((error) => {
+        console.log(error);
+        me.loading = false;
+        return error;
+      });
+  },
   async destroy(itemID) {
     const me = this;
 
