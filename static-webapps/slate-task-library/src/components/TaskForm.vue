@@ -179,7 +179,7 @@ export default {
     load() {
       const me = this,
         parentTaskStore = useParentTaskStore(),
-        parentTitle = me.selected[0].value.ParentTask.Title;
+        parentTask = me.selected[0].value.ParentTask;
 
       me.reset();
 
@@ -187,9 +187,9 @@ export default {
        *  TODO: we need the combo store to contain the value of the current parent task, but there's probably a better way to do this.
        *  can we query api by the parent task ID?
        */
-      if (parentTitle) {
+      if (parentTask && parentTask.Title) {
         parentTaskStore.extraParams = {
-          q: parentTitle,
+          q: parentTask.Title,
         };
         parentTaskStore.fetch();
       }
