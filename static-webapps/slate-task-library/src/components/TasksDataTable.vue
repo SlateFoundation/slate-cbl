@@ -27,6 +27,7 @@
         :item="item"
         :selected="isSelected(item)"
         @rowclick="onRowClick"
+        @dblclick="onRowDblClick"
       />
     </template>
   </v-data-table-server>
@@ -81,6 +82,14 @@ export default {
 
       taskUIStore.selected =
         taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
+    },
+    onRowDblClick(row) {
+      const taskUIStore = useTaskUIStore();
+
+      taskUIStore.selected =
+        taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
+
+      taskUIStore.editFormVisible = true;
     },
     updateSortBy(sortBy) {
       const taskStore = useTaskStore();
