@@ -19,25 +19,32 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-select
+                      <v-autocomplete
                         v-model="fields.ParentTaskID"
-                        :items="['0-17', '18-29', '30-54', '54+']"
+                        :items="parentTaskComboData"
+                        item-title="Title"
+                        item-value="ID"
                         label="Subtask of"
-                        required
-                      ></v-select>
+                        :loading="loadingParentTasks"
+                        :custom-filter="
+                          () => {
+                            return true;
+                          }
+                        "
+                        @update:search="queryParentTasks"
+                      ></v-autocomplete>
                     </v-col>
                     <v-col cols="12">
                       <v-select
                         v-model="fields.ExperienceType"
-                        :items="ExperienceTypeComboData"
+                        :items="experienceTypeComboData"
                         label="Type of Experience"
-                        required
                       ></v-select>
                     </v-col>
                     <v-col cols="12">
                       <v-autocomplete
                         v-model="fields.Skills"
-                        :items="SkillComboData"
+                        :items="skillComboData"
                         label="Skills"
                         return-object
                         chips
@@ -101,6 +108,7 @@
 <script>
 import { useTaskStore } from "@/stores/TaskStore.js";
 import { useTaskUIStore } from "@/stores/TaskUIStore.js";
+import { useParentTaskStore } from "@/stores/ParentTaskStore.js";
 import { useExperienceTypeStore } from "@/stores/ExperienceTypeStore.js";
 import { useSkillStore } from "@/stores/SkillStore.js";
 import DateField from "@/components/fields/DateField.vue";
@@ -115,11 +123,13 @@ export default {
   setup() {
     const taskStore = useTaskStore(),
       taskUIStore = useTaskUIStore(),
+      parentTaskStore = useParentTaskStore(),
       experienceTypeStore = useExperienceTypeStore(),
       skillStore = useSkillStore(),
       { selected, editFormVisible: dialog } = storeToRefs(taskUIStore),
-      { data: ExperienceTypeComboData } = storeToRefs(experienceTypeStore),
-      { data: SkillComboData } = storeToRefs(skillStore);
+      { data: parentTaskComboData } = storeToRefs(parentTaskStore),
+      { data: experienceTypeComboData } = storeToRefs(experienceTypeStore),
+      { data: skillComboData } = storeToRefs(skillStore);
 
     experienceTypeStore.fetch();
     skillStore.fetch();
@@ -128,8 +138,9 @@ export default {
       selected,
       taskStore,
       dialog,
-      ExperienceTypeComboData,
-      SkillComboData,
+      parentTaskComboData,
+      experienceTypeComboData,
+      skillComboData,
     };
   },
   data() {
@@ -144,6 +155,7 @@ export default {
         Skills: [],
         Title: "",
       },
+      loadingParentTasks: false,
     };
   },
   watch: {
@@ -153,9 +165,22 @@ export default {
   },
   methods: {
     load() {
-      const me = this;
+      const me = this,
+        parentTaskStore = useParentTaskStore(),
+        parentTitle = me.selected[0].value.ParentTask.Title;
 
       me.reset();
+
+      /**
+       *  TODO: we need the combo store to contain the value of the current parent task, but there's probably a better way to do this.
+       *  can we query api by the parent task ID?
+       */
+      if (parentTitle) {
+        parentTaskStore.extraParams = {
+          q: parentTitle,
+        };
+        parentTaskStore.fetch();
+      }
 
       for (const field in me.fields) {
         if (Object.prototype.hasOwnProperty.call(me.fields, field)) {
@@ -181,6 +206,17 @@ export default {
         me.load();
       } else {
         me.reset();
+      }
+    },
+    queryParentTasks(query) {
+      const parentTaskStore = useParentTaskStore();
+
+      if (query && query.length > 2 && !this.loadingParentTasks) {
+        parentTaskStore.extraParams = { q: query };
+
+        parentTaskStore.fetch().then(() => {
+          this.loadingParentTasks = false;
+        });
       }
     },
   },
