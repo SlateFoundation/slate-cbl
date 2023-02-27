@@ -12,7 +12,6 @@ const props = {
   limit: 0,
   offset: 0,
   total: 0,
-  order: "asc",
   sortBy: null,
   loading: false,
   error: false,
@@ -98,22 +97,6 @@ const methods = {
   },
   setLimit: function (limit) {
     this.limit = limit;
-  },
-  getEncodedSortBy: function () {
-    const sort = this.sortBy;
-
-    if (sort) {
-      return `&sort=${sort.key}&dir=${sort.order.toUpperCase()}`;
-    }
-    return "";
-  },
-  getEncodedOffset: function () {
-    const offset = this.offset;
-
-    if (offset > 0) {
-      return `&offset=${offset}`;
-    }
-    return "";
   },
   getRequestUrl: function (resource) {
     const me = this,
