@@ -66,16 +66,16 @@
                       ></DateField>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field
-                        v-model="fields.Attachments"
-                        label="Attachments"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
                       <v-textarea
                         v-model="fields.Instructions"
                         label="Instructions"
                       ></v-textarea>
+                    </v-col>
+                    <v-col cols="12">
+                      <AttachmentField
+                        v-model="fields.Attachments"
+                        label="Attachments"
+                      ></AttachmentField>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -104,11 +104,13 @@ import { useTaskUIStore } from "@/stores/TaskUIStore.js";
 import { useExperienceTypeStore } from "@/stores/ExperienceTypeStore.js";
 import { useSkillStore } from "@/stores/SkillStore.js";
 import DateField from "@/components/fields/DateField.vue";
+import AttachmentField from "@/components/fields/AttachmentField.vue";
 import { storeToRefs } from "pinia";
 
 export default {
   components: {
     DateField,
+    AttachmentField,
   },
   setup() {
     const taskStore = useTaskStore(),
