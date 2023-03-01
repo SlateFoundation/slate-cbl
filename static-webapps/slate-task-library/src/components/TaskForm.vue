@@ -86,6 +86,7 @@
                     </v-col>
                     <v-col cols="12">
                       <AttachmentField
+                        v-if="fields.Attachments"
                         v-model="fields.Attachments"
                         label="Attachments"
                       ></AttachmentField>
@@ -121,6 +122,7 @@ import DateField from "@/components/fields/DateField.vue";
 import AttachmentField from "@/components/fields/AttachmentField.vue";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
+import { isEqual, cloneDeep } from "lodash";
 
 export default {
   components: {
@@ -155,7 +157,7 @@ export default {
   data() {
     return {
       fields: {
-        Attachments: [],
+        Attachments: null,
         ExpirationDate: null,
         DueDate: null,
         ExperienceType: "",
@@ -166,6 +168,7 @@ export default {
       },
       editKey: false,
       loadingParentTasks: false,
+      originalTask: null,
     };
   },
   computed: {
@@ -192,6 +195,8 @@ export default {
       const me = this,
         parentTaskStore = useParentTaskStore(),
         parentTask = me.selected[0].value.ParentTask;
+
+      me.originalTask = cloneDeep(me.selected[0].value);
 
       /**
        *  TODO: we need the combo store to contain the value of the current parent task, but there's probably a better way to do this.
@@ -236,10 +241,10 @@ export default {
     update() {
       const me = this,
         fields = me.fields,
-        task = me.task,
+        task = me.originalTask,
         changes = Object.fromEntries(
           Object.entries(fields).filter(
-            ([key, val]) => key in task && task[key] !== val
+            ([key, val]) => key in task && !isEqual(task[key], val)
           )
         );
 
