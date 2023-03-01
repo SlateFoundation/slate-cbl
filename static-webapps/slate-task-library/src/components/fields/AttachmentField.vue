@@ -45,7 +45,7 @@
 
   <!-- Add Attachment Dialog -->
   <v-dialog v-model="dialog" width="auto" min-width="500px">
-    <v-form ref="form" validate-on="submit">
+    <v-form ref="attachmentform" validate-on="submit" @submit.prevent>
       <v-card>
         <v-card-title class="text-h5"> {{ dialogTitle }} </v-card-title>
         <v-card-text>
@@ -64,17 +64,19 @@
           <v-spacer></v-spacer>
           <v-btn
             v-if="current.matches('adding')"
+            type="submit"
             color="green-darken-1"
             variant="text"
-            @click="service.send('CREATE')"
+            @submit="service.send('CREATE')"
           >
             Add
           </v-btn>
           <v-btn
             v-if="current.matches('editing')"
+            type="submit"
             color="green-darken-1"
             variant="text"
-            @click="service.send('UPDATE')"
+            @submit="service.send('UPDATE')"
           >
             Update
           </v-btn>
