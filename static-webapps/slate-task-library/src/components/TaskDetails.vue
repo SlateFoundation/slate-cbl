@@ -7,7 +7,7 @@
       <v-card-subtitle>Attachments</v-card-subtitle>
       <v-card-text>
         <ul>
-          <li v-for="attachment in task.Attachments" :key="attachment.ID">
+          <li v-for="attachment in activeAttachments" :key="attachment.ID">
             <span class="title"
               ><a :href="attachment.URL">{{ attachment.Title }}</a></span
             >
@@ -41,6 +41,13 @@ export default {
       const selected = this.selected;
 
       return selected && selected.length > 0 ? selected[0].value : null;
+    },
+    activeAttachments() {
+      const attachments = this.task.Attachments;
+
+      return (
+        attachments && attachments.filter((item) => item.Status !== "removed")
+      );
     },
   },
 };
