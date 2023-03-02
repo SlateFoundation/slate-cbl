@@ -3,7 +3,7 @@
     <v-snackbar
       v-model="snackbar"
       :timeout="timeout"
-      color="primary"
+      :color="snackbarColor"
       rounded="pill"
       variant="elevated"
       close-on-content-click
@@ -20,15 +20,16 @@ import { storeToRefs } from "pinia";
 export default {
   setup() {
     const taskUIStore = useTaskUIStore(),
-      { snackbar, snackbarMsg } = storeToRefs(taskUIStore);
+      { snackbar, snackbarMsg, snackbarColor } = storeToRefs(taskUIStore);
 
     return {
       snackbar,
       snackbarMsg,
+      snackbarColor,
     };
   },
   data: () => ({
-    timeout: 2000,
+    timeout: 4000,
   }),
 };
 </script>
