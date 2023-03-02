@@ -24,20 +24,45 @@
           <i v-if="item.Status === 'removed'">(removed)</i>
         </span>
         <span class="actions">
-          <v-icon
-            icon="mdi-pencil-circle"
-            @click="service.send('EDIT', { idx: key })"
-          ></v-icon>
-          <v-icon
-            v-if="item.Status === 'normal'"
-            icon="mdi-close-circle"
-            @click="service.send('REMOVE', { idx: key })"
-          ></v-icon>
-          <v-icon
-            v-if="item.Status === 'removed'"
-            icon="mdi-file-restore"
-            @click="service.send('RESTORE', { idx: key })"
-          ></v-icon>
+          <v-tooltip text="edit">
+            <template #activator="{ props }">
+              <v-btn
+                icon="mdi-pencil"
+                size="20"
+                class="tinybutton"
+                color="primary"
+                rounded
+                v-bind="props"
+                @click="service.send('EDIT', { idx: key })"
+              >
+              </v-btn> </template
+          ></v-tooltip>
+          <v-tooltip text="remove">
+            <template #activator="{ props }">
+              <v-btn
+                v-if="item.Status === 'normal'"
+                icon="mdi-close"
+                size="20"
+                class="tinybutton"
+                color="primary"
+                rounded
+                v-bind="props"
+                @click="service.send('REMOVE', { idx: key })"
+              ></v-btn></template
+          ></v-tooltip>
+          <v-tooltip text="restore">
+            <template #activator="{ props }">
+              <v-btn
+                v-if="item.Status === 'removed'"
+                icon="mdi-restore"
+                size="20"
+                class="tinybutton"
+                color="primary"
+                rounded
+                v-bind="props"
+                @click="service.send('RESTORE', { idx: key })"
+              ></v-btn></template
+          ></v-tooltip>
         </span>
       </li>
     </ul>
@@ -45,7 +70,7 @@
 
   <!-- Add Attachment Dialog -->
   <v-dialog v-model="dialog" width="auto" min-width="500px">
-    <v-form ref="attachmentform" validate-on="submit" @submit.prevent>
+    <v-form ref="attachmentform" validate-on="blur">
       <v-card>
         <v-card-title class="text-h5"> {{ dialogTitle }} </v-card-title>
         <v-card-text>
@@ -64,19 +89,17 @@
           <v-spacer></v-spacer>
           <v-btn
             v-if="current.matches('adding')"
-            type="submit"
             color="green-darken-1"
             variant="text"
-            @submit="service.send('CREATE')"
+            @click="service.send('CREATE')"
           >
             Add
           </v-btn>
           <v-btn
             v-if="current.matches('editing')"
-            type="submit"
             color="green-darken-1"
             variant="text"
-            @submit="service.send('UPDATE')"
+            @click="service.send('UPDATE')"
           >
             Update
           </v-btn>
@@ -190,7 +213,7 @@ li {
   display: flex;
   align-items: right;
   width: 100%;
-  margin: 2px;
+  margin-top: 4px;
 }
 
 li > span.link {
@@ -208,6 +231,10 @@ li > span.removed {
 }
 li > span.actions {
   text-align: right;
-  width: 50px;
+  width: 60px;
+}
+.tinybutton {
+  font-size: 8px;
+  margin-left: 8px;
 }
 </style>
