@@ -70,7 +70,7 @@
 
   <!-- Add Attachment Dialog -->
   <v-dialog v-model="dialog" width="auto" min-width="500px">
-    <v-form ref="attachmentform" validate-on="blur">
+    <v-form ref="attachmentform">
       <v-card>
         <v-card-title class="text-h5"> {{ dialogTitle }} </v-card-title>
         <v-card-text>
