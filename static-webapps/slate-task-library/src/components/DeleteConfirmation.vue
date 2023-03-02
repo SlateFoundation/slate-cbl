@@ -13,10 +13,10 @@
       <v-card-text>{{ title }}</v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="green-darken-1" variant="text" @click="confirmDelete">
+        <v-btn color="primary" variant="text" @click="confirmDelete">
           Delete
         </v-btn>
-        <v-btn color="green-darken-1" variant="text" @click="dialog = false">
+        <v-btn color="primary" variant="text" @click="dialog = false">
           Cancel
         </v-btn>
       </v-card-actions>

@@ -89,7 +89,7 @@
           <v-spacer></v-spacer>
           <v-btn
             v-if="current.matches('adding')"
-            color="green-darken-1"
+            color="primary"
             variant="text"
             @click="service.send('CREATE')"
           >
@@ -97,17 +97,13 @@
           </v-btn>
           <v-btn
             v-if="current.matches('editing')"
-            color="green-darken-1"
+            color="primary"
             variant="text"
             @click="service.send('UPDATE')"
           >
             Update
           </v-btn>
-          <v-btn
-            color="green-darken-1"
-            variant="text"
-            @click="service.send('CANCEL')"
-          >
+          <v-btn color="primary" variant="text" @click="service.send('CANCEL')">
             Cancel
           </v-btn>
         </v-card-actions>
