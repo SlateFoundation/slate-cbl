@@ -168,6 +168,7 @@ export default {
       },
       editKey: false,
       loadingParentTasks: false,
+      originalTask: null,
       taskCopy: null,
     };
   },
@@ -196,7 +197,8 @@ export default {
         parentTaskStore = useParentTaskStore(),
         parentTask = me.selected[0].value.ParentTask;
 
-      me.taskCopy = toRaw(me.selected[0]);
+      me.originalTask = JSON.parse(JSON.stringify(me.selected[0].value));
+      me.taskCopy = JSON.parse(JSON.stringify(me.selected[0].value));
 
       /**
        *  TODO: we need the combo store to contain the value of the current parent task, but there's probably a better way to do this.
@@ -211,7 +213,7 @@ export default {
 
       for (const field in me.fields) {
         if (Object.prototype.hasOwnProperty.call(me.fields, field)) {
-          me.fields[field] = me.taskCopy.value[field];
+          me.fields[field] = me.taskCopy[field];
         }
       }
     },
