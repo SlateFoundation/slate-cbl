@@ -121,8 +121,8 @@ import { useSkillStore } from "@/stores/SkillStore.js";
 import DateField from "@/components/fields/DateField.vue";
 import AttachmentField from "@/components/fields/AttachmentField.vue";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
-import { isEqual, cloneDeep } from "lodash";
+import { ref, toRaw } from "vue";
+import { isEqual } from "lodash";
 
 export default {
   components: {
@@ -168,7 +168,7 @@ export default {
       },
       editKey: false,
       loadingParentTasks: false,
-      originalTask: null,
+      taskCopy: null,
     };
   },
   computed: {
@@ -196,7 +196,7 @@ export default {
         parentTaskStore = useParentTaskStore(),
         parentTask = me.selected[0].value.ParentTask;
 
-      me.originalTask = cloneDeep(me.selected[0].value);
+      me.taskCopy = toRaw(me.selected[0]);
 
       /**
        *  TODO: we need the combo store to contain the value of the current parent task, but there's probably a better way to do this.
@@ -211,7 +211,7 @@ export default {
 
       for (const field in me.fields) {
         if (Object.prototype.hasOwnProperty.call(me.fields, field)) {
-          me.fields[field] = me.selected[0].value[field];
+          me.fields[field] = me.taskCopy.value[field];
         }
       }
     },
