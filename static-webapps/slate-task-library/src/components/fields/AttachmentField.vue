@@ -91,7 +91,7 @@
             v-if="current.matches('adding')"
             color="primary"
             variant="text"
-            @click="service.send('CREATE')"
+            @click="submit"
           >
             Add
           </v-btn>
@@ -99,7 +99,7 @@
             v-if="current.matches('editing')"
             color="primary"
             variant="text"
-            @click="service.send('UPDATE')"
+            @click="submit"
           >
             Update
           </v-btn>
@@ -180,6 +180,19 @@ export default {
       .start();
   },
   methods: {
+    submit() {
+      const me = this;
+
+      me.$refs.attachmentform.validate().then((result) => {
+        if (result.valid && result.valid === true) {
+          if (me.editMode) {
+            me.service.send("UPDATE");
+          } else {
+            me.service.send("CREATE");
+          }
+        }
+      });
+    },
     isValidURL(urlString) {
       let givenURL;
 
