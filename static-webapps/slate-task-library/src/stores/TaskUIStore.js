@@ -6,11 +6,13 @@ export const useTaskUIStore = defineStore("taskUIStore", {
     editFormVisible: false,
     snackbar: false,
     snackbarMsg: false,
+    snackbarColor: "info",
   }),
   actions: {
-    toast(message) {
+    toast(message, color) {
       this.snackbar = true;
       this.snackbarMsg = message;
+      this.snackbarColor = color ? color : "info";
     },
   },
 });
