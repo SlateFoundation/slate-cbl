@@ -6,6 +6,7 @@
  */
 import axios from "axios";
 import { toRef, ref } from "vue";
+import { isEqual } from "lodash";
 
 const props = {
   data: [],
@@ -63,12 +64,33 @@ const methods = {
     me.data.unshift(response.data.data[0]);
     return { success: response.data.success, data: response.data.data };
   },
-  async update(payload) {
+  async update(updates, original) {
     const me = this;
 
     me.loading = true;
 
-    const response = await axios
+    const payload = updates;
+
+    /**
+     * ?? implement this later ??
+     * seems like it would be useful to just be able to send changes and optionally the original record
+     * and let this method construct the payload, but with tasks I need to transform the data anyway,
+     * specifically Skills, so I wouldn't need it right now.
+     * TODO: create a skills field component that returns the value needed for the API update then implement this?
+     */
+    // if (original) {
+    //   payload = Object.fromEntries(
+    //     Object.entries(updates).filter(
+    //       ([key, val]) => key in original && !isEqual(original[key], val)
+    //     )
+    //   );
+    // }
+
+    let success = false;
+    let data,
+      message = null;
+
+    await axios
       .post(
         me.getRequestUrl(`${me.path}/save`),
         {
@@ -76,20 +98,46 @@ const methods = {
         },
         me.getRequestHeaders()
       )
+      .then((res) => {
+        let updatedRecord = null;
+
+        if (res.data) {
+          success = res.data.success;
+          message = res.data.message;
+        }
+
+        if (success === true) {
+          // retrieve the updated record from the response
+          if (res.data && res.data.data && res.data.data.length === 1) {
+            updatedRecord = res.data.data[0];
+          }
+
+          if (updatedRecord && updatedRecord.ID) {
+            // find index of returned record in current data array
+            const idx = me.data.findIndex((rec) => rec.ID === updatedRecord.ID);
+
+            // update the record in the current data array
+            if (idx > -1) {
+              me.data[idx] = updatedRecord;
+              me.data.splice(idx, 1, updatedRecord);
+            }
+
+            data = updatedRecord;
+          } else {
+            // updated record was not valid
+            success = false;
+            message = "server response did not conain a valid record object";
+          }
+        }
+      })
       .catch((error) => {
         console.log(error);
-        me.loading = false;
-        return error;
+        message = error.message;
       });
 
     me.loading = false;
 
-    const record = me.data.filter(
-      (item) => item.ID === response.data.data[0].ID
-    )[0];
-
-    Object.assign(record, response.data.data[0]);
-    return { success: response.data.success, data: record };
+    return { success, data, message };
   },
   async destroy(itemID) {
     const me = this;

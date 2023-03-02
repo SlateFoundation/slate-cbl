@@ -15,7 +15,7 @@
                       <v-text-field
                         v-model="fields.Title"
                         label="Title *"
-                        required
+                        :rules="titleRules"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12">
@@ -99,11 +99,25 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue-darken-1" variant="text" @click="cancel">
-              Close
+
+            <v-btn
+              v-if="editMode"
+              color="primary"
+              variant="text"
+              @click="submit"
+            >
+              Update
             </v-btn>
-            <v-btn color="blue-darken-1" variant="text" @click="submit">
-              {{ submitButtonLabel }}
+            <v-btn
+              v-if="!editMode"
+              color="primary"
+              variant="text"
+              @click="submit"
+            >
+              Create
+            </v-btn>
+            <v-btn color="primary" variant="text" @click="cancel">
+              Close
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -121,7 +135,7 @@ import { useSkillStore } from "@/stores/SkillStore.js";
 import DateField from "@/components/fields/DateField.vue";
 import AttachmentField from "@/components/fields/AttachmentField.vue";
 import { storeToRefs } from "pinia";
-import { ref, toRaw } from "vue";
+import { ref } from "vue";
 import { isEqual } from "lodash";
 
 export default {
@@ -166,10 +180,12 @@ export default {
         Skills: [],
         Title: "",
       },
-      editKey: false,
       loadingParentTasks: false,
       originalTask: null,
       taskCopy: null,
+
+      // Validation rule for Title field
+      titleRules: [(v) => Boolean(v) || "Title is required"],
     };
   },
   computed: {
@@ -220,11 +236,15 @@ export default {
     submit() {
       const me = this;
 
-      if (me.editMode) {
-        me.update();
-      } else {
-        me.create();
-      }
+      me.$refs.taskform.validate().then((result) => {
+        if (result.valid && result.valid === true) {
+          if (me.editMode) {
+            me.update();
+          } else {
+            me.create();
+          }
+        }
+      });
     },
     create() {
       this.taskStore.create(this.fields).then((result) => {
@@ -235,39 +255,26 @@ export default {
         }
       });
     },
-    toast(msg) {
-      const taskUIStore = useTaskUIStore();
-
-      taskUIStore.toast(msg);
-    },
     update() {
       const me = this,
-        fields = me.fields,
         task = me.originalTask,
-        changes = Object.fromEntries(
-          Object.entries(fields).filter(
-            ([key, val]) => key in task && !isEqual(task[key], val)
-          )
-        );
+        changes = me.getRecordChanges();
 
-      // Convert skills to an array of string skill codes
-      if (changes.Skills) {
-        changes.Skills = changes.Skills.map((skill) => skill.Code);
-      }
-
-      if (Object.keys(changes).length !== 0) {
+      if (Object.keys(changes).length > 0) {
         const payload = Object.assign({ ID: task.ID }, changes);
 
         this.taskStore.update(payload).then((result) => {
           this.reset();
           this.dialog = false;
           if (result && result.success === true) {
-            this.toast("task updated successfully");
+            this.toast("task updated successfully", "success");
+          } else {
+            this.toast(result.message, "error");
           }
         });
+      } else {
+        this.toast("task unmodified: no changes to save", "warning");
       }
-      this.reset();
-      this.dialog = false;
     },
     cancel() {
       const me = this;
@@ -278,6 +285,11 @@ export default {
       if (this.$refs.taskform) {
         this.$refs.taskform.reset();
       }
+    },
+    toast(msg, color = "info") {
+      const taskUIStore = useTaskUIStore();
+
+      taskUIStore.toast(msg, color);
     },
     onTaskformToggle() {
       const me = this;
@@ -298,6 +310,24 @@ export default {
           this.loadingParentTasks = false;
         });
       }
+    },
+    getRecordChanges() {
+      const me = this,
+        fields = me.fields,
+        task = me.originalTask,
+        // get the field where the form fields differ from the original record
+        changes = Object.fromEntries(
+          Object.entries(fields).filter(
+            ([key, val]) => key in task && !isEqual(task[key], val)
+          )
+        );
+
+      // Convert skills to an array of string skill codes
+      if (changes.Skills) {
+        changes.Skills = changes.Skills.map((skill) => skill.Code);
+      }
+
+      return changes;
     },
   },
 };
