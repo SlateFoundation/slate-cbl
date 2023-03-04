@@ -35,11 +35,17 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 td {
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+tr {
+  width: 100%;
 }
 .selected td {
   filter: brightness(80%);

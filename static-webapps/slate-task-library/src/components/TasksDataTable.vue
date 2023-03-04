@@ -72,8 +72,8 @@ export default {
         { title: "Subtask of", align: "start", key: "ParentTask" },
         { title: "Type of Exp.", align: "center", key: "ExperienceType" },
         { title: "Skills", align: "center", key: "Skills" },
-        { title: "Created by", align: "start", key: "Creator" },
-        { title: "Created", align: "end", key: "Created" },
+        { title: "Created by", align: "center", key: "Creator" },
+        { title: "Created", align: "center", key: "Created" },
       ],
       tasks: [],
     };
@@ -122,6 +122,21 @@ export default {
 </script>
 
 <style>
+table {
+  table-layout: fixed !important;
+}
+/* Experience Type column */
+th:nth-child(3) {
+  width: 150px;
+}
+/* Created by column */
+th:nth-child(5) {
+  width: 180px;
+}
+/* Created column */
+th:nth-child(6) {
+  width: 120px;
+}
 tr:nth-child(even):not(.selected) td {
   filter: brightness(95%);
 }
