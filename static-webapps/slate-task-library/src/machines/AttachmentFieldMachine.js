@@ -80,7 +80,6 @@ const AttachmentFieldMachine =
     {
       actions: {
         initialize: assign((context, event) => ({ value: event.value })),
-        addItem: assign(() => ({ fields: { Title: null, URL: null } })),
         editItem: assign((context, event) => ({
           fields: {
             Title: context.value[event.idx].Title,
