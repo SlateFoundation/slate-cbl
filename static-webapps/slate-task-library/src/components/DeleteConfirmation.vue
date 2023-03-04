@@ -27,8 +27,6 @@
 <script>
 import { useTaskStore } from "@/stores/TaskStore.js";
 import { useTasksMachine } from "@/machines/TasksMachine.js";
-// import { useTaskUIStore } from "@/stores/TaskUIStore.js";
-// import { storeToRefs } from "pinia";
 
 export default {
   props: {
@@ -37,8 +35,6 @@ export default {
   setup() {
     const taskStore = useTaskStore(),
       { send } = useTasksMachine();
-    // taskUIStore = useTaskUIStore(),
-    // { selected } = storeToRefs(taskUIStore);
 
     return { taskStore, send };
   },
@@ -57,7 +53,6 @@ export default {
       const me = this;
 
       me.taskStore.destroy(me.task.ID).then((result) => {
-        // me.selected = [];
         me.dialog = false;
         if (result && result.success === true) {
           me.send("DESELECT");
