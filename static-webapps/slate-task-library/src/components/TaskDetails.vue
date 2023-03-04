@@ -24,21 +24,23 @@
 </template>
 
 <script>
-import { useTaskUIStore } from "@/stores/TaskUIStore.js";
-import { storeToRefs } from "pinia";
+// import { useTaskUIStore } from "@/stores/TaskUIStore.js";
+import { useTasksMachine } from "@/machines/TasksMachine.js";
+// import { storeToRefs } from "pinia";
 
 export default {
   setup() {
-    const taskUIStore = useTaskUIStore(),
-      { selected } = storeToRefs(taskUIStore);
+    // const taskUIStore = useTaskUIStore(),
+    // { selected } = storeToRefs(taskUIStore);
+    const { state } = useTasksMachine();
 
     return {
-      selected,
+      state,
     };
   },
   computed: {
     task() {
-      const selected = this.selected;
+      const selected = this.state.context.selected;
 
       return selected && selected.length > 0 ? selected[0].value : null;
     },

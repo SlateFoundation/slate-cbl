@@ -27,7 +27,6 @@
         :item="item"
         :selected="isSelected(item)"
         @rowclick="onRowClick"
-        @dblclick="onRowDblClick"
       />
     </template>
   </v-data-table-server>
@@ -37,7 +36,8 @@
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import RowTemplate from "@/components/templates/RowTemplate.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
-import { useTaskUIStore } from "@/stores/TaskUIStore.js";
+import { useTasksMachine } from "@/machines/TasksMachine.js";
+
 import { storeToRefs } from "pinia";
 
 export default {
@@ -47,13 +47,20 @@ export default {
   },
   setup() {
     const taskStore = useTaskStore(),
-      taskUIStore = useTaskUIStore(),
       { data, loading, total } = storeToRefs(taskStore),
-      { selected } = storeToRefs(taskUIStore);
+      { state, send } = useTasksMachine();
 
     taskStore.fetch();
+    send("INIT");
 
-    return { taskStore, data, taskUIStore, loading, total, selected };
+    return {
+      taskStore,
+      data,
+      loading,
+      total,
+      state,
+      send,
+    };
   },
   data() {
     return {
@@ -71,30 +78,31 @@ export default {
       tasks: [],
     };
   },
+  computed: {
+    selected() {
+      return this.state.context.selected;
+    },
+  },
   methods: {
     isSelected(row) {
-      const taskUIStore = useTaskUIStore();
-
-      return taskUIStore.selected.indexOf(row) > -1;
+      return this.selected.indexOf(row) > -1;
     },
     onRowClick(row) {
-      const taskUIStore = useTaskUIStore();
-
-      taskUIStore.selected =
-        taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
+      if (!this.isSelected(row)) {
+        this.send({ type: "SELECT", row });
+      }
     },
-    onRowDblClick(row) {
-      // const taskUIStore = useTaskUIStore();
-      // taskUIStore.selected =
-      //   taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
-      // taskUIStore.editFormVisible = true;
-    },
+    // onRowDblClick(row) {
+    //   const taskUIStore = useTaskUIStore();
+    //   taskUIStore.selected =
+    //     taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
+    //   taskUIStore.editFormVisible = true;
+    // },
     updateSortBy(sortBy) {
       const taskStore = useTaskStore();
 
       taskStore.setSortBy(sortBy[0] || null);
       taskStore.fetch();
-
       this.sortBy = sortBy;
     },
     updatePage(page) {

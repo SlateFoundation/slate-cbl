@@ -1,36 +1,44 @@
 <template>
   <div class="text-center">
     <v-snackbar
-      v-model="snackbar"
-      :timeout="timeout"
-      :color="snackbarColor"
+      v-model="isVisible"
+      :timeout="state.context.toastTimeout"
+      :color="state.context.toastColor"
       rounded="pill"
       variant="elevated"
       close-on-content-click
     >
-      <span class="message">{{ snackbarMsg }}</span>
+      <span class="message">{{ state.context.toastMessage }}</span>
     </v-snackbar>
   </div>
 </template>
 
 <script>
-import { useTaskUIStore } from "@/stores/TaskUIStore.js";
-import { storeToRefs } from "pinia";
+import { useTasksMachine } from "@/machines/TasksMachine.js";
+import { ref } from "vue";
 
 export default {
   setup() {
-    const taskUIStore = useTaskUIStore(),
-      { snackbar, snackbarMsg, snackbarColor } = storeToRefs(taskUIStore);
+    const { state, send } = useTasksMachine(),
+      toastVisible = ref(false);
 
     return {
-      snackbar,
-      snackbarMsg,
-      snackbarColor,
+      state,
+      send,
+      toastVisible,
     };
   },
-  data: () => ({
-    timeout: 4000,
-  }),
+  computed: {
+    isVisible: {
+      get() {
+        return this.state.context.toastIsVisible;
+      },
+      set(val) {
+        this.send({ type: "UNTOAST" });
+        this.toastIsVisible = val ? val : this.state.context.toastIsVisible;
+      },
+    },
+  },
 };
 </script>
 

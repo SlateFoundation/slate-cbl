@@ -26,16 +26,21 @@
 
 <script>
 import { useTaskStore } from "@/stores/TaskStore.js";
-import { useTaskUIStore } from "@/stores/TaskUIStore.js";
-import { storeToRefs } from "pinia";
+import { useTasksMachine } from "@/machines/TasksMachine.js";
+// import { useTaskUIStore } from "@/stores/TaskUIStore.js";
+// import { storeToRefs } from "pinia";
 
 export default {
+  props: {
+    task: Object,
+  },
   setup() {
     const taskStore = useTaskStore(),
-      taskUIStore = useTaskUIStore(),
-      { selected } = storeToRefs(taskUIStore);
+      { send } = useTasksMachine();
+    // taskUIStore = useTaskUIStore(),
+    // { selected } = storeToRefs(taskUIStore);
 
-    return { selected, taskStore, taskUIStore };
+    return { taskStore, send };
   },
   data() {
     return {
@@ -43,23 +48,30 @@ export default {
     };
   },
   computed: {
-    task() {
-      const selected = this.selected;
-
-      return selected && selected.length > 0 ? selected[0].value : null;
-    },
     title() {
       return this.task ? this.task.Title : "";
     },
   },
   methods: {
     confirmDelete() {
-      this.taskStore.destroy(this.task.ID).then((result) => {
-        this.selected = [];
-        this.dialog = false;
-        console.log(result);
+      const me = this;
+
+      me.taskStore.destroy(me.task.ID).then((result) => {
+        // me.selected = [];
+        me.dialog = false;
         if (result && result.success === true) {
-          this.taskUIStore.toast("task deleted successfully");
+          me.send("DESELECT");
+          me.send({
+            type: "TOAST",
+            message: "task deleted successfully",
+            color: "success",
+          });
+        } else {
+          me.send({
+            type: "TOAST",
+            message: "result.message",
+            color: "error",
+          });
         }
       });
     },

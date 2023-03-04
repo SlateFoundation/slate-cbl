@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" persistent width="1024">
+    <v-dialog v-model="isVisible" persistent width="1024">
       <v-card>
         <v-form ref="taskform">
           <v-card-title>
@@ -86,7 +86,7 @@
                     </v-col>
                     <v-col cols="12">
                       <AttachmentField
-                        v-if="fields.Attachments"
+                        v-if="fields.Attachments !== null"
                         v-model="fields.Attachments"
                         label="Attachments"
                       ></AttachmentField>
@@ -100,23 +100,11 @@
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn
-              v-if="editMode"
-              color="primary"
-              variant="text"
-              @click="submit"
-            >
-              Update
+            <v-btn color="primary" variant="text" @click="submit()">
+              {{ submitButtonLabel }}
             </v-btn>
-            <v-btn
-              v-if="!editMode"
-              color="primary"
-              variant="text"
-              @click="submit"
-            >
-              Create
-            </v-btn>
-            <v-btn color="primary" variant="text" @click="cancel">
+
+            <v-btn color="primary" variant="text" @click="send('CANCEL')">
               Close
             </v-btn>
           </v-card-actions>
@@ -128,15 +116,15 @@
 
 <script>
 import { useTaskStore } from "@/stores/TaskStore.js";
-import { useTaskUIStore } from "@/stores/TaskUIStore.js";
+import { useTasksMachine } from "@/machines/TasksMachine.js";
 import { useParentTaskStore } from "@/stores/ParentTaskStore.js";
 import { useExperienceTypeStore } from "@/stores/ExperienceTypeStore.js";
 import { useSkillStore } from "@/stores/SkillStore.js";
 import DateField from "@/components/fields/DateField.vue";
 import AttachmentField from "@/components/fields/AttachmentField.vue";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
-import { isEqual } from "lodash";
+import { ref, toRaw } from "vue";
+import { cloneDeep, isEqual } from "lodash";
 
 export default {
   components: {
@@ -145,27 +133,26 @@ export default {
   },
   setup() {
     const taskStore = useTaskStore(),
-      taskUIStore = useTaskUIStore(),
       parentTaskStore = useParentTaskStore(),
       experienceTypeStore = useExperienceTypeStore(),
       skillStore = useSkillStore(),
-      { selected, editFormVisible: dialog } = storeToRefs(taskUIStore),
       { data: parentTaskComboData } = storeToRefs(parentTaskStore),
       { data: experienceTypeComboData } = storeToRefs(experienceTypeStore),
       { data: skillComboData } = storeToRefs(skillStore),
+      { state, send } = useTasksMachine(),
       taskform = ref(null);
 
     experienceTypeStore.fetch();
     skillStore.fetch();
 
     return {
-      selected,
       taskStore,
-      dialog,
       taskform,
       parentTaskComboData,
       experienceTypeComboData,
       skillComboData,
+      state,
+      send,
     };
   },
   data() {
@@ -181,8 +168,6 @@ export default {
         Title: "",
       },
       loadingParentTasks: false,
-      originalTask: null,
-      taskCopy: null,
 
       // Validation rule for Title field
       titleRules: [(v) => Boolean(v) || "Title is required"],
@@ -190,10 +175,15 @@ export default {
   },
   computed: {
     task() {
-      return this.selected[0].value;
+      const selected = this.state.context.selected;
+
+      return selected && selected.length > 0 ? selected[0].value : null;
+    },
+    isVisible() {
+      return ["editing", "adding"].some(this.state.matches);
     },
     editMode() {
-      return this.selected && this.selected.length;
+      return this.state.matches("editing");
     },
     dialogTitle() {
       return this.editMode ? "Edit Task" : "Add Task";
@@ -203,33 +193,29 @@ export default {
     },
   },
   watch: {
-    taskform: {
-      handler: "onTaskformToggle",
+    taskform() {
+      const me = this;
+
+      if (me.state.matches("editing")) {
+        me.reset();
+        me.loadForm();
+      } else if (this.state.matches("adding")) {
+        me.reset();
+      }
     },
   },
   methods: {
-    load() {
-      const me = this,
-        parentTaskStore = useParentTaskStore(),
-        parentTask = me.selected[0].value.ParentTask;
+    loadForm() {
+      const me = this;
 
-      me.originalTask = JSON.parse(JSON.stringify(me.selected[0].value));
-      me.taskCopy = JSON.parse(JSON.stringify(me.selected[0].value));
+      if (me.task) {
+        // clone the task so we aren't editing the properties of the reactive original
+        const taskClone = cloneDeep(toRaw(me.task));
 
-      /**
-       *  TODO: we need the combo store to contain the value of the current parent task, but there's probably a better way to do this.
-       *  can we query api by the parent task ID?
-       */
-      if (parentTask && parentTask.Title) {
-        parentTaskStore.extraParams = {
-          q: parentTask.Title,
-        };
-        parentTaskStore.fetch();
-      }
-
-      for (const field in me.fields) {
-        if (Object.prototype.hasOwnProperty.call(me.fields, field)) {
-          me.fields[field] = me.taskCopy[field];
+        for (const field in me.fields) {
+          if (Object.prototype.hasOwnProperty.call(me.fields, field)) {
+            me.fields[field] = taskClone[field];
+          }
         }
       }
     },
@@ -247,75 +233,53 @@ export default {
       });
     },
     create() {
-      this.taskStore.create(this.fields).then((result) => {
-        this.reset();
-        this.dialog = false;
+      const me = this;
+
+      me.taskStore.create(this.fields).then((result) => {
         if (result && result.success === true) {
-          this.toast("task created successfully");
+          me.reset();
+          me.send({ type: "SUCCESS" });
+        } else {
+          me.send({ type: "FAIL", message: "result.message" });
         }
       });
     },
     update() {
       const me = this,
-        task = me.originalTask,
         changes = me.getRecordChanges();
 
       if (Object.keys(changes).length > 0) {
-        const payload = Object.assign({ ID: task.ID }, changes);
+        const payload = Object.assign({ ID: me.task.ID }, changes);
 
-        this.taskStore.update(payload).then((result) => {
-          this.reset();
-          this.dialog = false;
+        me.taskStore.update(payload).then((result) => {
+          me.reset();
+          // this.dialog = false;
           if (result && result.success === true) {
-            this.toast("task updated successfully", "success");
+            me.send({ type: "SUCCESS" });
           } else {
-            this.toast(result.message, "error");
+            me.send({ type: "FAIL", message: "result.message" });
           }
         });
       } else {
-        this.toast("task unmodified: no changes to save", "warning");
+        me.send({
+          type: "TOAST",
+          message: "task unmodified: no changes to save",
+          color: "warning",
+        });
       }
-    },
-    cancel() {
-      const me = this;
-
-      me.dialog = false;
     },
     reset() {
-      if (this.$refs.taskform) {
-        this.$refs.taskform.reset();
-      }
-    },
-    toast(msg, color = "info") {
-      const taskUIStore = useTaskUIStore();
-
-      taskUIStore.toast(msg, color);
-    },
-    onTaskformToggle() {
       const me = this;
 
-      if (me.editMode) {
-        me.load();
-      } else {
-        me.reset();
-      }
-    },
-    queryParentTasks(query) {
-      const parentTaskStore = useParentTaskStore();
-
-      if (query && query.length > 2 && !this.loadingParentTasks) {
-        parentTaskStore.extraParams = { q: query };
-
-        parentTaskStore.fetch().then(() => {
-          this.loadingParentTasks = false;
-        });
+      if (me.$refs.taskform) {
+        me.$refs.taskform.reset();
       }
     },
     getRecordChanges() {
       const me = this,
         fields = me.fields,
-        task = me.originalTask,
-        // get the field where the form fields differ from the original record
+        task = me.task,
+        // get the fields where the form fields differ from the original record
         changes = Object.fromEntries(
           Object.entries(fields).filter(
             ([key, val]) => key in task && !isEqual(task[key], val)
