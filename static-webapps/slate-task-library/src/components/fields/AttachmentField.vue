@@ -90,7 +90,8 @@
           <v-btn
             v-if="current.matches('adding')"
             color="primary"
-            variant="text"
+            variant="elevated"
+            rounded
             @click="submit"
           >
             Add
@@ -98,12 +99,18 @@
           <v-btn
             v-if="current.matches('editing')"
             color="primary"
-            variant="text"
+            variant="elevated"
+            rounded
             @click="submit"
           >
             Update
           </v-btn>
-          <v-btn color="primary" variant="text" @click="service.send('CANCEL')">
+          <v-btn
+            color="primary"
+            variant="elevated"
+            rounded
+            @click="service.send('CANCEL')"
+          >
             Cancel
           </v-btn>
         </v-card-actions>

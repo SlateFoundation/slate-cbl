@@ -13,10 +13,20 @@
       <v-card-text>{{ title }}</v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" variant="text" @click="confirmDelete">
+        <v-btn
+          color="primary"
+          variant="elevated"
+          rounded
+          @click="confirmDelete"
+        >
           Delete
         </v-btn>
-        <v-btn color="primary" variant="text" @click="dialog = false">
+        <v-btn
+          color="primary"
+          variant="elevated"
+          rounded
+          @click="dialog = false"
+        >
           Cancel
         </v-btn>
       </v-card-actions>

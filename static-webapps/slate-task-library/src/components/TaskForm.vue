@@ -33,7 +33,6 @@
                             return true;
                           }
                         "
-                        @update:search="queryParentTasks"
                       ></v-autocomplete>
                     </v-col>
                     <v-col cols="12">
@@ -100,11 +99,16 @@
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn color="primary" variant="text" @click="submit()">
+            <v-btn color="primary" variant="elevated" rounded @click="submit()">
               {{ submitButtonLabel }}
             </v-btn>
 
-            <v-btn color="primary" variant="text" @click="send('CANCEL')">
+            <v-btn
+              color="primary"
+              variant="elevated"
+              rounded
+              @click="send('CANCEL')"
+            >
               Close
             </v-btn>
           </v-card-actions>
