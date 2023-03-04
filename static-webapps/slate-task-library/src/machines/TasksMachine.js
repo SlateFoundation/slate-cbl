@@ -69,7 +69,6 @@ const TasksMachine = createMachine(
           },
           CANCEL: {
             target: "ready",
-            actions: "cancel",
           },
         },
       },
@@ -86,7 +85,6 @@ const TasksMachine = createMachine(
           },
           CANCEL: {
             target: "ready",
-            actions: "cancel",
           },
         },
       },
