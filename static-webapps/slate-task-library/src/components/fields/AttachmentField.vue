@@ -164,6 +164,9 @@ export default {
   mounted() {
     this.service.send({ type: "INIT", value: this.modelValue });
   },
+  unmounted() {
+    this.service.send({ type: "RESET" });
+  },
   created() {
     // Start service on component creation
     this.service
