@@ -6,7 +6,6 @@
  */
 import axios from "axios";
 import { toRef, ref } from "vue";
-import { isEqual } from "lodash";
 
 const props = {
   data: [],
