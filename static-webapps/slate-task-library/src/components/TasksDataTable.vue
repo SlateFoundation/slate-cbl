@@ -1,4 +1,9 @@
 <template>
+  <!-- Items per page prop does not yet seem to be implemented in Vue 3.
+  Probably not important enough to hack a solution rather than wait for it to be included
+  It should look like one of these two lines
+    :footer-props="{ 'items-per-page-options': [10, 20, 50] }"
+    :footer-props="{ 'itemsPerPageOptions': [10, 20, 50] }" -->
   <v-data-table-server
     v-model="selected"
     v-model:items-per-page="itemsPerPage"
@@ -11,7 +16,6 @@
     loading-text="Loading... Please wait"
     density="compact"
     class="elevation-1"
-    :footer-props="{ 'items-per-page-options': [15, 30] }"
     @update:sort-by="updateSortBy"
     @update:page="updatePage"
     @update:items-per-page="updateItemsPerPage"
