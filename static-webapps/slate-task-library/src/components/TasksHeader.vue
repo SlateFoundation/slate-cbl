@@ -16,16 +16,12 @@
 
 <script>
 import DeleteConfirmation from "./DeleteConfirmation.vue";
-// import { useTaskUIStore } from "@/stores/TaskUIStore.js";
 import { useTasksMachine } from "@/machines/TasksMachine.js";
-// import { storeToRefs } from "pinia";
 
 export default {
   components: { DeleteConfirmation },
   setup() {
-    // const taskUIStore = useTaskUIStore(),
     const { state, send } = useTasksMachine();
-    // { selected } = storeToRefs(taskUIStore);
 
     return {
       state,
@@ -39,20 +35,5 @@ export default {
       return selected && selected.length > 0 ? selected[0].value : null;
     },
   },
-  // methods: {
-  //   createTask() {
-  //     this.send({ type: "CREATE" });
-  //     // const taskUIStore = useTaskUIStore();
-
-  //     // taskUIStore.selected = [];
-  //     // taskUIStore.editFormVisible = true;
-  //   },
-  //   editTask() {
-  //     this.send({ type: "EDIT" });
-  //     // const taskUIStore = useTaskUIStore();
-
-  //     // taskUIStore.editFormVisible = true;
-  //   },
-  // },
 };
 </script>

@@ -24,14 +24,10 @@
 </template>
 
 <script>
-// import { useTaskUIStore } from "@/stores/TaskUIStore.js";
 import { useTasksMachine } from "@/machines/TasksMachine.js";
-// import { storeToRefs } from "pinia";
 
 export default {
   setup() {
-    // const taskUIStore = useTaskUIStore(),
-    // { selected } = storeToRefs(taskUIStore);
     const { state } = useTasksMachine();
 
     return {
