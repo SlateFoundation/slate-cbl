@@ -18,7 +18,7 @@
       >
         <span class="link">
           <v-icon icon="mdi-file-document-outline"></v-icon>
-          <a :href="item.URL" target="_blank">{{ item.Title }}</a>
+          <a :href="item.URL" target="_blank">{{ item.Title || item.URL }}</a>
         </span>
         <span class="removed">
           <i v-if="item.Status === 'removed'">(removed)</i>

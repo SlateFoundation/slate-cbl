@@ -9,7 +9,9 @@
         <ul>
           <li v-for="attachment in activeAttachments" :key="attachment.ID">
             <span class="title"
-              ><a :href="attachment.URL">{{ attachment.Title }}</a></span
+              ><a :href="attachment.URL">{{
+                attachment.Title || attachment.URL
+              }}</a></span
             >
           </li>
         </ul>
