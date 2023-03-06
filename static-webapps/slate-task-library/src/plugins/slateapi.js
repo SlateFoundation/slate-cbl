@@ -171,6 +171,9 @@ const methods = {
   setLimit: function (limit) {
     this.limit = limit;
   },
+  setExtraParams: function (extraParams) {
+    this.extraParams = extraParams;
+  },
   getRequestUrl: function (resource) {
     const me = this,
       protocol = me.api.useSSL ? "https://" : "http://",

@@ -35,21 +35,26 @@
         @rowclick="onRowClick"
       />
     </template>
+
+    <template #footer.prepend>
+      <SettingsMenu />
+    </template>
   </v-data-table-server>
 </template>
 
 <script>
 import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import RowTemplate from "@/components/templates/RowTemplate.vue";
+import SettingsMenu from "@/components/SettingsMenu.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
 import { useTasksMachine } from "@/machines/TasksMachine.js";
-
 import { storeToRefs } from "pinia";
 
 export default {
   components: {
     ParentTaskColumnTemplate,
     RowTemplate,
+    SettingsMenu,
   },
   setup() {
     const taskStore = useTaskStore(),
