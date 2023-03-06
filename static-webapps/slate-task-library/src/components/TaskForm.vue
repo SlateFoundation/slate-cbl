@@ -19,47 +19,18 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-autocomplete
+                      <ParentTaskField
                         v-model="fields.ParentTaskID"
-                        :items="parentTaskComboData"
-                        item-title="Title"
-                        item-value="ID"
                         label="Subtask of"
-                        no-data-text="type at least 3 characters to search tasks"
-                        clearable
-                        :loading="loadingParentTasks"
-                        :custom-filter="
-                          () => {
-                            return true;
-                          }
-                        "
-                      ></v-autocomplete>
+                      ></ParentTaskField>
                     </v-col>
                     <v-col cols="12">
-                      <v-select
+                      <ExperienceTypeField
                         v-model="fields.ExperienceType"
-                        :items="experienceTypeComboData"
-                        label="Type of Experience"
-                        item-title="Title"
-                        item-value="ID"
-                      ></v-select>
+                      ></ExperienceTypeField>
                     </v-col>
                     <v-col cols="12">
-                      <v-autocomplete
-                        v-model="fields.Skills"
-                        :items="skillComboData"
-                        label="Skills"
-                        item-title="title"
-                        item-value="Code"
-                        return-object
-                        chips
-                        closable-chips
-                        multiple
-                      >
-                        <template #chip="{ props, item }">
-                          <v-chip v-bind="props" :text="item.raw.Code"></v-chip>
-                        </template>
-                      </v-autocomplete>
+                      <SkillsField v-model="fields.Skills"></SkillsField>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -121,40 +92,30 @@
 <script>
 import { useTaskStore } from "@/stores/TaskStore.js";
 import { useTasksMachine } from "@/machines/TasksMachine.js";
-import { useParentTaskStore } from "@/stores/ParentTaskStore.js";
-import { useExperienceTypeStore } from "@/stores/ExperienceTypeStore.js";
-import { useSkillStore } from "@/stores/SkillStore.js";
-import DateField from "@/components/fields/DateField.vue";
 import AttachmentField from "@/components/fields/AttachmentField.vue";
-import { storeToRefs } from "pinia";
+import DateField from "@/components/fields/DateField.vue";
+import ExperienceTypeField from "@/components/fields/ExperienceTypeField.vue";
+import ParentTaskField from "@/components/fields/ParentTaskField.vue";
+import SkillsField from "@/components/fields/SkillsField.vue";
 import { ref, toRaw } from "vue";
 import { cloneDeep, isEqual } from "lodash";
 
 export default {
   components: {
-    DateField,
     AttachmentField,
+    DateField,
+    ExperienceTypeField,
+    ParentTaskField,
+    SkillsField,
   },
   setup() {
     const taskStore = useTaskStore(),
-      parentTaskStore = useParentTaskStore(),
-      experienceTypeStore = useExperienceTypeStore(),
-      skillStore = useSkillStore(),
-      { data: parentTaskComboData } = storeToRefs(parentTaskStore),
-      { data: experienceTypeComboData } = storeToRefs(experienceTypeStore),
-      { data: skillComboData } = storeToRefs(skillStore),
       { state, send } = useTasksMachine(),
       taskform = ref(null);
-
-    experienceTypeStore.fetch();
-    skillStore.fetch();
 
     return {
       taskStore,
       taskform,
-      parentTaskComboData,
-      experienceTypeComboData,
-      skillComboData,
       state,
       send,
     };
@@ -165,13 +126,12 @@ export default {
         Attachments: null,
         ExpirationDate: null,
         DueDate: null,
-        ExperienceType: "",
+        ExperienceType: null,
         Instructions: "",
         ParentTaskID: null,
         Skills: [],
         Title: "",
       },
-      loadingParentTasks: false,
 
       // Validation rule for Title field
       titleRules: [(v) => Boolean(v) || "Title is required"],
