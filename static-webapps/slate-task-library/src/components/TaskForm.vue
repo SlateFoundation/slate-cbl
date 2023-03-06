@@ -4,7 +4,10 @@
       <v-card>
         <v-form ref="taskform">
           <v-card-title>
-            <span class="text-h5">{{ dialogTitle }} </span>
+            <span v-if="state.matches('adding')" class="text-h5">Add Task</span>
+            <span v-if="state.matches('editing')" class="text-h5"
+              >Edit Task</span
+            >
           </v-card-title>
           <v-card-text>
             <v-container>
@@ -70,8 +73,24 @@
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn color="primary" variant="elevated" rounded @click="submit()">
-              {{ submitButtonLabel }}
+            <v-btn
+              v-if="state.matches('adding')"
+              color="primary"
+              variant="elevated"
+              rounded
+              @click="create()"
+            >
+              Add
+            </v-btn>
+
+            <v-btn
+              v-if="state.matches('editing')"
+              color="primary"
+              variant="elevated"
+              rounded
+              @click="update()"
+            >
+              Update
             </v-btn>
 
             <v-btn
@@ -146,15 +165,6 @@ export default {
     isVisible() {
       return ["editing", "adding"].some(this.state.matches);
     },
-    editMode() {
-      return this.state.matches("editing");
-    },
-    dialogTitle() {
-      return this.editMode ? "Edit Task" : "Add Task";
-    },
-    submitButtonLabel() {
-      return this.editMode ? "Update" : "Add";
-    },
   },
   watch: {
     taskform() {
@@ -183,54 +193,55 @@ export default {
         }
       }
     },
-    submit() {
-      const me = this;
-
-      me.$refs.taskform.validate().then((result) => {
-        if (result.valid && result.valid === true) {
-          if (me.editMode) {
-            me.update();
-          } else {
-            me.create();
-          }
-        }
-      });
-    },
     create() {
       const me = this;
 
-      me.taskStore.create(this.fields).then((result) => {
-        if (result && result.success === true) {
-          me.reset();
-          me.send({ type: "SUCCESS" });
-        } else {
-          me.send({ type: "FAIL", message: result.message });
+      // validate the form
+      me.$refs.taskform.validate().then((validation) => {
+        if (validation.valid && validation.valid === true) {
+          // create the task
+          me.taskStore.create(this.fields).then((result) => {
+            if (result && result.success === true) {
+              me.reset();
+              me.send({ type: "SUCCESS" });
+            } else {
+              me.send({ type: "FAIL", message: result.message });
+            }
+          });
         }
       });
     },
     update() {
-      const me = this,
-        changes = me.getRecordChanges();
+      const me = this;
 
-      if (Object.keys(changes).length > 0) {
-        const payload = Object.assign({ ID: me.task.ID }, changes);
+      // validate the form
+      me.$refs.taskform.validate().then((validation) => {
+        if (validation.valid && validation.valid === true) {
+          // get any changes made to the records
+          const changes = me.getRecordChanges();
 
-        me.taskStore.update(payload).then((result) => {
-          me.reset();
-          // this.dialog = false;
-          if (result && result.success === true) {
-            me.send({ type: "SUCCESS" });
+          // create a payload object withh changes and the ID of the task
+          if (Object.keys(changes).length > 0) {
+            const payload = Object.assign({ ID: me.task.ID }, changes);
+
+            // update the task
+            me.taskStore.update(payload).then((result) => {
+              me.reset();
+              if (result && result.success === true) {
+                me.send({ type: "SUCCESS" });
+              } else {
+                me.send({ type: "FAIL", message: result.message });
+              }
+            });
           } else {
-            me.send({ type: "FAIL", message: result.message });
+            me.send({
+              type: "TOAST",
+              message: "task unmodified: no changes to save",
+              color: "warning",
+            });
           }
-        });
-      } else {
-        me.send({
-          type: "TOAST",
-          message: "task unmodified: no changes to save",
-          color: "warning",
-        });
-      }
+        }
+      });
     },
     reset() {
       const me = this;
