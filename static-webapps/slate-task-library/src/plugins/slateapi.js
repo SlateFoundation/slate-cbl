@@ -45,7 +45,11 @@ const methods = {
 
     me.loading = true;
 
-    const response = await axios
+    let success = false;
+    let data,
+      message = null;
+
+    await axios
       .post(
         me.getRequestUrl(`${me.path}/save`),
         {
@@ -53,15 +57,40 @@ const methods = {
         },
         me.getRequestHeaders()
       )
+      .then((res) => {
+        let record = null;
+
+        if (res.data) {
+          success = res.data.success;
+          message = res.data.message;
+        }
+
+        if (success === true) {
+          // retrieve the updated record from the response
+          if (res.data && res.data.data && res.data.data.length === 1) {
+            record = res.data.data[0];
+          }
+
+          if (record && record.ID) {
+            // add the record to the current data array
+            me.data.unshift(record);
+
+            data = record;
+          } else {
+            // updated record was not valid
+            success = false;
+            message = "server response did not contain a valid record object";
+          }
+        }
+      })
       .catch((error) => {
         console.log(error);
-        me.loading = false;
-        return error;
+        message = error.message;
       });
 
     me.loading = false;
-    me.data.unshift(response.data.data[0]);
-    return { success: response.data.success, data: response.data.data };
+
+    return { success, data, message };
   },
   async update(updates, original) {
     const me = this;
