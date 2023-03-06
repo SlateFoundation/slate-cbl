@@ -5,6 +5,7 @@
     label="Type of Experience"
     item-title="Title"
     item-value="Title"
+    :loading="loading"
   ></v-select>
 </template>
 
@@ -19,12 +20,13 @@ export default {
   emits: ["update:modelValue"],
   setup() {
     const experienceTypeStore = useExperienceTypeStore(),
-      { data } = storeToRefs(experienceTypeStore);
+      { data, loading } = storeToRefs(experienceTypeStore);
 
     experienceTypeStore.fetch();
 
     return {
       data,
+      loading,
     };
   },
   computed: {
