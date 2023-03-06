@@ -203,7 +203,7 @@ export default {
           me.taskStore.create(this.fields).then((result) => {
             if (result && result.success === true) {
               me.reset();
-              me.send({ type: "SUCCESS" });
+              me.send({ type: "SUCCESS", updatedID: result.data.ID });
             } else {
               me.send({ type: "FAIL", message: result.message });
             }
@@ -226,9 +226,10 @@ export default {
 
             // update the task
             me.taskStore.update(payload).then((result) => {
-              me.reset();
               if (result && result.success === true) {
-                me.send({ type: "SUCCESS" });
+                me.reset();
+
+                me.send({ type: "SUCCESS", updatedID: result.data.ID });
               } else {
                 me.send({ type: "FAIL", message: result.message });
               }

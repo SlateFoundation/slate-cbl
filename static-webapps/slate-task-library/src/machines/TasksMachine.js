@@ -11,6 +11,7 @@ const TasksMachine = createMachine(
     predictableActionArguments: true,
     context: {
       selected: [],
+      updatedID: null,
       formIsVisible: false,
       toastIsVisible: false,
       toastMessage: null,
@@ -93,17 +94,20 @@ const TasksMachine = createMachine(
   {
     actions: {
       select: assign((context, event) => ({
+        updatedID: null,
         selected: [event.row],
       })),
       deselect: assign(() => ({
         selected: [],
       })),
-      onCreateSuccess: assign(() => ({
+      onCreateSuccess: assign((context, event) => ({
+        updatedID: event.updatedID,
         toastIsVisible: true,
         toastMessage: "task created successfully",
         toastColor: "info",
       })),
-      onUpdateSuccess: assign(() => ({
+      onUpdateSuccess: assign((context, event) => ({
+        updatedID: event.updatedID,
         toastIsVisible: true,
         toastMessage: "task updated successfully",
         toastColor: "info",

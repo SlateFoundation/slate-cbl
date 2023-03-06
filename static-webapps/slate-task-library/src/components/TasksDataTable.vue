@@ -61,7 +61,10 @@ export default {
       { data, loading, total } = storeToRefs(taskStore),
       { state, send } = useTasksMachine();
 
+    // Load the task store
     taskStore.fetch();
+
+    // Initialize the UI state machine
     send("INIT");
 
     return {
@@ -94,9 +97,21 @@ export default {
       return this.state.context.selected;
     },
   },
+  watch: {
+    state(state) {
+      if (state.changed && state.matches("ready") && state.context.updatedID) {
+        this.selectByID(state.context.updatedID);
+      }
+    },
+  },
   methods: {
     isSelected(row) {
       return this.selected.indexOf(row.value) > -1;
+    },
+    selectByID(id) {
+      const row = this.data.find((item) => item.ID === id);
+
+      this.send({ type: "SELECT", row });
     },
     onRowClick(row) {
       if (!this.isSelected(row)) {
