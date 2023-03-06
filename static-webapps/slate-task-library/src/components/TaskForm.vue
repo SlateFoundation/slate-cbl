@@ -244,7 +244,7 @@ export default {
           me.reset();
           me.send({ type: "SUCCESS" });
         } else {
-          me.send({ type: "FAIL", message: "result.message" });
+          me.send({ type: "FAIL", message: result.message });
         }
       });
     },
@@ -261,7 +261,7 @@ export default {
           if (result && result.success === true) {
             me.send({ type: "SUCCESS" });
           } else {
-            me.send({ type: "FAIL", message: "result.message" });
+            me.send({ type: "FAIL", message: result.message });
           }
         });
       } else {
