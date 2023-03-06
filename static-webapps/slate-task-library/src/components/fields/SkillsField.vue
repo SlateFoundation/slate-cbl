@@ -23,7 +23,7 @@ import { storeToRefs } from "pinia";
 
 export default {
   props: {
-    modelValue: Number,
+    modelValue: Array,
   },
   emits: ["update:modelValue"],
   setup() {
