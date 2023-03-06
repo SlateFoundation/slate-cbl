@@ -40,7 +40,7 @@ export default {
     task() {
       const selected = this.state.context.selected;
 
-      return selected && selected.length > 0 ? selected[0].value : null;
+      return selected && selected.length > 0 ? selected[0] : null;
     },
     activeAttachments() {
       const attachments = this.task.Attachments;
