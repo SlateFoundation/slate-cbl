@@ -116,16 +116,15 @@ const methods = {
             const idx = me.data.findIndex((rec) => rec.ID === updatedRecord.ID);
 
             // update the record in the current data array
-            if (idx > -1) {
+            if (idx > -1 && updatedRecord.Class === me.data[idx].Class) {
               me.data[idx] = updatedRecord;
-              me.data.splice(idx, 1, updatedRecord);
             }
 
             data = updatedRecord;
           } else {
             // updated record was not valid
             success = false;
-            message = "server response did not conain a valid record object";
+            message = "server response did not contain a valid record object";
           }
         }
       })
