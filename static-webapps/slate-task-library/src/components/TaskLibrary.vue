@@ -1,6 +1,5 @@
 <template>
-  <ToastSnackbar />
-  <v-container :fluid="true">
+  <v-container fluid fill-height>
     <!-- Header: title and buttons -->
     <v-row>
       <TasksHeader />
@@ -20,6 +19,7 @@
   </v-container>
 
   <TaskForm />
+  <ToastSnackbar />
 </template>
 
 <script setup>
