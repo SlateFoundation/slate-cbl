@@ -96,11 +96,11 @@ export default {
   },
   methods: {
     isSelected(row) {
-      return this.selected.indexOf(row) > -1;
+      return this.selected.indexOf(row.value) > -1;
     },
     onRowClick(row) {
       if (!this.isSelected(row)) {
-        this.send({ type: "SELECT", row });
+        this.send({ type: "SELECT", row: row.value });
       }
     },
     // onRowDblClick(row) {

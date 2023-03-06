@@ -160,7 +160,7 @@ export default {
     task() {
       const selected = this.state.context.selected;
 
-      return selected && selected.length > 0 ? selected[0].value : null;
+      return selected && selected.length > 0 ? selected[0] : null;
     },
     isVisible() {
       return ["editing", "adding"].some(this.state.matches);
@@ -220,7 +220,7 @@ export default {
           // get any changes made to the records
           const changes = me.getRecordChanges();
 
-          // create a payload object withh changes and the ID of the task
+          // create a payload object with changes and the ID of the task
           if (Object.keys(changes).length > 0) {
             const payload = Object.assign({ ID: me.task.ID }, changes);
 
