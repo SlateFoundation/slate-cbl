@@ -286,7 +286,11 @@ export default {
       return changes;
     },
     isNotParentTask() {
-      return !(this.task.SubTasks && this.task.SubTasks.length > 0);
+      return !(
+        this.task &&
+        this.task.SubTasks &&
+        this.task.SubTasks.length > 0
+      );
     },
   },
 };
