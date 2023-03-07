@@ -5,7 +5,7 @@ import { logTransition } from "./logTransition.js";
 
 const TasksMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QBUCGsDWsCyqDGAFgJYB2YAxMgPICCAysgNoAMAuoqAA4D2sRALkW4kOIAB6IArAE5JAOmkAOAOzSAjGulKAbMuYAWADQgAnogBMi+fpuTzzScrV7pyyQF93xtJhz5iZOQAqgBy1PRMbKI8fILCohIIkor6CgDMzNqa2uYazBrGZgj65uZypaVpksxpaWrmqtqe3uhYuISkYHJEEAA2FACSIQOR7EggMQJCIuOJamnScjL22tpapczmroUW0mULycrm+spH0jXNID5t-p1yAE5gqBAm5HQAogAy7wDCo9G8KbxWaIAC0imYSzSWwW5jSqlqaiMpgs1Tkq10NXqpxs0ku1z8HTIDyeL3IABF3h9vn8WGMuIC4jNQIloWo5Li9NoUslJLVlDsEOY0Ri9HUGspcfjWoSAl1Hs9XjRyeS6QDYtMEhZlHJmK5csc0msFooUoL9Lp0m4jatMnyHNLfO05STFeR3uSRmrxpMmVqhfU5FYZGkLQ5LNDzXpdcxYxbpNpHIpao6bkSus8IKQoG8gj8flS6N6GRrgSywalTZoLRpocLJM5Bdp9GklpJ2-lctoqvoPF4rjLnXdM9nyAAxGgDT7FiaMzUghCgtSmmPcrQLE6m7YohDaAxB02KDRORSJ5ep2XDiBZkg5n40EIF6dRH1zsviMFWDk2fTMCEySRu1Pc1Az-Wp9FNLJVAgi8h2JSAplvXN80LGdfXncsEE0VtTlOU0aiNC07CbFs2w7eo1G7SRe1g254KzQQkInKc0LfZkP2KTQ5COUonCcPY6jUEjW3bciux7PsWidOiugQxi7wfJ9WNLdjWUsOQ6mkCCVCPTEWxAsowNDSDnC0xRPH7EhuAgOBRAJOCwHVIFVLBOFtFXRR1y05QtwFHd5jKHjSmkBZuUyJFaPTbo+kc18VP9eoRPbPdlByHyW1KQUNnKCoDkTVK9TSSKXQVF4nL9BdErIlK0pSaFkSKeFIR-aitKqPlZCaft7JkuQR1vcqMI40Eqjbc4FgMRRzGbPZBUAxZPJkTQEQ0ZxiruOTs0G99Emm+RT1rNQ-1Sk85rWINZHUVwQtW5QLPcIA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QBUCGsDWsCyqDGAFgJYB2YAxMgPICCAysgNoAMAuoqAA4D2sRALkW4kOIAB6IAbABYArADoA7JNmTJigJzNtc6QBoQAT0QBGAMzN5J2RrPSNJgEyKTkx9MUBfTwbSYc+MRk5ACqAHLU9Exsojx8gsKiEggylrbMigAcmY7ZrmYmBsYIFtLyZpnWGioZ7pLMkt6+6Fi4hKRg8kQQADYUAJJh-dHsSCBxAkIiY8kAtCaKZvKSZpKZ2pImGtWbskWIjttKiorS9XaZbjJNIH6tgR3yAE5gqBCG5HQAogAyXwDCI1ivEmiRmiGk0ksC1UBWY+Vssn0RkQZhc8mkuQ0LlkmWkq1ksi8PluLQC7TIz1e73IABEvt8-oCWKMuCCEtNQMl8dDLswzKplCZpNl9ghHPD5Kp1LCbIpce4bndyUFOi83h8aLTaSzgfEpklEPNHEsNI5cpkzI5VK4TmKPAoKpJbOo7IpDo4lWS2qqqRryF9acNdWMJhzDeKTlYHNkTVD3bkxbJVuUZWatBKYV7-D7Hur3vIIGB+KgiD1YP8erxIOQqAAFL5henIGj9H50ENs-VgrkHRRShyuWTMWQmfnO9xiq2SDGQ5gaORIrYmEzZ+4UtXUwyF4ul8tUThgEjkf4-KjfZut9ud8bsg3g8XMTJWa0r90WQVTxwzyFQheE6Rl1XEllVzSk3ggUgoE+EJ-n+BkOxiUM7x7cQIXkSoYzkOxHGFGQNDFGp5G-a1v1kdwJRONcVUeCCoPIAAxK8bzDe9ewQWZ3BMKUbDkTNzUUflMkI4diLcJFcW2NwzWosDOjokhoP+Ggwngn4WJQzk0I4k0NCUdRKgaIlzCJYSUQQX95A0UdAMA50TEyCTZIeSlIEmRSYLghCNO7LTkgWfsx3xVxsgFZxkWKIiSPIlQKIyYlmhzFzOjcwQPKYtsfNBPyIRyeRmG-ex3VHBY8T2cyovEsi4qokDvWS+RUvo5TVN+LLwwfCpoQK2x30OSozOKEUymMxZRwzdZZG8EkSG4It4DGUDkr1bKI04zI9MJf9+OcZgIsQaorDMCp43MDanCmuqko3LpejAFaOvY+Z0RWNYdFHCVk0UMVcIUbZ7CfE0RxsY7nJu-Nii7VaH04ywoVC+wRWqCxlDFBylhWE6oTOBwcTB30IZ3EsywrKtYEgB62O0px+2dZNkeUZM7H2kpNAw7RCWHEd51Bq71wJrcib3WADyPSnUP846pRULZVnceUNrMH70XME7Fk0BcLEaPmaPAiBIMU8Wco46wljMazjvi61KiTLJlm2dZVc2HJtcS-nHiaw3kN8iMuvKFc7AKTEtkuJMbCUNF8KyLXbGmzwgA */
     id: "TasksMachine",
     initial: "idle",
     predictableActionArguments: true,
@@ -17,7 +17,7 @@ const TasksMachine = createMachine(
       toastMessage: null,
       toastColor: "info",
       toastTimeout: 4000,
-      logTransition: true,
+      logTransition: false,
     },
     // These actions can be performed in any state
     on: {
@@ -54,6 +54,25 @@ const TasksMachine = createMachine(
 
           EDIT: {
             target: "editing",
+          },
+        },
+
+        // Child states for the details pane
+        initial: "detailsOpen",
+        states: {
+          detailsClosed: {
+            on: {
+              OPENDETAILS: {
+                target: "detailsOpen",
+              },
+            },
+          },
+          detailsOpen: {
+            on: {
+              CLOSEDETAILS: {
+                target: "detailsClosed",
+              },
+            },
           },
         },
       },

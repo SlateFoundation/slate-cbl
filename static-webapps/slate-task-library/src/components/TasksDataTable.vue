@@ -9,7 +9,7 @@
     v-model:items-per-page="itemsPerPage"
     v-model:sort-by="sortBy"
     fixed-header
-    height="calc(100vh - 200px)"
+    height="calc(100vh - 160px)"
     :headers="headers"
     :items="data"
     item-key="ID"
@@ -146,7 +146,7 @@ export default {
       }
     },
     onRowDblClick() {
-      this.send({ type: "EDIT" });
+      this.send({ type: "OPENDETAILS" });
     },
     updateSortBy(sortBy) {
       const taskStore = useTaskStore();
