@@ -1,8 +1,9 @@
 <template>
-  <v-col cols="12" sm="8">
+  <v-col cols="5">
     <h1>Task Library</h1>
   </v-col>
-  <v-col cols="12" sm="2">
+
+  <v-col cols="5" class="text-right">
     <v-btn icon="mdi-plus" color="primary" @click="send({ type: 'ADD' })" />
     <v-btn
       :disabled="task === null"
