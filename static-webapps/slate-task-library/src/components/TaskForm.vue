@@ -4,7 +4,9 @@
       <v-card>
         <v-form ref="taskform">
           <v-card-title>
-            <span v-if="state.matches('adding')" class="text-h5">Add Task</span>
+            <div v-if="state.matches('adding')">
+              <span class="text-h5">Add Task</span>
+            </div>
             <span v-if="state.matches('editing')" class="text-h5"
               >Edit Task</span
             >
@@ -59,7 +61,6 @@
                     </v-col>
                     <v-col cols="12">
                       <AttachmentField
-                        v-if="fields.Attachments !== null"
                         v-model="fields.Attachments"
                         label="Attachments"
                       ></AttachmentField>
@@ -116,7 +117,7 @@ import DateField from "@/components/fields/DateField.vue";
 import ExperienceTypeField from "@/components/fields/ExperienceTypeField.vue";
 import ParentTaskField from "@/components/fields/ParentTaskField.vue";
 import SkillsField from "@/components/fields/SkillsField.vue";
-import { ref, toRaw } from "vue";
+import { ref, isProxy, toRaw } from "vue";
 import { cloneDeep, isEqual } from "lodash";
 
 export default {
@@ -172,23 +173,26 @@ export default {
 
       if (me.state.matches("editing")) {
         me.reset();
-        me.loadForm();
-      } else if (this.state.matches("adding")) {
+        me.loadForm(me.task);
+      } else if (me.state.matches("adding")) {
         me.reset();
+        me.loadForm({ Attachments: [] });
       }
     },
   },
   methods: {
-    loadForm() {
+    loadForm(task) {
       const me = this;
 
-      if (me.task) {
+      if (task) {
         // clone the task so we aren't editing the properties of the reactive original
-        const taskClone = cloneDeep(toRaw(me.task));
+        const taskClone = isProxy(task) ? cloneDeep(toRaw(task)) : task;
 
         for (const field in me.fields) {
           if (Object.prototype.hasOwnProperty.call(me.fields, field)) {
-            me.fields[field] = taskClone[field];
+            if (Object.prototype.hasOwnProperty.call(taskClone, field)) {
+              me.fields[field] = taskClone[field];
+            }
           }
         }
       }

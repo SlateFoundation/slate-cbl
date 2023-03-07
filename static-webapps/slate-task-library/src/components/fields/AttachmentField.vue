@@ -3,9 +3,7 @@
     <!-- Label and 'add' button -->
     <span class="label">
       <label>Attachments: </label>
-      <v-btn size="x-small" rounded="pill" @click="service.send('ADD')"
-        >add link</v-btn
-      >
+      <v-btn size="x-small" rounded="pill" @click="send('ADD')">add link</v-btn>
     </span>
 
     <!-- Attachment list -->
@@ -33,7 +31,7 @@
                 color="primary"
                 rounded
                 v-bind="props"
-                @click="service.send('EDIT', { idx: key })"
+                @click="send({ type: 'EDIT', idx: key })"
               >
               </v-btn> </template
           ></v-tooltip>
@@ -47,7 +45,7 @@
                 color="primary"
                 rounded
                 v-bind="props"
-                @click="service.send('REMOVE', { idx: key })"
+                @click="send({ type: 'REMOVE', idx: key })"
               ></v-btn></template
           ></v-tooltip>
           <v-tooltip text="restore">
@@ -60,7 +58,7 @@
                 color="primary"
                 rounded
                 v-bind="props"
-                @click="service.send('RESTORE', { idx: key })"
+                @click="send({ type: 'RESTORE', idx: key })"
               ></v-btn></template
           ></v-tooltip>
         </span>
@@ -72,14 +70,16 @@
   <v-dialog v-model="dialog" width="auto" min-width="500px">
     <v-form ref="attachmentform">
       <v-card>
-        <v-card-title class="text-h5"> {{ dialogTitle }} </v-card-title>
+        <v-card-title v-if="state.matches('adding')" class="text-h5"
+          >Add Attachment</v-card-title
+        >
+        <v-card-title v-if="state.matches('editing')" class="text-h5"
+          >Edit Attachment</v-card-title
+        >
         <v-card-text>
+          <v-text-field v-model="fields.Title" label="Title"></v-text-field>
           <v-text-field
-            v-model="context.fields.Title"
-            label="Title"
-          ></v-text-field>
-          <v-text-field
-            v-model="context.fields.URL"
+            v-model="fields.URL"
             label="URL *"
             :rules="urlRules"
           ></v-text-field>
@@ -88,20 +88,20 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            v-if="current.matches('adding')"
+            v-if="state.matches('adding')"
             color="primary"
             variant="elevated"
             rounded
-            @click="submit"
+            @click="create"
           >
             Add
           </v-btn>
           <v-btn
-            v-if="current.matches('editing')"
+            v-if="state.matches('editing')"
             color="primary"
             variant="elevated"
             rounded
-            @click="submit"
+            @click="update"
           >
             Update
           </v-btn>
@@ -109,7 +109,7 @@
             color="primary"
             variant="elevated"
             rounded
-            @click="service.send('CANCEL')"
+            @click="send('CANCEL')"
           >
             Cancel
           </v-btn>
@@ -120,8 +120,7 @@
 </template>
 
 <script>
-import { interpret } from "xstate";
-import AttachmentFieldMachine from "@/machines/AttachmentFieldMachine.js";
+import { useAttachmentFieldMachine } from "@/machines/AttachmentFieldMachine.js";
 
 export default {
   props: {
@@ -129,16 +128,17 @@ export default {
     label: String,
   },
   emits: ["update:modelValue"],
+  setup() {
+    const { state, send } = useAttachmentFieldMachine();
+
+    return {
+      state,
+      send,
+    };
+  },
   data() {
     return {
-      // Interpret the machine and store it in data
-      service: interpret(AttachmentFieldMachine),
-
-      // Start with the machine's initial state
-      current: AttachmentFieldMachine.initialState,
-
-      // Start with the machine's initial context
-      context: AttachmentFieldMachine.context,
+      fields: this.state.context.fields,
 
       // Validation rules for URL field
       urlRules: [
@@ -158,48 +158,45 @@ export default {
         this.$emit("update:modelValue", val);
       },
     },
-    editMode() {
-      return this.current.matches("editing");
-    },
-    dialogTitle() {
-      return this.editMode ? "Edit Attachment" : "Add Attachment";
-    },
     dialog() {
-      return ["editing", "adding"].some(this.current.matches);
+      return ["editing", "adding"].some(this.state.matches);
     },
   },
-  mounted() {
-    this.service.send({ type: "INIT", value: this.modelValue });
+  watch: {
+    state(state) {
+      if (state.changed) {
+        this.inputVal = state.context.value;
+        if (this.dialog) {
+          this.fields = state.context.fields;
+        }
+      }
+    },
+    modelValue(val) {
+      // Initialize when form loads and component receives an initial modelValue
+      this.send({ type: "INIT", value: val });
+    },
   },
   unmounted() {
-    this.service.send({ type: "RESET" });
-  },
-  created() {
-    // Start service on component creation
-    this.service
-      .onTransition((state) => {
-        // Update the current state component data property with the next state
-        this.current = state;
-        // Update the context component data property with the updated context
-        this.context = state.context;
-
-        if (state.changed) {
-          this.inputVal = state.context.value;
-        }
-      })
-      .start();
+    this.send({ type: "RESET" });
   },
   methods: {
-    submit() {
+    create() {
       const me = this;
 
-      me.$refs.attachmentform.validate().then((result) => {
-        if (result.valid && result.valid === true) {
-          if (me.editMode) {
-            me.service.send("UPDATE");
-          } else {
-            me.service.send("CREATE");
-          }
+      // validate the form and create the attachment
+      me.$refs.attachmentform.validate().then((validation) => {
+        if (validation.valid && validation.valid === true) {
+          me.send("CREATE");
+        }
+      });
+    },
+    update() {
+      const me = this;
+
+      // validate the form and create the attachment
+      me.$refs.attachmentform.validate().then((validation) => {
+        if (validation.valid && validation.valid === true) {
+          me.send("UPDATE");
         }
       });
     },
