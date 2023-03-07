@@ -15,7 +15,7 @@ const AttachmentFieldMachine = createMachine(
           URL: null,
           Status: "normal",
         },
-        logTransition: true,
+        logTransition: false,
       },
       states: {
         idle: {
