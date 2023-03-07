@@ -9,7 +9,7 @@
     v-model:items-per-page="itemsPerPage"
     v-model:sort-by="sortBy"
     fixed-header
-    height="calc(100vh - 160px)"
+    height="calc(100vh - 200px)"
     :headers="headers"
     :items="data"
     item-key="ID"
@@ -111,12 +111,10 @@ export default {
     },
   },
   mounted() {
-    console.log("mount");
     // Add event listener on keyup
     document.addEventListener("keyup", this.addKeyPressHandlers, false);
   },
   unmounted() {
-    console.log("UNmount");
     // Add event listener on keyup
     document.removeEventListener("keyup", this.addKeyPressHandlers);
   },
@@ -131,8 +129,6 @@ export default {
     },
     selectByIndex(idx) {
       const row = this.data[idx];
-
-      console.log("selectByIndex: " + idx);
 
       this.send({ type: "SELECT", row });
     },
