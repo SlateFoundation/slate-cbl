@@ -33,6 +33,7 @@
         :item="item"
         :selected="isSelected(item)"
         @rowclick="onRowClick"
+        @dblclick="onRowDblClick"
       />
     </template>
 
@@ -118,12 +119,9 @@ export default {
         this.send({ type: "SELECT", row: row.value });
       }
     },
-    // onRowDblClick(row) {
-    //   const taskUIStore = useTaskUIStore();
-    //   taskUIStore.selected =
-    //     taskUIStore.selected.indexOf(row) > -1 ? [] : [row];
-    //   taskUIStore.editFormVisible = true;
-    // },
+    onRowDblClick() {
+      this.send({ type: "EDIT" });
+    },
     updateSortBy(sortBy) {
       const taskStore = useTaskStore();
 
