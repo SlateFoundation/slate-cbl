@@ -110,6 +110,16 @@ export default {
       }
     },
   },
+  mounted() {
+    console.log("mount");
+    // Add event listener on keyup
+    document.addEventListener("keyup", this.addKeyPressHandlers, false);
+  },
+  unmounted() {
+    console.log("UNmount");
+    // Add event listener on keyup
+    document.removeEventListener("keyup", this.addKeyPressHandlers);
+  },
   methods: {
     isSelected(row) {
       return this.selected.indexOf(row.value) > -1;
@@ -118,6 +128,21 @@ export default {
       const row = this.data.find((item) => item.ID === id);
 
       this.send({ type: "SELECT", row });
+    },
+    selectByIndex(idx) {
+      const row = this.data[idx];
+
+      console.log("selectByIndex: " + idx);
+
+      this.send({ type: "SELECT", row });
+    },
+    getSelectedIndex() {
+      const row = this.selected[0];
+
+      if (row) {
+        return this.data.findIndex((item) => item.ID === row.ID);
+      }
+      return -1;
     },
     onRowClick(row) {
       if (!this.isSelected(row)) {
@@ -145,6 +170,31 @@ export default {
 
       taskStore.setLimit(limit);
       taskStore.fetch();
+    },
+    addKeyPressHandlers(event) {
+      const me = this,
+        code = event.code;
+
+      if (code === "ArrowUp" && me.selected) {
+        me.arrowUp();
+      }
+      if (code === "ArrowDown" && me.selected) {
+        me.arrowDown();
+      }
+    },
+    arrowUp() {
+      const current = this.getSelectedIndex();
+
+      if (current > 0) {
+        this.selectByIndex(current - 1);
+      }
+    },
+    arrowDown() {
+      const current = this.getSelectedIndex();
+
+      if (current < this.itemsPerPage - 1) {
+        this.selectByIndex(current + 1);
+      }
     },
   },
 };
