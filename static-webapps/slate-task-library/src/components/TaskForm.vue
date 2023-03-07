@@ -7,9 +7,21 @@
             <div v-if="state.matches('adding')">
               <span class="text-h5">Add Task</span>
             </div>
-            <span v-if="state.matches('editing')" class="text-h5"
-              >Edit Task</span
-            >
+            <div v-if="state.matches('editing')">
+              <v-container>
+                <v-row>
+                  <v-col>
+                    <span class="text-h5">Edit Task</span>
+                  </v-col>
+                  <v-col v-if="task.ClonedTask">
+                    <span class="text-sm-body-2">Cloned From: </span>
+                    <span class="text-subtitle-2">
+                      {{ task.ClonedTask.Title }}</span
+                    >
+                  </v-col>
+                </v-row>
+              </v-container>
+            </div>
           </v-card-title>
           <v-card-text>
             <v-container>
