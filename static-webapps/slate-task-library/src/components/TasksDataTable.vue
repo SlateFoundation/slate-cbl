@@ -104,6 +104,11 @@ export default {
         this.selectByID(state.context.updatedID);
       }
     },
+    loading(isLoading) {
+      if (isLoading) {
+        this.send({ type: "DESELECT" });
+      }
+    },
   },
   methods: {
     isSelected(row) {
