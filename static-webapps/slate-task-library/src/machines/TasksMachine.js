@@ -125,6 +125,9 @@ const TasksMachine = createMachine(
       })),
       untoast: assign(() => ({
         toastIsVisible: false,
+        toastMessage: null,
+        toastColor: "info",
+        toastTimeout: 4000,
       })),
     },
   }
