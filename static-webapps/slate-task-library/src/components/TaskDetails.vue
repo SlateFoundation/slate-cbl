@@ -1,7 +1,20 @@
 <template>
   <v-card v-if="task">
     <v-card-item>
-      <v-card-title>Task Details</v-card-title>
+      <v-card-title>
+        <v-row>
+          <v-col>Task Details</v-col>
+          <v-col class="text-right">
+            <v-btn
+              class="mb-1"
+              size="x-small"
+              icon="mdi-close"
+              @click="send({ type: 'DESELECT' })"
+            >
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card-title>
     </v-card-item>
     <v-card-item>
       <v-card-subtitle>Attachments</v-card-subtitle>
@@ -30,10 +43,11 @@ import { useTasksMachine } from "@/machines/TasksMachine.js";
 
 export default {
   setup() {
-    const { state } = useTasksMachine();
+    const { state, send } = useTasksMachine();
 
     return {
       state,
+      send,
     };
   },
   computed: {
