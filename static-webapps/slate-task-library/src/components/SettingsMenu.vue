@@ -16,10 +16,11 @@
         <v-divider></v-divider>
 
         <v-list>
-          <v-list-item>
+          <v-list-item class="ma-0 ml-3 pa-0">
             <v-checkbox
               v-model="archived"
               color="primary"
+              class="ma-0 pa-0"
               label="include archived"
               hide-details
               :disabled="loading"
@@ -27,7 +28,7 @@
             ></v-checkbox>
           </v-list-item>
 
-          <v-list-item>
+          <v-list-item class="ma-0 ml-3 pa-0">
             <v-checkbox
               v-model="unshared"
               name="unshared"
