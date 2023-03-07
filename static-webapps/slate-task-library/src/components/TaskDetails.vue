@@ -1,5 +1,5 @@
 <template>
-  <v-card :v-if="detailsIsOpen">
+  <v-card v-if="detailsIsOpen">
     <v-card-item>
       <v-card-title>
         <v-row>
