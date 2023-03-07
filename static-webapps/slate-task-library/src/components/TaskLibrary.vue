@@ -27,5 +27,5 @@ import TasksDataTable from "@/components/TasksDataTable.vue";
 import TasksHeader from "@/components/TasksHeader.vue";
 import TaskDetails from "@/components/TaskDetails.vue";
 import TaskForm from "@/components/TaskForm.vue";
-import ToastSnackbar from "./ToastSnackbar.vue";
+import ToastSnackbar from "@/components/ToastSnackbar.vue";
 </script>
