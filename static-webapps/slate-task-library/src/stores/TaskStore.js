@@ -4,7 +4,14 @@ export const useTaskStore = defineStore("taskStore", {
   state: () => ({
     path: "/cbl/tasks",
     limit: 20,
-    includes: ["Attachments", "Creator", "ParentTask", "Skills", "ClonedTask"],
+    includes: [
+      "Attachments",
+      "Creator",
+      "ParentTask",
+      "Skills",
+      "ClonedTask",
+      "SubTasks",
+    ],
     extraParams: {
       // eslint-disable-next-line camelcase
       include_archived: false,

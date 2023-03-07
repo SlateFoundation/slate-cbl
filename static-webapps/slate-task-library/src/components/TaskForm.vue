@@ -23,7 +23,7 @@
                         :rules="titleRules"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12">
+                    <v-col v-if="isNotParentTask(fields.Subtasks)" cols="12">
                       <ParentTaskField
                         v-model="fields.ParentTaskID"
                         label="Subtask of"
@@ -272,6 +272,9 @@ export default {
       }
 
       return changes;
+    },
+    isNotParentTask() {
+      return !(this.task.SubTasks && this.task.SubTasks.length > 0);
     },
   },
 };
