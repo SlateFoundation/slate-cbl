@@ -12,7 +12,9 @@
         ></v-btn>
       </template>
 
-      <v-card min-width="300">
+      <v-card min-width="300" prepend-icon="mdi-cog">
+        <template #title> Options </template>
+
         <v-divider></v-divider>
 
         <v-list>
