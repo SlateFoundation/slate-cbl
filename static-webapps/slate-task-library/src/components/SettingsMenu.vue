@@ -63,7 +63,7 @@ export default {
   },
   data: () => ({
     menu: false,
-    archived: true,
+    archived: false,
     unshared: false,
   }),
   methods: {
@@ -80,7 +80,7 @@ export default {
       this.taskStore.setExtraParams(
         Object.assign({}, toRaw(this.extraParams), {
           // eslint-disable-next-line camelcase
-          include_unshared: this.archived,
+          include_unshared: this.unshared,
         })
       );
       this.taskStore.fetch();
