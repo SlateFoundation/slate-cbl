@@ -2,11 +2,24 @@
   <v-row justify="center">
     <v-dialog v-model="isVisible" persistent width="1024">
       <v-card>
+        <!-- Task Form -->
         <v-form ref="taskform">
           <v-card-title>
+            <!-- Add task form header -->
             <div v-if="state.matches('adding')">
-              <span class="text-h5">Add Task</span>
+              <v-container>
+                <v-row>
+                  <v-col cols="4">
+                    <span class="text-h5">Add Task</span>
+                  </v-col>
+                  <v-col cols="8" class="pa-0">
+                    <CloneTaskField @clone-request="cloneRequest" />
+                  </v-col>
+                </v-row>
+              </v-container>
             </div>
+
+            <!-- Edit task form header -->
             <div v-if="state.matches('editing')">
               <v-container>
                 <v-row>
@@ -23,6 +36,8 @@
               </v-container>
             </div>
           </v-card-title>
+
+          <!-- Form fields -->
           <v-card-text>
             <v-container>
               <v-row>
@@ -83,9 +98,12 @@
             </v-container>
             <small>* indicates required field</small>
           </v-card-text>
+
+          <!-- Form actions footer -->
           <v-card-actions>
             <v-spacer></v-spacer>
 
+            <!-- Create task button -->
             <v-btn
               v-if="state.matches('adding')"
               color="primary"
@@ -96,6 +114,7 @@
               Add
             </v-btn>
 
+            <!-- Update task button -->
             <v-btn
               v-if="state.matches('editing')"
               color="primary"
@@ -106,6 +125,7 @@
               Update
             </v-btn>
 
+            <!-- Cancel form button -->
             <v-btn
               color="primary"
               variant="elevated"
@@ -126,6 +146,7 @@ import { useTaskStore } from "@/stores/TaskStore.js";
 import { useTasksMachine } from "@/machines/TasksMachine.js";
 import AttachmentField from "@/components/fields/AttachmentField.vue";
 import DateField from "@/components/fields/DateField.vue";
+import CloneTaskField from "@/components/fields/CloneTaskField.vue";
 import ExperienceTypeField from "@/components/fields/ExperienceTypeField.vue";
 import ParentTaskField from "@/components/fields/ParentTaskField.vue";
 import SkillsField from "@/components/fields/SkillsField.vue";
@@ -139,6 +160,7 @@ export default {
     ExperienceTypeField,
     ParentTaskField,
     SkillsField,
+    CloneTaskField,
   },
   setup() {
     const taskStore = useTaskStore(),
@@ -164,6 +186,9 @@ export default {
         Skills: [],
         Title: "",
       },
+
+      // flag set if this task is the result of cloning
+      ClonedTaskID: null,
 
       // Validation rule for Title field
       titleRules: [(v) => Boolean(v) || "Title is required"],
@@ -210,13 +235,25 @@ export default {
       }
     },
     create() {
-      const me = this;
+      const me = this,
+        task = me.fields,
+        // clone the task so we can add fields without affecting original
+        taskClone = isProxy(task) ? cloneDeep(toRaw(task)) : task;
 
       // validate the form
       me.$refs.taskform.validate().then((validation) => {
         if (validation.valid && validation.valid === true) {
+          // Convert skills to an array of string skill codes
+          me.convertSkills(taskClone);
+
+          // Add ClonedTaskID if flag exists, then remove it
+          if (me.ClonedTaskID !== null) {
+            taskClone.ClonedTaskID = me.ClonedTaskID;
+            me.ClonedTaskID = null;
+          }
+
           // create the task
-          me.taskStore.create(this.fields).then((result) => {
+          me.taskStore.create(taskClone).then((result) => {
             if (result && result.success === true) {
               me.reset();
               me.send({ type: "SUCCESS", updatedID: result.data.ID });
@@ -278,12 +315,28 @@ export default {
           )
         );
 
-      // Convert skills to an array of string skill codes
-      if (changes.Skills) {
-        changes.Skills = changes.Skills.map((skill) => skill.Code);
-      }
+      me.convertSkills(changes);
 
       return changes;
+    },
+    // Convert skills to an array of string skill codes
+    convertSkills(task) {
+      if (task.Skills) {
+        task.Skills = task.Skills.map((skill) => skill.Code);
+      }
+    },
+    cloneRequest(task, ClonedTaskID) {
+      if (task) {
+        // Remove ParentTaskId on any clones
+        delete task.ParentTaskID;
+
+        // Add the Cloned Task ID
+        this.ClonedTaskID = ClonedTaskID;
+
+        this.loadForm(task);
+      } else {
+        this.ClonedTaskID = null;
+      }
     },
     isNotParentTask() {
       return !(
