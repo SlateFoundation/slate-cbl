@@ -38,7 +38,7 @@
           </v-card-title>
 
           <!-- Form fields -->
-          <v-card-text>
+          <v-card-text class="pb-0">
             <v-container>
               <v-row>
                 <v-col cols="6" sm="12" md="6">
@@ -96,11 +96,23 @@
                 </v-col>
               </v-row>
             </v-container>
-            <small>* indicates required field</small>
           </v-card-text>
 
           <!-- Form actions footer -->
           <v-card-actions>
+            <small class="ml-6">* indicates required field</small>
+            <v-spacer></v-spacer>
+
+            <v-switch
+              v-model="fields.Status"
+              label="Share with other teachers"
+              color="primary"
+              true-value="shared"
+              false-value="private"
+              hide-details
+              :disabled="state.matches('adding')"
+            ></v-switch>
+
             <v-spacer></v-spacer>
 
             <!-- Create task button -->
@@ -185,6 +197,7 @@ export default {
         ParentTaskID: null,
         Skills: [],
         Title: "",
+        Status: null,
       },
 
       // flag set if this task is the result of cloning
@@ -213,7 +226,7 @@ export default {
         me.loadForm(me.task);
       } else if (me.state.matches("adding")) {
         me.reset();
-        me.loadForm({ Attachments: [] });
+        me.loadForm({ Status: "shared", Attachments: [] });
       }
     },
   },
