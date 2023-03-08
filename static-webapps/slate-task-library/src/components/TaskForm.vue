@@ -100,7 +100,32 @@
 
           <!-- Form actions footer -->
           <v-card-actions>
-            <small class="ml-6">* indicates required field</small>
+            <small v-if="state.matches('adding')" class="ml-6"
+              >* indicates required field</small
+            >
+            <!-- Archive task button -->
+            <span v-if="state.matches('editing') && task.SectionID">
+              <v-btn
+                v-if="task.Status !== 'archived'"
+                color="primary"
+                variant="elevated"
+                rounded
+                @click="archive"
+              >
+                Archive Task
+              </v-btn>
+
+              <!-- Unarchive task button -->
+              <v-btn
+                v-if="task.Status === 'archived'"
+                color="primary"
+                variant="elevated"
+                rounded
+                @click="unarchive"
+              >
+                Un-Archive Task
+              </v-btn>
+            </span>
             <v-spacer></v-spacer>
 
             <v-switch
@@ -307,6 +332,34 @@ export default {
               color: "warning",
             });
           }
+        }
+      });
+    },
+    archive() {
+      const me = this,
+        payload = Object.assign({ ID: me.task.ID, Status: "archived" });
+
+      // update the task
+      me.taskStore.update(payload).then((result) => {
+        if (result && result.success === true) {
+          me.reset();
+          me.send({ type: "SUCCESS", updatedID: result.data.ID });
+        } else {
+          me.send({ type: "FAIL", message: result.message });
+        }
+      });
+    },
+    unarchive() {
+      const me = this,
+        payload = Object.assign({ ID: me.task.ID, Status: "private" });
+
+      // update the task
+      me.taskStore.update(payload).then((result) => {
+        if (result && result.success === true) {
+          me.reset();
+          me.send({ type: "SUCCESS", updatedID: result.data.ID });
+        } else {
+          me.send({ type: "FAIL", message: result.message });
         }
       });
     },
