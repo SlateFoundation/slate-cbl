@@ -203,6 +203,9 @@ const methods = {
   setExtraParams: function (extraParams) {
     this.extraParams = extraParams;
   },
+  findByID: function (id) {
+    return this.data.find((item) => item.ID === id);
+  },
   getRequestUrl: function (resource) {
     const me = this,
       protocol = me.api.useSSL ? "https://" : "http://",
