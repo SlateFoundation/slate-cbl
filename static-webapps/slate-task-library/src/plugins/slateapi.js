@@ -41,7 +41,8 @@ const methods = {
   },
   async create(item) {
     const me = this,
-      payload = Object.assign(me.blankRecord, item);
+      blank = Object.assign({}, me.blankRecord),
+      payload = Object.assign(blank, item);
 
     me.loading = true;
 
