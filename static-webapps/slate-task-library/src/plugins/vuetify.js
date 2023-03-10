@@ -12,12 +12,12 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
 // Components
-import { VDataTableServer } from "vuetify/labs/VDataTable";
+import { VDataTableServer, VDataTableFooter } from "vuetify/labs/VDataTable";
 
-// https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   components: {
     VDataTableServer,
+    VDataTableFooter,
   },
   theme: {
     // defaultTheme: "dark",
