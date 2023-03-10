@@ -1,9 +1,9 @@
 <template>
   <!-- Items per page prop does not yet seem to be implemented in Vue 3.
-  Probably not important enough to hack a solution rather than wait for it to be included
+  For now, using <template #bottom>
   It should look like one of these two lines
-    :footer-props="{ 'items-per-page-options': [10, 20, 50] }"
-    :footer-props="{ 'itemsPerPageOptions': [10, 20, 50] }" -->
+    :footer-props="{ 'items-per-page-options': [10, 20, 50, 100] }"
+    :footer-props="{ 'itemsPerPageOptions': [10, 20, 50, 100] }" -->
   <v-data-table-server
     v-model="selected"
     v-model:items-per-page="itemsPerPage"
@@ -23,9 +23,10 @@
     @update:items-per-page="updateItemsPerPage"
   >
     <!-- Parent Task column header template -->
-    <template #column.ParentTask="{ column }">
+    <!-- This works with v-data-table but doesn't seem to be implemented in v-data-table yet in Vue 3 -->
+    <!-- <template #column.ParentTask="{ column }">
       <ParentTaskColumnTemplate :column="column" />
-    </template>
+    </template> -->
 
     <!-- Item (row) templates -->
     <template #item="{ item }">
@@ -39,6 +40,16 @@
 
     <template #footer.prepend>
       <SettingsMenu />
+    </template>
+    <template #bottom>
+      <v-data-table-footer
+        :items-per-page-options="[
+          { value: 10, title: '10' },
+          { value: 20, title: '20' },
+          { value: 50, title: '50' },
+          { value: 100, title: '100' },
+        ]"
+      />
     </template>
   </v-data-table-server>
 </template>
