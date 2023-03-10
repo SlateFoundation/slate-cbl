@@ -38,9 +38,6 @@
       />
     </template>
 
-    <template #footer.prepend>
-      <SettingsMenu />
-    </template>
     <template #bottom>
       <v-data-table-footer
         :items-per-page-options="[
@@ -49,7 +46,11 @@
           { value: 50, title: '50' },
           { value: 100, title: '100' },
         ]"
-      />
+      >
+        <template #prepend>
+          <SettingsMenu />
+        </template>
+      </v-data-table-footer>
     </template>
   </v-data-table-server>
 </template>
