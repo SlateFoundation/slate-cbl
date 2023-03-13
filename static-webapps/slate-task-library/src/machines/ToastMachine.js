@@ -5,7 +5,7 @@ import { logTransition } from "./logTransition.js";
 
 export const ToastMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QBUD2BDWAXAsugxgBYCWAdmAHTEQA2YAxMgPICCAysgNoAMAuoqAAOqWMSzFUpASAAeiACwBmCgDY1KgOwBGbgCYdugKz6ANCACeiLUooBOe-d27b8gBzyPugL5ezaTLgEJOQUWBjYZFD0AKoAcszsXHzSwqLiktJyCFqGrqpqGtzcinqK7opmltlqFBrOWioNSq4qroryPr4gpKgQcNL+2HhEZGApImISUkiyiAC0KpXzKhRFRYqGSvIaGu26ij5+4YEjIdR042lTmQq6SwiuWhTyDq723IYNum2HIIMnwUoYQCkUukwyMyy8juFkQukaFEUSJKrncWg07nkKk6XiAA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QBUD2BDWAXAsugxgBYCWAdmAHTEQA2YAxMgPICCAysgNoAMAuoqAAOqWMSzFUpASAAeiALQBGAEwUAzBo2LuANjXbl3ABxqANCACeiRUYCsFAOxOHdxQE5ji20aMBfX+ZomLgEJOQUWBjYZFCMrBw8-EggwqLiktJyCMq29or5ig4ALHZGbkXKbrbmVghGFD5l3GrKRoZubkY2-oFRIURklJHBMfQAqgByzOxcfNKpYhJSyVnyymrqHjrrikUqJtwOyjXWbhS5uQ7NRbbF+hX+ASCkqBBw0kHYeAPk8yKLGRWCnWqh0YJ0DlsBj2HR0JwQ8hcFB0+W4nRsDiqFSKPRAn36YUo1DofzSS0yChsRWR4Mh0Pcbjhlms+nOFxyaiMOj2ajcuPx30JET6MVJAOWoCyux0DR8bgZ7mUlVsx2ZCEUrIuUOUEMOuS5j18QA */
     id: "ToastMachine",
     initial: "idle",
     context: {
@@ -27,6 +27,10 @@ export const ToastMachine = createMachine(
 
       toasting: {
         on: {
+          TOAST: {
+            target: "toasting",
+            actions: "toast",
+          },
           UNTOAST: {
             target: "idle",
             actions: "untoast",
