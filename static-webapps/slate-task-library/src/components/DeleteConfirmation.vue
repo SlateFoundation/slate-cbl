@@ -1,14 +1,6 @@
 <template>
   <v-dialog v-model="dialog" persistent width="auto">
-    <template #activator="{ props }">
-      <v-btn
-        :disabled="task === null"
-        icon="mdi-trash-can-outline"
-        color="primary"
-        v-bind="props"
-      />
-    </template>
-    <v-card>
+    <v-card class="confirmationDialog">
       <v-card-title class="text-h5"> Delete Task </v-card-title>
       <v-card-text>{{ title }}</v-card-text>
       <v-card-actions>
@@ -17,7 +9,7 @@
           color="primary"
           variant="elevated"
           rounded
-          @click="confirmDelete"
+          @click="send({ type: 'DESTROY' })"
         >
           Delete
         </v-btn>
@@ -25,7 +17,7 @@
           color="primary"
           variant="elevated"
           rounded
-          @click="dialog = false"
+          @click="send({ type: 'CANCEL' })"
         >
           Cancel
         </v-btn>
@@ -35,7 +27,6 @@
 </template>
 
 <script>
-import { useTaskStore } from "@/stores/TaskStore.js";
 import { useTasksMachine } from "@/machines/TasksMachine.js";
 
 export default {
@@ -43,48 +34,25 @@ export default {
     task: Object,
   },
   setup() {
-    const taskStore = useTaskStore(),
-      { send } = useTasksMachine();
+    const { state, send } = useTasksMachine();
 
-    return { taskStore, send };
-  },
-  data() {
-    return {
-      dialog: false,
-    };
+    return { state, send };
   },
   computed: {
+    dialog() {
+      return this.state.matches("confirmingDelete");
+    },
     title() {
       return this.task ? this.task.Title : "";
-    },
-  },
-  methods: {
-    confirmDelete() {
-      const me = this;
-
-      me.taskStore.destroy(me.task.ID).then((result) => {
-        me.dialog = false;
-        if (result && result.success === true) {
-          me.send("DESELECT");
-          me.send({
-            type: "TOAST",
-            message: "task deleted successfully",
-            color: "success",
-          });
-        } else {
-          me.send({
-            type: "TOAST",
-            message: "result.message",
-            color: "error",
-          });
-        }
-      });
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
+.confirmationDialog {
+  min-width: 300px;
+}
 button {
   margin-left: 1em;
 }
