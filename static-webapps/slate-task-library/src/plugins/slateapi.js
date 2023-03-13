@@ -25,19 +25,33 @@ const methods = {
 
     me.loading = true;
 
+    let success = false;
+    let data,
+      message = null;
+
     await axios
       .get(me.getRequestUrl(me.path), me.getRequestHeaders())
       .then(({ data: res }) => {
-        me.data = me.transformData(res.data);
-        me.total = res.total;
-        me.loading = false;
+        if (res) {
+          success = res.success;
+          message = res.data.message;
+        }
+
+        if (success === true) {
+          me.data = me.transformData(res.data);
+          me.total = res.total;
+        }
       })
       .catch((error) => {
         console.log(error);
+        message = error.message;
 
-        me.loading = false;
         return error;
       });
+
+    me.loading = false;
+
+    return { success, data, message };
   },
   async create(item) {
     const me = this,
