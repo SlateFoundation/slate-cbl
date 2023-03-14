@@ -170,6 +170,8 @@ const methods = {
             success = false;
             message = "server response did not contain a valid record object";
           }
+        } else {
+          message = me.getErrorMessage(res);
         }
       })
       .catch((error) => {
@@ -181,26 +183,42 @@ const methods = {
 
     return { success, data, message };
   },
-  async destroy(itemID) {
+  async destroy(ID) {
     const me = this;
 
     me.loading = true;
 
+    let success = false;
+    let data,
+      message = null;
+
     const response = await axios
       .post(
         me.getRequestUrl(`${me.path}/destroy`),
-        { data: [{ ID: itemID }] },
+        { data: [{ ID }] },
         me.getRequestHeaders()
       )
+      .then((res) => {
+        if (res.data) {
+          success = res.data.success;
+          message = res.data.message;
+        }
+
+        if (success === true) {
+          // Remove the record from the store's data
+          me.data = me.data.filter((rec) => rec.ID !== ID);
+        } else {
+          message = me.getErrorMessage(res);
+        }
+      })
       .catch((error) => {
         console.log(error);
-        me.loading = false;
-        return error;
+        message = error.message;
       });
 
     me.loading = false;
-    me.data = me.data.filter((rec) => rec.ID !== itemID);
-    return { success: response.data.success, data: response.data.data };
+
+    return { success, data, message };
   },
   transformData(data) {
     return data;
@@ -289,6 +307,26 @@ const methods = {
       return null;
     }
     return me.api.host;
+  },
+  getErrorMessage(res) {
+    if (res.data.message && res.data.message.length > 0) {
+      return res.data.message;
+    }
+
+    if (res.errors) {
+      if (typeof res.errors === "string") {
+        return res.errors;
+      }
+      if (Array.isArray(res.errors)) {
+        return res.errors.join(", ");
+      }
+    }
+
+    // Added for potential errors in destroy operation
+    if (res.data && res.data.failed && Array.isArray(res.data.failed)) {
+      return res.data.failed.map(({ errors }) => errors).join(", ");
+    }
+    return "";
   },
 };
 
