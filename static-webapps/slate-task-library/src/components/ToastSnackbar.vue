@@ -2,40 +2,44 @@
   <div class="text-center">
     <v-snackbar
       v-model="isVisible"
-      :timeout="state.context.toastTimeout"
-      :color="state.context.toastColor"
+      :timeout="toasterContext.toastTimeout"
+      :color="toasterContext.toastColor"
       rounded="pill"
       variant="elevated"
       close-on-content-click
     >
-      <span class="message">{{ state.context.toastMessage }}</span>
+      <span class="message">{{ toasterContext.toastMessage }}</span>
     </v-snackbar>
   </div>
 </template>
 
 <script>
-import { useTasksMachine } from "@/machines/TasksMachine.js";
-import { ref } from "vue";
+import { useToastMachine } from "@/machines/ToastMachine.js";
 
 export default {
   setup() {
-    const { state, send } = useTasksMachine(),
-      toastVisible = ref(false);
+    const { state, send } = useToastMachine();
 
     return {
       state,
       send,
-      toastVisible,
     };
   },
   computed: {
+    toasterContext() {
+      return this.state.context;
+    },
     isVisible: {
       get() {
-        return this.state.context.toastIsVisible;
+        return this.toasterContext.toastIsVisible;
       },
       set(val) {
+        /**
+         * The vuetify snackbar will hide itself automatically after the set timeout
+         * so we need to notify the toast state machine that it has been hidden
+         */
         this.send({ type: "UNTOAST" });
-        this.toastIsVisible = val ? val : this.state.context.toastIsVisible;
+        this.toastIsVisible = val ? val : this.toasterContext.toastIsVisible;
       },
     },
   },
