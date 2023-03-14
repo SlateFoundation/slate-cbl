@@ -9,6 +9,7 @@
           color="primary"
           variant="elevated"
           rounded
+          :disabled="isDeleting"
           @click="send({ type: 'DESTROY' })"
         >
           Delete
@@ -17,6 +18,7 @@
           color="primary"
           variant="elevated"
           rounded
+          :disabled="isDeleting"
           @click="send({ type: 'CANCEL' })"
         >
           Cancel
@@ -40,10 +42,16 @@ export default {
   },
   computed: {
     dialog() {
-      return this.state.matches("confirmingDelete");
+      return this.state.matches("deleting");
     },
     title() {
       return this.task ? this.task.Title : "";
+    },
+    isDeleting() {
+      return (
+        this.state.matches("deleting") &&
+        this.state.children.delete.state.matches("destroying")
+      );
     },
   },
 };

@@ -3,7 +3,7 @@
     <v-dialog v-model="isVisible" persistent width="1024">
       <v-card>
         <!-- Task Form -->
-        <v-form ref="taskform">
+        <v-form ref="taskform" :disabled="isDisabled">
           <v-card-title>
             <!-- Add task form header -->
             <div v-if="state.matches('adding')">
@@ -104,9 +104,10 @@
               >* indicates required field</small
             >
             <!-- Archive task button -->
-            <span v-if="state.matches('editing') && task.SectionID">
+            <span v-if="state.matches('editing')">
               <v-btn
                 v-if="task.Status !== 'archived'"
+                :disabled="isDisabled"
                 color="primary"
                 variant="elevated"
                 rounded
@@ -118,6 +119,7 @@
               <!-- Unarchive task button -->
               <v-btn
                 v-if="task.Status === 'archived'"
+                :disabled="isDisabled"
                 color="primary"
                 variant="elevated"
                 rounded
@@ -128,14 +130,26 @@
             </span>
             <v-spacer></v-spacer>
 
+            <!-- Dummy shared checkbox for add form - status disabled, but on -->
             <v-switch
+              v-if="state.matches('adding')"
+              v-model.lazy="dummy"
+              label="Share with other teachers"
+              color="primary"
+              value="on"
+              disabled
+              hide-details
+            ></v-switch>
+
+            <!-- Shared checkbox -->
+            <v-switch
+              v-if="state.matches('editing')"
               v-model="fields.Status"
               label="Share with other teachers"
               color="primary"
               true-value="shared"
               false-value="private"
               hide-details
-              :disabled="state.matches('adding')"
             ></v-switch>
 
             <v-spacer></v-spacer>
@@ -143,21 +157,23 @@
             <!-- Create task button -->
             <v-btn
               v-if="state.matches('adding')"
+              :disabled="isDisabled"
               color="primary"
               variant="elevated"
               rounded
-              @click="create()"
+              @click="send({ type: 'CREATE' })"
             >
-              Add
+              Create
             </v-btn>
 
             <!-- Update task button -->
             <v-btn
-              v-if="state.matches('editing')"
+              v-if="['editRequest', 'editing'].some(state.matches)"
+              :disabled="isDisabled"
               color="primary"
               variant="elevated"
               rounded
-              @click="update()"
+              @click="send({ type: 'UPDATE' })"
             >
               Update
             </v-btn>
@@ -167,7 +183,7 @@
               color="primary"
               variant="elevated"
               rounded
-              @click="send('CANCEL')"
+              @click="send({ type: 'CANCEL' })"
             >
               Close
             </v-btn>
@@ -188,7 +204,7 @@ import ExperienceTypeField from "@/components/fields/ExperienceTypeField.vue";
 import ParentTaskField from "@/components/fields/ParentTaskField.vue";
 import SkillsField from "@/components/fields/SkillsField.vue";
 import { ref, isProxy, toRaw } from "vue";
-import { cloneDeep, isEqual } from "lodash";
+import { cloneDeep } from "lodash";
 
 export default {
   components: {
@@ -239,7 +255,13 @@ export default {
       return selected && selected.length > 0 ? selected[0] : null;
     },
     isVisible() {
-      return ["editing", "adding"].some(this.state.matches);
+      return ["editRequest", "editing", "adding"].some(this.state.matches);
+    },
+    isDisabled() {
+      return !["editing", "adding"].some(this.state.matches);
+    },
+    dummy() {
+      return ["on"];
     },
   },
   watch: {
@@ -248,10 +270,20 @@ export default {
 
       if (me.state.matches("editing")) {
         me.reset();
-        me.loadForm(me.task);
+        me.send({
+          type: "LOADFORM",
+          task: me.task,
+          form: me.taskform,
+          fields: me.fields,
+        });
       } else if (me.state.matches("adding")) {
         me.reset();
-        me.loadForm({ Status: "shared", Attachments: [] });
+        me.send({
+          type: "LOADFORM",
+          task: { Attachments: [] },
+          form: me.taskform,
+          fields: me.fields,
+        });
       }
     },
   },
@@ -271,69 +303,6 @@ export default {
           }
         }
       }
-    },
-    create() {
-      const me = this,
-        task = me.fields,
-        // clone the task so we can add fields without affecting original
-        taskClone = isProxy(task) ? cloneDeep(toRaw(task)) : task;
-
-      // validate the form
-      me.$refs.taskform.validate().then((validation) => {
-        if (validation.valid && validation.valid === true) {
-          // Convert skills to an array of string skill codes
-          me.convertSkills(taskClone);
-
-          // Add ClonedTaskID if flag exists, then remove it
-          if (me.ClonedTaskID !== null) {
-            taskClone.ClonedTaskID = me.ClonedTaskID;
-            me.ClonedTaskID = null;
-          }
-
-          // create the task
-          me.taskStore.create(taskClone).then((result) => {
-            if (result && result.success === true) {
-              me.reset();
-              me.send({ type: "SUCCESS", updatedID: result.data.ID });
-            } else {
-              me.send({ type: "FAIL", message: result.message });
-            }
-          });
-        }
-      });
-    },
-    update() {
-      const me = this;
-
-      // validate the form
-      me.$refs.taskform.validate().then((validation) => {
-        if (validation.valid && validation.valid === true) {
-          // get any changes made to the records
-          const changes = me.getRecordChanges();
-
-          // create a payload object with changes and the ID of the task
-          if (Object.keys(changes).length > 0) {
-            const payload = Object.assign({ ID: me.task.ID }, changes);
-
-            // update the task
-            me.taskStore.update(payload).then((result) => {
-              if (result && result.success === true) {
-                me.reset();
-
-                me.send({ type: "SUCCESS", updatedID: result.data.ID });
-              } else {
-                me.send({ type: "FAIL", message: result.message });
-              }
-            });
-          } else {
-            me.send({
-              type: "TOAST",
-              message: "task unmodified: no changes to save",
-              color: "warning",
-            });
-          }
-        }
-      });
     },
     archive() {
       const me = this,
@@ -370,33 +339,12 @@ export default {
         me.$refs.taskform.reset();
       }
     },
-    getRecordChanges() {
-      const me = this,
-        fields = me.fields,
-        task = me.task,
-        // get the fields where the form fields differ from the original record
-        changes = Object.fromEntries(
-          Object.entries(fields).filter(
-            ([key, val]) => key in task && !isEqual(task[key], val)
-          )
-        );
-
-      me.convertSkills(changes);
-
-      return changes;
-    },
-    // Convert skills to an array of string skill codes
-    convertSkills(task) {
-      if (task.Skills) {
-        task.Skills = task.Skills.map((skill) => skill.Code);
-      }
-    },
     cloneRequest(task, ClonedTaskID) {
       if (task) {
         // Remove ParentTaskId on any clones
         delete task.ParentTaskID;
 
-        // Add the Cloned Task ID
+        // Set the Cloned Task ID
         this.ClonedTaskID = ClonedTaskID;
 
         this.loadForm(task);

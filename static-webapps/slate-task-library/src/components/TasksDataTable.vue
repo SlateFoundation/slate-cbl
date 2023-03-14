@@ -18,10 +18,13 @@
     loading-text="Loading... Please wait"
     density="compact"
     class="elevation-1"
-    @update:sort-by="updateSortBy"
     @update:page="updatePage"
+    @update:sort-by="updateSortBy"
     @update:items-per-page="updateItemsPerPage"
   >
+    <!-- @update:page="updatePage" -->
+    <!-- @update:page="(page) => apiSend({ type: 'UPDATEPAGE', page: page })" -->
+
     <!-- Parent Task column header template -->
     <!-- This works with v-data-table but doesn't seem to be implemented in v-data-table yet in Vue 3 -->
     <!-- <template #column.ParentTask="{ column }">
@@ -56,7 +59,7 @@
 </template>
 
 <script>
-import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
+// import ParentTaskColumnTemplate from "@/components/templates/ParentTaskColumnTemplate";
 import RowTemplate from "@/components/templates/RowTemplate.vue";
 import SettingsMenu from "@/components/SettingsMenu.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
@@ -65,7 +68,7 @@ import { storeToRefs } from "pinia";
 
 export default {
   components: {
-    ParentTaskColumnTemplate,
+    // ParentTaskColumnTemplate,
     RowTemplate,
     SettingsMenu,
   },
@@ -74,11 +77,9 @@ export default {
       { data, loading, total } = storeToRefs(taskStore),
       { state, send } = useTasksMachine();
 
-    // Load the task store
-    taskStore.fetch();
-
     // Initialize the UI state machine
     send("INIT");
+    send("LOAD");
 
     return {
       taskStore,
@@ -112,6 +113,13 @@ export default {
   },
   watch: {
     state(state) {
+      console.log("state change: " + JSON.stringify(this.state.value));
+      if (
+        this.state.matches("deleting") &&
+        this.state.children.delete.state.matches("adding")
+      ) {
+        console.log("context", this.state.children.delete.state.context);
+      }
       if (state.changed && state.matches("ready") && state.context.updatedID) {
         this.selectByID(state.context.updatedID);
       }
