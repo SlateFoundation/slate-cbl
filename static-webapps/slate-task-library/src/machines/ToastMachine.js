@@ -13,7 +13,7 @@ export const ToastMachine = createMachine(
       toastMessage: null,
       toastColor: "info",
       toastTimeout: 4000,
-      logTransition: true,
+      logTransition: false,
     },
     states: {
       idle: {
