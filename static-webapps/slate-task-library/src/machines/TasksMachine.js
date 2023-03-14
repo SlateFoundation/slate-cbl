@@ -1,18 +1,19 @@
 /* eslint-disable one-var */
-import { createMachine, interpret, assign, forwardTo } from "xstate";
+import { assign, createMachine, interpret, forwardTo, send } from "xstate";
 import { useActor } from "@xstate/vue";
-import { isProxy, toRaw } from "vue";
-import { cloneDeep } from "lodash";
 import { logTransition } from "./logTransition.js";
 import { useTaskStore } from "@/stores/TaskStore.js";
 import { useToastMachine } from "@/machines/ToastMachine.js";
-import { create, read, update, destroy } from "@/machines/APIMachines.js";
+import { ApiCreateMachine } from "@/machines/ApiCreateMachine.js";
+import { ApiReadMachine } from "@/machines/ApiReadMachine.js";
+import { ApiUpdateMachine } from "@/machines/ApiUpdateMachine.js";
+import { ApiDeleteMachine } from "@/machines/ApiDeleteMachine.js";
 
 const toaster = useToastMachine();
 
 const TasksMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QBUCGsDWsCyqDGAFgJYB2YAxMgPICCAysgNoAMAuoqAA4D2sRALkW4kOIAB6IAtAEZm0gGwA6AJzKArMoAsmgOwAOPdLU61AGhABPKdIDMS+cx3Sdj6cubzpAJhsBfX+ZomDj4xGTkAKoActT0TGyiPHyCwqISCDLMXsyK+l6aHkZeytJ65lYI+YpeXibyNqqaeszKdv6B6Fi4hKRgikQQADYUAJJRI-HsSCBJAkIi0+mS8rW5Op7MzHo2hsZmltZOKsryzTvKzXqe7SBBXaG9igBOYKgQFuR0AKIAMl8AwpNErw5qlFtY1EobBomj4rvJ5BdNOVDtJjqdmOdLtcArdOiEemRnq93uQACJfb5-QEsKZcEEpBagJY7NG1dYuVS2TTqFEZZxo1QYrFbTyaG53AlhPovN4fH60Mm04HJeZpKSeNS5NRqfLFWoXOR85bKRQ2GxbWylEw6TRqPy4yXdaXEuXkGhkpUJaazRnqjKac2KSHKHReHVqLKhhR8mpKZj2jS1UpqUqGCX452PWWkr5kibKn0MtXgjIaM2GVQlWQKHVlA6VINePS65z1GxNC5eDPBLNEnMfCl-ZBfQv01Vg5nWU3FGzZBStWR2UPGxFmi2GGzW4x2h0dXsPfskiyKCBgfioIiDWD-Qa8SDkKgABS+UQpyBoIx+dDHM2Lk-EKRNHDRRHHteRdROAxdGRBtbUUbRNGkZDzTsPQbR7e5CRlY9T3PS9ryoTgwBIch-gVb530-b9f19EspwyfJNGDJCkK3ZxoU0eRYIqeDEOQ2xzVODDHUzQ8+jvN5SCgcgIGEPpSAAN24DA+gAM3PQhaP-JlAIyeoZyEnR3D0QNMXkY0vFA9QLRKdDm3kTlMKlR5JIgaTyDAJ4nm4J5FE4QZUH4NTfIAW0UDT+C071x1BXSlnqPRqgcO1mGA6RAzsPlkKshN6gFOxAw0aRnL7Po3nckgZIVD0ADEqAAJWwbSJ3ijUbB0BCPC3TZTlkbjYwKUDNjSrxETkBzu1Eg9sMUCqPP+BqvhoEcWri-1JFTJRtEaaEti8bwbD5AobEUUzdFkSFEoTUrxLmiBKpk-4aCif5fjWv1S0kfROo0dwkPWSErh4xAOyUVM7HNFwE2hPc8Rml1FNQQYBiC6SojAAB3WT5P6EhlNUxQkZRiAgrAD76L076wwQ7QFANQGDD5NRtmDCN3GyCCwNu2bidRwQqox7GvJ8vyAqCkKnnCvnSf4cmYr-VqNqcJKjA8NKNDULjPGO0oEK0WxikXBRHB5l08FlAWZLkoklJUvoaE4Ih-kt+W6UV9avoKHIDD0EoxsjRwsj5cbqlKLYnAckT9yw83LY8kXfP8wLgrCxRHed12KYApY9BqXJTIxdkTiyuCE0UE2DCXKsSum2PHkgAQGrAABHABXOB+HIGqyXqprs7ahBDGDOc0rkVo4UxWMIOqK4riTW0-a1s2G-c-hm-bzuyJet6fgH-1SmY7ICguC59C4-RYznWfdRqbRbIuOGnTuxurciJ8yRW0cFbonOpC0FQHZZDaB8CsRwOhjr2grjoYyKxUzqATGoFeRJX4LR3u9H+OkD6mWqGPU+6FC6XwbA0HIQN8r4I7E-MSvNkb8w8jbBS+N7ZE1obLN2KpPYMQUJ1REfsWg8ghpiesFRPCmg7HaBwjgtBZHkMgvoMs0ZVU8t5JO4tU5SxYSTMm+9SzGW1GGDKDRkJaFUJA06chPAQW8DoOczY5GKDbpwWW9DcZ20JhnCITjtGYKVl9GoWpwymWQtxEwSFlAh1DGaYoAoYGpnyFQhGjxHHOKUYnMWKdJbhQ8V4uWOiGLZByFsZQPgOqlHDOsLwfIXBakroYTENda4xxckSPAwg1JECltJMkYBhhy23q9DB7tf6DxkDOCeFjFzmRXA2SQSUpHNFFLIGyxl7GtJIO0zpVVum9IoBSBgDUqAAE08l6TVmsYwHZIypj9tCVcYiNxWnQjue09izywH4D5CwLjbZMPcU7bp7zPknKWNkM0WgHm1jStxCyZcWKGD9tI0U5pXmd0+QnFR6SJZpwzgCj53ALDAsQM2HIc5A4HTtMYkwxoabIW2LYE4ljCr+FxCQbgbzRDP2whwz6DFZkuALlxZoxd6gwoqJIcMpoeQYhtMYWwaV7EDGGNyymSx9Baj+mlXQBgLHGgyjORy9QXBQ2BsoexA5lV-wDDY0CJg7CQVOKZW0q4kp2E8A0a51oOxmtwmeC8V4bx3lgJAC1Iy5zMWjIJaMOw87ZVWAs2V58Wahj0N6uUeE-WEWIrpYZG0tymhrEZHw9MIENjcBXc0wMjDgvUGNexblpIho2s0Tq6hthqo7GlLQxpmKuqMBDecLYdT2PmlVRtXt1Bs0XFxVoqZUx8ihghBwS6a3hhkfYhRVshZjt5W6s0+htgIlDFGI6DZ7T5o8CcIwgZzqNPhvXFp8dR1Fl8byjQ4M9iXWKRBHYId9AV0RJGPaOoMq3s5S6V+G8O7vO3VTFsZoEQdW4lBZsVLiGOGDE4SEOx-HQnsagp9sUeVU3gmlcRLQ32qCZsQvOoF2RjS0NoFopq67NPkawxRUAYNLHcNULWCIahWkwyWiosqzq1B5PqBymJ7HJI41xol1RoTwoPWAuwHhf2qwA5iK5qYkKrLaR00KXSennjAPJhA-UzrGWkRoep2hhHWE8OuS0W4nm2heSxsqeFAX4obc+zhpyJ1LyaAoRyCYuIhzRBsTkchoRhkcuKZlQA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QBUCGsDWsCyqDGAFgJYB2YAxMgPICCAysgNoAMAuoqAA4D2sRALkW4kOIAB6IAtAEZm0gGwA6AJzKArMoAsmgOwAOPdLU61AGhABPKdIDMS+cx3Sdj6cubzpAJhsBfX+ZomDj4xGTkAKoActT0TGyiPHyCwqISCDLMXsyK+l6aHkZeytJ65lYI+YpeXibyNqqaeszKdv6B6Fi4hKRgikQQADYUAJJRI-HsSCBJAkIi0+mSujYq2so6qg2q8maW1k4qyvLNNnrKzXqe7SBBXaG9igBOYKgQFuR0AKIAMl8AwpNErw5qlFlIbNJpLlNGoDHZpE0fF5ygdoTtTudLtcArdOiEemRnq93uQACJfb5-QEsKZcEEpBagJYKPSKK5qZhZZQ1WFyHSojLOdHHTEXZhXFo3O4EsJ9F5vD4-Whk2nA5LzNJSeS1XI6TxZeQ6LxqbIC-YZBwqfInWSbDTaNTS-HdOXExXkGhk1UJaazRlay1eNn6XYStRqTT5ZyCozKRTyWH1LmJyMNLzO4Kux4K0lfMkTNV+hma8EZHRHepRxH6kxeIyxnSaRTaWqR+pGmxR+SZ+6E+Ukj4Uv7IL5F+kasHM6zx4o2bIKVqyOwbQWSeTxmw2CW2UomJtqPy4mXZom5iyKCBgfioIiDWD-Qa8SDkKgABS+UQpyBoIx+dHHGYSyncQpCjNRFEcQ9dmKE49F0TRBSbFttChWwtxOfde1lHNB0va9b3vKhODAEhyH+ZVvm-X9-0A-1S2nDJ8mbSNEV3ZwbHbRCLWQ7RNDQrc7D0LDjxdB4iSfN5SCgcgIGEPpSAAN24DA+kkiA6OAplQMtSFFFYpwl00DCUQtGwKxqAx9W8VRHC0J1RKzcS1O4KSSBksAniebgnkUThBlQfgADMfIAW0UdTNMnbSlmTdkTGYdsPAKeR5DXNl8laZgux0fUHBcI8Oic-tFDeCBpNk+T+hIZTVMUPAFX4MAotBGKwNhFtEWYJpEv5E40otLwjVyes9BqU05yyHRsNPPoyoqzzvN8-zApCp5woa14mpagMy2WbQYR0czzJqIaNEFLc2URY5xSrdxlBm5zSogcr3PIZUvQAMSoAAlbAdoYnTJGaJQox8Nxuq0RMBoqOMEyTDw5FhdxD0ekr5re-4fq+GhRwBkCljGrxINkYzZGcUVTIqLd4yhZpvEMdNpscvs3QxmT-hoKJ-l+fG2vLFoWxqS7HFDXZBSjNlEvyZoahKY09DRt1IDmN65KJJSVL6ABXTgIEC5rfQnVrA0kE0lGMZF1GMLQCm4iohorY1SnGuXt0KvFiuV8rBDexafL8gLgrCxRdf17ajaA6LTZNCCUbDKMuSjTQYcQS7FGujcQa7e6lceFXfZkj6yW+v6+cDWQchaWxDThGpctThA4dTXZzmY4SLjzokC4qiI3zJXGx0j+iCesRwVHqNQDRKCVISpxBJcg01OSjTZvE8TQu76HvMa5nmfnLss0P03cN0S2xNm6i6DEglPDDjJtuQcorWceK9hkLyqNZqrX8I-w26RRxNmWGoawIxZCnqKF2sZmycUcCDfUZwahGC3n-a8C0vIBxWsHdaaCI6AJHvzHwCZvAKHrNkLcsg9gVFSpBLIegp5Qjgq4VB790FvQpAwH6VAACah9GImmJhGNQLsJTZSMMaCW0JcpCRKGcMaFxpCsLAB-CqnNua82HlpQMtQlDO3MtlOBpR7ZSAXAmNseU7alA2P4XEJBuBXngNME8zl1TAMYsDFwJNuqQn5JTNcXYILZA0KUWQxRahKJZjhDWQwwBuN2h4k08ZNhaB5McBwwk1wmidolOR7g9CCVQeeeJgMlgrEgiYOwppRTwSbGuE4ig7CeHNufMaPYomzXdO8fCN47wPifLASAJTR4ZHnM2DYUIaZOHkfPJuupmiJScPoWE5x9BFLwleXpRESLaUIabSEtM5AYWNJCHU5pYa00uomOMxl1BDVQepaSwz+bA3HuoAp+hDx2y0GuWBqUjAiPnHIBhEZUHs2eabfquRIQFJ8JGDQwZBTBiUKUTiqUYJXHnM-T2r9u4+yecWaOe1PAkwaPBcJPg6wmMqLlFsh4uz02NE2dQyjVHuQhUfE0QsWhaESsmVK1DrBVBTq4e0cheoOX8EAA */
     id: "TasksMachine",
     initial: "idle",
     predictableActionArguments: true,
@@ -64,10 +65,10 @@ const TasksMachine = createMachine(
           },
 
           EDIT: {
-            target: "editRequest",
+            target: "editing",
           },
 
-          DELETE: "confirmingDelete",
+          DELETE: "deleting",
         },
 
         // Child states for the details pane
@@ -92,151 +93,68 @@ const TasksMachine = createMachine(
 
       loading: {
         invoke: {
-          id: "fetch",
-          src: read,
-          onDone: {
-            target: "ready",
-            actions: "fetchComplete",
+          id: "load",
+          src: ApiReadMachine,
+          data: {
+            store: (context) => context.store,
           },
-          onError: {
-            target: "ready",
-            actions: "toastFailure",
-          },
+          onDone: "ready",
+          onError: "ready",
         },
       },
 
       adding: {
-        on: {
-          LOADFORM: {
-            actions: "loadForm",
-            target: "adding",
-          },
-          CREATE: {
-            actions: "prepareRecord",
-            target: "validatingNew",
-          },
-          CANCEL: {
-            target: "ready",
-          },
-        },
-      },
-
-      validatingNew: {
+        entry: "setTask",
         invoke: {
-          id: "validate",
-          src: "validate",
-          onDone: {
-            target: "creating",
-          },
-          onError: {
-            target: "adding",
-            actions: "toastValidationFailure",
-          },
-        },
-      },
-
-      creating: {
-        invoke: {
-          id: "ApiCreate",
-          src: create,
+          id: "create",
+          src: ApiCreateMachine,
           data: {
-            fields: (context) => context.fields,
-            task: (context) => context.task,
+            store: (context) => context.store,
+            task: { Status: "shared", Attachments: [] },
           },
-          onDone: {
-            target: "ready",
-            actions: "toastCreateSuccess",
-          },
-          onError: {
-            target: "adding",
-            actions: "toastFailure",
-          },
+          onDone: "ready",
+          onError: "ready",
         },
-      },
-
-      editRequest: {
-        // TODO: make sure attachment field is disabling properly - use this code
-        // after: {
-        //   3000: { target: "editing" },
-        // },
         on: {
-          LOADFORM: {
-            actions: "loadForm",
-            target: "editing",
-          },
-          CANCEL: {
-            target: "ready",
-          },
+          LOADFORM: { actions: forwardTo("create") },
+          CREATE: { actions: forwardTo("create") },
+          CANCEL: { actions: forwardTo("create") },
         },
       },
 
       editing: {
-        on: {
-          UPDATE: {
-            actions: "prepareRecord",
-            target: "validating",
-          },
-          CANCEL: {
-            target: "ready",
-          },
-        },
-      },
-
-      validating: {
+        entry: "setTask",
         invoke: {
-          id: "validate",
-          src: "validate",
-          onDone: {
-            target: "updating",
-          },
-          onError: {
-            target: "editing",
-            actions: "toastValidationFailure",
-          },
-        },
-      },
-
-      updating: {
-        invoke: {
-          id: "ApiUpdate",
-          src: update,
+          id: "update",
+          src: ApiUpdateMachine,
           data: {
-            fields: (context) => context.fields,
+            store: (context) => context.store,
+          },
+          onDone: "ready",
+          onError: "ready",
+        },
+        on: {
+          LOADFORM: { actions: forwardTo("update") },
+          UPDATE: { actions: forwardTo("update") },
+          CANCEL: { actions: forwardTo("update") },
+        },
+      },
+
+      deleting: {
+        entry: "setTask",
+        invoke: {
+          id: "delete",
+          src: ApiDeleteMachine,
+          data: {
+            store: (context) => context.store,
             task: (context) => context.task,
           },
-          onDone: {
-            target: "ready",
-            actions: "toastUpdateSuccess",
-          },
-          onError: {
-            target: "editing",
-            actions: "toastFailure",
-          },
+          onDone: "ready",
+          onError: "ready",
         },
-      },
-
-      confirmingDelete: {
         on: {
-          CANCEL: "ready",
-          DESTROY: "destroying",
-        },
-      },
-
-      destroying: {
-        invoke: {
-          id: "ApiDestroy",
-          src: destroy,
-          data: {
-            task: (context) => context.task,
-          },
-          onDone: {
-            target: "ready",
-            actions: "toastDestroySuccess",
-          },
-          onError: {
-            target: "confirmingDelete",
-            actions: "toastFailure",
-          },
+          DESTROY: { actions: forwardTo("delete") },
+          CANCEL: { actions: forwardTo("delete") },
         },
       },
     },
@@ -253,99 +171,18 @@ const TasksMachine = createMachine(
       deselect: assign(() => ({
         selected: [],
       })),
-      fetchComplete: (context, event) => {
-        if (!event.data || !event.data.success) {
-          context.toaster.send({
-            type: "TOAST",
-            message: "data could not be loaded",
-            color: "error",
-          });
-        }
-      },
-      prepareRecord: (context) => {
-        console.log(" prepareRecord! ", context.taskForm);
-      },
-      setUpdatedID: () =>
-        assign((context, event) => ({
-          updatedID: event.updatedID,
-        })),
-      loadForm: assign((context, event) => {
-        const task = event.task,
-          fields = event.fields;
-
-        if (task) {
-          // clone the task so we aren't editing the properties of the reactive original
-          const taskClone = isProxy(task) ? cloneDeep(toRaw(task)) : task;
-
-          for (const field in fields) {
-            if (Object.prototype.hasOwnProperty.call(fields, field)) {
-              if (Object.prototype.hasOwnProperty.call(taskClone, field)) {
-                fields[field] = taskClone[field];
-              }
-            }
-          }
-        }
-        console.log(event.taskForm);
-        return { taskForm: event.taskForm, fields, task };
-      }),
-      toastCreateSuccess: (context) => {
-        context.toaster.send({
-          type: "TOAST",
-          message: "task created successfully",
-        });
-      },
-      toastUpdateSuccess: (context) => {
-        context.toaster.send({
-          type: "TOAST",
-          message: "task updated successfully",
-        });
-      },
-      toastDestroySuccess: (context) => {
-        context.toaster.send({
-          type: "TOAST",
-          message: "task deleted successfully",
-        });
-      },
-      toastFailure: (context, event) => {
-        console.log(event);
-        const message =
-          event.data && event.data.message
-            ? event.data.message
-            : "An unexpected error has occurred";
-
-        context.toaster.send({
-          type: "TOAST",
-          message: message,
-          color: "error",
-        });
-      },
-      toastValidationFailure: (context) => {
-        context.toaster.send({
-          type: "TOAST",
-          message: "Please correct any form errors and try again",
-          color: "warning",
-        });
-      },
-    },
-    services: {
-      // TODO:  Can this be more concise?
-      //        validate returns a promise, do we need to wrap it in one?
-      validate: (context) =>
-        new Promise((resolve, reject) => {
-          context.taskForm.validate().then((validation) => {
-            if (validation.valid && validation.valid === true) {
-              resolve();
-            } else {
-              reject();
-            }
-          });
-        }),
+      setTask: assign((context, event) => ({
+        task: event.task,
+      })),
     },
   }
 );
 
 // Create a service
-const service = interpret(TasksMachine).onTransition(logTransition).start();
+const service = interpret(TasksMachine, { devTools: true })
+  .onTransition(logTransition)
+  .start();
+// const service = interpret(TasksMachine).start();
 
 // Create a custom service hook for this machine, that takes the service previously created.
 export const useTasksMachine = () => useActor(service);
