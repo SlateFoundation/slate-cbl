@@ -5,11 +5,18 @@ const logTransition = (state) => {
     if (typeof current === "object") {
       current = JSON.stringify(current);
     }
-    console.groupCollapsed(
-      `[#] <${state.machine.id}> transitioned to ${current}`
-    );
+    if (state.changed) {
+      console.groupCollapsed(
+        `[#] <${state.machine.id}> received event ${state.event.type} and transitioned to ${current}`
+      );
+    } else {
+      console.groupCollapsed(
+        `[#] <${state.machine.id}> received event ${state.event.type} and remained in ${current}`
+      );
+    }
     console.log("event: ", state.event);
     console.log("state: ", state);
+    console.log("machine: ", state.machine);
     console.log("context: ", state.context);
     console.groupEnd();
   }
