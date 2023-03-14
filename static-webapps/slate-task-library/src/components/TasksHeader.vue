@@ -20,7 +20,7 @@
       :disabled="!isTaskSelected"
       icon="mdi-trash-can-outline"
       color="primary"
-      @click="send({ type: 'DELETE' })"
+      @click="send({ type: 'DELETE', task })"
     />
 
     <!-- Delete confirmation component -->
