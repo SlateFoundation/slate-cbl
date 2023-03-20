@@ -1,5 +1,5 @@
 /* eslint-disable one-var */
-import { assign, createMachine, interpret, forwardTo, send } from "xstate";
+import { assign, createMachine, interpret, forwardTo } from "xstate";
 import { useActor } from "@xstate/vue";
 import { logTransition } from "./logTransition.js";
 import { useTaskStore } from "@/stores/TaskStore.js";
