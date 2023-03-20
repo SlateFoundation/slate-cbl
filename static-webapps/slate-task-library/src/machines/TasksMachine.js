@@ -57,15 +57,11 @@ const TasksMachine = createMachine(
           },
 
           OPENDETAILS: {
-            actions: assign({
-              detailsIsVisible: true,
-            }),
+            actions: "openDetails",
           },
 
           CLOSEDETAILS: {
-            actions: assign({
-              detailsIsVisible: false,
-            }),
+            actions: "closeDetails",
           },
 
           LOAD: {
@@ -158,13 +154,19 @@ const TasksMachine = createMachine(
       initialize: assign(() => ({
         store: useTaskStore(),
       })),
-      select: assign((context, event) => ({
+      select: assign({
         updatedID: null,
-        selected: [event.row],
-      })),
-      deselect: assign(() => ({
+        selected: (context, event) => [event.row],
+      }),
+      deselect: assign({
         selected: [],
-      })),
+      }),
+      openDetails: assign({
+        detailsIsVisible: true,
+      }),
+      closeDetails: assign({
+        detailsIsVisible: false,
+      }),
       setTask: assign((context, event) => ({
         task: event.task,
       })),
