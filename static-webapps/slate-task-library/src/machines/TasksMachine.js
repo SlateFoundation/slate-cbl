@@ -13,7 +13,7 @@ const toaster = useToastMachine();
 
 const TasksMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QBUCGsDWsCyqDGAFgJYB2YAxMgPICCAysgNoAMAuoqAA4D2sRALkW4kOIAB6IAtAEZm0gGwA6AJzKArMoAsmgOwAOPdLU61AGhABPKdIDMS+cx3Sdj6cubzpAJhsBfX+ZomDj4xGTkAKoActT0TGyiPHyCwqISCDLMXsyK+l6aHkZeytJ65lYI+YpeXibyNqqaeszKdv6B6Fi4hKRgikQQADYUAJJRI-HsSCBJAkIi0+mSujYq2so6qg2q8maW1k4qyvLNNnrKzXqe7SBBXaG9igBOYKgQFuR0AKIAMl8AwpNErw5qlFlIbNJpLlNGoDHZpE0fF5ygdoTtTudLtcArdOiEemRnq93uQACJfb5-QEsKZcEEpBagJYKPSKK5qZhZZQ1WFyHSojLOdHHTEXZhXFo3O4EsJ9F5vD4-Whk2nA5LzNJSeS1XI6TxZeQ6LxqbIC-YZBwqfInWSbDTaNTS-HdOXExXkGhk1UJaazRlay1eNn6XYStRqTT5ZyCozKRTyWH1LmJyMNLzO4Kux4K0lfMkTNV+hma8EZHRHepRxH6kxeIyxnSaRTaWqR+pGmxR+SZ+6E+Ukj4Uv7IL5F+kasHM6zx4o2bIKVqyOwbQWSeTxmw2CW2UomJtqPy4mXZom5iyKCBgfioIiDWD-Qa8SDkKgABS+UQpyBoIx+dHHGYSyncQpCjNRFEcQ9dmKE49F0TRBSbFttChWwtxOfde1lHNB0va9b3vKhODAEhyH+ZVvm-X9-0A-1S2nDJ8mbSNEV3ZwbHbRCLWQ7RNDQrc7D0LDjxdB4iSfN5SCgcgIGEPpSAAN24DA+kkiA6OAplQMtSFFFYpwl00DCUQtGwKxqAx9W8VRHC0J1RKzcS1O4KSSBksAniebgnkUThBlQfgADMfIAW0UdTNMnbSlmTdkTGYdsPAKeR5DXNl8laZgux0fUHBcI8Oic-tFDeCBpNk+T+hIZTVMUPAFX4MAotBGKwNhFtEWYJpEv5E40otLwjVyes9BqU05yyHRsNPPoyoqzzvN8-zApCp5woa14mpagMy2WbQYR0czzJqIaNEFLc2URY5xSrdxlBm5zSogcr3PIZUvQAMSoAAlbAdoYnTJGaJQox8Nxuq0RMBoqOMEyTDw5FhdxD0ekr5re-4fq+GhRwBkCljGrxINkYzZGcUVTIqLd4yhZpvEMdNpscvs3QxmT-hoKJ-l+fG2vLFoWxqS7HFDXZBSjNlEvyZoahKY09DRt1IDmN65KJJSVL6ABXTgIEC5rfQnVrA0kE0lGMZF1GMLQCm4iohorY1SnGuXt0KvFiuV8rBDexafL8gLgrCxRdf17ajaA6LTZNCCUbDKMuSjTQYcQS7FGujcQa7e6lceFXfZkj6yW+v6+cDWQchaWxDThGpctThA4dTXZzmY4SLjzokC4qiI3zJXGx0j+iCesRwVHqNQDRKCVISpxBJcg01OSjTZvE8TQu76HvMa5nmfnLss0P03cN0S2xNm6i6DEglPDDjJtuQcorWceK9hkLyqNZqrX8I-w26RRxNmWGoawIxZCnqKF2sZmycUcCDfUZwahGC3n-a8C0vIBxWsHdaaCI6AJHvzHwCZvAKHrNkLcsg9gVFSpBLIegp5Qjgq4VB790FvQpAwH6VAACah9GImmJhGNQLsJTZSMMaCW0JcpCRKGcMaFxpCsLAB-CqnNua82HlpQMtQlDO3MtlOBpR7ZSAXAmNseU7alA2P4XEJBuBXngNME8zl1TAMYsDFwJNuqQn5JTNcXYILZA0KUWQxRahKJZjhDWQwwBuN2h4k08ZNhaB5McBwwk1wmidolOR7g9CCVQeeeJgMlgrEgiYOwppRTwSbGuE4ig7CeHNufMaPYomzXdO8fCN47wPifLASAJTR4ZHnM2DYUIaZOHkfPJuupmiJScPoWE5x9BFLwleXpRESLaUIabSEtM5AYWNJCHU5pYa00uomOMxl1BDVQepaSwz+bA3HuoAp+hDx2y0GuWBqUjAiPnHIBhEZUHs2eabfquRIQFJ8JGDQwZBTBiUKUTiqUYJXHnM-T2r9u4+yecWaOe1PAkwaPBcJPg6wmMqLlFsh4uz02NE2dQyjVHuQhUfE0QsWhaESsmVK1DrBVBTq4e0cheoOX8EAA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QBUCGsDWsCyqDGAFgJYB2YAxMgPICCAysgNoAMAuoqAA4D2sRALkW4kOIAB6IAtAEZmAdgBMAOgCcKgKwAOAGzqALCoXyAzMYA0IAJ5SFevUunaFcxy73MNKgL5eLaTDj4xGTkAKoActT0TGyiPHyCwqISCDLy2kpymgrGCtqa6vnGehbWqZrGSrlyKtnM9QoK6sY+fuhYuISkYEpEEAA2FACS4UMx7Egg8QJCIpMpkgbSSs6mesbSttracnKlUsbMypoF2iqmtbXM0uqtIP4dQd1KAE5gqBCW5HQAogAyPwAwuM4rwZkl5lJNhlNtdpJtjHJjJojuYrFI9NJ7OoVHospobsx1po7g9Al0yK93p9yAARH6-AHAlgTLhgxJzUALaS5By1HLbLHaPGmfapQ4qBwVTZ5Yz6ZraUntcnBHpvD5fKgABR+4XpyBoQz+dBZoISs2SNlxqgJeLx8P0OzFiyxShxeJOhOJSoCnVVVI15EBfyov31huNpsm0w5ltSCjUSnk6kaBl0wvWJXR4o8Uo2jW0cr0Cp9jwpaupXxDNFpUbZ5ohXKkRUycm0qMRwuM22djk0Sj0KMacnkeicKmkpZVz3VNJrtdi0fZFshqXy9iywoTTQJ6jbYpTSZU9U07jO6g8eSnfpnlfIP1pYzrU2XjfEUg0Sm2CYMOlMHhOMV3CUE5FGYHRMTOFRFV8e5lRvSlZy+ekAWQH5nxjFcm1SQdVBxFFcXApEKnUXs2xAv8FB0XRmA2eRryeSl+m4D5SCgcgIGEHpSAAN24DAemYj4MNfTl3zXTQ5DdSD3GubIU2kZ0RyqPJtlqXRoUUBjyyUISIDY8gwBeF5uBeJROH6VB+AAM1MgBbXSWIgESGzEhZ8gySSDDkZpZFyJpexuECiVPXFFHPRFtP9D59JIdjOMpXj+J6PB1X4MAXPBNypAvZZMWMaDJP0S992zRxmAcb82xTLINBgtpfUYnoYoMoyTLMiyrNsl4HNS950sy2NV0kC8KrkPEfz0PJpAJTQxRyCr3RuIx10KJooueFq4vIataQAMSoAAlbBBqw8TJB0ZQpsaAqfNMFFSOzQ8PHqdtrg0dQtGFDbKS29jAUOn4aDQ063wWST+2uWj1GkRQZtPRTsxyZY1rHfJ4cMOUfuaiBYv+mhwkBf5Qey1JqoHRodyyWHsizMpcgqtNzim4oeQJbGlEgGZtoS7iSD4gSlAAV04CArIyxd6yyuNJHzN1FCaI5tBmnENDFcrKqcarnE0Or6rgxqdK5wRtra0zzMsmz7OF0XxZJmWNmWY9PpcBENAqOnEAWt1cWW5hVqcW5YLJBCemNgzdoO477dXOwjzZ6QNHWeFTgPZQXvhbdcWaDYOfD7bQi1WlgfQyWX1cmXHEqaDigJGoDDUIkxQZgdoPdqj3AnIOGrLf18-xwnibLzCwcQT63R5WwPfGwseXmlFW+hQpUSKDmIDAQYTfirjen55KlHXzeJdZcvpeG0wk30TECWKHJ3Dm7NJHOFYiWqjYdBTYs143sAt8M4zzadStj1A+P8BrD1Eg7ZQyJdhaC0HKU8BRHplBdG6FM+RajU2aHVb+m8DL0gYIdKgABNGO2FE4ZE+ugnkbYCq1GdLoTIs1CinCMIObuBte7PEPr-AygICZEz+GQ8SjQxoKCxGmR2Rw8TOglHmGUhZ5Tdh8LBEg3B17wEmCHJqZoz7YSfnkJMfkYZwxOJiZ0F505hV1k4IkhhJzB3gk1XoAwwC6KGvowckpVjFEOPUFMFQ9iP0RFJaadgxx2D3DoDmSF3FnQWDAzI19bQ4iyMgqE+QBxDmcKOccDie7TiYk5NicTR7lELHhbIagcg1F0GiFB8InbiJHJnEczRxEcz+qU0mkhxrKCRLDZozA4FEXVlkL8VEjj+yiVRHEed9Jb26ZXWGRiCp2OgjcXx6szggRUFkKZlN3BUVwbwuKSzVw7KmrIJEcocjHh8s6HI6dHCymzjyPZKivBAA */
     id: "TasksMachine",
     initial: "idle",
     predictableActionArguments: true,
@@ -21,6 +21,7 @@ const TasksMachine = createMachine(
       selected: [],
       updatedID: null,
       store: null,
+      detailsIsVisible: false,
       taskForm: null,
       fields: null,
       task: null,
@@ -55,6 +56,18 @@ const TasksMachine = createMachine(
             actions: "deselect",
           },
 
+          OPENDETAILS: {
+            actions: assign({
+              detailsIsVisible: true,
+            }),
+          },
+
+          CLOSEDETAILS: {
+            actions: assign({
+              detailsIsVisible: false,
+            }),
+          },
+
           LOAD: {
             target: "loading",
           },
@@ -69,25 +82,6 @@ const TasksMachine = createMachine(
           },
 
           DELETE: "deleting",
-        },
-
-        // Child states for the details pane
-        initial: "detailsOpen",
-        states: {
-          detailsClosed: {
-            on: {
-              OPENDETAILS: {
-                target: "detailsOpen",
-              },
-            },
-          },
-          detailsOpen: {
-            on: {
-              CLOSEDETAILS: {
-                target: "detailsClosed",
-              },
-            },
-          },
         },
       },
 

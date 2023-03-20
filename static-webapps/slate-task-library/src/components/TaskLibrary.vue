@@ -51,14 +51,11 @@ export default {
 
       return selected && selected.length > 0 ? selected[0] : null;
     },
-    detailsIsOpen() {
-      return this.state.matches({ ready: "detailsOpen" });
-    },
     tableCols() {
-      return this.detailsIsOpen ? 10 : 12;
+      return this.state.context.detailsIsVisible ? 10 : 12;
     },
     detailsCols() {
-      return this.detailsIsOpen ? 2 : 0;
+      return this.state.context.detailsIsVisible ? 2 : 0;
     },
   },
 };

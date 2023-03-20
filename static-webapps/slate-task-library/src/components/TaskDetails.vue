@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="detailsIsOpen">
+  <v-card v-if="state.context.detailsIsVisible">
     <v-card-item>
       <v-card-title>
         <v-row>
@@ -55,9 +55,6 @@ export default {
       const selected = this.state.context.selected;
 
       return selected && selected.length > 0 ? selected[0] : null;
-    },
-    detailsIsOpen() {
-      return this.state.matches({ ready: "detailsOpen" });
     },
     activeAttachments() {
       const attachments = this.task.Attachments;
