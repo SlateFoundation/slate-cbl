@@ -167,9 +167,9 @@ const TasksMachine = createMachine(
       closeDetails: assign({
         detailsIsVisible: false,
       }),
-      setTask: assign((context, event) => ({
-        task: event.task,
-      })),
+      setTask: assign({
+        task: (context, event) => event.task,
+      }),
     },
   }
 );
