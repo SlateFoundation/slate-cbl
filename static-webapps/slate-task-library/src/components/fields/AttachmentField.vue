@@ -109,7 +109,7 @@
             color="primary"
             variant="elevated"
             rounded
-            @click="send('CANCEL')"
+            @click="send({ type: 'CANCEL' })"
           >
             Cancel
           </v-btn>

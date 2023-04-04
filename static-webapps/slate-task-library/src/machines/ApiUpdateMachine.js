@@ -4,7 +4,7 @@ import { cloneDeep, isEqual } from "lodash";
 
 const ApiUpdateMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QFUAOECGAXMBZDAxgBYCWAdmAHQkQA2YAxANoAMAuoqKgPawlYluZTiAAeiALQBWAJwtKADhYAWBQDYA7HLU6WCgDQgAnog0BGSlLUK5ZhVakarAJgC+rw2kw58xclUh+cigGABkAeQBBABEAMXCAJVxWDiQQHj4BIRFxBAk1FUoAZiLlM2U9UqkFDWdDEwQ7BUpzZSKZKU7lKWdus3dPdGw8QlIKSkCBMhCAYUiAORmAUVCUkQyg7LTciT7LGXUzGVUFZWcWIvrEZyLm6qkWKTMnXRY3DxAvYd8xgIgg6YMZAABWikQAKks1mkNllhNtJEUzFJKDopKUFAojgdnDIrggNPIWNZbEU1E9NO9Bt4Rn5xgA3DC0GjYYIMCBCKjkencADWVEZzJp0K4vE28NAuRslBkBSxLDM5WUMnOl2MiFUinaGiRSg6LA0yg0A0+Qx8o38lEFLKmITAACd7dx7ZRULRsAAzZ0AWytTJtYBF6TFcJykjszkUcmUanaFQOHSk+Ik5haMbMxNj6ix5JNX3NdKoBHtYFZgI5425fKokVQJHzgfY6xDgglYkQVjUlD0MiK6NOHQ0Ovx0vRZjUFVuahkcippppP0txdLtvZnOoZB5-MotfrZsDZlSosyrbDCCszVuGZuFyNMeU+KO8mcSsVBXOFTaef3i-Gy7LdqOs6rrulgXr2r6u4NkGsKngi56lJQ3TKN0ZK9rUqjJqmhoFCqyqaOSTjuB8ZDcBAcAiA2v5gM2J5bJKkgaGokZOM8sYFG0jwaMmyIyJQvRqIq6Jkj0WLfguFqVnQNEwi29HtnkrQtE8TFkioRRcfihLdtYNjmM4ziyL0RTid8kl-ACUC0eKZ67HIxRlJ+g5vKoSbqggMaWLpvY6BOfbkmopkFr8fpCgB1mhvBEh2F2pxFOYlL9qU+IlF5mIqjcsgxgqQW0iF-62hFcEMQguLKKiLBvM4ChIj05IGO5qUXiqjxHEOQ6BR8VHmZQFYyceNnwTUMqnIJMhaEO3QTvizhDpQQkYj0XRlMRrhAA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFUAOECGAXMBZDAxgBYCWAdmAHQkQA2YAxANoAMAuoqKgPawlYluZTiAAeiALQBGFgBYAzJQCcUgKwAOdavlz5U2QBoQAT0RSAbOuUsATDYDsLe6tnqZ62QF9PRtJhz4xORUkPzkUAwAMgDyAIIAIgBi0QBKuKwcSCA8fAJCIuII0iyq9pSysqpq6jbydrJyRqYINurmlHL29uYVqg6qSvZePiB+2HiEpBSUoQJkEQDCsQByCwCikRkiOWH5WYUSSnKUjkrm8pZtTvKGJojy8qrKUh42LOYu6o+q3r7o44EpiEIGF5gxkAAFeKxAAqay2WR2eWE+0k3SsXXO5nMNik3QuNiaZnMZQadkcNnOZIqv1G-wCk2ClAAbhhaDRsOEGBAhFRyMzuABrKis9n+MAIri8XYo0AHC6KNS2JytPTmKSEu4IfTtPF6FhOJxDBy0sYMoLTUUcuYRMAAJzt3DtlFQtGwADMnQBbFls60S9jbaXIgqSLEdFj6NwPNqyBxElpPDT2Sl2AaqbSlcym+kTC1UACu9K5POm-KFVFiqBIZoDmSluUEsrEZg1ynsXwulSkShsDXMCZe7TaqgNva0aYUOfFgKZRf8Jd51DIAuFlCrNdzTCk9eywaboe1akoDgNJXOpzVCdaZRcXXUJQN-Xs04BjOm885YPtjudro93rrtWtaSnujZ7HKiBuJQNywTiZxOGoA5ajYSbqCm3QNDqSiyEM3gjGQ3AQHAIi1rOFBBuBzYHBqx5tA4bgGj2GhKAmEjqs8DhYb2PbdD8Ixke+fJ0GAlEyoe0gWGU9EdjIkZKCxg4kuUtiUuYyo1Hxr7mkCMwgjaYkhqiRQ4YolR9nYjyyCS6iDgo1h2Diqg9CSLCaNpea6VaC7zIZB7Gex8hKMod43BqOgXMhzRSDoDmUlIMWyC84UeeRhbFr5iL7hBLZFNUlBVE46hHDU8joXGg6xUcdjFUlD4xalQmUKWolZVREkXE8GrnIMAxKEc3QJvIQzlK49h4nGw32Dh+GeEAA */
     id: "UpdateMachine",
     initial: "idle",
     context: {
@@ -36,7 +36,7 @@ const ApiUpdateMachine = createMachine(
           id: "validate",
           src: "validate",
           onDone: {
-            target: "creating",
+            target: "updating",
             actions: "prepareUpdates",
           },
           onError: {
@@ -46,7 +46,7 @@ const ApiUpdateMachine = createMachine(
         },
       },
 
-      creating: {
+      updating: {
         entry: "notify",
         invoke: {
           id: "ApiUpdate",

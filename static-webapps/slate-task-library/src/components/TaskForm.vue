@@ -265,25 +265,20 @@ export default {
     },
   },
   watch: {
+    // We can't load the form until it is available, so we watch it and load it when it becomes available
     taskform() {
       const me = this;
 
       if (me.state.matches("editing")) {
+        const { task, taskform: form, fields } = me;
+
         me.reset();
-        me.send({
-          type: "LOADFORM",
-          task: me.task,
-          form: me.taskform,
-          fields: me.fields,
-        });
+        me.send({ type: "LOADFORM", task, form, fields });
       } else if (me.state.matches("adding")) {
+        const { taskform: form, fields } = me;
+
         me.reset();
-        me.send({
-          type: "LOADFORM",
-          task: { Attachments: [] },
-          form: me.taskform,
-          fields: me.fields,
-        });
+        me.send({ type: "LOADFORM", task: { Attachments: [] }, form, fields });
       }
     },
   },
