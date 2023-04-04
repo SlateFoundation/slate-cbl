@@ -10,6 +10,7 @@
           variant="elevated"
           rounded
           :disabled="isDeleting"
+          :loading="isDeleting"
           @click="send({ type: 'DESTROY' })"
         >
           Delete
