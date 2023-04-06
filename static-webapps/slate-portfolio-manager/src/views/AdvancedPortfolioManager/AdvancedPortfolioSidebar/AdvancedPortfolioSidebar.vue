@@ -139,7 +139,6 @@ export default {
       }));
     },
 
-    // TODO:  We no longer need this property for this component, but it is being passed throughout the component hierarchy, so look into it before removing
     visibleLevels() {
       const details = this.studentCompetencyDetails;
       return details ? details.data.map((portfolio) => portfolio.Level) : [];
