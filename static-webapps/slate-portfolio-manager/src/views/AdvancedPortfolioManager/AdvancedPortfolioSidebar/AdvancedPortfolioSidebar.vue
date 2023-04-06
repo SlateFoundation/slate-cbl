@@ -62,26 +62,27 @@
 
       <ol class="list-unstyled">
         <li
-          v-for="Level in availableLevels"
+          v-for="Level in levels"
           :key="Level"
         >
-          <new-level-panel
-            :Level="Level"
-            :StudentID="studentCompetencyDetails.Student.ID"
-            :CompetencyID="studentCompetencyDetails.Competency.ID"
-          />
-        </li>
-        <li
-          v-for="portfolio in studentCompetencyDetails.data"
-          :key="portfolio.ID"
-        >
-          <level-panel
-            :portfolio="portfolio"
-            :demonstrations="demonstrations"
-            :skills-by-i-d="skillsByID"
-            :show-hidden-items="showHiddenItems"
-            :visible-levels="visibleLevels"
-          />
+          <template v-if="Level.portfolio">
+            <level-panel
+              v-if="Level.portfolio"
+              :portfolio="Level.portfolio"
+              :demonstrations="demonstrations"
+              :skills-by-i-d="skillsByID"
+              :show-hidden-items="showHiddenItems"
+              :visible-levels="visibleLevels"
+            />
+          </template>
+          <template v-else>
+            <new-level-panel
+              v-if="!Level.portfolio"
+              :Level="Level.level"
+              :StudentID="studentCompetencyDetails.Student.ID"
+              :CompetencyID="studentCompetencyDetails.Competency.ID"
+            />
+          </template>
         </li>
       </ol>
     </template>
@@ -130,11 +131,15 @@ export default {
   computed: {
     ...mapStores(useCompetency, useDemonstration, useStudentCompetency, useDemonstrationSkill),
 
-    availableLevels() {
-      const maxLevel = Math.max(this.$site.minLevel - 1, ...this.visibleLevels);
-      return range(maxLevel + 1, this.$site.maxLevel + 1).reverse();
+    levels() {
+      const levelRange = range(this.$site.minLevel, this.$site.maxLevel + 1).reverse();
+      return levelRange.map((level) => ({
+        level,
+        portfolio: this.studentCompetencyDetails.data.find((item) => item.Level === level),
+      }));
     },
 
+    // TODO:  We no longer need this property for this component, but it is being passed throughout the component hierarchy, so look into it before removing
     visibleLevels() {
       const details = this.studentCompetencyDetails;
       return details ? details.data.map((portfolio) => portfolio.Level) : [];
