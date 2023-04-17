@@ -72,7 +72,7 @@
               :demonstrations="demonstrations"
               :skills-by-i-d="skillsByID"
               :show-hidden-items="showHiddenItems"
-              :visible-levels="visibleLevels"
+              :enrolled-levels="enrolledLevels"
             />
           </template>
           <template v-else>
@@ -139,7 +139,7 @@ export default {
       }));
     },
 
-    visibleLevels() {
+    enrolledLevels() {
       const details = this.studentCompetencyDetails;
       return details ? details.data.map((portfolio) => portfolio.Level) : [];
     },
