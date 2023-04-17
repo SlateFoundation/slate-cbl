@@ -113,7 +113,7 @@ const methods = {
       axios
         .post(
           me.getRequestUrl(`${me.path}/destroy`),
-          { data: [{ yo: ID }] },
+          { data: [{ ID }] },
           me.getRequestHeaders()
         )
         .then((response) => {
