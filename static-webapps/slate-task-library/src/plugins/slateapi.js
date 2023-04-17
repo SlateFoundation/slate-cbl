@@ -20,208 +20,120 @@ const props = {
 };
 
 const methods = {
-  async fetch() {
+  load() {
     const me = this;
 
-    me.loading = true;
-
-    let success = false;
-    let data,
-      message = null;
-
-    await axios
-      .get(me.getRequestUrl(me.path), me.getRequestHeaders())
-      .then(({ data: res }) => {
-        if (res) {
-          success = res.success;
-          message = res.data.message;
-        }
-
-        if (success === true) {
-          me.data = me.transformData(res.data);
-          me.total = res.total;
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        message = error.message;
-
-        return error;
-      });
-
-    me.loading = false;
-
-    return { success, data, message };
-  },
-  async create(item) {
-    const me = this,
-      blank = Object.assign({}, me.blankRecord),
-      payload = Object.assign(blank, item);
-
-    me.loading = true;
-
-    let success = false;
-    let data,
-      message = null;
-
-    await axios
-      .post(
-        me.getRequestUrl(`${me.path}/save`),
-        {
-          data: [payload],
-        },
-        me.getRequestHeaders()
-      )
-      .then((res) => {
-        let record = null;
-
-        if (res.data) {
-          success = res.data.success;
-          message = res.data.message;
-        }
-
-        if (success === true) {
-          // retrieve the updated record from the response
-          if (res.data && res.data.data && res.data.data.length === 1) {
-            record = res.data.data[0];
+    return new Promise((resolve, reject) => {
+      axios
+        .get(me.getRequestUrl(me.path), me.getRequestHeaders())
+        .then((response) => {
+          if (response.data?.success) {
+            me.data = me.transformData(response.data.data);
+            me.total = parseInt(response.data.total, 10);
           }
-
-          if (record && record.ID) {
-            // add the record to the current data array
-            me.data.unshift(record);
-
-            data = record;
-          } else {
-            // updated record was not valid
-            success = false;
-            message = "server response did not contain a valid record object";
-          }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        message = error.message;
-      });
-
-    me.loading = false;
-
-    return { success, data, message };
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
-  async update(updates, original) {
+
+  create(item) {
     const me = this;
 
-    me.loading = true;
+    const payload = me.prepareRecord(item);
 
-    const payload = updates;
-
-    /**
-     * ?? implement this later ??
-     * seems like it would be useful to just be able to send changes and optionally the original record
-     * and let this method construct the payload, but with tasks I need to transform the data anyway,
-     * specifically Skills, so I wouldn't need it right now.
-     * TODO: create a skills field component that returns the value needed for the API update then implement this?
-     */
-    // if (original) {
-    //   payload = Object.fromEntries(
-    //     Object.entries(updates).filter(
-    //       ([key, val]) => key in original && !isEqual(original[key], val)
-    //     )
-    //   );
-    // }
-
-    let success = false;
-    let data,
-      message = null;
-
-    await axios
-      .post(
-        me.getRequestUrl(`${me.path}/save`),
-        {
-          data: [payload],
-        },
-        me.getRequestHeaders()
-      )
-      .then((res) => {
-        let updatedRecord = null;
-
-        if (res.data) {
-          success = res.data.success;
-          message = res.data.message;
-        }
-
-        if (success === true) {
-          // retrieve the updated record from the response
-          if (res.data && res.data.data && res.data.data.length === 1) {
-            updatedRecord = res.data.data[0];
-          }
-
-          if (updatedRecord && updatedRecord.ID) {
-            // find index of returned record in current data array
-            const idx = me.data.findIndex((rec) => rec.ID === updatedRecord.ID);
-
-            // update the record in the current data array
-            if (idx > -1 && updatedRecord.Class === me.data[idx].Class) {
-              me.data[idx] = updatedRecord;
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          me.getRequestUrl(`${me.path}/save`),
+          {
+            data: [payload],
+          },
+          me.getRequestHeaders()
+        )
+        .then((response) => {
+          if (response.data?.success) {
+            if (response.data.data?.length === 1) {
+              me.data.unshift(response.data.data[0]);
+              me.total--;
             }
-
-            data = updatedRecord;
-          } else {
-            // updated record was not valid
-            success = false;
-            message = "server response did not contain a valid record object";
           }
-        } else {
-          message = me.getErrorMessage(res);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        message = error.message;
-      });
-
-    me.loading = false;
-
-    return { success, data, message };
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
-  async destroy(ID) {
+
+  update(updates) {
+    const me = this,
+      payload = me.prepareRecord(updates);
+
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          me.getRequestUrl(`${me.path}/save`),
+          {
+            data: [payload],
+          },
+          me.getRequestHeaders()
+        )
+        .then((response) => {
+          if (response.data?.success === true) {
+            // retrieve the updated record from the response
+            if (response.data?.data?.length === 1) {
+              const updatedRecord = response.data.data[0];
+
+              // find index of returned record in current data array
+              const idx = me.data.findIndex(
+                (rec) => rec.ID === updatedRecord.ID
+              );
+
+              // update the record in the current data array
+              if (idx > -1 && updatedRecord.Class === me.data[idx].Class) {
+                me.data[idx] = updatedRecord;
+              }
+            }
+          }
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
+
+  destroy(ID) {
     const me = this;
 
-    me.loading = true;
-
-    let success = false;
-    let data,
-      message = null;
-
-    const response = await axios
-      .post(
-        me.getRequestUrl(`${me.path}/destroy`),
-        { data: [{ ID }] },
-        me.getRequestHeaders()
-      )
-      .then((res) => {
-        if (res.data) {
-          success = res.data.success;
-          message = res.data.message;
-        }
-
-        if (success === true) {
-          // Remove the record from the store's data
-          me.data = me.data.filter((rec) => rec.ID !== ID);
-        } else {
-          message = me.getErrorMessage(res);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        message = error.message;
-      });
-
-    me.loading = false;
-
-    return { success, data, message };
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          me.getRequestUrl(`${me.path}/destroy`),
+          { data: [{ yo: ID }] },
+          me.getRequestHeaders()
+        )
+        .then((response) => {
+          if (response.data?.success) {
+            me.data = me.data.filter((rec) => rec.ID !== ID);
+            me.total--;
+          }
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
+
   transformData(data) {
     return data;
+  },
+  prepareRecord(record) {
+    return record;
   },
   setSortBy: function (sortBy) {
     this.sortBy = sortBy;
@@ -309,7 +221,15 @@ const methods = {
     return me.api.host;
   },
   getErrorMessage(res) {
-    if (res.data.message && res.data.message.length > 0) {
+    if (res.name === "AxiosError" && res.message) {
+      return res.message;
+    }
+
+    if (res.message && res.message.length > 0) {
+      return res.message;
+    }
+
+    if (res.data?.message && res.data.message.length > 0) {
       return res.data.message;
     }
 
@@ -323,10 +243,10 @@ const methods = {
     }
 
     // Added for potential errors in destroy operation
-    if (res.data && res.data.failed && Array.isArray(res.data.failed)) {
+    if (res.data?.failed && Array.isArray(res.data.failed)) {
       return res.data.failed.map(({ errors }) => errors).join(", ");
     }
-    return "";
+    return "An unexpected error has occurred";
   },
 };
 
