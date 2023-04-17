@@ -9,7 +9,7 @@
               class="mb-1"
               size="x-small"
               icon="mdi-close"
-              @click="send({ type: 'CLOSEDETAILS' })"
+              @click="send({ type: 'close.details' })"
             >
             </v-btn>
           </v-col>
@@ -39,11 +39,12 @@
 </template>
 
 <script>
-import { useTasksMachine } from "@/machines/TasksMachine.js";
+// import { useTasksMachine } from "@/machines/TasksMachine.js";
+import { useDataTableMachine } from "@/machines/DataTableMachine.js";
 
 export default {
   setup() {
-    const { state, send } = useTasksMachine();
+    const { state, send } = useDataTableMachine();
 
     return {
       state,
@@ -52,9 +53,14 @@ export default {
   },
   computed: {
     task() {
-      const selected = this.state.context.selected;
+      const selected = this.state.context.selected,
+        store = this.state.context.store;
 
-      return selected && selected.length > 0 ? selected[0] : null;
+      if (Array.isArray(selected) && selected.length > 0) {
+        return store.data[selected[0]];
+      }
+
+      return null;
     },
     activeAttachments() {
       const attachments = this.task.Attachments;

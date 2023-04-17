@@ -5,14 +5,18 @@
 
   <v-col cols="5" class="text-right">
     <!-- Add task button -->
-    <v-btn icon="mdi-plus" color="primary" @click="send({ type: 'ADD' })" />
+    <v-btn
+      icon="mdi-plus"
+      color="primary"
+      @click="send({ type: 'add.item' })"
+    />
 
     <!-- Edit task button -->
     <v-btn
       :disabled="!isTaskSelected"
       icon="mdi-pencil"
       color="primary"
-      @click="send({ type: 'EDIT' })"
+      @click="send({ type: 'edit.item' })"
     />
 
     <!-- Delete task Button -->
@@ -20,7 +24,7 @@
       :disabled="!isTaskSelected"
       icon="mdi-trash-can-outline"
       color="primary"
-      @click="send({ type: 'DELETE', task })"
+      @click="send({ type: 'delete.item', task })"
     />
 
     <!-- Delete confirmation component -->
@@ -30,12 +34,12 @@
 
 <script>
 import DeleteConfirmation from "./DeleteConfirmation.vue";
-import { useTasksMachine } from "@/machines/TasksMachine.js";
+import { useDataTableMachine } from "@/machines/DataTableMachine.js";
 
 export default {
   components: { DeleteConfirmation },
   setup() {
-    const { state, send } = useTasksMachine();
+    const { state, send } = useDataTableMachine();
 
     return {
       state,
@@ -44,9 +48,14 @@ export default {
   },
   computed: {
     task() {
-      const selected = this.state.context.selected;
+      const selected = this.state.context.selected,
+        store = this.state.context.store;
 
-      return selected && selected.length > 0 ? selected[0] : null;
+      if (Array.isArray(selected) && selected.length > 0) {
+        return store.data[selected[0]];
+      }
+
+      return null;
     },
     isTaskSelected() {
       return this.task !== null;

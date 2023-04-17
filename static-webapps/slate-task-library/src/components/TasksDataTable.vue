@@ -6,38 +6,31 @@
     :footer-props="{ 'itemsPerPageOptions': [10, 20, 50, 100] }" -->
   <v-data-table-server
     v-model="selected"
-    v-model:items-per-page="itemsPerPage"
-    v-model:sort-by="sortBy"
+    v-model:items-per-page="context.itemsPerPage"
+    v-model:page="context.page"
+    v-model:sort-by="context.sortBy"
     fixed-header
     height="calc(100vh - 160px)"
     :headers="headers"
     :items="data"
     item-key="ID"
     :items-length="total"
-    :loading="loading"
+    :loading="isLoading"
     loading-text="Loading... Please wait"
     density="compact"
     class="elevation-1"
-    @update:page="updatePage"
-    @update:sort-by="updateSortBy"
-    @update:items-per-page="updateItemsPerPage"
+    :disable-pagination="true"
+    @update:page="(page) => send({ type: 'configure.page', page })"
+    @update:sort-by="(sort) => send({ type: 'configure.sort.by', sort })"
+    @update:items-per-page="(limit) => send({ type: 'configure.limit', limit })"
   >
-    <!-- @update:page="updatePage" -->
-    <!-- @update:page="(page) => apiSend({ type: 'UPDATEPAGE', page: page })" -->
-
-    <!-- Parent Task column header template -->
-    <!-- This works with v-data-table but doesn't seem to be implemented in v-data-table yet in Vue 3 -->
-    <!-- <template #column.ParentTask="{ column }">
-      <ParentTaskColumnTemplate :column="column" />
-    </template> -->
-
     <!-- Item (row) templates -->
-    <template #item="{ item }">
+    <template #item="{ item, index }">
       <RowTemplate
         :item="item"
-        :selected="isSelected(item)"
-        @rowclick="onRowClick"
-        @dblclick="onRowDblClick"
+        :selected="selected.indexOf(index) > -1"
+        @rowclick="() => send({ type: 'select.row', index })"
+        @dblclick="() => send({ type: 'open.details', index })"
       />
     </template>
 
@@ -63,7 +56,7 @@
 import RowTemplate from "@/components/templates/RowTemplate.vue";
 import SettingsMenu from "@/components/SettingsMenu.vue";
 import { useTaskStore } from "@/stores/TaskStore.js";
-import { useTasksMachine } from "@/machines/TasksMachine.js";
+import { useDataTableMachine } from "@/machines/DataTableMachine.js";
 import { storeToRefs } from "pinia";
 
 export default {
@@ -74,17 +67,13 @@ export default {
   },
   setup() {
     const taskStore = useTaskStore(),
-      { data, loading, total } = storeToRefs(taskStore),
-      { state, send } = useTasksMachine();
+      { data, total } = storeToRefs(taskStore),
+      { state, send } = useDataTableMachine();
 
-    // Initialize the UI state machine
-    send("INIT");
-    send("LOAD");
+    send({ type: "initialize", store: taskStore });
 
     return {
-      taskStore,
       data,
-      loading,
       total,
       state,
       send,
@@ -92,9 +81,6 @@ export default {
   },
   data() {
     return {
-      itemsPerPage: 20,
-      selectedItem: null,
-      sortBy: [],
       headers: [
         { title: "Title", align: "start", key: "Title" },
         { title: "Subtask of", align: "start", key: "ParentTask" },
@@ -103,114 +89,23 @@ export default {
         { title: "Created by", align: "center", key: "Creator" },
         { title: "Created", align: "center", key: "Created" },
       ],
-      tasks: [],
     };
   },
   computed: {
+    isLoading() {
+      return this.state.matches("Loading");
+    },
+    context() {
+      return this.state.context;
+    },
     selected() {
       return this.state.context.selected;
     },
   },
-  watch: {
-    state(state) {
-      console.log("state change: " + JSON.stringify(this.state.value));
-      if (
-        this.state.matches("deleting") &&
-        this.state.children.delete.state.matches("adding")
-      ) {
-        console.log("context", this.state.children.delete.state.context);
-      }
-      if (state.changed && state.matches("ready") && state.context.updatedID) {
-        this.selectByID(state.context.updatedID);
-      }
-    },
-    loading(isLoading) {
-      if (isLoading) {
-        this.send({ type: "DESELECT" });
-      }
-    },
-  },
-  mounted() {
-    // Add event listener on keyup
-    document.addEventListener("keyup", this.addKeyPressHandlers, false);
-  },
-  unmounted() {
-    // Add event listener on keyup
-    document.removeEventListener("keyup", this.addKeyPressHandlers);
-  },
+
   methods: {
-    isSelected(row) {
-      return this.selected.indexOf(row.value) > -1;
-    },
-    selectByID(id) {
-      const row = this.data.find((item) => item.ID === id);
-
-      this.send({ type: "SELECT", row });
-    },
-    selectByIndex(idx) {
-      const row = this.data[idx];
-
-      this.send({ type: "SELECT", row });
-    },
-    getSelectedIndex() {
-      const row = this.selected[0];
-
-      if (row) {
-        return this.data.findIndex((item) => item.ID === row.ID);
-      }
-      return -1;
-    },
-    onRowClick(row) {
-      if (!this.isSelected(row)) {
-        this.send({ type: "SELECT", row: row.value });
-      }
-    },
-    onRowDblClick() {
-      this.send({ type: "OPENDETAILS" });
-    },
-    updateSortBy(sortBy) {
-      const taskStore = useTaskStore();
-
-      taskStore.setSortBy(sortBy[0] || null);
-      taskStore.fetch();
-      this.sortBy = sortBy;
-    },
-    updatePage(page) {
-      const taskStore = useTaskStore();
-
-      taskStore.setOffset((page - 1) * this.itemsPerPage);
-      taskStore.fetch();
-    },
-    updateItemsPerPage(limit) {
-      const taskStore = useTaskStore();
-
-      taskStore.setLimit(limit);
-      taskStore.fetch();
-    },
-    addKeyPressHandlers(event) {
-      const me = this,
-        code = event.code;
-
-      if (code === "ArrowUp" && me.selected) {
-        me.arrowUp();
-      }
-      if (code === "ArrowDown" && me.selected) {
-        me.arrowDown();
-      }
-    },
-    arrowUp() {
-      const current = this.getSelectedIndex();
-
-      if (current > 0) {
-        this.selectByIndex(current - 1);
-      }
-    },
-    arrowDown() {
-      const current = this.getSelectedIndex();
-
-      if (current < this.itemsPerPage - 1) {
-        this.selectByIndex(current + 1);
-      }
+    isSelected(index) {
+      return this.selected.indexOf(index) > -1;
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent width="auto">
+  <v-dialog v-model="isVisible" persistent width="auto">
     <v-card class="confirmationDialog">
       <v-card-title class="text-h5"> Delete Task </v-card-title>
       <v-card-text>{{ title }}</v-card-text>
@@ -11,7 +11,7 @@
           rounded
           :disabled="isDeleting"
           :loading="isDeleting"
-          @click="send({ type: 'DESTROY' })"
+          @click="send({ type: 'destroy.item' })"
         >
           Delete
         </v-btn>
@@ -20,7 +20,7 @@
           variant="elevated"
           rounded
           :disabled="isDeleting"
-          @click="send({ type: 'CANCEL' })"
+          @click="send({ type: 'cancel.delete' })"
         >
           Cancel
         </v-btn>
@@ -30,28 +30,28 @@
 </template>
 
 <script>
-import { useTasksMachine } from "@/machines/TasksMachine.js";
+import { useDataTableMachine } from "@/machines/DataTableMachine.js";
 
 export default {
   props: {
     task: Object,
   },
   setup() {
-    const { state, send } = useTasksMachine();
+    const { state, send } = useDataTableMachine();
 
     return { state, send };
   },
   computed: {
-    dialog() {
-      return this.state.matches("deleting");
+    isVisible() {
+      return this.state.matches("Deleting");
     },
     title() {
       return this.task ? this.task.Title : "";
     },
     isDeleting() {
       return (
-        this.state.matches("deleting") &&
-        this.state.children.delete.state.matches("destroying")
+        this.state.matches("Deleting") &&
+        this.state.children.delete?.state.matches("Destroying")
       );
     },
   },

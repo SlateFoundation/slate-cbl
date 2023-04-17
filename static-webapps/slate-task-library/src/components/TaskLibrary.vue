@@ -18,12 +18,12 @@
     </v-row>
   </v-container>
 
-  <TaskForm />
+  <TaskForm v-if="isFormVisible" :form-machine="state.children.form" />
   <ToastSnackbar />
 </template>
 
 <script>
-import { useTasksMachine } from "@/machines/TasksMachine.js";
+import { useDataTableMachine } from "@/machines/DataTableMachine.js";
 import TasksDataTable from "@/components/TasksDataTable.vue";
 import TasksHeader from "@/components/TasksHeader.vue";
 import TaskDetails from "@/components/TaskDetails.vue";
@@ -39,7 +39,8 @@ export default {
     ToastSnackbar,
   },
   setup() {
-    const { state } = useTasksMachine();
+    // const { state } = useTasksMachine();
+    const { state } = useDataTableMachine();
 
     return {
       state,
@@ -47,9 +48,17 @@ export default {
   },
   computed: {
     task() {
-      const selected = this.state.context.selected;
+      const selected = this.state.context.selected,
+        store = this.state.context.store;
 
-      return selected && selected.length > 0 ? selected[0] : null;
+      if (Array.isArray(selected) && selected.length > 0) {
+        return store.data[selected[0]];
+      }
+
+      return null;
+    },
+    isFormVisible() {
+      return this.state.children?.form;
     },
     tableCols() {
       return this.state.context.detailsIsVisible ? 10 : 12;

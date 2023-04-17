@@ -1,26 +1,29 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="isVisible" persistent width="1024">
+    <v-dialog v-model="dialogVisible" persistent width="1024">
       <v-card>
         <!-- Task Form -->
         <v-form ref="taskform" :disabled="isDisabled">
           <v-card-title>
             <!-- Add task form header -->
-            <div v-if="state.matches('adding')">
+            <div v-if="parent.matches('Adding')">
               <v-container>
                 <v-row>
                   <v-col cols="4">
                     <span class="text-h5">Add Task</span>
                   </v-col>
                   <v-col cols="8" class="pa-0">
-                    <CloneTaskField @clone-request="cloneRequest" />
+                    <CloneTaskField
+                      :disabled="isDisabled"
+                      @clone-request="send({ type: 'clone.task' })"
+                    />
                   </v-col>
                 </v-row>
               </v-container>
             </div>
 
             <!-- Edit task form header -->
-            <div v-if="state.matches('editing')">
+            <div v-if="parent.matches('Editing')">
               <v-container>
                 <v-row>
                   <v-col>
@@ -50,7 +53,7 @@
                         :rules="titleRules"
                       ></v-text-field>
                     </v-col>
-                    <v-col v-if="isNotParentTask(fields.Subtasks)" cols="12">
+                    <v-col v-if="isNotParentTask" cols="12">
                       <ParentTaskField
                         v-model="fields.ParentTaskID"
                         label="Subtask of"
@@ -100,18 +103,18 @@
 
           <!-- Form actions footer -->
           <v-card-actions>
-            <small v-if="state.matches('adding')" class="ml-6"
+            <small v-if="parent.matches('Adding')" class="ml-6"
               >* indicates required field</small
             >
             <!-- Archive task button -->
-            <span v-if="state.matches('editing')">
+            <span v-if="parent.matches('Editing')">
               <v-btn
                 v-if="task.Status !== 'archived'"
                 :disabled="isDisabled"
                 color="primary"
                 variant="elevated"
                 rounded
-                @click="archive"
+                @click="send({ type: 'archive.task' })"
               >
                 Archive Task
               </v-btn>
@@ -123,17 +126,17 @@
                 color="primary"
                 variant="elevated"
                 rounded
-                @click="unarchive"
+                @click="send({ type: 'unarchive.task' })"
               >
                 Un-Archive Task
               </v-btn>
             </span>
             <v-spacer></v-spacer>
 
-            <!-- Dummy shared checkbox for add form - status disabled, but on -->
+            <!-- Dummy shared switch for add form - status disabled, but on -->
             <v-switch
-              v-if="state.matches('adding')"
-              v-model.lazy="dummy"
+              v-if="parent.matches('Adding')"
+              v-model.lazy="switchOn"
               label="Share with other teachers"
               color="primary"
               value="on"
@@ -141,9 +144,11 @@
               hide-details
             ></v-switch>
 
-            <!-- Shared checkbox -->
+            <!-- v-model.lazy="dummy" -->
+
+            <!-- Shared switch -->
             <v-switch
-              v-if="state.matches('editing')"
+              v-if="parent.matches('Editing')"
               v-model="fields.Status"
               label="Share with other teachers"
               color="primary"
@@ -156,24 +161,24 @@
 
             <!-- Create task button -->
             <v-btn
-              v-if="state.matches('adding')"
+              v-if="parent.matches('Adding')"
               :disabled="isDisabled"
               color="primary"
               variant="elevated"
               rounded
-              @click="send({ type: 'CREATE' })"
+              @click="send({ type: 'form.submit' })"
             >
               Create
             </v-btn>
 
             <!-- Update task button -->
             <v-btn
-              v-if="['editRequest', 'editing'].some(state.matches)"
+              v-if="parent.matches('Editing')"
               :disabled="isDisabled"
               color="primary"
               variant="elevated"
               rounded
-              @click="send({ type: 'UPDATE' })"
+              @click="send({ type: 'form.submit' })"
             >
               Update
             </v-btn>
@@ -183,7 +188,7 @@
               color="primary"
               variant="elevated"
               rounded
-              @click="send({ type: 'CANCEL' })"
+              @click="send({ type: 'cancel.form' })"
             >
               Close
             </v-btn>
@@ -196,15 +201,17 @@
 
 <script>
 import { useTaskStore } from "@/stores/TaskStore.js";
-import { useTasksMachine } from "@/machines/TasksMachine.js";
+import { useDataTableMachine } from "@/machines/DataTableMachine.js";
+import { ref, isProxy, toRaw } from "vue";
+import { useActor } from "@xstate/vue";
+
+// Field components
 import AttachmentField from "@/components/fields/AttachmentField.vue";
 import DateField from "@/components/fields/DateField.vue";
 import CloneTaskField from "@/components/fields/CloneTaskField.vue";
 import ExperienceTypeField from "@/components/fields/ExperienceTypeField.vue";
 import ParentTaskField from "@/components/fields/ParentTaskField.vue";
 import SkillsField from "@/components/fields/SkillsField.vue";
-import { ref, isProxy, toRaw } from "vue";
-import { cloneDeep } from "lodash";
 
 export default {
   components: {
@@ -215,14 +222,19 @@ export default {
     SkillsField,
     CloneTaskField,
   },
-  setup() {
+  props: {
+    formMachine: Object,
+  },
+  setup(props) {
     const taskStore = useTaskStore(),
-      { state, send } = useTasksMachine(),
+      { state: parent } = useDataTableMachine(),
+      { state, send } = useActor(props.formMachine),
       taskform = ref(null);
 
     return {
       taskStore,
       taskform,
+      parent,
       state,
       send,
     };
@@ -246,95 +258,54 @@ export default {
 
       // Validation rule for Title field
       titleRules: [(v) => Boolean(v) || "Title is required"],
+
+      // dummy model for the dialog - visibility is controlled by v-if on component
+      dialogVisible: true,
+
+      // dummy model for the status switch in adding mode
+      switchOn: ["on"],
     };
   },
   computed: {
     task() {
-      const selected = this.state.context.selected;
+      const selected = this.parent.context.selected;
 
-      return selected && selected.length > 0 ? selected[0] : null;
+      if (selected && selected.length > 0) {
+        const task = this.taskStore.data[selected[0]];
+
+        if (isProxy(task)) {
+          return toRaw(task);
+        }
+      }
+      return null;
     },
-    isVisible() {
-      return ["editRequest", "editing", "adding"].some(this.state.matches);
+    isReady() {
+      return this.state.matches("Ready");
     },
     isDisabled() {
-      return !["editing", "adding"].some(this.state.matches);
+      return !this.isReady;
     },
-    dummy() {
-      return ["on"];
+    isNotParentTask() {
+      return !(this.task?.SubTasks?.length > 0);
     },
   },
   watch: {
-    // We can't load the form until it is available, so we watch it and load it when it becomes available
+    // the form can not be loaded until it is available in the DOM, so watch the ref and initialize when it becomes available
     taskform() {
-      const me = this;
+      const me = this,
+        { task, taskform: form, fields } = me;
 
-      if (me.state.matches("editing")) {
-        const { task, taskform: form, fields } = me;
-
-        me.reset();
-        me.send({ type: "LOADFORM", task, form, fields });
-      } else if (me.state.matches("adding")) {
-        const { taskform: form, fields } = me;
-
-        me.reset();
-        me.send({ type: "LOADFORM", task: { Attachments: [] }, form, fields });
-      }
+      me.send({
+        type: "form.initialize",
+        task: me.parent.matches("Editing") ? task : null,
+        form,
+        fields,
+      });
     },
   },
   methods: {
-    loadForm(task) {
-      const me = this;
-
-      if (task) {
-        // clone the task so we aren't editing the properties of the reactive original
-        const taskClone = isProxy(task) ? cloneDeep(toRaw(task)) : task;
-
-        for (const field in me.fields) {
-          if (Object.prototype.hasOwnProperty.call(me.fields, field)) {
-            if (Object.prototype.hasOwnProperty.call(taskClone, field)) {
-              me.fields[field] = taskClone[field];
-            }
-          }
-        }
-      }
-    },
-    archive() {
-      const me = this,
-        payload = Object.assign({ ID: me.task.ID, Status: "archived" });
-
-      // update the task
-      me.taskStore.update(payload).then((result) => {
-        if (result && result.success === true) {
-          me.reset();
-          me.send({ type: "SUCCESS", updatedID: result.data.ID });
-        } else {
-          me.send({ type: "FAIL", message: result.message });
-        }
-      });
-    },
-    unarchive() {
-      const me = this,
-        payload = Object.assign({ ID: me.task.ID, Status: "private" });
-
-      // update the task
-      me.taskStore.update(payload).then((result) => {
-        if (result && result.success === true) {
-          me.reset();
-          me.send({ type: "SUCCESS", updatedID: result.data.ID });
-        } else {
-          me.send({ type: "FAIL", message: result.message });
-        }
-      });
-    },
-    reset() {
-      const me = this;
-
-      if (me.$refs.taskform) {
-        me.$refs.taskform.reset();
-      }
-    },
     cloneRequest(task, ClonedTaskID) {
+      console.log(task, ClonedTaskID);
       if (task) {
         // Remove ParentTaskId on any clones
         delete task.ParentTaskID;
@@ -346,13 +317,6 @@ export default {
       } else {
         this.ClonedTaskID = null;
       }
-    },
-    isNotParentTask() {
-      return !(
-        this.task &&
-        this.task.SubTasks &&
-        this.task.SubTasks.length > 0
-      );
     },
   },
 };
