@@ -1,29 +1,29 @@
 import { createMachine, sendParent } from "xstate";
 const ApiDeleteMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QBEwBswBcwFkCGAxgBYCWAdmAHQkQYDEA2gAwC6ioADgPawmYlcy7EAA9EAWgBMARgAslAGxKA7NIDM0yZLUBWNbICcAGhABPRLLWKDCg9IAcCyTu0KmB2QF9PJ1Bmz4xORUBIIAZiQATgC25FB0AMIAggByCQCiADLMbEgg3Lz8gsJiCOI2lGoKsm6y0jpKTDom5gjSbpRMXUz1OrLO9l4+IH5YuISkFJShZBExcXTI6QDKACoASgDyAJo5wgV8AkJ5pdWUNvbKavaSTArKSg4tiNIGlDXKynU3ctLqOt5fOgxoFJlQIHBMJEuKYFhBBFRyAA3LgAayoSQ4JFQsChML2eQORWOoFKsku50cTUkblUaiYkmeCB09kozm69jkyi00m5gJGwICE2ClAhuOhsLI8XhU2RaIxWJxeNMDGkuU4PEOxROFgMTDZn2U7kkHmqvKZ9WUnR0DQa-Ve9xq-NGQqCUzFyoWYEi0MilA4aDwmDCXBilEx2MhEoJGsKRxKiD6Vsc0ju9wMOgZ2iZ5Wk1ksClTgxtVQM3mGZC4YuELvGbrA+01xITZWuCkqMic90kdQc9hzvLer0s9ia7i7n2dgrrYOotAbhKb8Z1reuHfaNO5vfs-bMFkklAdBjUV2cSlsHin-hnIpmc1iUsbce1pIkqYP3S6CjUGlTslkygWqytgKPYGY6O+9i6M4V4gsK7pRjCcRPlqJKiC8BhvD+P6OGoGaYXcTI6NYtjuOOHiXGosGurOMoLrGqEtp2bJaLcvL1PodSAXuCA9gehapkWTD2H07Tlp4QA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QBEwBswBcwFkCGAxgBYCWAdmAHQCSEGAxANoAMAuoqAA4D2sJmJbmQ4gAHogDMAJgCslABxSpATikBGAOwyVKjQBoQAT0QAWNcwVbmzNWpkbmEtcoC+Lg6gzZ8xclQDCQgBmJABOALbkUPQEeGQE6JQQ6FhgLOxIIDx8AkIi4ggayhKUzMUaAGzaMvIa8spqBsYIsvKUUhIaJsoaEiYdfRpuHinehKQUlIFkIRFR9MmwmKHchpT8YOHpItn8gsKZBSYVGpQSMmYamtqqPU2ImiaUJjXSyibMZsxKUsMgnqkfBMqKglitDPMIEIqOQAG7cADWVAAgpwSKDlqttpldrkDqACtI5IodNcdHcjIh5Gpnso6cVtJVOp0-gCxr5JhjwZDoesyPCkZRUei4JjDIw1BkuLw9nlDpJZAolKoybd9JSWlInspXioPl8fqzRrhxn5KFzVvMwKEVqFKJw0HhMEFuBEhWiLeK2DsZXj8gricr1Fpyermk5Tg0KtHtPJmDITo43O4QGRuIsRGyTRywD6cvt-QgALQVe7FuT0ytVukSI1ebPAmh0XM430F+UINTU571Go1SrHEzyExlj7KSwyay2eyOZx1wGmybTWaRMhQPOy-FiRAVJzPExFYM3XRljpyDpdHp9AbHGTz9mNz1RDd+jv9MvmGmaKNqW-yCrKPI94NmayDQi+7YEogOolIBygVMwtQVIOw4fmUlDITUUjUkSEiYcmLhAA */
     id: "DeleteMachine",
-    initial: "idle",
+    initial: "Idle",
     context: {
       store: null,
       task: null,
     },
     states: {
-      idle: {
+      Idle: {
         always: {
-          target: "confirming",
+          target: "Confirming",
         },
       },
 
-      confirming: {
+      Confirming: {
         entry: "notify",
         on: {
-          CANCEL: { target: "done" },
-          DESTROY: { target: "destroying" },
+          "cancel.delete": { target: "Done" },
+          "destroy.item": { target: "Destroying" },
         },
       },
 
-      destroying: {
+      Destroying: {
         entry: "notify",
         invoke: {
           id: "ApiDestroy",
@@ -33,62 +33,46 @@ const ApiDeleteMachine = createMachine(
           },
           onDone: [
             {
-              target: "done",
+              target: "Done",
               actions: "toastSuccess",
               cond: "opSuccess",
             },
             {
-              target: "confirming",
+              target: "Confirming",
               actions: "toastFailure",
             },
           ],
           onError: {
-            target: "confirming",
+            target: "Confirming",
             actions: "toastFailure",
           },
         },
       },
 
-      done: {
+      Done: {
         type: "final",
-        data: (context, event) => event.data,
+        data: (_, event) => event.data,
       },
     },
   },
   {
     actions: {
-      notify: sendParent({ type: "NOTIFY" }),
+      notify: sendParent({ type: "child.transition" }),
       toastSuccess: sendParent({
-        type: "TOAST",
+        type: "send.toast",
         message: "task deleted successfully",
       }),
-      toastFailure: sendParent((context, event) => {
-        const message =
-          event.data && event.data.message
-            ? event.data.message
-            : "An unexpected error has occurred";
-
-        return {
-          type: "TOAST",
-          message: message,
-          color: "error",
-        };
-      }),
+      toastFailure: sendParent((context, event) => ({
+        type: "send.toast",
+        message: context.store.getErrorMessage(event.data),
+        color: "error",
+      })),
     },
     services: {
-      destroy: (context) =>
-        new Promise((resolve, reject) => {
-          context.store.destroy(context.task.ID).then((result) => {
-            if (result.success) {
-              resolve({ success: result.success, message: result.message });
-            } else {
-              reject({ success: result.success, message: result.message });
-            }
-          });
-        }),
+      destroy: (context) => context.store.destroy(context.task.ID),
     },
     guards: {
-      opSuccess: (context, event) => event.data.success,
+      opSuccess: (_, event) => event.data?.data?.success,
     },
   }
 );
