@@ -22,7 +22,7 @@ export default {
     const experienceTypeStore = useExperienceTypeStore(),
       { data, loading } = storeToRefs(experienceTypeStore);
 
-    experienceTypeStore.fetch();
+    experienceTypeStore.load();
 
     return {
       data,

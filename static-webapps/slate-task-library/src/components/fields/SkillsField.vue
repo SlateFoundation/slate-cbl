@@ -30,7 +30,7 @@ export default {
     const skillStore = useSkillStore(),
       { data, loading } = storeToRefs(skillStore);
 
-    skillStore.fetch();
+    skillStore.load();
 
     return {
       data,

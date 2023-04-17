@@ -5,6 +5,7 @@
         rounded
         color="primary"
         size="small"
+        :disabled="disabled"
         @click="cloneSelectionIsActive = !cloneSelectionIsActive"
         >Clone</v-btn
       >
@@ -53,6 +54,9 @@ import { useCloneTaskStore } from "@/stores/CloneTaskStore.js";
 import { storeToRefs } from "pinia";
 
 export default {
+  props: {
+    disabled: Boolean,
+  },
   emits: ["cloneRequest"],
   setup() {
     const cloneTaskStore = useCloneTaskStore(),
@@ -79,7 +83,7 @@ export default {
 
       if (query && query.length > 2 && !me.loading) {
         me.cloneTaskStore.extraParams = { q: query };
-        me.cloneTaskStore.fetch();
+        me.cloneTaskStore.load();
       }
     },
     cloneSelected(id) {

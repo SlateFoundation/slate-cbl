@@ -26,7 +26,7 @@ export default {
     const parentTaskStore = useParentTaskStore(),
       { data, loading } = storeToRefs(parentTaskStore);
 
-    parentTaskStore.fetch();
+    parentTaskStore.load();
 
     return {
       data,
@@ -49,7 +49,7 @@ export default {
 
       if (query && query.length > 2 && !this.loading) {
         parentTaskStore.extraParams = { q: query };
-        parentTaskStore.fetch();
+        parentTaskStore.load();
       }
     },
     // filter out subtasks. TODO: do this in the endpoint?
