@@ -18,7 +18,7 @@ export const ToastMachine = createMachine(
     states: {
       idle: {
         on: {
-          TOAST: {
+          "send.toast": {
             target: "toasting",
             actions: "toast",
           },
@@ -27,11 +27,11 @@ export const ToastMachine = createMachine(
 
       toasting: {
         on: {
-          TOAST: {
+          "send.toast": {
             target: "toasting",
             actions: "toast",
           },
-          UNTOAST: {
+          "remove.toast": {
             target: "idle",
             actions: "untoast",
           },

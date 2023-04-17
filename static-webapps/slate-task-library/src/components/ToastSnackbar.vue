@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import { useToastMachine } from "@/machines/ToastMachine.js";
+import { useDataTableMachine } from "@/machines/DataTableMachine.js";
 
 export default {
   setup() {
-    const { state, send } = useToastMachine();
+    const { state, send } = useDataTableMachine();
 
     return {
       state,
@@ -26,8 +26,11 @@ export default {
     };
   },
   computed: {
+    toaster() {
+      return this.state.context.toaster;
+    },
     toasterContext() {
-      return this.state.context;
+      return this.toaster.state.context;
     },
     isVisible: {
       get() {
@@ -38,7 +41,7 @@ export default {
          * The vuetify snackbar will hide itself automatically after the set timeout
          * so we need to notify the toast state machine that it has been hidden
          */
-        this.send({ type: "UNTOAST" });
+        this.send({ type: "remove.toast" });
         this.toastIsVisible = val ? val : this.toasterContext.toastIsVisible;
       },
     },
