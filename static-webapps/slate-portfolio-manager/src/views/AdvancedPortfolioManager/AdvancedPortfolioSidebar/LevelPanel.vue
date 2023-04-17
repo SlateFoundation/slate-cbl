@@ -56,7 +56,7 @@
           v-bind="skillDemo"
           :show-hidden-items="showHiddenItems"
           :level="portfolio.Level"
-          :visible-levels="visibleLevels"
+          :enrolled-levels="enrolledLevels"
           @refetch="refetch"
         />
         <div
@@ -94,7 +94,7 @@ export default {
   },
 
   props: {
-    visibleLevels: {
+    enrolledLevels: {
       type: Array,
       default: () => [],
     },
@@ -186,7 +186,7 @@ export default {
     },
 
     canDelete() {
-      const nextLevel = this.visibleLevels.find((level) => level > this.portfolio.Level);
+      const nextLevel = this.enrolledLevels.find((level) => level > this.portfolio.Level);
       return this.preppedSkillDemos.length === 0 && !nextLevel;
     },
   },
