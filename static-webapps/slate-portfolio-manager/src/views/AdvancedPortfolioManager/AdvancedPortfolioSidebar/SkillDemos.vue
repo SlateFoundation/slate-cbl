@@ -25,7 +25,7 @@
         :effective="demo.effective"
         :show-hidden-items="showHiddenItems"
         :level="level"
-        :visible-levels="visibleLevels"
+        :enrolled-levels="enrolledLevels"
         @refetch="$emit('refetch')"
       />
     </ol>
@@ -65,7 +65,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    visibleLevels: {
+    enrolledLevels: {
       type: Array,
       default: () => [],
     },

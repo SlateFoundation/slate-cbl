@@ -115,7 +115,7 @@ const shortDate = (value) => {
 
 export default {
   props: {
-    visibleLevels: {
+    enrolledLevels: {
       type: Array,
       default: () => [],
     },
@@ -166,9 +166,9 @@ export default {
       return `${FirstName} ${LastName}`;
     },
     targetLevels() {
-      const visibleLevels = this.visibleLevels.slice();
-      const higherLevels = visibleLevels.filter((l) => l > this.level);
-      const lowerLevels = visibleLevels.filter((l) => l < this.level);
+      const enrolledLevels = this.enrolledLevels.slice();
+      const higherLevels = enrolledLevels.filter((l) => l > this.level);
+      const lowerLevels = enrolledLevels.filter((l) => l < this.level);
       const targetLevels = [];
       if (higherLevels.length) {
         targetLevels.push(Math.min(...higherLevels));
