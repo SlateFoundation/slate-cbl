@@ -112,7 +112,6 @@ const DataTableMachine = createMachine(
       },
 
       Loading: {
-        entry: "notify",
         invoke: {
           id: "ApiRead",
           src: "storeLoad",
