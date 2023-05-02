@@ -39,7 +39,6 @@ export default {
     ToastSnackbar,
   },
   setup() {
-    // const { state } = useTasksMachine();
     const { state } = useDataTableMachine();
 
     return {

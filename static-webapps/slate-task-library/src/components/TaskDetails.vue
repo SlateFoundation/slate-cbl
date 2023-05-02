@@ -39,7 +39,6 @@
 </template>
 
 <script>
-// import { useTasksMachine } from "@/machines/TasksMachine.js";
 import { useDataTableMachine } from "@/machines/DataTableMachine.js";
 
 export default {
