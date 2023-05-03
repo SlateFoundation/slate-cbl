@@ -23,7 +23,6 @@ const TaskFormMachine = createMachine(
             actions: "initialize",
           },
         },
-        exit: "resetForm",
       },
 
       Ready: {
@@ -169,7 +168,6 @@ const TaskFormMachine = createMachine(
       },
 
       Done: {
-        entry: "resetForm",
         type: "final",
         data: (context, event) => event.data,
       },
@@ -185,11 +183,6 @@ const TaskFormMachine = createMachine(
         fields: (_, event) => event.fields,
         task: (_, event) => event.task,
       }),
-
-      // TODO: why doesn't this work?
-      resetForm: (context) => {
-        context.form.reset();
-      },
 
       loadForm: (context) => {
         const task = context.task,
