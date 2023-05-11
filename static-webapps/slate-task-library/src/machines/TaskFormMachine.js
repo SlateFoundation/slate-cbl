@@ -42,7 +42,7 @@ const TaskFormMachine = createMachine(
             target: "Unarchiving",
           },
           "clone.task": {
-            action: "cloneTask",
+            actions: ["assignTask", "loadForm"],
             target: "Ready",
           },
         },
@@ -205,6 +205,10 @@ const TaskFormMachine = createMachine(
           }
         }
       },
+
+      assignTask: assign({
+        task: (_, event) => event.task,
+      }),
 
       // User Notifications
       toastSuccess: sendParent((_, event) => {
