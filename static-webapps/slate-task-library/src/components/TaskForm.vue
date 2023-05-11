@@ -15,7 +15,9 @@
                   <v-col cols="8" class="pa-0">
                     <CloneTaskField
                       :disabled="isDisabled"
-                      @clone-request="send({ type: 'clone.task' })"
+                      @clone-request="
+                        (task) => send({ type: 'clone.task', task })
+                      "
                     />
                   </v-col>
                 </v-row>
