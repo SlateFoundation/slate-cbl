@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "NODE_ENV=production vite build",
     "preview": "vite preview",
     "dist": "serve -s dist",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
@@ -22,6 +22,7 @@
     "xstate": "^4.37.0"
   },
   "devDependencies": {
+    "@vue/cli-service": "~5.0.0",
     "@vitejs/plugin-vue": "^3.0.3",
     "eslint": "^8.35.0",
     "eslint-config-prettier": "^8.7.0",
