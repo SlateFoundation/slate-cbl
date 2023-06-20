@@ -153,8 +153,8 @@ const methods = {
   getRequestUrl: function (resource) {
     const me = this,
       protocol = me.api.useSSL ? "https://" : "http://",
-      host = me.getHost() || "",
-      url = `${protocol}${host}${resource}?`;
+      host = me.getHost() || null,
+      url = host ? `${protocol}${host}${resource}?` : `${resource}?`;
 
     let query = "";
 
