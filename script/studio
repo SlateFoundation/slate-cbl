@@ -65,6 +65,10 @@ fi
 if [ $launch_studio = true ]; then
     export HAB_DOCKER_STUDIO_IMAGE="ghcr.io/emergenceplatform/studio:latest"
     echo
+    echo "==> studio: ensuring Docker studio image is up to date…"
+    docker pull "${HAB_DOCKER_STUDIO_IMAGE}"
+
+    echo
     echo "==> studio: launching Docker-powered Chef Habitat studio…"
     set +e
     if ! hab studio enter -D; then
