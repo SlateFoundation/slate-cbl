@@ -72,23 +72,23 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
                     '<td class="skill-list-demo-data skill-list-demo-date">{Demonstrated:date}</td>',
                     '<td class="skill-list-demo-data skill-list-demo-level">',
                         '<div',
-                            ' class="cbl-level-colored cbl-level-{TargetLevel} <tpl if="!Override">cbl-rating-{DemonstratedLevel}</tpl>"',
+                            ' class="cbl-level-colored cbl-level-{TargetLevel} <tpl if="!this.isOverride(values)">cbl-rating-{DemonstratedLevel}</tpl>"',
                             ' title="',
-                                '<tpl if="Override">',
+                                '<tpl if="this.isOverride(values)">',
                                     '[Overridden]',
                                 '<tpl else>',
                                     '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
                                 '</tpl>',
                             '"',
                         '>',
-                            '<tpl if="Override">',
+                            '<tpl if="this.isOverride(values)">',
                                 '<i class="fa fa-check"></i>',
                             '<tpl else>',
                                 '{[fm.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(values.DemonstratedLevel))]}',
                             '</tpl>',
                         '</div>',
                     '</td>',
-                    '<tpl if="Override">',
+                    '<tpl if="this.isOverride(values)">',
                         '<td colspan="2" class="skill-list-demo-data skill-list-override">[Overridden]</td>',
                     '<tpl else>',
                         '<td class="skill-list-demo-data skill-list-demo-experience">',
@@ -223,6 +223,9 @@ Ext.define('Slate.cbl.view.demonstrations.SkillList', {
             '</tr>',
         '</tpl>',
         {
+            isOverride: function(demonstrationData) {
+                return demonstrationData.Demonstration.Class == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration';
+            },
             getStudentTaskLink: function(d) {
                 return Slate.API.buildUrl("/cbl/dashboards/tasks/student#"+d.Student.Username+"/"+d.StudentTask.Task.Section.Code+"/"+d.StudentTask.ID);
             },

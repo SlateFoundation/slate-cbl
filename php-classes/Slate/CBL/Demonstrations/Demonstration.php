@@ -215,31 +215,19 @@ class Demonstration extends \VersionedRecord
         // create new and update existing skills
         $skills = [];
         foreach ($skillsData as $skillData) {
-            // skip if DemonstratedLevel and Override is unset or null -- these will be deleted
-            if (!isset($skillData['DemonstratedLevel']) && empty($skillData['Override'])) {
-                continue;
-            }
-
             if (empty($skillData['SkillID'])) {
                 throw new Exception('demonstration skill requires SkillID be set');
             }
 
-            $override = !empty($skillData['Override']);
-            $rating = $override ? null : $skillData['DemonstratedLevel'];
-
+            // get existing or initialize new rating record
             if ($DemonstrationSkill = $existingSkills[$skillData['SkillID']]) {
                 if (!empty($skillData['TargetLevel'])) {
                     $DemonstrationSkill->TargetLevel = $skillData['TargetLevel'];
                 }
-
-                $DemonstrationSkill->DemonstratedLevel = $rating;
-                $DemonstrationSkill->Override = $override;
             } else {
                 $DemonstrationSkill = DemonstrationSkill::create([
                     'Demonstration' => $this,
                     'SkillID' => $skillData['SkillID'],
-                    'DemonstratedLevel' => $rating,
-                    'Override' => $override
                 ]);
 
                 if (!empty($skillData['TargetLevel'])) {
@@ -255,6 +243,25 @@ class Demonstration extends \VersionedRecord
                 $existingSkills[$skillData['SkillID']] = $DemonstrationSkill;
             }
 
+            // apply rating data
+            $ratingDataProvided = false;
+
+            if (array_key_exists('EvidenceWeight', $skillData)) {
+                $DemonstrationSkill->EvidenceWeight = $skillData['EvidenceWeight'];
+                $ratingDataProvided = true;
+            }
+
+            if (array_key_exists('DemonstratedLevel', $skillData)) {
+                $DemonstrationSkill->DemonstratedLevel = $skillData['DemonstratedLevel'];
+                $ratingDataProvided = true;
+            }
+
+            // skip saving if phantom and neither EvidenceWeight or DemonstratedLevel has been set
+            if ($DemonstrationSkill->isPhantom && !$ratingDataProvided) {
+                continue;
+            }
+
+            // add to new array to create/preserve
             $skills[] = $DemonstrationSkill;
         }
 

@@ -360,6 +360,9 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
                 throw new UserUnauthorizedException('rate authorization denied');
             }
 
+            // build an array of demonstration skills with non-null ratings
+            $ratingSkillsData = [];
+
             // save skills not associated with parent task
             $skills = [];
             foreach ($demonstrationSkillsData as $demonstrationSkillData) {
@@ -368,6 +371,10 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
                 }
 
                 $skills[$demonstrationSkillData['SkillID']] = true;
+
+                if (!empty($demonstrationSkillData['DemonstratedLevel'])) {
+                    $ratingSkillsData[] = $demonstrationSkillData;
+                }
             }
 
             foreach ($StudentTask->Task->TaskSkills as $TaskSkill) {
@@ -386,7 +393,7 @@ class StudentTasksRequestHandler extends \Slate\CBL\RecordsRequestHandler
             // save ratings via an attached demonstration
             $Demonstration = $StudentTask->getOrCreateDemonstration();
             $Demonstration->recordAffectedStudentCompetencies();
-            $Demonstration->applySkillsData($demonstrationSkillsData);
+            $Demonstration->applySkillsData($ratingSkillsData);
         }
 
 

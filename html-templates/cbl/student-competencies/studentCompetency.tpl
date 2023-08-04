@@ -24,6 +24,7 @@
         {dli label='Growth' value=$data->getGrowth()}
         {dli label='Progress' value=$data->getProgress()}
         {dli label='Is Level Complete?' value=tif($data->isLevelComplete(), 'Yes', 'No')}
+        {dli label='Demonstration Opportunities' value=$data->getDemonstrationOpportunities()|number_format}
         {dli label='Demonstrations Average' value=$data->getDemonstrationsAverage()|number_format:2}
         {dli label='Demonstrations Logged' value=$data->getDemonstrationsLogged()|number_format}
         {dli label='Demonstrations Missed' value=$data->getDemonstrationsMissed()|number_format}
@@ -53,7 +54,7 @@
                     <th scope="col">DemonstrationDate</th>
                     <th scope="col">Level</th>
                     <th scope="col">Rating</th>
-                    <th scope="col">Override</th>
+                    <th scope="col">Evidence Weight</th>
                 </tr>
             </thead>
             <tbody>
@@ -67,11 +68,22 @@
                         <td>#{$DemonstrationSkill.ID}</td>
                         <td>{$DemonstrationSkill.Created|date_format}</td>
                         <td>{contextLink Emergence\People\Person::getById($DemonstrationSkill.CreatorID)}</td>
-                        <td><a href="{$Demonstration->getUrl()|escape}">#{$Demonstration->ID}</a></td>
+                        <td>
+                            <a href="{$Demonstration->getUrl()|escape}">#{$Demonstration->ID}</a>
+                            {if $Demonstration->Class == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration'}
+                                (override)
+                            {/if}
+                        </td>
                         <td>{$DemonstrationSkill.DemonstrationDate|date_format}</td>
                         <td>{$DemonstrationSkill.TargetLevel}</td>
-                        <td>{tif $DemonstrationSkill.DemonstratedLevel == '0' ? 'M' : $DemonstrationSkill.DemonstratedLevel}</td>
-                        <td>{tif($DemonstrationSkill.Override, 'Yes', 'No')}</td>
+                        {if $DemonstrationSkill.DemonstratedLevel === 0}
+                            <td>M</td>
+                        {elseif $DemonstrationSkill.DemonstratedLevel === null}
+                            <td>&mdash;</td>
+                        {else}
+                            <td>{$DemonstrationSkill.DemonstratedLevel}</td>
+                        {/if}
+                        <td>{tif($DemonstrationSkill.EvidenceWeight === null, '&infin;', $DemonstrationSkill.EvidenceWeight)}</td>
                     </tr>
                 {/foreach}
             {/foreach}

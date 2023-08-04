@@ -6,7 +6,7 @@
   >
     <div class="skill-demo__rating py-1 bg-cbl-level">
       <v-icon
-        v-if="skillDemo.Override"
+        v-if="skillDemo.DemonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration'"
         icon="fa:fa fa-check"
         size="x-small"
       />
@@ -179,8 +179,8 @@ export default {
       return targetLevels;
     },
     title() {
-      const { Context, Override, StudentTask } = this.demonstration;
-      if (Override) {
+      const { Class, Context, StudentTask } = this.demonstration;
+      if (Class === 'Slate\\CBL\\Demonstrations\\OverrideDemonstration') {
         return '[Overridden]';
       }
       const taskTitle = StudentTask && StudentTask.Task.Title;
