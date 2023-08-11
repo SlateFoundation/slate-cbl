@@ -8,6 +8,7 @@
     <v-btn
       icon="mdi-login-variant"
       color="primary"
+      class="mr-2"
       @click="send({ type: 'test.auth' })"
     />
 
@@ -15,6 +16,7 @@
     <v-btn
       icon="mdi-plus"
       color="primary"
+      class="mr-2"
       @click="send({ type: 'add.item' })"
     />
 
@@ -23,6 +25,7 @@
       :disabled="!isTaskSelected"
       icon="mdi-pencil"
       color="primary"
+      class="mr-2"
       @click="send({ type: 'edit.item' })"
     />
 
