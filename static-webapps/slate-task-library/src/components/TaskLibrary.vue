@@ -19,6 +19,7 @@
   </v-container>
 
   <TaskForm v-if="isFormVisible" :form-machine="state.children.form" />
+  <Login v-if="isUnauthorized" />
   <ToastSnackbar />
 </template>
 
@@ -29,6 +30,7 @@ import TasksHeader from "@/components/TasksHeader.vue";
 import TaskDetails from "@/components/TaskDetails.vue";
 import TaskForm from "@/components/TaskForm.vue";
 import ToastSnackbar from "@/components/ToastSnackbar.vue";
+import Login from "@/components/Login.vue";
 
 export default {
   components: {
@@ -37,6 +39,7 @@ export default {
     TaskDetails,
     TaskForm,
     ToastSnackbar,
+    Login,
   },
   setup() {
     const { state } = useDataTableMachine();
@@ -58,6 +61,10 @@ export default {
     },
     isFormVisible() {
       return this.state.children?.form;
+    },
+    isUnauthorized() {
+      console.log(this.state);
+      return ["Unauthorized", "Login"].some(this.state.matches);
     },
     tableCols() {
       return this.state.context.detailsIsVisible ? 10 : 12;

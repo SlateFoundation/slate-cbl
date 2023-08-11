@@ -52,6 +52,10 @@ const DataTableMachine = createMachine(
           src: "addKeyListener",
         },
         on: {
+          "test.auth": {
+            target: "Unauthorized",
+          },
+
           // Selection events
           "select.row": {
             actions: "doSelectRow",
@@ -185,6 +189,28 @@ const DataTableMachine = createMachine(
         on: {
           "destroy.item": { actions: forwardTo("delete") },
           "cancel.delete": { actions: forwardTo("delete") },
+        },
+      },
+
+      Unauthorized: {
+        on: {
+          "cancel.dialog": {
+            target: "Ready",
+          },
+          "open.login": {
+            target: "Login",
+          },
+        },
+      },
+
+      Login: {
+        on: {
+          "cancel.dialog": {
+            target: "Ready",
+          },
+          "form.submit": {
+            target: "Ready",
+          },
         },
       },
     },
