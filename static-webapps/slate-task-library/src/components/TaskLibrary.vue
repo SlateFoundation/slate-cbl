@@ -19,7 +19,7 @@
   </v-container>
 
   <TaskForm v-if="isFormVisible" :form-machine="state.children.form" />
-  <Login v-if="isUnauthorized" />
+  <Login v-if="isUnauthenticated" />
   <ToastSnackbar />
 </template>
 
@@ -62,9 +62,8 @@ export default {
     isFormVisible() {
       return this.state.children?.form;
     },
-    isUnauthorized() {
-      console.log(this.state);
-      return ["Unauthorized", "Login"].some(this.state.matches);
+    isUnauthenticated() {
+      return ["Unauthenticated", "Login"].some(this.state.matches);
     },
     tableCols() {
       return this.state.context.detailsIsVisible ? 10 : 12;
