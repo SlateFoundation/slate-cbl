@@ -11,6 +11,7 @@ import { useActor } from "@xstate/vue";
 
 import { ToastMachine } from "@/machines/ToastMachine.js";
 import { TaskFormMachine } from "@/machines/TaskFormMachine.js";
+import { LoginFormMachine } from "@/machines/LoginFormMachine.js";
 import { ApiDeleteMachine } from "@/machines/ApiDeleteMachine.js";
 
 // import { logTransition } from "./logTransition.js";
@@ -53,7 +54,7 @@ const DataTableMachine = createMachine(
         },
         on: {
           "test.auth": {
-            target: "Unauthorized",
+            target: "Unauthenticated",
           },
 
           // Selection events
@@ -129,10 +130,16 @@ const DataTableMachine = createMachine(
               actions: "toastAPIFailure",
             },
           ],
-          onError: {
-            target: "Ready",
-            actions: "toastAPIFailure",
-          },
+          onError: [
+            {
+              target: "Unauthenticated",
+              cond: "authFailure",
+            },
+            {
+              target: "Ready",
+              actions: "toastAPIFailure",
+            },
+          ],
         },
       },
 
@@ -192,25 +199,21 @@ const DataTableMachine = createMachine(
         },
       },
 
-      Unauthorized: {
-        on: {
-          "cancel.dialog": {
-            target: "Ready",
+      // Login: {
+      Unauthenticated: {
+        invoke: {
+          id: "loginform",
+          src: LoginFormMachine,
+          data: {
+            store: (context) => context.store,
           },
-          "open.login": {
-            target: "Login",
-          },
+          onDone: "Loading",
+          onError: "Ready",
         },
-      },
-
-      Login: {
         on: {
-          "cancel.dialog": {
-            target: "Ready",
-          },
-          "form.submit": {
-            target: "Ready",
-          },
+          "form.open": { actions: forwardTo("loginform") },
+          "form.submit": { actions: forwardTo("loginform") },
+          "form.cancel": { target: "Ready" },
         },
       },
     },
@@ -296,6 +299,9 @@ const DataTableMachine = createMachine(
     guards: {
       // API Load success
       opSuccess: (_, event) => event.data?.data?.success,
+
+      // API Authorization Failure
+      authFailure: (_, event) => event.data.response.status == 401,
 
       // Ensure there is a selection and it is not the last row
       canSelectNext: (context) =>
