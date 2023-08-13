@@ -19,6 +19,8 @@ const props = {
   blankRecord: {},
 };
 
+axios.defaults.withCredentials = true;
+
 const methods = {
   load() {
     const me = this;
@@ -129,6 +131,31 @@ const methods = {
     });
   },
 
+  login(credentials) {
+    const me = this;
+
+    credentials["_LOGIN[returnMethod]"] = "POST";
+
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          `${me.getResourceUrl("/login")}format=json`,
+          new URLSearchParams(credentials),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        )
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
+
   transformData(data) {
     return data;
   },
@@ -150,11 +177,16 @@ const methods = {
   findByID: function (id) {
     return this.data.find((item) => item.ID === id);
   },
-  getRequestUrl: function (resource) {
+  getResourceUrl: function (resource) {
     const me = this,
       protocol = me.api.useSSL ? "https://" : "http://",
-      host = me.getHost() || null,
-      url = host ? `${protocol}${host}${resource}?` : `${resource}?`;
+      host = me.getHost() || null;
+
+    return host ? `${protocol}${host}${resource}?` : `${resource}?`;
+  },
+  getRequestUrl: function (resource) {
+    const me = this,
+      url = me.getResourceUrl(resource);
 
     let query = "";
 
