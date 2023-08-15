@@ -18,7 +18,7 @@
     </v-row>
   </v-container>
 
-  <TaskForm v-if="isFormVisible" :form-machine="state.children.form" />
+  <TaskForm v-if="isFormVisible" />
   <Login v-if="isUnauthenticated" />
   <ToastSnackbar />
 </template>

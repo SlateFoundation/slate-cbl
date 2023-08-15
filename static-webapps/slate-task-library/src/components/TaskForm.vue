@@ -230,7 +230,7 @@ export default {
   setup(props) {
     const taskStore = useTaskStore(),
       { state: parent } = useDataTableMachine(),
-      { state, send } = useActor(props.formMachine),
+      { state, send } = useActor(parent.value.children.form),
       taskform = ref(null);
 
     return {
