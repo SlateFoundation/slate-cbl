@@ -227,7 +227,7 @@ export default {
   props: {
     formMachine: Object,
   },
-  setup(props) {
+  setup() {
     const taskStore = useTaskStore(),
       { state: parent } = useDataTableMachine(),
       { state, send } = useActor(parent.value.children.form),
