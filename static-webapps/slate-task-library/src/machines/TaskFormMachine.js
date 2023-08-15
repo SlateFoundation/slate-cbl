@@ -204,31 +204,10 @@ const TaskFormMachine = createMachine(
       }),
 
       // User Notifications
-      toastSuccess: sendParent((_, event) => {
-        let message;
-
-        switch (event.type) {
-          case "done.invoke.ApiCreate":
-            message = "task created successfully";
-            break;
-          case "done.invoke.ApiUpdate":
-            message = "task updated successfully";
-            break;
-          case "done.invoke.ApiArchive":
-            message = "task archived successfully";
-            break;
-          case "done.invoke.ApiUnarchive":
-            message = "task unarchived successfully";
-            break;
-          default:
-            message = "operation successful";
-        }
-
-        return {
-          type: "send.toast",
-          message,
-        };
-      }),
+      toastSuccess: sendParent((_, event) => ({
+        type: "send.toast",
+        message: successMessages[event.type] || "operation successful",
+      })),
 
       toastFailure: sendParent((context, event) => ({
         type: "send.toast",
@@ -263,5 +242,12 @@ const TaskFormMachine = createMachine(
     },
   }
 );
+
+const successMessages = {
+  "done.invoke.ApiCreate": "task created successfully",
+  "done.invoke.ApiUpdate": "task updated successfully",
+  "done.invoke.ApiArchive": "task archived successfully",
+  "done.invoke.ApiUnarchive": "task unarchived successfully",
+};
 
 export { TaskFormMachine };
