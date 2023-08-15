@@ -45,6 +45,14 @@
       >
         <template #prepend>
           <SettingsMenu />
+          <v-btn
+            class="mr-4"
+            icon="mdi-reload"
+            color="grey-darken-1"
+            variant="text"
+            rounded
+            @click="send({ type: 'store.load' })"
+          />
         </template>
       </v-data-table-footer>
     </template>
