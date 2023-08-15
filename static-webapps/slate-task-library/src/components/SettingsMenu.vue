@@ -3,8 +3,8 @@
     <v-menu v-model="menu" :close-on-content-click="false" location="end">
       <template #activator="{ props }">
         <v-btn
-          color="primary"
-          size="small"
+          color="grey-darken-1"
+          variant="text"
           rounded
           icon="mdi-cog"
           v-bind="props"
