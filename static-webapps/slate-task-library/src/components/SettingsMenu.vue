@@ -76,7 +76,7 @@ export default {
           include_archived: this.archived,
         })
       );
-      this.taskStore.fetch();
+      this.taskStore.load();
     },
     updateUnshared() {
       this.taskStore.setExtraParams(
@@ -85,7 +85,7 @@ export default {
           include_unshared: this.unshared,
         })
       );
-      this.taskStore.fetch();
+      this.taskStore.load();
     },
   },
 };
