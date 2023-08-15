@@ -3,15 +3,7 @@
     <h1>Task Library</h1>
   </v-col>
 
-  <!-- TODO: remove this button - it is for testing -->
   <v-col cols="5" class="text-right">
-    <v-btn
-      icon="mdi-login-variant"
-      color="primary"
-      class="mr-2"
-      @click="send({ type: 'test.auth' })"
-    />
-
     <!-- Add task button -->
     <v-btn
       icon="mdi-plus"
