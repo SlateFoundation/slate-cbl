@@ -40,6 +40,7 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
 
         return {
             ID: demonstrationSkill.ID || null,
+            Class: demonstrationSkill.Class || 'Slate\\CBL\\Demonstrations\\DemonstrationSkill',
             SkillID: demonstrationSkill.SkillID,
             TargetLevel: demonstrationSkill.TargetLevel || null,
             DemonstratedLevel: demonstrationSkill.DemonstratedLevel,

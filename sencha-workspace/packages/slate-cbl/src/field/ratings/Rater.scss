@@ -1,0 +1,84 @@
+.slate-cbl-ratings-rater {
+  .x-btn-icon-el-default-large.x-btn-glyph {
+    // TODO replace selector?
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .x-segmented-button-item-horizontal {
+    border-left: 1px solid rgba(black, 0.15);
+
+    .x-btn-inner {
+      padding: 0;
+    }
+
+    &:first-child {
+      border-left: 0;
+    }
+  }
+
+  @for $n from 1 through length($level-colors) {
+    $color: nth($level-colors, $n);
+    $color-dark: nth($level-colors-dark, $n);
+    $color-medium: nth($level-colors-medium, $n);
+    $color-light: nth($level-colors-light, $n);
+    $color-shadow: darken($color-dark, 5%);
+
+    &.cbl-level-#{$n} {
+      .x-btn {
+        background-color: $color-light;
+        border-bottom-color: $color-shadow;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+
+        &:hover,
+        &:focus,
+        &.x-btn-over,
+        &.x-btn-focus {
+          background-color: $color-medium;
+          background-image: none;
+        }
+
+        &.x-btn-pressed {
+          background-color: $color-dark;
+          background-image: linear-gradient(to bottom, $color, $color-dark);
+          border-color: $color-shadow;
+
+          + .x-segmented-button-item-horizontal {
+            border-left-color: $color-shadow;
+          }
+        }
+
+        .x-btn-inner {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+.slate-cbl-ratings-rater-clear-btn {
+  .x-btn-inner {
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+}
+
+.slate-cbl-ratings-rater-menu-btn {
+  // match the framework selectors
+
+  .x-btn-arrow-right > .x-btn-icon.x-btn-no-text.x-btn-button-default-large {
+    padding-right: 0;
+  }
+
+  .x-btn-wrap-default-large.x-btn-arrow-right:after {
+    background: none;
+    color: white;
+    content: '\f0d7'; // fa-caret-down
+    font-family: FontAwesome;
+    font-size: 14px;
+    margin: 0 4px;
+    opacity: 0.6;
+    padding: 0;
+    width: 14px;
+  }
+}

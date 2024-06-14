@@ -1,13 +1,18 @@
 .slate-cbl-ratings-studentcompetency {
+    .competency-header {
+        max-width: 480px;
+    }
+
     h4 {
-        margin: 0 0 .25em;
+        margin: .375em 0 .25em;
     }
 
     .competency-statement {
         border: none;
         color: #666;
         font-style: italic;
-        margin: 0;
+        line-height: (4/3);
+        margin: 0 0 .5em;
         padding: 0;
     }
 }
