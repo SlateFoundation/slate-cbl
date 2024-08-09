@@ -36,8 +36,8 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
                                 '</div>',
                             '</td>',
                             '<td class="level-col">',
-                                '<div class="cbl-level-colored cbl-level-{targetLevel} <tpl if="!override">cbl-rating-{demonstratedLevel}</tpl>">',
-                                   '<tpl if="override">',
+                                '<div class="cbl-level-colored cbl-level-{targetLevel} <tpl if="!this.isOverride(values)">cbl-rating-{demonstratedLevel}</tpl>">',
+                                   '<tpl if="this.isOverride(values)">',
                                        '<i class="fa fa-check"></i>',
                                    '<tpl elseif="demonstratedLevel == 0">',
                                        'M',
@@ -55,7 +55,12 @@ Ext.define('SlateDemonstrationsStudent.view.RecentProgress', {
                     '</tpl>',
                 '</tbody>',
             '</table>',
-        '</div>'
+        '</div>',
+        {
+            isOverride: function(demonstrationData) {
+                return demonstrationData.demonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration';
+            }
+        }
     ],
 
 

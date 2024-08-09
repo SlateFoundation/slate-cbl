@@ -86,7 +86,8 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
             $progress = DB::allRecords('
                 SELECT ds.TargetLevel AS targetLevel,
                        ds.DemonstratedLevel AS demonstratedLevel,
-                       ds.Override AS override,
+                       ds.EvidenceWeight AS evidenceWeight,
+                       d.Class AS demonstrationClass,
                        d.Created AS demonstrationCreated,
                        CONCAT(CASE p.Gender
                          WHEN "Male"   THEN "Mr. "
@@ -130,8 +131,8 @@ class StudentDashboardRequestHandler extends \Emergence\Site\RequestHandler
         // cast strings to integers
         foreach ($progress as &$progressRecord) {
             $progressRecord['targetLevel'] = intval($progressRecord['targetLevel']);
-            $progressRecord['demonstratedLevel'] = intval($progressRecord['demonstratedLevel']);
-            $progressRecord['override'] = (bool)$progressRecord['override'];
+            $progressRecord['demonstratedLevel'] = $progressRecord['demonstratedLevel'] === null ? null : intval($progressRecord['demonstratedLevel']);
+            $progressRecord['evidenceWeight'] = $progressRecord['evidenceWeight'] === null ? null : intval($progressRecord['evidenceWeight']);
             $progressRecord['demonstrationCreated'] = strtotime($progressRecord['demonstrationCreated']);
 
             if ($Student) {

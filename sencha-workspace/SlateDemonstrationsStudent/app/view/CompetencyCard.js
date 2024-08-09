@@ -139,7 +139,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                             '<li',
                                 ' data-demonstration="{DemonstrationID}"',
                                 ' title="',
-                                    '<tpl if="Override">',
+                                    '<tpl if="this.isOverride(values)">',
                                         '[Overridden]',
                                     '<tpl else>',
                                         '{[fm.htmlEncode(Slate.cbl.util.Config.getTitleForRating(values.DemonstratedLevel))]}',
@@ -147,13 +147,13 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                                 '"',
                                 ' class="',
                                     ' cbl-skill-demo',
-                                    '<tpl if="Override">',
+                                    '<tpl if="this.isOverride(values)">',
                                         ' cbl-skill-override',
                                         ' cbl-skill-span-{[xcount - xindex + 1]}',
                                     '<tpl else>',
                                         ' cbl-rating-{DemonstratedLevel}',
                                     '</tpl>',
-                                    '<tpl if="DemonstratedLevel || Override">',
+                                    '<tpl if="DemonstratedLevel || this.isOverride(values)">',
                                         ' cbl-skill-demo-counted',
                                     '<tpl elseif="!DemonstratedLevel">',
                                         ' cbl-skill-demo-missed',
@@ -162,26 +162,31 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
                                     '</tpl>',
                                 '"',
                             '>',
-                                '<tpl if="Override">',
+                                '<tpl if="this.isOverride(values)">',
                                     '<i class="fa fa-check"></i>',
                                 '<tpl else>',
                                     '{[fm.htmlEncode(Slate.cbl.util.Config.getAbbreviationForRating(values.DemonstratedLevel))]}',
                                 '</tpl>',
                             '</li>',
-                            '{% if (values.Override) break; %}', // don't print any more blocks after override
+                            '{% if (this.isOverride(values)) break; %}', // don't print any more blocks after override
                         '<tpl else>',
                             '<li class="cbl-skill-demo cbl-skill-demo-empty">&nbsp;</li>',
                         '</tpl>',
                     '</tpl>',
 
-                    '<li class="cbl-skill-complete-indicator <tpl if="isLevelComplete">is-checked</tpl>">',
+                    '<li class="cbl-skill-complete-indicator <tpl if="isSkillComplete">is-checked</tpl>">',
                         '<i class="fa fa-2x fa-check"></i>',
                     '</li>',
                 '</ul>',
 
                 '<div class="cbl-skill-description"><p>{Statement}</p></div>',
             '</li>',
-        '</tpl>'
+        '</tpl>',
+        {
+            isOverride: function(demonstrationData) {
+                return demonstrationData.DemonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration';
+            }
+        }
     ],
 
 
@@ -388,7 +393,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             /* eslint-disable no-extra-parens */
             isSkillComplete = (
                 // mark complete if any override is present...
-                lastDemonstration && lastDemonstration.Override
+                lastDemonstration && lastDemonstration.DemonstrationClass == 'Slate\\CBL\\Demonstrations\\OverrideDemonstration'
 
                 // ...or every skill is marked with non-M demos
                 || (
@@ -402,7 +407,7 @@ Ext.define('SlateDemonstrationsStudent.view.CompetencyCard', {
             demonstrations.length = demonstrationsRequired || 1;
 
             tplData.push(Ext.applyIf({
-                isLevelComplete: isSkillComplete,
+                isSkillComplete: isSkillComplete,
                 demonstrations: demonstrations
             }, skill));
         }

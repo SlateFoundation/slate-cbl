@@ -9,6 +9,7 @@ use Slate\People\Student;
 
 use Slate\CBL\Demonstrations\Demonstration;
 use Slate\CBL\Demonstrations\DemonstrationSkill;
+use Slate\CBL\Demonstrations\OverrideDemonstration;
 
 class StudentCompetency extends \ActiveRecord
 {
@@ -240,9 +241,10 @@ class StudentCompetency extends \ActiveRecord
                         'SkillID',
                         '
                         SELECT DemonstrationSkill.*,
-                               Demonstration.Demonstrated AS DemonstrationDate
+                               Demonstration.Demonstrated AS DemonstrationDate,
+                               Demonstration.Class AS DemonstrationClass
                           FROM `%s` DemonstrationSkill
-                          JOIN (SELECT ID, Demonstrated FROM `%s` WHERE StudentID = %u) Demonstration
+                          JOIN (SELECT ID, Demonstrated, Class FROM `%s` WHERE StudentID = %u) Demonstration
                             ON Demonstration.ID = DemonstrationSkill.DemonstrationID
                          WHERE (%s)
                          ORDER BY SkillID, DemonstrationDate, DemonstrationID
@@ -260,11 +262,13 @@ class StudentCompetency extends \ActiveRecord
                             // leverage models to parse values/timestamps correctly
                             $Demonstration = Demonstration::instantiateRecord(
                                 [
+                                    'Class' => $demonstrationSkill['DemonstrationClass'],
                                     'Demonstrated' => $demonstrationSkill['DemonstrationDate']
                                 ]
                             );
                             $DemonstrationSkill = DemonstrationSkill::instantiateRecord($demonstrationSkill);
                             $demonstrationSkill = $DemonstrationSkill->getData();
+                            $demonstrationSkill['DemonstrationClass'] = $Demonstration->Class;
                             $demonstrationSkill['DemonstrationDate'] = $Demonstration->Demonstrated;
 
                             // trim extraneous RevisionID
@@ -287,13 +291,32 @@ class StudentCompetency extends \ActiveRecord
     {
         if ($this->demonstrationOpportunities === null) {
             $this->demonstrationOpportunities = 0;
-
             foreach ($this->getDemonstrationsData() as $skillId => $demonstrationData) {
+                $Skill = Skill::getByID($skillId);
+                $skillDemonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
+
+                $skillDemonstrationOpportunities = 0;
+                $hasWildcard = false;
                 foreach ($demonstrationData as $demonstration) {
-                    if (empty($demonstration['Override'])) {
-                        $this->demonstrationOpportunities++;
+                    // skip overrides by class
+                    if ($demonstration['DemonstrationClass'] == OverrideDemonstration::class) {
+                        continue;
+                    }
+
+                    if ($demonstration['EvidenceWeight'] === null) {
+                        // count a wildcard as 1 opportunity until a gap is left between the total for this skill and demonstrations required
+                        $skillDemonstrationOpportunities += 1;
+                        $hasWildcard = true;
+                    } else {
+                        $skillDemonstrationOpportunities += $demonstration['EvidenceWeight'];
                     }
                 }
+
+                if ($hasWildcard && $skillDemonstrationOpportunities < $skillDemonstrationsRequired) {
+                    $skillDemonstrationOpportunities = $skillDemonstrationsRequired;
+                }
+
+                $this->demonstrationOpportunities += $skillDemonstrationOpportunities;
             }
         }
 
@@ -302,9 +325,9 @@ class StudentCompetency extends \ActiveRecord
 
     protected static function sortDemonstrations($a, $b)
     {
-        if ($a['Override'] === true) {
+        if ($a['DemonstrationClass'] === OverrideDemonstration::class) {
             return 1;
-        } elseif ($b['Override'] === true) {
+        } elseif ($b['DemonstrationClass'] === OverrideDemonstration::class) {
             return -1;
         }
 
@@ -334,11 +357,11 @@ class StudentCompetency extends \ActiveRecord
         if ($this->effectiveDemonstrationsData === null) {
             $demonstrationsData = $this->getDemonstrationsData();
 
-            foreach ($demonstrationsData as $skillId => &$demonstrationData) {
+            foreach ($demonstrationsData as $skillId => &$skillDemonstrationsData) {
                 // Check if there are overrides
                 $overrideExists = false;
-                foreach ($demonstrationData as $item) {
-                    if ($item['Override'] === true) {
+                foreach ($skillDemonstrationsData as $demonstrationData) {
+                    if ($demonstrationData['EvidenceWeight'] === null) {
                         $overrideExists = true;
                         break;
                     }
@@ -346,20 +369,20 @@ class StudentCompetency extends \ActiveRecord
 
                 // If any overrides exist, bump all M ratings
                 if ($overrideExists) {
-                    $demonstrationData = array_filter($demonstrationData, function($datum) {
-                        return $datum['DemonstratedLevel'] !== 0;
+                    $skillDemonstrationsData = array_filter($skillDemonstrationsData, function($demonstrationData) {
+                        return $demonstrationData['DemonstratedLevel'] !== 0;
                     });
                 }
 
-                usort($demonstrationData, [__CLASS__,  'sortEffectiveDemonstrations']);
+                usort($skillDemonstrationsData, [__CLASS__,  'sortEffectiveDemonstrations']);
 
                 $Skill = Skill::getByID($skillId);
 
                 $demonstrationsRequired = $Skill->getDemonstrationsRequiredByLevel($this->Level);
 
-                array_splice($demonstrationData, $demonstrationsRequired);
+                array_splice($skillDemonstrationsData, $demonstrationsRequired);
 
-                usort($demonstrationData, [__CLASS__,  'sortDemonstrations']);
+                usort($skillDemonstrationsData, [__CLASS__,  'sortDemonstrations']);
             }
 
             $this->effectiveDemonstrationsData = $demonstrationsData;
@@ -400,8 +423,11 @@ class StudentCompetency extends \ActiveRecord
 
             foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
                 foreach ($demonstrationData as $demonstration) {
-                    if (empty($demonstration['Override']) && !empty($demonstration['DemonstratedLevel'])) {
-                        $this->demonstrationsLogged++;
+                    if ( // ignore override
+                        $demonstration['DemonstrationClass'] !== OverrideDemonstration::class &&
+                        !empty($demonstration['DemonstratedLevel'])
+                    ) {
+                        $this->demonstrationsLogged += $demonstration['EvidenceWeight'];
                     }
                 }
             }
@@ -418,8 +444,8 @@ class StudentCompetency extends \ActiveRecord
 
             foreach ($this->getEffectiveDemonstrationsData() as $skillId => $demonstrationData) {
                 foreach ($demonstrationData as $demonstration) {
-                    if (empty($demonstration['Override']) && empty($demonstration['DemonstratedLevel'])) {
-                        $this->demonstrationsMissed++;
+                    if ($demonstration['DemonstratedLevel'] === 0) {
+                        $this->demonstrationsMissed += $demonstration['EvidenceWeight'];
                     }
                 }
             }
@@ -440,10 +466,10 @@ class StudentCompetency extends \ActiveRecord
                 $skillCount = 0;
 
                 foreach ($demonstrationData as $demonstration) {
-                    if (!empty($demonstration['Override'])) {
+                    if ($demonstration['DemonstrationClass'] === OverrideDemonstration::class) {
                         $skillCount += $demonstrationsRequired;
                     } elseif (!empty($demonstration['DemonstratedLevel'])) {
-                        $skillCount++;
+                        $skillCount += $demonstration['EvidenceWeight'];
                     }
                 }
 
@@ -463,7 +489,7 @@ class StudentCompetency extends \ActiveRecord
                 $totalScore = 0;
                 foreach ($effectiveDemonstrationsData as $skillId => $demonstrationsData) {
                     foreach ($demonstrationsData as $demonstration) {
-                        if (empty($demonstration['Override'])) {
+                        if ($demonstration['DemonstrationClass'] !== OverrideDemonstration::class) {
                             $totalScore += $demonstration['DemonstratedLevel'];
                         }
                     }

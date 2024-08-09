@@ -54,12 +54,14 @@ Ext.define('Slate.cbl.model.demonstrations.DemonstrationSkill', {
         },
         {
             name: 'DemonstratedLevel',
-            type: 'int'
+            type: 'int',
+            allowNull: true
         },
         {
-            name: 'Override',
-            type: 'boolean',
-            defaultValue: false
+            name: 'EvidenceWeight',
+            type: 'int',
+            allowNull: true,
+            defaultValue: 1
         },
 
         // virtual fields

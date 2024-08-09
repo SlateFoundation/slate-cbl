@@ -36,14 +36,14 @@ Ext.define('Slate.cbl.field.ratings.AbstractSkillsField', {
     },
 
     normalizeDemonstrationSkill: function(demonstrationSkill) {
-        var level = demonstrationSkill.DemonstratedLevel;
+        var evidenceWeight = demonstrationSkill.EvidenceWeight;
 
         return {
             ID: demonstrationSkill.ID || null,
             SkillID: demonstrationSkill.SkillID,
             TargetLevel: demonstrationSkill.TargetLevel || null,
-            DemonstratedLevel: typeof level == 'number' ? level : null,
-            Override: demonstrationSkill.Override || false,
+            DemonstratedLevel: demonstrationSkill.DemonstratedLevel,
+            EvidenceWeight: typeof evidenceWeight == 'undefined' ? 1 : evidenceWeight,
             Removable: demonstrationSkill.Removable || false
         };
     },

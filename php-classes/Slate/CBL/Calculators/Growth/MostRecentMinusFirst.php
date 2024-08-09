@@ -3,16 +3,18 @@
 namespace Slate\CBL\Calculators\Growth;
 
 use Slate\CBL\StudentCompetency;
+use Slate\CBL\Demonstrations\OverrideDemonstration;
 
 class MostRecentMinusFirst implements IGrowthCalculator
 {
     public static function calculateGrowth(StudentCompetency $StudentCompetency)
     {
+        $overrideClass = OverrideDemonstration::class;
         $demonstrationData = $StudentCompetency->getDemonstrationsData();
         $growthData = array_filter(array_map(function($demonstrations) use ($StudentCompetency) {
             // filter out overrides and missed demonstrations
             $demonstrations = array_filter($demonstrations, function ($demonstration) {
-                return $demonstration['DemonstratedLevel'] && empty($demonstration['Override']);
+                return $demonstration['DemonstratedLevel'] && $demonstration['DemonstrationClass'] != OverrideDemonstration::class;
             });
 
             // growth can only be calculated if 2 ratings are available, or 1 rating and a baseline

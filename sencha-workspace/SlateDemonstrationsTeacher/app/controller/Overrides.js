@@ -77,7 +77,7 @@ Ext.define('SlateDemonstrationsTeacher.controller.Overrides', {
                 DemonstrationSkills: skill && [
                     {
                         SkillID: skill.getId(),
-                        Override: true
+                        EvidenceWeight: null
                     }
                 ],
             }),
