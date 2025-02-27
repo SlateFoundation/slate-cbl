@@ -1,0 +1,15 @@
+[hololens]
+package = "holo/lens-npm-run/14"
+
+[hololens.npm-run]
+env = "development"
+command = "build"
+output_dir = "dist"
+
+[hololens.input]
+root = "static-webapps/slate-task-library"
+files = "**"
+
+[hololens.output]
+root = "webapp-builds/SlateTaskLibrary"
+merge = "replace"
