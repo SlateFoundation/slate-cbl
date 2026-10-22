@@ -1,5 +1,5 @@
 [hololens]
-package = "holo/lens-sencha-package"
+container = "ghcr.io/hologit/lenses/sencha-package:v2"
 
 [hololens.sencha]
 pkg = "slate-cbl-admin"
