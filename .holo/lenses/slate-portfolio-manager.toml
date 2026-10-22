@@ -1,5 +1,5 @@
 [hololens]
-package = "holo/lens-npm-run/14"
+container = "ghcr.io/hologit/lenses/npm-run:v2"
 
 [hololens.npm-run]
 env = "development"
